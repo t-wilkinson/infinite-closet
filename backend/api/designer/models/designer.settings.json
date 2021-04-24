@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "designers",
+  "info": {
+    "name": "Designer",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "products": {
+      "via": "designer",
+      "collection": "product"
+    }
+  }
+}

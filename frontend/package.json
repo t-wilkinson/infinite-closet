@@ -6,31 +6,26 @@
     "dev": "next dev",
     "develop": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "start": "next start"
   },
   "dependencies": {
-    "next": "9.5.5",
+    "@reduxjs/toolkit": "^1.5.1",
+    "@tailwindcss/aspect-ratio": "^0.2.0",
+    "axios": "^0.21.1",
+    "next": "10.x",
     "postcss-flexbugs-fixes": "^4.2.1",
     "postcss-preset-env": "^6.7.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "react-redux": "^7.2.3",
+    "redux": "^4.0.5",
     "tailwindcss": "^1.9.5"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "2.x",
-    "@typescript-eslint/parser": "2.x",
-    "babel-eslint": "10.x",
-    "eslint": "6.x",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-config-react-app": "^5.2.1",
-    "eslint-plugin-flowtype": "4.x",
-    "eslint-plugin-import": "2.x",
-    "eslint-plugin-jsx-a11y": "6.x",
-    "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-react": "7.x",
-    "eslint-plugin-react-hooks": "2.x",
-    "prettier": "^2.1.2"
+    "@types/node": "^14.14.41",
+    "@types/react": "^17.0.3",
+    "@types/react-responsive": "^8.0.2",
+    "react-responsive": "^8.2.0",
+    "typescript": "^4.2.4"
   }
 }

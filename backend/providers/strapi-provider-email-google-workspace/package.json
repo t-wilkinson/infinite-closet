@@ -1,0 +1,15 @@
+{
+  "name": "strapi-provider-email-google-workspace",
+  "version": "1.0.0",
+  "main": "index.js",
+  "description": "Google Workspace provider for strapi email",
+  "dependencies": {},
+  "keywords": [
+    "email",
+    "strapi",
+    "sendgrid"
+  ],
+  "strapi": {
+    "isProvider": true
+  }
+}
