@@ -2,10 +2,10 @@ const { colors } = require(`tailwindcss/defaultTheme`)
 // https://tailwindcss.com/docs/customizing-colors#color-palette-reference
 
 const palette = {
-  pri1: '#e7ddcb',
-  pri2: '#ad9253',
-  sec1: '#a3bcb6',
-  sec2: '#39603d',
+  pri1: '#ad9253',
+  pri2: '#e7ddcb',
+  sec1: '#39603d',
+  sec2: '#a3bcb6',
   black: '#000000',
   white: '#ffffff',
   red: '#ff3f22',
@@ -17,15 +17,18 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      spacing: {
+        pt: '1px',
+      },
       colors: {
         ...palette,
         pri: {
-          light: palette.pri2,
           default: palette.pri1,
+          light: palette.pri2,
         },
         sec: {
-          light: palette.sec2,
           default: palette.sec1,
+          light: palette.sec2,
         },
         gray: {
           light: '#efefef',
@@ -34,6 +37,7 @@ module.exports = {
         },
         fg: palette.black,
         warning: palette.red,
+        blue: colors.blue,
       },
       container: {
         center: true,

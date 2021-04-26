@@ -35,14 +35,14 @@ export default AboutUs
 
 const AboutItem = ({ header, children }) => (
   <div className="items-center my-4">
-    <span className="text-3xl font-subheader text-pri-light">{header}</span>
+    <span className="text-3xl font-subheader text-pri">{header}</span>
     {children}
   </div>
 )
 
 const ValueItem = ({ header, text }) => (
   <div className="items-center w-56 h-56 p-6 m-2 shadow-md bg-gray-light">
-    <span className="mb-4 text-lg font-bold text-pri-light">{header}</span>
+    <span className="mb-4 text-lg font-bold text-pri">{header}</span>
     <span className="text-center">{text}</span>
   </div>
 )

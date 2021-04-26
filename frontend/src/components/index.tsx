@@ -1,3 +1,4 @@
+/* Components that are used everywhere */
 import React from 'react'
 import Image from 'next/image'
 
@@ -35,7 +36,7 @@ export const CallToAction = ({
 }) => (
   <button className="items-center" onClick={onClick}>
     <div
-      className={`items-center content-center p-4 bg-pri-light ${className}`}
+      className={`items-center content-center p-4 bg-pri ${className}`}
       {...props}
     >
       <span
@@ -178,11 +179,3 @@ export const ScrollUp = ({ size: size_ = undefined, ...props }) => {
     </button>
   )
 }
-
-/* TODO: Can we do lodaing animation based on progress of graphql query? */
-export const GraphQLLoading = () => <div></div>
-export const GraphQLError = () => <div></div>
-
-export const Loading = () => <div />
-
-export const SplashScreen = () => <></>

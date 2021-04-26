@@ -16,9 +16,7 @@ export function getURL(url: string) {
 
 // Helper to make GET requests to Strapi
 export async function fetchAPI(path: string) {
-  const { data } = await axios({
-    url: getURL(path),
-    method: 'GET',
+  const { data } = await axios.get(path, {
     headers: {
       'Content-Type': 'application/json',
     },

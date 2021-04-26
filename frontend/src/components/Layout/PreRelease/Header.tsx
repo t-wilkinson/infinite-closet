@@ -2,10 +2,10 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import Navbar from './Navbar'
+import Navbar from '../Navbar'
 
 const SmallHeader = () => (
-  <div className="p-4 border-b border-light-gray mb-6 flex md:hidden items-center">
+  <div className="p-4 border-b border-gray-light mb-6 flex md:hidden items-center">
     <div className="flex-row items-center content-between w-full mr-2">
       {/* TODO: drawer */}
       {/* <button onPress={() => navigation.toggleDrawer()}> */}
@@ -23,11 +23,7 @@ const LargeHeader = () => (
     <Link href="/landing-page">
       <div className="items-center mb-2 cursor-pointer">
         <div className="-my-4">
-          <Image
-            width={140}
-            height={120}
-            src="/images/brand/logo-transparent.svg"
-          />
+          <Image width={140} height={120} src="/icons/logo-transparent.svg" />
         </div>
         <span className="text-4xl font-header">INFINITE CLOSET</span>
         <span className="text-xl font-header">LESS IS MORE</span>

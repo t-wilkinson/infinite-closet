@@ -23,12 +23,17 @@ export const Sort = ({ sortBy }: { sortBy: SortBy }) => {
         onBlur={() => setFocused(false)}
       >
         <div
-          className={`flex-row items-center border-l border-r border-t p-2
+          className={`flex-row items-center border-l border-r border-t p-2 relative
          ${hover ? 'border-gray' : 'border-transparent'}`}
         >
           <Icon name="sort" size={14} />
           <div className="w-1" />
           <span>Sort By</span>
+          <div
+            className={`absolute left-0 bottom-0 -mb-pt z-20 h-pt w-full ${
+              hover ? 'bg-white' : 'bg-transparent'
+            }`}
+          />
         </div>
       </button>
 

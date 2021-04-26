@@ -1,12 +1,11 @@
 import React from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
 import { Divider } from '@/components'
 import { useSelector, useDispatch } from '@/utils/store'
-import { routes } from '@/utils/constants'
 
+import { BreadCrumbs } from './BreadCrumbs'
 import { FILTERS_ASIDE_WIDTH, filtersByRoute, filterData } from './constants'
 import { productsActions, productsSelectors } from './slice'
 import { Filter } from './types'
@@ -58,27 +57,6 @@ const FiltersWrapper = ({ children }) => {
 }
 
 export default Filters
-
-const BreadCrumbs = ({}) => {
-  const slug = useRouter().query.slug as string[]
-
-  return (
-    <div className="items-start mb-2 w-full px-1 hidden sm:flex">
-      <span className="mb-4">
-        <span>{slug.join(' / ')}</span>
-      </span>
-      {routes
-        .find((el) => el.value === slug[0])
-        ?.data[0].data.map((el: { label: string; href: string }) => (
-          <Link key={el.label} href={el.href}>
-            <span className="cursor-pointer hover:underline mb-1">
-              {el.label}
-            </span>
-          </Link>
-        ))}
-    </div>
-  )
-}
 
 const FilterHeader = () => {
   const router = useRouter()

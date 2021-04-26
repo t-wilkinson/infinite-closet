@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { ScrollUp, Icon } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
 
+import { Crumbs } from './BreadCrumbs'
 import { QUERY_LIMIT } from './constants'
 import { productsSelectors, productsActions } from './slice'
 import Filters, { FiltersCount } from './Filters'
@@ -52,7 +53,9 @@ const Header = ({ router, data, totalPages, sortBy }) => {
 
   return (
     <div className="mb-4 border-b border-gray">
-      <span>{slug.join(' / ')}</span>
+      <div className="sm:hidden">
+        <Crumbs slug={slug} />
+      </div>
 
       <div className="flex-row items-center justify-between w-full">
         <span className="font-subheader text-xl">

@@ -50,7 +50,7 @@ export const ProductItems = ({ data, loading }) => {
   } else {
     return (
       <div className="flex-row flex-wrap">
-        {data.products.map((item: any) => (
+        {data.products?.map((item: any) => (
           <Product key={item.id} item={item} />
         ))}
       </div>

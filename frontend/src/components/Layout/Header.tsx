@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Navbar from './Navbar'
 
 const SmallHeader = () => (
-  <div className="flex items-center p-4 mb-6 border-b border-light-gray md:hidden">
+  <div className="flex items-center p-4 mb-6 border-b border-gray-light md:hidden">
     <div className="flex-row items-center w-full mr-2">
       <Link href="/landing-page">
         <span className="ml-4 font-header font-lg">INFINITE CLOSET</span>

@@ -128,7 +128,7 @@ const WaitlistForm = ({ status, setStatus }) => {
   return (
     <div className="w-full">
       <div className="z-10 items-center w-full my-4">
-        <span className="text-4xl uppercase text-pri-light font-subheader">
+        <span className="text-4xl uppercase text-pri font-subheader">
           Join The Waitlist
         </span>
         <WaitlistItem>

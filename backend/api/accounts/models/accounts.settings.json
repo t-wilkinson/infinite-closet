@@ -1,0 +1,14 @@
+{
+  "collectionName": "accounts",
+  "info": {
+    "name": "accounts",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false,
+    "increments": true,
+    "timestamps": true,
+    "comment": ""
+  },
+  "attributes": {}
+}
