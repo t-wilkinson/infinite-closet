@@ -8,7 +8,7 @@ const SmallHeader = () => (
   <div className="p-4 border-b border-gray-light mb-6 flex md:hidden items-center">
     <div className="flex-row items-center content-between w-full mr-2">
       {/* TODO: drawer */}
-      {/* <button onPress={() => navigation.toggleDrawer()}> */}
+      {/* <button onClick={() => toggleDrawer()}> */}
       {/*   <Ionicons name="menu-outline" size={32} /> */}
       {/* </button> */}
       <Link href="/landing-page">

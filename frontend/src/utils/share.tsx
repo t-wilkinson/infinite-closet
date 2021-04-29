@@ -1,6 +1,11 @@
 import React from 'react'
-import { Image, Linking, button } from '@/shared/components'
-import { extras } from '@/shared/constants'
+import Image from 'next/image'
+import getConfig from 'next/config'
+
+import qs from 'qs'
+
+const { publicRuntimeConfig } = getConfig()
+const { FACEBOOK_APP_ID } = publicRuntimeConfig
 
 interface ShareFacebookConfig {
   url: string
@@ -13,19 +18,11 @@ interface SharePinterestConfig {
   imageURL: string
 }
 
-const share = (url: string) => {
-  if (url) {
-    Linking.openURL(url)
-      .then((data) => console.log(data))
-      .catch((err) => console.error(err))
-  }
-}
-
-const createParams = (obj: { [key: string]: string | undefined }) =>
-  Object.entries(obj)
-    .filter(([, v]) => v !== undefined)
-    .map(([k, v]) => k + '=' + encodeURI(v as string))
-    .join('&')
+// const createParams = (obj: { [key: string]: string | undefined }) =>
+//   Object.entries(obj)
+//     .filter(([, v]) => v !== undefined)
+//     .map(([k, v]) => k + '=' + encodeURI(v as string))
+//     .join('&')
 
 const ratio = 32 / 13
 const size = 28
@@ -33,48 +30,44 @@ const shareStyle = { width: size * ratio, height: size }
 
 export default {
   Facebook: ({ url, description }: ShareFacebookConfig) => (
-    <button
-      onPress={() =>
-        share(
-          'https://www.facebook.com/sharer/sharer.php?' +
-            createParams({
-              u: url,
-              quote: description,
-              app_id: extras.facebook_app_id,
-              redirect_uri: url,
-              display: 'popup',
-              kid_directed_site: '0',
-            }),
-        )
+    <a
+      href={
+        'https://www.facebook.com/sharer/sharer.php?' +
+        qs.stringify({
+          u: url,
+          quote: description,
+          app_id: FACEBOOK_APP_ID,
+          redirect_uri: url,
+          display: 'popup',
+          kid_directed_site: '0',
+        })
       }
     >
       <Image
-        style={shareStyle}
-        resizeMode="contain"
-        source={require('/icons/facebook-share.png')}
+        layout="fill"
+        objectFit="contain"
+        src="/icons/facebook-share.png"
       />
-    </button>
+    </a>
   ),
 
   Pinterest: ({ url, description, imageURL }: SharePinterestConfig) => (
-    <button
-      onPress={() =>
-        share(
-          'https://www.pinterest.com/pin/create/button/?' +
-            createParams({
-              url,
-              description,
-              media: imageURL,
-              method: 'button',
-            }),
-        )
+    <a
+      href={
+        'https://www.pinterest.com/pin/create/button?' +
+        qs.stringify({
+          url,
+          description,
+          media: imageURL,
+          method: 'button',
+        })
       }
     >
-      <Image
-        style={shareStyle}
-        resizeMode="contain"
-        source={require('/icons/pinit.jpg')}
-      />
-    </button>
+      <Image layout="fill" objectFit="contain" src="/icons/pinit.jpg" />
+    </a>
   ),
 }
+
+// app_id=
+// https://www.facebook.com/sharer/sharer.php?u=%2Fshop%2Fdesigner-two%2Fshirt&quote=asdf&app_id=&redirect_uri=%2Fshop%2Fdesigner-two%2Fshirt&display=popup&kid_directed_site=0
+// https://www.facebook.com/sharer/sharer.php?u=%2Fshop%2Fdesigner-two%2Fshirt&quote=asdf&redirect_uri=%2Fshop%2Fdesigner-two%2Fshirt&display=popup&kid_directed_site=0

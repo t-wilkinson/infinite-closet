@@ -10,17 +10,26 @@ export const validate = (
     const [type, ...props] = constraint.split(':')
     switch (type) {
       case 'email':
-        return /^\w+@\w+\.\w+$/.test(value) || 'Email Address must be valid'
+        return /^\w+@\w+\.\w+$/.test(value) || `${field} must be valid`
       case 'required':
         return value.length > 0 || `${field} is required`
       case 'number':
         return /^\d*$/.test(value) || `${field} must be a number`
-      // case 'max-width':
-      //   return ret(value.length < Number(props[0]), ``)
-      // case 'min-width':
-      //   break
-      // case 'regex':
-      //   return ret(RegExp(props[0]).test(value), "")
+      case 'max-width':
+        return (
+          value.length <= Number(props[0]) ||
+          `${field} must be at most ${props[0]} characters long`
+        )
+      case 'min-width':
+        return (
+          value.length >= Number(props[0]) ||
+          `${field} must be at least ${props[0]} characters long`
+        )
+      case 'regex':
+        return (
+          RegExp(props[0]).test(value) ||
+          `${field} does not have the correct format`
+        )
       case '':
         return true
       default:

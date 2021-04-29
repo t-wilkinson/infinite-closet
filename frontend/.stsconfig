@@ -1,0 +1,39 @@
+// vim: filetype=javascript
+
+/**
+ * @type {import('strapi-to-typescript')}
+ */
+console.log(__dirname)
+const titleCase = (value) =>
+  value
+    .split('_')
+    .map((v) => v.charAt(0).toUpperCase() + v.slice(1))
+    .join('')
+
+module.exports = {
+  //required
+  input: [
+    'api',
+    'node_modules/strapi-plugin-users-permissions/models/',
+    'node_modules/strapi-plugin-upload/models/',
+    'extensions/users-permissions/models/',
+  ].map((v) => '../backend/' + v),
+  inputGroup: '../backend/components/',
+  output: './src/utils/models/',
+  interfaceName: (name) => `Strapi${titleCase(name)}`,
+
+  // optional
+  enum: false,
+  nested: false,
+  excludeField: (interfaceName, fieldName) => fieldName === 'hide_field',
+  addField: (interfaceName) => [{ name: 'created_by', type: 'string' }],
+
+  // optional, builtin function used if undefined return
+  fieldType: (fieldType, fieldName, interfaceName) => {
+    if (fieldType == 'datetime') return 'string'
+  },
+  fieldName: (fieldName) => fieldName.replace('_', ''),
+  enumName: (name, interfaceName) => `Enum${interfaceName}${name}`,
+  importAsType: (interfaceName) =>
+    interfaceName === 'MyInterfaceThatWantsToImportAsTypes' /* or just true */,
+}

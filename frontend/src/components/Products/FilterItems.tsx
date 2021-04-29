@@ -8,17 +8,17 @@ import { filterData } from './constants'
 import { Filter } from './types'
 import { productsActions } from './slice'
 
-type ProductFilter = {
+type FilterItems = {
   [key in Filter]: (props: {
     filter: Filter
     panel: { values: string[]; toggle: (payload: string) => void }
   }) => any
 }
 
-export const productFilter: ProductFilter = {
+export const FilterItems: FilterItems = {
   Designers: ({ panel, filter }) => {
     const dispatch = useDispatch()
-    // TODO
+    // TODO: try using internal state (not redux)
     const state = useSelector((state) => state.products.Designers)
     const setState = (field: string, value: any) =>
       dispatch(
@@ -31,7 +31,7 @@ export const productFilter: ProductFilter = {
 
     const designers = []
     const debounceMatches = React.useCallback(
-      // TODO
+      // TODO: finish implementation
       (a, b, c) => {},
       // debounce(searchDesignerMatches, 300),
       [],
@@ -156,10 +156,8 @@ export const productFilter: ProductFilter = {
       </>
     )
   },
-
-  // TODO: or consider removing sort from filters.
 }
-export default productFilter
+export default FilterItems
 
 async function searchDesignerMatches(
   setMatches: (matches: any) => void,

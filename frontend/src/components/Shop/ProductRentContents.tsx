@@ -1,30 +1,20 @@
 import React from 'react'
+// import DropDownPicker from 'react-native-dropdown-picker'
 
-import { Dayjs } from 'dayjs'
-import DropDownPicker from 'react-native-dropdown-picker'
-import { Ionicons, MaterialIcons } from '@expo/vector-icons'
+import { useDispatch } from '@/utils/store'
+import { Icon, CallToAction } from '@/components'
 
-import { div, span, button, CallToAction } from '@/shared/components'
-
+import { shopActions } from './slice'
 import { OneTime } from './types'
 import DatePicker from './DatePicker'
 
-export const ProductRentContents = ({ shopItem, state, setState }) => {
-  const [visible, setVisible] = React.useState(false)
-  const [selectedDate, setSelectedDate] = React.useState<Dayjs>()
+export const ProductRentContents = ({ product, state }) => {
+  const Contents = productRentContents[state.rentType]
+  const dispatch = useDispatch()
 
   return (
-    <div height={250}>
-      {productRentContents[state.rentType]({
-        // TODO performance?
-        shopItem,
-        setState,
-        visible,
-        setVisible,
-        selectedDate,
-        setSelectedDate,
-        state,
-      })}
+    <div className="h-64">
+      <Contents product={product} state={state} dispatch={dispatch} />
     </div>
   )
 }
@@ -36,131 +26,98 @@ const rentalLengths: { [key in OneTime]: number } = {
 }
 
 const productRentContents = {
-  OneTime: ({
-    setState,
-    shopItem,
-    visible,
-    setVisible,
-    state,
-    selectedDate,
-    setSelectedDate,
-  }) => (
+  OneTime: ({ dispatch, product, state }) => (
     <>
       <DatePicker
-        visible={visible}
-        setVisible={setVisible}
+        state={state}
         rentalLength={rentalLengths[state.oneTime]}
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
+        dispatch={dispatch}
       />
 
-      <SelectorItem label="Size" zIndex={10} width={100}>
-        <DropDownPicker
-          containerStyle={{ zIndex: 10 }}
-          style={{ zIndex: 10 }}
-          items={shopItem.sizes.map((v: { id: string } & unknown) => ({
-            ...v,
-            value: v.id,
-          }))}
-          itemStyle={{ justifyContent: 'flex-start' }}
-          placeholder="Select"
-          onChangeItem={(item) =>
-            setState((s: { id: string } & unknown) => ({
-              ...s,
-              size: item.id,
-            }))
-          }
-        />
+      <SelectorItem label="Size" className="my-2 z-10 w-24">
+        {/* <DropDownPicker */}
+        {/*   containerStyle={{ zIndex: 10 }} */}
+        {/*   style={{ zIndex: 10 }} */}
+        {/*   items={product.sizes.map((v: { id: string } & unknown) => ({ */}
+        {/*     ...v, */}
+        {/*     value: v.id, */}
+        {/*   }))} */}
+        {/*   itemStyle={{ justifyContent: 'flex-start' }} */}
+        {/*   placeholder="Select" */}
+        {/*   onChangeItem={(item) => dispatch(shopActions.changeSize(item.id))} */}
+        {/* /> */}
       </SelectorItem>
-      <SelectorItem label="Rental time">
-        <div flexDirection="row" justifyContent="space-between">
-          <div mr="lg">
+
+      <SelectorItem label="Rental time" className="my-2">
+        <div className="flex-row justify-between">
+          <div className="mr-6">
             <OneTimeRadioButton
-              setState={setState}
               selected={state.oneTime === 'Short'}
-              oneTime={'Short'}
+              oneTime="Short"
+              dispatch={dispatch}
             />
             <OneTimeRadioButton
-              setState={setState}
               selected={state.oneTime === 'Long'}
-              oneTime={'Long'}
+              oneTime="Long"
+              dispatch={dispatch}
             />
           </div>
           <button
-            onPress={() => setVisible(true)}
-            style={{ flex: 1 }}
+            className="flex flex-grow border border-gray py-2 px-2 rounded-sm rounded-sm flex-row flex-grow justify-between items-center"
+            onClick={() => dispatch(shopActions.showDate())}
           >
-            <div
-              borderWidth={1}
-              borderColor="light-gray"
-              borderRadius={4}
-              flexDirection="row"
-              flex={1}
-              justifyContent="space-between"
-              alignItems="center"
-              px="sm"
-            >
-              <span>
-                {selectedDate &&
-                  selectedDate.format('dd M/D') +
-                    ' - ' +
-                    selectedDate
-                      .add(rentalLengths[state.oneTime], 'day')
-                      .format('dd M/D')}
-              </span>
-              <MaterialIcons name="date-range" size={24} color="black" />
-            </div>
+            <span>
+              {state.selectedDate &&
+                state.selectedDate.format('ddd M/D') +
+                  ' - ' +
+                  state.selectedDate
+                    .add(rentalLengths[state.oneTime], 'day')
+                    .format('ddd M/D')}
+            </span>
+            <Icon className="text-gray" name="date" size={24} />
           </button>
         </div>
       </SelectorItem>
-      <CallToAction onPress={() => {}} width="100%" my="sm">
+
+      <CallToAction onClick={() => {}} className="my-2 self-center">
         Add to Closet
       </CallToAction>
     </>
   ),
 
   Membership: () => (
-    <div justifyContent="center" alignItems="center" flex={1}>
-      <span variant="subheader" textAlign="center">
-        Coming Soon!
-      </span>
+    <div className="justify-center items-center flex-grow">
+      <span className="font-subheader text-center text-3xl">Coming Soon!</span>
     </div>
   ),
 
   Purchase: () => (
-    <div justifyContent="center" alignItems="center" flex={1}>
-      <span variant="subheader" textAlign="center">
-        Coming Soon!
-      </span>
+    <div className="justify-center items-center flex-grow">
+      <span className="font-subheader text-center text-3xl">Coming Soon!</span>
     </div>
   ),
 }
 
 const SelectorItem = ({ label, children, ...props }) => (
-  <div my="sm" {...props}>
-    <span variant="body-bold" my="sm">
-      {label}
-    </span>
+  <div {...props}>
+    <span className="font-bold my-2">{label}</span>
     {children}
   </div>
 )
 
-const OneTimeRadioButton = ({ setState, selected, oneTime }) => (
+const OneTimeRadioButton = ({ selected, oneTime, dispatch }) => (
   <button
-    style={{ flexDirection: 'row', alignItems: 'center' }}
-    onPress={() =>
-      setState((s: any) => ({
-        ...s,
-        oneTime,
-      }))
-    }
+    className="flex-row flex items-center"
+    onClick={() => dispatch(shopActions.changeOneTime(oneTime))}
   >
-    <button>
-      <Ionicons
-        name={selected ? 'radio-button-on' : 'radio-button-off'}
-        size={16}
+    <div className="w-4 h-4 rounded-full border items-center justify-center mr-2">
+      <div
+        className={`w-3 h-3 rounded-full
+        ${selected ? 'bg-sec-light' : ''}
+        `}
       />
-    </button>
-    <span>{oneTime}-day rental</span>
+    </div>
+    {/* TODO: dynamic from server */}
+    <span>{{ Short: 4, Long: 8 }[oneTime]}-day rental</span>
   </button>
 )

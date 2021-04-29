@@ -1,51 +1,29 @@
 import React from 'react'
 
-import { div, span, button } from '@/shared/components'
+import { useDispatch } from '@/utils/store'
 
-import { State } from './types'
+import { shopActions } from './slice'
+import { RentType } from './types'
 
-export const ProductRentHeaders = ({
-  shopItem,
-  membership_price,
-  state,
-  setState,
-}) => {
+export const ProductRentHeaders = ({ product, state }) => {
+  const dispatch = useDispatch()
+
   return (
-    <div
-      flexDirection="row"
-      borderColor="gray3"
-      borderWidth={1}
-      borderRadius={4}
-      bg="light-gray"
-    >
-      {Object.keys(productRentHeaders).map((rentType, i) => {
+    <div className="flex-row border-gray-dark border rounded-md bg-gray-light divide-x overflow-hidden">
+      {Object.keys(productRentHeaders).map((rentType: RentType, i: number) => {
         return (
           <button
             key={rentType}
             style={{ flex: 1 }}
-            onPress={() =>
-              setState((s: State) => ({
-                ...s,
-                rentType,
-              }))
-            }
+            onClick={() => dispatch(shopActions.changeRentType(rentType))}
           >
             <div
-              flex={1}
-              p="sm"
-              borderRightColor="gray3"
-              borderRightWidth={
-                i !== Object.keys(productRentHeaders).length - 1 ? 1 : 0
-              }
-              {...(Number(rentType) === state.rentType && { bg: 'sec' })}
+              className={`flex-grow p-2 br-gray-light h-full
+                ${rentType === state.rentType ? 'bg-sec-light' : ''}
+                `}
             >
-              <div flex={1} alignItems="center" justifyContent="space-between">
-                {productRentHeaders[rentType]({
-                  shopItem,
-                  membership_price,
-                  state,
-                  setState,
-                })}
+              <div className="flex-grow items-center justify-between">
+                {productRentHeaders[rentType]({ product })}
               </div>
             </div>
           </button>
@@ -57,30 +35,22 @@ export const ProductRentHeaders = ({
 export default ProductRentHeaders
 
 const productRentHeaders = {
-  OneTime: ({ shopItem }) => (
+  OneTime: ({ product }) => (
     <>
-      <span fontSize={13} variant="body-bold" textAlign="center">
-        One-time rental
-      </span>
-      <span variant="body-bold">£{shopItem.rental_price}</span>
+      <span className="text-sm font-bold text-center">One-time rental</span>
+      <span className="font-bold">£{product.rental_price}</span>
     </>
   ),
 
-  Membership: ({ membership_price }) => (
+  Membership: () => (
     <>
-      <span fontSize={13} variant="body-bold">
-        Membership
-      </span>
-      {/* <span variant="body-bold">from £{membership_price}</span> */}
+      <span className="text-sm font-bold">Membership</span>
     </>
   ),
 
-  Purchase: ({ shopItem }) => (
+  Purchase: () => (
     <>
-      <span fontSize={13} variant="body-bold">
-        Purchase
-      </span>
-      {/* <span variant="body-bold">£{shopItem.purchase_price}</span> */}
+      <span className="text-sm font-bold">Purchase</span>
     </>
   ),
 }

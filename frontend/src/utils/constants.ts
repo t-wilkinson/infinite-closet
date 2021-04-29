@@ -5,14 +5,7 @@ export const socialMediaLinks = {
   tiktok: 'https://www.tiktok.com/@infinitecloset',
 }
 
-// type routes = {
-//   label: string
-//   value: string
-//   href: string
-//   img: string | null
-//   data: { label: string; href: string; data: { label: string; href: string }[] }[]
-// }[]
-
+// TODO: if href starts with `/`, consider it absolute, otherwise, hrefs.join('/')
 const routes = [
   {
     label: 'Plans',
@@ -39,11 +32,13 @@ const routes = [
     label: 'Trending',
     value: 'trending',
     href: '/coming-soon',
+    type: 'path',
     img: null,
     data: [
       {
         label: 'Category',
         href: '/coming-soon',
+        type: 'query',
         data: [
           { label: 'Popular', href: '/coming-soon' },
           { label: 'New In', href: '/coming-soon' },
@@ -58,12 +53,13 @@ const routes = [
   {
     label: 'Clothing',
     value: 'clothing',
-    href: '/shop',
+    href: 'clothing',
     img: null,
     data: [
       {
         label: 'Category',
         href: '/coming-soon',
+        type: 'query',
         data: [
           { label: 'Dresses', href: '/coming-soon' },
           { label: 'Tops', href: '/coming-soon' },

@@ -1,14 +1,13 @@
 import React from 'react'
-import { div, span, button } from '@/shared/components'
-import { AntDesign } from '@expo/vector-icons'
 import dayjs, { Dayjs } from 'dayjs'
 import 'dayjs/locale/en-gb'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import isBetween from 'dayjs/plugin/isBetween'
 
-import Modal from '@/shared/Modal'
-import Hoverable from '@/shared/Hoverable'
+import { Icon } from '@/components'
+
+import { shopActions } from './slice'
 
 dayjs.extend(isBetween)
 dayjs.extend(utc)
@@ -17,147 +16,105 @@ dayjs.tz.setDefault('Europe/London')
 dayjs.tz.guess()
 dayjs.locale('en-gb')
 
-export const DatePicker = ({
-  selectedDate,
-  setSelectedDate,
-  visible,
-  setVisible,
-  rentalLength,
-}) => (
-  <Modal visible={visible} transparent={true}>
-    <div
-      alignItems="center"
-      justifyContent="center"
-      width="100%"
-      height="100%"
-      style={{ backgroundColor: '#000c' }}
-    >
-      <div bg="white" p="lg">
-        <div alignSelf="flex-end" pb="md">
-          <button onPress={() => setVisible(false)}>
-            <AntDesign name="close" size={24} color="black" />
+export const DatePicker = ({ state, dispatch, rentalLength }) =>
+  state.dateVisible && (
+    <div className="fixed inset-0 items-center justify-center bg-opacity-50 bg-black z-20">
+      <div className="bg-white p-6">
+        <div className="self-end pb-4">
+          <button onClick={() => dispatch(shopActions.hideDate())}>
+            <Icon name="close" size={16} />
           </button>
         </div>
-        <Date
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          rentalLength={rentalLength}
-          setVisible={setVisible}
-        />
+        <Date state={state} dispatch={dispatch} rentalLength={rentalLength} />
       </div>
     </div>
-  </Modal>
-)
+  )
 
 export default DatePicker
 
-const Date = ({ selectedDate, setVisible, setSelectedDate, rentalLength }) => {
-  const { date, setDate, days } = useDays(selectedDate)
-  const [hover, setHover] = React.useState<Dayjs>()
+const Date = ({ state, rentalLength, dispatch }) => {
+  const { date, setDate, days } = useDays(state.selectedDate)
 
   return (
     <div>
-      <div
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-        width="100%"
-      >
-        <button
-          onPress={() => setDate((d) => d.subtract(1, 'month'))}
-        >
-          <div borderColor="light-gray" borderWidth={1} p="sm">
-            <AntDesign size={16} name="left" />
+      <div className="flex-row items-center justify-between w-full">
+        <button onClick={() => setDate((d) => d.subtract(1, 'month'))}>
+          <div className="border-gray-light border p-2">
+            <Icon size={16} name="left" />
           </div>
         </button>
         <span>{date.format('MMMM YYYY')}</span>
-        <button onPress={() => setDate((d) => d.add(1, 'month'))}>
-          <div borderColor="light-gray" borderWidth={1} p="sm">
-            <AntDesign size={16} name="right" />
+        <button onClick={() => setDate((d) => d.add(1, 'month'))}>
+          <div className="border border-gray-light p-2">
+            <Icon size={16} name="right" />
           </div>
         </button>
       </div>
 
-      <div flexDirection="row" justifyContent="space-around" width="100%">
+      <div className="flex-row justify-around w-full">
         {'SMTWTFS'.split('').map((v, i) => (
-          <span key={i} variant="subheader" fontSize={24} p="sm">
+          <span key={i} className="font-subheader text-lg p-2">
             {v}
           </span>
         ))}
       </div>
-      <Hoverable onHoverOut={() => setHover(undefined)}>
-        <Days
-          {...{
-            days,
-            setHover,
-            setSelectedDate,
-            setVisible,
-            selectedDate,
-            hover,
-            rentalLength,
-          }}
-        />
-      </Hoverable>
+      <Days
+        days={days}
+        state={state}
+        dispatch={dispatch}
+        rentalLength={rentalLength}
+      />
     </div>
   )
 }
 
-const Days = ({
-  days,
-  setHover,
-  setSelectedDate,
-  setVisible,
-  selectedDate,
-  hover,
-  rentalLength,
-}) => {
+const Days = ({ days, state, dispatch, rentalLength }) => {
+  const [hover, setHover] = React.useState<Dayjs>()
+
   return (
-    <div borderColor="light-gray" borderRightWidth={1} borderBottomWidth={1}>
+    <div className="border-gray-light border-r border-b">
       {Array(6)
         .fill(0)
         .map((_, i) => (
-          <div flexDirection="row" key={i}>
-            {days
-              .slice(i * 7, i * 7 + 7)
-              .map((date: Dayjs, dateIndex: number) => (
-                <button
-                  key={date.day()}
-                  onMouseEnter={() => {
-                    if (dateAvailable(date)) setHover(date)
-                    else setHover(undefined)
-                  }}
-                  onPress={() => {
-                    if (hover) {
-                      setSelectedDate(date)
-                      setVisible(false)
-                    }
-                  }}
-                >
-                  <Day
-                    date={date}
-                    unavailable={!dateAvailable(date)}
-                    selected={
-                      selectedDate &&
-                      date.isBetween(
-                        selectedDate,
-                        selectedDate.add(rentalLength, 'day'),
-                        'day',
-                        '[)',
-                      )
-                    }
-                    hover={
-                      hover &&
-                      date.isBetween(
-                        hover,
-                        hover.add(rentalLength, 'day'),
-                        'day',
-                        '[)',
-                      )
-                    }
-                    style={{ cursor: date.day() !== 0 && 'pointer' }}
-                  />
-                </button>
-              ))}
+          <div key={i} className="flex-row">
+            {days.slice(i * 7, i * 7 + 7).map((date: Dayjs) => (
+              <button
+                key={date.day()}
+                onMouseEnter={() => {
+                  if (dateAvailable(date)) setHover(date)
+                  else setHover(undefined)
+                }}
+                onClick={() => {
+                  if (hover) {
+                    dispatch(shopActions.selectDate(date))
+                    dispatch(shopActions.hideDate())
+                  }
+                }}
+              >
+                <Day
+                  date={date}
+                  unavailable={!dateAvailable(date)}
+                  selected={
+                    state.selectedDate &&
+                    date.isBetween(
+                      state.selectedDate,
+                      state.selectedDate.add(rentalLength, 'day'),
+                      'day',
+                      '[)',
+                    )
+                  }
+                  hover={
+                    hover &&
+                    date.isBetween(
+                      hover,
+                      hover!.add(rentalLength, 'day'),
+                      'day',
+                      '[)',
+                    )
+                  }
+                />
+              </button>
+            ))}
           </div>
         ))}
     </div>
@@ -171,34 +128,21 @@ const Day = ({
   selected = false,
   unavailable = false,
   hover = false,
-  ...props
 }: {
   date: Dayjs
   selected: Boolean
   unavailable: Boolean
   hover: Boolean
-  props?: Object
 }) => (
   <div
-    borderLeftWidth={1}
-    borderTopWidth={1}
-    borderColor="light-gray"
-    width={48}
-    height={48}
-    p="md"
-    alignItems="center"
-    justifyContent="center"
-    {...(unavailable && { bg: 'light-gray' })}
-    {...(hover && { bg: 'sec' })}
-    {...(selected && { bg: 'sec-light' })}
-    {...props}
+    className={`border-l border-t border-gray-light w-12 h-12 p-4 items-center justify-center
+      ${hover ? 'bg-sec-light' : ''}
+      ${date.day() !== 0 ? 'cursor-pointer' : ''}
+      ${unavailable && !selected ? 'bg-gray-light text-gray-dark' : ''}
+      ${selected ? 'bg-sec text-white' : ''}
+    `}
   >
-    <span
-      {...(unavailable && { color: 'dark-gray' })}
-      {...(selected && { color: 'white' })}
-    >
-      {date.date()}
-    </span>
+    <span>{date.date()}</span>
   </div>
 )
 

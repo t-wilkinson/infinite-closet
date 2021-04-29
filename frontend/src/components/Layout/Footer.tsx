@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import axios from 'axios'
 
 import { Icon, CallToAction, Divider } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
@@ -26,12 +27,12 @@ const Subscribe = () => {
   })
 
   const onSubmit = () => {
-    fetch(process.env.GRAPHQL_API + '/accounts/newsletter', {
-      method: 'POST',
-      body: JSON.stringify({
-        email: state.value,
-      }),
-    })
+    axios
+      .post('/accounts/newsletter', {
+        data: {
+          email: state.value,
+        },
+      })
       .then(() => setState({ ...state, status: 'Submitted' }))
       .catch(() => setState({ ...state, status: 'Error' }))
       .then(() => {})

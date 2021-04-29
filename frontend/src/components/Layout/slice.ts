@@ -1,0 +1,45 @@
+import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit'
+
+import { RootState } from '@/utils/store'
+
+export interface State {
+  data: object
+  loading: boolean
+}
+
+const initialState = {
+  data: {},
+  loading: false,
+}
+
+export const layoutSlice = createSlice({
+  name: 'LAYOUT',
+  initialState,
+  reducers: {
+    dataReceived(state, { payload }: PayloadAction<object>) {
+      // fetched data from server
+      state.data = { ...state.data, ...payload }
+    },
+    setLoading(state, { payload }: PayloadAction<boolean>) {
+      state.loading = payload
+    },
+    startLoading(state) {
+      state.loading = true
+    },
+    doneLoading(state) {
+      // fetched data from server
+      state.loading = false
+    },
+  },
+})
+
+const layoutSelector = (state: RootState) => state.layout
+
+const layoutSelectors = {
+  data: createSelector([layoutSelector], (layout) => layout.data),
+  loading: createSelector([layoutSelector], (layout) => layout.loading),
+}
+
+export { layoutSelectors }
+export const layoutActions = layoutSlice.actions
+export default layoutSlice.reducer

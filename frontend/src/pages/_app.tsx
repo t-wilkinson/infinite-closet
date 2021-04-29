@@ -4,10 +4,13 @@ import { useRouter } from 'next/router'
 import { Provider } from 'react-redux'
 import store from '@/utils/store'
 import axios from 'axios'
-
+import getConfig from 'next/config'
 import '@/styles/index.css'
 
-axios.defaults.baseURL = process.env.STRAPI_API_URL || 'http://localhost:1337'
+const { publicRuntimeConfig } = getConfig()
+const { STRAPI_API_URL } = publicRuntimeConfig
+
+axios.defaults.baseURL = STRAPI_API_URL || 'http://localhost:1337'
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 const App = ({ Component, pageProps }) => {
@@ -52,6 +55,27 @@ const Headers = () => (
 )
 
 const Wrapper = ({ children }) => {
+  useSaveScrollPos()
+
+  return (
+    <div className="min-h-screen">
+      <Banner />
+      <Provider store={store}>{children}</Provider>
+    </div>
+  )
+}
+
+const Banner = () => (
+  <div className="items-center px-2 py-4 width-full bg-sec-light">
+    <span className="text-lg font-header">COMING JULY 1, 2021</span>
+    <div className="h-2" />
+    <span className="text-center font-subheader-light">
+      Discover and rent the latest trends from fashions rising
+    </span>
+  </div>
+)
+
+const useSaveScrollPos = () => {
   const scrollState = React.useRef({}).current
   const router = useRouter()
 
@@ -72,21 +96,4 @@ const Wrapper = ({ children }) => {
       router.events.off('routeChangeComplete', completeLoading)
     }
   }, [])
-
-  return (
-    <div className="min-h-screen">
-      <Banner />
-      <Provider store={store}>{children}</Provider>
-    </div>
-  )
 }
-
-const Banner = () => (
-  <div className="items-center px-2 py-4 width-full bg-sec-light">
-    <span className="text-lg font-header">COMING JULY 1, 2021</span>
-    <div className="h-2" />
-    <span className="text-center font-subheader-light">
-      Discover and rent the latest trends from fashions rising
-    </span>
-  </div>
-)

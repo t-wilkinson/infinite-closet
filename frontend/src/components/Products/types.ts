@@ -1,5 +1,5 @@
-// TODO
-export const ProductRoutes = ['clothing', 'plans', 'trending'] as const
+// TODO: dynamicall get these
+export const ProductRoutes = ['clothing'] as const
 export type ProductRoutes = typeof ProductRoutes[number]
 
 export const FilterFields = ['colors', 'fits', 'occasions', 'styles'] as const

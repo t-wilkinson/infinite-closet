@@ -1,28 +1,24 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import qs from 'qs'
 
+import useLoading from '@/utils/useLoading'
 import { useDispatch } from '@/utils/store'
 import { fetchAPI } from '@/utils/api'
-import {
-  Filter,
-  Filters,
-  ProductRoutes,
-  FilterFields,
-  SortBy,
-} from '@/Products/types'
+import { Filter, Filters, ProductRoutes, SortBy } from '@/Products/types'
 import Products from '@/Products'
 import { sortData, filterData } from '@/Products/constants'
 import { productsActions } from '@/Products/slice'
 import { QUERY_LIMIT } from '@/Products/constants'
+import Header from '@/Layout/Header'
+import Footer from '@/Layout/Footer'
+import { Divider } from '@/components'
 
 export const Page = ({ data }) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const query = router.query
-
-  const [loading, setLoading] = React.useState(false)
-  const startLoading = () => setLoading(true)
-  const stopLoading = () => setLoading(false)
+  const loading = useLoading()
 
   React.useEffect(() => {
     dispatch(productsActions.dataReceived(data))
@@ -48,16 +44,14 @@ export const Page = ({ data }) => {
     dispatch(productsActions.setPanelFilters(filters as Filters))
   }, [loading, data])
 
-  React.useEffect(() => {
-    router.events.on('routeChangeStart', startLoading)
-    router.events.on('routeChangeComplete', stopLoading)
-    return () => {
-      router.events.off('routeChangeStart', startLoading)
-      router.events.off('routeChangeComplete', stopLoading)
-    }
-  }, [])
-
-  return <Products />
+  return (
+    <>
+      <Header />
+      <Products />
+      <Divider />
+      <Footer />
+    </>
+  )
 }
 export default Page
 
@@ -70,26 +64,27 @@ export async function getServerSideProps({ params, query }) {
 
   const page = query.page > 0 ? query.page : 1
   const sort = sortData[query.sort]?.value ?? 'created_by:ASC'
-  const filters = `_sort=${sort}&categories.slug_in=${params.slug}`
-  const paging = `_start=${(page - 1) * QUERY_LIMIT}&_limit=${QUERY_LIMIT}`
 
-  let where = Filter.reduce((acc, filter) => {
+  const filters = str({
+    _sort: sort,
+    categories: { slug_in: query.slug },
+  })
+
+  const paging = str({
+    _start: (page - 1) * QUERY_LIMIT,
+    _limit: QUERY_LIMIT,
+  })
+
+  const _where = Filter.map((filter) => {
     const { filterName } = filterData[filter]
-    const contains = '&' + filterName + '_contains' + '='
-    if (!FilterFields.includes(filterName)) return acc
-    switch (typeof query[filterName]) {
-      case 'string':
-        return acc + contains + query[filterName]
-      case 'object':
-        return acc + contains + query[filterName].join(contains)
-      default:
-        return acc
-    }
-  }, '')
+    return str({ [filterName + '_contains']: query[filterName] })
+  })
+    .filter((v) => v)
+    .join('&')
 
   const [productsCount, products] = await Promise.all([
-    fetchAPI(`/products/count?${filters}&${where}`),
-    fetchAPI(`/products?${paging}&${filters}&${where}`),
+    fetchAPI(`/products/count?${filters}&${_where}`),
+    fetchAPI(`/products?${paging}&${filters}&${_where}`),
   ])
 
   return {
@@ -98,3 +93,6 @@ export async function getServerSideProps({ params, query }) {
     },
   }
 }
+
+const str = (props: object) =>
+  qs.stringify(props, { encode: false, indices: false, allowDots: true })

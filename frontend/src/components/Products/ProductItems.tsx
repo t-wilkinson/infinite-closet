@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
-import { CallToAction } from '@/components'
+import { Icon, CallToAction } from '@/components'
 import { getURL } from '@/utils/api'
 
 import { QUERY_LIMIT } from './constants'
@@ -18,7 +18,7 @@ export const ProductItems = ({ data, loading }) => {
           Sorry, we couldn't find any matches.
         </span>
         <CallToAction
-          onPress={() => {
+          onClick={() => {
             router.push({
               pathname: router.pathname,
               query: { slug: router.query.slug },
@@ -77,10 +77,9 @@ const Product = ({ item }: any) => {
 
 const ProductImage = ({ images }) => (
   <div className="relative h-full bg-gray-light">
-    {/* TODO */}
-    {/* <div className="absolute top-0 right-0 p-2"> */}
-    {/*   <Image width={24} height={24} src="/icons/heart.svg" /> */}
-    {/* </div> */}
+    <div className="absolute top-0 right-0 p-2">
+      <Icon size={24} name="heart" />
+    </div>
     <Image src={getURL(images[0].url)} layout="fill" objectFit="contain" />
   </div>
 )

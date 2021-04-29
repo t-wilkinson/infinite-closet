@@ -1,213 +1,181 @@
 import React from 'react'
-import { AntDesign } from '@expo/vector-icons'
-import MediaQuery from 'react-responsive'
+import Image from 'next/image'
 
-import FeaturedImage from './FeaturedImage'
-import ProductImageSlider from './ProductImageSlider'
+import { getURL } from '@/utils/api'
+import { Icon } from '@/components'
 
-export const ListingImages = ({ images }) => {
-  const [startIndex, setStartIndex] = React.useState<number>(0)
-  const [selected, setSelected] = React.useState<number>(0)
-  const [sideHover, setSideHover] = React.useState<number>()
+type Action =
+  | { type: 'focus-image'; index: number }
+  | { type: 'decrease-focus'; length: number }
+  | { type: 'increase-focus'; length: number }
+  | { type: 'shift-decrease' }
+  | { type: 'shift-increase'; length: number }
+
+const reducer = (state: State, action: Action) => {
+  switch (action.type) {
+    case 'focus-image':
+      return { ...state, focusedImage: action.index }
+    case 'decrease-focus':
+      return {
+        ...state,
+        focusedImage:
+          state.focusedImage <= 0 ? action.length - 1 : state.focusedImage - 1,
+      }
+    case 'increase-focus':
+      let i = state.focusedImage
+      return { ...state, focusedImage: i >= action.length - 1 ? 0 : i + 1 }
+    case 'shift-decrease': {
+      const i = state.startIndex
+      return { ...state, startIndex: i > 0 ? i - 1 : i }
+    }
+    case 'shift-increase': {
+      const i = state.startIndex
+      return { ...state, startIndex: i < action.length - 1 ? i + 1 : i }
+    }
+    default:
+      return state
+  }
+}
+
+interface State {
+  startIndex: number
+  focusedImage: number
+}
+
+const initialState: State = {
+  startIndex: 0,
+  focusedImage: 0,
+}
+
+export const ProductImages = ({ images }) => {
+  const [state, dispatch] = React.useReducer<typeof reducer>(
+    reducer,
+    initialState,
+  )
 
   return (
     <>
-      <MediaQuery maxWidth={600}>
-        <ImagesSmall
-          images={images}
-          selected={selected}
-          setSelected={setSelected}
-        />
-      </MediaQuery>
-      <MediaQuery minWidth={601} maxWidth={breakpoints.laptop}>
-        <ImagesMedium
-          images={images}
-          selected={selected}
-          setSelected={setSelected}
-          setStartIndex={setStartIndex}
-          startIndex={startIndex}
-          sideHover={sideHover}
-          setSideHover={setSideHover}
-        />
-      </MediaQuery>
-      <MediaQuery minWidth={breakpoints.laptop + 1}>
-        <ImagesLarge
-          images={images}
-          selected={selected}
-          setSelected={setSelected}
-          setStartIndex={setStartIndex}
-          startIndex={startIndex}
-          sideHover={sideHover}
-          setSideHover={setSideHover}
-        />
-      </MediaQuery>
+      <ImagesSmall images={images} state={state} dispatch={dispatch} />
+      <ImagesLarge images={images} state={state} dispatch={dispatch} />
     </>
   )
 }
-export default ListingImages
+export default ProductImages
 
-const ImagesSmall = ({ images, selected, setSelected }) => (
-  <div alignItems="center" justifyContent="center">
-    <FeaturedImage image={images[selected]} />
-    <div mr="md" flexDirection="row" alignItems="center" mt="md">
+const ImagesSmall = ({ images, state, dispatch }) => (
+  <div className="items-center justify-center sm:hidden h-80">
+    <FocusedImage image={images[state.focusedImage]} />
+    <div className="mr-4 flex-row items-center mt-4 space-x-2">
       <button
-        onPress={() =>
-          setSelected((n: number) => (n <= 0 ? images.length - 1 : n - 1))
+        onClick={() =>
+          dispatch({
+            type: 'decrease-focus',
+            length: images.length,
+          })
         }
       >
-        <div p="sm" alignItems="center">
-          <AntDesign size={16} name="left" />
+        <div className="p-2 items-center">
+          <Icon name="left" size={16} />
         </div>
       </button>
       {images.map((_: unknown, i: number) => (
-        <button key={i} onPress={() => setSelected(i)}>
+        <button
+          key={i}
+          onClick={() => dispatch({ type: 'focus-image', index: i })}
+          className="flex w-4 h-4 rounded-full border items-center justify-center"
+        >
           <div
-            height={16}
-            width={16}
-            bg={selected === i ? 'pri-light' : 'pri'}
-            mx="sm"
-            borderRadius={999}
-            style={{
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 1,
-                height: 1,
-              },
-              shadowOpacity: 0.22,
-              shadowRadius: 2.22,
-              elevation: 3,
-            }}
+            className={`w-3 h-3 rounded-full
+              ${state.focusedImage === i ? 'bg-sec-light' : ''}
+            `}
           />
         </button>
       ))}
       <button
-        onPress={() =>
-          setSelected((n: number) => (n + 1 >= images.length ? 0 : n + 1))
+        onClick={() =>
+          dispatch({
+            type: 'increase-focus',
+            length: images.length,
+          })
         }
       >
-        <div p="sm" alignItems="center">
-          <AntDesign size={16} name="right" />
+        <div className="p-2 items-center">
+          <Icon size={16} name="right" />
         </div>
       </button>
     </div>
   </div>
 )
 
-const ImagesMedium = ({
-  images,
-  selected,
-  setSelected,
-  setStartIndex,
-  startIndex,
-  sideHover,
-  setSideHover,
-}) => (
-  <div flex={1.5}>
-    <FeaturedImage image={images[selected]} />
+const ImagesLarge = ({ images, state, dispatch }) => (
+  <div className="hidden sm:flex flex-col-reverse md:flex-row justify-center flex-grow h-128">
+    <div className="flex-row md:flex-col items-center space-x-2">
+      <button
+        onClick={() => dispatch({ type: 'shift-decrease' })}
+        style={state.startIndex < 1 ? { opacity: 0.2 } : {}}
+        disabled={state.startIndex < 1}
+      >
+        <div className="border-gray-light border p-2 items-center">
+          <Icon size={16} name="up" className="hidden md:block" />
+          <Icon size={16} name="left" className="md:hidden" />
+        </div>
+      </button>
+      {images
+        .slice(state.startIndex, state.startIndex + 3)
+        .map((v: { url: string } & unknown, index: number) => (
+          <div
+            key={v.url}
+            className="w-24 lg:w-32 h-24 lg:h-32 my-2 cursor-pointer relative hover:opacity-75"
+            onClick={() => {
+              dispatch({ type: 'focus-image', index: state.startIndex + index })
+            }}
+          >
+            <Image layout="fill" objectFit="contain" src={getURL(v.url)} />
+          </div>
+        ))}
+      <button
+        onClick={() =>
+          dispatch({ type: 'shift-increase', length: images.length })
+        }
+        style={state.startIndex + 1 > images.length - 3 ? { opacity: 0.2 } : {}}
+        disabled={state.startIndex + 1 > images.length - 3}
+      >
+        <div className="border-gray-light border p-2 items-center">
+          <Icon size={16} name="down" className="hidden md:block" />
+          <Icon size={16} name="right" className="md:hidden" />
+        </div>
+      </button>
+    </div>
+    <FocusedImage image={images[state.focusedImage]} />
+  </div>
+)
+
+export const FocusedImage = ({ image }) => {
+  const [hover, setHover] = React.useState<{
+    clientX: number
+    clientY: number
+  }>()
+  /*
+  const scale = 2
+  const scaleFactor = 1 - 1 / scale
+
+  React.useEffect(() => {
+    if (!hover) return
+    x: scaleFactor * (layout.left + layout.width / 2 - hover.clientX),
+    y: scaleFactor * (layout.top + layout.height / 2 - hover.clientY),
+      duration: 1.5,
+  }, [hover])
+  */
+
+  return (
     <div
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="row"
-      mr="md"
-      mt="lg"
-      width="100%"
+      className="overflow-hidden max-w-md w-full h-full relative"
+      onMouseLeave={() => setHover(undefined)}
+      onMouseMove={({ clientX, clientY }) => setHover({ clientX, clientY })}
     >
-      <button
-        onPress={() => setStartIndex((n: number) => n - 1)}
-        style={startIndex < 1 ? { opacity: 0.2 } : {}}
-        disabled={startIndex < 1}
-      >
-        <div
-          borderColor="light-gray"
-          borderWidth={1}
-          p="sm"
-          alignItems="center"
-        >
-          <AntDesign size={16} name="left" />
-        </div>
-      </button>
-      <ProductImageSlider
-        images={images}
-        sideHover={sideHover}
-        setSelected={setSelected}
-        setSideHover={setSideHover}
-        startIndex={startIndex}
-        style={{
-          width: 64,
-          height: 64,
-          marginHorizontal: 8,
-        }}
-      />
-      <button
-        onPress={() => setStartIndex((n: number) => n + 1)}
-        style={startIndex + 1 > images.length - 3 ? { opacity: 0.2 } : {}}
-        disabled={startIndex + 1 > images.length - 3}
-      >
-        <div
-          borderColor="light-gray"
-          borderWidth={1}
-          p="sm"
-          alignItems="center"
-        >
-          <AntDesign size={16} name="right" />
-        </div>
-      </button>
+      <div>
+        <Image layout="fill" objectFit="contain" src={getURL(image.url)} />
+      </div>
     </div>
-  </div>
-)
-
-const ImagesLarge = ({
-  images,
-  selected,
-  setSelected,
-  setStartIndex,
-  startIndex,
-  sideHover,
-  setSideHover,
-}) => (
-  <div flexDirection="row" justifyContent="center" flex={2}>
-    <div mr="md">
-      <button
-        onPress={() => setStartIndex((n: number) => n - 1)}
-        style={startIndex < 1 ? { opacity: 0.2 } : {}}
-        disabled={startIndex < 1}
-      >
-        <div
-          borderColor="light-gray"
-          borderWidth={1}
-          p="sm"
-          alignItems="center"
-        >
-          <AntDesign size={16} name="up" />
-        </div>
-      </button>
-      <ProductImageSlider
-        images={images}
-        sideHover={sideHover}
-        setSelected={setSelected}
-        setSideHover={setSideHover}
-        startIndex={startIndex}
-        style={{
-          width: 100,
-          height: 100,
-          marginVertical: 8,
-        }}
-      />
-      <button
-        onPress={() => setStartIndex((n: number) => n + 1)}
-        style={startIndex + 1 > images.length - 3 ? { opacity: 0.2 } : {}}
-        disabled={startIndex + 1 > images.length - 3}
-      >
-        <div
-          borderColor="light-gray"
-          borderWidth={1}
-          p="sm"
-          alignItems="center"
-        >
-          <AntDesign size={16} name="down" />
-        </div>
-      </button>
-    </div>
-    <FeaturedImage image={images[selected]} />
-  </div>
-)
+  )
+}

@@ -1,50 +1,61 @@
 import React from 'react'
-import { AntDesign } from '@expo/vector-icons'
 
-import { Divider, div, span, button } from '@/shared/components'
-import Share from '@/shared/share'
-import { extras } from '@/shared/constants'
+import { Icon, Divider } from '@/components'
+import Share from '@/utils/share'
+import { useDispatch } from '@/utils/store'
 
-import { State } from './types'
+import { shopActions } from './slice'
 
-export const ProductDeatils = ({ selected, setState, item, shopItem }) => (
-  <>
-    <button
-      onPress={() =>
-        setState((s: State) => ({
-          ...s,
-          moreInfo: item.key === s.moreInfo ? undefined : item.key,
-        }))
-      }
-    >
-      <div px="sm" py="md" flexDirection="row" justifyContent="space-between">
-        <span variant={selected ? 'body-bold' : 'body'}>{item.label}</span>
-        <AntDesign size={12} name={selected ? 'down' : 'up'} />
+export const ProductDeatils = ({ selected, item, product }) => {
+  const dispatch = useDispatch()
+  const Details =
+    details[item.key] ||
+    (() => (
+      <div className={`bg-gray-light px-2 py-4 ${selected ? '' : 'hidden'} `}>
+        <span>{product[item.key]}</span>
       </div>
-    </button>
-    {item.key === 'share' ? (
-      <div flexDirection="row" visible={selected} px="sm" pb="md">
-        <div mr="sm">
-          <Share.Facebook
-            url={createProductURL(shopItem)}
-            description={shopItem.description}
-          />
+    ))
+
+  return (
+    <>
+      <button onClick={() => dispatch(shopActions.toggleDetails(item.key))}>
+        <div className="px-2 py-4 flex-row justify-between items-center">
+          <span className={`${selected ? 'font-bold' : ''}`}>{item.label}</span>
+          <Icon size={12} name={selected ? 'down' : 'up'} />
         </div>
-        <Share.Pinterest
-          url={createProductURL(shopItem)}
-          description={shopItem.description}
-          imageURL={shopItem.images[0]}
-        />
-      </div>
-    ) : (
-      <div bg="light-gray" px="sm" py="md" visible={selected}>
-        <span>{shopItem[item.key]}</span>
-      </div>
-    )}
-    <Divider />
-  </>
-)
+      </button>
+      <Details selected={selected} product={product} />
+      <Divider />
+    </>
+  )
+}
 export default ProductDeatils
 
-const createProductURL = ({ name_uid, designer: { name: designer_uid } }) =>
-  `${extras.domain}/@/Shop/listings/${designer_uid}/${name_uid}`
+const details = {
+  share: ({ selected, product }) => (
+    <div
+      className={`flex-row px-2 pt-1 pb-4 space-x-2
+        ${selected ? '' : 'hidden'}
+        `}
+    >
+      {[
+        <Share.Facebook
+          url={createProductURL(product)}
+          description={product.description}
+        />,
+        <Share.Pinterest
+          url={createProductURL(product)}
+          description={product.description}
+          imageURL={product.images[0]}
+        />,
+      ].map((share, i) => (
+        <div key={i} className="w-16 h-8 relative cursor-pointer">
+          {share}
+        </div>
+      ))}
+    </div>
+  ),
+} as const
+
+const createProductURL = ({ slug, designer: { slug: designer_slug } }) =>
+  `/shop/${designer_slug}/${slug}`

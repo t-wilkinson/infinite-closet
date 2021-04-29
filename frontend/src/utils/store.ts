@@ -1,5 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import productsSlice from '@/Products/slice'
+import layoutSlice from '@/Layout/slice'
+import shopSlice from '@/Shop/slice'
 
 import {
   TypedUseSelectorHook,
@@ -9,7 +11,9 @@ import {
 
 const store = configureStore({
   reducer: {
+    layout: layoutSlice,
     products: productsSlice,
+    shop: shopSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

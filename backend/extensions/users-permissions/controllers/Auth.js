@@ -427,6 +427,7 @@ module.exports = {
       );
     } else {
       // In the off-chance we generate an existing username
+      // TODO: instead we can insert user. then hash the resulting user id
       do {
         params.username = normalize(params.name) + "-" + nDigit(6);
       } while (

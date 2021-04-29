@@ -1,7 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import axios from 'axios'
 
+import { getURL } from '@/utils/api'
 import { Divider, Icon, CallToAction, CheckBox } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 
@@ -39,7 +41,6 @@ type Status =
   | 'Submitted'
   | 'Submitting'
 
-// TODO use useReducer instead
 const JoinWaitlist = () => {
   const [status, setStatus] = React.useState<Status>('None')
 
@@ -104,14 +105,14 @@ const WaitlistForm = ({ status, setStatus }) => {
       return
     }
 
-    fetch(process.env.GRAPHQL_API + '/accounts/waitlist', {
-      method: 'POST',
-      body: JSON.stringify({
-        ...body,
-        subscribe: state.subscribe.value,
-        marketing: marketing,
-      }),
-    })
+    axios
+      .post('/accounts/waitlist', {
+        data: {
+          ...body,
+          subscribe: state.subscribe.value,
+          marketing: marketing,
+        },
+      })
       .then(() => {
         setStatus('Submitting')
         // Analytics.logEvent('form_submit', {
