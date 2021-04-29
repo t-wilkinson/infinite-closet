@@ -1,12 +1,12 @@
 import React from 'react'
-// import debounce from 'lodash/debounce'
+import debounce from 'lodash/debounce'
 
 import { Icon, CheckBox } from '@/components'
-import { useSelector, useDispatch } from '@/utils/store'
+import { useSelector } from '@/utils/store'
+import { useFields, Input } from '@/Accounts/components'
 
 import { filterData } from './constants'
 import { Filter } from './types'
-import { productsActions } from './slice'
 
 type FilterItems = {
   [key in Filter]: (props: {
@@ -16,69 +16,53 @@ type FilterItems = {
 }
 
 export const FilterItems: FilterItems = {
-  Designers: ({ panel, filter }) => {
-    const dispatch = useDispatch()
-    // TODO: try using internal state (not redux)
-    const state = useSelector((state) => state.products.Designers)
-    const setState = (field: string, value: any) =>
-      dispatch(
-        productsActions.setFilterState({
-          filter,
-          field,
-          payload: value,
-        }),
-      )
+  Designers: ({ panel }) => {
+    const designers = useSelector(
+      (state) => state.products.data.designers || [],
+    )
 
-    const designers = []
+    const [matches, setMatches] = React.useState<number[]>([])
     const debounceMatches = React.useCallback(
-      // TODO: finish implementation
-      (a, b, c) => {},
-      // debounce(searchDesignerMatches, 300),
+      debounce(
+        (search: string, designers: { slug: string; name: string }[]) => {
+          fuzzySearch(
+            search,
+            designers.map((designer) => designer.name),
+          ).then((matches) => setMatches(matches))
+        },
+        300,
+      ),
       [],
     )
 
-    React.useEffect(() => {
-      debounceMatches(
-        (v: any) => setState('matches', v),
-        state.search,
-        designers,
-      )
-    }, [state.search])
+    const form = useFields({
+      search: {
+        label: 'Designer Names',
+        onChange: (value) => debounceMatches(value, designers),
+      },
+    })
+    const useMatches = matches.length > 0 || form.search.value
+    const matchedIndexes = useMatches
+      ? matches
+      : designers.map((_: unknown, i: number) => i)
 
     return (
       <>
-        <div
-          className={`border-b-2 flex-row items-center ${
-            state.searchFocused ? 'border-sec-light' : 'border-gray-light'
-          }`}
-        >
-          <div className="p-1">
-            {/* <Ionicons name="search-outline" size={20} /> */}
+        <Input {...form.search} className="w-full">
+          <div className="absolute right-0 top-0 bottom-0 justify-center mr-2 pointer-events-none">
+            <Icon name="search" size={20} />
           </div>
-          <input
-            autoFocus={true}
-            placeholder="Designer"
-            value={state.search}
-            onChange={(e) => {
-              setState('search', e.target.value)
-            }}
-            className="flex-grow p-1"
-            onBlur={() => setState('searchFocused', false)}
-            onFocus={() => setState('searchFocused', true)}
-          />
-        </div>
-        {state.matches.map((_, index: number) => {
-          const key = designers[index].name_uid
+        </Input>
+        {matchedIndexes.map((index: number) => {
+          const { slug, name } = designers[index]
           return (
             <CheckBox
-              key={key}
-              setState={() => {
-                panel.toggle(key)
-              }}
-              state={panel.values.includes(key)}
+              key={slug}
+              setState={() => panel.toggle(slug)}
+              state={panel.values.includes(slug)}
               p="sm"
             >
-              <span>&nbsp;&nbsp;{designers[index].name}</span>
+              <span>&nbsp;&nbsp;{name}</span>
             </CheckBox>
           )
         })}
@@ -159,22 +143,19 @@ export const FilterItems: FilterItems = {
 }
 export default FilterItems
 
-async function searchDesignerMatches(
-  setMatches: (matches: any) => void,
-  search: string,
-  designers: { name_uid: string; name: string }[],
-) {
+/*
+ * iterate through each keyword, removing keyword if exists.
+ * if replacement was made, continue, otherwise, short-circuit
+ * compare to `emptyRegExp' because this will not affect `newName.length'
+ */
+async function fuzzySearch(search: string, values: string[]) {
   const emptyRegExp = String(new RegExp('', 'i'))
   const keywords: RegExp[] = search
     .replace(/[^a-zA-Z0-9_\s]/g, '')
     .split(/\s+/g)
     .map((v) => new RegExp(v, 'i'))
 
-  /* iterate through each keyword, removing keyword if exists.
-   * if replacement was made, continue, otherwise, short-circuit
-   * compare to `emptyRegExp' because this will not affect `newName.length'
-   */
-  const matches = designers.reduce((acc: number[], designer, index) => {
+  const matches = values.reduce((acc: number[], value, index) => {
     const keywordsFound =
       null !==
       keywords.reduce((name: string | null, keyword) => {
@@ -182,11 +163,12 @@ async function searchDesignerMatches(
         if (String(keyword) === emptyRegExp) return name
         const newName = name.replace(keyword, '')
         return newName.length === name.length ? null : newName
-      }, designer.name)
+      }, value)
     if (keywordsFound) acc.push(index)
     return acc
   }, [])
-  setMatches(matches ?? [])
+
+  return matches || []
 }
 
 const pickFgColorFromBgColor = (

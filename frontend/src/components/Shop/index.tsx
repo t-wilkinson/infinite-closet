@@ -24,7 +24,7 @@ const Product = ({ data }) => {
   const state = useSelector((state) => state.shop)
 
   return (
-    <div className="w-full sm:w-1/2 md:w-1/3 sm:max-w-md">
+    <div className="w-full sm:w-1/2 sm:max-w-md">
       <div className="flex-row justify-between items-center">
         <Rating rating={4.5} />
         <Icon name="heart" size={24} />
@@ -39,13 +39,17 @@ const Product = ({ data }) => {
       <Divider className="mb-4" />
       <ProductRentHeaders product={product} state={state} />
       <ProductRentContents product={product} state={state} />
-      {details.map((item) => (
-        <ProductDetails
-          key={item.key}
-          item={item}
-          selected={item.key === state.details}
-          product={product}
-        />
+      <div className="mb-4" />
+      {details.map((item, index) => (
+        <React.Fragment key={item.key}>
+          <Divider visible={index !== 0} />
+          <ProductDetails
+            key={item.key}
+            item={item}
+            selected={item.key === state.details}
+            product={product}
+          />
+        </React.Fragment>
       ))}
     </div>
   )

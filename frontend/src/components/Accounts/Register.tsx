@@ -1,23 +1,33 @@
 import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
-import { Input, Form, Submit, useForm } from './components'
+import { useDispatch } from '@/utils/store'
+
+import { accountsActions } from './slice'
+import { Input, Form, Submit, useFields } from './components'
 
 export const Register = () => {
-  const form = useForm({
+  const form = useFields({
     name: { constraints: 'required', label: 'First Name' },
     email: { constraints: 'required email', label: 'Email Address' },
     password: { constraints: 'required', label: 'Password' },
   })
+  const router = useRouter()
+  const dispatch = useDispatch()
 
   return (
-    <div className="py-16 bg-gray-light space-y-8">
+    <div className="py-16 bg-gray-light space-y-8 h-full">
       <Form>
+        <span className="font-subheader-light text-xl mb-6">Join us</span>
         <Input {...form.name} />
         <Input {...form.email} />
         <Input {...form.password} type="password" />
-        <Submit disabled={!form.valid} onSubmit={() => onSubmit(form.state)}>
+        <Submit
+          disabled={!form.valid}
+          onSubmit={() => onSubmit(form.state, router, dispatch)}
+        >
           Sign Up
         </Submit>
       </Form>
@@ -36,7 +46,7 @@ export const Register = () => {
 }
 export default Register
 
-const onSubmit = (state) => {
+const onSubmit = (state, router, dispatch) => {
   axios
     .post('/auth/local/register', {
       name: state.name,
@@ -44,9 +54,11 @@ const onSubmit = (state) => {
       password: state.password,
     })
     .then((res) => {
-      console.log(res)
+      dispatch(accountsActions.login(res.data.user))
+      dispatch(accountsActions.addJWT(res.data.jwt))
+      router.push('/')
     })
     .catch((err) => {
-      console.log(err)
+      console.error(err)
     })
 }

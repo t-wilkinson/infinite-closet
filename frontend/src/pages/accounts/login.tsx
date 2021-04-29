@@ -1,9 +1,4 @@
 import Login from '@/Accounts/Login'
-import Layout from '@/Layout'
 
-const Page = () => (
-  <Layout>
-    <Login />
-  </Layout>
-)
+const Page = () => <Login />
 export default Page

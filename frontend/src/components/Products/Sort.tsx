@@ -30,7 +30,7 @@ export const Sort = ({ sortBy }: { sortBy: SortBy }) => {
           <div className="w-1" />
           <span>Sort By</span>
           <div
-            className={`absolute left-0 bottom-0 -mb-pt z-20 h-pt w-full ${
+            className={`absolute left-0 bottom-0 -mb-px z-20 h-px w-full ${
               hover ? 'bg-white' : 'bg-transparent'
             }`}
           />

@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { Divider } from '@/components'
 import { routes } from '@/utils/constants'
 
 export const NavBar = () => {
@@ -9,29 +10,30 @@ export const NavBar = () => {
 
   return (
     <div
-      className="relative items-center w-full pb-4"
+      className="items-center w-full relative"
       onMouseLeave={() => setVisible(null)}
     >
       <Sections visible={visible} setVisible={setVisible} />
+      <Divider className="max-w-screen-xl" />
 
-      <div className="absolute bottom-0 w-full transform translate-y-full bg-gray-light">
-        {routes.map((route, i) => (
-          <div
-            key={i}
-            className={`flex-row p-10 ${
-              route.value === visible ? 'flex' : 'hidden'
-            }`}
-          >
-            <Image
-              src={route.img ?? '/images/brand/Logo-Lockup---Gray.jpg'}
-              height={350}
-              width={350}
-              objectFit="contain"
-            />
-            <PageRoutes route={route} />
-          </div>
-        ))}
-      </div>
+      {visible && (
+        <div className="absolute bottom-0 w-full transform translate-y-full bg-white items-center p-4 shadow-xl">
+          {routes.map(
+            (route, i) =>
+              route.value === visible && (
+                <div key={i} className="flex-row w-full max-w-screen-xl">
+                  <Image
+                    src={route.img ?? '/images/brand/Logo-Lockup---Gray.jpg'}
+                    height={350}
+                    width={350}
+                    objectFit="contain"
+                  />
+                  <PageRoutes route={route} />
+                </div>
+              ),
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -44,9 +46,9 @@ const Sections = ({ visible, setVisible }) => (
         <div
           key={i}
           onMouseEnter={() => setVisible(value)}
-          className={`pb-4 -mb-4 ${
-            visible === value ? 'bg-gray-light cursor-pointer' : undefined
-          }`}
+          className={`
+            ${visible === value ? 'bg-gray-light cursor-pointer' : ''}
+          `}
         >
           <Link href={href}>
             <span className="p-2 cursor-pointer md:text-base lg:text-lg">

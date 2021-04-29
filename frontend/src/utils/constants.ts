@@ -1,6 +1,6 @@
 export const socialMediaLinks = {
   facebook: 'https://www.facebook.com/InfiniteClosetUK',
-  instagram: 'https://www.instagram.com/infinitecloset.uk/',
+  instagram: 'https://www.instagram.com/infinitecloset.uk',
   twitter: 'https://twitter.com/_infinitecloset',
   tiktok: 'https://www.tiktok.com/@infinitecloset',
 }
@@ -76,15 +76,24 @@ const routes = [
         label: 'Occasions',
         href: '/coming-soon',
         data: [
-          { label: 'Wedding', href: '/coming-soon' },
-          { label: 'Night Out', href: '/coming-soon' },
-          { label: 'Dinner', href: '/coming-soon' },
-          { label: 'Date night', href: '/coming-soon' },
-          { label: 'Office', href: '/coming-soon' },
-          { label: 'WFH & Loungewear', href: '/coming-soon' },
-          { label: 'Brunch', href: '/coming-soon' },
-          { label: 'Party', href: '/coming-soon' },
-          { label: 'Weekend', href: '/coming-soon' },
+          { label: 'Wedding', href: '/products/clothing?occasions=wedding' },
+          {
+            label: 'Night Out',
+            href: '/products/clothing?occasions=night_out',
+          },
+          { label: 'Dinner', href: '/products/clothing?occasions=dinner' },
+          {
+            label: 'Date night',
+            href: '/products/clothing?occasions=date_night',
+          },
+          { label: 'Office', href: '/products/clothing?occasions=office' },
+          {
+            label: 'WFH & Loungewear',
+            href: '/products/clothing?occasions=wfh',
+          },
+          { label: 'Brunch', href: '/products/clothing?occasions=brunch' },
+          { label: 'Party', href: '/products/clothing?occasions=party' },
+          { label: 'Weekend', href: '/products/clothing?occasions=weekend' },
         ],
       },
       { label: 'More coming soon!', href: '/coming-soon', data: [] },
@@ -108,25 +117,25 @@ const routes = [
       { label: 'More coming soon!', href: '/coming-soon', data: [] },
     ],
   },
-  {
-    label: 'Designers',
-    value: 'designers',
-    href: '/coming-soon',
-    img: null,
-    data: [
-      {
-        label: 'Category',
-        href: '/coming-soon',
-        data: [],
-      },
-      {
-        label: 'Trending Now',
-        href: '/coming-soon',
-        data: [],
-      },
-      { label: 'More coming soon!', href: '/coming-soon', data: [] },
-    ],
-  },
+  // {
+  //   label: 'Designers',
+  //   value: 'designers',
+  //   href: '/coming-soon',
+  //   img: null,
+  //   data: [
+  //     {
+  //       label: 'Category',
+  //       href: '/coming-soon',
+  //       data: [],
+  //     },
+  //     {
+  //       label: 'Trending Now',
+  //       href: '/coming-soon',
+  //       data: [],
+  //     },
+  //     { label: 'More coming soon!', href: '/coming-soon', data: [] },
+  //   ],
+  // },
   {
     label: 'Sale',
     value: 'sale',

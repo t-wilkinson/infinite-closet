@@ -2,10 +2,10 @@ import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
 
-import { Input, Form, Submit, OR, useForm } from './components'
+import { Input, Form, Submit, OR, useFields } from './components'
 
 export const ForgotPassword = () => {
-  const form = useForm({
+  const form = useFields({
     code: { constraints: 'required number', label: 'Reset Code' },
     password: { constraints: 'required', label: 'Password' },
   })

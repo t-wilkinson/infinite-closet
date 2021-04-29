@@ -10,8 +10,6 @@ export interface State {
   loading: boolean
   Designers: {
     // TODO: does this need to be in redux state?
-    search: string
-    searchFocused: boolean
     matches: string[]
   }
   panel: {
@@ -29,8 +27,6 @@ const initialState: State = {
   pageNumber: 0,
   loading: false,
   Designers: {
-    search: '',
-    searchFocused: false,
     matches: [],
   },
   panel: {
@@ -88,7 +84,6 @@ export const productsSlice = createSlice({
         payload: { filter, payload },
       }: PayloadAction<{ filter: Filter; payload: string[] }>,
     ) {
-      console.log(payload)
       state.panel.filters[filter] = payload
     },
     setFilterState(

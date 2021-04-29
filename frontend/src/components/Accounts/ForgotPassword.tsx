@@ -2,15 +2,15 @@ import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
 
-import { Input, Form, Submit, OR, useForm } from './components'
+import { Input, Form, Submit, OR, useFields } from './components'
 
 export const ForgotPassword = () => {
-  const form = useForm({
+  const form = useFields({
     email: { constraints: 'required email', label: 'Email Address' },
   })
 
   return (
-    <div className="py-16 bg-gray-light space-y-8">
+    <div className="py-16 bg-gray-light space-y-8 h-full">
       <Form>
         <span className="font-subheader-light text-xl mb-6">
           Forgot password?

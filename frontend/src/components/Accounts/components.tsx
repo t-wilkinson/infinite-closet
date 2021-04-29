@@ -43,30 +43,40 @@ export const validate = (
     .filter((v) => v !== true)
 }
 
-export const Input = ({ name, label, dispatch, constraints, value, type }) => {
+export const Input = ({
+  name,
+  label,
+  onChange,
+  constraints,
+  value,
+  type,
+  children,
+  className = '',
+}) => {
   const [changed, setChanged] = React.useState(false)
-  const onChange = (e) => {
+  const onChange_ = (e) => {
     setChanged(true)
-    dispatch(e.target.value)
+    onChange(e.target.value)
   }
   const [focused, setFocused] = React.useState(false)
   const validations = validate(label, value, constraints)
 
   return (
-    <div className="my-1 py-1">
+    <div className={`relative my-1 py-1 w-full h-full ${className}`}>
       <div
         className="relative"
         onFocus={() => {
           setFocused(true)
+        }}
+        onBlur={() => {
+          setFocused(false)
           setChanged(true)
         }}
-        onBlur={() => setFocused(false)}
       >
         <label
           htmlFor={name}
-          className={`bg-white absolute left-0 bottom-0 m-2 my-4 px-1 transform duration-200 ${
-            focused || value ? '-translate-y-5 -translate-x-1 scale-90' : ''
-          }
+          className={`bg-white rounded-sm border-sec absolute left-0 bottom-0 m-2 my-4 px-1 transform duration-200 pointer-events-none
+          ${focused || value ? '-translate-y-5 -translate-x-1 scale-90' : ''}
           ${focused ? 'text-sec' : 'text-gray'}
           `}
         >
@@ -84,9 +94,10 @@ export const Input = ({ name, label, dispatch, constraints, value, type }) => {
           name={name}
           type={type}
           value={value}
-          onChange={onChange}
+          onChange={onChange_}
         />
       </div>
+      {children}
       {changed && (
         <span className="font-bold text-sm text-warning">{validations[0]}</span>
       )}
@@ -96,11 +107,11 @@ export const Input = ({ name, label, dispatch, constraints, value, type }) => {
 
 export const Form = ({ className = '', children }) => (
   <div
-    className={`items-center h-full w-full bg-gray-light flex-grow justify-center ${className}`}
+    className={`items-center h-full w-full bg-gray-light flex-grow ${className}`}
   >
-    <div className="max-w-sm w-full p-8 bg-white rounded-lg shadow-md">
-      {children}
-    </div>
+    <form className="w-full max-w-sm" onSubmit={(e) => e.preventDefault()}>
+      <div className="w-full p-6 bg-white rounded-lg shadow-md">{children}</div>
+    </form>
   </div>
 )
 
@@ -126,34 +137,45 @@ export const OR = () => (
 )
 
 // TODO: needs better type
-type UseForm = (form: {
-  [field: string]: { constraints: string; label: string; type?: string }
+type UseFields = (fields: {
+  [field: string]: {
+    constraints?: string
+    label: string
+    onChange?: (value: string) => void
+    type?: string
+  }
 }) => any
-export const useForm: UseForm = (form) => {
-  const initialState = Object.keys(form).reduce(
+export const useFields: UseFields = (config) => {
+  const initialState = Object.keys(config).reduce(
     (acc, k) => ((acc[k] = ''), acc),
     {},
   )
   const reducer = (
-    state: { [field in keyof typeof form]: string },
+    state: { [field in keyof typeof config]: string },
     { type, payload },
   ) => ({ ...state, [type]: payload })
   const [state, dispatch] = React.useReducer(reducer, initialState)
 
   const valid = Object.keys(state)
-    .map((field) => validate(field, state[field], form[field].constraints))
+    .map((field) =>
+      validate(field, state[field], config[field].constraints || ''),
+    )
     .every((v) => v.length === 0)
 
-  const inputs = Object.entries(form).reduce((acc, [field, v]) => {
+  const fields = Object.entries(config).reduce((acc, [field, v]) => {
+    v = Object.assign({ type: 'text', constraints: '', onChange: () => {} }, v)
     acc[field] = {
       label: v.label,
-      type: v.type ?? 'text',
-      constraints: v.constraints,
-      dispatch: (value: string) => dispatch({ type: field, payload: value }),
+      type: v.type,
       value: state[field],
+      constraints: v.constraints,
+      onChange: (value: string) => {
+        dispatch({ type: field, payload: value })
+        v.onChange(value)
+      },
     }
     return acc
   }, {})
 
-  return { valid, state, ...inputs }
+  return { valid, state, ...fields }
 }

@@ -49,7 +49,7 @@ const productRentContents = {
       </SelectorItem>
 
       <SelectorItem label="Rental time" className="my-2">
-        <div className="flex-row justify-between">
+        <div className="flex-row justify-between w-full flex-wrap">
           <div className="mr-6">
             <OneTimeRadioButton
               selected={state.oneTime === 'Short'}

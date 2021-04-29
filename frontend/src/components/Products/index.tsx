@@ -15,11 +15,11 @@ import Sort from './Sort'
 export const Products = () => {
   return (
     <div className="items-center">
-      <div className="flex-row w-full max-w-screen-xl h-full">
+      <div className="flex-row w-full max-w-screen-xl h-full px-1 sm:px-4">
         <Filters />
         <ProductItemsWrapper />
-        <ScrollUp />
       </div>
+      <ScrollUp />
       <div className="mb-4" />
     </div>
   )
@@ -34,7 +34,7 @@ const ProductItemsWrapper = () => {
   const loading = useSelector((state) => productsSelectors.loading(state))
 
   return (
-    <div className="flex-grow mx-4">
+    <div className="w-full">
       <Header
         router={router}
         data={data}
@@ -57,11 +57,11 @@ const Header = ({ router, data, totalPages, sortBy }) => {
         <Crumbs slug={slug} />
       </div>
 
-      <div className="flex-row items-center justify-between w-full">
-        <span className="font-subheader text-xl">
+      <div className="sm:flex-row items-end sm:items-center justify-between w-full">
+        <span className="font-subheader text-xl self-start sm:self-center">
           {router.query.slug[0]} ({data.productsCount})
         </span>
-        <div className="flex-row">
+        <div className="flex-row space-x-1">
           <div className="flex-row sm:hidden justify-end py-2">
             <button
               onClick={() => {

@@ -1,13 +1,12 @@
 import { Filter, SortBy, ProductRoutes } from './types'
 
 export const QUERY_LIMIT = 6
-export const FILTERS_ASIDE_WIDTH = 200
 
 // TODO: dynamically get this
 export type FilterData = typeof filterData
 export const filterData = {
   Weather: {
-    filterName: 'weathers',
+    filterName: 'weather',
     data: [
       { field: 'cold_weather', label: 'Cold Weather' },
       { field: 'warm_weather', label: 'Warm Weather' },
@@ -55,7 +54,7 @@ export const filterData = {
     label: 'Dates Available',
   },
   Designers: {
-    filterName: 'designers',
+    filterName: 'designer.slug',
   },
   Favorites: { filterName: undefined },
 } as const

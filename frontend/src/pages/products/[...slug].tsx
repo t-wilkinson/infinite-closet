@@ -82,14 +82,15 @@ export async function getServerSideProps({ params, query }) {
     .filter((v) => v)
     .join('&')
 
-  const [productsCount, products] = await Promise.all([
+  const [productsCount, products, designers] = await Promise.all([
     fetchAPI(`/products/count?${filters}&${_where}`),
     fetchAPI(`/products?${paging}&${filters}&${_where}`),
+    fetchAPI(`/designers`), // TODO: this includes all of designers relations
   ])
 
   return {
     props: {
-      data: { products, productsCount },
+      data: { products, productsCount, designers },
     },
   }
 }

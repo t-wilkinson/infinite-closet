@@ -108,7 +108,7 @@ const ImagesSmall = ({ images, state, dispatch }) => (
 )
 
 const ImagesLarge = ({ images, state, dispatch }) => (
-  <div className="hidden sm:flex flex-col-reverse md:flex-row justify-center flex-grow h-128">
+  <div className="hidden sm:flex flex-col-reverse md:flex-row justify-center w-1/2 h-128">
     <div className="flex-row md:flex-col items-center space-x-2">
       <button
         onClick={() => dispatch({ type: 'shift-decrease' })}

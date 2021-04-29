@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Icon, Divider } from '@/components'
+import { Icon } from '@/components'
 import Share from '@/utils/share'
 import { useDispatch } from '@/utils/store'
 
@@ -25,7 +25,6 @@ export const ProductDeatils = ({ selected, item, product }) => {
         </div>
       </button>
       <Details selected={selected} product={product} />
-      <Divider />
     </>
   )
 }

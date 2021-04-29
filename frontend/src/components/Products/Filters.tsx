@@ -6,7 +6,7 @@ import { Divider } from '@/components'
 import { useSelector, useDispatch } from '@/utils/store'
 
 import { BreadCrumbs } from './BreadCrumbs'
-import { FILTERS_ASIDE_WIDTH, filtersByRoute, filterData } from './constants'
+import { filtersByRoute, filterData } from './constants'
 import { productsActions, productsSelectors } from './slice'
 import { Filter } from './types'
 import FilterItems from './FilterItems'
@@ -15,44 +15,29 @@ export const Filters = ({}) => {
   const router = useRouter()
   const routeName = router.query.slug[0]
   const dispatch = useDispatch()
+  const isOpen = useSelector((state) => state.products.panel.open)
 
   return (
-    <FiltersWrapper>
-      <div className="h-full w-full justify-start pl-4 bg-white">
-        <div className="items-center">
-          <BreadCrumbs />
-          <FilterHeader />
-          <Divider />
-        </div>
-        {filtersByRoute[routeName].map((filter: Filter) => (
-          <FilterWrapper
-            key={filter}
-            filter={filter}
-            Filter={FilterItems[filter]}
-            selectFilter={() => dispatch(productsActions.focusFilter(filter))}
-          />
-        ))}
-        <FilterFooter />
+    <div
+      className={`h-full justify-start bg-white w-full sm:w-64
+          ${isOpen ? 'fixed inset-0 sm:hidden z-20' : 'hidden w-full sm:flex'}
+          `}
+    >
+      <div className="items-center">
+        <BreadCrumbs />
+        <FilterHeader />
+        <Divider />
       </div>
-    </FiltersWrapper>
-  )
-}
-
-const FiltersWrapper = ({ children }) => {
-  const isOpen = useSelector((state) => productsSelectors.isPanelOpen(state))
-
-  return (
-    <>
-      {isOpen && (
-        <div className="fixed inset-0 sm:hidden z-20 ">{children}</div>
-      )}
-      <div
-        className="hidden w-1/4 sm:flex"
-        style={{ minWidth: FILTERS_ASIDE_WIDTH }}
-      >
-        {children}
-      </div>
-    </>
+      {filtersByRoute[routeName].map((filter: Filter) => (
+        <FilterWrapper
+          key={filter}
+          filter={filter}
+          Filter={FilterItems[filter]}
+          selectFilter={() => dispatch(productsActions.focusFilter(filter))}
+        />
+      ))}
+      <FilterFooter />
+    </div>
   )
 }
 
@@ -62,7 +47,7 @@ const FilterHeader = () => {
   const router = useRouter()
 
   return (
-    <div className="flex-row items-end justify-between w-full my-4 px-4">
+    <div className="flex-row items-end justify-between w-full my-4 px-2 flex-wrap">
       <FiltersCount className="text-2xl font-subheader" />
       <button
         onClick={() => {
@@ -91,7 +76,7 @@ const FilterWrapper = ({ selectFilter, filter, Filter }) => {
     <>
       <div>
         <button onClick={() => selectFilter()}>
-          <div className="flex-row items-center justify-between p-4">
+          <div className="flex-row items-center justify-between py-4 px-2">
             <span
               className={`uppercase ${selected ? 'font-bold' : 'font-normal'}`}
             >
@@ -122,7 +107,7 @@ const FilterFooter = () => {
   return (
     <div className="sm:hidden p-4 flex-row w-full">
       <button
-        className="flex-grow bg-pri-light p-4 text-white"
+        className="flex-grow bg-pri p-4 text-white"
         onClick={() => {
           dispatch(productsActions.closePanel())
 
@@ -192,9 +177,24 @@ const usePanel = (filter: Filter) => {
     }
   }
 
+  const set = (payload: string[]) => {
+    if (panel.open) {
+      dispatch(productsActions.setPanelFilter({ filter, payload: payload }))
+    } else {
+      router.push({
+        pathname: router.pathname,
+        query: {
+          ...router.query,
+          [filterData[filter].filterName]: payload,
+        },
+      })
+    }
+  }
+
   // check if panel is open and if so pass those values in
   return {
     values: panel.filters[filter],
     toggle,
+    set,
   }
 }

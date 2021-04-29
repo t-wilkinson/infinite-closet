@@ -49,7 +49,9 @@
     "images": {
       "collection": "file",
       "via": "related",
-      "allowedTypes": ["images"],
+      "allowedTypes": [
+        "images"
+      ],
       "plugin": "upload",
       "required": true
     },
@@ -63,6 +65,9 @@
       "type": "string"
     },
     "styles": {
+      "type": "string"
+    },
+    "weather": {
       "type": "string"
     }
   }

@@ -5,11 +5,13 @@ import { RootState } from '@/utils/store'
 export interface State {
   data: object
   loading: boolean
+  headerOpen: boolean
 }
 
 const initialState = {
   data: {},
   loading: false,
+  headerOpen: false,
 }
 
 export const layoutSlice = createSlice({
@@ -17,7 +19,6 @@ export const layoutSlice = createSlice({
   initialState,
   reducers: {
     dataReceived(state, { payload }: PayloadAction<object>) {
-      // fetched data from server
       state.data = { ...state.data, ...payload }
     },
     setLoading(state, { payload }: PayloadAction<boolean>) {
@@ -27,8 +28,17 @@ export const layoutSlice = createSlice({
       state.loading = true
     },
     doneLoading(state) {
-      // fetched data from server
       state.loading = false
+    },
+
+    toggleHeader(state) {
+      state.headerOpen = !state.headerOpen
+    },
+    openHeader(state) {
+      state.headerOpen = true
+    },
+    closeHeader(state) {
+      state.headerOpen = false
     },
   },
 })
