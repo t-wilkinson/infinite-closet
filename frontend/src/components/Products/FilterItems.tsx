@@ -17,10 +17,7 @@ type FilterItems = {
 
 export const FilterItems: FilterItems = {
   Designers: ({ panel }) => {
-    const designers = useSelector(
-      (state) => state.products.data.designers || [],
-    )
-
+    const designers = useSelector((state) => state.layout.data.designers)
     const [matches, setMatches] = React.useState<number[]>([])
     const debounceMatches = React.useCallback(
       debounce(

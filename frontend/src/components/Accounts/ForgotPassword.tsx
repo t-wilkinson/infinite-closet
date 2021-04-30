@@ -4,6 +4,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
+import useAnalytics from '@/utils/useAnalytics'
+
 import { Input, Form, Submit, OR, Warning, useFields } from './components'
 
 type Status = 'success' | 'in-form' | 'server-error'
@@ -15,6 +17,27 @@ export const ForgotPassword = () => {
   const [warnings, setWarnings] = React.useState<string[]>([])
   const [status, setStatus] = React.useState<Status>('in-form')
   const router = useRouter()
+  const app = useAnalytics()
+
+  const onSubmit = () => {
+    axios
+      .post('/auth/forgot-password', {
+        email: form.state.email.trim(),
+      })
+      .then((res) => {
+        // setStatus("success")
+        app.logEvent('form_submit', {
+          type: 'accounts.forgot-password',
+          user: form.state.email,
+        })
+        router.push('/')
+      })
+      .catch((err) => {
+        setStatus('server-error')
+        console.error(err.response.data.data[0].messages)
+        setWarnings(err.response.data.data[0].messages.map((v) => v.message))
+      })
+  }
 
   return (
     <div className="py-16 bg-gray-light space-y-8 h-full">
@@ -31,7 +54,7 @@ export const ForgotPassword = () => {
 
         <Submit
           disabled={!form.valid || status === 'success'}
-          onSubmit={() => onSubmit(form.state, setStatus, setWarnings, router)}
+          onSubmit={() => onSubmit()}
         >
           Request Password Reset
         </Submit>
@@ -48,18 +71,3 @@ export const ForgotPassword = () => {
   )
 }
 export default ForgotPassword
-
-const onSubmit = (state, setStatus, setWarnings, router) =>
-  axios
-    .post('/auth/forgot-password', {
-      email: state.email,
-    })
-    .then((res) => {
-      // setStatus("success")
-      router.push('/')
-    })
-    .catch((err) => {
-      setStatus('server-error')
-      console.error(err.response.data.data[0].messages)
-      setWarnings(err.response.data.data[0].messages.map((v) => v.message))
-    })

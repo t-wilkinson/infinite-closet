@@ -1,4 +1,3 @@
-import { StrapiCategory } from './category';
 import { StrapiDesigner } from './designer';
 import { StrapiFile } from './file';
 
@@ -7,7 +6,6 @@ import { StrapiFile } from './file';
  */
 export interface StrapiProduct {
   id: string;
-  categories: StrapiCategory[];
   designer?: StrapiDesigner;
   name: string;
   slug: string;
@@ -21,5 +19,8 @@ export interface StrapiProduct {
   fits?: string;
   occasions?: string;
   styles?: string;
+  weather?: string;
+  categories?: string;
+  sizes: any[];
   created_by: string;
 }

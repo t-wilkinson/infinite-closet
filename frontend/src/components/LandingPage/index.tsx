@@ -3,9 +3,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import axios from 'axios'
 
-import { getURL } from '@/utils/api'
 import { Divider, Icon, CallToAction, CheckBox } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
+import useAnalytics from '@/utils/useAnalytics'
 
 import { AboutUs } from './AboutUs'
 import { howDidYouFindUs } from './constants'
@@ -85,6 +85,7 @@ const WaitlistForm = ({ status, setStatus }) => {
       }),
   })
 
+  const app = useAnalytics()
   const subscribe = getProps('subscribe')
   const checkbox = getProps('checkbox')
 
@@ -115,15 +116,13 @@ const WaitlistForm = ({ status, setStatus }) => {
       })
       .then(() => {
         setStatus('Submitting')
-        // Analytics.logEvent('form_submit', {
-        //   route: '/landing-page',
-        //   type: 'waitlist',
-        //   id: body.email,
-        // })
+        app.logEvent('form_submit', {
+          type: 'waitlist',
+          user: body.email,
+        })
       })
       .then(() => setStatus('Submitted'))
       .catch(() => setStatus('ServerError'))
-      .then(() => {})
   }
 
   return (

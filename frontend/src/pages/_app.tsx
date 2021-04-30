@@ -7,6 +7,8 @@ import axios from 'axios'
 import getConfig from 'next/config'
 import '@/styles/index.css'
 
+import useAnalytics from '@/utils/useAnalytics'
+
 import { useSelector } from '@/utils/store'
 
 const { publicRuntimeConfig } = getConfig()
@@ -16,6 +18,9 @@ axios.defaults.baseURL = STRAPI_API_URL || 'http://localhost:1337'
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 const App = ({ Component, pageProps }) => {
+  const app = useAnalytics()
+  app?.setCurrentScreen(window.location.pathname)
+
   return (
     <>
       <Headers />

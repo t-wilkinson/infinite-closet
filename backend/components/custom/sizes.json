@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_custom_sizes",
+  "info": {
+    "name": "sizes",
+    "icon": "text-height",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "size": {
+      "type": "string",
+      "required": true
+    },
+    "quantity": {
+      "type": "integer",
+      "default": 1,
+      "min": 1,
+      "required": true
+    }
+  }
+}

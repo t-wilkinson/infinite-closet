@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
+import useAnalytics from '@/utils/useAnalytics'
 import { accountsActions } from './slice'
 import { useDispatch } from '@/utils/store'
 import { Icon } from '@/components'
@@ -17,8 +18,31 @@ export const ForgotPassword = () => {
   })
   const router = useRouter()
   const dispatch = useDispatch()
+  const app = useAnalytics()
   const [warnings, setWarnings] = React.useState<string[]>([])
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false)
+
+  const onSubmit = () => {
+    axios
+      .post('/auth/reset-password', {
+        code: form.state.code.trim(),
+        password: form.state.password.trim(),
+        passwordConfirmation: form.state.password.trim(),
+      })
+      .then((res) => {
+        dispatch(accountsActions.login(res.data.user))
+        dispatch(accountsActions.addJWT(res.data.jwt))
+        app.logEvent('form_submit', {
+          type: 'accounts.reset-password',
+          user: form.state.email,
+        })
+        router.push('/')
+      })
+      .catch((err) => {
+        console.error(err.response.data.data[0].messages)
+        setWarnings(err.response.data.data[0].messages.map((v) => v.message))
+      })
+  }
 
   return (
     <div className="py-16 bg-gray-light space-y-8">
@@ -44,10 +68,7 @@ export const ForgotPassword = () => {
             )}
           </button>
         </Input>
-        <Submit
-          disabled={!form.valid}
-          onSubmit={() => onSubmit(form.state, router, dispatch, setWarnings)}
-        >
+        <Submit disabled={!form.valid} onSubmit={() => onSubmit()}>
           Request Password Reset
         </Submit>
         <OR />
@@ -61,21 +82,3 @@ export const ForgotPassword = () => {
   )
 }
 export default ForgotPassword
-
-const onSubmit = (state, router, dispatch, setWarnings) => {
-  axios
-    .post('/auth/reset-password', {
-      code: state.code,
-      password: state.password,
-      passwordConfirmation: state.password,
-    })
-    .then((res) => {
-      dispatch(accountsActions.login(res.data.user))
-      dispatch(accountsActions.addJWT(res.data.jwt))
-      router.push('/')
-    })
-    .catch((err) => {
-      console.error(err.response.data.data[0].messages)
-      setWarnings(err.response.data.data[0].messages.map((v) => v.message))
-    })
-}

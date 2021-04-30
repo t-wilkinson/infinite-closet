@@ -21,7 +21,6 @@ export interface State {
   filters: Partial<Filters>
 }
 
-// TODO: move panel keys up a level? I don't think state.sortBy and state.filters are used
 const initialState: State = {
   data: {},
   pageNumber: 0,
@@ -30,6 +29,7 @@ const initialState: State = {
     matches: [],
   },
   panel: {
+    // TODO: move panel keys up a level? I don't think state.sortBy and state.filters are used
     open: false,
     sortBy: 'Recommended',
     filters: {
@@ -111,10 +111,6 @@ const panelSelector = createSelector(
   productsSelector,
   (products) => products.panel,
 )
-const focusedFilter = createSelector(
-  productsSelector,
-  (products) => products.focusedFilter,
-)
 const panelSize = (
   panel: typeof initialState['panel'],
   filter: Filter,
@@ -123,13 +119,7 @@ const panelSize = (
 }
 
 const productsSelectors = {
-  focusedFilter,
   panelSelector,
-  pageNumber: createSelector(
-    productsSelector,
-    (products) => products.pageNumber,
-  ),
-  isPanelOpen: createSelector([panelSelector], (panel) => panel.open),
   isFilterSelected: createSelector(
     [productsSelector, (_: any, filter: Filter) => filter],
     (products, filter) => products.focusedFilter === filter,
@@ -148,8 +138,6 @@ const productsSelectors = {
     [panelSelector, (_: any, filter: Filter) => filter],
     panelSize,
   ),
-  data: createSelector(productsSelector, (products) => products.data),
-  loading: createSelector(productsSelector, (products) => products.loading),
 }
 
 export { productsSelectors }

@@ -12,12 +12,13 @@ import Filters, { FiltersCount } from './Filters'
 import ProductItems from './ProductItems'
 import Sort from './Sort'
 
-export const Products = () => {
+export const Products = ({ data, loading }) => {
   return (
     <div className="items-center">
       <div className="flex-row w-full max-w-screen-xl h-full px-1 sm:px-4">
         <Filters />
-        <ProductItemsWrapper />
+        <div className="w-2" />
+        <ProductItemsWrapper data={data} loading={loading} />
       </div>
       <ScrollUp />
       <div className="mb-4" />
@@ -26,12 +27,10 @@ export const Products = () => {
 }
 export default Products
 
-const ProductItemsWrapper = () => {
-  const data = useSelector((state) => productsSelectors.data(state))
+const ProductItemsWrapper = ({ data, loading }) => {
   const router = useRouter()
   const totalPages = Math.ceil(data.productsCount / QUERY_LIMIT) || 1
   const sortBy = useSelector((state) => productsSelectors.panelSortBy(state))
-  const loading = useSelector((state) => productsSelectors.loading(state))
 
   return (
     <div className="w-full">
@@ -91,21 +90,39 @@ const Footer = ({ totalPages }) => (
 )
 
 const PageNavigation = ({ totalPages, ...props }) => {
-  const pageNumber = useSelector((state) => productsSelectors.pageNumber(state))
-  const dispatch = useDispatch()
+  const router = useRouter()
+  const pageNumber = Number(router.query.page) || 1
 
   return (
     <div className="flex-row items-center justify-end" {...props}>
-      <button onClick={() => dispatch(productsActions.decreasePageNumber())}>
+      <button
+        onClick={() => {
+          const page = pageNumber > 1 ? pageNumber - 1 : pageNumber
+          if (page !== pageNumber) {
+            router.push({
+              pathname: router.pathname,
+              query: { ...router.query, page },
+            })
+          }
+        }}
+      >
         <div className="p-1 border border-gray-light">
           <Image src="/icons/left-arrow.svg" width={16} height={16} />
         </div>
       </button>
       <span className="mx-1">
-        {pageNumber + 1} / {totalPages}
+        {pageNumber} / {totalPages}
       </span>
       <button
-        onClick={() => dispatch(productsActions.increasePageNumber(totalPages))}
+        onClick={() => {
+          const page = pageNumber < totalPages ? pageNumber + 1 : pageNumber
+          if (page !== pageNumber) {
+            router.push({
+              pathname: router.pathname,
+              query: { ...router.query, page },
+            })
+          }
+        }}
       >
         <div className="p-1 border border-gray-light">
           <Image src="/icons/right-arrow.svg" width={16} height={16} />

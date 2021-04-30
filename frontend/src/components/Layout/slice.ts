@@ -1,15 +1,22 @@
-import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { RootState } from '@/utils/store'
+import { StrapiProduct, StrapiDesigner } from '@/utils/models'
 
 export interface State {
-  data: object
+  data: {
+    products: StrapiProduct[]
+    designers: StrapiDesigner[]
+  }
   loading: boolean
   headerOpen: boolean
 }
 
-const initialState = {
-  data: {},
+const initialState: State = {
+  data: {
+    products: [],
+    designers: [],
+  },
   loading: false,
   headerOpen: false,
 }
@@ -44,10 +51,8 @@ export const layoutSlice = createSlice({
 })
 
 const layoutSelector = (state: RootState) => state.layout
-
 const layoutSelectors = {
-  data: createSelector([layoutSelector], (layout) => layout.data),
-  loading: createSelector([layoutSelector], (layout) => layout.loading),
+  layoutSelector,
 }
 
 export { layoutSelectors }

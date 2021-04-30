@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 
 import { Icon } from '@/components'
 import { useDispatch } from '@/utils/store'
+import useAnalytics from '@/utils/useAnalytics'
 
 import { accountsActions } from './slice'
 import { Input, Form, Submit, OR, Warning, useFields } from './components'
@@ -17,8 +18,30 @@ export const Login = () => {
   })
   const router = useRouter()
   const dispatch = useDispatch()
+  const app = useAnalytics()
   const [warnings, setWarnings] = React.useState<string[]>([])
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false)
+
+  const onSubmit = () => {
+    axios
+      .post('/auth/local', {
+        identifier: form.state.email.trim(),
+        password: form.state.password.trim(),
+      })
+      .then((res) => {
+        dispatch(accountsActions.login(res.data.user))
+        dispatch(accountsActions.addJWT(res.data.jwt))
+        app.logEvent('form_submit', {
+          type: 'accounts.login',
+          user: form.state.email,
+        })
+        router.push('/')
+      })
+      .catch((err) => {
+        console.error(err.response.data.data[0].messages)
+        setWarnings(err.response.data.data[0].messages.map((v) => v.message))
+      })
+  }
 
   return (
     <div className="py-16 bg-gray-light space-y-8 h-full">
@@ -44,10 +67,7 @@ export const Login = () => {
             )}
           </button>
         </Input>
-        <Submit
-          disabled={!form.valid}
-          onSubmit={() => onSubmit(form.state, router, dispatch, setWarnings)}
-        >
+        <Submit disabled={!form.valid} onSubmit={() => onSubmit()}>
           Sign In
         </Submit>
 
@@ -76,20 +96,3 @@ export const Login = () => {
   )
 }
 export default Login
-
-const onSubmit = (state, router, dispatch, setWarnings) => {
-  axios
-    .post('/auth/local', {
-      identifier: state.email,
-      password: state.password,
-    })
-    .then((res) => {
-      dispatch(accountsActions.login(res.data.user))
-      dispatch(accountsActions.addJWT(res.data.jwt))
-      router.push('/')
-    })
-    .catch((err) => {
-      console.error(err.response.data.data[0].messages)
-      setWarnings(err.response.data.data[0].messages.map((v) => v.message))
-    })
-}

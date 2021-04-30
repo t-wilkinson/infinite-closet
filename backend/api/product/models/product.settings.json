@@ -11,10 +11,6 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "categories": {
-      "collection": "category",
-      "via": "products"
-    },
     "designer": {
       "model": "designer",
       "via": "products"
@@ -69,6 +65,14 @@
     },
     "weather": {
       "type": "string"
+    },
+    "categories": {
+      "type": "string"
+    },
+    "sizes": {
+      "type": "component",
+      "repeatable": true,
+      "component": "custom.sizes"
     }
   }
 }

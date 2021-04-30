@@ -2,7 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import qs from 'qs'
 
-import useLoading from '@/utils/useLoading'
+import useData from '@/Layout/useData'
 import { useDispatch } from '@/utils/store'
 import { fetchAPI } from '@/utils/api'
 import { Filter, Filters, ProductRoutes, SortBy } from '@/Products/types'
@@ -18,11 +18,9 @@ export const Page = ({ data }) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const query = router.query
-  const loading = useLoading()
+  const loading = useData(data)
 
   React.useEffect(() => {
-    dispatch(productsActions.dataReceived(data))
-    dispatch(productsActions.setLoading(loading))
     if (SortBy.includes(query.sort as any))
       dispatch(productsActions.setPanelSortBy(query.sort as any))
 
@@ -47,7 +45,7 @@ export const Page = ({ data }) => {
   return (
     <>
       <Header />
-      <Products />
+      <Products data={data} loading={loading} />
       <Divider />
       <Footer />
     </>
@@ -64,27 +62,26 @@ export async function getServerSideProps({ params, query }) {
 
   const page = query.page > 0 ? query.page : 1
   const sort = sortData[query.sort]?.value ?? 'created_by:ASC'
-
-  const filters = str({
-    _sort: sort,
-    categories: { slug_in: query.slug },
-  })
-
-  const paging = str({
+  const _paging = str({
     _start: (page - 1) * QUERY_LIMIT,
     _limit: QUERY_LIMIT,
   })
-
-  const _where = Filter.map((filter) => {
+  const _filters = Filter.map((filter) => {
     const { filterName } = filterData[filter]
     return str({ [filterName + '_contains']: query[filterName] })
   })
     .filter((v) => v)
     .join('&')
 
+  let _where = str({
+    _sort: sort,
+    categories_contains: query.slug,
+  })
+  _where = [_where, _filters].join('&')
+
   const [productsCount, products, designers] = await Promise.all([
-    fetchAPI(`/products/count?${filters}&${_where}`),
-    fetchAPI(`/products?${paging}&${filters}&${_where}`),
+    fetchAPI(`/products/count?${_where}`),
+    fetchAPI(`/products?${_paging}&${_where}`),
     fetchAPI(`/designers`), // TODO: this includes all of designers relations
   ])
 
