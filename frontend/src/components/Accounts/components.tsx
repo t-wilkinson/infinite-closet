@@ -10,7 +10,7 @@ export const validate = (
     const [type, ...props] = constraint.split(':')
     switch (type) {
       case 'email':
-        return /^\w+@\w+\.\w+$/.test(value) || `${field} must be valid`
+        return /^.+@.+\..+$/.test(value) || `${field} must be valid`
       case 'required':
         return value.length > 0 || `${field} is required`
       case 'number':
@@ -75,35 +75,42 @@ export const Input = ({
       >
         <label
           htmlFor={name}
-          className={`bg-white rounded-sm border-sec absolute left-0 bottom-0 m-2 my-4 px-1 transform duration-200 pointer-events-none
+          className={`bg-white rounded-sm border-sec absolute z-10 left-0 bottom-0 m-2 my-4 px-1 transform duration-200 pointer-events-none
           ${focused || value ? '-translate-y-5 -translate-x-1 scale-90' : ''}
           ${focused ? 'text-sec' : 'text-gray'}
           `}
         >
           {label}
         </label>
-        <input
-          className={`border-2 outline-none rounded-sm p-2 py-3
+        <div
+          className={`w-full h-full flex-row justify-between border-2 rounded-sm
             ${
               changed && validations.length > 0
                 ? 'border-warning'
                 : 'border-gray focus:border-sec'
             }
             `}
-          id={name}
-          name={name}
-          type={type}
-          value={value}
-          onChange={onChange_}
-        />
+        >
+          <input
+            className={`p-2 py-3 outline-none w-full h-full
+            `}
+            id={name}
+            name={name}
+            type={type}
+            value={value}
+            onChange={onChange_}
+          />
+          {children}
+        </div>
       </div>
-      {children}
-      {changed && (
-        <span className="font-bold text-sm text-warning">{validations[0]}</span>
-      )}
+      {changed && <Warning>{validations[0]}</Warning>}
     </div>
   )
 }
+
+export const Warning = ({ children }) => (
+  <span className="font-bold text-sm text-warning">{children}</span>
+)
 
 export const Form = ({ className = '', children }) => (
   <div
@@ -150,10 +157,7 @@ export const useFields: UseFields = (config) => {
     (acc, k) => ((acc[k] = ''), acc),
     {},
   )
-  const reducer = (
-    state: { [field in keyof typeof config]: string },
-    { type, payload },
-  ) => ({ ...state, [type]: payload })
+  const reducer = (state, { type, payload }) => ({ ...state, [type]: payload })
   const [state, dispatch] = React.useReducer(reducer, initialState)
 
   const valid = Object.keys(state)

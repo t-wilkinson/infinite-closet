@@ -1,14 +1,7 @@
-import Head from 'next/head'
+import Home from '@/Home'
 
-const Page = ({ products }) => {
-  return (
-    <div>
-      <Head>
-        <title>Strapi Next.js E-commerce</title>
-      </Head>
-      HOME
-    </div>
-  )
+const Page = () => {
+  return <Home />
 }
 
 export default Page
