@@ -3,7 +3,7 @@ import Layout from '@/Layout/PreRelease'
 
 const Page = () => {
   return (
-    <Layout>
+    <Layout title="Privacy Policy">
       <PrivacyPolicy />
     </Layout>
   )

@@ -1,3 +1,5 @@
+import Head from 'next/head'
+
 import { Divider } from '@/components'
 import ComingSoon from '@/ComingSoon'
 import Header from '@/Layout/PreRelease/Header'
@@ -5,6 +7,9 @@ import Header from '@/Layout/PreRelease/Header'
 const Page = () => {
   return (
     <>
+      <Head>
+        <title>More Coming Soon</title>
+      </Head>
       <Header />
       <ComingSoon />
       <Divider />
