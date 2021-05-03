@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import axios from 'axios'
 
 import { Icon, CallToAction, Divider } from '@/components'
@@ -74,7 +73,7 @@ const Subscribe = () => {
                 state.focused ? 'border-black' : 'border-gray-light'
               }`}
             >
-              <Image name="email" size={24} />
+              <Icon name="email" size={24} />
               <input
                 placeholder="Email"
                 value={state.value}

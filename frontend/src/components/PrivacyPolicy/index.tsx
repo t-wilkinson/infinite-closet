@@ -5,7 +5,7 @@ import { Divider } from '@/components'
 import { terms } from './constants'
 
 export const PolicyTerms = () => (
-  <div class="items-center mx-4">
+  <div className="items-center mx-4">
     <div className="w-full max-w-screen-xl">
       <div className="items-center mb-4">
         <span className="font-subheader text-center text-5xl">
