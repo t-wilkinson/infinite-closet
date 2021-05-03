@@ -17,8 +17,19 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      opacity: {
+        10: '0.10',
+        20: '0.20',
+        30: '0.30',
+        40: '0.40',
+        50: '0.50',
+        60: '0.60',
+        70: '0.70',
+        80: '0.80',
+        90: '0.90',
+      },
       spacing: {
-        px: '1px',
+        pt: '1px',
         72: '18rem',
         80: '20rem',
         96: '24rem',
@@ -36,6 +47,7 @@ module.exports = {
           light: palette.sec2,
         },
         gray: {
+          ...colors.gray,
           light: '#efefef',
           default: '#cccccc',
           dark: '#505050',

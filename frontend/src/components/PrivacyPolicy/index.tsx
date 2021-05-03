@@ -1,40 +1,16 @@
 import React from 'react'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { ScrollView, div, Divider, span } from '@/shared/components'
-import { LandingPageHeader as Header } from '@/shared/Header'
-import { LandingPageFooter as Footer } from '@/shared/Footer'
+import { Divider } from '@/components'
 
 import { terms } from './constants'
 
-export default ({ navigation }) => {
-  const insets = useSafeAreaInsets()
-
-  return (
-    <ScrollView>
-      <div bg="white" flex={1} style={{ paddingTop: insets.top }}>
-        <Header navigation={navigation} />
-        <Wrapper inner={{ px: { base: 'sm', desktop: 0 } }}>
-          <PolicyTerms />
-        </Wrapper>
-        <Default>
-          <Divider />
-        </Default>
-        <Footer />
-      </div>
-    </ScrollView>
-  )
-}
-
-const PolicyTerms = () => (
-  <>
-    <div alignItems="center" mb="md">
-      <span variant="subheader" textAlign="center">
+export const PolicyTerms = () => (
+  <div className="mx-4">
+    <div className="items-center mb-4">
+      <span className="font-subheader text-center">
         Privacy & Cookie Policy
       </span>
-      <span color="dark-gray" fontSize={14}>
-        Last Updated: 5/2/21
-      </span>
+      <span className="text-gray-dark text-sm">Last Updated: 5/2/21</span>
     </div>
     {terms.map((term) => (
       <React.Fragment key={term.header}>
@@ -48,16 +24,17 @@ const PolicyTerms = () => (
         ))}
       </React.Fragment>
     ))}
-  </>
+  </div>
 )
+export default PolicyTerms
 
 const TermHeader = ({ header = '', text = '' }) => (
   <>
-    <span textAlign="center" variant="subheader" fontSize={32}>
+    <span className="text-center sm:text-left font-subheader text-xl">
       {header}
     </span>
-    <Divider my="md" />
-    <span variant="body">{`${text}
+    <Divider className="my-4" />
+    <span className="whitespace-pre-wrap">{`${text}
 
 `}</span>
   </>
@@ -65,8 +42,8 @@ const TermHeader = ({ header = '', text = '' }) => (
 
 const TermContent = ({ subheader = '', text = '' }) => (
   <>
-    <span variant="body-bold">{subheader}</span>
-    <span variant="body">{`${text}
+    <span className="font-bold">{subheader}</span>
+    <span className="whitespace-pre-wrap">{`${text}
 
 `}</span>
   </>

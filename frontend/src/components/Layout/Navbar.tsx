@@ -50,8 +50,8 @@ const Sections = ({ visible, setVisible }) => (
             ${visible === value ? 'bg-gray-light cursor-pointer' : ''}
           `}
         >
-          <Link href={href}>
-            <span className="p-2 cursor-pointer md:text-base lg:text-lg">
+          <Link href={href ?? '#'}>
+            <span className="p-2 cursor-pointer md:text-base lg:text-lg font-subheader">
               {label}
             </span>
           </Link>
@@ -61,21 +61,24 @@ const Sections = ({ visible, setVisible }) => (
   </div>
 )
 
-const PageRoutes = ({ route }) => (
+const PageRoutes = ({ route }: { route: typeof routes[number] }) => (
   <div className="flex-row">
     {route.data.map((column, i) => (
       <div key={i}>
         <span className="px-4 font-bold">
-          <Link href={column.href}>
-            <span className="p-1 font-bold cursor-pointer">{column.label}</span>
+          <Link href={column.href ?? '#'}>
+            <span className={`p-1 font-bold ${dne(column.href)} `}>
+              {column.label}
+            </span>
           </Link>
         </span>
         {column.data.map((row, i) => (
           <div key={i}>
             <span className="px-4">
-              <Link href={row.href}>
-                <span className="p-1 text-sm cursor-pointer hover:underline">
-                  {row.label}
+              <Link href={row.href ?? '#'}>
+                <span className={`p-1 text-sm ${dne(row.href)} `}>
+                  {' '}
+                  {row.label}{' '}
                 </span>
               </Link>
             </span>
@@ -85,3 +88,5 @@ const PageRoutes = ({ route }) => (
     ))}
   </div>
 )
+const dne = (href?: string) =>
+  href ? 'cursor-pointer hover:underline' : 'text-gray-700'

@@ -19,7 +19,7 @@ const HeaderAside = () => {
         <div className="w-full h-full overflow-scroll">
           <div className="w-full flex-row items-center justify-between p-4">
             <Link href="/">
-              <span className="font-header">Infinite Closet</span>
+              <span className="font-header">INFINITE CLOSET</span>
             </Link>
             <button onClick={() => dispatch(layoutActions.toggleHeader())}>
               <Icon name="close" size={16} />

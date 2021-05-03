@@ -9,10 +9,19 @@ import { accountsActions } from './slice'
 import { useDispatch } from '@/utils/store'
 import { Icon } from '@/components'
 
-import { Input, Form, Submit, OR, Warning, useFields } from './components'
+import {
+  OR,
+  Input,
+  Form,
+  Submit,
+  Warning,
+  useFields,
+  isValid,
+  cleanFields,
+} from './components'
 
 export const ForgotPassword = () => {
-  const form = useFields({
+  const fields = useFields({
     code: { constraints: 'required', label: 'Reset Code' },
     password: { constraints: 'required', label: 'Password' },
   })
@@ -23,18 +32,19 @@ export const ForgotPassword = () => {
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false)
 
   const onSubmit = () => {
+    const cleaned = cleanFields(fields)
     axios
       .post('/auth/reset-password', {
-        code: form.state.code.trim(),
-        password: form.state.password.trim(),
-        passwordConfirmation: form.state.password.trim(),
+        code: cleaned.code,
+        password: cleaned.password,
+        passwordConfirmation: cleaned.password,
       })
       .then((res) => {
         dispatch(accountsActions.login(res.data.user))
         dispatch(accountsActions.addJWT(res.data.jwt))
         app.logEvent('form_submit', {
           type: 'accounts.reset-password',
-          user: form.state.email,
+          user: cleaned.email,
         })
         router.push('/')
       })
@@ -55,8 +65,11 @@ export const ForgotPassword = () => {
         {warnings.map((warning) => (
           <Warning key={warning}>{warning}</Warning>
         ))}
-        <Input {...form.code} />
-        <Input {...form.password} type={passwordVisible ? 'text' : 'password'}>
+        <Input {...fields.code} />
+        <Input
+          {...fields.password}
+          type={passwordVisible ? 'text' : 'password'}
+        >
           <button
             className="flex flex-row items-center absolute right-0 h-full pr-2"
             onClick={() => setPasswordVisible(!passwordVisible)}
@@ -68,7 +81,7 @@ export const ForgotPassword = () => {
             )}
           </button>
         </Input>
-        <Submit disabled={!form.valid} onSubmit={() => onSubmit()}>
+        <Submit disabled={!isValid(fields)} onSubmit={() => onSubmit()}>
           Request Password Reset
         </Submit>
         <OR />

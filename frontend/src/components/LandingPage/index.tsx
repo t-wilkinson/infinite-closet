@@ -3,9 +3,19 @@ import Image from 'next/image'
 import Link from 'next/link'
 import axios from 'axios'
 
-import { Divider, Icon, CallToAction, CheckBox } from '@/components'
+import { Divider, Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 import useAnalytics from '@/utils/useAnalytics'
+import {
+  Input,
+  useFields,
+  isValid,
+  cleanFields,
+  Checkbox,
+  Submit,
+  // validateField,
+  // Warning,
+} from '@/Accounts/components'
 
 import { AboutUs } from './AboutUs'
 import { howDidYouFindUs } from './constants'
@@ -13,19 +23,22 @@ import { howDidYouFindUs } from './constants'
 export const LandingPage = () => {
   return (
     <div className="w-full mb-6">
-      <div className="relative items-center">
+      <div className="relative items-center h-screen">
         <Image
           src="/images/brand/Facebook-Banner.png"
           layout="fill"
           objectFit="cover"
         />
-        <div className="z-10 items-center w-full py-16 bg-black bg-opacity-50">
-          <div className="items-center w-full p-4 bg-white md:my-92 md:max-w-lg bg-opacity-75">
+        <div className="z-10 items-center w-full py-16 bg-black h-full bg-opacity-50 px-4 sm:px-0">
+          <div className="items-center w-full p-4 bg-white sm:my-92 sm:max-w-lg sm:rounded-md">
             <JoinWaitlist />
           </div>
         </div>
       </div>
-      <Divider className="mt-8" />
+      <div className="items-center">
+        <Divider className="mt-8 max-w-screen-xl" />
+      </div>
+
       <AboutUs />
       <div className="mb-4" />
     </div>
@@ -46,13 +59,13 @@ const JoinWaitlist = () => {
 
   if (status === 'Submitting') {
     return (
-      <div className="items-center content-center">
+      <div className="items-center content-center w-full">
         <span className="font-subheader">Submitting</span>
       </div>
     )
   } else if (status === 'Submitted') {
     return (
-      <div className="items-center content-center">
+      <div className="items-center content-center w-full">
         <span>Form was successfully submitted.</span>
         <span className="font-subheader">Thank You!</span>
       </div>
@@ -67,50 +80,27 @@ const JoinWaitlist = () => {
 }
 
 const WaitlistForm = ({ status, setStatus }) => {
-  const [state, setState] = React.useState({
-    subscribe: { value: false },
-    checkbox: { value: null },
-    email: { placeholder: 'Email', value: '' },
-    name: { placeholder: 'Name', value: '' },
-    other: { placeholder: 'Leave a comment', value: '' },
-  })
-
-  const getProps = (field: string) => ({
-    state: state[field],
-    setState: (value: any) =>
-      setState((s) => {
-        const newState = { ...s }
-        newState[field].value = value
-        return newState
-      }),
+  const fields = useFields({
+    subscribe: { label: '' },
+    checkbox: { constraints: 'required', label: '' },
+    email: { constraints: 'required email', label: 'Email Address' },
+    name: { constraints: 'required', label: 'Name' },
+    comment: { label: 'Leave a comment' },
   })
 
   const app = useAnalytics()
-  const subscribe = getProps('subscribe')
-  const checkbox = getProps('checkbox')
-
   const onSubmit = () => {
     setStatus('Submitting')
 
-    const marketing = howDidYouFindUs.find(
-      (v) => v.value == state.checkbox.value,
-    )?.label
-    const body = {
-      name: state.name.value.trim(),
-      email: state.email.value.trim(),
-      comment: state.other.value.trim(),
-    }
-
-    if (body.name.length === 0 || body.email.length === 0) {
-      setStatus('ClientError')
-      return
-    }
+    const cleaned = cleanFields(fields)
+    const marketing = howDidYouFindUs.find((v) => v.value == cleaned.checkbox)
+      ?.label
 
     axios
       .post('/accounts/waitlist', {
         data: {
-          ...body,
-          subscribe: state.subscribe.value,
+          ...cleaned,
+          subscribe: cleaned.subscribe,
           marketing: marketing,
         },
       })
@@ -118,7 +108,7 @@ const WaitlistForm = ({ status, setStatus }) => {
         setStatus('Submitting')
         app.logEvent('form_submit', {
           type: 'waitlist',
-          user: body.email,
+          user: cleaned.email,
         })
       })
       .then(() => setStatus('Submitted'))
@@ -128,51 +118,39 @@ const WaitlistForm = ({ status, setStatus }) => {
   return (
     <div className="w-full">
       <div className="z-10 items-center w-full my-4">
-        <span className="text-4xl uppercase text-pri font-subheader">
+        <span className="text-4xl uppercase text-pri font-subheader text-center">
           Join The Waitlist
         </span>
-        <WaitlistItem>
-          <span className="font-bold">Name</span>
-          <Input
-            autoComplete="name"
-            autoCapitalize="words"
-            {...getProps('name')}
-          />
-        </WaitlistItem>
 
-        <WaitlistItem>
-          <span className="text-bold">Email</span>
-          <Input
-            autoComplete="email"
-            autoCapitalize="none"
-            {...getProps('email')}
-          />
-        </WaitlistItem>
+        <Input {...fields.name} />
+        <Input {...fields.email} />
 
-        <WaitlistItem>
+        <div className="w-full my-2">
           <span className="my-2 font-bold">
             How did you first learn about our website?
           </span>
-          <CheckBoxes {...checkbox} />
-          <Input {...getProps('other')} />
-        </WaitlistItem>
+          <Checkboxes {...fields.checkbox} />
+          {/* <Warning>{validateField(fields.checkbox)}</Warning> */}
+        </div>
+
+        <Input {...fields.comment} />
 
         <div className="items-center my-2 md:flex-row">
-          <CheckBox state={subscribe.state.value} setState={subscribe.setState}>
-            <span>
-              &nbsp;&nbsp;I want to subscribe to the newsletter.&nbsp;
-            </span>
-          </CheckBox>
-          <Link href="/privacy-policy">
-            <span className="underline">View terms.</span>
-          </Link>
+          <Checkbox {...fields.subscribe}>
+            <span>&nbsp;&nbsp;I want to subscribe to the newsletter.</span>
+          </Checkbox>
+          &nbsp;
         </div>
+        <Link href="/privacy-policy">
+          <span className="underline cursor-pointer">View terms.</span>
+        </Link>
 
         <div className="my-2">
-          <CallToAction onClick={onSubmit}>
+          <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
             <span>Join</span>
-          </CallToAction>
+          </Submit>
         </div>
+
         {status === 'ServerError' && (
           <div className="items-center">
             <span className="text-warning">
@@ -216,17 +194,17 @@ const FooterContact = () => (
   </div>
 )
 
-const CheckBoxes = ({ state, setState }) => (
+const Checkboxes = ({ label, value, onChange }) => (
   <>
     {howDidYouFindUs.map((v) => (
-      <CheckBox
+      <Checkbox
         key={v.value}
-        state={state.value === v.value}
-        setState={(s: null | string) => s && setState(v.value)}
-        my="xs"
+        value={value === v.value}
+        onChange={() => onChange(v.value)}
+        label={label}
       >
         <span>&nbsp;&nbsp;{v.label}</span>
-      </CheckBox>
+      </Checkbox>
     ))}
   </>
 )
@@ -237,32 +215,4 @@ const SocialMediaIcon = ({ name }) => (
       <Icon name={name} className="w-6 h-6 text-black" />
     </div>
   </Link>
-)
-
-const Input = ({ state, setState, ...props }) => {
-  const [focused, setFocused] = React.useState(false)
-
-  return (
-    <div
-      className={`border-b-2 flex-row items-center w-full my-2 ${
-        focused ? 'border-sec-light' : 'border-gray-dark'
-      }`}
-    >
-      <input
-        className="flex-grow p-1 bg-transparent outline-none placeholder-gray-dark"
-        placeholder={state.placeholder}
-        spellCheck="false"
-        enterKeyHint="next"
-        {...props}
-        value={state.value}
-        onChange={(text) => setState(text)}
-        onBlur={() => setFocused(false)}
-        onFocus={() => setFocused(true)}
-      />
-    </div>
-  )
-}
-
-const WaitlistItem = (props: object) => (
-  <div className="w-full my-2" {...props} />
 )

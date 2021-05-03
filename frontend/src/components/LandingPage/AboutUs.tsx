@@ -2,18 +2,18 @@ import React from 'react'
 import { values } from './constants'
 
 export const AboutUs = () => (
-  <div className="items-center w-full pb-6 mx-2">
-    <span className="items-center my-4 text-4xl font-subheader-light">
+  <div className="items-center w-full pb-6">
+    <span className="items-center text-center my-4 text-4xl font-subheader-light">
       Discover. Rent. Love.
     </span>
     <AboutItem header="Our Mission">
-      <span className="max-w-sm text-lg text-center ">
+      <span className="max-w-sm text-lg sm:text-center text-left mx-2">
         To help women feel confident and fashionable while creating a more
         sustainable future.
       </span>
     </AboutItem>
     <AboutItem header="Our Vision">
-      <span className="max-w-sm text-center font-xl ">
+      <span className="max-w-sm text-lg sm:text-center text-left mx-2">
         Our platform allows customers to hire independent brands while cutting
         their carbon footprint and supporting “slow” fashion – making it
         affordable for the average consumer. We take the guesswork out of the

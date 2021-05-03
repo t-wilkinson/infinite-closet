@@ -9,10 +9,19 @@ import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
 import { accountsActions } from './slice'
-import { Input, Form, Submit, OR, Warning, useFields } from './components'
+import {
+  Input,
+  Form,
+  Submit,
+  OR,
+  Warning,
+  useFields,
+  isValid,
+  cleanFields,
+} from './components'
 
 export const Login = () => {
-  const form = useFields({
+  const fields = useFields({
     email: { constraints: 'required email', label: 'Email Address' },
     password: { constraints: 'required', label: 'Password' },
   })
@@ -23,17 +32,18 @@ export const Login = () => {
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false)
 
   const onSubmit = () => {
+    const cleaned = cleanFields(fields)
     axios
       .post('/auth/local', {
-        identifier: form.state.email.trim(),
-        password: form.state.password.trim(),
+        identifier: cleaned.email,
+        password: cleaned.password,
       })
       .then((res) => {
         dispatch(accountsActions.login(res.data.user))
         dispatch(accountsActions.addJWT(res.data.jwt))
         app.logEvent('form_submit', {
           type: 'accounts.login',
-          user: form.state.email,
+          user: cleaned.email,
         })
         router.push('/')
       })
@@ -54,8 +64,11 @@ export const Login = () => {
         {warnings.map((warning) => (
           <Warning key={warning}>{warning}</Warning>
         ))}
-        <Input {...form.email} />
-        <Input {...form.password} type={passwordVisible ? 'text' : 'password'}>
+        <Input {...fields.email} />
+        <Input
+          {...fields.password}
+          type={passwordVisible ? 'text' : 'password'}
+        >
           <button
             className="flex flex-row items-center absolute right-0 h-full pr-2"
             onClick={() => setPasswordVisible(!passwordVisible)}
@@ -67,7 +80,7 @@ export const Login = () => {
             )}
           </button>
         </Input>
-        <Submit disabled={!form.valid} onSubmit={() => onSubmit()}>
+        <Submit disabled={!isValid(fields)} onSubmit={() => onSubmit()}>
           Sign In
         </Submit>
 

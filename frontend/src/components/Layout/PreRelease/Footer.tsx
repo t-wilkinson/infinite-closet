@@ -44,7 +44,7 @@ const Subscribe = () => {
       content = (
         <>
           <span className="text-2xl font-header">Newsletter</span>
-          <div className="items-center content-center px-2 my-2 border border-black">
+          <div className="items-center content-center px-2 my-2 border border-gray">
             <div className="flex-row items-center content-center p-2 m-4">
               <span>Thanks for submitting!</span>
             </div>
@@ -56,7 +56,7 @@ const Subscribe = () => {
       content = (
         <>
           <span className="text-2xl font-subheader">Newsletter</span>
-          <div className="items-center content-center px-2 my-2 border border-black">
+          <div className="items-center content-center px-2 my-2 border border-gray">
             <div className="flex-row items-center content-center p-2 m-4">
               <span>Submitting...</span>
             </div>
@@ -68,7 +68,7 @@ const Subscribe = () => {
       content = (
         <>
           <span className="text-2xl font-subheader">Newsletter</span>
-          <div className="items-center px-2 my-2 border border-black">
+          <div className="items-center px-2 my-2 border border-gray">
             <div
               className={`flex-row items-center mt-4 p-2 border-b ${
                 state.focused ? 'border-black' : 'border-gray-light'
@@ -101,7 +101,7 @@ const Subscribe = () => {
 
 const FooterLinks = () => (
   <div className="items-center flex-grow">
-    <FooterLink href="/landing-page" label="Landing Page" />
+    <FooterLink href="/" label="Landing Page" />
     <FooterLink href="/privacy-policy" label="Legal Terms and Conditions" />
   </div>
 )
@@ -126,7 +126,7 @@ export const FollowUs = ({ className = '' }) => (
 
 export const SocialMediaIcon = ({ name }) => (
   <Link href={socialMediaLinks[name]}>
-    <div className="p-5 border rounded-full cursor-pointer">
+    <div className="p-5 border-gray border rounded-full cursor-pointer items-center justify-center">
       <Icon name={name} className="w-5 h-5" />
     </div>
   </Link>

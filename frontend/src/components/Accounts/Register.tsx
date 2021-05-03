@@ -9,10 +9,18 @@ import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
 import { accountsActions } from './slice'
-import { Input, Form, Submit, Warning, useFields } from './components'
+import {
+  Input,
+  Form,
+  Submit,
+  Warning,
+  useFields,
+  isValid,
+  cleanFields,
+} from './components'
 
 export const Register = () => {
-  const form = useFields({
+  const fields = useFields({
     name: { constraints: 'required', label: 'First Name' },
     email: { constraints: 'required email', label: 'Email Address' },
     password: { constraints: 'required', label: 'Password' },
@@ -24,18 +32,20 @@ export const Register = () => {
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false)
 
   const onSubmit = () => {
+    const cleaned = cleanFields(fields)
+
     axios
       .post('/auth/local/register', {
-        name: form.state.name.trim(),
-        email: form.state.email.trim(),
-        password: form.state.password.trim(),
+        name: cleaned.name,
+        email: cleaned.email,
+        password: cleaned.password,
       })
       .then((res) => {
         dispatch(accountsActions.login(res.data.user))
         dispatch(accountsActions.addJWT(res.data.jwt))
         app.logEvent('form_submit', {
           type: 'accounts.register',
-          user: form.state.email,
+          user: cleaned.email,
         })
         router.push('/')
       })
@@ -56,9 +66,12 @@ export const Register = () => {
         {warnings.map((warning) => (
           <Warning key={warning}>{warning}</Warning>
         ))}
-        <Input {...form.name} />
-        <Input {...form.email} />
-        <Input {...form.password} type={passwordVisible ? 'text' : 'password'}>
+        <Input {...fields.name} />
+        <Input {...fields.email} />
+        <Input
+          {...fields.password}
+          type={passwordVisible ? 'text' : 'password'}
+        >
           <button
             className="flex flex-row items-center absolute right-0 h-full pr-2"
             onClick={() => setPasswordVisible(!passwordVisible)}
@@ -70,7 +83,7 @@ export const Register = () => {
             )}
           </button>
         </Input>
-        <Submit disabled={!form.valid} onSubmit={() => onSubmit()}>
+        <Submit disabled={!isValid(fields)} onSubmit={() => onSubmit()}>
           Sign Up
         </Submit>
       </Form>

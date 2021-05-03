@@ -126,7 +126,7 @@ export const FollowUs = ({ className = '' }) => (
 
 export const SocialMediaIcon = ({ name }) => (
   <Link href={socialMediaLinks[name]}>
-    <div className="p-5 border rounded-full cursor-pointer">
+    <div className="p-5 border rounded-full cursor-pointer items-gray items-center justify-center">
       <Icon name={name} className="w-5 h-5" />
     </div>
   </Link>

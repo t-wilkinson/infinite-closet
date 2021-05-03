@@ -150,7 +150,7 @@ We may share your information with advertisers and investors for the purpose of 
     ],
   },
   {
-    header: 'Tracking technologies',
+    header: 'Tracking Technologies',
     text: '',
     data: [
       {
@@ -200,7 +200,7 @@ We use administrative, technical, and physical security measures to help protect
       {
         header: 'Policy for children’s information',
         text: `
-We do not knowingly collect or solicit information from children under the age of 18. By using the Site, you represent that you are at least 18 years of age. If you become aware of any data we have collected from someone under the age of 18, please contact us by emailing help@InfiniteCloset.co.uk.
+We do not knowingly collect or solicit information from children under the age of 18. By using the Site, you represent that you are at least 18 years of age. If you become aware of any data we have collected from someone under the age of 18, please contact us by emailing info@InfiniteCloset.co.uk.
 `,
       },
 
@@ -210,7 +210,7 @@ We do not knowingly collect or solicit information from children under the age o
 You may at any time review or change the information in your account or terminate your account by:
 
   ·    Logging into your account settings and updating your account
-  ·    Contacting us by emailing help@InfiniteCloset.co.uk
+  ·    Contacting us by emailing info@InfiniteCloset.co.uk
 
 Upon your request to terminate your account, we will deactivate or delete your account and information from our active databases. However, some information may be retained in our files to prevent fraud, troubleshoot problems, assist with any investigations, enforce our Terms of Use and/or comply with legal requirements.
 `,
@@ -224,7 +224,7 @@ If you no longer wish to receive correspondence, emails, or other communications
 
   ·    Noting your preferences at the time you register your account with the Site
   ·    Logging into your account settings and updating your preferences
-  ·    Contacting us by emailing help@InfiniteCloset.co.uk
+  ·    Contacting us by emailing info@InfiniteCloset.co.uk
 
 If you no longer wish to receive correspondence, emails, or other communications from third parties, you are responsible for contacting the third party directly.
 `,
@@ -241,7 +241,7 @@ Under data protection law, you have rights including:
   ·    Your right to object to processing - You have the right to object to the processing of your personal information in certain circumstances; and
   ·    Your right to data portability - You have the right to ask that we transfer the personal information you gave us to another organisation, or to you, in certain circumstances.
 
-You may request details of personal information which we hold about you under the Data Protection Act 1998. A small fee will be payable. If you would like a copy of the information held on you please write to help@InfiniteCloset.co.uk.
+You may request details of personal information which we hold about you under the Data Protection Act 1998. A small fee will be payable. If you would like a copy of the information held on you please write to info@InfiniteCloset.co.uk.
 If you believe that any information we are holding on you is incorrect or incomplete, please write to or email us as soon as possible, at the above address. We will promptly correct any information found to be incorrect.
 `,
       },
@@ -250,11 +250,10 @@ If you believe that any information we are holding on you is incorrect or incomp
   {
     header: 'How to complain',
     text: `
-If you have any concerns about our use of your personal information, you can make a complaint to us at help@InfiniteCloset.co.uk
+If you have any concerns about our use of your personal information, you can make a complaint to us at info@InfiniteCloset.co.uk
 `,
     data: [],
   },
 ] as const
 
-type Terms = typeof terms
-export { terms, Terms }
+export { terms }

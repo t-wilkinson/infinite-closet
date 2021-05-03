@@ -6,29 +6,39 @@ import { useRouter } from 'next/router'
 
 import useAnalytics from '@/utils/useAnalytics'
 
-import { Input, Form, Submit, OR, Warning, useFields } from './components'
+import {
+  OR,
+  Input,
+  Form,
+  Submit,
+  Warning,
+  useFields,
+  isValid,
+  cleanFields,
+} from './components'
 
-type Status = 'success' | 'in-form' | 'server-error'
+type Status = 'success' | 'in-fields' | 'server-error'
 
 export const ForgotPassword = () => {
-  const form = useFields({
+  const fields = useFields({
     email: { constraints: 'required email', label: 'Email Address' },
   })
   const [warnings, setWarnings] = React.useState<string[]>([])
-  const [status, setStatus] = React.useState<Status>('in-form')
+  const [status, setStatus] = React.useState<Status>('in-fields')
   const router = useRouter()
   const app = useAnalytics()
 
   const onSubmit = () => {
+    const cleaned = cleanFields(fields)
     axios
       .post('/auth/forgot-password', {
-        email: form.state.email.trim(),
+        email: cleaned.email,
       })
       .then((res) => {
         // setStatus("success")
         app.logEvent('form_submit', {
           type: 'accounts.forgot-password',
-          user: form.state.email,
+          user: cleaned.email,
         })
         router.push('/')
       })
@@ -50,10 +60,10 @@ export const ForgotPassword = () => {
         {status === 'server-error' &&
           warnings.map((warning) => <Warning key={warning}>{warning}</Warning>)}
 
-        <Input {...form.email} />
+        <Input {...fields.email} />
 
         <Submit
-          disabled={!form.valid || status === 'success'}
+          disabled={!isValid(fields) || status === 'success'}
           onSubmit={() => onSubmit()}
         >
           Request Password Reset

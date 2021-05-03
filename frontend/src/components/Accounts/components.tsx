@@ -1,6 +1,35 @@
 import React from 'react'
+import { Icon } from '@/components'
+
+// TODO: needs better type
+type Field = {
+  field: string
+  label: string
+  type: string
+  value: any
+  constraints: string
+  onChange: (value: any) => void
+}
+
+type Fields = {
+  [field: string]: Field
+}
+
+type FieldsConfig = {
+  [field: string]: {
+    defaultValue?: any
+    constraints?: string
+    label: string
+    onChange?: (value: string) => void
+    type?: string
+  }
+}
 
 type Valid = true | string
+
+export const validateField = (field: Field) =>
+  validate(field.field, field.value, field.constraints)
+
 export const validate = (
   field: string,
   value: string,
@@ -10,9 +39,12 @@ export const validate = (
     const [type, ...props] = constraint.split(':')
     switch (type) {
       case 'email':
-        return /^.+@.+\..+$/.test(value) || `${field} must be valid`
+        return (
+          /^.+@.+\..+$/.test(value) ||
+          `Please enter a valid ${field.toLowerCase()}`
+        )
       case 'required':
-        return value.length > 0 || `${field} is required`
+        return Boolean(value) || `Please include your ${field.toLowerCase()}`
       case 'number':
         return /^\d*$/.test(value) || `${field} must be a number`
       case 'max-width':
@@ -43,14 +75,32 @@ export const validate = (
     .filter((v) => v !== true)
 }
 
+export const Checkbox = ({
+  value = false,
+  onChange,
+  label,
+  color = undefined,
+  children = undefined,
+}) => (
+  <button onClick={() => onChange(!value)}>
+    <div className="flex-row flex-wrap items-center">
+      <div className="items-center justify-center w-5 h-5 bg-white border border-black">
+        {value && <Icon name="check" className="w-3 h-3" style={{ color }} />}
+      </div>
+      <span>{label}</span>
+      {children}
+    </div>
+  </button>
+)
+
 export const Input = ({
-  name,
+  field,
   label,
   onChange,
   constraints,
   value,
   type,
-  children,
+  children = undefined,
   className = '',
 }) => {
   const [changed, setChanged] = React.useState(false)
@@ -74,7 +124,7 @@ export const Input = ({
         }}
       >
         <label
-          htmlFor={name}
+          htmlFor={field}
           className={`bg-white rounded-sm border-sec absolute z-10 left-0 bottom-0 m-2 my-4 px-1 transform duration-200 pointer-events-none
           ${focused || value ? '-translate-y-5 -translate-x-1 scale-90' : ''}
           ${focused ? 'text-sec' : 'text-gray'}
@@ -94,8 +144,8 @@ export const Input = ({
           <input
             className={`p-2 py-3 outline-none w-full h-full
             `}
-            id={name}
-            name={name}
+            id={field}
+            name={field}
             type={type}
             value={value}
             onChange={onChange_}
@@ -124,9 +174,9 @@ export const Form = ({ className = '', children }) => (
 
 export const Submit = ({ children, disabled, onSubmit }) => (
   <button
-    className={`p-4 text-white mt-4 rounded-sm inline ${
-      disabled ? 'bg-pri-light' : 'bg-pri'
-    }`}
+    className={`p-4 text-white mt-4 rounded-sm inline
+      ${disabled ? 'bg-pri-light' : 'bg-pri'}
+    `}
     type="submit"
     onClick={onSubmit}
     disabled={disabled}
@@ -143,32 +193,18 @@ export const OR = () => (
   </div>
 )
 
-// TODO: needs better type
-type UseFields = (fields: {
-  [field: string]: {
-    constraints?: string
-    label: string
-    onChange?: (value: string) => void
-    type?: string
-  }
-}) => any
-export const useFields: UseFields = (config) => {
+export const useFields: (config: FieldsConfig) => Fields = (config) => {
   const initialState = Object.keys(config).reduce(
-    (acc, k) => ((acc[k] = ''), acc),
+    (acc, k) => ((acc[k] = config[k].defaultValue ?? ''), acc),
     {},
   )
   const reducer = (state, { type, payload }) => ({ ...state, [type]: payload })
   const [state, dispatch] = React.useReducer(reducer, initialState)
 
-  const valid = Object.keys(state)
-    .map((field) =>
-      validate(field, state[field], config[field].constraints || ''),
-    )
-    .every((v) => v.length === 0)
-
   const fields = Object.entries(config).reduce((acc, [field, v]) => {
     v = Object.assign({ type: 'text', constraints: '', onChange: () => {} }, v)
     acc[field] = {
+      field,
       label: v.label,
       type: v.type,
       value: state[field],
@@ -181,5 +217,19 @@ export const useFields: UseFields = (config) => {
     return acc
   }, {})
 
-  return { valid, state, ...fields }
+  return fields
+}
+
+export const isValid = (fields: Fields): boolean => {
+  return Object.values(fields)
+    .map((field) => validate(field.label, field.value, field.constraints))
+    .every((v) => v.length === 0)
+}
+
+export const cleanFields = (fields: Fields): { [field: string]: any } => {
+  return Object.entries(fields).reduce((acc, [k, v]) => {
+    if (typeof v.value === 'string') acc[k] = v.value.trim()
+    else acc[k] = v.value
+    return acc
+  }, {})
 }

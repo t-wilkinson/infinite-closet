@@ -11,7 +11,7 @@ export const ComingSoon = () => {
         <span className="font-subheader text-center p-4 text-6xl my-8">
           MORE COMING SOON!
         </span>
-        <Link href="/landing-page">
+        <Link href="/">
           <span className="text-blue-500 cursor-pointer hover:underline">
             Go Back
           </span>
@@ -24,11 +24,7 @@ export const ComingSoon = () => {
         <SocialMediaIcon name="facebook" />
         <SocialMediaIcon name="instagram" />
         <SocialMediaIcon name="twitter" />
-        <Link href={socialMediaLinks.tiktok}>
-          <div className="border rounded-full p-4">
-            <Icon name="tiktok" size={24} />
-          </div>
-        </Link>
+        <SocialMediaIcon name="tiktok" />
       </div>
     </div>
   )
@@ -37,7 +33,7 @@ export default ComingSoon
 
 export const SocialMediaIcon = ({ name }) => (
   <Link href={socialMediaLinks[name]}>
-    <div className="border rounded-full p-4">
+    <div className="border border-gray rounded-full p-4 items-center justify-center">
       <Icon size={20} name={name} />
     </div>
   </Link>
