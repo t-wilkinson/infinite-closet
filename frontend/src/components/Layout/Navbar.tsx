@@ -16,24 +16,29 @@ export const NavBar = () => {
       <Sections visible={visible} setVisible={setVisible} />
       <Divider className="max-w-screen-xl" />
 
-      {visible && (
-        <div className="absolute bottom-0 w-full transform translate-y-full bg-white items-center p-4 shadow-xl">
-          {routes.map(
-            (route, i) =>
-              route.value === visible && (
-                <div key={i} className="flex-row w-full max-w-screen-xl">
-                  <Image
-                    src={route.img ?? '/images/brand/Logo-Lockup---Gray.jpg'}
-                    height={350}
-                    width={350}
-                    objectFit="contain"
-                  />
-                  <PageRoutes route={route} />
-                </div>
-              ),
-          )}
-        </div>
-      )}
+      <div
+        className={`absolute bottom-0 w-full transform translate-y-full bg-white items-center p-4 shadow-xl
+        ${visible ? '' : 'hidden'}
+        `}
+      >
+        {routes.map((route) => (
+          <div
+            key={route.value}
+            className={`flex-row w-full max-w-screen-xl
+            ${route.value === visible ? '' : 'hidden'}
+            `}
+          >
+            <Image
+              alt={`${route.label} page`}
+              src={route.img ?? '/images/brand/Logo-Lockup---Gray.jpg'}
+              height={350}
+              width={350}
+              objectFit="contain"
+            />
+            <PageRoutes route={route} />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -51,9 +56,9 @@ const Sections = ({ visible, setVisible }) => (
           `}
         >
           <Link href={href ?? '#'}>
-            <span className="p-2 cursor-pointer md:text-base lg:text-lg font-subheader">
-              {label}
-            </span>
+            <a>
+              <span className="p-2 cursor-pointer font-subheader">{label}</span>
+            </a>
           </Link>
         </div>
       ))}
@@ -65,28 +70,45 @@ const PageRoutes = ({ route }: { route: typeof routes[number] }) => (
   <div className="flex-row">
     {route.data.map((column, i) => (
       <div key={i}>
-        <span className="px-4 font-bold">
-          <Link href={column.href ?? '#'}>
-            <span className={`p-1 font-bold ${dne(column.href)} `}>
-              {column.label}
-            </span>
-          </Link>
-        </span>
+        <ColumnHeader href={column.href}>{column.label}</ColumnHeader>
         {column.data.map((row, i) => (
-          <div key={i}>
-            <span className="px-4">
-              <Link href={row.href ?? '#'}>
-                <span className={`p-1 text-sm ${dne(row.href)} `}>
-                  {' '}
-                  {row.label}{' '}
-                </span>
-              </Link>
-            </span>
-          </div>
+          <ColumnItem key={i} href={row.href}>
+            {row.label}
+          </ColumnItem>
         ))}
       </div>
     ))}
   </div>
 )
-const dne = (href?: string) =>
-  href ? 'cursor-pointer hover:underline' : 'text-gray-700'
+
+const ColumnHeader = ({ href, children }) => (
+  <span className="px-4 font-bold">
+    <Link href={href ?? '#'}>
+      <a>
+        <span
+          className={`p-1 font-bold
+          ${href ? 'hover:underline' : 'cursor-default text-gray-700'}
+          `}
+        >
+          {children}
+        </span>
+      </a>
+    </Link>
+  </span>
+)
+
+const ColumnItem = ({ href, children }) => (
+  <span className="px-4">
+    <Link href={href ?? '#'}>
+      <a>
+        <span
+          className={`p-1 text-sm
+        ${href ? 'hover:underline' : 'cursor-default text-gray-700'}
+        `}
+        >
+          {children}
+        </span>
+      </a>
+    </Link>
+  </span>
+)

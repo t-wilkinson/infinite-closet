@@ -1,8 +1,7 @@
 import React from 'react'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 
-import { Divider } from '@/components'
+import { Icon, Divider } from '@/components'
 import { useSelector, useDispatch } from '@/utils/store'
 
 import { BreadCrumbs } from './BreadCrumbs'
@@ -83,11 +82,7 @@ const FilterWrapper = ({ selectFilter, filter, Filter }) => {
               {filterData[filter].label ?? filter}
               {numToggled > 0 && ` (${numToggled})`}
             </span>
-            <Image
-              src={selected ? '/icons/down-arrow.svg' : '/icons/up-arrow.svg'}
-              width={12}
-              height={12}
-            />
+            <Icon name={selected ? 'down' : 'up'} size={12} />
           </div>
         </button>
         <div className={`bg-gray-light p-4 ${selected ? 'flex' : 'hidden'}`}>

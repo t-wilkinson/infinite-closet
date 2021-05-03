@@ -14,12 +14,14 @@ const SmallHeader = () => {
 
   return (
     <div className="flex items-center p-4 mb-6 border-b border-gray-light md:hidden">
-      <div className="flex-row items-center w-full mr-2">
+      <div className="flex-row items-center w-full mr-2 select-none">
         <button onClick={() => dispatch(layoutActions.toggleHeader())}>
           <Icon name="menu" size={20} />
         </button>
         <Link href="/landing-page">
-          <span className="ml-4 font-header font-lg">INFINITE CLOSET</span>
+          <a>
+            <span className="ml-4 font-header font-lg">INFINITE CLOSET</span>
+          </a>
         </Link>
       </div>
       <HeaderAside />
@@ -28,14 +30,16 @@ const SmallHeader = () => {
 }
 
 const LargeHeader = () => (
-  <div className="z-20 items-center justify-center hidden w-full pt-4 pb-4 md:flex relative">
+  <div className="z-20 items-center justify-center hidden w-full pt-4 pb-4 md:flex relative select-none">
     <Link href="/landing-page">
-      <div className="items-end cursor-pointer flex-row">
-        <div className="relative w-20 h-16">
-          <Image layout="fill" src="/icons/logo-transparent.svg" />
+      <a>
+        <div className="items-end cursor-pointer flex-row">
+          <div className="relative w-20 h-16">
+            <Image layout="fill" src="/icons/logo-transparent.svg" />
+          </div>
+          <span className="text-4xl font-header">INFINITE CLOSET</span>
         </div>
-        <span className="text-4xl font-header">INFINITE CLOSET</span>
-      </div>
+      </a>
     </Link>
     <Navbar />
   </div>

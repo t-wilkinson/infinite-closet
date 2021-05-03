@@ -72,9 +72,11 @@ export const ForgotPassword = () => {
         <OR />
 
         <Link href="/accounts/register">
-          <span className="cursor-pointer text-blue-500">
-            Create a new Account
-          </span>
+          <a>
+            <span className="cursor-pointer text-blue-500">
+              Create a new Account
+            </span>
+          </a>
         </Link>
       </Form>
     </div>

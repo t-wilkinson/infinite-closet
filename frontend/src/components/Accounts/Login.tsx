@@ -86,22 +86,24 @@ export const Login = () => {
 
         <OR />
 
-        <span>
-          <Link href="/accounts/forgot-password">
+        <Link href="/accounts/forgot-password">
+          <a>
             <span className="cursor-pointer text-blue-500">
               Forgot Password?
             </span>
-          </Link>
-        </span>
+          </a>
+        </Link>
       </Form>
 
       <Form>
         <span>
           New to Infinite Closet?{' '}
           <Link href="/accounts/register">
-            <span className="cursor-pointer text-blue-500">
-              Create an account
-            </span>
+            <a>
+              <span className="cursor-pointer text-blue-500">
+                Create an account
+              </span>
+            </a>
           </Link>
         </span>
       </Form>

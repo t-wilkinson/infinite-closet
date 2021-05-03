@@ -44,6 +44,7 @@ export default {
       }
     >
       <Image
+        alt="Share on Facebook"
         layout="fill"
         objectFit="contain"
         src="/icons/facebook-share.png"
@@ -63,7 +64,12 @@ export default {
         })
       }
     >
-      <Image layout="fill" objectFit="contain" src="/icons/pinit.jpg" />
+      <Image
+        alt="Share on Pinterest"
+        layout="fill"
+        objectFit="contain"
+        src="/icons/pinit.jpg"
+      />
     </a>
   ),
 }

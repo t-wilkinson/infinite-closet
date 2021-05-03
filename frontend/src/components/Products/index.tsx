@@ -107,7 +107,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
         }}
       >
         <div className="p-1 border border-gray-light">
-          <Image src="/icons/left-arrow.svg" width={16} height={16} />
+          <Icon name="left" size={16} />
         </div>
       </button>
       <span className="mx-1">
@@ -125,7 +125,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
         }}
       >
         <div className="p-1 border border-gray-light">
-          <Image src="/icons/right-arrow.svg" width={16} height={16} />
+          <Icon name="right" size={16} />
         </div>
       </button>
     </div>

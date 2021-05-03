@@ -74,7 +74,7 @@ const Subscribe = () => {
                 state.focused ? 'border-black' : 'border-gray-light'
               }`}
             >
-              <Image src="/icons/email.svg" width={24} height={24} />
+              <Image name="email" size={24} />
               <input
                 placeholder="Email"
                 value={state.value}
@@ -108,7 +108,9 @@ const FooterLinks = () => (
 
 const FooterLink = ({ href, label }) => (
   <Link href={href}>
-    <span className="my-2 underline cursor-pointer">{label}</span>
+    <a>
+      <span className="my-2 underline cursor-pointer">{label}</span>
+    </a>
   </Link>
 )
 
@@ -126,8 +128,10 @@ export const FollowUs = ({ className = '' }) => (
 
 export const SocialMediaIcon = ({ name }) => (
   <Link href={socialMediaLinks[name]}>
-    <div className="p-5 border rounded-full cursor-pointer items-gray items-center justify-center">
-      <Icon name={name} className="w-5 h-5" />
-    </div>
+    <a>
+      <div className="p-5 border rounded-full cursor-pointer items-gray items-center justify-center">
+        <Icon name={name} className="w-5 h-5" />
+      </div>
+    </a>
   </Link>
 )

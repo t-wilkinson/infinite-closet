@@ -92,7 +92,9 @@ export const Register = () => {
         <span>
           Already have an account?{' '}
           <Link href="/accounts/login">
-            <span className="cursor-pointer text-blue-500">Sign In</span>
+            <a>
+              <span className="cursor-pointer text-blue-500">Sign In</span>
+            </a>
           </Link>
           .
         </span>

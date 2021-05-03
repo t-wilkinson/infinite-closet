@@ -1,12 +1,11 @@
 import React from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 import { routes } from '@/utils/constants'
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon, Divider } from '@/components'
 
-import { layoutActions } from './slice'
+import { layoutActions } from '../slice'
 
 const HeaderAside = () => {
   const dispatch = useDispatch()
@@ -16,7 +15,7 @@ const HeaderAside = () => {
   return (
     headerOpen && (
       <div className="fixed inset-0 bg-white z-20 border-b border-gray-light">
-        <div className="w-full h-full overflow-scroll">
+        <div className="w-full h-full overflow-auto">
           <div className="w-full flex-row items-center justify-between p-4">
             <Link href="/">
               <a>
@@ -48,36 +47,12 @@ const HeaderAside = () => {
               ))}
             </div>
           ))}
-
-          <Divider className="my-2" />
-          {/* <AsideLink href="/coming-soon" label="My Accout" /> */}
-          <AsideLink href="/coming-soon" label="About Us" />
-          <AsideLink href="/coming-soon" label="Help" />
-          <Divider className="my-2" />
-          <AsideLink href="/accounts/login" label="Sign In" />
-          <AsideLink href="/accounts/register" label="Register" />
         </div>
       </div>
     )
   )
 }
 export default HeaderAside
-
-const AsideLink = ({ href, label }) => {
-  const router = useRouter()
-  const dispatch = useDispatch()
-  return (
-    <button
-      className="flex items-start"
-      onClick={() => {
-        dispatch(layoutActions.closeHeader())
-        router.push(href)
-      }}
-    >
-      <span className="uppercase px-4 my-1 py-1 cursor-pointer">{label}</span>
-    </button>
-  )
-}
 
 const RouteHeader = ({ setFocused, focused, section }) => {
   return (
@@ -101,20 +76,20 @@ const RouteHeader = ({ setFocused, focused, section }) => {
   )
 }
 
-const RouteContents = ({ focused, item, section }) => {
-  return (
-    <div
-      className={`bg-gray-light items-start
-        ${focused === section.value ? '' : 'hidden'}
+const RouteContents = ({ focused, item, section }) => (
+  <div
+    className={`bg-gray-light items-start
+      ${focused === section.value ? '' : 'hidden'}
       `}
-    >
-      <Link href={item.href ?? '#'}>
-        <a>
-          <span className="px-4 my-1 py-1 hover:underline cursor-pointer">
-            {item.label}
-          </span>
-        </a>
-      </Link>
-    </div>
-  )
-}
+  >
+    <Link href={item.href ?? '#'}>
+      <a
+        className={`px-4 my-1 py-1
+          ${item.href ? 'hover:underline' : 'cursor-default text-gray-700'}
+        `}
+      >
+        <span>{item.label}</span>
+      </a>
+    </Link>
+  </div>
+)

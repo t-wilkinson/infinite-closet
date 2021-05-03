@@ -12,9 +12,11 @@ export const ComingSoon = () => {
           MORE COMING SOON!
         </span>
         <Link href="/">
-          <span className="text-blue-500 cursor-pointer hover:underline">
-            Go Back
-          </span>
+          <a>
+            <span className="text-blue-500 cursor-pointer hover:underline">
+              Go Back
+            </span>
+          </a>
         </Link>
       </div>
 
@@ -33,8 +35,10 @@ export default ComingSoon
 
 export const SocialMediaIcon = ({ name }) => (
   <Link href={socialMediaLinks[name]}>
-    <div className="border border-gray rounded-full p-4 items-center justify-center">
-      <Icon size={20} name={name} />
-    </div>
+    <a>
+      <div className="border border-gray rounded-full p-4 items-center justify-center">
+        <Icon size={20} name={name} />
+      </div>
+    </a>
   </Link>
 )

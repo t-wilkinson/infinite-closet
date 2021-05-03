@@ -53,7 +53,7 @@ const routes = [
   {
     label: 'Clothing',
     value: 'clothing',
-    href: 'clothing',
+    href: null,
     img: null,
     data: [
       {

@@ -84,7 +84,7 @@ export const Checkbox = ({
 }) => (
   <button onClick={() => onChange(!value)}>
     <div className="flex-row flex-wrap items-center">
-      <div className="items-center justify-center w-5 h-5 bg-white border border-black">
+      <div className="items-center justify-center w-5 h-5 bg-white border border-black rounded-sm">
         {value && <Icon name="check" className="w-3 h-3" style={{ color }} />}
       </div>
       <span>{label}</span>
@@ -132,12 +132,14 @@ export const Input = ({
         >
           {label}
         </label>
+
         <div
-          className={`w-full h-full flex-row justify-between border-2 rounded-sm
+          className={`w-full h-full flex-row justify-between border-2 rounded-sm transform duration-200
+            ${focused ? 'border-sec' : ''}
             ${
               changed && validations.length > 0
                 ? 'border-warning'
-                : 'border-gray focus:border-sec'
+                : 'border-gray'
             }
             `}
         >

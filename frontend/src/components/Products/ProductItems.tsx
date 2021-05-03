@@ -64,12 +64,14 @@ const Product = ({ item }: any) => {
   return (
     <div className="w-1/2 lg:w-1/3">
       <Link href={`/shop/${item.designer.slug}/${item.slug}`}>
-        <div className="relative w-full h-0 overflow-hidden cursor-pointer aspect-w-2 aspect-h-3">
-          <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-black">
-            <ProductImage images={item.images} />
-            <ProductInfo item={item} />
+        <a>
+          <div className="relative w-full h-0 overflow-hidden cursor-pointer aspect-w-2 aspect-h-3">
+            <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-black">
+              <ProductImage images={item.images} />
+              <ProductInfo item={item} />
+            </div>
           </div>
-        </div>
+        </a>
       </Link>
     </div>
   )

@@ -13,8 +13,6 @@ import {
   cleanFields,
   Checkbox,
   Submit,
-  // validateField,
-  // Warning,
 } from '@/Accounts/components'
 
 import { AboutUs } from './AboutUs'
@@ -23,24 +21,29 @@ import { howDidYouFindUs } from './constants'
 export const LandingPage = () => {
   return (
     <div className="w-full mb-6">
-      <div className="relative items-center h-screen">
+      <div className="relative items-center min-h-screen">
         <Image
+          priority={true}
           src="/images/brand/Facebook-Banner.png"
           layout="fill"
           objectFit="cover"
         />
-        <div className="z-10 items-center w-full py-16 bg-black h-full bg-opacity-50 px-4 sm:px-0">
+        <div className="z-10 items-center w-full py-16 bg-black h-full bg-opacity-80 px-4 sm:px-0">
           <div className="items-center w-full p-4 bg-white sm:my-92 sm:max-w-lg sm:rounded-md">
+            <span className="text-4xl uppercase text-pri font-subheader text-center">
+              Join The Waitlist
+            </span>
             <JoinWaitlist />
+            <FooterContact />
           </div>
         </div>
       </div>
+
       <div className="items-center">
         <Divider className="mt-8 max-w-screen-xl" />
       </div>
 
       <AboutUs />
-      <div className="mb-4" />
     </div>
   )
 }
@@ -56,27 +59,25 @@ type Status =
 
 const JoinWaitlist = () => {
   const [status, setStatus] = React.useState<Status>('None')
-
-  if (status === 'Submitting') {
-    return (
-      <div className="items-center content-center w-full">
-        <span className="font-subheader">Submitting</span>
-      </div>
-    )
-  } else if (status === 'Submitted') {
-    return (
-      <div className="items-center content-center w-full">
-        <span>Form was successfully submitted.</span>
-        <span className="font-subheader">Thank You!</span>
-      </div>
-    )
-  } else {
-    return (
-      <div className="w-full">
-        <WaitlistForm status={status} setStatus={setStatus} />
-      </div>
-    )
+  const messages = {
+    Submitting: <span className="font-bold text-2xl">Submitting...</span>,
+    Submitted: (
+      <span className="font-bold text-center text-2xl">
+        Thank you for joining!
+      </span>
+    ),
   }
+
+  return (
+    <div className="h-full w-full relative">
+      <WaitlistForm status={status} setStatus={setStatus} />
+      {status in messages ? (
+        <div className="absolute inset-0 bg-white z-10 justify-center items-center border border-gray rounded-md">
+          {messages[status]}
+        </div>
+      ) : null}
+    </div>
+  )
 }
 
 const WaitlistForm = ({ status, setStatus }) => {
@@ -84,7 +85,7 @@ const WaitlistForm = ({ status, setStatus }) => {
     subscribe: { label: '' },
     checkbox: { constraints: 'required', label: '' },
     email: { constraints: 'required email', label: 'Email Address' },
-    name: { constraints: 'required', label: 'Name' },
+    name: { constraints: 'required', label: 'First Name' },
     comment: { label: 'Leave a comment' },
   })
 
@@ -98,11 +99,9 @@ const WaitlistForm = ({ status, setStatus }) => {
 
     axios
       .post('/accounts/waitlist', {
-        data: {
-          ...cleaned,
-          subscribe: cleaned.subscribe,
-          marketing: marketing,
-        },
+        ...cleaned,
+        subscribe: cleaned.subscribe,
+        marketing: marketing,
       })
       .then(() => {
         setStatus('Submitting')
@@ -116,56 +115,48 @@ const WaitlistForm = ({ status, setStatus }) => {
   }
 
   return (
-    <div className="w-full">
-      <div className="z-10 items-center w-full my-4">
-        <span className="text-4xl uppercase text-pri font-subheader text-center">
-          Join The Waitlist
+    <div className="items-center w-full my-4">
+      <Input {...fields.name} />
+      <Input {...fields.email} />
+
+      <div className="w-full my-2">
+        <span className="my-2 font-bold">
+          How did you first learn about our website?
         </span>
-
-        <Input {...fields.name} />
-        <Input {...fields.email} />
-
-        <div className="w-full my-2">
-          <span className="my-2 font-bold">
-            How did you first learn about our website?
-          </span>
-          <Checkboxes {...fields.checkbox} />
-          {/* <Warning>{validateField(fields.checkbox)}</Warning> */}
-        </div>
-
-        <Input {...fields.comment} />
-
-        <div className="items-center my-2 md:flex-row">
-          <Checkbox {...fields.subscribe}>
-            <span>&nbsp;&nbsp;I want to subscribe to the newsletter.</span>
-          </Checkbox>
-          &nbsp;
-        </div>
-        <Link href="/privacy-policy">
-          <span className="underline cursor-pointer">View terms.</span>
-        </Link>
-
-        <div className="my-2">
-          <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
-            <span>Join</span>
-          </Submit>
-        </div>
-
-        {status === 'ServerError' && (
-          <div className="items-center">
-            <span className="text-warning">
-              Could not communicate with server. Try again?
-            </span>
-          </div>
-        )}
-        {status === 'ClientError' && (
-          <div className="items-center">
-            <span className="text-warning">Please fill out all fields.</span>
-          </div>
-        )}
+        <Checkboxes {...fields.checkbox} />
       </div>
 
-      <FooterContact />
+      <Input {...fields.comment} />
+
+      <div className="items-center my-2 md:flex-row">
+        <Checkbox {...fields.subscribe}>
+          <span>&nbsp;&nbsp;I want to subscribe to the newsletter.</span>
+        </Checkbox>
+      </div>
+      <Link href="/privacy-policy">
+        <a>
+          <span className="underline cursor-pointer">View terms</span>
+        </a>
+      </Link>
+
+      <div className="my-2">
+        <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
+          <span>Join</span>
+        </Submit>
+      </div>
+
+      {status === 'ServerError' && (
+        <div className="items-center">
+          <span className="text-warning">
+            Could not communicate with server. Try again?
+          </span>
+        </div>
+      )}
+      {status === 'ClientError' && (
+        <div className="items-center">
+          <span className="text-warning">Please fill out all fields.</span>
+        </div>
+      )}
     </div>
   )
 }
@@ -174,9 +165,12 @@ const FooterContact = () => (
   <div className="flex-row items-center justify-between w-full">
     <div>
       <span className="text-gray-dark">London, UK</span>
-      <span className="text-gray-dark">info@infinitecloset.co.uk</span>
+      <Link href="mailto:info@infinitecloset.co.uk">
+        <a>
+          <span className="text-gray-dark">info@infinitecloset.co.uk</span>
+        </a>
+      </Link>
     </div>
-
     <div className="flex-row items-center">
       <div className="items-center md:flex-row">
         <SocialMediaIcon name="facebook" />
@@ -211,8 +205,8 @@ const Checkboxes = ({ label, value, onChange }) => (
 
 const SocialMediaIcon = ({ name }) => (
   <Link href={socialMediaLinks[name]}>
-    <div className="mx-2 cursor-pointer">
+    <a className="mx-2">
       <Icon name={name} className="w-6 h-6 text-black" />
-    </div>
+    </a>
   </Link>
 )
