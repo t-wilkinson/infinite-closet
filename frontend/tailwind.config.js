@@ -13,7 +13,9 @@ const palette = {
 
 module.exports = {
   mode: 'jit',
-  // purge: ['./src/components/**/*.{js,jsx,ts,tsx}', './src/pages/**/*.{js,jsx,ts,tsx}'],
+  future: {
+    purgeLayersByDefault: true,
+  },
   purge: ['./src/**/*.{js,jsx,ts,tsx}'],
   darkMode: 'class',
   theme: {
@@ -50,7 +52,7 @@ module.exports = {
         gray: {
           ...colors.gray,
           light: '#efefef',
-          default: '#cccccc',
+          default: '#5f6368',
           dark: '#505050',
         },
         fg: palette.black,

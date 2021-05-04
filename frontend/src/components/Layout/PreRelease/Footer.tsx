@@ -13,10 +13,10 @@ import { Icon, Divider } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 
 export const Footer = () => (
-  <div className="flex-col items-center justify-evenly w-full pb-2 my-4 md:flex-row">
+  <footer className="flex flex-col items-center justify-evenly w-full pb-2 my-4 md:flex-row">
     <div className="items-center flex-grow">
       <span className="text-2xl font-subheader">NEWSLETTER</span>
-      <div className="content-center items-center rounded-sm border border-gray">
+      <div className="content-center items-center rounded-sm">
         <Subscribe />
       </div>
     </div>
@@ -24,7 +24,7 @@ export const Footer = () => (
     <FooterLinks />
     <Divider className="my-4 md:hidden" />
     <FollowUs />
-  </div>
+  </footer>
 )
 export default Footer
 
@@ -33,7 +33,7 @@ type Status = 'None' | 'Error' | 'Submitted' | 'Submitting'
 const Subscribe = () => {
   const [status, setStatus] = React.useState<Status>('None')
   const fields = useFields({
-    email: {
+    newsletter_email: {
       constraints: 'required email',
       label: 'Email Address',
     },
@@ -43,7 +43,7 @@ const Subscribe = () => {
     const cleaned = cleanFields(fields)
     axios
       .post('/accounts/newsletter', {
-        email: cleaned.email,
+        email: cleaned.newsletter_email,
       })
       .then(() => setStatus('Submitted'))
       .catch(() => setStatus('Error'))
@@ -69,7 +69,7 @@ const Subscribe = () => {
           {messages[status]}
         </div>
       ) : null}
-      <Input {...fields.email}>
+      <Input {...fields.newsletter_email}>
         <div className="h-full absolute right-0 mr-2 justify-center">
           <Icon name="email" size={20} />
         </div>
@@ -110,7 +110,7 @@ export const FollowUs = ({ className = '' }) => (
 
 export const SocialMediaIcon = ({ name }) => (
   <Link href={socialMediaLinks[name]}>
-    <a>
+    <a aria-label={`Social media link to ${name}`}>
       <div className="p-5 border-gray border rounded-full cursor-pointer items-center justify-center">
         <Icon name={name} className="w-5 h-5" />
       </div>

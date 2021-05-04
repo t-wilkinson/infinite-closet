@@ -52,7 +52,12 @@ export const ForgotPassword = () => {
   return (
     <div className="py-16 bg-gray-light space-y-8 h-full">
       <Form>
-        <Image src="/icons/logo-transparent.svg" width={64} height={64} />
+        <Image
+          alt="Infinite Closet logo"
+          src="/icons/logo-transparent.svg"
+          width={64}
+          height={64}
+        />
         <span className="font-subheader-light text-center text-xl mb-6">
           Forgot password?
         </span>

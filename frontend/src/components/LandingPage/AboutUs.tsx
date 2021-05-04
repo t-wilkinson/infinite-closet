@@ -1,4 +1,7 @@
 import React from 'react'
+
+import { Divider } from '@/components'
+
 import { values } from './constants'
 
 export const AboutUs = () => (
@@ -12,6 +15,9 @@ export const AboutUs = () => (
         sustainable future.
       </span>
     </AboutItem>
+
+    <Divider className="my-2 max-w-xs" />
+
     <AboutItem header="Our Vision">
       <span className="max-w-sm text-lg sm:text-center text-left mx-2">
         Our platform allows customers to hire independent brands while cutting
@@ -22,6 +28,9 @@ export const AboutUs = () => (
         designer closet, we allow women to feel great every day.
       </span>
     </AboutItem>
+
+    <Divider className="my-2 max-w-xs" />
+
     <AboutItem header="Our Values">
       <div className="flex-wrap items-center justify-center w-full max-w-xl m-4 md:flex-row">
         {values.map(({ header, text }) => (
@@ -35,13 +44,13 @@ export default AboutUs
 
 const AboutItem = ({ header, children }) => (
   <div className="items-center my-4">
-    <span className="text-3xl font-subheader text-pri">{header}</span>
+    <span className="text-3xl font-subheader">{header}</span>
     {children}
   </div>
 )
 
 const ValueItem = ({ header, text }) => (
-  <div className="items-center w-56 h-56 p-6 m-2 shadow-md bg-gray-light">
+  <div className="rounded-sm items-center w-56 h-56 p-6 m-2 shadow-md bg-gray-light">
     <span className="mb-4 text-lg font-bold text-pri">{header}</span>
     <span className="text-center">{text}</span>
   </div>

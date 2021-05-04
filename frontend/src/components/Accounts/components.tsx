@@ -82,7 +82,10 @@ export const Checkbox = ({
   color = undefined,
   children = undefined,
 }) => (
-  <button onClick={() => onChange(!value)}>
+  <button
+    onClick={() => onChange(!value)}
+    aria-label={`Toggle ${label} checkbox`}
+  >
     <div className="flex-row flex-wrap items-center">
       <div className="items-center justify-center w-5 h-5 bg-white border border-black rounded-sm">
         {value && <Icon name="check" className="w-3 h-3" style={{ color }} />}
@@ -126,15 +129,19 @@ export const Input = ({
         <label
           htmlFor={field}
           className={`bg-white rounded-sm border-sec absolute z-10 left-0 bottom-0 m-2 my-4 px-1 transform duration-200 pointer-events-none
-          ${focused || value ? '-translate-y-5 -translate-x-1 scale-90' : ''}
           ${focused ? 'text-sec' : 'text-gray'}
           `}
+          style={{
+            ...(focused || value
+              ? { transform: 'translate(-5px, -22px) scale(0.9)' }
+              : {}),
+          }}
         >
           {label}
         </label>
 
         <div
-          className={`w-full h-full flex-row justify-between border-2 rounded-sm transform duration-200
+          className={`w-full h-full flex-row justify-between border rounded-sm transform duration-200
             ${focused ? 'border-sec' : ''}
             ${
               changed && validations.length > 0
@@ -176,6 +183,7 @@ export const Form = ({ className = '', children }) => (
 
 export const Submit = ({ children, disabled, onSubmit }) => (
   <button
+    aria-label="Submit form"
     className={`p-4 text-white mt-4 rounded-sm inline
       ${disabled ? 'bg-pri-light' : 'bg-pri'}
     `}

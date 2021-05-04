@@ -56,7 +56,12 @@ export const Login = () => {
   return (
     <div className="py-16 bg-gray-light space-y-8 h-full">
       <Form>
-        <Image src="/icons/logo-transparent.svg" width={64} height={64} />
+        <Image
+          src="/icons/logo-transparent.svg"
+          width={64}
+          height={64}
+          alt="Infinite Closet logo"
+        />
         <span className="text-center font-subheader-light text-xl mb-6">
           Sign in to Infinite Closet
         </span>
@@ -70,6 +75,7 @@ export const Login = () => {
           type={passwordVisible ? 'text' : 'password'}
         >
           <button
+            aria-label="Toggle password visibility"
             className="flex flex-row items-center absolute right-0 h-full pr-2"
             onClick={() => setPasswordVisible(!passwordVisible)}
           >

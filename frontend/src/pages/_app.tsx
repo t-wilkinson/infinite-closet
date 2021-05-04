@@ -36,14 +36,18 @@ export default App
 
 const Headers = () => (
   <Head>
+    <meta
+      name="description"
+      content="Rent clothes from independent brands while cutting their carbon footprint, all while being more affordable. By creating an “unlimited” designer closet, we allow women to feel great every day."
+    />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link rel="shortcut icon" href="/favicon.png" />
     <link
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@200;300&family=Cinzel&family=Lato:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js" />
+    <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-analytics.js" />
     <script
       dangerouslySetInnerHTML={{
         __html: `
@@ -65,7 +69,7 @@ const Headers = () => (
 )
 
 const Wrapper = ({ children }) => {
-  useSaveScrollPos()
+  // useSaveScrollPos()
   const headerOpen = useSelector((state) => state.layout.headerOpen)
 
   return (

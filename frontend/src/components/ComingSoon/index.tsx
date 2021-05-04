@@ -35,7 +35,7 @@ export default ComingSoon
 
 export const SocialMediaIcon = ({ name }) => (
   <Link href={socialMediaLinks[name]}>
-    <a>
+    <a aria-label={`Social media link to ${name}`}>
       <div className="border border-gray rounded-full p-4 items-center justify-center">
         <Icon size={20} name={name} />
       </div>

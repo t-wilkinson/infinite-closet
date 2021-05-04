@@ -15,7 +15,7 @@ const HeaderAside = () => {
 
   return (
     headerOpen && (
-      <div className="fixed inset-0 bg-white z-20 border-b border-gray-light">
+      <aside className="fixed inset-0 bg-white z-20 border-b border-gray-light">
         <div className="w-full h-full overflow-scroll">
           <div className="w-full flex-row items-center justify-between p-4">
             <Link href="/">
@@ -23,7 +23,10 @@ const HeaderAside = () => {
                 <span className="font-header">INFINITE CLOSET</span>
               </a>
             </Link>
-            <button onClick={() => dispatch(layoutActions.toggleHeader())}>
+            <button
+              onClick={() => dispatch(layoutActions.toggleHeader())}
+              aira-label="Toggle side navigation"
+            >
               <Icon name="close" size={16} />
             </button>
           </div>
@@ -57,7 +60,7 @@ const HeaderAside = () => {
           <AsideLink href="/accounts/login" label="Sign In" />
           <AsideLink href="/accounts/register" label="Register" />
         </div>
-      </div>
+      </aside>
     )
   )
 }
@@ -68,6 +71,7 @@ const AsideLink = ({ href, label }) => {
   const dispatch = useDispatch()
   return (
     <button
+      aria-label="Close side navigation"
       className="flex items-start"
       onClick={() => {
         dispatch(layoutActions.closeHeader())
@@ -82,6 +86,7 @@ const AsideLink = ({ href, label }) => {
 const RouteHeader = ({ setFocused, focused, section }) => {
   return (
     <button
+      aria-label="Toggle aside menu route content"
       className="outline-none"
       onClick={() =>
         setFocused(focused === section.value ? null : section.value)

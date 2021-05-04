@@ -15,7 +15,10 @@ const SmallHeader = () => {
   return (
     <div className="flex items-center p-4 mb-6 border-b border-gray-light md:hidden">
       <div className="flex-row items-center w-full mr-2 select-none">
-        <button onClick={() => dispatch(layoutActions.toggleHeader())}>
+        <button
+          onClick={() => dispatch(layoutActions.toggleHeader())}
+          aria-label="Toggle side navigation"
+        >
           <Icon name="menu" size={20} />
         </button>
         <Link href="/landing-page">
@@ -35,7 +38,11 @@ const LargeHeader = () => (
       <a>
         <div className="items-end cursor-pointer flex-row">
           <div className="relative w-20 h-16">
-            <Image layout="fill" src="/icons/logo-transparent.svg" />
+            <Image
+              layout="fill"
+              src="/icons/logo-transparent.svg"
+              alt="Infinite Closet logo"
+            />
           </div>
           <span className="text-4xl font-header">INFINITE CLOSET</span>
         </div>

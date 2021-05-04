@@ -130,7 +130,12 @@ const ImagesLarge = ({ images, state, dispatch }) => (
               dispatch({ type: 'focus-image', index: state.startIndex + index })
             }}
           >
-            <Image layout="fill" objectFit="contain" src={getURL(v.url)} />
+            <Image
+              className="Product image"
+              layout="fill"
+              objectFit="contain"
+              src={getURL(v.url)}
+            />
           </div>
         ))}
       <button
@@ -174,7 +179,12 @@ export const FocusedImage = ({ image }) => {
       onMouseMove={({ clientX, clientY }) => setHover({ clientX, clientY })}
     >
       <div>
-        <Image layout="fill" objectFit="contain" src={getURL(image.url)} />
+        <Image
+          layout="fill"
+          objectFit="contain"
+          alt="Main product image"
+          src={getURL(image.url)}
+        />
       </div>
     </div>
   )

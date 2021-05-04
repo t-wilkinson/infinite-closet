@@ -10,7 +10,7 @@ export const NavBar = () => {
 
   return (
     <div
-      className="items-center w-full relative"
+      className="items-center w-full relative z-30"
       onMouseLeave={() => setVisible(null)}
     >
       <Sections visible={visible} setVisible={setVisible} />
@@ -55,7 +55,7 @@ const Sections = ({ visible, setVisible }) => (
             ${visible === value ? 'bg-gray-light cursor-pointer' : ''}
           `}
         >
-          <Link href={href ?? '#'}>
+          <Link href={href ?? '/coming-soon#'}>
             <a>
               <span className="p-2 cursor-pointer font-subheader">{label}</span>
             </a>
@@ -83,7 +83,7 @@ const PageRoutes = ({ route }: { route: typeof routes[number] }) => (
 
 const ColumnHeader = ({ href, children }) => (
   <span className="px-4 font-bold">
-    <Link href={href ?? '#'}>
+    <Link href={href ?? '/coming-soon#'}>
       <a>
         <span
           className={`p-1 font-bold
@@ -99,7 +99,7 @@ const ColumnHeader = ({ href, children }) => (
 
 const ColumnItem = ({ href, children }) => (
   <span className="px-4">
-    <Link href={href ?? '#'}>
+    <Link href={href ?? '/coming-soon#'}>
       <a>
         <span
           className={`p-1 text-sm

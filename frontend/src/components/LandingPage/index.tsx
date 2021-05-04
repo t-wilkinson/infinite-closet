@@ -1,5 +1,4 @@
 import React from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import axios from 'axios'
 
@@ -21,16 +20,17 @@ import { howDidYouFindUs } from './constants'
 export const LandingPage = () => {
   return (
     <div className="w-full mb-6">
-      <div className="relative items-center min-h-screen">
-        <Image
-          priority={true}
-          src="/images/brand/Facebook-Banner.png"
-          layout="fill"
-          objectFit="cover"
+      <div className="relative items-center min-h-screen overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover"
+          style={{
+            filter: 'blur(8px)',
+            backgroundImage: 'url(/images/brand/Facebook-Banner-shrunk.png)',
+          }}
         />
-        <div className="z-10 items-center w-full py-16 bg-black h-full bg-opacity-80 px-4 sm:px-0">
-          <div className="items-center w-full p-4 bg-white sm:my-92 sm:max-w-lg sm:rounded-md">
-            <span className="text-4xl uppercase text-pri font-subheader text-center">
+        <div className="z-10 items-center w-full py-16 bg-black h-full bg-opacity-50 px-4 sm:px-0">
+          <div className="items-center w-full p-4 bg-white sm:my-92 sm:max-w-lg rounded-md">
+            <span className="text-4xl uppercase font-subheader text-center">
               Join The Waitlist
             </span>
             <JoinWaitlist />
@@ -85,7 +85,7 @@ const WaitlistForm = ({ status, setStatus }) => {
     subscribe: { label: '' },
     checkbox: { constraints: 'required', label: '' },
     email: { constraints: 'required email', label: 'Email Address' },
-    name: { constraints: 'required', label: 'First Name' },
+    name: { constraints: 'required', label: 'Name' },
     comment: { label: 'Leave a comment' },
   })
 
@@ -164,7 +164,7 @@ const WaitlistForm = ({ status, setStatus }) => {
 const FooterContact = () => (
   <div className="flex-row items-center justify-between w-full">
     <div>
-      <span className="text-gray-dark">London, UK</span>
+      <span className="text-gray">London, UK</span>
       <Link href="mailto:info@infinitecloset.co.uk">
         <a>
           <span className="text-gray-dark">info@infinitecloset.co.uk</span>
@@ -205,7 +205,7 @@ const Checkboxes = ({ label, value, onChange }) => (
 
 const SocialMediaIcon = ({ name }) => (
   <Link href={socialMediaLinks[name]}>
-    <a className="mx-2">
+    <a aria-label={`Social media link to ${name}`} className="mx-2">
       <Icon name={name} className="w-6 h-6 text-black" />
     </a>
   </Link>

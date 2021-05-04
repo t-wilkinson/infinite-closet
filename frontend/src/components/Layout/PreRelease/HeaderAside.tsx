@@ -14,16 +14,20 @@ const HeaderAside = () => {
 
   return (
     headerOpen && (
-      <div className="fixed inset-0 bg-white z-20 border-b border-gray-light">
+      <aside className="fixed inset-0 bg-white z-30 border-b border-gray-light">
         <div className="w-full h-full overflow-auto">
-          <div className="w-full flex-row items-center justify-between p-4">
+          <div className="w-full flex-row items-center justify-between">
             <Link href="/">
-              <a>
-                <span className="font-header">INFINITE CLOSET</span>
+              <a className="p-4">
+                <span className="font-header text-xl">INFINITE CLOSET</span>
               </a>
             </Link>
-            <button onClick={() => dispatch(layoutActions.toggleHeader())}>
-              <Icon name="close" size={16} />
+            <button
+              onClick={() => dispatch(layoutActions.toggleHeader())}
+              aria-label="Toggle side navigation"
+              className="p-4"
+            >
+              <Icon name="close" size={20} />
             </button>
           </div>
 
@@ -48,7 +52,7 @@ const HeaderAside = () => {
             </div>
           ))}
         </div>
-      </div>
+      </aside>
     )
   )
 }
@@ -57,6 +61,7 @@ export default HeaderAside
 const RouteHeader = ({ setFocused, focused, section }) => {
   return (
     <button
+      aria-label="Toggle aside menu sub routes"
       className="outline-none"
       onClick={() =>
         setFocused(focused === section.value ? null : section.value)

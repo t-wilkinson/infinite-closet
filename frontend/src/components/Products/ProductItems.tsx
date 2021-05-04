@@ -82,7 +82,12 @@ const ProductImage = ({ images }) => (
     <div className="absolute top-0 right-0 p-2">
       <Icon size={24} name="heart" />
     </div>
-    <Image src={getURL(images[0].url)} layout="fill" objectFit="contain" />
+    <Image
+      alt="Product image"
+      src={getURL(images[0].url)}
+      layout="fill"
+      objectFit="contain"
+    />
   </div>
 )
 
@@ -99,7 +104,12 @@ const ProductInfo = ({ item }) => (
       </div>
     </div>
     <div className="self-end p-4 border border-black rounded-full">
-      <Image width={16} height={16} src="/icons/shopping-bag.svg" />
+      <Image
+        alt="Shopping bag"
+        width={16}
+        height={16}
+        src="/icons/shopping-bag.svg"
+      />
     </div>
   </div>
 )
