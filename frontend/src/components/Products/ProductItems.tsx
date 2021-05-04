@@ -63,16 +63,18 @@ export default ProductItems
 const Product = ({ item }: any) => {
   return (
     <div className="w-1/2 lg:w-1/3">
-      <Link href={`/shop/${item.designer.slug}/${item.slug}`}>
-        <a>
-          <div className="relative w-full h-0 overflow-hidden cursor-pointer aspect-w-2 aspect-h-3">
-            <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-black">
-              <ProductImage images={item.images} />
-              <ProductInfo item={item} />
+      <div className="m-2 lg:m-4">
+        <Link href={`/shop/${item.designer.slug}/${item.slug}`}>
+          <a>
+            <div className="relative w-full h-0 overflow-hidden cursor-pointer aspect-w-2 aspect-h-3">
+              <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-gray">
+                <ProductImage images={item.images} />
+                <ProductInfo item={item} />
+              </div>
             </div>
-          </div>
-        </a>
-      </Link>
+          </a>
+        </Link>
+      </div>
     </div>
   )
 }
@@ -80,7 +82,7 @@ const Product = ({ item }: any) => {
 const ProductImage = ({ images }) => (
   <div className="relative h-full bg-gray-light">
     <div className="absolute top-0 right-0 p-2">
-      <Icon size={24} name="heart" />
+      <Icon size={20} name="heart" />
     </div>
     <Image
       alt="Product image"
@@ -103,13 +105,8 @@ const ProductInfo = ({ item }) => (
         </span>
       </div>
     </div>
-    <div className="self-end p-4 border border-black rounded-full">
-      <Image
-        alt="Shopping bag"
-        width={16}
-        height={16}
-        src="/icons/shopping-bag.svg"
-      />
+    <div className="self-end p-4 border border-gray-light rounded-full">
+      <Icon name="shopping-bag" size={16} />
     </div>
   </div>
 )

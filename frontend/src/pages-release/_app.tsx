@@ -4,17 +4,14 @@ import { useRouter } from 'next/router'
 import { Provider } from 'react-redux'
 import store from '@/utils/store'
 import axios from 'axios'
-import getConfig from 'next/config'
 import '@/styles/index.css'
 
 import useAnalytics from '@/utils/useAnalytics'
 
 import { useSelector } from '@/utils/store'
 
-const { publicRuntimeConfig } = getConfig()
-const { STRAPI_API_URL } = publicRuntimeConfig
-
-axios.defaults.baseURL = STRAPI_API_URL || 'http://localhost:1337'
+axios.defaults.baseURL =
+  process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337'
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 const App = ({ Component, pageProps }) => {

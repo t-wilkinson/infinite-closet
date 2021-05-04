@@ -3,7 +3,7 @@ import LandingPage from '@/LandingPage'
 
 const Page = () => {
   return (
-    <Layout title="Welcome!">
+    <Layout>
       <LandingPage />
     </Layout>
   )

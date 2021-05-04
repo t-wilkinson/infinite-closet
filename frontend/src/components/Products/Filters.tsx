@@ -98,43 +98,40 @@ const FilterFooter = () => {
   const dispatch = useDispatch()
   const router = useRouter()
   const panel = useSelector((state) => productsSelectors.panelSelector(state))
+  const applyFilterPanel = () => {
+    dispatch(productsActions.closePanel())
+
+    // turn panel filters into query
+    let filters = Object.entries(filterData).reduce(
+      (acc, [filter, { filterName }]) => {
+        if (filterName) acc[filterName] = panel.filters[filter]
+        return acc
+      },
+      {} as any,
+    )
+    if (panel.sortBy) filters.sort = panel.sortBy
+
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        ...filters,
+      },
+    })
+  }
 
   return (
-    <div className="sm:hidden p-4 flex-row w-full">
+    <div className="sm:hidden p-2 flex-row w-full">
       <button
-        className="flex-grow bg-pri p-4 text-white"
-        onClick={() => {
-          dispatch(productsActions.closePanel())
-
-          // turn panel filters into query
-          let filters = Object.entries(filterData).reduce(
-            (acc, [filter, { filterName }]) => {
-              if (filterName) acc[filterName] = panel.filters[filter]
-              return acc
-            },
-            {} as any,
-          )
-          if (panel.sortBy) filters.sort = panel.sortBy
-
-          router.push({
-            pathname: router.pathname,
-            query: {
-              ...router.query,
-              ...filters,
-            },
-          })
-        }}
+        className="flex-grow bg-pri p-4 text-white rounded-sm"
+        onClick={applyFilterPanel}
       >
         Apply
       </button>
-
       <div className="w-4" />
-
       <button
-        className="flex-grow bg-white border p-4"
-        onClick={() => {
-          dispatch(productsActions.closePanel())
-        }}
+        className="flex-grow bg-white border border-gray p-4 rounded-sm"
+        onClick={() => dispatch(productsActions.closePanel())}
       >
         Close
       </button>

@@ -10,9 +10,7 @@ import Products from '@/Products'
 import { sortData, filterData } from '@/Products/constants'
 import { productsActions } from '@/Products/slice'
 import { QUERY_LIMIT } from '@/Products/constants'
-import Header from '@/Layout/Header'
-import Footer from '@/Layout/Footer'
-import { Divider } from '@/components'
+import Layout from '@/Layout'
 
 export const Page = ({ data }) => {
   const router = useRouter()
@@ -44,10 +42,9 @@ export const Page = ({ data }) => {
 
   return (
     <>
-      <Header />
-      <Products data={data} loading={loading} />
-      <Divider />
-      <Footer />
+      <Layout title="Rent Products | Infinite Closet">
+        <Products data={data} loading={loading} />
+      </Layout>
     </>
   )
 }

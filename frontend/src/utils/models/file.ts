@@ -16,7 +16,7 @@ export interface StrapiFile {
   url: string;
   previewUrl?: string;
   provider: string;
-  providermetadata?: { [key: string]: any };
+  provider_metadata?: { [key: string]: any };
   related: any[];
   created_by: string;
 }

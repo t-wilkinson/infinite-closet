@@ -15,19 +15,20 @@ const HeaderAside = () => {
 
   return (
     headerOpen && (
-      <aside className="fixed inset-0 bg-white z-20 border-b border-gray-light">
-        <div className="w-full h-full overflow-scroll">
-          <div className="w-full flex-row items-center justify-between p-4">
+      <aside className="fixed inset-0 bg-white z-30 border-b border-gray-light">
+        <div className="w-full h-full overflow-auto">
+          <div className="w-full flex-row items-center justify-between">
             <Link href="/">
-              <a>
-                <span className="font-header">INFINITE CLOSET</span>
+              <a className="p-4">
+                <span className="font-header text-xl">INFINITE CLOSET</span>
               </a>
             </Link>
             <button
               onClick={() => dispatch(layoutActions.toggleHeader())}
-              aira-label="Toggle side navigation"
+              aria-label="Toggle side navigation"
+              className="p-4"
             >
-              <Icon name="close" size={16} />
+              <Icon name="close" size={20} />
             </button>
           </div>
 
@@ -51,15 +52,15 @@ const HeaderAside = () => {
               ))}
             </div>
           ))}
-
-          <Divider className="my-2" />
-          {/* <AsideLink href="/coming-soon" label="My Accout" /> */}
-          <AsideLink href="/coming-soon" label="About Us" />
-          <AsideLink href="/coming-soon" label="Help" />
-          <Divider className="my-2" />
-          <AsideLink href="/accounts/login" label="Sign In" />
-          <AsideLink href="/accounts/register" label="Register" />
         </div>
+
+        <Divider className="my-2" />
+        {/* <AsideLink href="/coming-soon" label="My Accout" /> */}
+        <AsideLink href="/coming-soon" label="About Us" />
+        <AsideLink href="/coming-soon" label="Help" />
+        <Divider className="my-2" />
+        <AsideLink href="/accounts/login" label="Sign In" />
+        <AsideLink href="/accounts/register" label="Register" />
       </aside>
     )
   )
@@ -86,7 +87,7 @@ const AsideLink = ({ href, label }) => {
 const RouteHeader = ({ setFocused, focused, section }) => {
   return (
     <button
-      aria-label="Toggle aside menu route content"
+      aria-label="Toggle aside menu sub routes"
       className="outline-none"
       onClick={() =>
         setFocused(focused === section.value ? null : section.value)
@@ -106,20 +107,20 @@ const RouteHeader = ({ setFocused, focused, section }) => {
   )
 }
 
-const RouteContents = ({ focused, item, section }) => {
-  return (
-    <div
-      className={`bg-gray-light items-start
-        ${focused === section.value ? '' : 'hidden'}
+const RouteContents = ({ focused, item, section }) => (
+  <div
+    className={`bg-gray-light items-start
+      ${focused === section.value ? '' : 'hidden'}
       `}
-    >
-      <Link href={item.href ?? '#'}>
-        <a>
-          <span className="px-4 my-1 py-1 hover:underline cursor-pointer">
-            {item.label}
-          </span>
-        </a>
-      </Link>
-    </div>
-  )
-}
+  >
+    <Link href={item.href ?? '#'}>
+      <a
+        className={`px-4 my-1 py-1
+          ${item.href ? 'hover:underline' : 'cursor-default text-gray-700'}
+        `}
+      >
+        <span>{item.label}</span>
+      </a>
+    </Link>
+  </div>
+)

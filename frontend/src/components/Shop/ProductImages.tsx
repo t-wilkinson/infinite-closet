@@ -82,7 +82,7 @@ const ImagesSmall = ({ images, state, dispatch }) => (
         <button
           key={i}
           onClick={() => dispatch({ type: 'focus-image', index: i })}
-          className="flex w-4 h-4 rounded-full border items-center justify-center"
+          className="flex w-4 h-4 rounded-full border border-gray items-center justify-center"
         >
           <div
             className={`w-3 h-3 rounded-full
@@ -108,7 +108,7 @@ const ImagesSmall = ({ images, state, dispatch }) => (
 )
 
 const ImagesLarge = ({ images, state, dispatch }) => (
-  <div className="hidden sm:flex flex-col-reverse md:flex-row justify-center w-1/2 h-128">
+  <div className="hidden sm:flex flex-col-reverse md:flex-row justify-center w-1/2 lg:w-full h-128">
     <div className="flex-row md:flex-col items-center space-x-2">
       <button
         onClick={() => dispatch({ type: 'shift-decrease' })}

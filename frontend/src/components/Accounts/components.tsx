@@ -128,12 +128,13 @@ export const Input = ({
       >
         <label
           htmlFor={field}
-          className={`bg-white rounded-sm border-sec absolute z-10 left-0 bottom-0 m-2 my-4 px-1 transform duration-200 pointer-events-none
+          className={`bg-white rounded-sm border-sec absolute z-10 left-0 m-2 my-4 px-1 transform duration-200 pointer-events-none
           ${focused ? 'text-sec' : 'text-gray'}
           `}
           style={{
+            bottom: -2,
             ...(focused || value
-              ? { transform: 'translate(-5px, -22px) scale(0.9)' }
+              ? { transform: 'translate(-5px, -24px) scale(0.9)' }
               : {}),
           }}
         >

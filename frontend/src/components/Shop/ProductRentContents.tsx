@@ -79,7 +79,7 @@ const productRentContents = {
         </div>
       </SelectorItem>
 
-      <CallToAction onClick={() => {}} className="my-2 self-center">
+      <CallToAction onClick={() => {}} className="my-2 self-center rounded-sm">
         Add to Closet
       </CallToAction>
     </>
@@ -110,7 +110,7 @@ const OneTimeRadioButton = ({ selected, oneTime, dispatch }) => (
     className="flex-row flex items-center"
     onClick={() => dispatch(shopActions.changeOneTime(oneTime))}
   >
-    <div className="w-4 h-4 rounded-full border items-center justify-center mr-2">
+    <div className="w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
       <div
         className={`w-3 h-3 rounded-full
         ${selected ? 'bg-sec-light' : ''}

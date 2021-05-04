@@ -31,7 +31,7 @@ export const BreadCrumbs = ({}) => {
       {routes
         .find((el) => el.value === slug[0])
         ?.data[0].data.map((el: { label: string; href: string }) => (
-          <Link key={el.label} href={el.href}>
+          <Link key={el.label} href={el.href || '#'}>
             <a>
               <span className="cursor-pointer hover:underline mb-1">
                 {el.label}

@@ -4,17 +4,13 @@ import { useRouter } from 'next/router'
 import { Provider } from 'react-redux'
 import store from '@/utils/store'
 import axios from 'axios'
-import getConfig from 'next/config'
 import '@/styles/index.css'
 
 import useAnalytics from '@/utils/useAnalytics'
 
 import { useSelector } from '@/utils/store'
 
-const { publicRuntimeConfig } = getConfig()
-const { STRAPI_API_URL } = publicRuntimeConfig
-
-axios.defaults.baseURL = STRAPI_API_URL || 'http://localhost:1337'
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_STRAPI_API_URL
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 const App = ({ Component, pageProps }) => {
@@ -50,19 +46,7 @@ const Headers = () => (
     <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-analytics.js" />
     <script
       dangerouslySetInnerHTML={{
-        __html: `
-        var firebaseConfig = {
-        apiKey: "AIzaSyC3eakvWXGZVM2vKN69pXViyPsHyQghCys",
-        authDomain: "infinite-closet-1614373277543.firebaseapp.com",
-        projectId: "infinite-closet-1614373277543",
-        storageBucket: "infinite-closet-1614373277543.appspot.com",
-        messagingSenderId: "703454257680",
-        appId: "1:703454257680:web:ffd5aeb011088bfe6b6095",
-        measurementId: "G-K4XJMWSGN9"
-        };
-        firebase.initializeApp(firebaseConfig);
-        firebase.analytics();
-        `,
+        __html: process.env.NEXT_PUBLIC_FIREBASE_CONFIG,
       }}
     />
   </Head>

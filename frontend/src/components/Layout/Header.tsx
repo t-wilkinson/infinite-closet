@@ -1,29 +1,30 @@
 import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import dynamic from 'next/dynamic'
 
-import { useDispatch } from '@/utils/store'
 import { Icon } from '@/components'
+import { useDispatch } from '@/utils/store'
 
 import { layoutActions } from './slice'
 import Navbar from './Navbar'
-import HeaderAside from './HeaderAside'
+const HeaderAside = dynamic(() => import('./HeaderAside'))
 
 const SmallHeader = () => {
   const dispatch = useDispatch()
 
   return (
-    <div className="flex items-center p-4 mb-6 border-b border-gray-light md:hidden">
-      <div className="flex-row items-center w-full mr-2 select-none">
+    <div className="p-4 border-b border-gray-light mb-6 flex md:hidden items-center">
+      <div className="flex-row items-center content-between w-full mr-2 select-none">
         <button
           onClick={() => dispatch(layoutActions.toggleHeader())}
           aria-label="Toggle side navigation"
+          className="p-2"
         >
-          <Icon name="menu" size={20} />
+          <Icon name="menu" size={28} />
         </button>
-        <Link href="/landing-page">
+        <Link href="/">
           <a>
-            <span className="ml-4 font-header font-lg">INFINITE CLOSET</span>
+            <span className="p-2 font-header text-xl">INFINITE CLOSET</span>
           </a>
         </Link>
       </div>
@@ -33,18 +34,15 @@ const SmallHeader = () => {
 }
 
 const LargeHeader = () => (
-  <div className="z-20 items-center justify-center hidden w-full pt-4 pb-4 md:flex relative select-none">
-    <Link href="/landing-page">
+  <div className="z-30 items-center hidden w-full pt-4 mb-8 md:flex select-none">
+    <Link href="/">
       <a>
-        <div className="items-end cursor-pointer flex-row">
-          <div className="relative w-20 h-16">
-            <Image
-              layout="fill"
-              src="/icons/logo-transparent.svg"
-              alt="Infinite Closet logo"
-            />
+        <div className="items-center mb-2 cursor-pointer">
+          <div className="w-24 mb-2">
+            <Icon name="logo" className="text-pri" />
           </div>
           <span className="text-4xl font-header">INFINITE CLOSET</span>
+          <span className="text-lg font-header">LESS IS MORE</span>
         </div>
       </a>
     </Link>
@@ -53,10 +51,10 @@ const LargeHeader = () => (
 )
 
 export const Header = () => (
-  <>
+  <header>
     <SmallHeader />
     <LargeHeader />
-  </>
+  </header>
 )
 
 export default Header

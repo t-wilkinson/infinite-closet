@@ -10,10 +10,10 @@ export interface StrapiProduct {
   name: string;
   slug: string;
   description: string;
-  stylistnotes: string;
-  rentalprice: number;
-  retailprice?: number;
-  purchaseprice?: number;
+  stylist_notes: string;
+  rental_price: number;
+  retail_price?: number;
+  purchase_price?: number;
   images: StrapiFile[];
   colors?: string;
   fits?: string;

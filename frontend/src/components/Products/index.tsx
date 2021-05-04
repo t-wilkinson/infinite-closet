@@ -1,6 +1,5 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import Image from 'next/image'
 
 import { ScrollUp, Icon } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
@@ -15,7 +14,7 @@ import Sort from './Sort'
 export const Products = ({ data, loading }) => {
   return (
     <div className="items-center">
-      <div className="flex-row w-full max-w-screen-xl h-full px-1 sm:px-4">
+      <div className="flex-row w-full max-w-screen-xl h-full px-1 px-4 xl:px-0">
         <Filters />
         <div className="w-2" />
         <ProductItemsWrapper data={data} loading={loading} />
@@ -106,7 +105,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
           }
         }}
       >
-        <div className="p-1 border border-gray-light">
+        <div className="p-1 border border-gray-light rounded-sm">
           <Icon name="left" size={16} />
         </div>
       </button>
@@ -124,7 +123,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
           }
         }}
       >
-        <div className="p-1 border border-gray-light">
+        <div className="p-1 border border-gray-light rounded-sm">
           <Icon name="right" size={16} />
         </div>
       </button>

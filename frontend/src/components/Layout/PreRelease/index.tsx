@@ -1,6 +1,5 @@
 import Head from 'next/head'
 
-import { Divider } from '@/components'
 import Header from './Header'
 import Footer from './Footer'
 
@@ -11,7 +10,6 @@ const Page = ({ title = 'Infinite Closet', children }) => (
     </Head>
     <Header />
     {children}
-    <Divider />
     <Footer />
   </>
 )

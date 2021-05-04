@@ -1,11 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
-import getConfig from 'next/config'
 
 import qs from 'qs'
-
-const { publicRuntimeConfig } = getConfig()
-const { FACEBOOK_APP_ID } = publicRuntimeConfig
 
 interface ShareFacebookConfig {
   url: string
@@ -36,7 +32,7 @@ export default {
         qs.stringify({
           u: url,
           quote: description,
-          app_id: FACEBOOK_APP_ID,
+          app_id: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID,
           redirect_uri: url,
           display: 'popup',
           kid_directed_site: '0',

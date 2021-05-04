@@ -24,7 +24,7 @@ export const Sort = ({ sortBy }: { sortBy: SortBy }) => {
       >
         <div
           className={`flex-row items-center border-l border-r border-t p-2 relative
-         ${hover ? 'border-gray' : 'border-transparent'}`}
+         ${hover ? 'border-gray-light' : 'border-transparent'}`}
         >
           <Icon name="sort" size={14} />
           <div className="w-1" />
@@ -69,18 +69,18 @@ const DropDown = ({ focused, hover, sortBy }) => {
     (focused || hover) && (
       <div
         className={`p-2 left-0 w-48 items-start absolute bottom-0 transform translate-y-full bg-white
-        border-l border-b border-r border-t ${
-          hover ? 'border-gray' : 'border-transparent'
-        }`}
+        border-l border-b border-r border-t
+        ${hover ? 'border-gray-light' : 'border-transparent'}
+        `}
       >
         {Object.entries(sortData).map(([field, { label }]) => (
           <div key={field} className="my-1">
             <button onClick={() => sortByField(field as SortBy)}>
               <div className="items-start w-full">
                 <span
-                  className={`text-left ${
-                    sortBy === field ? 'font-bold' : 'font-normal'
-                  }`}
+                  className={`text-left
+                    ${sortBy === field ? 'font-bold' : 'font-normal'}
+                  `}
                 >
                   {label}
                 </span>

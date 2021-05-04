@@ -10,10 +10,12 @@ import ProductRentContents from './ProductRentContents'
 
 export const Shop = ({ data }) => {
   return (
-    <div className="px-4 sm:flex-row flex-col w-full">
-      <ProductImages images={data.product.images} />
-      <div className="w-4" />
-      <Product data={data} />
+    <div className="items-center">
+      <div className="px-4 xl:px:0 sm:flex-row flex-col w-full max-w-screen-xl">
+        <ProductImages images={data.product.images} />
+        <div className="w-4" />
+        <Product data={data} />
+      </div>
     </div>
   )
 }

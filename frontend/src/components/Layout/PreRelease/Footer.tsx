@@ -13,18 +13,21 @@ import { Icon, Divider } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 
 export const Footer = () => (
-  <footer className="flex flex-col items-center justify-evenly w-full pb-2 my-4 md:flex-row">
-    <div className="items-center flex-grow">
-      <span className="text-2xl font-subheader">NEWSLETTER</span>
-      <div className="content-center items-center rounded-sm">
-        <Subscribe />
+  <>
+    <Divider />
+    <footer className="flex flex-col items-center justify-evenly w-full pb-2 my-4 md:flex-row">
+      <div className="items-center flex-grow">
+        <span className="text-2xl font-subheader">NEWSLETTER</span>
+        <div className="content-center items-center rounded-sm">
+          <Subscribe />
+        </div>
       </div>
-    </div>
-    <Divider className="my-4 md:hidden" />
-    <FooterLinks />
-    <Divider className="my-4 md:hidden" />
-    <FollowUs />
-  </footer>
+      <Divider className="my-4 md:hidden" />
+      <FooterLinks />
+      <Divider className="my-4 md:hidden" />
+      <FollowUs />
+    </footer>
+  </>
 )
 export default Footer
 

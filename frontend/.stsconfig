@@ -32,7 +32,7 @@ module.exports = {
   fieldType: (fieldType, fieldName, interfaceName) => {
     if (fieldType == 'datetime') return 'string'
   },
-  fieldName: (fieldName) => fieldName.replace('_', ''),
+  // fieldName: (fieldName) => fieldName.replace('_', ''),
   enumName: (name, interfaceName) => `Enum${interfaceName}${name}`,
   importAsType: (interfaceName) =>
     interfaceName === 'MyInterfaceThatWantsToImportAsTypes' /* or just true */,

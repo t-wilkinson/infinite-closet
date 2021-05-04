@@ -1,8 +1,4 @@
 import axios from 'axios'
-import getConfig from 'next/config'
-
-const { publicRuntimeConfig } = getConfig()
-const { STRAPI_API_URL } = publicRuntimeConfig
 
 export function getURL(url: string) {
   if (url == null) {
@@ -15,7 +11,9 @@ export function getURL(url: string) {
   }
 
   // Otherwise prepend the URL path with the Strapi URL
-  return `${STRAPI_API_URL || 'http://localhost:1337'}${url}`
+  return `${
+    process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337'
+  }${url}`
 }
 
 // Helper to make GET requests to Strapi

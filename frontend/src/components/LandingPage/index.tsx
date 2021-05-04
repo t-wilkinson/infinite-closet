@@ -24,11 +24,12 @@ export const LandingPage = () => {
         <div
           className="absolute inset-0 bg-cover"
           style={{
-            filter: 'blur(8px)',
+            filter: 'blur(12px) brightness(0.5)',
+            transform: 'scale(1.05)',
             backgroundImage: 'url(/images/brand/Facebook-Banner-shrunk.png)',
           }}
         />
-        <div className="z-10 items-center w-full py-16 bg-black h-full bg-opacity-50 px-4 sm:px-0">
+        <div className="z-10 items-center w-full py-16 h-full px-4 sm:px-0">
           <div className="items-center w-full p-4 bg-white sm:my-92 sm:max-w-lg rounded-md">
             <span className="text-4xl uppercase font-subheader text-center">
               Join The Waitlist
@@ -83,7 +84,7 @@ const JoinWaitlist = () => {
 const WaitlistForm = ({ status, setStatus }) => {
   const fields = useFields({
     subscribe: { label: '' },
-    checkbox: { constraints: 'required', label: '' },
+    checkbox: { constraints: 'required', label: '', defaultValue: 'other' },
     email: { constraints: 'required email', label: 'Email Address' },
     name: { constraints: 'required', label: 'Name' },
     comment: { label: 'Leave a comment' },

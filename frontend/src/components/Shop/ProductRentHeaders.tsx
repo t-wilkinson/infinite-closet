@@ -9,7 +9,7 @@ export const ProductRentHeaders = ({ product, state }) => {
   const dispatch = useDispatch()
 
   return (
-    <div className="flex-row border-gray-dark border rounded-md bg-gray-light divide-x overflow-hidden">
+    <div className="flex-row border-gray border rounded-md bg-gray-light divide-x divide-gray overflow-hidden">
       {Object.keys(productRentHeaders).map((rentType: RentType, i: number) => {
         return (
           <button
@@ -18,7 +18,7 @@ export const ProductRentHeaders = ({ product, state }) => {
             onClick={() => dispatch(shopActions.changeRentType(rentType))}
           >
             <div
-              className={`flex-grow p-2 br-gray-light h-full
+              className={`flex-grow p-2 h-full
                 ${rentType === state.rentType ? 'bg-sec-light' : ''}
                 `}
             >

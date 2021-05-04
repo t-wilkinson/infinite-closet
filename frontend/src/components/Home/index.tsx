@@ -5,7 +5,7 @@ import { useSelector } from '@/utils/store'
 export const Home = () => {
   const layout = useSelector((state) => state.accounts)
   return (
-    <div>
+    <div className="h-full items-center">
       HOME
       {JSON.stringify(layout)}
     </div>

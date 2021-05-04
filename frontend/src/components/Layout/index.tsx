@@ -1,7 +1,13 @@
+import Head from 'next/head'
+
 import Header from './Header'
 import Footer from './Footer'
-export const Layout = ({ children }) => (
+
+export const Layout = ({ title = 'Infinite Closet', children }) => (
   <>
+    <Head>
+      <title>{title}</title>
+    </Head>
     <Header />
     {children}
     <Footer />
