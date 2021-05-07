@@ -12,7 +12,7 @@ import {
   cleanFields,
   Checkbox,
   Submit,
-} from '@/Accounts/components'
+} from '@/Account/components'
 
 import { AboutUs } from './AboutUs'
 import { howDidYouFindUs } from './constants'

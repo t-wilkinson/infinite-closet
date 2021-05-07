@@ -7,16 +7,13 @@ import axios from 'axios'
 import '@/styles/index.css'
 
 import useAnalytics from '@/utils/useAnalytics'
-
+import CookieConsent from '@/Layout/CookieConsent'
 import { useSelector } from '@/utils/store'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_STRAPI_API_URL
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 const App = ({ Component, pageProps }) => {
-  const app = useAnalytics()
-  app?.setCurrentScreen(window.location.pathname)
-
   return (
     <>
       <Headers />
@@ -42,19 +39,14 @@ const Headers = () => (
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@200;300&family=Cinzel&family=Lato:wght@400;700&display=swap"
       rel="stylesheet"
     />
-    <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js" />
-    <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-analytics.js" />
-    <script
-      dangerouslySetInnerHTML={{
-        __html: process.env.NEXT_PUBLIC_FIREBASE_CONFIG,
-      }}
-    />
   </Head>
 )
 
 const Wrapper = ({ children }) => {
   // useSaveScrollPos()
   const headerOpen = useSelector((state) => state.layout.headerOpen)
+  const app = useAnalytics()
+  app?.setCurrentScreen(window.location.pathname)
 
   return (
     <div
@@ -62,6 +54,8 @@ const Wrapper = ({ children }) => {
         ${headerOpen ? 'overflow-hidden' : 'overflow-y-scroll'}
       `}
     >
+      <CookieConsent />
+
       <div className="min-h-screen">
         <Banner />
         {children}

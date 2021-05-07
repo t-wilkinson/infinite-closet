@@ -1,21 +1,20 @@
 import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 
 import useAnalytics from '@/utils/useAnalytics'
-
-import {
-  OR,
+import Form, {
   Input,
-  Form,
   Submit,
-  Warning,
-  useFields,
-  isValid,
-  cleanFields,
-} from './components'
+  Warnings,
+  PasswordVisible,
+  FormHeader,
+  OR,
+} from '@/Form'
+import useFields, { isValid, cleanFields } from '@/Form/useFields'
+
+import AccountForm from './AccountForm'
 
 type Status = 'success' | 'in-fields' | 'server-error'
 
@@ -50,23 +49,12 @@ export const ForgotPassword = () => {
   }
 
   return (
-    <div className="py-16 bg-gray-light space-y-8 h-full">
-      <Form>
-        <Image
-          alt="Infinite Closet logo"
-          src="/icons/logo-transparent.svg"
-          width={64}
-          height={64}
-        />
-        <span className="font-subheader-light text-center text-xl mb-6">
-          Forgot password?
-        </span>
+    <AccountForm>
+      <Form onSubmit={onSubmit}>
+        <FormHeader label="Forgot password?" />
 
-        {status === 'server-error' &&
-          warnings.map((warning) => <Warning key={warning}>{warning}</Warning>)}
-
+        {status === 'server-error' && <Warnings warnings={warnings} />}
         <Input {...fields.email} />
-
         <Submit
           disabled={!isValid(fields) || status === 'success'}
           onSubmit={() => onSubmit()}
@@ -84,7 +72,7 @@ export const ForgotPassword = () => {
           </a>
         </Link>
       </Form>
-    </div>
+    </AccountForm>
   )
 }
 export default ForgotPassword

@@ -1,12 +1,10 @@
-import React from 'react'
+import { useSelector } from '@/utils/store'
 
 export const useAnalytics = () => {
-  const [analytics, setAnalytics] = React.useState<any>()
+  const consent = useSelector((state) => state.layout.cookieConsent)
+  const analytics = useSelector((state) => state.layout.analytics)
 
-  React.useEffect(() => {
-    setAnalytics((window as any).firebase.analytics())
-  }, [])
-
-  return analytics
+  if (consent.statistics) return analytics
+  else return
 }
 export default useAnalytics

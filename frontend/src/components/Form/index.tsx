@@ -1,79 +1,12 @@
 import React from 'react'
+
 import { Icon } from '@/components'
 
-// TODO: needs better type
-type Field = {
-  field: string
-  label: string
-  type: string
-  value: any
-  constraints: string
-  onChange: (value: any) => void
-}
-
-type Fields = {
-  [field: string]: Field
-}
-
-type FieldsConfig = {
-  [field: string]: {
-    defaultValue?: any
-    constraints?: string
-    label: string
-    onChange?: (value: string) => void
-    type?: string
-  }
-}
-
-type Valid = true | string
+import { Field } from './types'
+import { validate } from './useFields'
 
 export const validateField = (field: Field) =>
   validate(field.field, field.value, field.constraints)
-
-export const validate = (
-  field: string,
-  value: string,
-  constraints: string,
-): Valid[] => {
-  const isValid = (value: string, constraint: string): Valid => {
-    const [type, ...props] = constraint.split(':')
-    switch (type) {
-      case 'email':
-        return (
-          /^.+@.+\..+$/.test(value) ||
-          `Please enter a valid ${field.toLowerCase()}`
-        )
-      case 'required':
-        return Boolean(value) || `Please include your ${field.toLowerCase()}`
-      case 'number':
-        return /^\d*$/.test(value) || `${field} must be a number`
-      case 'max-width':
-        return (
-          value.length <= Number(props[0]) ||
-          `${field} must be at most ${props[0]} characters long`
-        )
-      case 'min-width':
-        return (
-          value.length >= Number(props[0]) ||
-          `${field} must be at least ${props[0]} characters long`
-        )
-      case 'regex':
-        return (
-          RegExp(props[0]).test(value) ||
-          `${field} does not have the correct format`
-        )
-      case '':
-        return true
-      default:
-        return true
-    }
-  }
-
-  return constraints
-    .split(' ')
-    .map((constraint) => isValid(value, constraint))
-    .filter((v) => v !== true)
-}
 
 export const Checkbox = ({
   value = false,
@@ -168,21 +101,49 @@ export const Input = ({
   )
 }
 
+export const Warnings = ({ warnings }) =>
+  warnings.map((warning) => <Warning key={warning}>{warning}</Warning>)
+
 export const Warning = ({ children }) => (
   <span className="font-bold text-sm text-warning">{children}</span>
 )
 
-export const Form = ({ className = '', children }) => (
+export const Form = ({
+  onSubmit = (..._: any[]) => {}, // eww
+  className = '',
+  children,
+}) => (
   <div
     className={`items-center h-full w-full bg-gray-light flex-grow ${className}`}
   >
-    <form className="w-full max-w-sm" onSubmit={(e) => e.preventDefault()}>
+    <form
+      className="w-full max-w-sm"
+      onSubmit={(e) => {
+        onSubmit(e)
+        e.preventDefault()
+      }}
+    >
       <div className="w-full p-6 bg-white rounded-lg shadow-md">{children}</div>
     </form>
   </div>
 )
 
-export const Submit = ({ children, disabled, onSubmit }) => (
+export const FormHeader = ({ label }) => (
+  <>
+    <div className="items-center text-pri -mb-6">
+      <Icon name="logo" size={64} />
+    </div>
+    <span className="text-center font-subheader-light text-3xl mb-6">
+      {label}
+    </span>
+  </>
+)
+
+export const Submit = ({
+  children = 'Submit',
+  disabled = false,
+  onSubmit = () => {},
+}) => (
   <button
     aria-label="Submit form"
     className={`p-4 text-white mt-4 rounded-sm inline
@@ -204,43 +165,19 @@ export const OR = () => (
   </div>
 )
 
-export const useFields: (config: FieldsConfig) => Fields = (config) => {
-  const initialState = Object.keys(config).reduce(
-    (acc, k) => ((acc[k] = config[k].defaultValue ?? ''), acc),
-    {},
-  )
-  const reducer = (state, { type, payload }) => ({ ...state, [type]: payload })
-  const [state, dispatch] = React.useReducer(reducer, initialState)
+export const PasswordVisible = ({ passwordVisible, setPasswordVisible }) => (
+  <button
+    aria-label="Toggle password visibility"
+    className="flex flex-row items-center absolute right-0 h-full pr-2"
+    type="button"
+    onClick={() => setPasswordVisible(!passwordVisible)}
+  >
+    {passwordVisible ? (
+      <Icon name="eye" size={24} />
+    ) : (
+      <Icon name="eye-hidden" size={24} />
+    )}
+  </button>
+)
 
-  const fields = Object.entries(config).reduce((acc, [field, v]) => {
-    v = Object.assign({ type: 'text', constraints: '', onChange: () => {} }, v)
-    acc[field] = {
-      field,
-      label: v.label,
-      type: v.type,
-      value: state[field],
-      constraints: v.constraints,
-      onChange: (value: string) => {
-        dispatch({ type: field, payload: value })
-        v.onChange(value)
-      },
-    }
-    return acc
-  }, {})
-
-  return fields
-}
-
-export const isValid = (fields: Fields): boolean => {
-  return Object.values(fields)
-    .map((field) => validate(field.label, field.value, field.constraints))
-    .every((v) => v.length === 0)
-}
-
-export const cleanFields = (fields: Fields): { [field: string]: any } => {
-  return Object.entries(fields).reduce((acc, [k, v]) => {
-    if (typeof v.value === 'string') acc[k] = v.value.trim()
-    else acc[k] = v.value
-    return acc
-  }, {})
-}
+export default Form

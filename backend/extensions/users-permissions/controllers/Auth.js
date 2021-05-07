@@ -30,6 +30,18 @@ const nDigit = (size) => {
   return num;
 };
 
+const setCookieSession = (cookies, jwt) => {
+  cookies.set("token", jwt, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production" ? true : false,
+    maxAge: 1000 * 60 * 60 * 24 * 14, // 14 Day Age
+    domain:
+      process.env.NODE_ENV === "development"
+        ? "localhost"
+        : process.env.PRODUCTION_URL,
+  });
+};
+
 module.exports = {
   async callback(ctx) {
     const provider = ctx.params.provider || "local";
@@ -177,10 +189,13 @@ module.exports = {
         return ctx.badRequest(null, error === "array" ? error[0] : error);
       }
 
-      ctx.send({
-        jwt: strapi.plugins["users-permissions"].services.jwt.issue({
-          id: user.id,
-        }),
+      const jwt = strapi.plugins["users-permissions"].services.jwt.issue({
+        id: user.id,
+      });
+
+      setCookieSession(ctx.cookies, jwt);
+      return ctx.send({
+        status: "Authenticated",
         user: sanitizeEntity(user.toJSON ? user.toJSON() : user, {
           model: strapi.query("user", "users-permissions").model,
         }),
@@ -563,8 +578,9 @@ module.exports = {
         _.pick(user, ["id"])
       );
 
+      setCookieSession(ctx.cookies, jwt);
       return ctx.send({
-        jwt,
+        status: "Authenticated",
         user: sanitizedUser,
       });
     } catch (err) {

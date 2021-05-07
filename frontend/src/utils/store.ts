@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import productsSlice from '@/Products/slice'
 import layoutSlice from '@/Layout/slice'
 import shopSlice from '@/Shop/slice'
-import accountsSlice from '@/Accounts/slice'
+import accountsSlice from '@/Account/slice'
 
 import {
   TypedUseSelectorHook,

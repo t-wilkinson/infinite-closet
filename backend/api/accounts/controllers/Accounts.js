@@ -2,6 +2,14 @@
 const _ = require("lodash");
 
 module.exports = {
+  async logout(ctx) {
+    ctx.cookies.set("token", null);
+    ctx.send({
+      authorized: true,
+      message: "Successfully ended session",
+    });
+  },
+
   async newsletter(ctx) {
     const body = ctx.request.body;
 

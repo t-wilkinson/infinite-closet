@@ -1,5 +1,6 @@
 /* Components that are used everywhere */
 import React from 'react'
+import Image from 'next/image'
 
 export const CheckBox = ({
   state = false,
@@ -79,8 +80,7 @@ export const Icon = ({
   )
 }
 
-// TODO: Instead wrap an Image, pass the filepath/name
-// TODO: efficiency (use a single arrow, dynamically load these? )
+// TODO: This is ~ 24K not compressed.
 const icons = {
   'shopping-bag': (
     <svg viewBox="-35 0 512 512.00102">

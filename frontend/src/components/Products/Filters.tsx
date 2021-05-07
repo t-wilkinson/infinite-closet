@@ -31,7 +31,6 @@ export const Filters = ({}) => {
         <FilterWrapper
           key={filter}
           filter={filter}
-          Filter={FilterItems[filter]}
           selectFilter={() => dispatch(productsActions.focusFilter(filter))}
         />
       ))}
@@ -62,7 +61,8 @@ const FilterHeader = () => {
   )
 }
 
-const FilterWrapper = ({ selectFilter, filter, Filter }) => {
+const FilterWrapper = ({ selectFilter, filter }) => {
+  const Filter = FilterItems[filter]
   const panel = usePanel(filter)
   const selected = useSelector((state) =>
     productsSelectors.isFilterSelected(state, filter),

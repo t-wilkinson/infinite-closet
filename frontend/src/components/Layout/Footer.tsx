@@ -8,7 +8,7 @@ import {
   useFields,
   cleanFields,
   isValid,
-} from '@/Accounts/components'
+} from '@/Account/components'
 import { Icon, Divider } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 

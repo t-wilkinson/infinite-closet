@@ -2,6 +2,14 @@
   "routes": [
     {
       "method": "POST",
+      "path": "/accounts/logout",
+      "handler": "Accounts.logout",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
       "path": "/accounts/waitlist",
       "handler": "Accounts.waitlist",
       "config": {

@@ -3,6 +3,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '@/utils/store'
 import { StrapiProduct, StrapiDesigner } from '@/utils/models'
 
+import { CookieConsent } from './types'
+
 export interface State {
   data: {
     products: StrapiProduct[]
@@ -10,6 +12,8 @@ export interface State {
   }
   loading: boolean
   headerOpen: boolean
+  cookieConsent: CookieConsent
+  analytics?: any
 }
 
 const initialState: State = {
@@ -19,6 +23,9 @@ const initialState: State = {
   },
   loading: false,
   headerOpen: false,
+  cookieConsent: {
+    statistics: false,
+  },
 }
 
 export const layoutSlice = createSlice({
@@ -37,7 +44,6 @@ export const layoutSlice = createSlice({
     doneLoading(state) {
       state.loading = false
     },
-
     toggleHeader(state) {
       state.headerOpen = !state.headerOpen
     },
@@ -46,6 +52,12 @@ export const layoutSlice = createSlice({
     },
     closeHeader(state) {
       state.headerOpen = false
+    },
+    giveConsent(state, { payload }: PayloadAction<CookieConsent>) {
+      state.cookieConsent = payload
+    },
+    loadAnalytics(state, { payload }) {
+      state.analytics = payload
     },
   },
 })

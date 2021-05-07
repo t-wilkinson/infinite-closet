@@ -1,28 +1,25 @@
 import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 
 import useAnalytics from '@/utils/useAnalytics'
-import { accountsActions } from './slice'
 import { useDispatch } from '@/utils/store'
-import { Icon } from '@/components'
-
-import {
-  OR,
+import Form, {
   Input,
-  Form,
   Submit,
-  Warning,
-  useFields,
-  isValid,
-  cleanFields,
-} from './components'
+  Warnings,
+  PasswordVisible,
+  FormHeader,
+  OR,
+} from '@/Form'
+import useFields, { isValid, cleanFields } from '@/Form/useFields'
+
+import { accountsActions } from './slice'
+import AccountForm from './AccountForm'
 
 export const ForgotPassword = () => {
   const fields = useFields({
-    code: { constraints: 'required', label: 'Reset Code' },
     password: { constraints: 'required', label: 'Password' },
   })
   const router = useRouter()
@@ -30,12 +27,13 @@ export const ForgotPassword = () => {
   const app = useAnalytics()
   const [warnings, setWarnings] = React.useState<string[]>([])
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false)
+  const code = router.query.code
 
   const onSubmit = () => {
     const cleaned = cleanFields(fields)
     axios
       .post('/auth/reset-password', {
-        code: cleaned.code,
+        code,
         password: cleaned.password,
         passwordConfirmation: cleaned.password,
       })
@@ -55,42 +53,23 @@ export const ForgotPassword = () => {
   }
 
   return (
-    <div className="py-16 bg-gray-light space-y-8">
-      <Form>
-        <Image
-          alt="Infinite Closet logo"
-          src="/icons/logo-transparent.svg"
-          width={64}
-          height={64}
-        />
-        <span className="font-subheader-light text-center text-xl mb-6">
-          Forgot password?
-        </span>
-
-        {warnings.map((warning) => (
-          <Warning key={warning}>{warning}</Warning>
-        ))}
-        <Input {...fields.code} />
+    <AccountForm>
+      <Form onSubmit={onSubmit}>
+        <FormHeader label="Forgot password?" />
+        <Warnings warnings={warnings} />
         <Input
           {...fields.password}
           type={passwordVisible ? 'text' : 'password'}
         >
-          <button
-            aria-label="Toggle password visibility"
-            className="flex flex-row items-center absolute right-0 h-full pr-2"
-            onClick={() => setPasswordVisible(!passwordVisible)}
-          >
-            {passwordVisible ? (
-              <Icon name="eye" size={24} />
-            ) : (
-              <Icon name="eye-hidden" size={24} />
-            )}
-          </button>
+          <PasswordVisible
+            passwordVisible={passwordVisible}
+            setPasswordVisible={setPasswordVisible}
+          />
         </Input>
-        <Submit disabled={!isValid(fields)} onSubmit={() => onSubmit()}>
-          Request Password Reset
-        </Submit>
+        <Submit disabled={!isValid(fields)}>Request Password Reset</Submit>
+
         <OR />
+
         <Link href="/accounts/register">
           <a>
             <span className="cursor-pointer text-blue-500">
@@ -99,7 +78,7 @@ export const ForgotPassword = () => {
           </a>
         </Link>
       </Form>
-    </div>
+    </AccountForm>
   )
 }
 export default ForgotPassword

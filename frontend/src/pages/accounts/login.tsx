@@ -1,4 +1,4 @@
-import Login from '@/Accounts/Login'
+import Login from '@/Account/Login'
 
 const Page = () => <Login />
 export default Page
