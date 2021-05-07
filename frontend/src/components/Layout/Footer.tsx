@@ -2,13 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import axios from 'axios'
 
-import {
-  Input,
-  Submit,
-  useFields,
-  cleanFields,
-  isValid,
-} from '@/Account/components'
+import useFields, { isValid, cleanFields } from '@/Form/useFields'
+import { Input, Submit } from '@/Form'
 import { Icon, Divider } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 

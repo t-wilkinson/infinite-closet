@@ -13,7 +13,19 @@ import { useSelector } from '@/utils/store'
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_STRAPI_API_URL
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
-const App = ({ Component, pageProps }) => {
+const prereleasePaths = ['/', '/404', '/privacy-policy']
+
+const App = ({ Component, pageProps, router }) => {
+  const validPath =
+    !process.env.NEXT_PUBLIC_RELEASE &&
+    !prereleasePaths.includes(router.pathname)
+
+  React.useEffect(() => {
+    if (validPath) {
+      router.push('/')
+    }
+  }, [])
+
   return (
     <>
       <Headers />
@@ -43,7 +55,7 @@ const Headers = () => (
 )
 
 const Wrapper = ({ children }) => {
-  // useSaveScrollPos()
+  useSaveScrollPos()
   const headerOpen = useSelector((state) => state.layout.headerOpen)
   const app = useAnalytics()
   app?.setCurrentScreen(window.location.pathname)

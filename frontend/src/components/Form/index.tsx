@@ -23,6 +23,7 @@ export const Checkbox = ({
       <div className="items-center justify-center w-5 h-5 bg-white border border-black rounded-sm">
         {value && <Icon name="check" className="w-3 h-3" style={{ color }} />}
       </div>
+      &nbsp;&nbsp;
       <span>{label}</span>
       {children}
     </div>

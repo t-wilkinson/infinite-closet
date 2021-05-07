@@ -1,5 +1,5 @@
 import PrivacyPolicy from '@/PrivacyPolicy'
-import Layout from '@/Layout/PreRelease'
+import Layout from '@/Layout'
 
 const Page = () => {
   return (

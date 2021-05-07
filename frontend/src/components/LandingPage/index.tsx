@@ -5,14 +5,8 @@ import axios from 'axios'
 import { Divider, Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 import useAnalytics from '@/utils/useAnalytics'
-import {
-  Input,
-  useFields,
-  isValid,
-  cleanFields,
-  Checkbox,
-  Submit,
-} from '@/Account/components'
+import useFields, { isValid, cleanFields } from '@/Form/useFields'
+import { Input, Checkbox, Submit } from '@/Form'
 
 import { AboutUs } from './AboutUs'
 import { howDidYouFindUs } from './constants'

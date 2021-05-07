@@ -37,13 +37,23 @@ const LargeHeader = () => (
   <div className="z-30 items-center hidden w-full pt-4 mb-8 md:flex select-none">
     <Link href="/">
       <a>
-        <div className="items-center mb-2 cursor-pointer">
-          <div className="w-24 mb-2">
-            <Icon name="logo" className="text-pri" />
+        {process.env.NEXT_PUBLIC_RELEASE ? (
+          <div className="flex-row items-center mb-2 cursor-pointer">
+            <div className="w-10 mb-1">
+              <Icon name="logo" className="text-pri" />
+            </div>
+            <div className="w-4" />
+            <span className="text-4xl font-header">INFINITE CLOSET</span>
           </div>
-          <span className="text-4xl font-header">INFINITE CLOSET</span>
-          <span className="text-lg font-header">LESS IS MORE</span>
-        </div>
+        ) : (
+          <div className="items-center mb-2 cursor-pointer">
+            <div className="w-24 mb-2">
+              <Icon name="logo" className="text-pri" />
+            </div>
+            <span className="text-4xl font-header">INFINITE CLOSET</span>
+            <span className="text-lg font-header">LESS IS MORE</span>
+          </div>
+        )}
       </a>
     </Link>
     <Navbar />

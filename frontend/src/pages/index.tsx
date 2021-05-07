@@ -1,4 +1,4 @@
-import Layout from '@/Layout/PreRelease'
+import Layout from '@/Layout'
 import LandingPage from '@/LandingPage'
 
 const Page = () => {

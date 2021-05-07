@@ -3,7 +3,8 @@ import debounce from 'lodash/debounce'
 
 import { Icon, CheckBox } from '@/components'
 import { useSelector } from '@/utils/store'
-import { useFields, Input } from '@/Account/components'
+import useFields from '@/Form/useFields'
+import { Input } from '@/Form'
 
 import { filterData } from './constants'
 import { Filter } from './types'

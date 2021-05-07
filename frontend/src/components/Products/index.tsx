@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 
-import { ScrollUp, Icon } from '@/components'
+import { Icon } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
 
 import { Crumbs } from './BreadCrumbs'
@@ -130,3 +130,17 @@ const PageNavigation = ({ totalPages, ...props }) => {
     </div>
   )
 }
+
+const ScrollUp = ({ size: size_ = undefined, ...props }) => (
+  <button
+    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+    aria-label="Scroll up"
+  >
+    <div
+      className="fixed bottom-0 right-0 items-center justify-center w-12 h-12 bg-white border-2 border-black rounded-full mr-2 mb-2"
+      {...props}
+    >
+      <Icon name="up" size={20} />
+    </div>
+  </button>
+)

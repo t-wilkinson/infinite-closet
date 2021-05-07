@@ -53,14 +53,17 @@ const HeaderAside = () => {
             </div>
           ))}
         </div>
-
-        <Divider className="my-2" />
-        {/* <AsideLink href="/coming-soon" label="My Accout" /> */}
-        <AsideLink href="/coming-soon" label="About Us" />
-        <AsideLink href="/coming-soon" label="Help" />
-        <Divider className="my-2" />
-        <AsideLink href="/accounts/login" label="Sign In" />
-        <AsideLink href="/accounts/register" label="Register" />
+        {process.env.NEXT_PUBLIC_RELEASE ? (
+          <>
+            <Divider className="my-2" />
+            {/* <AsideLink href="/coming-soon" label="My Accout" /> */}
+            <AsideLink href="/coming-soon" label="About Us" />
+            <AsideLink href="/coming-soon" label="Help" />
+            <Divider className="my-2" />
+            <AsideLink href="/accounts/login" label="Sign In" />
+            <AsideLink href="/accounts/register" label="Register" />
+          </>
+        ) : null}
       </aside>
     )
   )

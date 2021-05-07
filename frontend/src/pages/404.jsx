@@ -2,7 +2,7 @@ import Head from 'next/head'
 
 import { Divider } from '@/components'
 import ComingSoon from '@/ComingSoon'
-import Header from '@/Layout/PreRelease/Header'
+import Header from '@/Layout/Header'
 
 const Page = () => {
   return (
