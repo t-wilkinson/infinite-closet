@@ -32,7 +32,11 @@
       "type": "string",
       "required": true
     },
-    "rental_price": {
+    "short_rental_price": {
+      "type": "decimal",
+      "required": true
+    },
+    "long_rental_price": {
       "type": "decimal",
       "required": true
     },
@@ -45,9 +49,7 @@
     "images": {
       "collection": "file",
       "via": "related",
-      "allowedTypes": [
-        "images"
-      ],
+      "allowedTypes": ["images"],
       "plugin": "upload",
       "required": true
     },
