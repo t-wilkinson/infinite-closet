@@ -43,7 +43,7 @@ const Headers = () => (
   <Head>
     <meta
       name="description"
-      content="Rent clothes from independent brands while cutting their carbon footprint, all while being more affordable. By creating an “unlimited” designer closet, we allow women to feel great every day."
+      content="Rent clothes from independent brands while cutting your carbon footprint, all while being more affordable. By creating an “unlimited” designer closet, we allow women to feel great every day."
     />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link rel="shortcut icon" href="/favicon.png" />
