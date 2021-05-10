@@ -68,7 +68,11 @@ export const Input = ({
               : {}),
           }}
         >
-          {label}
+          {changed && validations.length ? (
+            <Warning>{validations[0]}</Warning>
+          ) : (
+            label
+          )}
         </label>
 
         <div
@@ -93,7 +97,6 @@ export const Input = ({
           {children}
         </div>
       </div>
-      {changed && <Warning>{validations[0]}</Warning>}
     </div>
   )
 }
@@ -137,7 +140,7 @@ export const FormHeader = ({ label }) => (
 )
 
 export const Submit = ({
-  children = 'Submit',
+  children = 'Submit' as any,
   disabled = false,
   onSubmit = () => {},
 }) => (
