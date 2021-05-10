@@ -15,7 +15,7 @@ import Form, {
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 
 import AccountForm from './AccountForm'
-import { accountsActions } from './slice'
+import { accountActions } from './slice'
 
 export const Register = () => {
   const fields = useFields({
@@ -43,10 +43,9 @@ export const Register = () => {
         { withCredentials: true },
       )
       .then((res) => {
-        dispatch(accountsActions.login(res.data.user))
-        dispatch(accountsActions.addJWT(res.data.jwt))
+        dispatch(accountActions.login(res.data.user))
         app.logEvent('form_submit', {
-          type: 'accounts.register',
+          type: 'account.register',
           user: cleaned.email,
         })
         router.push('/')
@@ -91,7 +90,7 @@ const AlreadyHaveAccount = () => (
   <Form>
     <span>
       Already have an account?{' '}
-      <Link href="/accounts/login">
+      <Link href="/account/login">
         <a>
           <span className="cursor-pointer text-blue-500">Sign In</span>
         </a>

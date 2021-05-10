@@ -93,7 +93,7 @@ const WaitlistForm = ({ status, setStatus }) => {
       ?.label
 
     axios
-      .post('/accounts/waitlist', {
+      .post('/account/waitlist', {
         ...cleaned,
         subscribe: cleaned.subscribe,
         marketing: marketing,

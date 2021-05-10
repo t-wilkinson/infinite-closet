@@ -1,7 +1,55 @@
 "use strict";
 const _ = require("lodash");
+const { sanitizeEntity } = require("strapi-utils");
 
 module.exports = {
+  async login(ctx) {
+    if (ctx.state.user) {
+      return ctx.send({
+        status: 200,
+        user: sanitizeEntity(ctx.state.user),
+      });
+    }
+
+    const hasHeader = ctx.request && ctx.request.header;
+    if (hasHeader && !ctx.request.header.authorization) {
+      const token = ctx.cookies.get("token");
+      if (token) {
+        ctx.request.header.authorization = "Bearer " + token;
+      }
+    }
+
+    if (hasHeader && ctx.request.header.authorization) {
+      try {
+        const { id } = await strapi.plugins[
+          "users-permissions"
+        ].services.jwt.getToken(ctx);
+
+        if (id === undefined) {
+          return ctx.send({ status: 204 });
+        }
+
+        // fetch authenticated user
+        ctx.state.user = await strapi.plugins[
+          "users-permissions"
+        ].services.user.fetchAuthenticatedUser(id);
+      } catch (err) {
+        return ctx.send({ status: 204 });
+      }
+
+      if (!ctx.state.user) {
+        return ctx.send({ status: 204 });
+      }
+
+      return ctx.send({
+        user: sanitizeEntity(ctx.state.user),
+        status: 200,
+      });
+    } else {
+      ctx.send({ status: 204 });
+    }
+  },
+
   async logout(ctx) {
     ctx.cookies.set("token", null);
     ctx.send({
@@ -61,4 +109,8 @@ module.exports = {
 
     ctx.send({ ok: true });
   },
+};
+
+const handleErrors = (ctx, err = undefined, type) => {
+  throw strapi.errors[type](err);
 };

@@ -17,7 +17,7 @@ import Form, {
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 
 import AccountForm from './AccountForm'
-import { accountsActions } from './slice'
+import { accountActions } from './slice'
 
 export const Login = () => {
   const fields = useFields({
@@ -38,17 +38,21 @@ export const Login = () => {
         password: cleaned.password,
       })
       .then((res) => {
-        dispatch(accountsActions.login(res.data.user))
-        dispatch(accountsActions.addJWT(res.data.jwt))
-        app.logEvent('form_submit', {
-          type: 'accounts.login',
+        dispatch(accountActions.login(res.data.user))
+        app?.logEvent('form_submit', {
+          type: 'account.login',
           user: cleaned.email,
         })
         router.push('/')
       })
       .catch((err) => {
-        console.error(err.response.data.data[0].messages)
-        setWarnings(err.response.data.data[0].messages.map((v) => v.message))
+        try {
+          console.error(err.response.data.data[0].messages)
+          setWarnings(err.response.data.data[0].messages.map((v) => v.message))
+        } catch {
+          console.error('Unknown error: ' + err)
+          setWarnings(['Somethings not right... Try again?'])
+        }
       })
   }
 
@@ -71,7 +75,7 @@ export const Login = () => {
 
         <OR />
 
-        <Link href="/accounts/forgot-password">
+        <Link href="/account/forgot-password">
           <a>
             <span className="cursor-pointer text-blue-500">
               Forgot Password?
@@ -90,7 +94,7 @@ const CreateAnAccount = () => (
   <Form>
     <span>
       New to Infinite Closet?{' '}
-      <Link href="/accounts/register">
+      <Link href="/account/register">
         <a>
           <span className="cursor-pointer text-blue-500">
             Create an account

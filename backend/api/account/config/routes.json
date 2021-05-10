@@ -1,0 +1,36 @@
+{
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/account/login",
+      "handler": "account.login",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/account/logout",
+      "handler": "account.logout",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/account/waitlist",
+      "handler": "account.waitlist",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/account/newsletter",
+      "handler": "account.newsletter",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

@@ -2,11 +2,7 @@ import React from 'react'
 
 import { Icon } from '@/components'
 
-import { Field } from './types'
 import { validate } from './useFields'
-
-export const validateField = (field: Field) =>
-  validate(field.field, field.value, field.constraints)
 
 export const Checkbox = ({
   value = false,

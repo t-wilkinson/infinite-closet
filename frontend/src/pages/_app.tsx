@@ -8,7 +8,8 @@ import '@/styles/index.css'
 
 import useAnalytics from '@/utils/useAnalytics'
 import CookieConsent from '@/Layout/CookieConsent'
-import { useSelector } from '@/utils/store'
+import { useDispatch, useSelector } from '@/utils/store'
+import { accountActions } from '@/Account/slice'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_STRAPI_API_URL
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -16,11 +17,10 @@ axios.defaults.headers.post['Content-Type'] = 'application/json'
 const prereleasePaths = ['/', '/404', '/privacy-policy']
 
 const App = ({ Component, pageProps, router }) => {
-  const validPath =
-    !process.env.NEXT_PUBLIC_RELEASE &&
-    !prereleasePaths.includes(router.pathname)
-
   React.useEffect(() => {
+    const validPath =
+      !process.env.NEXT_PUBLIC_RELEASE &&
+      !prereleasePaths.includes(router.pathname)
     if (validPath) {
       router.push('/')
     }
@@ -56,9 +56,21 @@ const Headers = () => (
 
 const Wrapper = ({ children }) => {
   useSaveScrollPos()
+  const dispatch = useDispatch()
   const headerOpen = useSelector((state) => state.layout.headerOpen)
   const app = useAnalytics()
   app?.setCurrentScreen(window.location.pathname)
+
+  React.useEffect(() => {
+    axios
+      .post('/account/login', {}, { withCredentials: true })
+      .then((res) => {
+        if (res.data.user) {
+          dispatch(accountActions.login(res.data.user))
+        }
+      })
+      .catch((err) => console.error(err))
+  }, [])
 
   return (
     <div

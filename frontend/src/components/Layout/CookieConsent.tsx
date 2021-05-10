@@ -1,6 +1,5 @@
 import React from 'react'
 import Head from 'next/head'
-import Link from 'next/link'
 
 import { Checkbox } from '@/Form'
 import useFields from '@/Form/useFields'
@@ -38,7 +37,7 @@ export const CookieConsent = () => {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white p-4 items-center">
+    <div className="fixed bottom-0 left-0 right-0 p-4 items-center bg-white z-50 border-t border-gray">
       <div className="max-w-screen-lg w-full flex-wrap items-center justify-between">
         <span className="">
           This site uses cookies to improve your experience. Find our more

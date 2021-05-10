@@ -34,30 +34,57 @@ const SmallHeader = () => {
 }
 
 const LargeHeader = () => (
-  <div className="z-30 items-center hidden w-full pt-4 mb-8 md:flex select-none">
-    <Link href="/">
-      <a>
-        {process.env.NEXT_PUBLIC_RELEASE ? (
-          <div className="flex-row items-center mb-2 cursor-pointer">
-            <div className="w-10 mb-1">
-              <Icon name="logo" className="text-pri" />
-            </div>
-            <div className="w-4" />
-            <span className="text-4xl font-header">INFINITE CLOSET</span>
-          </div>
-        ) : (
-          <div className="items-center mb-2 cursor-pointer">
-            <div className="w-24 mb-2">
-              <Icon name="logo" className="text-pri" />
-            </div>
-            <span className="text-4xl font-header">INFINITE CLOSET</span>
-            <span className="text-lg font-header">LESS IS MORE</span>
-          </div>
-        )}
-      </a>
-    </Link>
+  <div className="z-30 items-center hidden w-full pt-4 mb-8 md:flex select-none relative ">
+    <div className="flex-row justify-center w-full items-center max-w-screen-xl relative">
+      <LargeHeaderLogo />
+      {process.env.NEXT_PUBLIC_RELEASE ? (
+        <div className="absolute right-0">
+          <Account />
+        </div>
+      ) : null}
+    </div>
     <Navbar />
   </div>
+)
+
+const LargeHeaderLogo = () => (
+  <Link href="/">
+    <a>
+      {process.env.NEXT_PUBLIC_RELEASE ? (
+        <div className="flex-row items-center mb-2 cursor-pointer">
+          <div className="w-10 mb-1">
+            <Icon name="logo" className="text-pri" />
+          </div>
+          <div className="w-4" />
+          <span className="text-4xl font-header">INFINITE CLOSET</span>
+        </div>
+      ) : (
+        <div className="items-center mb-2 cursor-pointer">
+          <div className="w-24 mb-2">
+            <Icon name="logo" className="text-pri" />
+          </div>
+          <span className="text-4xl font-header">INFINITE CLOSET</span>
+          <span className="text-lg font-header">LESS IS MORE</span>
+        </div>
+      )}
+    </a>
+  </Link>
+)
+
+const Account = () => (
+  <div className="flex-row">
+    <IconLink href="/user/profile" size={18} name="user" />
+    <IconLink href="/user/saved" size={18} name="heart" />
+    <IconLink href="/user/cart" size={18} name="shopping-bag" />
+  </div>
+)
+
+const IconLink = ({ size, name, href }) => (
+  <Link href={href}>
+    <a className="p-2">
+      <Icon size={size} name={name} />
+    </a>
+  </Link>
 )
 
 export const Header = () => (

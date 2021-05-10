@@ -16,7 +16,7 @@ export type FieldsConfig = {
   [field: string]: {
     defaultValue?: any
     constraints?: string
-    label: string
+    label?: string
     onChange?: (value: string) => void
     type?: string
   }

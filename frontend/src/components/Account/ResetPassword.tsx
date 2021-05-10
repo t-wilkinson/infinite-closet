@@ -15,7 +15,7 @@ import Form, {
 } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 
-import { accountsActions } from './slice'
+import { accountActions } from './slice'
 import AccountForm from './AccountForm'
 
 export const ForgotPassword = () => {
@@ -38,10 +38,9 @@ export const ForgotPassword = () => {
         passwordConfirmation: cleaned.password,
       })
       .then((res) => {
-        dispatch(accountsActions.login(res.data.user))
-        dispatch(accountsActions.addJWT(res.data.jwt))
+        dispatch(accountActions.login(res.data.user))
         app.logEvent('form_submit', {
-          type: 'accounts.reset-password',
+          type: 'account.reset-password',
           user: cleaned.email,
         })
         router.push('/')
@@ -70,7 +69,7 @@ export const ForgotPassword = () => {
 
         <OR />
 
-        <Link href="/accounts/register">
+        <Link href="/account/register">
           <a>
             <span className="cursor-pointer text-blue-500">
               Create a new Account

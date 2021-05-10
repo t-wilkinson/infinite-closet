@@ -36,7 +36,7 @@ export const ForgotPassword = () => {
       .then((res) => {
         // setStatus("success")
         app.logEvent('form_submit', {
-          type: 'accounts.forgot-password',
+          type: 'account.forgot-password',
           user: cleaned.email,
         })
         router.push('/')
@@ -64,7 +64,7 @@ export const ForgotPassword = () => {
 
         <OR />
 
-        <Link href="/accounts/register">
+        <Link href="/account/register">
           <a>
             <span className="cursor-pointer text-blue-500">
               Create a new Account

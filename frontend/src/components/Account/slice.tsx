@@ -3,18 +3,14 @@ import { RootState } from '@/utils/store'
 
 interface State {
   user?: string
-  jwt?: string
 }
 
 const initialState: State = {}
 
-export const accountsSlice = createSlice({
-  name: 'ACCOUNTS',
+export const accountSlice = createSlice({
+  name: 'ACCOUNT',
   initialState,
   reducers: {
-    addJWT(state, { payload }: PayloadAction<string>) {
-      state.jwt = payload
-    },
     login(state, { payload }: PayloadAction<string>) {
       state.user = payload
     },
@@ -24,12 +20,12 @@ export const accountsSlice = createSlice({
   },
 })
 
-const accountsSelector = (state: RootState) => state.accounts
+const accountSelector = (state: RootState) => state.account
 
-const accountsSelectors = {
-  accounts: accountsSelector,
+const accountSelectors = {
+  account: accountSelector,
 }
 
-export { accountsSelectors }
-export const accountsActions = accountsSlice.actions
-export default accountsSlice.reducer
+export { accountSelectors }
+export const accountActions = accountSlice.actions
+export default accountSlice.reducer

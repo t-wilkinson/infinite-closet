@@ -17,51 +17,21 @@ const HeaderAside = () => {
     headerOpen && (
       <aside className="fixed inset-0 bg-white z-30 border-b border-gray-light">
         <div className="w-full h-full overflow-auto">
-          <div className="w-full flex-row items-center justify-between">
-            <Link href="/">
-              <a className="p-4">
-                <span className="font-header text-xl">INFINITE CLOSET</span>
-              </a>
-            </Link>
-            <button
-              onClick={() => dispatch(layoutActions.toggleHeader())}
-              aria-label="Toggle side navigation"
-              className="p-4"
-            >
-              <Icon name="close" size={20} />
-            </button>
-          </div>
+          <Header dispatch={dispatch} />
 
           <Divider />
-
-          {routes.map((section, i) => (
-            <div key={section.value + '' + i}>
-              <RouteHeader
-                key={section.value + '' + i}
-                setFocused={setFocused}
-                focused={focused}
-                section={section}
-              />
-              {section.data[0].data.map((v: any, i: number) => (
-                <RouteContents
-                  key={v.label + '' + i}
-                  focused={focused}
-                  section={section}
-                  item={v}
-                />
-              ))}
-            </div>
-          ))}
+          <Routes focused={focused} setFocused={setFocused} />
         </div>
+
         {process.env.NEXT_PUBLIC_RELEASE ? (
           <>
             <Divider className="my-2" />
-            {/* <AsideLink href="/coming-soon" label="My Accout" /> */}
-            <AsideLink href="/coming-soon" label="About Us" />
-            <AsideLink href="/coming-soon" label="Help" />
+            <AsideLink href="/account" label="My Accout" />
+            <AsideLink href="/about-us" label="About Us" />
+            <AsideLink href="/help" label="Help" />
             <Divider className="my-2" />
-            <AsideLink href="/accounts/login" label="Sign In" />
-            <AsideLink href="/accounts/register" label="Register" />
+            <AsideLink href="/account/login" label="Sign In" />
+            <AsideLink href="/account/register" label="Register" />
           </>
         ) : null}
       </aside>
@@ -69,6 +39,46 @@ const HeaderAside = () => {
   )
 }
 export default HeaderAside
+
+const Header = ({ dispatch }) => (
+  <div className="w-full flex-row items-center justify-between">
+    <Link href="/">
+      <a className="p-4">
+        <span className="font-header text-xl">INFINITE CLOSET</span>
+      </a>
+    </Link>
+    <button
+      onClick={() => dispatch(layoutActions.toggleHeader())}
+      aria-label="Toggle side navigation"
+      className="p-4"
+    >
+      <Icon name="close" size={20} />
+    </button>
+  </div>
+)
+
+const Routes = ({ setFocused, focused }) => (
+  <>
+    {routes.map((section, i) => (
+      <div key={section.value + '' + i}>
+        <RouteHeader
+          key={section.value + '' + i}
+          setFocused={setFocused}
+          focused={focused}
+          section={section}
+        />
+        {section.data[0].data.map((v: any, i: number) => (
+          <RouteContents
+            key={v.label + '' + i}
+            focused={focused}
+            section={section}
+            item={v}
+          />
+        ))}
+      </div>
+    ))}
+  </>
+)
 
 const AsideLink = ({ href, label }) => {
   const router = useRouter()

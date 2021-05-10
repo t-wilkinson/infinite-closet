@@ -40,7 +40,7 @@ const Subscribe = () => {
   const onSubmit = () => {
     const cleaned = cleanFields(fields)
     axios
-      .post('/accounts/newsletter', {
+      .post('/account/newsletter', {
         email: cleaned.newsletter_email,
       })
       .then(() => setStatus('Submitted'))

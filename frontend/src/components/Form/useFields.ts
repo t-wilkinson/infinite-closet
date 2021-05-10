@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { FieldsConfig, Fields, Valid } from './types'
+import { FieldsConfig, Field, Fields, Valid } from './types'
 
 // TODO: this should be an object of functions
 export const validate = (
@@ -48,6 +48,9 @@ export const validate = (
     .filter((v) => v !== true)
 }
 
+export const validateField = (field: Field) =>
+  validate(field.field, field.value, field.constraints)
+
 export const isValid = (fields: Fields): boolean => {
   return Object.values(fields)
     .map((field) => validate(field.label, field.value, field.constraints))
@@ -72,7 +75,15 @@ export const useFields: (config: FieldsConfig) => Fields = (config) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
 
   const fields = Object.entries(config).reduce((acc, [field, v]) => {
-    v = Object.assign({ type: 'text', constraints: '', onChange: () => {} }, v)
+    v = Object.assign(
+      {
+        label: toTitlecase(field),
+        type: 'text',
+        constraints: '',
+        onChange: () => {},
+      },
+      v,
+    )
     acc[field] = {
       field,
       label: v.label,
@@ -90,3 +101,9 @@ export const useFields: (config: FieldsConfig) => Fields = (config) => {
   return fields
 }
 export default useFields
+
+const toTitlecase = (value: string) => {
+  let titlecase = value.replace(/([A-Z])/g, ' $1')
+  titlecase = titlecase.charAt(0).toUpperCase() + titlecase.slice(1)
+  return titlecase
+}

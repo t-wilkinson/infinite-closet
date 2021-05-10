@@ -137,7 +137,7 @@ const ScrollUp = ({ size: size_ = undefined, ...props }) => (
     aria-label="Scroll up"
   >
     <div
-      className="fixed bottom-0 right-0 items-center justify-center w-12 h-12 bg-white border-2 border-black rounded-full mr-2 mb-2"
+      className="fixed bottom-0 right-0 items-center justify-center w-12 h-12 bg-white border border-gray rounded-full mr-2 mb-2"
       {...props}
     >
       <Icon name="up" size={20} />
