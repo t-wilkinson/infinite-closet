@@ -100,7 +100,7 @@ const WaitlistForm = ({ status, setStatus }) => {
       })
       .then(() => {
         setStatus('Submitting')
-        app.logEvent('form_submit', {
+        app?.logEvent('form_submit', {
           type: 'waitlist',
           user: cleaned.email,
         })

@@ -35,7 +35,7 @@ export const ForgotPassword = () => {
       })
       .then((res) => {
         // setStatus("success")
-        app.logEvent('form_submit', {
+        app?.logEvent('form_submit', {
           type: 'account.forgot-password',
           user: cleaned.email,
         })

@@ -39,7 +39,7 @@ export const ForgotPassword = () => {
       })
       .then((res) => {
         dispatch(accountActions.login(res.data.user))
-        app.logEvent('form_submit', {
+        app?.logEvent('form_submit', {
           type: 'account.reset-password',
           user: cleaned.email,
         })
