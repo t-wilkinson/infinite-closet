@@ -61,6 +61,11 @@
     },
     "name": {
       "type": "string"
+    },
+    "cart_item": {
+      "type": "component",
+      "repeatable": true,
+      "component": "custom.cart-item"
     }
   }
 }

@@ -85,6 +85,7 @@ const Fieldset = ({ name, children }) => (
   </fieldset>
 )
 
+// TODO: use css-grid instead
 const FieldRow = ({ children }) => (
   <div className="flex-row space-x-4">{children}</div>
 )
