@@ -93,13 +93,18 @@ const ProductImage = ({ images }) => (
   </div>
 )
 
+const rentalPrice = (low: number, high: number): string =>
+  low === high ? `£${low}` : `£${low} - ${high}`
+
 const ProductInfo = ({ item }) => (
   <div className="flex-row justify-between mt-4">
     <div className="flex-grow">
       <span className="font-bold">{item.designer.name}</span>
       <span>{item.name}</span>
       <div className="flex-row mt-4">
-        <span className="font-bold">£{item.rental_price}</span>
+        <span className="font-bold">
+          {rentalPrice(item.short_rental_price, item.long_rental_price)}
+        </span>
         <span className="font-gray">
           &nbsp;{'| '} £{item.retail_price} retail
         </span>

@@ -11,7 +11,8 @@ export interface StrapiProduct {
   slug: string;
   description: string;
   stylist_notes: string;
-  rental_price: number;
+  short_rental_price: number;
+  long_rental_price: number;
   retail_price?: number;
   purchase_price?: number;
   images: StrapiFile[];

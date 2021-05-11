@@ -66,11 +66,11 @@ export const sortData: {
   Newest: { label: 'Newest', value: 'created_by' },
   PriceLowHigh: {
     label: 'Price (Low to High)',
-    value: 'rental_price:ASC',
+    value: 'short_rental_price:ASC',
   },
   PriceHighLow: {
     label: 'Price (High to Low)',
-    value: 'rental_price:DESC',
+    value: 'short_rental_price:DESC',
   },
 } as const
 

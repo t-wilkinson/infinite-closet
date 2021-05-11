@@ -42,11 +42,18 @@ export async function getServerSideProps({ params }) {
 }
 
 const OpenGraph = (product: StrapiProduct) => {
-  const { name, designer, rental_price, images, sizes, retail_price } = product
+  const {
+    name,
+    designer,
+    short_rental_price,
+    images,
+    sizes,
+    retail_price,
+  } = product
   const router = useRouter()
   const url = router.asPath.split('?')[0]
 
-  const description = `Rent ${name} by ${designer.name} for only ${rental_price} only at Infinite Closet.`
+  const description = `Rent ${name} by ${designer.name} for only ${short_rental_price} only at Infinite Closet.`
   const quantity = Object.values(sizes as { quantity: number }[]).reduce(
     (acc, { quantity }) => acc + quantity,
     0,

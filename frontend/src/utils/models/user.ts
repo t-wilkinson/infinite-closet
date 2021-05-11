@@ -15,5 +15,6 @@ export interface StrapiUser {
   blocked?: boolean;
   role?: StrapiRole;
   name?: string;
+  cart_item: any[];
   created_by: string;
 }
