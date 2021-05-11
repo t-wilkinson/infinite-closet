@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "develop": "next dev",
+    "develop": "next dev -p 3001",
     "build": "NODE_ENV=production next build",
     "start": "next start",
     "sts": "sts -c .stsconfig"
