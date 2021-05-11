@@ -8,6 +8,9 @@ module.exports = {
         "http://localhost:3000",
         "http://localhost:1337",
 
+        "http://localhost:3001",
+        "http://localhost:1338",
+
         "https://" + domain,
         "https://api." + domain,
         "https://admin." + domain,

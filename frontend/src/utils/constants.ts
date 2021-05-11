@@ -5,6 +5,10 @@ export const socialMediaLinks = {
   tiktok: 'https://www.tiktok.com/@infinitecloset',
 }
 
+const clothingPath = process.env.NEXT_PUBLIC_RELEASE
+  ? '/products/clothing'
+  : null
+
 // TODO: if href starts with `/`, consider it absolute, otherwise, hrefs.join('/')
 const routes = [
   {
@@ -58,18 +62,18 @@ const routes = [
     data: [
       {
         label: 'Category',
-        href: null,
+        href: clothingPath,
         type: 'query',
         data: [
-          { label: 'Dresses', href: null },
-          { label: 'Tops', href: null },
-          { label: 'Outerwear', href: null },
-          { label: 'Pants', href: null },
-          { label: 'Skirts', href: null },
-          { label: 'Gowns', href: null },
-          { label: 'Jumpsuits', href: null },
-          { label: 'Maternity', href: null },
-          { label: 'Jumpers', href: null },
+          { label: 'Dresses', href: clothingPath },
+          { label: 'Tops', href: clothingPath },
+          { label: 'Outerwear', href: clothingPath },
+          { label: 'Pants', href: clothingPath },
+          { label: 'Skirts', href: clothingPath },
+          { label: 'Gowns', href: clothingPath },
+          { label: 'Jumpsuits', href: clothingPath },
+          { label: 'Maternity', href: clothingPath },
+          { label: 'Jumpers', href: clothingPath },
         ],
       },
       {
