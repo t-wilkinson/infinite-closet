@@ -1,8 +1,9 @@
 {
   "kind": "collectionType",
-  "collectionName": "shipping_addresses",
+  "collectionName": "addresses",
   "info": {
-    "name": "Shipping Address"
+    "name": "Address",
+    "description": ""
   },
   "options": {
     "increments": true,
@@ -11,7 +12,8 @@
   },
   "attributes": {
     "first_name": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "last_name": {
       "type": "string",

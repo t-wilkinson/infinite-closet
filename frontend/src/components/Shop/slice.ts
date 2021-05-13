@@ -10,6 +10,7 @@ interface State {
   oneTime: OneTime
   membership: Membership
   dateVisible: boolean
+  quantity: number
   selectedDate?: Dayjs
   details?: string
   size?: number
@@ -20,6 +21,7 @@ const initialState: State = {
   oneTime: 'Short',
   membership: 'Short',
   dateVisible: false,
+  quantity: 1,
 }
 
 export const shopSlice = createSlice({

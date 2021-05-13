@@ -1,20 +1,35 @@
 import React from 'react'
 import { Input } from '@/Form'
 import useFields from '@/Form/useFields'
+import { loadStripe } from '@stripe/stripe-js'
+import { Elements } from '@stripe/react-stripe-js'
 
-export const Order = ({ data }) => {
+import CheckoutForm from './CheckoutForm'
+
+const promise = loadStripe(
+  'pk_test_51Ikb9lDnNgAk4A84M2EKzMFOlpQG65VHqqw8ZKlY8KwfgGHLEadvakIIJM7dA6HzVewnWZvJ2BPR9ZGq9SwfKBFJ00PTz0SIz5',
+)
+
+export const Checkout = ({ user, data }) => {
+  if (!user) {
+    return <div></div>
+  }
+
+  if (user.cart.length === 0) {
+    return <div></div>
+  }
+
   return (
     <div className="items-center max-w-screen-xl h-full">
       <div className="w-full">
-        <Addresses addresses={data.addresses} />
-        <PaymentMethods paymentMethods={data.paymentMethods} />
-        <Summary cart={data.cart} />
+        <Addresses addresses={user.addresses} />
+        <PaymentMethods user={user} paymentMethods={user.payment_methods} />
+        <Summary cart={user.cart} />
       </div>
-      <Cart cart={data.cart} />
+      <Cart cart={user.cart} />
     </div>
   )
 }
-export default Order
 
 const Cart = ({ cart }) => {
   return (
@@ -54,8 +69,14 @@ const AddAddress = (props) => {
   )
 }
 
-const PaymentMethods = ({ paymentMethods }) => {
-  return <> </>
+const PaymentMethods = ({ user, paymentMethods }) => {
+  return (
+    <div className="items-center w-full">
+      <Elements stripe={promise}>
+        <CheckoutForm user={user} />
+      </Elements>
+    </div>
+  )
 }
 
 const AddPaymentMethod = () => {
@@ -82,3 +103,5 @@ const AddPaymentMethod = () => {
 const Summary = ({ cart }) => {
   return <> </>
 }
+
+export default Checkout

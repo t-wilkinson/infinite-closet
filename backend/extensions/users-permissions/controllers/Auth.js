@@ -35,10 +35,9 @@ const setCookieSession = (cookies, jwt) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production" ? true : false,
     maxAge: 1000 * 60 * 60 * 24 * 14, // 14 Day Age
+    overwrite: true,
     domain:
-      process.env.NODE_ENV === "development"
-        ? "localhost"
-        : process.env.PRODUCTION_URL,
+      process.env.NODE_ENV === "development" ? "localhost" : process.env.DOMAIN,
   });
 };
 
@@ -155,10 +154,12 @@ module.exports = {
           })
         );
       } else {
+        const jwt = strapi.plugins["users-permissions"].services.jwt.issue({
+          id: user.id,
+        });
+
+        setCookieSession(ctx.cookies, jwt);
         ctx.send({
-          jwt: strapi.plugins["users-permissions"].services.jwt.issue({
-            id: user.id,
-          }),
           user: sanitizeEntity(user.toJSON ? user.toJSON() : user, {
             model: strapi.query("user", "users-permissions").model,
           }),
@@ -195,7 +196,6 @@ module.exports = {
 
       setCookieSession(ctx.cookies, jwt);
       return ctx.send({
-        status: "Authenticated",
         user: sanitizeEntity(user.toJSON ? user.toJSON() : user, {
           model: strapi.query("user", "users-permissions").model,
         }),
@@ -237,10 +237,11 @@ module.exports = {
         .query("user", "users-permissions")
         .update({ id: user.id }, { resetPasswordToken: null, password });
 
+      const jwt = strapi.plugins["users-permissions"].services.jwt.issue({
+        id: user.id,
+      });
+      setCookieSession(ctx.cookies, jwt);
       ctx.send({
-        jwt: strapi.plugins["users-permissions"].services.jwt.issue({
-          id: user.id,
-        }),
         user: sanitizeEntity(user.toJSON ? user.toJSON() : user, {
           model: strapi.query("user", "users-permissions").model,
         }),
@@ -579,10 +580,7 @@ module.exports = {
       );
 
       setCookieSession(ctx.cookies, jwt);
-      return ctx.send({
-        status: "Authenticated",
-        user: sanitizedUser,
-      });
+      return ctx.send({ user: sanitizedUser });
     } catch (err) {
       const adminError = _.includes(err.message, "username")
         ? {

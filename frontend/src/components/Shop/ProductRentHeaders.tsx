@@ -23,7 +23,7 @@ export const ProductRentHeaders = ({ product, state }) => {
                 `}
             >
               <div className="flex-grow items-center justify-between">
-                {productRentHeaders[rentType]({ product })}
+                {productRentHeaders[rentType]({ product, state })}
               </div>
             </div>
           </button>
@@ -34,15 +34,15 @@ export const ProductRentHeaders = ({ product, state }) => {
 }
 export default ProductRentHeaders
 
-const rentalPrice = (low: number, high: number): string =>
-  low === high ? `£${low}` : `£${low} - ${high}`
-
 const productRentHeaders = {
-  OneTime: ({ product }) => (
+  OneTime: ({ product, state }) => (
     <>
       <span className="text-sm font-bold text-center">One-time rental</span>
       <span className="font-bold">
-        {rentalPrice(product.short_rental_price, product.long_rental_price)}
+        £
+        {state.oneTime === 'Short'
+          ? product.short_rental_price
+          : product.long_rental_price}
       </span>
     </>
   ),

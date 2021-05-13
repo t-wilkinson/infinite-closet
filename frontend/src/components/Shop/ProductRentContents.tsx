@@ -1,7 +1,8 @@
 import React from 'react'
+import axios from 'axios'
 // import DropDownPicker from 'react-native-dropdown-picker'
 
-import { useDispatch } from '@/utils/store'
+import { useDispatch, useSelector } from '@/utils/store'
 import { Icon, CallToAction } from '@/components'
 
 import { shopActions } from './slice'
@@ -10,11 +11,17 @@ import DatePicker from './DatePicker'
 
 export const ProductRentContents = ({ product, state }) => {
   const Contents = productRentContents[state.rentType]
+  const user = useSelector((state) => state.account.user)
   const dispatch = useDispatch()
 
   return (
     <div className="h-64">
-      <Contents product={product} state={state} dispatch={dispatch} />
+      <Contents
+        user={user}
+        product={product}
+        state={state}
+        dispatch={dispatch}
+      />
     </div>
   )
 }
@@ -26,64 +33,97 @@ const rentalLengths: { [key in OneTime]: number } = {
 }
 
 const productRentContents = {
-  OneTime: ({ dispatch, product, state }) => (
-    <>
-      <DatePicker
-        state={state}
-        rentalLength={rentalLengths[state.oneTime]}
-        dispatch={dispatch}
-      />
+  OneTime: ({ dispatch, product, state, user }) => {
+    console.log(user)
+    const addToCart = () => {
+      axios
+        .post(
+          '/cart-items',
+          {
+            product: product.id,
+            quantity: state.quantity,
+            // size: product.sizes.find((v) => v.id === state.size).size ?? 'SM', // TODO: remove `??...`
+            size: 'SM',
+            rental_length: state.oneTime.toLowerCase(),
+            user: user.id,
+          },
+          { withCredentials: true },
+        )
+        .then((res) => {
+          return axios.put(
+            '/users-permissions_user',
+            { ...user, cart: [...user.cart, res.data] },
+            { withCredentials: true },
+          )
+        })
+        .then((res) => {})
+        .catch((err) => {
+          console.error(err)
+        })
+    }
 
-      <SelectorItem label="Size" className="my-2 z-10 w-24">
-        {/* <DropDownPicker */}
-        {/*   containerStyle={{ zIndex: 10 }} */}
-        {/*   style={{ zIndex: 10 }} */}
-        {/*   items={product.sizes.map((v: { id: string } & unknown) => ({ */}
-        {/*     ...v, */}
-        {/*     value: v.id, */}
-        {/*   }))} */}
-        {/*   itemStyle={{ justifyContent: 'flex-start' }} */}
-        {/*   placeholder="Select" */}
-        {/*   onChangeItem={(item) => dispatch(shopActions.changeSize(item.id))} */}
-        {/* /> */}
-      </SelectorItem>
+    return (
+      <>
+        <DatePicker
+          state={state}
+          rentalLength={rentalLengths[state.oneTime]}
+          dispatch={dispatch}
+        />
 
-      <SelectorItem label="Rental time" className="my-2">
-        <div className="flex-row justify-between w-full flex-wrap">
-          <div className="mr-6">
-            <OneTimeRadioButton
-              selected={state.oneTime === 'Short'}
-              oneTime="Short"
-              dispatch={dispatch}
-            />
-            <OneTimeRadioButton
-              selected={state.oneTime === 'Long'}
-              oneTime="Long"
-              dispatch={dispatch}
-            />
+        <SelectorItem label="Size" className="my-2 z-10 w-24">
+          {/* <DropDownPicker */}
+          {/*   containerStyle={{ zIndex: 10 }} */}
+          {/*   style={{ zIndex: 10 }} */}
+          {/*   items={product.sizes.map((v: { id: string } & unknown) => ({ */}
+          {/*     ...v, */}
+          {/*     value: v.id, */}
+          {/*   }))} */}
+          {/*   itemStyle={{ justifyContent: 'flex-start' }} */}
+          {/*   placeholder="Select" */}
+          {/*   onChangeItem={(item) => dispatch(shopActions.changeSize(item.id))} */}
+          {/* /> */}
+        </SelectorItem>
+
+        <SelectorItem label="Rental time" className="my-2">
+          <div className="flex-row justify-between w-full flex-wrap">
+            <div className="mr-6">
+              <OneTimeRadioButton
+                selected={state.oneTime === 'Short'}
+                oneTime="Short"
+                dispatch={dispatch}
+              />
+              <OneTimeRadioButton
+                selected={state.oneTime === 'Long'}
+                oneTime="Long"
+                dispatch={dispatch}
+              />
+            </div>
+            <button
+              className="flex flex-grow border border-gray py-2 px-2 rounded-sm rounded-sm flex-row flex-grow justify-between items-center"
+              onClick={() => dispatch(shopActions.showDate())}
+            >
+              <span>
+                {state.selectedDate &&
+                  state.selectedDate.format('ddd M/D') +
+                    ' - ' +
+                    state.selectedDate
+                      .add(rentalLengths[state.oneTime], 'day')
+                      .format('ddd M/D')}
+              </span>
+              <Icon className="text-gray" name="date" size={24} />
+            </button>
           </div>
-          <button
-            className="flex flex-grow border border-gray py-2 px-2 rounded-sm rounded-sm flex-row flex-grow justify-between items-center"
-            onClick={() => dispatch(shopActions.showDate())}
-          >
-            <span>
-              {state.selectedDate &&
-                state.selectedDate.format('ddd M/D') +
-                  ' - ' +
-                  state.selectedDate
-                    .add(rentalLengths[state.oneTime], 'day')
-                    .format('ddd M/D')}
-            </span>
-            <Icon className="text-gray" name="date" size={24} />
-          </button>
-        </div>
-      </SelectorItem>
+        </SelectorItem>
 
-      <CallToAction onClick={() => {}} className="my-2 self-center rounded-sm">
-        Add to Closet
-      </CallToAction>
-    </>
-  ),
+        <CallToAction
+          onClick={addToCart}
+          className="my-2 self-center rounded-sm"
+        >
+          Add to Closet
+        </CallToAction>
+      </>
+    )
+  },
 
   Membership: () => (
     <div className="justify-center items-center flex-grow">

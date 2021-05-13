@@ -30,9 +30,13 @@ export const ForgotPassword = () => {
   const onSubmit = () => {
     const cleaned = cleanFields(fields)
     axios
-      .post('/auth/forgot-password', {
-        email: cleaned.email,
-      })
+      .post(
+        '/auth/forgot-password',
+        {
+          email: cleaned.email,
+        },
+        { withCredentials: true },
+      )
       .then((res) => {
         // setStatus("success")
         app?.logEvent('form_submit', {

@@ -7,7 +7,9 @@ module.exports = {
     if (ctx.state.user) {
       return ctx.send({
         status: 200,
-        user: sanitizeEntity(ctx.state.user),
+        user: sanitizeEntity(ctx.state.user, {
+          model: strapi.query("user", "users-permissions").model,
+        }),
       });
     }
 
@@ -42,7 +44,9 @@ module.exports = {
       }
 
       return ctx.send({
-        user: sanitizeEntity(ctx.state.user),
+        user: sanitizeEntity(ctx.state.user, {
+          model: strapi.query("user", "users-permissions").model,
+        }),
         status: 200,
       });
     } else {

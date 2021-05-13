@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cart_item",
+  "info": {
+    "name": "Cart Item",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "product": {
+      "model": "product"
+    },
+    "quantity": {
+      "type": "integer",
+      "default": 1
+    },
+    "size": {
+      "type": "string",
+      "required": true
+    },
+    "rental_length": {
+      "type": "enumeration",
+      "enum": [
+        "short",
+        "long"
+      ]
+    }
+  }
+}

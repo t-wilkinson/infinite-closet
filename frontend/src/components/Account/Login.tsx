@@ -33,17 +33,21 @@ export const Login = () => {
   const onSubmit = () => {
     const cleaned = cleanFields(fields)
     axios
-      .post('/auth/local', {
-        identifier: cleaned.email,
-        password: cleaned.password,
-      })
+      .post(
+        '/auth/local',
+        {
+          identifier: cleaned.email,
+          password: cleaned.password,
+        },
+        { withCredentials: true },
+      )
       .then((res) => {
         dispatch(accountActions.login(res.data.user))
         app?.logEvent('form_submit', {
           type: 'account.login',
           user: cleaned.email,
         })
-        router.push('/')
+        // router.push('/')
       })
       .catch((err) => {
         try {

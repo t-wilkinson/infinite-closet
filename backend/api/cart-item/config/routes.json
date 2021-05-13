@@ -2,48 +2,48 @@
   "routes": [
     {
       "method": "GET",
-      "path": "/shipping-addresses",
-      "handler": "shipping-address.find",
+      "path": "/cart-items",
+      "handler": "cart-item.find",
       "config": {
         "policies": []
       }
     },
     {
       "method": "GET",
-      "path": "/shipping-addresses/count",
-      "handler": "shipping-address.count",
+      "path": "/cart-items/count",
+      "handler": "cart-item.count",
       "config": {
         "policies": []
       }
     },
     {
       "method": "GET",
-      "path": "/shipping-addresses/:id",
-      "handler": "shipping-address.findOne",
+      "path": "/cart-items/:id",
+      "handler": "cart-item.findOne",
       "config": {
         "policies": []
       }
     },
     {
       "method": "POST",
-      "path": "/shipping-addresses",
-      "handler": "shipping-address.create",
+      "path": "/cart-items",
+      "handler": "cart-item.create",
       "config": {
         "policies": []
       }
     },
     {
       "method": "PUT",
-      "path": "/shipping-addresses/:id",
-      "handler": "shipping-address.update",
+      "path": "/cart-items/:id",
+      "handler": "cart-item.update",
       "config": {
         "policies": []
       }
     },
     {
       "method": "DELETE",
-      "path": "/shipping-addresses/:id",
-      "handler": "shipping-address.delete",
+      "path": "/cart-items/:id",
+      "handler": "cart-item.delete",
       "config": {
         "policies": []
       }

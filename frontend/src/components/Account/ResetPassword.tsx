@@ -32,11 +32,15 @@ export const ForgotPassword = () => {
   const onSubmit = () => {
     const cleaned = cleanFields(fields)
     axios
-      .post('/auth/reset-password', {
-        code,
-        password: cleaned.password,
-        passwordConfirmation: cleaned.password,
-      })
+      .post(
+        '/auth/reset-password',
+        {
+          code,
+          password: cleaned.password,
+          passwordConfirmation: cleaned.password,
+        },
+        { withCredentials: true },
+      )
       .then((res) => {
         dispatch(accountActions.login(res.data.user))
         app?.logEvent('form_submit', {
