@@ -5,7 +5,6 @@ import { useSelector } from '@/utils/store'
 
 const Page = ({ data }) => {
   const user = useSelector((state) => state.account.user)
-  console.log(user)
 
   return (
     <Layout>
@@ -16,11 +15,13 @@ const Page = ({ data }) => {
 export default Page
 
 export const getServerSideProps = async ({ params, query }) => {
-  const [] = await Promise.all([])
+  const [paymentMethods] = await Promise.all([
+    fetchAPI('/stripe/payment_methods'),
+  ])
 
   return {
     props: {
-      data: {},
+      data: { paymentMethods },
     },
   }
 }

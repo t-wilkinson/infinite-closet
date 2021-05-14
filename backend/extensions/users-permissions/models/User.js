@@ -11,8 +11,7 @@ module.exports = {
         email: data.email,
         name: data.name,
         metadata: {
-          id: data.id,
-          username: data.username,
+          user: data.id,
         },
       });
 

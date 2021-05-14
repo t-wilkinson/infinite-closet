@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "orders",
+  "info": {
+    "name": "Order",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "payment_intent": {
+      "type": "string",
+      "required": true
+    },
+    "cart_items": {
+      "collection": "cart-item"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["planning", "shipping", "shipped"],
+      "default": "planning"
+    }
+  }
+}

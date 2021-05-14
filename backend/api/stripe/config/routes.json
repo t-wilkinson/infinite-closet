@@ -2,8 +2,24 @@
   "routes": [
     {
       "method": "POST",
-      "path": "/stripe/create-payment-intent",
+      "path": "/stripe/payment_intents",
       "handler": "stripe.createPaymentIntent",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/stripe/payment_intents/:id/capture",
+      "handler": "stripe.capturePaymentIntent",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/stripe/payment_methods",
+      "handler": "stripe.paymentMethods",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }

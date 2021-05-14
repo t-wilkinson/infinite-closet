@@ -40,7 +40,7 @@ export const CheckoutForm = ({ user }) => {
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     axios
-      .post('/stripe/create-payment-intent', {}, { withCredentials: true })
+      .post('/stripe/payment_intents', {}, { withCredentials: true })
       .then((res) => {
         setClientSecret(res.data.clientSecret)
       })

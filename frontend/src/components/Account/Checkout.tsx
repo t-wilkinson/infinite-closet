@@ -23,7 +23,7 @@ export const Checkout = ({ user, data }) => {
     <div className="items-center max-w-screen-xl h-full">
       <div className="w-full">
         <Addresses addresses={user.addresses} />
-        <PaymentMethods user={user} paymentMethods={user.payment_methods} />
+        <PaymentMethods user={user} paymentMethods={data.paymentMethods} />
         <Summary cart={user.cart} />
       </div>
       <Cart cart={user.cart} />

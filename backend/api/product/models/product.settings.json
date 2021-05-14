@@ -12,8 +12,8 @@
   },
   "attributes": {
     "designer": {
-      "model": "designer",
-      "via": "products"
+      "via": "products",
+      "model": "designer"
     },
     "name": {
       "type": "string",

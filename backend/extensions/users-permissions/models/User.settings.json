@@ -71,9 +71,6 @@
     },
     "carts": {
       "collection": "cart-item"
-    },
-    "payment_methods": {
-      "collection": "payment-method"
     }
   }
 }
