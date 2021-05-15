@@ -1,20 +1,21 @@
-/*
- *
- * HomePage
- *
- */
+import React, { memo } from "react";
+import styled from "styled-components";
+import Orders from "../../components/Orders";
+import usePlugin from "../../utils/usePlugin";
 
-import React, { memo } from 'react';
-// import PropTypes from 'prop-types';
-import pluginId from '../../pluginId';
+const HomePage = ({ className }) => {
+  const plugin = usePlugin();
 
-const HomePage = () => {
   return (
-    <div>
-      <h1>{pluginId}&apos;s HomePage</h1>
-      <p>Happy coding</p>
+    <div className={className}>
+      <Orders plugin={plugin} />
     </div>
   );
 };
 
-export default memo(HomePage);
+const HomePageWrapper = styled(HomePage)`
+  padding: 1rem;
+  background: white;
+`;
+
+export default memo(HomePageWrapper);

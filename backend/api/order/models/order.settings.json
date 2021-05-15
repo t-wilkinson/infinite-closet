@@ -20,8 +20,31 @@
     },
     "status": {
       "type": "enumeration",
-      "enum": ["planning", "shipping", "shipped"],
+      "enum": [
+        "planning",
+        "shipping",
+        "shipped"
+      ],
       "default": "planning"
+    },
+    "user": {
+      "plugin": "users-permissions",
+      "model": "user",
+      "via": "orders"
+    },
+    "address": {
+      "model": "address"
+    },
+    "shipping": {
+      "type": "string"
+    },
+    "shipping_class": {
+      "type": "enumeration",
+      "enum": [
+        "one_day",
+        "next_day",
+        "two_day"
+      ]
     }
   }
 }

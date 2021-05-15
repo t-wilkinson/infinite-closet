@@ -1,16 +1,27 @@
-import pluginPkg from '../../package.json';
-import pluginId from './pluginId';
-import App from './containers/App';
-import Initializer from './containers/Initializer';
-import lifecycles from './lifecycles';
-import trads from './translations';
+import pluginPkg from "../../package.json";
+import pluginId from "./pluginId";
+import App from "./containers/App";
+import Initializer from "./containers/Initializer";
+import lifecycles from "./lifecycles";
+import trads from "./translations";
 
-export default strapi => {
-  const pluginDescription = pluginPkg.strapi.description || pluginPkg.description;
+export default (strapi) => {
+  const pluginDescription =
+    pluginPkg.strapi.description || pluginPkg.description;
   const icon = pluginPkg.strapi.icon;
-  const name = pluginPkg.strapi.name;
+  const name = "Order" || pluginPkg.strapi.name;
 
   const plugin = {
+    stripe: {
+      key:
+        "sk_test_51Ikb9lDnNgAk4A84a08Vrtj9h0K7Zg6C3HLSEhbZXRkC2E3wX2y9JDo67TOZI8spmVj4nvaHSamVwiKUokS9Kg5S00whW8RV3K",
+      api: "https://api.stripe.com/v1",
+    },
+    hived: {
+      key: "",
+      api: "",
+      sender: "Infinite Closet",
+    },
     blockerComponent: null,
     blockerComponentProps: {},
     description: pluginDescription,

@@ -59,7 +59,7 @@
       "plugin": "users-permissions",
       "configurable": false
     },
-    "name": {
+    "first_name": {
       "type": "string"
     },
     "customer": {
@@ -71,6 +71,16 @@
     },
     "carts": {
       "collection": "cart-item"
+    },
+    "orders": {
+      "via": "user",
+      "collection": "order"
+    },
+    "last_name": {
+      "type": "string"
+    },
+    "phone_number": {
+      "type": "string"
     }
   }
 }

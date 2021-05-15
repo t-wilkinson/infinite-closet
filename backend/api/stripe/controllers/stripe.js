@@ -46,6 +46,9 @@ module.exports = {
       customer: user.customer,
       payment_method_types: ["card"],
       capture_method: "manual",
+      metadata: {
+        user: user.id,
+      },
     });
 
     ctx.send({

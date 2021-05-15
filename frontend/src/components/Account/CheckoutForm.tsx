@@ -56,10 +56,11 @@ export const CheckoutForm = ({ user }) => {
     setError(event.error ? event.error.message : '')
   }
 
-  const handleSubmit = async (ev) => {
+  const onSubmit = async (ev) => {
     ev.preventDefault()
     setProcessing(true)
 
+    // TODO: create order on backend
     const payload = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: elements.getElement(CardElement),
@@ -92,7 +93,10 @@ export const CheckoutForm = ({ user }) => {
         </div>
 
         <div className="w-full">
-          <Submit disabled={Boolean(processing || disabled || succeeded)}>
+          <Submit
+            disabled={Boolean(processing || disabled || succeeded)}
+            onSubmit={onSubmit}
+          >
             <span id="button-text">
               {processing ? (
                 <div className="spinner" id="spinner"></div>
