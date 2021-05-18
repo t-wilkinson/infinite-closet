@@ -66,6 +66,7 @@ export const cleanFields = (fields: Fields): { [field: string]: any } => {
 }
 
 // TODO: take an optional object which sets the default values?
+// TODO: preserve order of fields?
 export const useFields: (config: FieldsConfig) => Fields = (config) => {
   const initialState = Object.keys(config).reduce(
     (acc, k) => ((acc[k] = config[k].defaultValue ?? ''), acc),

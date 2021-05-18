@@ -17,11 +17,12 @@ export interface StrapiUser {
   confirmed?: boolean;
   blocked?: boolean;
   role?: StrapiRole;
-  lastName?: string;
   customer?: string;
-  addresses: StrapiAddress[];
-  carts: StrapiCart Item[];
-  orders: StrapiOrder[];
+  firstName?: string;
+  lastName?: string;
   phoneNumber?: string;
+  addresses: StrapiAddress[];
+  orders: StrapiOrder[];
+  cart: StrapiCart Item[];
   created_by: string;
 }

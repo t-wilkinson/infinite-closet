@@ -8,5 +8,6 @@ export interface StrapiAddress {
   localityName: string;
   town: string;
   postcode: string;
+  firstName?: string;
   created_by: string;
 }

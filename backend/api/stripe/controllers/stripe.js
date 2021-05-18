@@ -14,20 +14,14 @@ const rentalPrice = {
   long: "longRentalPrice",
 };
 
-const amountToCapture = (intent) => {
-  // TODO:
-  // Find corresponding order.
-  // Remove from amount any un-fulfilled orders
-  return intent.amount;
-};
-
 module.exports = {
   async createPaymentIntent(ctx) {
+    const body = ctx.request.body;
     const user = ctx.state.user;
-    const cartIds = user.cart.map((item) => item.id);
-    const cart = await strapi
+    const cartIds = body.cart;
+    const cartItems = await strapi
       .query("cart-item")
-      .find({ id_in: cartIds }, ["product"]);
+      .find({ id_in: body.cart }, ["product"]);
 
     const itemPrice = (item) => {
       const itemPrice = item.product[rentalPrice[item.rentalLength]];
@@ -35,42 +29,37 @@ module.exports = {
       return item.quantity * itemPrice * 100;
     };
 
-    const cartPrice = cart.reduce((price, item) => price + itemPrice(item), 0);
+    let cartPrice = cartItems.reduce(
+      (price, item) => price + itemPrice(item),
+      0
+    );
+    if (process.env.NODE_ENV === 'development' && cartPrice === 0) { cartPrice = 2000 }
 
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: cartPrice,
       currency: "gbp",
-      customer: user.customer,
       payment_method_types: ["card"],
-      capture_method: "manual",
-      metadata: {
-        user: user.id,
-      },
-    });
-
-    ctx.send({
-      clientSecret: paymentIntent.client_secret,
-    });
-  },
-
-  async capturePaymentIntent(ctx) {
-    const { id } = ctx.params;
-
-    const intent = await stripe.paymentIntents.capture(id, {
-      amount_to_capture: amountToCapture(intent),
+      setup_future_usage: "off_session",
+      amount: cartPrice,
+      customer: user.customer,
+      payment_method: body.paymentMethod,
     });
 
     ctx.send({
       status: 200,
+      paymentIntent,
     });
   },
 
   async paymentMethods(ctx) {
     const user = ctx.state.user;
-    const paymentMethods = await stripe.paymentMethods.list({
-      customer: user.customer,
-      type: "card",
-    });
+    let paymentMethods = []
+    do { // fetch all payment methods attached to user
+       const res = await stripe.paymentMethods.list({
+        customer: user.customer,
+        type: "card",
+      });
+      paymentMethods = paymentMethods.concat(res.data)
+    } while (paymentMethods.has_more)
 
     ctx.send({
       paymentMethods,

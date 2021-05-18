@@ -9,14 +9,6 @@
       }
     },
     {
-      "method": "POST",
-      "path": "/stripe/payment_intents/:id/capture",
-      "handler": "stripe.capturePaymentIntent",
-      "config": {
-        "policies": ["plugins::users-permissions.permissions"]
-      }
-    },
-    {
       "method": "GET",
       "path": "/stripe/payment_methods",
       "handler": "stripe.paymentMethods",

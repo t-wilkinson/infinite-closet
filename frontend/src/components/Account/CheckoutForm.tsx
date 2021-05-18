@@ -3,6 +3,7 @@ import axios from 'axios'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import './CheckoutForm.module.css'
 import { getURL } from '@/utils/api'
+import { StrapiUser } from '@/utils/models'
 
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from 'tailwind.config'
@@ -29,66 +30,79 @@ const cardStyle = {
   },
 }
 
-export const CheckoutForm = ({ user }) => {
-  const [succeeded, setSucceeded] = useState(false)
-  const [error, setError] = useState(null)
-  const [processing, setProcessing] = useState('')
-  const [disabled, setDisabled] = useState(true)
-  const [clientSecret, setClientSecret] = useState('')
+export const CheckoutForm = ({
+  user,
+  state,
+  dispatch,
+}: {
+  user: StrapiUser
+  address: any
+}) => {
   const stripe = useStripe()
   const elements = useElements()
 
-  useEffect(() => {
-    // Create PaymentIntent as soon as the page loads
-    axios
-      .post(
-        '/stripe/payment_intents',
-        { test: true },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          withCredentials: true,
-        },
-      )
-      .then((res) => {
-        setClientSecret(res.data.clientSecret)
-      })
-      .catch((err) => {
-        console.error(err)
-      })
-  }, [])
-
   const handleChange = async (event) => {
-    // Listen for changes in the CardElement
-    // and display any errors as the customer types their card details
-    setDisabled(event.empty)
-    setError(event.error ? event.error.message : '')
+    if (event.error) {
+      dispatch({type: 'payment-failure', payload: event.error})
+    }
   }
 
   const onSubmit = async (ev) => {
     ev.preventDefault()
-    setProcessing(true)
+    dispatch({type: 'payment-processing'})
 
-    // TODO: create order on backend
-    const payload = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: elements.getElement(CardElement),
-        billing_details: {
-          name: user.name,
-        },
+    stripe
+    .createPaymentMethod({
+      type: 'card',
+      card: elements.getElement(CardElement),
+      billing_details: {
+        name: user.firstName + ' ' + user.lastName,
+        email: user.email,
+        phone: user.phoneNumber,
       },
-      setup_future_usage: 'off_session',
     })
 
-    if (payload.error) {
-      setError(`Payment failed ${payload.error.message}`)
-      setProcessing(false)
-    } else {
-      setError(null)
-      setProcessing(false)
-      setSucceeded(true)
-    }
+    .then(res => {
+      if (res.error) { throw res.error }
+      else {
+        return axios.post(
+          '/stripe/payment_intents',
+          {
+            paymentMethod: res.paymentMethod.id,
+            cart: user.cart.map((item) => item.id),
+          },
+          {withCredentials: true},
+        )
+      }
+    })
+
+    .then(res => {
+      return stripe.confirmCardPayment(res.data.paymentIntent.client_secret)
+    })
+
+    .then(res => {
+      if (res.error) { throw res.error }
+      else {
+        dispatch({type: "payment-succeeded", payload: res.paymentIntent.status})
+        axios.post( // we can safely expect this to succeed
+          '/orders',
+          {
+            address: state.address.id,
+            paymentIntent: res.paymentIntent.id,
+            shippingClass: state.shippingClass,
+            cart: user.cart.map((item) => item.id),
+          },
+          {withCredentials: true}
+        )
+      }
+    })
+
+    .catch(err => {
+      dispatch({type: 'payment-failed', payload: err})
+      if (!err.error) { // not a stripe error, print it to console to debug
+        console.error(err)
+      }
+    })
   }
 
   return (
@@ -104,11 +118,10 @@ export const CheckoutForm = ({ user }) => {
 
         <div className="w-full">
           <Submit
-            disabled={Boolean(processing || disabled || succeeded)}
-            onSubmit={onSubmit}
+            disabled={["disabled", "processing", "succeeded"].includes(state.paymentStatus)}
           >
             <span id="button-text">
-              {processing ? (
+              {state.paymentStatus === "processing" ? (
                 <div className="spinner" id="spinner"></div>
               ) : (
                 'Pay now'
@@ -118,13 +131,13 @@ export const CheckoutForm = ({ user }) => {
         </div>
 
         {/* Show any error that happens when processing the payment */}
-        {error && (
+        {state.error && (
           <div className="card-error" role="alert">
-            {error}
+            {state.error}
           </div>
         )}
         {/* Show a success message upon completion */}
-        <p className={succeeded ? 'result-message' : 'result-message hidden'}>
+        <p className={state.paymentStatus === "succeeded" ? 'result-message' : 'result-message hidden'}>
           Payment succeeded, see the result in your
           <a href={`https://dashboard.stripe.com/test/payments`}>
             {' '}
