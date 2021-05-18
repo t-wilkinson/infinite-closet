@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import './CheckoutForm.module.css'
+import { getURL } from '@/utils/api'
 
 import resolveConfig from 'tailwindcss/resolveConfig'
 import tailwindConfig from 'tailwind.config'
@@ -40,7 +41,16 @@ export const CheckoutForm = ({ user }) => {
   useEffect(() => {
     // Create PaymentIntent as soon as the page loads
     axios
-      .post('/stripe/payment_intents', {}, { withCredentials: true })
+      .post(
+        '/stripe/payment_intents',
+        { test: true },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        },
+      )
       .then((res) => {
         setClientSecret(res.data.clientSecret)
       })
@@ -83,7 +93,7 @@ export const CheckoutForm = ({ user }) => {
 
   return (
     <div className="max-w-sm w-full">
-      <form id="payment-form" onSubmit={handleSubmit}>
+      <form id="payment-form" onSubmit={onSubmit}>
         <div className="border border-gray rounded-sm p-2">
           <CardElement
             id="card-element"

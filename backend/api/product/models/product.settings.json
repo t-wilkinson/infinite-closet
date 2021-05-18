@@ -25,35 +25,28 @@
       "required": true
     },
     "description": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
-    "stylist_notes": {
-      "type": "string",
-      "required": true
+    "stylistNotes": {
+      "type": "string"
     },
-    "short_rental_price": {
-      "type": "decimal",
-      "required": true
-    },
-    "long_rental_price": {
-      "type": "decimal",
-      "required": true
-    },
-    "retail_price": {
+    "shortRentalPrice": {
       "type": "decimal"
     },
-    "purchase_price": {
+    "longRentalPrice": {
+      "type": "decimal"
+    },
+    "retailPrice": {
+      "type": "decimal"
+    },
+    "purchasePrice": {
       "type": "decimal"
     },
     "images": {
       "collection": "file",
       "via": "related",
-      "allowedTypes": [
-        "images"
-      ],
-      "plugin": "upload",
-      "required": true
+      "allowedTypes": ["images"],
+      "plugin": "upload"
     },
     "colors": {
       "type": "string"

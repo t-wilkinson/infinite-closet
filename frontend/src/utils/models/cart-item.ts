@@ -6,7 +6,8 @@ import { StrapiProduct } from './product';
 export interface StrapiCart Item {
   id: string;
   product?: StrapiProduct;
+  quantity?: number;
   size: string;
-  quantity: number;
+  rentalLength?: "short" | "long";
   created_by: string;
 }

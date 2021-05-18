@@ -2,6 +2,7 @@ import { Filter, SortBy, ProductRoutes } from './types'
 
 export const QUERY_LIMIT = 6
 
+// TODO: the field probably isnt necessary
 // TODO: dynamically get this
 export type FilterData = typeof filterData
 export const filterData = {
@@ -66,11 +67,11 @@ export const sortData: {
   Newest: { label: 'Newest', value: 'created_by' },
   PriceLowHigh: {
     label: 'Price (Low to High)',
-    value: 'short_rental_price:ASC',
+    value: 'shortRentalPrice:ASC',
   },
   PriceHighLow: {
     label: 'Price (High to Low)',
-    value: 'short_rental_price:DESC',
+    value: 'shortRentalPrice:DESC',
   },
 } as const
 

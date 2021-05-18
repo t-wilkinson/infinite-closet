@@ -43,6 +43,7 @@ export const Input = ({
   }
   const [focused, setFocused] = React.useState(false)
   const validations = validate(label, value, constraints)
+  const required = /required/.test(constraints)
 
   return (
     <div className={`relative my-1 py-1 w-full h-full ${className}`}>
@@ -58,20 +59,23 @@ export const Input = ({
       >
         <label
           htmlFor={field}
-          className={`bg-white rounded-sm border-sec absolute z-10 left-0 m-2 my-4 px-1 transform duration-200 pointer-events-none
+          className={`bg-white rounded-sm border-sec absolute z-10 left-0 m-2 my-4 px-1 transform duration-200 pointer-events-none leading-3
           ${focused ? 'text-sec' : 'text-gray'}
           `}
           style={{
             bottom: -2,
             ...(focused || value
-              ? { transform: 'translate(-5px, -24px) scale(0.9)' }
-              : {}),
+              ? { transform: 'translate(-5px, -30px) scale(0.9)' }
+              : { transform: 'translate(-0px, -6px) ' }),
           }}
         >
           {changed && validations.length ? (
             <Warning>{validations[0]}</Warning>
           ) : (
-            label
+            <>
+              {label}
+              {required ? <span className="text-base">*</span> : null}
+            </>
           )}
         </label>
 

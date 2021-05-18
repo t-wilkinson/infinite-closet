@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '@/utils/store'
+import { StrapiUser } from '@/utils/models'
 
 interface State {
-  user?: string
+  user?: StrapiUser
 }
 
 const initialState: State = {}
@@ -11,10 +12,10 @@ export const accountSlice = createSlice({
   name: 'ACCOUNT',
   initialState,
   reducers: {
-    login(state, { payload }: PayloadAction<string>) {
+    login(state, { payload }: PayloadAction<StrapiUser>) {
       state.user = payload
     },
-    logout(state, { payload }: PayloadAction<string>) {
+    logout(state, { payload }: PayloadAction<StrapiUser>) {
       state.user = payload
     },
   },

@@ -64,7 +64,7 @@ const Product = ({ item }: any) => {
   return (
     <div className="w-1/2 lg:w-1/3">
       <div className="m-2 lg:m-4">
-        <Link href={`/shop/${item.designer.slug}/${item.slug}`}>
+        <Link href={`/shop/${item.designer?.slug}/${item.slug}`}>
           <a>
             <div className="relative w-full h-0 overflow-hidden cursor-pointer aspect-w-2 aspect-h-3">
               <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-gray">
@@ -93,20 +93,24 @@ const ProductImage = ({ images }) => (
   </div>
 )
 
-const rentalPrice = (low: number, high: number): string =>
-  low === high ? `£${low}` : `£${low} - ${high}`
+const rentalPrice = (low: number, high: number): string => {
+  if (!low && !high) {
+    return '£-'
+  }
+  return low === high ? `£${low}` : `£${low} - ${high}`
+}
 
 const ProductInfo = ({ item }) => (
   <div className="flex-row justify-between mt-4">
     <div className="flex-grow">
-      <span className="font-bold">{item.designer.name}</span>
+      <span className="font-bold">{item.designer?.name}</span>
       <span>{item.name}</span>
       <div className="flex-row mt-4">
         <span className="font-bold">
-          {rentalPrice(item.short_rental_price, item.long_rental_price)}
+          {rentalPrice(item.shortRentalPrice, item.longRentalPrice)}
         </span>
         <span className="font-gray">
-          &nbsp;{'| '} £{item.retail_price} retail
+          &nbsp;{'| '} £{item.retailPrice || '-'} retail
         </span>
       </div>
     </div>

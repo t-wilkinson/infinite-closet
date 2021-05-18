@@ -433,7 +433,7 @@ module.exports = {
     };
 
     // Create unique username from given Name
-    if (!params.name) {
+    if (!params.firstName) {
       return ctx.badRequest(
         null,
         formatError({
@@ -442,10 +442,15 @@ module.exports = {
         })
       );
     } else {
-      // In the off-chance we generate an existing username
-      // TODO: instead we can insert user. then hash the resulting user id
+      // generate username from name until it is unique
+      // TODO: there are some ways to make this more efficient
       do {
-        params.username = normalize(params.name) + "-" + nDigit(6);
+        params.username =
+          normalize(params.firstName) +
+          "-" +
+          normalize(params.lastName) +
+          "-" +
+          nDigit(6);
       } while (
         await strapi
           .query("user", "users-permissions")

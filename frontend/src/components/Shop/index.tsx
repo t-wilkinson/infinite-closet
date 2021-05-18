@@ -35,9 +35,11 @@ const Product = ({ data }) => {
         {product.designer.name}
       </span>
       <span className="">{product.name}</span>
-      <span className="pb-2 text-gray-dark">
-        Retails for £{product.retail_price}
-      </span>
+      {product.retailPrice && (
+        <span className="pb-2 text-gray-dark">
+          Retails for £{product.retailPrice}
+        </span>
+      )}
       <Divider className="mb-4" />
       <ProductRentHeaders product={product} state={state} />
       <ProductRentContents product={product} state={state} />
@@ -58,7 +60,7 @@ const Product = ({ data }) => {
 }
 
 const details = [
-  { key: 'stylist_notes', label: 'Stylist Notes' },
+  { key: 'stylistNotes', label: 'Stylist Notes' },
   { key: 'description', label: 'Product Description' },
   { key: 'share', label: 'Share' },
 ]

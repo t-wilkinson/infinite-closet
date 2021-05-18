@@ -4,6 +4,8 @@ const { sanitizeEntity } = require("strapi-utils");
 
 module.exports = {
   async login(ctx) {
+    const users = await strapi.query("user", "users-permissions").find();
+
     if (ctx.state.user) {
       return ctx.send({
         status: 200,

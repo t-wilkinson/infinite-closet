@@ -19,9 +19,10 @@ import { accountActions } from './slice'
 
 export const Register = () => {
   const fields = useFields({
-    name: { constraints: 'required', label: 'First Name' },
+    firstName: { constraints: 'required' },
+    lastName: { constraints: '', label: 'Last Name' },
     email: { constraints: 'required email', label: 'Email Address' },
-    password: { constraints: 'required', label: 'Password' },
+    password: { constraints: 'required' },
   })
   const router = useRouter()
   const dispatch = useDispatch()
@@ -36,7 +37,8 @@ export const Register = () => {
       .post(
         '/auth/local/register',
         {
-          name: cleaned.name,
+          firstName: cleaned.firstName,
+          lastName: cleaned.firstName,
           email: cleaned.email,
           password: cleaned.password,
         },
@@ -65,7 +67,10 @@ export const Register = () => {
       <Form onSubmit={onSubmit}>
         <FormHeader label="Join Us" />
         <Warnings warnings={warnings} />
-        <Input {...fields.name} />
+        <div className="flex-row space-x-2">
+          <Input {...fields.firstName} />
+          <Input {...fields.lastName} />
+        </div>
         <Input {...fields.email} />
         <Input
           // TODO: this logic should be in useFields

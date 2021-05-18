@@ -17,7 +17,7 @@
       }
     },
     {
-      "method": "POST",
+      "method": "GET",
       "path": "/stripe/payment_methods",
       "handler": "stripe.paymentMethods",
       "config": {

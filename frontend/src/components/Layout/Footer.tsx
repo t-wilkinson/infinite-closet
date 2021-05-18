@@ -31,7 +31,7 @@ type Status = 'None' | 'Error' | 'Submitted' | 'Submitting'
 const Subscribe = () => {
   const [status, setStatus] = React.useState<Status>('None')
   const fields = useFields({
-    newsletter_email: {
+    newsletterEmail: {
       constraints: 'required email',
       label: 'Email Address',
     },
@@ -41,7 +41,7 @@ const Subscribe = () => {
     const cleaned = cleanFields(fields)
     axios
       .post('/account/newsletter', {
-        email: cleaned.newsletter_email,
+        email: cleaned.newsletterEmail,
       })
       .then(() => setStatus('Submitted'))
       .catch(() => setStatus('Error'))
@@ -67,7 +67,7 @@ const Subscribe = () => {
           {messages[status]}
         </div>
       ) : null}
-      <Input {...fields.newsletter_email}>
+      <Input {...fields.newsletterEmail}>
         <div className="h-full absolute right-0 mr-2 justify-center">
           <Icon name="email" size={20} />
         </div>

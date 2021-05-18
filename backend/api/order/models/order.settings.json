@@ -11,11 +11,11 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "payment_intent": {
+    "paymentIntent": {
       "type": "string",
       "required": true
     },
-    "cart_items": {
+    "cartItems": {
       "collection": "cart-item"
     },
     "status": {
@@ -27,18 +27,13 @@
       ],
       "default": "planning"
     },
-    "user": {
-      "plugin": "users-permissions",
-      "model": "user",
-      "via": "orders"
-    },
     "address": {
       "model": "address"
     },
     "shipping": {
       "type": "string"
     },
-    "shipping_class": {
+    "shippingClass": {
       "type": "enumeration",
       "enum": [
         "one_day",

@@ -34,7 +34,10 @@ const rentalLengths: { [key in OneTime]: number } = {
 
 const productRentContents = {
   OneTime: ({ dispatch, product, state, user }) => {
-    console.log(user)
+    const defaultSize = {
+      size: 'SM',
+    }
+
     const addToCart = () => {
       axios
         .post(
@@ -42,16 +45,17 @@ const productRentContents = {
           {
             product: product.id,
             quantity: state.quantity,
-            // size: product.sizes.find((v) => v.id === state.size).size ?? 'SM', // TODO: remove `??...`
-            size: 'SM',
-            rental_length: state.oneTime.toLowerCase(),
+            size: (
+              product.sizes.find((v) => v.id === state.size) ?? defaultSize
+            ).size,
+            rentalLength: state.oneTime.toLowerCase(),
             user: user.id,
           },
           { withCredentials: true },
         )
         .then((res) => {
           return axios.put(
-            '/users-permissions_user',
+            '/users/' + user.id,
             { ...user, cart: [...user.cart, res.data] },
             { withCredentials: true },
           )

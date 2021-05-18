@@ -1,16 +1,26 @@
 import React from 'react'
-import { Input } from '@/Form'
-import useFields from '@/Form/useFields'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 
+import { Input } from '@/Form'
+import useFields from '@/Form/useFields'
+import { fetchAPI } from '@/utils/api'
+
 import CheckoutForm from './CheckoutForm'
 
-const promise = loadStripe(
-  'pk_test_51Ikb9lDnNgAk4A84M2EKzMFOlpQG65VHqqw8ZKlY8KwfgGHLEadvakIIJM7dA6HzVewnWZvJ2BPR9ZGq9SwfKBFJ00PTz0SIz5',
-)
+const promise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY)
 
 export const Checkout = ({ user, data }) => {
+  const [paymentMethods, setPaymentMethods] = React.useState()
+
+  React.useEffect(() => {
+    if (user) {
+      fetchAPI('/stripe/payment_methods')
+        .then((res) => setPaymentMethods(res))
+        .catch((err) => console.error(err))
+    }
+  }, [])
+
   if (!user) {
     return <div></div>
   }
@@ -23,7 +33,7 @@ export const Checkout = ({ user, data }) => {
     <div className="items-center max-w-screen-xl h-full">
       <div className="w-full">
         <Addresses addresses={user.addresses} />
-        <PaymentMethods user={user} paymentMethods={data.paymentMethods} />
+        <PaymentMethods user={user} paymentMethods={paymentMethods || []} />
         <Summary cart={user.cart} />
       </div>
       <Cart cart={user.cart} />
@@ -35,7 +45,7 @@ const Cart = ({ cart }) => {
   return (
     <div>
       {cart.map((cartItem) => (
-        <> </>
+        <div key={cartItem.id}>{JSON.stringify(cartItem)}</div>
       ))}
     </div>
   )

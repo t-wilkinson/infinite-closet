@@ -3,7 +3,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 
 import { Icon } from '@/components'
-import { useDispatch } from '@/utils/store'
+import { useDispatch, useSelector } from '@/utils/store'
 
 import { layoutActions } from './slice'
 import Navbar from './Navbar'
@@ -33,13 +33,13 @@ const SmallHeader = () => {
   )
 }
 
-const LargeHeader = () => (
+const LargeHeader = ({ user }) => (
   <div className="z-30 items-center hidden w-full pt-4 mb-8 md:flex select-none relative ">
     <div className="flex-row justify-center w-full items-center max-w-screen-xl relative">
       <LargeHeaderLogo />
       {process.env.NEXT_PUBLIC_RELEASE ? (
         <div className="absolute right-0">
-          <Account />
+          <Account user={user} />
         </div>
       ) : null}
     </div>
@@ -71,13 +71,29 @@ const LargeHeaderLogo = () => (
   </Link>
 )
 
-const Account = () => (
-  <div className="flex-row">
-    <IconLink href="/user/profile" size={18} name="user" />
-    <IconLink href="/user/saved" size={18} name="heart" />
-    <IconLink href="/user/cart" size={18} name="shopping-bag" />
-  </div>
-)
+const Account = ({ user }) => {
+  return (
+    <div className="flex-row items-center">
+      {user ? (
+        <>
+          <IconLink href="/user/profile" size={18} name="user" />
+          <IconLink href="/user/saved" size={18} name="heart" />
+          <IconLink href="/user/order" size={18} name="shopping-bag" />
+        </>
+      ) : (
+        <>
+          <Link href="/account/login">
+            <a>
+              <span className="font-bold">Sign In</span>
+            </a>
+          </Link>
+          <IconLink href="/user/saved" size={18} name="heart" />
+          <IconLink href="/user/order" size={18} name="shopping-bag" />
+        </>
+      )}
+    </div>
+  )
+}
 
 const IconLink = ({ size, name, href }) => (
   <Link href={href}>
@@ -87,11 +103,15 @@ const IconLink = ({ size, name, href }) => (
   </Link>
 )
 
-export const Header = () => (
-  <header>
-    <SmallHeader />
-    <LargeHeader />
-  </header>
-)
+export const Header = () => {
+  const user = useSelector((state) => state.account.user)
+
+  return (
+    <header>
+      <SmallHeader />
+      <LargeHeader user={user} />
+    </header>
+  )
+}
 
 export default Header

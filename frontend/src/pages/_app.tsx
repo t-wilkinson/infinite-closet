@@ -66,6 +66,7 @@ const Wrapper = ({ children }) => {
       .post('/account/login', {}, { withCredentials: true })
       .then((res) => {
         if (res.data.user) {
+          console.log(res.data.user)
           dispatch(accountActions.login(res.data.user))
         }
       })

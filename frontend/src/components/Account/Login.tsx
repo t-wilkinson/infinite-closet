@@ -47,7 +47,7 @@ export const Login = () => {
           type: 'account.login',
           user: cleaned.email,
         })
-        // router.push('/')
+        router.push('/')
       })
       .catch((err) => {
         try {

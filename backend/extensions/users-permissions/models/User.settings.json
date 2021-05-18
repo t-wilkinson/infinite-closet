@@ -59,28 +59,27 @@
       "plugin": "users-permissions",
       "configurable": false
     },
-    "first_name": {
-      "type": "string"
-    },
     "customer": {
       "private": false,
+      "type": "string"
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "phoneNumber": {
       "type": "string"
     },
     "addresses": {
       "collection": "address"
     },
-    "carts": {
-      "collection": "cart-item"
-    },
     "orders": {
-      "via": "user",
       "collection": "order"
     },
-    "last_name": {
-      "type": "string"
-    },
-    "phone_number": {
-      "type": "string"
+    "cart": {
+      "collection": "cart-item"
     }
   }
 }

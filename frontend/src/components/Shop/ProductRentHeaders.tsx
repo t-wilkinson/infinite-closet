@@ -32,7 +32,6 @@ export const ProductRentHeaders = ({ product, state }) => {
     </div>
   )
 }
-export default ProductRentHeaders
 
 const productRentHeaders = {
   OneTime: ({ product, state }) => (
@@ -40,9 +39,9 @@ const productRentHeaders = {
       <span className="text-sm font-bold text-center">One-time rental</span>
       <span className="font-bold">
         £
-        {state.oneTime === 'Short'
-          ? product.short_rental_price
-          : product.long_rental_price}
+        {(state.oneTime === 'Short'
+          ? product.shortRentalPrice
+          : product.longRentalPrice) || '-'}
       </span>
     </>
   ),
@@ -59,3 +58,5 @@ const productRentHeaders = {
     </>
   ),
 }
+
+export default ProductRentHeaders

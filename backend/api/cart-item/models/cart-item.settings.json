@@ -22,7 +22,7 @@
       "type": "string",
       "required": true
     },
-    "rental_length": {
+    "rentalLength": {
       "type": "enumeration",
       "enum": [
         "short",

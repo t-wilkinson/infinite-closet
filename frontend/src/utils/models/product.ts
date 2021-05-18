@@ -9,12 +9,12 @@ export interface StrapiProduct {
   designer?: StrapiDesigner;
   name: string;
   slug: string;
-  description: string;
-  stylist_notes: string;
-  short_rental_price: number;
-  long_rental_price: number;
-  retail_price?: number;
-  purchase_price?: number;
+  description?: string;
+  stylistNotes?: string;
+  shortRentalPrice?: number;
+  longRentalPrice?: number;
+  retailPrice?: number;
+  purchasePrice?: number;
   images: StrapiFile[];
   colors?: string;
   fits?: string;
