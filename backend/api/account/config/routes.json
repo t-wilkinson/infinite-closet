@@ -2,6 +2,22 @@
   "routes": [
     {
       "method": "POST",
+      "path": "/account/waitlist",
+      "handler": "mail.waitlist",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/account/newsletter",
+      "handler": "mail.newsletter",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
       "path": "/account/login",
       "handler": "account.login",
       "config": {
@@ -18,18 +34,18 @@
     },
     {
       "method": "POST",
-      "path": "/account/waitlist",
-      "handler": "account.waitlist",
+      "path": "/account/wallet",
+      "handler": "stripe.attachSetupIntent",
       "config": {
-        "policies": []
+        "policies": ["plugins::users-permissions.permissions"]
       }
     },
     {
-      "method": "POST",
-      "path": "/account/newsletter",
-      "handler": "account.newsletter",
+      "method": "GET",
+      "path": "/account/payment-methods",
+      "handler": "stripe.paymentMethods",
       "config": {
-        "policies": []
+        "policies": ["plugins::users-permissions.permissions"]
       }
     }
   ]

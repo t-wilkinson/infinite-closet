@@ -1,0 +1,37 @@
+{
+  "routes": [
+    {
+      "method": "POST",
+      "path": "/orders",
+      "handler": "Order.create",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/orders/price",
+      "handler": "Order.calculatePrice",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+
+    {
+      "method": "GET",
+      "path": "/orders",
+      "handler": "Order.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/orders/ship/:id",
+      "handler": "Order.ship",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

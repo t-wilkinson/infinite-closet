@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "order",
+  "info": {
+    "name": "Order",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "cart": {
+      "collection": "cart-item"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["planning", "shipping", "shipped"],
+      "default": "planning"
+    },
+    "address": {
+      "model": "address"
+    },
+    "shipping": {
+      "type": "string"
+    },
+    "shippingClass": {
+      "type": "enumeration",
+      "enum": ["one_day", "next_day", "two_day"]
+    },
+    "paymentMethod": {
+      "type": "string"
+    },
+    "shippingDate": {
+      "type": "date"
+    },
+    "recieveDate": {
+      "type": "date"
+    }
+  }
+}

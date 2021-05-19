@@ -76,7 +76,8 @@
       "collection": "address"
     },
     "orders": {
-      "collection": "order"
+      "collection": "order",
+      "plugin": "orders"
     },
     "cart": {
       "collection": "cart-item"

@@ -1,6 +1,6 @@
+import { useSelector } from '@/utils/store'
 import Checkout from '@/Account/Checkout'
 import Layout from '@/Layout'
-import { useSelector } from '@/utils/store'
 
 const Page = ({ data }) => {
   const user = useSelector((state) => state.account.user)

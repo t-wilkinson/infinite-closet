@@ -41,6 +41,7 @@ export const CheckoutForm = ({
 }) => {
   const stripe = useStripe()
   const elements = useElements()
+  // TODO: we want to allow user to modify cart before final purchase
 
   const handleChange = async (event) => {
     if (event.error) {
@@ -53,50 +54,17 @@ export const CheckoutForm = ({
     dispatch({type: 'payment-processing'})
 
     stripe
-    .createPaymentMethod({
-      type: 'card',
-      card: elements.getElement(CardElement),
-      billing_details: {
-        name: user.firstName + ' ' + user.lastName,
-        email: user.email,
-        phone: user.phoneNumber,
-      },
-    })
-
-    .then(res => {
-      if (res.error) { throw res.error }
-      else {
-        return axios.post(
-          '/stripe/payment_intents',
-          {
-            paymentMethod: res.paymentMethod.id,
-            cart: state.cart,
+      .confirmCardSetup(state.clientSecret, {
+        payment_method: {
+          type: 'card',
+          card: elements.getElement(CardElement),
+          billing_details: {
+            name: user.firstName + ' ' + user.lastName,
+            email: user.email,
+            phone: user.phoneNumber,
           },
-          {withCredentials: true},
-        )
-      }
-    })
-
-    .then(res => {
-      return stripe.confirmCardPayment(res.data.paymentIntent.client_secret)
-    })
-
-    .then(res => {
-      if (res.error) { throw res.error }
-      else {
-        dispatch({type: "payment-succeeded", payload: res.paymentIntent.status})
-        axios.post( // we can safely expect this to succeed
-          '/orders',
-          {
-            address: state.address.id,
-            paymentIntent: res.paymentIntent.id,
-            shippingClass: state.shippingClass,
-            cart: state.cart,
-          },
-          {withCredentials: true}
-        )
-      }
-    })
+        }
+      })
 
     .catch(err => {
       dispatch({type: 'payment-failed', payload: err})
@@ -152,3 +120,4 @@ export const CheckoutForm = ({
 }
 
 export default CheckoutForm
+
