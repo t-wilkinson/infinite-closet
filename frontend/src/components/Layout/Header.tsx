@@ -77,7 +77,7 @@ const Account = ({ user }) => {
       {user ? (
         <>
           <IconLink href="/user/profile" size={18} name="user" />
-          <IconLink href="/user/saved" size={18} name="heart" />
+          {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
           <IconLink href="/user/order" size={18} name="shopping-bag" />
         </>
       ) : (
@@ -87,7 +87,7 @@ const Account = ({ user }) => {
               <span className="font-bold">Sign In</span>
             </a>
           </Link>
-          <IconLink href="/user/saved" size={18} name="heart" />
+          {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
           <IconLink href="/user/order" size={18} name="shopping-bag" />
         </>
       )}

@@ -1,10 +1,13 @@
 import React from 'react'
+import { Input } from '@/Form'
 
-export const Addresses = ({ fields, addresses, state}) => {
-  return <div>
-    <span>Addresses</span>
-    {JSON.stringify(addresses)}
-  </div>
+export const Addresses = ({ fields, addresses, state, dispatch }) => {
+  return (
+    <div>
+      <span>Addresses</span>
+      {JSON.stringify(addresses)}
+    </div>
+  )
 }
 
 export const AddAddress = ({ fields }) => {
@@ -16,4 +19,3 @@ export const AddAddress = ({ fields }) => {
     </div>
   )
 }
-

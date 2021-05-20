@@ -1,4 +1,4 @@
-const { sanitizeEntity } = require('strapi-utils');
+const { sanitizeEntity } = require("strapi-utils");
 
 module.exports = {
   /**
@@ -6,11 +6,9 @@ module.exports = {
    *
    * @return {Object}
    */
-
-  async findOne(ctx) {
-    const { slug } = ctx.params;
-
-    const entity = await strapi.services.product.findOne({ slug });
-    return sanitizeEntity(entity, { model: strapi.models.product });
-  },
+  // async findOne(ctx) {
+  //   const { slug } = ctx.params;
+  //   const entity = await strapi.services.product.findOne({ slug });
+  //   return sanitizeEntity(entity, { model: strapi.models.product });
+  // },
 };

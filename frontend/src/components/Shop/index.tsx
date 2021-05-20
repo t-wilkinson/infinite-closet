@@ -28,8 +28,8 @@ const Product = ({ data }) => {
   return (
     <div className="w-full sm:w-1/2 sm:max-w-md">
       <div className="flex-row justify-between items-center">
-        <Rating rating={4.5} />
-        <Icon name="heart" size={24} />
+        {/* <Rating rating={4.5} /> */}
+        {/* <Icon name="heart" size={24} /> */}
       </div>
       <span className="pt-4 font-subheader text-xl">
         {product.designer.name}

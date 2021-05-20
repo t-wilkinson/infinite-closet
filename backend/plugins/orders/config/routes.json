@@ -2,16 +2,24 @@
   "routes": [
     {
       "method": "POST",
-      "path": "/orders",
+      "path": "/",
       "handler": "Order.create",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
     },
     {
-      "method": "GET",
-      "path": "/orders/price",
-      "handler": "Order.calculatePrice",
+      "method": "POST",
+      "path": "/checkout",
+      "handler": "Order.checkout",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/",
+      "handler": "Order.update",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -19,16 +27,34 @@
 
     {
       "method": "GET",
-      "path": "/orders",
-      "handler": "Order.find",
+      "path": "/cart/price",
+      "handler": "Order.calculateCartPrice",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/amount",
+      "handler": "Order.calculateAmount",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+
+    {
+      "method": "POST",
+      "path": "/ship/:id",
+      "handler": "Order.ship",
       "config": {
         "policies": []
       }
     },
+
     {
-      "method": "POST",
-      "path": "/orders/ship/:id",
-      "handler": "Order.ship",
+      "method": "GET",
+      "path": "/",
+      "handler": "Order.find",
       "config": {
         "policies": []
       }

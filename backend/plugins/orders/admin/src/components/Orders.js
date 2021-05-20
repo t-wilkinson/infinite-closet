@@ -4,15 +4,14 @@ import styled from "styled-components";
 
 const Orders = ({ plugin, className }) => {
   const [orders, setOrders] = React.useState([]);
+  console.log(orders);
 
   React.useEffect(() => {
     fetch(strapi.backendURL + "/orders", {
       method: "GET",
     })
       .then((res) => res.json())
-      .then((res) => {
-        setOrders(res);
-      })
+      .then((res) => setOrders(res))
       .catch((err) => console.error(err));
   }, []);
 
@@ -33,7 +32,7 @@ const OrdersWrapper = styled(Orders)``;
 const Header = ({ className }) => (
   <thead className={className}>
     <tr>
-      <td className="header__td">Name</td>
+      <td className="header__td">Status</td>
       <td className="header__td">Amount</td>
       <td className="header__td">Shipping Label</td>
       <td className="header__td">Process Order</td>

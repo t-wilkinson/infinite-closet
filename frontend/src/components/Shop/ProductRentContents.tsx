@@ -1,6 +1,5 @@
 import React from 'react'
 import axios from 'axios'
-// import DropDownPicker from 'react-native-dropdown-picker'
 
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon, CallToAction } from '@/components'
@@ -35,32 +34,24 @@ const rentalLengths: { [key in OneTime]: number } = {
 const productRentContents = {
   OneTime: ({ dispatch, product, state, user }) => {
     const defaultSize = {
-      size: 'SM',
+      size: 'MD',
     }
 
     const addToCart = () => {
       axios
         .post(
-          '/cart-items',
+          '/orders',
           {
-            product: product.id,
             quantity: state.quantity,
             size: (
               product.sizes.find((v) => v.id === state.size) ?? defaultSize
             ).size,
-            rentalLength: state.oneTime.toLowerCase(),
-            user: user.id,
+            date: state.selectedDate.toJSON(),
+            rentalLength: state.oneTime,
+            product: product.id,
           },
           { withCredentials: true },
         )
-        .then((res) => {
-          return axios.put(
-            '/users/' + user.id,
-            { ...user, cart: [...user.cart, res.data] },
-            { withCredentials: true },
-          )
-        })
-        .then((res) => {})
         .catch((err) => {
           console.error(err)
         })

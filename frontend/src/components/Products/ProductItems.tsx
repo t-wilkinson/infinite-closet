@@ -81,9 +81,9 @@ const Product = ({ item }: any) => {
 
 const ProductImage = ({ images }) => (
   <div className="relative h-full bg-gray-light">
-    <div className="absolute top-0 right-0 p-2">
-      <Icon size={20} name="heart" />
-    </div>
+    {/* <div className="absolute top-0 right-0 p-2"> */}
+    {/*   <Icon size={20} name="heart" /> */}
+    {/* </div> */}
     <Image
       alt="Product image"
       src={getURL(images[0].url)}
@@ -114,8 +114,8 @@ const ProductInfo = ({ item }) => (
         </span>
       </div>
     </div>
-    <div className="self-end p-4 border border-gray-light rounded-full">
-      <Icon name="shopping-bag" size={16} />
-    </div>
+    {/* <div className="self-end p-4 border border-gray-light rounded-full"> */}
+    {/*   <Icon name="shopping-bag" size={16} /> */}
+    {/* </div> */}
   </div>
 )

@@ -1,13 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import usePlugin from "../utils/usePlugin";
 
 const Order = ({ className, order }) => {
-  const plugin = usePlugin();
-  console.log(order);
-
   const ship = () => {
-    fetch(plugin.stripe.api + "/orders/ship/" + order.id, {
+    fetch(strapi.backendURL + "/orders/ship/" + order.id, {
       method: "POST",
       body: JSON.stringify({
         order,
@@ -17,48 +13,41 @@ const Order = ({ className, order }) => {
 
   return (
     <tr className={className}>
-      <td className="order__field">
-        {order.user.first_name}
-        {order.user.last_name}
-      </td>
-      <td className="order__field">
-        {order.payment_intent_json && order.payment_intent_json.amount}
-      </td>
+      <td className="order__field">{order.status}</td>
       <td className="order__field">Shipping Label</td>
       <td className="order__field order__process">
-        <button onClick={process}>Process</button>
+        <button onClick={ship}>Process</button>
       </td>
-      <td className="order__field">
-        {
-          {
-            planning: <div />,
-            shipping: () => {
-              const collectionAddress = Object.keys(order.shipping_json)
-                .filter((key) => /^Collection_/.test(key))
-                .reduce((acc, key) => {
-                  acc[key.replace(/^Collection_/, "")] =
-                    order.shipping_json[key];
-                }, {});
-
-              return (
-                <div>
-                  Shipping Label
-                  <div className="order__shipping__label">
-                    {Object.entries(collectionAddress).map(([k, v]) => (
-                      <div key={k}>
-                        {k.replace(/_/, " ")} {v}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            },
-            shipped: <div />,
-          }[order.status]
-        }
-      </td>
+      <td className="order__field">{OrderStatus[order.status]()}</td>
     </tr>
   );
+};
+
+const OrderStatus = {
+  cart: () => <div>Cart</div>,
+  list: () => <div>List</div>,
+  planning: () => <div />,
+  shipping: () => {
+    const collectionAddress = Object.keys(order.shipping_json)
+      .filter((key) => /^Collection_/.test(key))
+      .reduce((acc, key) => {
+        acc[key.replace(/^Collection_/, "")] = order.shipping_json[key];
+      }, {});
+
+    return (
+      <div>
+        Shipping Label
+        <div className="order__shipping__label">
+          {Object.entries(collectionAddress).map(([k, v]) => (
+            <div key={k}>
+              {k.replace(/_/, " ")} {v}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  },
+  shipped: () => <div />,
 };
 
 const OrderWrapper = styled(Order)`

@@ -1,79 +1,153 @@
 "use strict";
 
-const stripe = require("stripe")(
-  "sk_test_51Ikb9lDnNgAk4A84a08Vrtj9h0K7Zg6C3HLSEhbZXRkC2E3wX2y9JDo67TOZI8spmVj4nvaHSamVwiKUokS9Kg5S00whW8RV3K"
-);
+const stripe = require("stripe")(process.env.STRIPE_KEY);
+const { generateAPI } = require("../../../api/utils");
+const fetch = require("node-fetch");
 
-// TODO: should move this to order plugin
+// TODO: hardcode settings for now
+const rentalLengths = {
+  Short: 4,
+  Long: 8,
+};
+const hived = {
+  parcels: "https://api.airtable.com/v0/appDFURl2nEJd1XEF/Parcels",
+  postcodes: "https://api.airtable.com/v0/app5ZWdAtj21xnZrh/Postcodes",
+  key: "keyzCmMhMH9fvKBPV",
+};
+
 module.exports = {
-  async find(...props) {
-    console.log(props);
-  },
-  // find: strapi.query("order", "orders").find,
+  // TODO: probably don't need this
+  ...generateAPI("order", "orders"),
 
   async create(ctx) {
     // TODO: make sure products are available
-    console.log("creating order");
     const body = ctx.request.body;
     const user = ctx.state.user;
 
-    // each cart item should have rental length. calculate the shipping and recieving date
-    // shippingDate: body.date, // TODO: calculate correct date
-    // recieveDate: body.date,
-    const order = await strapi.query("order", "orders").create({
-      paymentMethod: body.intent.id,
-      cart: body.cart,
-      shippingClass: body.shippingClass,
-      address: body.address,
-    });
+    //     let dropoffDate = new Date(body.date);
+    //     dropoffDate.setUTCDate(
+    //       dropoffDate.getUTCDate() + rentalLengths[body.rentalLength]
+    //     );
+    console.log(body.date);
 
-    await strapi.query("user", "users-permissions").update(
-      { id: user.id },
-      {
-        orders: [...user.orders, order.id], // add order to users existing orders
-        cart: user.cart.filter((item) => !body.cart.includes(item.id)), // remove items from cart
-      }
-    );
+    const order = await strapi.query("order", "orders").create({
+      // pickupDate: body.date,
+      // dropoffDate: dropoffDate.toJSON(),
+      status: "cart",
+      product: body.product,
+      date: body.date,
+      rentalLength: body.rentalLength.toLowerCase(),
+      quantity: body.quantity,
+      user: user.id,
+      size: body.size,
+    });
 
     ctx.send({
       status: 200,
+      order,
     });
   },
 
-  async calculatePrice(ctx) {
+  async checkout(ctx) {
     const user = ctx.state.user;
-    const price = await strapi.plugins["orders"].services.calculatePrice(
+    const body = ctx.request.body;
+
+    const updates = body.cart.map((order) => {
+      return strapi.query("order", "orders").update({
+        id: order.id,
+        address: body.address,
+        paymentMethodID: body.paymentMethod,
+        status: "planning",
+      });
+    });
+    Promise.all(updates);
+
+    ctx.send({ status: 200 });
+  },
+
+  async calculateCartPrice(ctx) {
+    const user = ctx.state.user;
+    const price = await strapi.plugins["orders"].services.calculateCartPrice(
       body.cart || user.cart
     );
     ctx.send({ price });
   },
 
+  async calculateAmount(ctx) {
+    const user = ctx.state.user;
+    const amount = await strapi.plugins["orders"].services.calculateAmount(
+      body.order
+    );
+    ctx.send({ amount });
+  },
+
   async ship(ctx) {
     const { order } = ctx.request.body;
+    strapi.log.info("order %o", order);
+    const { address } = order;
+    const amount = await strapi.plugins["orders"].services.calculateAmount(
+      order
+    );
     const user = await strapi
       .query("user", "users-permissions")
       .find({ id: order.user });
-    const price = await strapi.plugins["orders"].services.calculatePrice(
-      body.cart || user.cart
-    );
 
     stripe.paymentIntents
       .create({
-        amount: price,
+        amount,
         currency: "gbp",
         customer: user.customer,
-        payment_method: order.paymentMethod,
+        payment_method: order.paymentMethodID,
         off_session: true,
         confirm: true,
       })
-      .then((paymentIntent) => {
-        // TODO: make a shipping request
-      })
+
+      .then((paymentIntent) =>
+        strapi.query("order", "orders").update({
+          id: order.id,
+          status: "shipping",
+          paymentIntentID: paymentIntent.id,
+        })
+      )
+
+      .then(() =>
+        fetch(hived.parcels, {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + hived.key,
+            "Content-Type": "application/json",
+          },
+          body: {
+            // TODO: Infinite Closet info
+            Collection: "Infinite Closet",
+            Collection_Address_Line_1: address.address,
+            Collection_Town: address.town,
+            Collection_Postcode: address.postcode,
+            Collection_Email_Address: "sarah.korich@infinitecloset.co.uk",
+            Collection_Phone_Number: user.phone_number,
+
+            Recipient: address.first_name + " " + address.last_name,
+            Recipient_Address_Line_1: address.address,
+            Recipient_Town: address.town,
+            Recipient_Postcode: address.postcode,
+            Recipient_Email_Address: user.email,
+            Recipient_Phone_Number: user.phone_number,
+
+            Shipping_Class: "One-Day",
+            Sender: "Infinite Closet",
+            Value_GBP: amount, // 1000,
+            // Sender_Chosen_Collection_Date
+            // Sender_Chosen_Delivery_Date
+          },
+        })
+      )
+
       .then(() => {
-        // TODO: update status of order
+        // TODO: send email to user?
       })
+
       .catch((err) => {
-        // TODO: contact user with next step to take
+        // TODO: something failed, contact user with next step to take
       });
 
     ctx.send({
@@ -91,27 +165,6 @@ const shippingClass = {
   two_day: "2-Day",
   next_day: "Next-Day",
 };
-
-fetch(plugin.hived.api, {
-  method: "POST",
-  headers: {
-    Authorization: "Bearer " + plugin.hived.key,
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-  }),
-
-fields: {
-  Recipient: address.first_name + address.last_name,
-  Recipient_Address_Line_1: address.address,
-  Recipient_Town: address.town,
-  Recipient_Postcode: address.postcode,
-  Sender: plugin.hived.sender,
-  Value_GBP: order.payment_intent_json.amount,
-  Recipient_Email_Address: user.email,
-  Recipient_Phone_Number: user.phone_number,
-  Shipping_Class: shippingClass[order.shipping_class],
-},
 
 React.useEffect(() => {
   if (order.status === "shipping" && order.shipping && !order.shipping_json) {

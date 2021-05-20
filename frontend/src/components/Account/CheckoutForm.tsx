@@ -44,66 +44,72 @@ export const CheckoutForm = ({
 
   const handleChange = async (event) => {
     if (event.error) {
-      dispatch({type: 'payment-failure', payload: event.error})
+      dispatch({ type: 'payment-failure', payload: event.error })
     }
   }
 
   const onSubmit = async (ev) => {
     ev.preventDefault()
-    dispatch({type: 'payment-processing'})
+    dispatch({ type: 'payment-processing' })
 
     stripe
-    .createPaymentMethod({
-      type: 'card',
-      card: elements.getElement(CardElement),
-      billing_details: {
-        name: user.firstName + ' ' + user.lastName,
-        email: user.email,
-        phone: user.phoneNumber,
-      },
-    })
+      .createPaymentMethod({
+        type: 'card',
+        card: elements.getElement(CardElement),
+        billing_details: {
+          name: user.firstName + ' ' + user.lastName,
+          email: user.email,
+          phone: user.phoneNumber,
+        },
+      })
 
-    .then(res => {
-      if (res.error) { throw res.error }
-      else {
-        return axios.post(
-          '/stripe/payment_intents',
-          {
-            paymentMethod: res.paymentMethod.id,
-            cart: state.cart,
-          },
-          {withCredentials: true},
-        )
-      }
-    })
+      .then((res) => {
+        if (res.error) {
+          throw res.error
+        } else {
+          return axios.post(
+            '/stripe/payment_intents',
+            {
+              paymentMethod: res.paymentMethod.id,
+              cart: state.cart,
+            },
+            { withCredentials: true },
+          )
+        }
+      })
 
-    .then(res => {
-      return stripe.confirmCardPayment(res.data.paymentIntent.client_secret)
-    })
+      .then((res) => {
+        return stripe.confirmCardPayment(res.data.paymentIntent.client_secret)
+      })
 
-    .then(res => {
-      if (res.error) { throw res.error }
-      else {
-        dispatch({type: "payment-succeeded", payload: res.paymentIntent.status})
-        axios.post( // we can safely expect this to succeed
-          '/orders',
-          {
-            address: state.address.id,
-            paymentIntent: res.paymentIntent.id,
-            shippingClass: state.shippingClass,
-            cart: state.cart,
-          },
-          {withCredentials: true}
-        )
-      }
-    })
+      .then((res) => {
+        if (res.error) {
+          throw res.error
+        } else {
+          dispatch({
+            type: 'payment-succeeded',
+            payload: res.paymentIntent.status,
+          })
+          axios.put(
+            '/orders',
+            {
+              address: state.address.id,
+              paymentIntent: res.paymentIntent.id,
+              shippingClass: state.shippingClass,
+              cart: state.cart,
+            },
+            { withCredentials: true },
+          )
+        }
+      })
 
-    .catch(err => {
-      dispatch({type: 'payment-failed', payload: err})
-      if (!err.error) { // not a stripe error, print it to console to debug
-        console.error(err)
-      }
-    })
+      .catch((err) => {
+        dispatch({ type: 'payment-failed', payload: err })
+        if (!err.error) {
+          // not a stripe error, print it to console to debug
+          console.error(err)
+        }
+      })
   }
 
   return (
@@ -119,10 +125,12 @@ export const CheckoutForm = ({
 
         <div className="w-full">
           <Submit
-            disabled={["disabled", "processing", "succeeded"].includes(state.paymentStatus)}
+            disabled={['disabled', 'processing', 'succeeded'].includes(
+              state.paymentStatus,
+            )}
           >
             <span id="button-text">
-              {state.paymentStatus === "processing" ? (
+              {state.paymentStatus === 'processing' ? (
                 <div className="spinner" id="spinner"></div>
               ) : (
                 'Pay now'
@@ -138,7 +146,13 @@ export const CheckoutForm = ({
           </div>
         )}
         {/* Show a success message upon completion */}
-        <p className={state.paymentStatus === "succeeded" ? 'result-message' : 'result-message hidden'}>
+        <p
+          className={
+            state.paymentStatus === 'succeeded'
+              ? 'result-message'
+              : 'result-message hidden'
+          }
+        >
           Payment succeeded, see the result in your
           <a href={`https://dashboard.stripe.com/test/payments`}>
             {' '}

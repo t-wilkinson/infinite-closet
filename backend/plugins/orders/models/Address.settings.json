@@ -1,6 +1,6 @@
 {
   "kind": "collectionType",
-  "collectionName": "addresses",
+  "collectionName": "address",
   "info": {
     "name": "Address",
     "description": ""
@@ -11,10 +11,6 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "lastName": {
-      "type": "string",
-      "required": true
-    },
     "address": {
       "type": "string",
       "required": true
@@ -33,6 +29,10 @@
     },
     "firstName": {
       "type": "string"
+    },
+    "lastName": {
+      "type": "string",
+      "required": true
     }
   }
 }

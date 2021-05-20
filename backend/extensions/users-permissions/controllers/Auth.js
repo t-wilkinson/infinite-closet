@@ -403,6 +403,7 @@ module.exports = {
   },
 
   async register(ctx) {
+    console.log("hi");
     const pluginStore = await strapi.store({
       environment: "",
       type: "plugin",

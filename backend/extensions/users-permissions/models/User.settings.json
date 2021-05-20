@@ -59,8 +59,7 @@
       "plugin": "users-permissions",
       "configurable": false
     },
-    "customer": {
-      "private": false,
+    "customerID": {
       "type": "string"
     },
     "firstName": {
@@ -73,14 +72,13 @@
       "type": "string"
     },
     "addresses": {
-      "collection": "address"
+      "collection": "address",
+      "plugin": "orders"
     },
     "orders": {
       "collection": "order",
+      "via": "user",
       "plugin": "orders"
-    },
-    "cart": {
-      "collection": "cart-item"
     }
   }
 }

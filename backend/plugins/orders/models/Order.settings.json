@@ -3,7 +3,7 @@
   "collectionName": "order",
   "info": {
     "name": "Order",
-    "description": ""
+    "description": "Includes information required to identify an order"
   },
   "options": {
     "increments": true,
@@ -11,32 +11,53 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "cart": {
-      "collection": "cart-item"
-    },
     "status": {
       "type": "enumeration",
-      "enum": ["planning", "shipping", "shipped"],
-      "default": "planning"
+      "enum": ["cart", "list", "planning", "shipping", "shipped"],
+      "default": "planning",
+      "required": true
+    },
+    "quantity": {
+      "type": "integer",
+      "default": 1,
+      "required": true
+    },
+    "size": {
+      "type": "string",
+      "required": true
+    },
+    "pickupDate": {
+      "type": "date"
+    },
+    "dropoffDate": {
+      "type": "date"
+    },
+    "date": {
+      "type": "date"
+    },
+    "rentalLength": {
+      "type": "enumeration",
+      "enum": ["short", "long"]
     },
     "address": {
-      "model": "address"
+      "model": "address",
+      "plugin": "orders"
     },
-    "shipping": {
+    "paymentMethodID": {
       "type": "string"
     },
-    "shippingClass": {
-      "type": "enumeration",
-      "enum": ["one_day", "next_day", "two_day"]
-    },
-    "paymentMethod": {
+    "paymentIntentID": {
       "type": "string"
     },
-    "shippingDate": {
-      "type": "date"
+    "shipmentID": {
+      "type": "string"
     },
-    "recieveDate": {
-      "type": "date"
+    "product": {
+      "model": "product"
+    },
+    "user": {
+      "model": "user",
+      "plugin": "users-permissions"
     }
   }
 }
