@@ -27,12 +27,21 @@
 
     {
       "method": "GET",
+      "path": "/cart/:user_id",
+      "handler": "Order.getCart",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "GET",
       "path": "/cart/price",
       "handler": "Order.calculateCartPrice",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
     },
+
     {
       "method": "GET",
       "path": "/amount",

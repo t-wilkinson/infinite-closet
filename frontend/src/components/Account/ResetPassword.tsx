@@ -69,7 +69,9 @@ export const ForgotPassword = () => {
             setPasswordVisible={setPasswordVisible}
           />
         </Input>
-        <Submit disabled={!isValid(fields)}>Request Password Reset</Submit>
+        <Submit onSubmit={() => {}} disabled={!isValid(fields)}>
+          Request Password Reset
+        </Submit>
 
         <OR />
 

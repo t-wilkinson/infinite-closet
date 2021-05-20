@@ -13,7 +13,15 @@
   "attributes": {
     "status": {
       "type": "enumeration",
-      "enum": ["cart", "list", "planning", "shipping", "shipped"],
+      "enum": [
+        "cart",
+        "list",
+        "planning",
+        "shipping",
+        "recieving",
+        "recieved",
+        "completed"
+      ],
       "default": "planning",
       "required": true
     },
@@ -26,12 +34,6 @@
       "type": "string",
       "required": true
     },
-    "pickupDate": {
-      "type": "date"
-    },
-    "dropoffDate": {
-      "type": "date"
-    },
     "date": {
       "type": "date"
     },
@@ -40,16 +42,15 @@
       "enum": ["short", "long"]
     },
     "address": {
-      "model": "address",
-      "plugin": "orders"
+      "model": "address"
     },
-    "paymentMethodID": {
+    "paymentMethod": {
       "type": "string"
     },
-    "paymentIntentID": {
+    "paymentIntent": {
       "type": "string"
     },
-    "shipmentID": {
+    "shipment": {
       "type": "string"
     },
     "product": {
@@ -57,7 +58,8 @@
     },
     "user": {
       "model": "user",
-      "plugin": "users-permissions"
+      "plugin": "users-permissions",
+      "via": "order"
     }
   }
 }

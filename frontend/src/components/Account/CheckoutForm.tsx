@@ -93,7 +93,7 @@ export const CheckoutForm = ({
           axios.put(
             '/orders',
             {
-              address: state.address.id,
+              address: state.address,
               paymentIntent: res.paymentIntent.id,
               shippingClass: state.shippingClass,
               cart: state.cart,
@@ -125,6 +125,7 @@ export const CheckoutForm = ({
 
         <div className="w-full">
           <Submit
+            onSubmit={() => {}}
             disabled={['disabled', 'processing', 'succeeded'].includes(
               state.paymentStatus,
             )}

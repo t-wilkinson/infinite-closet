@@ -59,7 +59,7 @@
       "plugin": "users-permissions",
       "configurable": false
     },
-    "customerID": {
+    "customer": {
       "type": "string"
     },
     "firstName": {
@@ -72,13 +72,16 @@
       "type": "string"
     },
     "addresses": {
-      "collection": "address",
-      "plugin": "orders"
+      "collection": "address"
     },
     "orders": {
-      "collection": "order",
+      "plugin": "orders",
+      "collection": "order"
+    },
+    "order": {
       "via": "user",
-      "plugin": "orders"
+      "plugin": "orders",
+      "model": "order"
     }
   }
 }

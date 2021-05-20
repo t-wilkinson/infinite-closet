@@ -33,9 +33,8 @@ const Header = ({ className }) => (
   <thead className={className}>
     <tr>
       <td className="header__td">Status</td>
-      <td className="header__td">Amount</td>
-      <td className="header__td">Shipping Label</td>
-      <td className="header__td">Process Order</td>
+      <td className="header__td">Date</td>
+      <td className="header__td">Info</td>
     </tr>
   </thead>
 );

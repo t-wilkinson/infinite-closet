@@ -3,6 +3,7 @@ import axios from 'axios'
 
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon, CallToAction } from '@/components'
+import {Submit} from '@/Form'
 
 import { shopActions } from './slice'
 import { OneTime } from './types'
@@ -66,6 +67,7 @@ const productRentContents = {
         />
 
         <SelectorItem label="Size" className="my-2 z-10 w-24">
+          {/* TODO: pick a size*/}
           {/* <DropDownPicker */}
           {/*   containerStyle={{ zIndex: 10 }} */}
           {/*   style={{ zIndex: 10 }} */}
@@ -110,12 +112,13 @@ const productRentContents = {
           </div>
         </SelectorItem>
 
-        <CallToAction
+        <Submit
           onClick={addToCart}
-          className="my-2 self-center rounded-sm"
+          className="my-2 self-center rounded-sm w-full"
+          disabled={!state.selectedDate}
         >
           Add to Closet
-        </CallToAction>
+        </Submit>
       </>
     )
   },

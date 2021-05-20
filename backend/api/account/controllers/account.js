@@ -61,4 +61,24 @@ module.exports = {
       message: "Successfully ended session",
     });
   },
+
+  async attachAddress(ctx) {
+    const user = ctx.state.user;
+    const body = ctx.request.body;
+
+    const address = await strapi.query("address").create({
+      ...body,
+    });
+    const addresses = [
+      ...user.addresses.map((address) => address.id),
+      address.id,
+    ];
+    await strapi
+      .query("user", "users-permissions")
+      .update({ id: user.id }, { addresses });
+
+    return ctx.send({
+      addresses,
+    });
+  },
 };

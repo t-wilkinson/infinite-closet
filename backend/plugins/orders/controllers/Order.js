@@ -5,10 +5,6 @@ const { generateAPI } = require("../../../api/utils");
 const fetch = require("node-fetch");
 
 // TODO: hardcode settings for now
-const rentalLengths = {
-  Short: 4,
-  Long: 8,
-};
 const hived = {
   parcels: "https://api.airtable.com/v0/appDFURl2nEJd1XEF/Parcels",
   postcodes: "https://api.airtable.com/v0/app5ZWdAtj21xnZrh/Postcodes",
@@ -24,15 +20,7 @@ module.exports = {
     const body = ctx.request.body;
     const user = ctx.state.user;
 
-    //     let dropoffDate = new Date(body.date);
-    //     dropoffDate.setUTCDate(
-    //       dropoffDate.getUTCDate() + rentalLengths[body.rentalLength]
-    //     );
-    console.log(body.date);
-
     const order = await strapi.query("order", "orders").create({
-      // pickupDate: body.date,
-      // dropoffDate: dropoffDate.toJSON(),
       status: "cart",
       product: body.product,
       date: body.date,
@@ -48,26 +36,43 @@ module.exports = {
     });
   },
 
+  async getCart(ctx) {
+    const user = ctx.state.user;
+
+    let cart = await strapi.query("order", "orders").find({
+      user: user.id,
+      status: "cart",
+    },
+    [ "product", "product.designer", "product.images"]);
+    cart = cart.map(item => ({...item, price: strapi.plugins["orders"].services.order.calculatePrice(item)}))
+
+    ctx.send({
+      cart,
+    });
+  },
+
   async checkout(ctx) {
     const user = ctx.state.user;
     const body = ctx.request.body;
 
     const updates = body.cart.map((order) => {
-      return strapi.query("order", "orders").update({
-        id: order.id,
+      return strapi.query("order", "orders").update(
+        {id: order.id},
+        {
         address: body.address,
-        paymentMethodID: body.paymentMethod,
+        paymentMethod: body.paymentMethod,
         status: "planning",
       });
     });
-    Promise.all(updates);
+    const result = await Promise.allSettled(updates);
+    strapi.log.info('checkout:result = %o', result)
 
-    ctx.send({ status: 200 });
+    ctx.send({ status: 200, result});
   },
 
   async calculateCartPrice(ctx) {
     const user = ctx.state.user;
-    const price = await strapi.plugins["orders"].services.calculateCartPrice(
+    const price = strapi.plugins["orders"].services.order.calculateCartPrice(
       body.cart || user.cart
     );
     ctx.send({ price });
@@ -75,7 +80,7 @@ module.exports = {
 
   async calculateAmount(ctx) {
     const user = ctx.state.user;
-    const amount = await strapi.plugins["orders"].services.calculateAmount(
+    const amount = strapi.plugins["orders"].services.order.calculateAmount(
       body.order
     );
     ctx.send({ amount });
@@ -83,33 +88,30 @@ module.exports = {
 
   async ship(ctx) {
     const { order } = ctx.request.body;
-    strapi.log.info("order %o", order);
+    strapi.log.info("orders:ship:order %o", order);
     const { address } = order;
-    const amount = await strapi.plugins["orders"].services.calculateAmount(
-      order
-    );
-    const user = await strapi
-      .query("user", "users-permissions")
-      .find({ id: order.user });
+    const amount = await strapi.plugins["orders"].services.order.calculateAmount( order);
+    const user = order.user
 
     stripe.paymentIntents
       .create({
         amount,
         currency: "gbp",
         customer: user.customer,
-        payment_method: order.paymentMethodID,
+        payment_method: order.paymentMethod,
         off_session: true,
         confirm: true,
       })
 
       .then((paymentIntent) =>
-        strapi.query("order", "orders").update({
-          id: order.id,
-          status: "shipping",
-          paymentIntentID: paymentIntent.id,
-        })
-      )
+            strapi.query("order", "orders").update(
+              { id: order.id},
+              { status: "shipping",
+                paymentIntent: paymentIntent.id,
+              }
+      ))
 
+      /* TODO: production: uncomment
       .then(() =>
         fetch(hived.parcels, {
           method: "POST",
@@ -120,11 +122,11 @@ module.exports = {
           body: {
             // TODO: Infinite Closet info
             Collection: "Infinite Closet",
-            Collection_Address_Line_1: address.address,
-            Collection_Town: address.town,
-            Collection_Postcode: address.postcode,
+            Collection_Address_Line_1: 'TODO',
+            Collection_Town: 'TODO',
+            Collection_Postcode: 'TODO',
             Collection_Email_Address: "sarah.korich@infinitecloset.co.uk",
-            Collection_Phone_Number: user.phone_number,
+            Collection_Phone_Number: 'TODO',
 
             Recipient: address.first_name + " " + address.last_name,
             Recipient_Address_Line_1: address.address,
@@ -136,11 +138,12 @@ module.exports = {
             Shipping_Class: "One-Day",
             Sender: "Infinite Closet",
             Value_GBP: amount, // 1000,
-            // Sender_Chosen_Collection_Date
-            // Sender_Chosen_Delivery_Date
+            // Sender_Chosen_Collection_Date: MM/DD/YYYY
+            // Sender_Chosen_Delivery_Date: MM/DD/YYYY
           },
         })
       )
+      */
 
       .then(() => {
         // TODO: send email to user?

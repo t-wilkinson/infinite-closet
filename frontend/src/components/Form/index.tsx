@@ -113,7 +113,7 @@ export const Warning = ({ children }) => (
 )
 
 export const Form = ({
-  onSubmit = (..._: any[]) => {}, // eww
+  onSubmit = (..._: any[]) => {},
   className = '',
   children,
 }) => (
@@ -146,12 +146,14 @@ export const FormHeader = ({ label }) => (
 export const Submit = ({
   children = 'Submit' as any,
   disabled = false,
-  onSubmit = () => {},
+  className='',
+  onSubmit,
 }) => (
   <button
     aria-label="Submit form"
-    className={`p-4 text-white mt-4 rounded-sm inline
+    className={`p-4 text-white mt-4 rounded-sm
       ${disabled ? 'bg-pri-light' : 'bg-pri'}
+      ${className}
     `}
     type="submit"
     onClick={onSubmit}

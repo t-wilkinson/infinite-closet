@@ -41,11 +41,13 @@ export const CallToAction = ({
   onClick = () => {},
   children,
   className = '',
+  disabled = false,
   ...props
 }) => (
   <button
     className="items-center"
     onClick={onClick}
+    disabled={disabled}
     aria-label="Activate call to action"
   >
     <div

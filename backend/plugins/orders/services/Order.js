@@ -7,25 +7,31 @@ const rentalPrice = {
 
 const denomination = 100;
 
+function calculatePrice(order) {
+  // returns cart price in smallest unit of currency
+  const orderPrice = order.product[rentalPrice[order.rentalLength]];
+  // stripe expects an integer price in smallest unit of currency
+  let price = order.quantity * orderPrice;
+  if (process.env.NODE_ENV === "development" && price === 0) {
+    price = 20;
+  }
+  return price
+}
+
+function calculateAmount(order) {
+  return calculatePrice(order) * denomination;
+}
+
+function calculateCartPrice(cart) {
+  const cartPrice = cart.reduce(
+    (price, item) => price + calculateAmount(item),
+    0
+  );
+  return cartPrice;
+}
+
 module.exports = {
-  calculateCartPrice(cart) {
-    calculatePrice = strapi.plugins["orders"].serivces.calculatePrice;
-    const cartAmount = cart.reduce(
-      (price, item) => price + calculateAmount(item),
-      0
-    );
-    return cartAmount / denomination;
-  },
-
-  calculateAmount(order) {
-    // returns cart price in smallest unit of currency
-    const orderPrice = order.product[rentalPrice[order.rentalLength]];
-    // stripe expects an integer price in smallest unit of currency
-    let amount = order.quantity * orderPrice * denomination;
-    if (process.env.NODE_ENV === "development" && amount === 0) {
-      amount = 2000;
-    }
-
-    return amount;
-  },
+  calculatePrice,
+  calculateAmount,
+  calculateCartPrice,
 };

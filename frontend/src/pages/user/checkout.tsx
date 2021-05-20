@@ -5,6 +5,11 @@ import Layout from '@/Layout'
 const Page = ({ data }) => {
   const user = useSelector((state) => state.account.user)
 
+  // TODO: allow guests
+  if (!user) {
+    return <div></div>
+  }
+
   return (
     <Layout>
       <Checkout user={user} data={data} />

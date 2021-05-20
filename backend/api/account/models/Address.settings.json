@@ -15,10 +15,6 @@
       "type": "string",
       "required": true
     },
-    "localityName": {
-      "type": "string",
-      "required": true
-    },
     "town": {
       "type": "string",
       "required": true
@@ -28,7 +24,8 @@
       "required": true
     },
     "firstName": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "lastName": {
       "type": "string",

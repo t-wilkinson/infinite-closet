@@ -1,6 +1,4 @@
 import { StrapiAddress } from './address';
-import { StrapiCart Item } from './cart-item';
-import { StrapiOrder } from './order';
 import { StrapiRole } from './role';
 
 /**
@@ -22,7 +20,6 @@ export interface StrapiUser {
   lastName?: string;
   phoneNumber?: string;
   addresses: StrapiAddress[];
-  orders: StrapiOrder[];
-  cart: StrapiCart Item[];
+  orders: any[];
   created_by: string;
 }

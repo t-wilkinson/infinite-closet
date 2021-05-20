@@ -3,11 +3,11 @@
  */
 export interface StrapiAddress {
   id: string;
-  lastName: string;
   address: string;
   localityName: string;
   town: string;
   postcode: string;
   firstName?: string;
+  lastName: string;
   created_by: string;
 }

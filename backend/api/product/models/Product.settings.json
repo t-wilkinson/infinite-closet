@@ -45,7 +45,9 @@
     "images": {
       "collection": "file",
       "via": "related",
-      "allowedTypes": ["images"],
+      "allowedTypes": [
+        "images"
+      ],
       "plugin": "upload"
     },
     "colors": {

@@ -82,7 +82,9 @@ export const Register = () => {
             setPasswordVisible={setPasswordVisible}
           />
         </Input>
-        <Submit disabled={!isValid(fields)}>Sign Up</Submit>
+        <Submit
+          onSubmit={() => {}}
+        disabled={!isValid(fields)}>Sign Up</Submit>
       </Form>
 
       <AlreadyHaveAccount />
