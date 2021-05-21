@@ -42,10 +42,6 @@ const productRentContents = {
   OneTime: ({ dispatch, product, state, user }) => {
     const [sizeState, setSizeState] = React.useState(false)
 
-    const defaultSize = {
-      size: 'MD',
-    }
-
     const addToCart = () => {
       axios
         .post(
@@ -140,7 +136,7 @@ const productRentContents = {
         <Submit
           onSubmit={addToCart}
           className="my-2 self-center rounded-sm w-full"
-          disabled={!state.selectedDate || !state.size}
+          disabled={!state.selectedDate || state.size === undefined}
         >
           Add to Closet
         </Submit>

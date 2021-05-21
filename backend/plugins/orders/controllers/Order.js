@@ -38,45 +38,9 @@ module.exports = {
 
   async getCart(ctx) {
     const user = ctx.state.user;
-
-    // add `sizes` component
-    // strapi won't fill in components so we must do it ourselves
-    let orders = await strapi.query("order", "orders").find({}, []);
-    orders = await Promise.allSettled(
-      orders.map(async (order) => {
-        order.product = await strapi
-          .query("product")
-          .findOne({ id: order.product });
-        return order;
-      })
-    );
-
-    // calculate available product quantities by removing existing order quantities
-    const availableQuantities = orders.reduce((counter, settled) => {
-      if (settled.status === "rejected") {
-        return counter;
-      }
-      const order = settled.value;
-      const { product } = order;
-      const productSize = product.sizes.find(
-        ({ size }) => size === order.size
-      ) || {
-        quantity: 0, // sane default
-      };
-      const key = product.id.toString() + order.size;
-
-      // initialize counter with total product quantity
-      counter[key] = counter[key] || productSize.quantity;
-
-      // remove quantity of any order related to product
-      if (["recieving", "planning"].includes(order.status)) {
-        counter[key] -= order.quantity;
-      }
-
-      return counter;
-    }, {});
-
-    console.log(availableQuantities);
+    const numAvailable = await strapi.plugins[
+      "orders"
+    ].services.order.numAvailable();
 
     let cart = await strapi.query("order", "orders").find(
       {
@@ -85,49 +49,73 @@ module.exports = {
       },
       ["product", "product.designer", "product.images"]
     );
-    cart = cart.map((order) => ({
-      ...order,
-      price: strapi.plugins["orders"].services.order.calculatePrice(order),
-      available: availableQuantities[order.product.id.toString() + order.size],
-    }));
+    cart = cart.map((order) => {
+      const availableKey = strapi.plugins["orders"].services.order.availableKey(
+        order
+      );
+      return {
+        ...order,
+        price: strapi.plugins["orders"].services.order.price(order),
+        available: numAvailable[availableKey],
+      };
+    });
 
     ctx.send({
       cart,
     });
   },
 
+  async removeCartItem(ctx) {
+    const { id } = ctx.params;
+    const order = await strapi
+      .query("order", "orders")
+      .update({ id }, { status: "dropped" });
+    ctx.send({
+      order,
+    });
+  },
+
   async checkout(ctx) {
-    const user = ctx.state.user;
     const body = ctx.request.body;
+    const numAvailable = await strapi.plugins[
+      "orders"
+    ].services.order.numAvailable();
 
     const updates = body.cart.map((order) => {
-      return strapi.query("order", "orders").update(
-        { id: order.id },
-        {
-          address: body.address,
-          paymentMethod: body.paymentMethod,
-          status: "planning",
-        }
+      const availableKey = strapi.plugins["orders"].services.order.availableKey(
+        order
       );
+      if (order.quantity <= numAvailable[availableKey]) {
+        return strapi.query("order", "orders").update(
+          { id: order.id },
+          {
+            address: body.address,
+            paymentMethod: body.paymentMethod,
+            status: "planning",
+          }
+        );
+      } else {
+        return new Promise((_, rej) =>
+          rej(`Not enough quantity available for order ${order.id}`)
+        );
+      }
     });
     const result = await Promise.allSettled(updates);
 
     ctx.send({ status: 200, result });
   },
 
-  async calculateCartPrice(ctx) {
+  async cartPrice(ctx) {
     const user = ctx.state.user;
-    const price = strapi.plugins["orders"].services.order.calculateCartPrice(
+    const price = strapi.plugins["orders"].services.order.cartPrice(
       body.cart || user.cart
     );
     ctx.send({ price });
   },
 
-  async calculateAmount(ctx) {
+  async amount(ctx) {
     const user = ctx.state.user;
-    const amount = strapi.plugins["orders"].services.order.calculateAmount(
-      body.order
-    );
+    const amount = strapi.plugins["orders"].services.order.amount(body.order);
     ctx.send({ amount });
   },
 
@@ -135,9 +123,7 @@ module.exports = {
   async ship(ctx) {
     const { order } = ctx.request.body;
     const { address } = order;
-    const amount = await strapi.plugins[
-      "orders"
-    ].services.order.calculateAmount(order);
+    const amount = await strapi.plugins["orders"].services.order.amount(order);
     const user = order.user;
 
     stripe.paymentIntents

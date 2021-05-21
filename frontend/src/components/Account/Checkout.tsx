@@ -1,12 +1,12 @@
 import React from 'react'
 import axios from 'axios'
 import Image from 'next/image'
-import dayjs, { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 import 'dayjs/locale/en-gb'
 
 import { fetchAPI, getURL } from '@/utils/api'
 import { Submit } from '@/Form'
-import { Divider } from '@/components'
+import { Divider, Icon, BlueLink } from '@/components'
 
 import { PaymentMethods, AddPaymentMethod } from './PaymentMethod'
 import { Addresses, AddAddress } from './Address'
@@ -29,6 +29,11 @@ const reducer = (state, action) => {
   switch (action.type) {
     case 'fill-cart':
       return { ...state, cart: action.payload }
+    case 'remove-cart-item':
+      return {
+        ...state,
+        cart: state.cart.filter((order) => order.id !== action.payload),
+      }
 
     case 'edit-payment':
       return { ...state, popup: 'payment' }
@@ -140,7 +145,7 @@ export const Checkout = ({ user, data }) => {
   }, [user])
 
   return (
-    <div className="w-full items-center mx-4 mb-8">
+    <div className="w-full items-center px-4 mb-8">
       <div className="w-full justify-center max-w-screen-xl h-full flex-row space-x-4">
         <div className="w-1/3">
           <Address state={state} dispatch={dispatch} user={user} />
@@ -149,15 +154,27 @@ export const Checkout = ({ user, data }) => {
           <Summary cart={state.cart} />
         </div>
         {state.cart.length === 0 ? (
-          <div className="w-full items-center">
-            <span className="font-bold text-xl">
-              Please add products to your cart.
+          <div className="w-full items-center h-64 justify-center">
+            <span className="font-bold text-xl flex flex-col items-center">
+              <div>Hmm... Your cart looks empty. </div>
+              <div>
+                <BlueLink
+                  href="/products/clothing"
+                  label="Would you like to go shopping?"
+                />
+              </div>
             </span>
           </div>
         ) : (
+          // TODO: check if any available <= 0
           <div className="w-full">
-            <Cart cart={state.cart} />
-            <Submit onSubmit={checkout}>Checkout</Submit>
+            <Cart cart={state.cart} dispatch={dispatch} />
+            <Submit
+              onSubmit={checkout}
+              disabled={state.cart.some((order) => order.available <= 0)}
+            >
+              Checkout
+            </Submit>
           </div>
         )}
       </div>
@@ -200,26 +217,43 @@ const rentalLengths = {
   long: 8,
 }
 
-const Cart = ({ cart }) => {
+const Cart = ({ dispatch, cart }) => {
   return (
     <div className="w-full">
       {cart.map((item) => (
-        <CartItem key={item.id} {...item} />
+        <CartItem key={item.id} dispatch={dispatch} {...item} />
       ))}
     </div>
   )
 }
 
-const CartItem = ({ product, ...item }) => {
-  const date = dayjs(item.date)
+const CartItem = ({ dispatch, product, ...order }) => {
+  const date = dayjs(order.date)
   const startDate = date.format('ddd, MMM D')
   const endDate = date
-    .add(rentalLengths[item.rentalLength], 'day')
+    .add(rentalLengths[order.rentalLength], 'day')
     .format('ddd, MMM D')
   const Bold = (props) => <span className="font-bold" {...props} />
 
+  const removeItem = () => {
+    axios
+      .delete(`/orders/cart/${order.id}`, { withCredentials: true })
+      .then((res) => dispatch({ type: 'remove-cart-item', payload: order.id }))
+      .catch((err) => console.error(err))
+  }
+
   return (
-    <div className="flex-row items-center border border-gray p-4 rounded-sm">
+    <div
+      className={`flex-row items-center border p-4 rounded-sm relative
+        ${order.available === 0 ? 'border-warning' : 'border-gray'}
+      `}
+    >
+      <button
+        onClick={removeItem}
+        className="absolute top-0 right-0 m-2 cursor-pointer"
+      >
+        <Icon name="close" size={20} />
+      </button>
       <div className="h-32 w-32 relative mr-4">
         <Image
           src={getURL(product.images[0].url)}
@@ -228,16 +262,22 @@ const CartItem = ({ product, ...item }) => {
         />
       </div>
       <div>
-        <span>Available: {item.available}</span>
         <span>
           {product.name} by <Bold>{product.designer.name}</Bold>
         </span>
         <span>
           {startDate} - {endDate}
         </span>
-        <span>{item.size}</span>
+        <span>{order.size}</span>
         <span>
-          <Bold>£{item.price}</Bold>
+          <Bold>£{order.price}</Bold>
+        </span>
+      </div>
+      <div className="flex-grow items-end">
+        <span>
+          {order.available === 1
+            ? `There is ${order.available} item left. Order now before it's gone!`
+            : `There are ${order.available} items left`}
         </span>
       </div>
     </div>
