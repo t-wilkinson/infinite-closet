@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 import styled from "styled-components";
 
 const OrderStatus = {
@@ -7,7 +7,7 @@ const OrderStatus = {
       fetch(strapi.backendURL + "/orders/ship/" + order.id, {
         method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           order,
@@ -15,12 +15,20 @@ const OrderStatus = {
       }).catch((err) => console.error(err));
     };
 
-    return <div className="process">
-      <div>{order.product.name} by {order.product.designer.name}</div>
-      <div><span className="process__label">Size:</span>{' '}{order.size}</div>
-      <div><span className="process__label">Quantity:</span>{' '}{order.quantity}</div>
-      <button onClick={ship}>Ship</button>
-    </div>;
+    return (
+      <div className="process">
+        <div>
+          {order.product.name} by {order.product.designer.name}
+        </div>
+        <div>
+          <span className="process__label">Size:</span> {order.size}
+        </div>
+        <div>
+          <span className="process__label">Quantity:</span> {order.quantity}
+        </div>
+        <button onClick={ship}>Ship</button>
+      </div>
+    );
   },
 
   recieving: (order) => {
@@ -28,29 +36,34 @@ const OrderStatus = {
       fetch(strapi.backendURL + `/orders/complete/${order.id}`, {
         method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           order,
         }),
-      }).catch(err => console.error(err))
-    }
+      }).catch((err) => console.error(err));
+    };
 
-    return <div className="recieving">
-      <button onClick={complete}>Complete Order</button>
-    </div>
+    return (
+      <div className="recieving">
+        <button onClick={complete}>Complete Order</button>
+      </div>
+    );
   },
 };
 
-const OrderDetails = ({order, className}) => {
-  const Status = OrderStatus[order.status]
-  return <div className={className}>
-    <Status {...order}/>
-  </div>
-}
+const OrderDetails = ({ order, className }) => {
+  const Status = OrderStatus[order.status];
+  return (
+    <div className={className}>
+      <Status {...order} />
+    </div>
+  );
+};
 
 const OrderDetailsWrapper = styled(OrderDetails)`
-  .process, .recieving {
+  .process,
+  .recieving {
     display: flex;
     flex-direction: column;
     align-items: center;

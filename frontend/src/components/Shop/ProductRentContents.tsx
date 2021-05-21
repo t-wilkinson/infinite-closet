@@ -3,7 +3,7 @@ import axios from 'axios'
 
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon, CallToAction } from '@/components'
-import {Submit} from '@/Form'
+import { Submit } from '@/Form'
 
 import { shopActions } from './slice'
 import { OneTime } from './types'

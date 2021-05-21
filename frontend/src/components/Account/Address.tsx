@@ -35,7 +35,7 @@ const Address = ({
     className={`border bg-gray-light p-4 flex-row cursor-pointer items-center
     ${id === state.address ? 'border-black' : ''}
     `}
-      onClick={() => dispatch({ type: 'choose-address', payload: id })}
+    onClick={() => dispatch({ type: 'choose-address', payload: id })}
   >
     <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
       <div
@@ -113,7 +113,7 @@ export const AddAddress = ({ user, dispatch, state }) => {
         { withCredentials: true },
       )
       .then((res) => {
-        dispatch({ type: 'close-popup'})
+        dispatch({ type: 'close-popup' })
         dispatch({ type: 'set-addresses', payload: res.data.addresses })
       })
       .catch((err) => console.error(err))
@@ -167,7 +167,11 @@ const EditAddress = ({ onSubmit, fields, dispatch, state }) => {
         >
           <Icon name="close" size={20} />
         </button>
-        {!valid && <span className="text-warning my-2">Sorry, we do not currently serve this location.</span>}
+        {!valid && (
+          <span className="text-warning my-2">
+            Sorry, we do not currently serve this location.
+          </span>
+        )}
         <div className="grid grid-flow-row grid-cols-2 w-full gap-x-4">
           {Object.keys(fields).map((field) => (
             <Input key={field} {...fields[field]} />

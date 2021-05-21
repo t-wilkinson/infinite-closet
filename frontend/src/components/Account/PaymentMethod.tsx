@@ -10,22 +10,28 @@ import { loadStripe } from '@stripe/stripe-js'
 
 import { StrapiUser } from '@/utils/models'
 import { fetchAPI } from '@/utils/api'
-import { Icon, BlueLink} from '@/components'
+import { Icon, BlueLink } from '@/components'
 import { Input, Submit } from '@/Form'
 
 import './CheckoutForm.module.css'
 
 const promise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY)
 
-const toTitleCase = (string: string) => string.charAt(0).toUpperCase() + string.slice(1)
+const toTitleCase = (string: string) =>
+  string.charAt(0).toUpperCase() + string.slice(1)
 
 export const PaymentMethods = ({ user, state, dispatch }) => {
   return (
     <div className="space-y-4">
       <span className="font-subheader text-2xl my-2">Payment Methods</span>
-      {state.paymentMethods.map(paymentMethod =>
-      <PaymentMethod key={paymentMethod.id} state={state} dispatch={dispatch} {...paymentMethod} />
-                               )}
+      {state.paymentMethods.map((paymentMethod) => (
+        <PaymentMethod
+          key={paymentMethod.id}
+          state={state}
+          dispatch={dispatch}
+          {...paymentMethod}
+        />
+      ))}
     </div>
   )
 }
@@ -34,7 +40,7 @@ const PaymentMethod = ({
   id,
   dispatch,
   state,
-  card: {brand, exp_month, exp_year, last4},
+  card: { brand, exp_month, exp_year, last4 },
 }) => (
   <div
     className={`border bg-gray-light p-4 flex-row cursor-pointer items-center
@@ -52,7 +58,7 @@ const PaymentMethod = ({
 
     <div className="justify-between">
       <span>
-      {toTitleCase(brand)} ending in {last4}
+        {toTitleCase(brand)} ending in {last4}
       </span>
       <span>
         Expires {exp_month}/{exp_year}
@@ -122,9 +128,9 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
         card: elements.getElement(CardElement),
         billing_details: {
           // TODO: is it better to include this or ask user for information?
-        //   name: user.firstName + ' ' + user.lastName,
-        //   email: user.email,
-        //   phone: user.phoneNumber,
+          //   name: user.firstName + ' ' + user.lastName,
+          //   email: user.email,
+          //   phone: user.phoneNumber,
         },
       },
     })
@@ -136,8 +142,11 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
       setError(null)
       setProcessing(false)
       setSucceeded(true)
-      dispatch({type: 'close-popup'})
-      dispatch({type: 'choose-payment-method', payload: payload.setupIntent.payment_method})
+      dispatch({ type: 'close-popup' })
+      dispatch({
+        type: 'choose-payment-method',
+        payload: payload.setupIntent.payment_method,
+      })
 
       // TODO: be nicer with clients data limits
       fetchAPI('/account/payment-methods')
@@ -151,7 +160,7 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
     }
   }
 
-  if (state.popup !== "payment") {
+  if (state.popup !== 'payment') {
     return <div />
   }
 
@@ -163,7 +172,9 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
         onSubmit={onSubmit}
       >
         <div className="w-full items-center">
-          <span className="font-subheader text-3xl m-2">Add Payment Method</span>
+          <span className="font-subheader text-3xl m-2">
+            Add Payment Method
+          </span>
         </div>
 
         <button
@@ -174,25 +185,27 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
         </button>
 
         <div className="my-8 border border-gray rounded-sm p-4">
-        <CardElement
-          id="card-element"
-          options={cardStyle}
-          onChange={handleChange}
-        />
+          <CardElement
+            id="card-element"
+            options={cardStyle}
+            onChange={handleChange}
+          />
         </div>
 
         <div className="w-full items-center">
-            <Submit
-              className="w-full"
-              disabled={processing || disabled || succeeded}
-              onSubmit={onSubmit}
-            >
-              {processing ? (
-                <div className="spinner w-full" id="spinner">...</div>
-              ) : 'Submit'
-
-              }
-        </Submit>
+          <Submit
+            className="w-full"
+            disabled={processing || disabled || succeeded}
+            onSubmit={onSubmit}
+          >
+            {processing ? (
+              <div className="spinner w-full" id="spinner">
+                ...
+              </div>
+            ) : (
+              'Submit'
+            )}
+          </Submit>
         </div>
 
         {/* Show any error that happens when processing the payment */}

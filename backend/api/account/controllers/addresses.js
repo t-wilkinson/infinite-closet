@@ -11,24 +11,24 @@ const hived = {
 
 module.exports = {
   async verify(ctx) {
-    const {postcode} = ctx.params;
+    const { postcode } = ctx.params;
     const res = await fetch(hived.postcodes, {
       method: "POST",
       headers: {
-        "Authorization": "Bearer " + hived.key,
+        Authorization: "Bearer " + hived.key,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         fields: {
           Recipient_Postcode: postcode,
-        }
-      })
+        },
+      }),
     });
-    const resJSON = await res.json()
-    const valid = resJSON.fields.Address_in_delivery_Area === "Valid"
+    const resJSON = await res.json();
+    const valid = resJSON.fields.Address_in_delivery_Area === "Valid";
 
     ctx.send({
-      valid
-    })
-  }
-}
+      valid,
+    });
+  },
+};

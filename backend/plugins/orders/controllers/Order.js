@@ -39,12 +39,17 @@ module.exports = {
   async getCart(ctx) {
     const user = ctx.state.user;
 
-    let cart = await strapi.query("order", "orders").find({
-      user: user.id,
-      status: "cart",
-    },
-    [ "product", "product.designer", "product.images"]);
-    cart = cart.map(item => ({...item, price: strapi.plugins["orders"].services.order.calculatePrice(item)}))
+    let cart = await strapi.query("order", "orders").find(
+      {
+        user: user.id,
+        status: "cart",
+      },
+      ["product", "product.designer", "product.images"]
+    );
+    cart = cart.map((item) => ({
+      ...item,
+      price: strapi.plugins["orders"].services.order.calculatePrice(item),
+    }));
 
     ctx.send({
       cart,
@@ -57,17 +62,18 @@ module.exports = {
 
     const updates = body.cart.map((order) => {
       return strapi.query("order", "orders").update(
-        {id: order.id},
+        { id: order.id },
         {
-        address: body.address,
-        paymentMethod: body.paymentMethod,
-        status: "planning",
-      });
+          address: body.address,
+          paymentMethod: body.paymentMethod,
+          status: "planning",
+        }
+      );
     });
     const result = await Promise.allSettled(updates);
-    strapi.log.info('checkout:result = %o', result)
+    strapi.log.info("checkout:result = %o", result);
 
-    ctx.send({ status: 200, result});
+    ctx.send({ status: 200, result });
   },
 
   async calculateCartPrice(ctx) {
@@ -91,8 +97,10 @@ module.exports = {
     const { order } = ctx.request.body;
     strapi.log.info("orders:ship:order %o", order);
     const { address } = order;
-    const amount = await strapi.plugins["orders"].services.order.calculateAmount( order);
-    const user = order.user
+    const amount = await strapi.plugins[
+      "orders"
+    ].services.order.calculateAmount(order);
+    const user = order.user;
 
     stripe.paymentIntents
       .create({
@@ -105,10 +113,10 @@ module.exports = {
       })
 
       .then((paymentIntent) =>
-            strapi.query("order", "orders").update(
-              { id: order.id},
-              { paymentIntent: paymentIntent.id, }
-      ))
+        strapi
+          .query("order", "orders")
+          .update({ id: order.id }, { paymentIntent: paymentIntent.id })
+      )
 
       /* TODO: production: uncomment
       .then(() =>
@@ -146,12 +154,10 @@ module.exports = {
 
       .then((res) =>
         // only update status once payment and delivery are valid
-            strapi.query("order", "orders").update(
-              { id: order.id},
-              { status: "recieving",
-                shipment: res.id
-              }
-      ))
+        strapi
+          .query("order", "orders")
+          .update({ id: order.id }, { status: "recieving", shipment: res.id })
+      )
 
       .then(() => {
         // TODO: send email to user?
@@ -159,7 +165,8 @@ module.exports = {
 
       .catch((err) => {
         // TODO: something failed, contact user with next step to take
-        if (err.error) { // stripe error
+        if (err.error) {
+          // stripe error
         } else {
         }
       });
@@ -172,17 +179,15 @@ module.exports = {
   // TODO: this method should be protected
   async complete(ctx) {
     const body = ctx.request.body;
-    const {order} = body
+    const { order } = body;
 
-    const res = await strapi.query("order", "orders").update(
-      {id: order.id},
-      {status: "completed"}
-    );
+    const res = await strapi
+      .query("order", "orders")
+      .update({ id: order.id }, { status: "completed" });
 
     ctx.send({
       status: 200,
       order: res,
-    })
+    });
   },
-
 };

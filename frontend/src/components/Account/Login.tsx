@@ -75,9 +75,10 @@ export const Login = () => {
             setPasswordVisible={setPasswordVisible}
           />
         </Input>
-        <Submit
-          onSubmit={() => {}}
-        disabled={!isValid(fields)}> Sign In </Submit>
+        <Submit onSubmit={() => {}} disabled={!isValid(fields)}>
+          {' '}
+          Sign In{' '}
+        </Submit>
 
         <OR />
 

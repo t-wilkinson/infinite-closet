@@ -146,8 +146,8 @@ export const FormHeader = ({ label }) => (
 export const Submit = ({
   children = 'Submit' as any,
   disabled = false,
-  className='',
-  onSubmit=() => {},
+  className = '',
+  onSubmit = () => {},
 }) => (
   <button
     aria-label="Submit form"

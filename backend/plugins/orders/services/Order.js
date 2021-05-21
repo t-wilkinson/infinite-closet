@@ -15,7 +15,7 @@ function calculatePrice(order) {
   if (process.env.NODE_ENV === "development" && price === 0) {
     price = 20;
   }
-  return price
+  return price;
 }
 
 function calculateAmount(order) {

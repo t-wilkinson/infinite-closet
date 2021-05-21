@@ -13,13 +13,7 @@
   "attributes": {
     "status": {
       "type": "enumeration",
-      "enum": [
-        "cart",
-        "list",
-        "planning",
-        "recieving",
-        "completed"
-      ],
+      "enum": ["cart", "list", "planning", "recieving", "completed"],
       "default": "planning",
       "required": true
     },
