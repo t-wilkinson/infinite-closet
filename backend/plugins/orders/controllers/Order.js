@@ -39,6 +39,45 @@ module.exports = {
   async getCart(ctx) {
     const user = ctx.state.user;
 
+    // add `sizes` component
+    // strapi won't fill in components so we must do it ourselves
+    let orders = await strapi.query("order", "orders").find({}, []);
+    orders = await Promise.allSettled(
+      orders.map(async (order) => {
+        order.product = await strapi
+          .query("product")
+          .findOne({ id: order.product });
+        return order;
+      })
+    );
+
+    // calculate available product quantities by removing existing order quantities
+    const availableQuantities = orders.reduce((counter, settled) => {
+      if (settled.status === "rejected") {
+        return counter;
+      }
+      const order = settled.value;
+      const { product } = order;
+      const productSize = product.sizes.find(
+        ({ size }) => size === order.size
+      ) || {
+        quantity: 0, // sane default
+      };
+      const key = product.id.toString() + order.size;
+
+      // initialize counter with total product quantity
+      counter[key] = counter[key] || productSize.quantity;
+
+      // remove quantity of any order related to product
+      if (["recieving", "planning"].includes(order.status)) {
+        counter[key] -= order.quantity;
+      }
+
+      return counter;
+    }, {});
+
+    console.log(availableQuantities);
+
     let cart = await strapi.query("order", "orders").find(
       {
         user: user.id,
@@ -46,9 +85,10 @@ module.exports = {
       },
       ["product", "product.designer", "product.images"]
     );
-    cart = cart.map((item) => ({
-      ...item,
-      price: strapi.plugins["orders"].services.order.calculatePrice(item),
+    cart = cart.map((order) => ({
+      ...order,
+      price: strapi.plugins["orders"].services.order.calculatePrice(order),
+      available: availableQuantities[order.product.id.toString() + order.size],
     }));
 
     ctx.send({
@@ -71,7 +111,6 @@ module.exports = {
       );
     });
     const result = await Promise.allSettled(updates);
-    strapi.log.info("checkout:result = %o", result);
 
     ctx.send({ status: 200, result });
   },
@@ -95,7 +134,6 @@ module.exports = {
   // TODO: this method should be protected
   async ship(ctx) {
     const { order } = ctx.request.body;
-    strapi.log.info("orders:ship:order %o", order);
     const { address } = order;
     const amount = await strapi.plugins[
       "orders"

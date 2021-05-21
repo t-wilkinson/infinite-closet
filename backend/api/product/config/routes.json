@@ -48,7 +48,6 @@
         "policies": []
       }
     },
-
     {
       "method": "GET",
       "path": "/products",

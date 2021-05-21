@@ -7,18 +7,17 @@
   },
   "options": {},
   "attributes": {
-    "size": {
-      "type": "string",
-      "required": true
-    },
-    "details": {
-      "type": "string",
-      "required": false
-    },
     "quantity": {
       "type": "integer",
       "default": 1,
       "min": 1,
+      "required": true
+    },
+    "details": {
+      "type": "string"
+    },
+    "size": {
+      "type": "string",
       "required": true
     }
   }

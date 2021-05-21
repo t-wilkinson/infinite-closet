@@ -228,6 +228,7 @@ const CartItem = ({ product, ...item }) => {
         />
       </div>
       <div>
+        <span>Available: {item.available}</span>
         <span>
           {product.name} by <Bold>{product.designer.name}</Bold>
         </span>

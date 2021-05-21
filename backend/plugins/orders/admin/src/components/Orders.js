@@ -43,8 +43,10 @@ const Orders = ({ plugin, className }) => {
 
   React.useEffect(() => {
     getOrders();
-    const timer = window.setInterval(getOrders, 60 * 1000);
-    return () => window.clearInterval(timer);
+    if (process.env.NODE_ENV === "production") {
+      const timer = window.setInterval(getOrders, 60 * 1000);
+      return () => window.clearInterval(timer);
+    }
   }, []);
 
   return (

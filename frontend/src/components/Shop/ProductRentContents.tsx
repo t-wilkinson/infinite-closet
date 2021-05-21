@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 
 import { useDispatch, useSelector } from '@/utils/store'
-import { Icon, CallToAction } from '@/components'
+import { Icon } from '@/components'
 import { Submit } from '@/Form'
 
 import { shopActions } from './slice'
@@ -32,8 +32,16 @@ const rentalLengths: { [key in OneTime]: number } = {
   Long: 8,
 }
 
+interface Size {
+  id: number
+  size: string
+  quantity: number
+}
+
 const productRentContents = {
   OneTime: ({ dispatch, product, state, user }) => {
+    const [sizeState, setSizeState] = React.useState(false)
+
     const defaultSize = {
       size: 'MD',
     }
@@ -44,9 +52,7 @@ const productRentContents = {
           '/orders',
           {
             quantity: state.quantity,
-            size: (
-              product.sizes.find((v) => v.id === state.size) ?? defaultSize
-            ).size,
+            size: product.sizes[state.size].size,
             date: state.selectedDate.toJSON(),
             rentalLength: state.oneTime,
             product: product.id,
@@ -66,19 +72,38 @@ const productRentContents = {
           dispatch={dispatch}
         />
 
-        <SelectorItem label="Size" className="my-2 z-10 w-24">
-          {/* TODO: pick a size*/}
-          {/* <DropDownPicker */}
-          {/*   containerStyle={{ zIndex: 10 }} */}
-          {/*   style={{ zIndex: 10 }} */}
-          {/*   items={product.sizes.map((v: { id: string } & unknown) => ({ */}
-          {/*     ...v, */}
-          {/*     value: v.id, */}
-          {/*   }))} */}
-          {/*   itemStyle={{ justifyContent: 'flex-start' }} */}
-          {/*   placeholder="Select" */}
-          {/*   onChangeItem={(item) => dispatch(shopActions.changeSize(item.id))} */}
-          {/* /> */}
+        <SelectorItem label="Size" className="my-2 z-10 w-full">
+          <div className="relative items-start w-full">
+            <div
+              className="p-2 border border-gray relative cursor-pointer w-32 justify-between flex-row"
+              onClick={() => setSizeState((state) => !state)}
+            >
+              {(state.size !== undefined &&
+                product.sizes[state.size] !== undefined &&
+                product.sizes[state.size].size) ||
+                'Select Size'}
+              <Icon name="down" size={16} className="mt-1" />
+            </div>
+            <div
+              className={`
+              w-32 absolute bottom-0 bg-white divide-y transform translate-y-full border border-gray
+              ${sizeState ? '' : 'hidden'}
+              `}
+            >
+              {product.sizes.map((size: Size, index: number) => (
+                <div
+                  key={size.id}
+                  onClick={() => {
+                    dispatch(shopActions.changeSize(index))
+                    setSizeState(false)
+                  }}
+                  className="items-center cursor-pointer"
+                >
+                  {size.size}
+                </div>
+              ))}
+            </div>
+          </div>
         </SelectorItem>
 
         <SelectorItem label="Rental time" className="my-2">
@@ -113,9 +138,9 @@ const productRentContents = {
         </SelectorItem>
 
         <Submit
-          onClick={addToCart}
+          onSubmit={addToCart}
           className="my-2 self-center rounded-sm w-full"
-          disabled={!state.selectedDate}
+          disabled={!state.selectedDate || !state.size}
         >
           Add to Closet
         </Submit>
