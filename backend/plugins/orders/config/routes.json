@@ -50,6 +50,14 @@
         "policies": ["plugins::users-permissions.permissions"]
       }
     },
+    {
+      "method": "GET",
+      "path": "/",
+      "handler": "Order.find",
+      "config": {
+        "policies": []
+      }
+    },
 
     {
       "method": "POST",
@@ -59,11 +67,10 @@
         "policies": []
       }
     },
-
     {
-      "method": "GET",
-      "path": "/",
-      "handler": "Order.find",
+      "method": "POST",
+      "path": "/complete/:id",
+      "handler": "Order.complete",
       "config": {
         "policies": []
       }

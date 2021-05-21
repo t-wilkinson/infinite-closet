@@ -87,7 +87,6 @@ const reducer = (state, action) => {
 
 export const Checkout = ({ user, data }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
-  console.log(state)
 
   const checkout = () => {
     dispatch({ type: 'payment-succeeded' })
@@ -187,7 +186,6 @@ const rentalLengths = {
 }
 
 const Cart = ({ cart }) => {
-  console.log(cart)
   return (
     <div className="w-full">
       {cart.map((item) => (

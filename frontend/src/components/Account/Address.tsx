@@ -130,8 +130,22 @@ export const AddAddress = ({ user, dispatch, state }) => {
 }
 
 const EditAddress = ({ onSubmit, fields, dispatch, state }) => {
+  const [valid, setValid] = React.useState(true)
+
   if (state.popup !== 'address') {
     return <div />
+  }
+
+  const validatePostcode = () => {
+    onSubmit()
+    /* TODO: production:
+    axios.get(`/addresses/verify/${fields.postcode.value}`)
+      .then(res => {
+        setValid(res.data.valid)
+        onSubmit()
+      })
+      .catch(err => setValid(false))
+     */
   }
 
   return (
@@ -139,8 +153,8 @@ const EditAddress = ({ onSubmit, fields, dispatch, state }) => {
       <form
         className="w-full max-w-sm w-full p-6 bg-white rounded-lg relative"
         onSubmit={(e) => {
-          onSubmit()
           e.preventDefault()
+          validatePostcode()
         }}
       >
         <div className="w-full items-center">
@@ -148,17 +162,19 @@ const EditAddress = ({ onSubmit, fields, dispatch, state }) => {
         </div>
         <button
           className="absolute top-0 right-0 m-3"
+          type="button"
           onClick={() => dispatch({ type: 'close-popup' })}
         >
           <Icon name="close" size={20} />
         </button>
+        {!valid && <span className="text-warning my-2">Sorry, we do not currently serve this location.</span>}
         <div className="grid grid-flow-row grid-cols-2 w-full gap-x-4">
           {Object.keys(fields).map((field) => (
             <Input key={field} {...fields[field]} />
           ))}
         </div>
         <div className="w-full items-center">
-          <Submit onSubmit={onSubmit}>Submit</Submit>
+          <Submit disabled={!valid}>Submit</Submit>
         </div>
       </form>
     </div>

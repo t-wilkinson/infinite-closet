@@ -86,6 +86,7 @@ module.exports = {
     ctx.send({ amount });
   },
 
+  // TODO: this method should be protected
   async ship(ctx) {
     const { order } = ctx.request.body;
     strapi.log.info("orders:ship:order %o", order);
@@ -106,9 +107,7 @@ module.exports = {
       .then((paymentIntent) =>
             strapi.query("order", "orders").update(
               { id: order.id},
-              { status: "shipping",
-                paymentIntent: paymentIntent.id,
-              }
+              { paymentIntent: paymentIntent.id, }
       ))
 
       /* TODO: production: uncomment
@@ -122,11 +121,10 @@ module.exports = {
           body: {
             // TODO: Infinite Closet info
             Collection: "Infinite Closet",
-            Collection_Address_Line_1: 'TODO',
-            Collection_Town: 'TODO',
-            Collection_Postcode: 'TODO',
+            Collection_Address_Line_1: '22 Horder Rd',
+            Collection_Town: 'London',
+            Collection_Postcode: 'SW6 5EE',
             Collection_Email_Address: "sarah.korich@infinitecloset.co.uk",
-            Collection_Phone_Number: 'TODO',
 
             Recipient: address.first_name + " " + address.last_name,
             Recipient_Address_Line_1: address.address,
@@ -137,13 +135,23 @@ module.exports = {
 
             Shipping_Class: "One-Day",
             Sender: "Infinite Closet",
-            Value_GBP: amount, // 1000,
+            Value_GBP: amount / 100, // 1000,
             // Sender_Chosen_Collection_Date: MM/DD/YYYY
             // Sender_Chosen_Delivery_Date: MM/DD/YYYY
           },
         })
+        .then(res => res.json())
       )
       */
+
+      .then((res) =>
+        // only update status once payment and delivery are valid
+            strapi.query("order", "orders").update(
+              { id: order.id},
+              { status: "recieving",
+                shipment: res.id
+              }
+      ))
 
       .then(() => {
         // TODO: send email to user?
@@ -151,68 +159,30 @@ module.exports = {
 
       .catch((err) => {
         // TODO: something failed, contact user with next step to take
+        if (err.error) { // stripe error
+        } else {
+        }
       });
 
     ctx.send({
       status: 200,
     });
   },
-};
 
-/*
- * Hived API
- *
+  // TODO: this method should be protected
+  async complete(ctx) {
+    const body = ctx.request.body;
+    const {order} = body
 
-const shippingClass = {
-  one_day: "One-Day",
-  two_day: "2-Day",
-  next_day: "Next-Day",
-};
+    const res = await strapi.query("order", "orders").update(
+      {id: order.id},
+      {status: "completed"}
+    );
 
-React.useEffect(() => {
-  if (order.status === "shipping" && order.shipping && !order.shipping_json) {
-    fetch(plugin.hived.api, {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + plugin.hived.key,
-      },
+    ctx.send({
+      status: 200,
+      order: res,
     })
-      .then((res) => res.json())
-      .then((res) => {
-        order.shipping_json = res;
-      });
-  }
-}, [order.status]);
+  },
 
-return Promise.all(
-  res.map((order) =>
-    fetch(
-      plugin.stripe.api + "/payment_intents/" + order.payment_intent,
-      {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + plugin.stripe.key,
-        },
-      }
-    )
-      .then((res) => res.json())
-      .catch(() => null)
-  )
-);
-
-.then((payment_intents) => {
-setOrders((orders) =>
-  orders.map((order, i) => {
-    if (payment_intents[i]) {
-      return {
-        ...order,
-        // TODO: there is probably a better solution
-        payment_intent_json: payment_intents[i],
-      };
-    } else {
-      return order;
-    }
-  })
-);
-
-*/
+};

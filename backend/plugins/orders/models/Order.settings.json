@@ -17,9 +17,7 @@
         "cart",
         "list",
         "planning",
-        "shipping",
         "recieving",
-        "recieved",
         "completed"
       ],
       "default": "planning",

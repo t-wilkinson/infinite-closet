@@ -121,7 +121,11 @@ const Days = ({ days, state, dispatch, rentalLength }) => {
   )
 }
 
-const dateAvailable = (date: Dayjs) => date.day() !== 0
+const dateAvailable = (date: Dayjs) =>  {
+  const isNotSunday = date.day() !== 0
+  const enoughShippingTime = date.isAfter(dayjs().add(2, 'day'), 'day')
+  return isNotSunday && enoughShippingTime
+}
 
 const Day = ({
   date,
