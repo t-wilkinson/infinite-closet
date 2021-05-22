@@ -7,6 +7,8 @@ module.exports = {
   },
   images: {
     domains: [
+      'infinitecloset.treywilkinson.com',
+      'api.infinitecloset.treywilkinson.com',
       'localhost',
       'api.dev.' + domain,
       'dev.' + domain,

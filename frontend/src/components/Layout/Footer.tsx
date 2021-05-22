@@ -79,10 +79,16 @@ const Subscribe = () => {
   )
 }
 
+// const footerLinks = [
+//   [{hre
+// ]
+
 const FooterLinks = () => (
-  <div className="items-center flex-grow">
-    <FooterLink href="/" label="Landing Page" />
-    <FooterLink href="/privacy-policy" label="Legal Terms and Conditions" />
+  <div className="items-center flex-grow flex-row">
+    <div className="w-full items-center">
+      <FooterLink href="/" label="Landing Page" />
+      <FooterLink href="/privacy-policy" label="Legal Terms and Conditions" />
+    </div>
   </div>
 )
 

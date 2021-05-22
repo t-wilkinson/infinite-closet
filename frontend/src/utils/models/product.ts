@@ -9,8 +9,6 @@ export interface StrapiProduct {
   designer?: StrapiDesigner;
   name: string;
   slug: string;
-  description?: string;
-  stylistNotes?: string;
   shortRentalPrice?: number;
   longRentalPrice?: number;
   retailPrice?: number;
@@ -23,5 +21,7 @@ export interface StrapiProduct {
   weather?: string;
   categories?: string;
   sizes: any[];
+  details?: string;
+  stylistNotes?: string;
   created_by: string;
 }

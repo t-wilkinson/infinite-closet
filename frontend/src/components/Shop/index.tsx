@@ -31,13 +31,11 @@ const Product = ({ data }) => {
         {/* <Rating rating={4.5} /> */}
         {/* <Icon name="heart" size={24} /> */}
       </div>
-      <span className="pt-4 font-subheader text-xl">
-        {product.designer.name}
-      </span>
+      <span className="pt-4 font-bold text-xl">{product.designer.name}</span>
       <span className="">{product.name}</span>
       {product.retailPrice && (
         <span className="pb-2 text-gray-dark">
-          Retails for £{product.retailPrice}
+          £{product.retailPrice} Original Retail
         </span>
       )}
       <Divider className="mb-4" />
@@ -51,6 +49,7 @@ const Product = ({ data }) => {
             key={item.key}
             item={item}
             selected={item.key === state.details}
+            state={state}
             product={product}
           />
         </React.Fragment>
@@ -60,8 +59,9 @@ const Product = ({ data }) => {
 }
 
 const details = [
+  { key: 'details', label: 'Product Details' },
   { key: 'stylistNotes', label: 'Stylist Notes' },
-  { key: 'description', label: 'Product Description' },
+  { key: 'fit', label: 'Style & Fit' },
   { key: 'share', label: 'Share' },
 ]
 

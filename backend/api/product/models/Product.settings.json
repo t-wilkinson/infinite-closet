@@ -24,12 +24,6 @@
       "targetField": "name",
       "required": true
     },
-    "description": {
-      "type": "string"
-    },
-    "stylistNotes": {
-      "type": "string"
-    },
     "shortRentalPrice": {
       "type": "decimal"
     },
@@ -73,6 +67,12 @@
       "type": "component",
       "repeatable": true,
       "component": "custom.sizes"
+    },
+    "details": {
+      "type": "richtext"
+    },
+    "stylistNotes": {
+      "type": "richtext"
     }
   }
 }

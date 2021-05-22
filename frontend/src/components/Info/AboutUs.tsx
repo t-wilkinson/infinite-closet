@@ -2,7 +2,26 @@ import React from 'react'
 
 import { Divider } from '@/components'
 
-import { values } from './constants'
+const values = [
+  {
+    header: 'Sustainability',
+    text: 'Create less waste and work with designers who share our vision',
+  },
+  {
+    header: 'Inclusivity',
+    text:
+      'Cultivate a culture that allows all women to freely express themselves',
+  },
+  {
+    header: 'Diversity',
+    text:
+      'Create a platform to promote independent women and minority owned brands',
+  },
+  {
+    header: 'Affordability',
+    text: 'Make sustainable fashion accessible to everyone',
+  },
+]
 
 export const AboutUs = () => (
   <div className="items-center w-full pb-6">
@@ -32,7 +51,7 @@ export const AboutUs = () => (
     <Divider className="my-2 max-w-xs" />
 
     <AboutItem header="Our Values">
-      <div className="flex-wrap items-center justify-center w-full max-w-xl m-4 md:flex-row">
+      <div className="flex-wrap items-center justify-center w-full max-w-screen-lg m-4 md:flex-row">
         {values.map(({ header, text }) => (
           <ValueItem key={header} header={header} text={text} />
         ))}

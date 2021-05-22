@@ -117,9 +117,7 @@ export const Form = ({
   className = '',
   children,
 }) => (
-  <div
-    className={`items-center h-full w-full bg-gray-light flex-grow ${className}`}
-  >
+  <div className={`items-center h-full w-full flex-grow ${className}`}>
     <form
       className="w-full max-w-sm"
       onSubmit={(e) => {

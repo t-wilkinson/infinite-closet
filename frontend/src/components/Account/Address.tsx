@@ -138,14 +138,15 @@ const EditAddress = ({ onSubmit, fields, dispatch, state }) => {
 
   const validatePostcode = () => {
     onSubmit()
-    /* TODO: production:
-    axios.get(`/addresses/verify/${fields.postcode.value}`)
-      .then(res => {
-        setValid(res.data.valid)
-        onSubmit()
-      })
-      .catch(err => setValid(false))
-     */
+    if (process.env.NODE_ENV === 'production') {
+      axios
+        .get(`/addresses/verify/${fields.postcode.value}`)
+        .then((res) => {
+          setValid(res.data.valid)
+          onSubmit()
+        })
+        .catch((err) => setValid(false))
+    }
   }
 
   return (

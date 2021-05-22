@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export const User = ({ children }) => {
   return (
-    <div className="w-full items-center h-full px-4 xl:px-0 mb-4">
+    <div className="w-full items-center px-4 xl:px-0 mb-4">
       <div className="max-w-screen-xl sm:flex-row w-full">
         <SideMenu />
         <div className="w-4" />

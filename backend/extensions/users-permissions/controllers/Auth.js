@@ -36,8 +36,7 @@ const setCookieSession = (cookies, jwt) => {
     secure: process.env.NODE_ENV === "production" ? true : false,
     maxAge: 1000 * 60 * 60 * 24 * 14, // 14 Day Age
     overwrite: true,
-    domain:
-      process.env.NODE_ENV === "development" ? "localhost" : process.env.DOMAIN,
+    domain: process.env.DOMAIN,
   });
 };
 

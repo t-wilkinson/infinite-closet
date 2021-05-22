@@ -4,9 +4,12 @@ import { StrapiUser } from '@/utils/models'
 
 interface State {
   user?: StrapiUser
+  popup: 'hidden' | 'email' | 'sign-in' | 'register'
 }
 
-const initialState: State = {}
+const initialState: State = {
+  popup: 'register',
+}
 
 export const accountSlice = createSlice({
   name: 'ACCOUNT',
@@ -17,6 +20,16 @@ export const accountSlice = createSlice({
     },
     logout(state, { payload }: PayloadAction<StrapiUser>) {
       state.user = payload
+    },
+
+    hidePopup(state) {
+      state.popup = 'hidden'
+    },
+    togglePopup(state, { payload }: PayloadAction<State['popup']>) {
+      state.popup = state.popup === 'hidden' ? payload : 'hidden'
+    },
+    showPopup(state, { payload }: PayloadAction<State['popup']>) {
+      state.popup = payload
     },
   },
 })

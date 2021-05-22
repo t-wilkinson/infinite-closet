@@ -9,27 +9,32 @@ const clothingPath = process.env.NEXT_PUBLIC_RELEASE
   ? '/products/clothing'
   : null
 
-// TODO: if href starts with `/`, consider it absolute, otherwise, hrefs.join('/')
+const imgs = [
+  'Elegant-pieces-you_ll-keep-forever-1.png',
+  'Elegant-pieces-you_ll-keep-forever-2.png',
+  'IMG_0457.jpg',
+  'IMG_0461.jpg',
+  'IMG_0459.jpg',
+  'IMG_0458.jpg',
+]
+
 const routes = [
   {
-    label: 'Plans',
-    value: 'plans',
+    label: 'How It Works',
+    value: 'howitworks',
     href: null,
-    img: null,
+    img: imgs[0],
     data: [
       {
-        label: 'Category',
+        label: null,
         href: null,
         data: [
           { label: 'How it works', href: null },
-          { label: 'Membership', href: null },
-          { label: 'Pick a plan', href: null },
+          { label: 'About Us', href: null },
           { label: 'Customer feedback', href: null },
           { label: 'Ambassador program', href: null },
-          { label: 'University partners', href: null },
         ],
       },
-      { label: 'More coming soon!', href: '/coming-soon', data: [] },
     ],
   },
   {
@@ -37,43 +42,38 @@ const routes = [
     value: 'trending',
     href: null,
     type: 'path',
-    img: null,
+    img: imgs[1],
     data: [
       {
-        label: 'Category',
+        label: null,
         href: null,
-        type: 'query',
         data: [
-          { label: 'Popular', href: null },
           { label: 'New In', href: null },
-          { label: 'Top rated', href: null },
-          { label: 'Our edit picks', href: null },
-          { label: 'Brand spotlight', href: null },
+          { label: 'Top Rated', href: null },
+          { label: 'Our Picks', href: null },
+          { label: 'Brand Spotlight', href: null },
         ],
       },
-      { label: 'More coming soon!', href: '/coming-soon', data: [] },
     ],
   },
   {
     label: 'Clothing',
     value: 'clothing',
     href: clothingPath,
-    img: null,
+    img: imgs[2],
     data: [
       {
         label: 'Category',
         href: clothingPath,
-        type: 'query',
         data: [
-          { label: 'Dresses', href: clothingPath },
-          { label: 'Tops', href: clothingPath },
-          { label: 'Outerwear', href: clothingPath },
-          { label: 'Pants', href: clothingPath },
-          { label: 'Skirts', href: clothingPath },
-          { label: 'Gowns', href: clothingPath },
-          { label: 'Jumpsuits', href: clothingPath },
-          { label: 'Maternity', href: clothingPath },
-          { label: 'Jumpers', href: clothingPath },
+          { label: 'Dresses', href: '/products/clothing/dresses' }, // TODO: more dynamic href
+          { label: 'Jumpsuits', href: '/products/clothing/jumpsuits' },
+          { label: 'Tops', href: null },
+          { label: 'Outerwear', href: null },
+          { label: 'Pants', href: null },
+          { label: 'Skirts', href: null },
+          { label: 'Gowns', href: null },
+          { label: 'Maternity', href: null },
         ],
       },
       {
@@ -81,33 +81,20 @@ const routes = [
         href: null,
         data: [
           { label: 'Wedding', href: null },
-          {
-            label: 'Night Out',
-            href: null,
-          },
-          { label: 'Dinner', href: null },
-          {
-            label: 'Date night',
-            href: null,
-          },
-          { label: 'Office', href: null },
-          {
-            label: 'WFH & Loungewear',
-            href: null,
-          },
-          { label: 'Brunch', href: null },
+          { label: 'Date Night', href: null },
           { label: 'Party', href: null },
-          { label: 'Weekend', href: null },
+          { label: 'Brunch', href: null },
+          { label: 'Office', href: null },
+          { label: 'Cocktail', href: null },
         ],
       },
-      { label: 'More coming soon!', href: '/coming-soon', data: [] },
     ],
   },
   {
     label: 'Accessories',
     value: 'accessories',
     href: null,
-    img: null,
+    img: imgs[3],
     data: [
       {
         label: 'Category',
@@ -115,10 +102,8 @@ const routes = [
         data: [
           { label: 'Bags', href: null },
           { label: 'Jewelry', href: null },
-          { label: 'Bridal', href: null },
         ],
       },
-      { label: 'More coming soon!', href: '/coming-soon', data: [] },
     ],
   },
   // {
@@ -137,44 +122,14 @@ const routes = [
   //       href: null,
   //       data: [],
   //     },
-  //     { label: 'More coming soon!', href: '/coming-soon', data: [] },
   //   ],
   // },
-  {
-    label: 'Sale',
-    value: 'sale',
-    href: null,
-    img: null,
-    data: [
-      {
-        label: 'Category',
-        href: null,
-        data: [
-          { label: 'Under £50', href: null },
-          { label: 'Under £100', href: null },
-          { label: 'Under £150', href: null },
-          { label: 'Under £200', href: null },
-        ],
-      },
-      { label: 'More coming soon!', href: '/coming-soon', data: [] },
-    ],
-  },
   {
     label: 'Blog',
     value: 'blog',
     href: null,
-    img: null,
-    data: [
-      {
-        label: 'Category',
-        href: null,
-        data: [
-          { label: 'Featured', href: null },
-          { label: 'Popular', href: null },
-        ],
-      },
-      { label: 'More coming soon!', href: '/coming-soon', data: [] },
-    ],
+    img: imgs[4],
+    data: [],
   },
 ] as const
 

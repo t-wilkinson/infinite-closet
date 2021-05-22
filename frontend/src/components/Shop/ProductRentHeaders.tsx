@@ -9,7 +9,7 @@ export const ProductRentHeaders = ({ product, state }) => {
   const dispatch = useDispatch()
 
   return (
-    <div className="flex-row border-gray border rounded-md bg-gray-light divide-x divide-gray overflow-hidden">
+    <div className="flex-row border-gray border rounded-md divide-x divide-gray overflow-hidden">
       {Object.keys(productRentHeaders).map((rentType: RentType, i: number) => {
         return (
           <button
@@ -19,7 +19,7 @@ export const ProductRentHeaders = ({ product, state }) => {
           >
             <div
               className={`flex-grow p-2 h-full
-                ${rentType === state.rentType ? 'bg-sec-light' : ''}
+                ${rentType === state.rentType ? 'bg-pri-light' : ''}
                 `}
             >
               <div className="flex-grow items-center justify-between">
@@ -47,16 +47,10 @@ const productRentHeaders = {
   ),
 
   Membership: () => (
-    <>
-      <span className="text-sm font-bold">Membership</span>
-    </>
+    <span className="text-sm text-gray font-bold">Membership</span>
   ),
 
-  Purchase: () => (
-    <>
-      <span className="text-sm font-bold">Purchase</span>
-    </>
-  ),
+  Purchase: () => <span className="text-sm text-gray font-bold">Purchase</span>,
 }
 
 export default ProductRentHeaders

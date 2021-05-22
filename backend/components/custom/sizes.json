@@ -10,15 +10,15 @@
     "quantity": {
       "type": "integer",
       "default": 1,
-      "min": 1,
+      "min": 0,
       "required": true
-    },
-    "details": {
-      "type": "string"
     },
     "size": {
       "type": "string",
       "required": true
+    },
+    "details": {
+      "type": "richtext"
     }
   }
 }

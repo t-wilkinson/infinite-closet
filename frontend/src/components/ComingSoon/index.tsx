@@ -9,7 +9,7 @@ export const ComingSoon = () => {
     <div className="items-center bg-white flex-grow">
       <div className="flex-grow justify-center items-center">
         <span className="font-subheader text-center p-4 text-6xl my-8">
-          MORE COMING SOON!
+          MORE COMING SOON
         </span>
         <Link href="/">
           <a>

@@ -21,7 +21,8 @@ export const Crumbs = ({ slug, ...props }) => {
 }
 
 export const BreadCrumbs = ({}) => {
-  const slug = useRouter().query.slug as string[]
+  // TODO: remove .slice()
+  const slug = useRouter().query.slug.slice(0, 1) as string[]
 
   return (
     <div className="items-start mb-2 w-full px-1 hidden sm:flex">
@@ -30,15 +31,25 @@ export const BreadCrumbs = ({}) => {
       </span>
       {routes
         .find((el) => el.value === slug[0])
-        ?.data[0].data.map((el: { label: string; href: string }) => (
-          <Link key={el.label} href={el.href || '#'}>
-            <a>
-              <span className="cursor-pointer hover:underline mb-1">
+        ?.data[0].data.map((el: { label: string; href: string }) => {
+          if (el.href) {
+            return (
+              <Link key={el.label} href={el.href}>
+                <a>
+                  <span className="cursor-pointer hover:underline mb-1">
+                    {el.label}
+                  </span>
+                </a>
+              </Link>
+            )
+          } else {
+            return (
+              <span key={el.label} className="mb-1 text-gray">
                 {el.label}
               </span>
-            </a>
-          </Link>
-        ))}
+            )
+          }
+        })}
     </div>
   )
 }

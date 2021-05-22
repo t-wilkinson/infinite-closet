@@ -2,14 +2,19 @@ import React from 'react'
 import Link from 'next/link'
 import axios from 'axios'
 
-import { Divider, Icon } from '@/components'
+import { Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 import useAnalytics from '@/utils/useAnalytics'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { Input, Checkbox, Submit } from '@/Form'
 
-import { AboutUs } from './AboutUs'
-import { howDidYouFindUs } from './constants'
+const howDidYouFindUs = [
+  { label: 'Social Media', value: 'social-media' },
+  { label: 'Word of Mouth', value: 'word-of-mouth' },
+  { label: 'Search Engine (Google, etc.)', value: 'search-engine' },
+  { label: 'Blog or Publication', value: 'blog' },
+  { label: 'Other', value: 'other' },
+]
 
 export const LandingPage = () => {
   return (
@@ -33,12 +38,6 @@ export const LandingPage = () => {
           </div>
         </div>
       </div>
-
-      <div className="items-center">
-        <Divider className="mt-8 max-w-screen-xl" />
-      </div>
-
-      <AboutUs />
     </div>
   )
 }

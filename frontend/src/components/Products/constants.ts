@@ -17,13 +17,12 @@ export const filterData = {
   Occasions: {
     filterName: 'occasions',
     data: [
-      { field: 'date', label: 'Date' },
-      { field: 'formal_affair', label: 'Formal Affair' },
-      { field: 'party', label: 'Party' },
-      { field: 'vacation', label: 'Vacation' },
-      { field: 'wedding', label: 'Wedding' },
-      { field: 'weekend', label: 'Weekend' },
-      { field: 'work', label: 'Work' },
+      { label: 'Wedding', field: 'Wedding' },
+      { label: 'Date Night', field: 'Date Night' },
+      { label: 'Party', field: 'Party' },
+      { label: 'Brunch', field: 'Brunch' },
+      { label: 'Office', field: 'Office' },
+      { label: 'Cocktail', field: 'Cocktail' },
     ],
   },
   Colors: {
@@ -32,9 +31,15 @@ export const filterData = {
       { color: 'white', label: 'White', value: '#ffffff' },
       { color: 'gray', label: 'Gray', value: '#cccccc' },
       { color: 'black', label: 'Black', value: '#000000' },
+
       { color: 'red', label: 'Red', value: '#ff0000' },
-      { color: 'blue', label: 'Blue', value: '#0000ff' },
+      { color: 'blue', label: 'Blue', value: '#4169E1' },
       { color: 'green', label: 'Green', value: '#00ff00' },
+      { color: 'pink', label: 'Pink', value: '#FFC0CB' },
+      { color: 'orange', label: 'Orange', value: '#FFA500' },
+
+      { color: 'emerald', label: 'Emerald', value: '#50C878' },
+      { color: 'champagne', label: 'Champagne', value: '#F7E7CE' },
     ],
   },
   Style: {
@@ -80,10 +85,10 @@ export const filtersByRoute: { readonly [key in ProductRoutes]: Filter[] } = {
   clothing: [
     'Designers',
     'Colors',
-    'DatesAvailable',
+    // 'DatesAvailable',
     'Occasions',
-    'Favorites',
+    // 'Favorites',
     'Weather',
-    'Style',
+    // 'Style',
   ],
 }

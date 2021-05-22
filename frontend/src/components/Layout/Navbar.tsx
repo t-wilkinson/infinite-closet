@@ -30,7 +30,10 @@ export const NavBar = () => {
           >
             <Image
               alt={`${route.label} page`}
-              src={route.img ?? '/images/brand/Logo-Lockup---Gray.jpg'}
+              src={
+                `/images/home/${route.img}` ??
+                '/images/brand/Logo-Lockup---Gray.jpg'
+              }
               height={350}
               width={350}
               objectFit="contain"
@@ -46,18 +49,25 @@ export default NavBar
 
 const Sections = ({ visible, setVisible }) => (
   <div className="items-center justify-center w-full">
-    <div className="flex-row space-x-2">
+    <div className="flex-row w-full justify-evenly">
       {routes.map(({ value, label, href }, i) => (
         <div
           key={i}
           onMouseEnter={() => setVisible(value)}
           className={`
-            ${visible === value ? 'bg-gray-light cursor-pointer' : ''}
+            relative
+            ${visible === value ? 'cursor-pointer' : ''}
           `}
         >
+          {visible === value && (
+            <div
+              className="absolute bottom-0 w-full bg-black"
+              style={{ height: 2, marginBottom: -2 }}
+            />
+          )}
           <Link href={href ?? '#'}>
             <a>
-              <span className="p-2 cursor-pointer font-subheader">{label}</span>
+              <span className="p-2 cursor-pointer">{label}</span>
             </a>
           </Link>
         </div>
@@ -70,7 +80,9 @@ const PageRoutes = ({ route }: { route: typeof routes[number] }) => (
   <div className="flex-row">
     {route.data.map((column, i) => (
       <div key={i}>
-        <ColumnHeader href={column.href}>{column.label}</ColumnHeader>
+        {column.label && (
+          <ColumnHeader href={column.href}>{column.label}</ColumnHeader>
+        )}
         {column.data.map((row, i) => (
           <ColumnItem key={i} href={row.href}>
             {row.label}

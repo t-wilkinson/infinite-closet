@@ -19,6 +19,9 @@ module.exports = {
         "https://dev." + domain,
         "https://api.dev." + domain,
         "https://admin.dev." + domain,
+
+        "http://api.infinitecloset.treywilkinson.com",
+        "http://infinitecloset.treywilkinson.com",
       ],
     },
   },

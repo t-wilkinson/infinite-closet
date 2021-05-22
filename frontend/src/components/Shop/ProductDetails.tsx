@@ -6,7 +6,7 @@ import { useDispatch } from '@/utils/store'
 
 import { shopActions } from './slice'
 
-export const ProductDeatils = ({ selected, item, product }) => {
+export const ProductDeatils = ({ state, selected, item, product }) => {
   const dispatch = useDispatch()
   const Details =
     details[item.key] ||
@@ -24,13 +24,28 @@ export const ProductDeatils = ({ selected, item, product }) => {
           <Icon size={12} name={selected ? 'down' : 'up'} />
         </div>
       </button>
-      <Details selected={selected} product={product} />
+      <Details state={state} selected={selected} product={product} />
     </>
   )
 }
 export default ProductDeatils
 
 const details = {
+  fit: ({ selected, product, state }) => (
+    <div
+      className={`bg-gray-light px-2 py-4
+        ${selected ? '' : 'hidden'}
+        `}
+    >
+      <span>
+        {state.size === undefined && product.sizes.length > 0
+          ? product.sizes[0].details
+          : state.size !== undefined && product.sizes[state.size]
+          ? product.sizes[state.size].details
+          : null}
+      </span>
+    </div>
+  ),
   share: ({ selected, product }) => (
     <div
       className={`flex-row px-2 pt-1 pb-4 space-x-2

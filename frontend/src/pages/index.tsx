@@ -1,10 +1,10 @@
+import Home from '@/Home'
 import Layout from '@/Layout'
-import LandingPage from '@/LandingPage'
 
-const Page = () => {
+export const Page = () => {
   return (
     <Layout>
-      <LandingPage />
+      <Home />
     </Layout>
   )
 }

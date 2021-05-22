@@ -54,10 +54,7 @@ export const CallToAction = ({
       className={`items-center content-center p-4 bg-pri ${className}`}
       {...props}
     >
-      <span
-        className="text-white uppercase font-subheader"
-        children={children}
-      />
+      <span className="text-white" children={children} />
     </div>
   </button>
 )

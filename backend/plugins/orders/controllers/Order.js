@@ -16,7 +16,6 @@ module.exports = {
   ...generateAPI("order", "orders"),
 
   async create(ctx) {
-    // TODO: make sure products are available
     const body = ctx.request.body;
     const user = ctx.state.user;
 
@@ -142,39 +141,39 @@ module.exports = {
           .update({ id: order.id }, { paymentIntent: paymentIntent.id })
       )
 
-      /* TODO: production: uncomment
-      .then(() =>
-        fetch(hived.parcels, {
-          method: "POST",
-          headers: {
-            Authorization: "Bearer " + hived.key,
-            "Content-Type": "application/json",
-          },
-          body: {
-            // TODO: Infinite Closet info
-            Collection: "Infinite Closet",
-            Collection_Address_Line_1: '22 Horder Rd',
-            Collection_Town: 'London',
-            Collection_Postcode: 'SW6 5EE',
-            Collection_Email_Address: "sarah.korich@infinitecloset.co.uk",
+      .then(() => {
+        if (process.env.NODE_ENV === "production") {
+          return fetch(hived.parcels, {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + hived.key,
+              "Content-Type": "application/json",
+            },
+            body: {
+              Collection: "Infinite Closet",
+              Collection_Address_Line_1: "22 Horder Rd",
+              Collection_Town: "London",
+              Collection_Postcode: "SW6 5EE",
+              Collection_Email_Address: "sarah.korich@infinitecloset.co.uk",
 
-            Recipient: address.first_name + " " + address.last_name,
-            Recipient_Address_Line_1: address.address,
-            Recipient_Town: address.town,
-            Recipient_Postcode: address.postcode,
-            Recipient_Email_Address: user.email,
-            Recipient_Phone_Number: user.phone_number,
+              Recipient: address.first_name + " " + address.last_name,
+              Recipient_Address_Line_1: address.address,
+              Recipient_Town: address.town,
+              Recipient_Postcode: address.postcode,
+              Recipient_Email_Address: user.email,
+              Recipient_Phone_Number: user.phone_number,
 
-            Shipping_Class: "One-Day",
-            Sender: "Infinite Closet",
-            Value_GBP: amount / 100, // 1000,
-            // Sender_Chosen_Collection_Date: MM/DD/YYYY
-            // Sender_Chosen_Delivery_Date: MM/DD/YYYY
-          },
-        })
-        .then(res => res.json())
-      )
-      */
+              Shipping_Class: "One-Day",
+              Sender: "Infinite Closet",
+              Value_GBP: amount / 100, // 1000,
+              // Sender_Chosen_Collection_Date: MM/DD/YYYY
+              // Sender_Chosen_Delivery_Date: MM/DD/YYYY
+            },
+          }).then((res) => res.json());
+        } else {
+          return new Promise((res) => res());
+        }
+      })
 
       .then((res) =>
         // only update status once payment and delivery are valid

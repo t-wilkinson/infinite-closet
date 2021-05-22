@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
 
 import { Icon } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
@@ -33,10 +34,10 @@ const SmallHeader = () => {
   )
 }
 
-const LargeHeader = ({ user }) => (
+const LargeHeader = ({ user, router }) => (
   <div className="z-30 items-center hidden w-full pt-4 mb-8 md:flex select-none relative ">
     <div className="flex-row justify-center w-full items-center max-w-screen-xl relative">
-      <LargeHeaderLogo />
+      <LargeHeaderLogo router={router} />
       {process.env.NEXT_PUBLIC_RELEASE ? (
         <div className="absolute right-0">
           <Account user={user} />
@@ -47,24 +48,20 @@ const LargeHeader = ({ user }) => (
   </div>
 )
 
-const LargeHeaderLogo = () => (
+const LargeHeaderLogo = ({ router }) => (
   <Link href="/">
     <a>
-      {process.env.NEXT_PUBLIC_RELEASE ? (
-        <div className="flex-row items-center mb-2 cursor-pointer">
-          <div className="w-10 mb-1">
+      {router.pathname === '/' || !process.env.NEXT_PUBLIC_RELEASE ? (
+        <div className="items-center mb-8 cursor-pointer">
+          <div className="w-20 mb-2">
             <Icon name="logo" className="text-pri" />
           </div>
-          <div className="w-4" />
           <span className="text-4xl font-header">INFINITE CLOSET</span>
+          {/* <span className="text-lg font-header">LESS IS MORE</span> */}
         </div>
       ) : (
-        <div className="items-center mb-2 cursor-pointer">
-          <div className="w-24 mb-2">
-            <Icon name="logo" className="text-pri" />
-          </div>
+        <div className="flex-row items-center mb-2 cursor-pointer">
           <span className="text-4xl font-header">INFINITE CLOSET</span>
-          <span className="text-lg font-header">LESS IS MORE</span>
         </div>
       )}
     </a>
@@ -105,11 +102,12 @@ const IconLink = ({ size, name, href }) => (
 
 export const Header = () => {
   const user = useSelector((state) => state.account.user)
+  const router = useRouter()
 
   return (
     <header>
       <SmallHeader />
-      <LargeHeader user={user} />
+      <LargeHeader user={user} router={router} />
     </header>
   )
 }

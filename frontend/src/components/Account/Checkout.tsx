@@ -166,14 +166,12 @@ export const Checkout = ({ user, data }) => {
             </span>
           </div>
         ) : (
-          // TODO: check if any available <= 0
           <div className="w-full">
             <Cart cart={state.cart} dispatch={dispatch} />
-            <Submit
-              onSubmit={checkout}
-              disabled={state.cart.some((order) => order.available <= 0)}
-            >
-              Checkout
+            <Submit onSubmit={checkout}>
+              {state.cart.some((order) => order.available <= 0)
+                ? 'Checkout Available Items'
+                : 'Checkout'}
             </Submit>
           </div>
         )}
@@ -245,7 +243,7 @@ const CartItem = ({ dispatch, product, ...order }) => {
   return (
     <div
       className={`flex-row items-center border p-4 rounded-sm relative
-        ${order.available === 0 ? 'border-warning' : 'border-gray'}
+        ${order.available <= 0 ? 'border-warning' : 'border-gray'}
       `}
     >
       <button
@@ -277,6 +275,8 @@ const CartItem = ({ dispatch, product, ...order }) => {
         <span>
           {order.available === 1
             ? `There is ${order.available} item left. Order now before it's gone!`
+            : order.available <= 0
+            ? `There are no items left`
             : `There are ${order.available} items left`}
         </span>
       </div>

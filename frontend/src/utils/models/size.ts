@@ -3,8 +3,8 @@
  */
 export interface StrapiSize {
   id: string;
+  quantity: number;
   size: string;
   details?: string;
-  quantity: number;
   created_by: string;
 }

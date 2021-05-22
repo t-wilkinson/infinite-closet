@@ -10,6 +10,7 @@ import useAnalytics from '@/utils/useAnalytics'
 import CookieConsent from '@/Layout/CookieConsent'
 import { useDispatch, useSelector } from '@/utils/store'
 import { accountActions } from '@/Account/slice'
+import Popup from '@/Account/Popup'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_STRAPI_API_URL
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -58,6 +59,7 @@ const Wrapper = ({ children }) => {
   useSaveScrollPos()
   const dispatch = useDispatch()
   const headerOpen = useSelector((state) => state.layout.headerOpen)
+  const popup = useSelector((state) => state.account.popup)
   const app = useAnalytics()
   app?.setCurrentScreen(window.location.pathname)
 
@@ -66,8 +68,9 @@ const Wrapper = ({ children }) => {
       .post('/account/login', {}, { withCredentials: true })
       .then((res) => {
         if (res.data.user) {
-          console.log(res.data.user)
           dispatch(accountActions.login(res.data.user))
+        } else {
+          dispatch(accountActions.showPopup('email'))
         }
       })
       .catch((err) => console.error(err))
@@ -80,7 +83,7 @@ const Wrapper = ({ children }) => {
       `}
     >
       <CookieConsent />
-
+      {/* <Popup popup={popup} /> */}
       <div className="min-h-screen">
         <Banner />
         {children}
@@ -90,12 +93,8 @@ const Wrapper = ({ children }) => {
 }
 
 const Banner = () => (
-  <div className="items-center px-2 py-4 width-full bg-sec-light">
-    <span className="text-lg font-header">COMING JULY 1, 2021</span>
-    <div className="h-2" />
-    <span className="text-center font-subheader-light">
-      Discover and rent the latest trends from fashions rising
-    </span>
+  <div className="items-center px-2 py-1 width-full bg-sec-light">
+    <span className="text-norm">COMING JULY 1</span>
   </div>
 )
 

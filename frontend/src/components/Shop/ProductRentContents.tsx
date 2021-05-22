@@ -138,7 +138,7 @@ const productRentContents = {
           className="my-2 self-center rounded-sm w-full"
           disabled={!state.selectedDate || state.size === undefined}
         >
-          Add to Closet
+          Add to Cart
         </Submit>
       </>
     )
@@ -146,13 +146,13 @@ const productRentContents = {
 
   Membership: () => (
     <div className="justify-center items-center flex-grow">
-      <span className="font-subheader text-center text-3xl">Coming Soon!</span>
+      <span className="font-subheader text-center text-3xl">Coming Soon</span>
     </div>
   ),
 
   Purchase: () => (
     <div className="justify-center items-center flex-grow">
-      <span className="font-subheader text-center text-3xl">Coming Soon!</span>
+      <span className="font-subheader text-center text-3xl">Coming Soon</span>
     </div>
   ),
 }
