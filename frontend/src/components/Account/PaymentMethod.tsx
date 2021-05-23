@@ -10,8 +10,8 @@ import { loadStripe } from '@stripe/stripe-js'
 
 import { StrapiUser } from '@/utils/models'
 import { fetchAPI } from '@/utils/api'
-import { Icon, BlueLink } from '@/components'
-import { Input, Submit } from '@/Form'
+import { Icon } from '@/components'
+import { Submit } from '@/Form'
 
 import './CheckoutForm.module.css'
 
@@ -23,7 +23,10 @@ const toTitleCase = (string: string) =>
 export const PaymentMethods = ({ user, state, dispatch }) => {
   return (
     <div className="space-y-4">
-      <span className="font-subheader text-2xl my-2">Payment Methods</span>
+      <span className="font-subheader text-2xl my-2">
+        Payment Methods
+        <div className="w-full h-px bg-pri mt-2 mb-1 " />
+      </span>
       {state.paymentMethods.map((paymentMethod) => (
         <PaymentMethod
           key={paymentMethod.id}
@@ -51,7 +54,7 @@ const PaymentMethod = ({
     <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
       <div
         className={`w-3 h-3 rounded-full
-          ${id === state.paymentMethod ? 'bg-sec-light' : ''}
+          ${id === state.paymentMethod ? 'bg-pri' : ''}
           `}
       />
     </div>
@@ -169,13 +172,15 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
       <form
         id="payment-form"
         className="w-full max-w-sm w-full p-6 bg-white rounded-lg relative"
-        onSubmit={onSubmit}
+        onSubmit={(e) => e.preventDefault()}
       >
         <div className="w-full items-center">
           <span className="font-subheader text-3xl m-2">
             Add Payment Method
           </span>
         </div>
+
+        <div className="w-full h-px bg-pri mb-4 mt-1 rounded-full" />
 
         <button
           className="absolute top-0 right-0 m-3"

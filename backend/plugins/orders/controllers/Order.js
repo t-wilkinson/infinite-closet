@@ -75,6 +75,7 @@ module.exports = {
   },
 
   async checkout(ctx) {
+    // TODO: make sure date is available
     const body = ctx.request.body;
     const numAvailable = await strapi.plugins[
       "orders"

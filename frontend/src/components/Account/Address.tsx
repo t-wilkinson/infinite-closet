@@ -4,11 +4,16 @@ import axios from 'axios'
 import { Icon } from '@/components'
 import { Input, Submit } from '@/Form'
 import { useFields, cleanFields } from '@/Form/useFields'
+import { useDispatch } from '@/utils/store'
+import { accountActions } from '@/Account/slice'
 
 export const Addresses = ({ addresses, state, dispatch }) => {
   return (
     <div className="space-y-4">
-      <span className="font-subheader text-2xl my-2">Addresses</span>
+      <span className="font-subheader text-2xl my-2">
+        Addresses
+        <div className="w-full h-px bg-pri mt-2 mb-1 " />
+      </span>
       {addresses.map((address) => (
         <Address
           key={address.id}
@@ -40,7 +45,7 @@ const Address = ({
     <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
       <div
         className={`w-3 h-3 rounded-full
-          ${id === state.address ? 'bg-sec-light' : ''}
+          ${id === state.address ? 'bg-pri' : ''}
           `}
       />
     </div>
@@ -101,6 +106,7 @@ export const AddAddress = ({ user, dispatch, state }) => {
     postcode: { constraints: 'required', defaultValue: '' },
     mobileNumber: { constraints: 'required', defaultValue: user.phoneNumber },
   })
+  const accountDispatch = useDispatch()
 
   const onSubmit = () => {
     const cleaned = cleanFields(fields)
@@ -115,6 +121,7 @@ export const AddAddress = ({ user, dispatch, state }) => {
       .then((res) => {
         dispatch({ type: 'close-popup' })
         dispatch({ type: 'set-addresses', payload: res.data.addresses })
+        accountDispatch(accountActions.login(res.data.user))
       })
       .catch((err) => console.error(err))
   }
@@ -161,6 +168,9 @@ const EditAddress = ({ onSubmit, fields, dispatch, state }) => {
         <div className="w-full items-center">
           <span className="font-subheader text-3xl m-2">Add Address</span>
         </div>
+
+        <div className="w-full h-px bg-pri mb-4 mt-1 rounded-full" />
+
         <button
           className="absolute top-0 right-0 m-3"
           type="button"
@@ -179,7 +189,9 @@ const EditAddress = ({ onSubmit, fields, dispatch, state }) => {
           ))}
         </div>
         <div className="w-full items-center">
-          <Submit disabled={!valid}>Submit</Submit>
+          <Submit disabled={!valid} className="w-full">
+            Submit
+          </Submit>
         </div>
       </form>
     </div>

@@ -145,16 +145,23 @@ export const Checkout = ({ user, data }) => {
   }, [user])
 
   return (
-    <div className="w-full items-center px-4 mb-8">
-      <div className="w-full justify-center max-w-screen-xl h-full flex-row space-x-4">
-        <div className="w-1/3">
-          <Address state={state} dispatch={dispatch} user={user} />
+    <div className="w-full items-center px-4 mb-8 bg-gray-light">
+      <div className="w-full justify-center max-w-screen-xl min-h-full flex-row space-x-4 my-4">
+        <div className="w-2/5">
+          <SideItem>
+            <Address state={state} dispatch={dispatch} user={user} />
+          </SideItem>
           <Divider className="my-4" />
-          <Payment state={state} dispatch={dispatch} user={user} />
-          <Summary cart={state.cart} />
+          <SideItem>
+            <Payment state={state} dispatch={dispatch} user={user} />
+          </SideItem>
+          {/* TODO: add cart summary */}
+          {/* <SideItem> */}
+          {/* <Summary cart={state.cart} /> */}
+          {/* </SideItem> */}
         </div>
         {state.cart.length === 0 ? (
-          <div className="w-full items-center h-64 justify-center">
+          <div className="w-full items-center h-64 justify-center bg-white rounded-sm ">
             <span className="font-bold text-xl flex flex-col items-center">
               <div>Hmm... Your cart looks empty. </div>
               <div>
@@ -168,7 +175,7 @@ export const Checkout = ({ user, data }) => {
         ) : (
           <div className="w-full">
             <Cart cart={state.cart} dispatch={dispatch} />
-            <Submit onSubmit={checkout}>
+            <Submit onSubmit={checkout} className="">
               {state.cart.some((order) => order.available <= 0)
                 ? 'Checkout Available Items'
                 : 'Checkout'}
@@ -180,34 +187,36 @@ export const Checkout = ({ user, data }) => {
   )
 }
 
+const SideItem = (props) => (
+  <div className="space-y-2 bg-white p-4 rounded-sm" {...props} />
+)
+
 const Address = ({ state, user, dispatch }) => (
-  <div className="space-y-2">
+  <>
     <Addresses addresses={user.addresses} state={state} dispatch={dispatch} />
-    <AddAddress user={user} dispatch={dispatch} state={state} />
-    <div className="">
-      <button
-        className="flex p-2 bg-white rounded-sm border border-gray justify-center"
-        onClick={() => dispatch({ type: 'edit-address' })}
-      >
-        <span className="inline">Add Address</span>
-      </button>
-    </div>
-  </div>
+    {state.popup === 'address' && (
+      <AddAddress user={user} dispatch={dispatch} state={state} />
+    )}
+    <button
+      className="flex p-2 bg-white rounded-sm border border-gray justify-center"
+      onClick={() => dispatch({ type: 'edit-address' })}
+    >
+      <span className="inline">Add Address</span>
+    </button>
+  </>
 )
 
 const Payment = ({ state, user, dispatch }) => (
-  <div className="space-y-2">
+  <>
     <PaymentMethods user={user} dispatch={dispatch} state={state} />
     <AddPaymentMethod user={user} state={state} dispatch={dispatch} />
-    <div className="">
-      <button
-        className="flex p-2 bg-white rounded-sm border border-gray justify-center"
-        onClick={() => dispatch({ type: 'edit-payment' })}
-      >
-        <span className="inline">Add Payment</span>
-      </button>
-    </div>
-  </div>
+    <button
+      className="flex p-2 bg-white rounded-sm border border-gray justify-center"
+      onClick={() => dispatch({ type: 'edit-payment' })}
+    >
+      <span className="inline">Add Payment</span>
+    </button>
+  </>
 )
 
 const rentalLengths = {

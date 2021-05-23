@@ -117,9 +117,9 @@ export const Form = ({
   className = '',
   children,
 }) => (
-  <div className={`items-center h-full w-full flex-grow ${className}`}>
+  <div className={`items-center ${className}`}>
     <form
-      className="w-full max-w-sm"
+      className="w-full max-w-sm relative"
       onSubmit={(e) => {
         onSubmit(e)
         e.preventDefault()
@@ -141,11 +141,12 @@ export const FormHeader = ({ label }) => (
   </>
 )
 
+// TODO: should this prevent default?
 export const Submit = ({
   children = 'Submit' as any,
   disabled = false,
   className = '',
-  onSubmit = () => {},
+  onSubmit = (..._: any) => {},
 }) => (
   <button
     aria-label="Submit form"

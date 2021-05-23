@@ -68,9 +68,14 @@ const Wrapper = ({ children }) => {
       .post('/account/login', {}, { withCredentials: true })
       .then((res) => {
         if (res.data.user) {
+          // loggedIn tracks if the user has logged into the web site
+          window.localStorage.setItem('loggedIn', 'true')
           dispatch(accountActions.login(res.data.user))
         } else {
-          dispatch(accountActions.showPopup('email'))
+          const loggedIn = JSON.parse(window.localStorage.getItem('loggedIn'))
+          if (!loggedIn) {
+            dispatch(accountActions.showPopup('register'))
+          }
         }
       })
       .catch((err) => console.error(err))
@@ -83,7 +88,7 @@ const Wrapper = ({ children }) => {
       `}
     >
       <CookieConsent />
-      {/* <Popup popup={popup} /> */}
+      <Popup popup={popup} />
       <div className="min-h-screen">
         <Banner />
         {children}

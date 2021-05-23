@@ -74,7 +74,7 @@ module.exports = {
       return counter;
     }, {});
 
-    console.log(numAvailable);
+    // console.log(numAvailable);
     return numAvailable;
   },
 };

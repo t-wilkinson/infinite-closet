@@ -63,7 +63,7 @@ module.exports = {
   },
 
   async attachAddress(ctx) {
-    const user = ctx.state.user;
+    let user = ctx.state.user;
     const body = ctx.request.body;
 
     const address = await strapi.query("address").create({
@@ -73,12 +73,14 @@ module.exports = {
       ...user.addresses.map((address) => address.id),
       address.id,
     ];
-    await strapi
+    user = await strapi
       .query("user", "users-permissions")
       .update({ id: user.id }, { addresses });
 
     return ctx.send({
-      addresses,
+      // TODO: I think it best to handle similar actions like this (return the updated user)
+      addresses: user.addresses,
+      user,
     });
   },
 };

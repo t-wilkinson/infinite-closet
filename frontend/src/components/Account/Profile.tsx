@@ -30,39 +30,25 @@ export const Profile = () => {
     <div className="space-y-4">
       <span className="font-subheader text-2xl">Profile</span>
       <Fieldset name="Account Details">
-        <FieldRow>
-          <Field {...accountDetailFields.firstName} />
-          <Field {...accountDetailFields.lastName} />
-        </FieldRow>
-        <div className="flex-row space-x-4">
-          <Field {...accountDetailFields.mobile} />
-        </div>
+        <Field {...accountDetailFields.firstName} />
+        <Field {...accountDetailFields.lastName} />
+        <Field {...accountDetailFields.mobile} />
         <SubmitFields onSubmit={() => {}} disabled={false} />
       </Fieldset>
 
       <Fieldset name="Fits & Preferences">
-        <FieldRow>
-          <Field {...preferenceFields.height} />
-          <Field {...preferenceFields.weight} />
-        </FieldRow>
-        <FieldRow>
-          <Field {...preferenceFields.bustSize} />
-          <Field {...preferenceFields.bodyType} />
-        </FieldRow>
-        <FieldRow>
-          <Field {...preferenceFields.dressSize} />
-        </FieldRow>
+        <Field {...preferenceFields.height} />
+        <Field {...preferenceFields.weight} />
+        <Field {...preferenceFields.bustSize} />
+        <Field {...preferenceFields.bodyType} />
+        <Field {...preferenceFields.dressSize} />
         <SubmitFields onSubmit={() => {}} disabled={false} />
       </Fieldset>
 
       <Fieldset name="Reset Password">
-        <FieldRow>
-          <Field {...resetPasswordFields.currentPassword} />
-        </FieldRow>
-        <FieldRow>
-          <Field {...resetPasswordFields.password} />
-          <Field {...resetPasswordFields.confirmPassword} />
-        </FieldRow>
+        <Field {...resetPasswordFields.currentPassword} />
+        <Field {...resetPasswordFields.password} />
+        <Field {...resetPasswordFields.confirmPassword} />
         <SubmitFields onSubmit={() => {}} disabled={false} />
       </Fieldset>
     </div>
@@ -70,7 +56,7 @@ export const Profile = () => {
 }
 
 const SubmitFields = ({ onSubmit, disabled }) => (
-  <div className="w-full max-w-xs">
+  <div className="w-full col-span-full">
     <Submit disabled={disabled} onSubmit={onSubmit}>
       Save Changes
     </Submit>
@@ -78,16 +64,16 @@ const SubmitFields = ({ onSubmit, disabled }) => (
 )
 
 const Fieldset = ({ name, children }) => (
-  <fieldset className="flex flex-col" name={name}>
+  <>
     <span className="">{name}</span>
-    <Divider className="my-2" />
-    {children}
-  </fieldset>
-)
-
-// TODO: use css-grid instead
-const FieldRow = ({ children }) => (
-  <div className="flex-row space-x-4">{children}</div>
+    <Divider />
+    <fieldset
+      className="grid grid-cols-2 w-full gap-x-4 max-w-screen-sm"
+      name={name}
+    >
+      {children}
+    </fieldset>
+  </>
 )
 
 const Field = ({ ...props }: FieldType) => (

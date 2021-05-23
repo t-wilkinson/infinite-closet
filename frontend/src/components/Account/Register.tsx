@@ -1,21 +1,13 @@
 import React from 'react'
-import axios from 'axios'
 import Link from 'next/link'
+import axios from 'axios'
 import { useRouter } from 'next/router'
 
+import { Input, Submit, Warnings, PasswordVisible, FormHeader } from '@/Form'
+import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
-import Form, {
-  Input,
-  Submit,
-  Warnings,
-  PasswordVisible,
-  FormHeader,
-} from '@/Form'
-import useFields, { isValid, cleanFields } from '@/Form/useFields'
-
-import AccountForm from './AccountForm'
-import { accountActions } from './slice'
+import { accountActions } from '@/Account/slice'
 
 export const Register = () => {
   const fields = useFields({
@@ -63,38 +55,33 @@ export const Register = () => {
   }
 
   return (
-    <AccountForm>
-      <Form onSubmit={onSubmit}>
-        <FormHeader label="Join Us" />
-        <Warnings warnings={warnings} />
-        <div className="flex-row space-x-2">
-          <Input {...fields.firstName} />
-          <Input {...fields.lastName} />
-        </div>
-        <Input {...fields.email} />
-        <Input
-          // TODO: this logic should be in useFields
-          {...fields.password}
-          type={passwordVisible ? 'text' : 'password'}
-        >
-          <PasswordVisible
-            passwordVisible={passwordVisible}
-            setPasswordVisible={setPasswordVisible}
-          />
-        </Input>
-        <Submit onSubmit={() => {}} disabled={!isValid(fields)}>
-          Sign Up
-        </Submit>
-      </Form>
-
-      <AlreadyHaveAccount />
-    </AccountForm>
+    <>
+      <FormHeader label="Join Us" />
+      <Warnings warnings={warnings} />
+      <div className="flex-row space-x-2">
+        <Input {...fields.firstName} />
+        <Input {...fields.lastName} />
+      </div>
+      <Input {...fields.email} />
+      <Input
+        // TODO: this logic should be in useFields
+        {...fields.password}
+        type={passwordVisible ? 'text' : 'password'}
+      >
+        <PasswordVisible
+          passwordVisible={passwordVisible}
+          setPasswordVisible={setPasswordVisible}
+        />
+      </Input>
+      <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
+        Sign Up
+      </Submit>
+    </>
   )
 }
-export default Register
 
-const AlreadyHaveAccount = () => (
-  <Form>
+export const AlreadyHaveAccount = () => {
+  return (
     <span>
       Already have an account?{' '}
       <Link href="/account/login">
@@ -104,5 +91,7 @@ const AlreadyHaveAccount = () => (
       </Link>
       .
     </span>
-  </Form>
-)
+  )
+}
+
+export default Register

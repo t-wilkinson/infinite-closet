@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 import useAnalytics from '@/utils/useAnalytics'
 import { useDispatch } from '@/utils/store'
-import Form, {
+import {
   Input,
   Submit,
   Warnings,
@@ -16,7 +16,6 @@ import Form, {
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 
 import { accountActions } from './slice'
-import AccountForm from './AccountForm'
 
 export const ForgotPassword = () => {
   const fields = useFields({
@@ -56,34 +55,30 @@ export const ForgotPassword = () => {
   }
 
   return (
-    <AccountForm>
-      <Form onSubmit={onSubmit}>
-        <FormHeader label="Forgot password?" />
-        <Warnings warnings={warnings} />
-        <Input
-          {...fields.password}
-          type={passwordVisible ? 'text' : 'password'}
-        >
-          <PasswordVisible
-            passwordVisible={passwordVisible}
-            setPasswordVisible={setPasswordVisible}
-          />
-        </Input>
-        <Submit onSubmit={() => {}} disabled={!isValid(fields)}>
-          Request Password Reset
-        </Submit>
+    <>
+      <FormHeader label="Reset password" />
+      <Warnings warnings={warnings} />
+      <Input {...fields.password} type={passwordVisible ? 'text' : 'password'}>
+        <PasswordVisible
+          passwordVisible={passwordVisible}
+          setPasswordVisible={setPasswordVisible}
+        />
+      </Input>
+      <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
+        Password Reset
+      </Submit>
 
-        <OR />
+      <OR />
 
-        <Link href="/account/register">
-          <a>
-            <span className="cursor-pointer text-blue-500">
-              Create a new Account
-            </span>
-          </a>
-        </Link>
-      </Form>
-    </AccountForm>
+      <Link href="/account/register">
+        <a>
+          <span className="cursor-pointer text-blue-500">
+            Create a new Account
+          </span>
+        </a>
+      </Link>
+    </>
   )
 }
+
 export default ForgotPassword

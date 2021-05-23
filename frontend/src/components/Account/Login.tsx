@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
-import Form, {
+import {
   Input,
   Submit,
   OR,
@@ -16,7 +16,6 @@ import Form, {
 } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 
-import AccountForm from './AccountForm'
 import { accountActions } from './slice'
 
 export const Login = () => {
@@ -61,27 +60,24 @@ export const Login = () => {
   }
 
   return (
-    <AccountForm>
-      <Form onSubmit={onSubmit}>
-        <FormHeader label="Sign in to Infinite Closet" />
-        <Warnings warnings={warnings} />
-        <Input {...fields.email} />
-        <Input
-          {...fields.password}
-          type={passwordVisible ? 'text' : 'password'}
-        >
-          <PasswordVisible
-            passwordVisible={passwordVisible}
-            setPasswordVisible={setPasswordVisible}
-          />
-        </Input>
-        <Submit onSubmit={() => {}} disabled={!isValid(fields)}>
-          {' '}
-          Sign In{' '}
-        </Submit>
+    <>
+      <FormHeader label="Sign in to Infinite Closet" />
+      <Warnings warnings={warnings} />
+      <Input {...fields.email} />
+      <Input {...fields.password} type={passwordVisible ? 'text' : 'password'}>
+        <PasswordVisible
+          passwordVisible={passwordVisible}
+          setPasswordVisible={setPasswordVisible}
+        />
+      </Input>
+      <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
+        {' '}
+        Sign In{' '}
+      </Submit>
 
-        <OR />
+      <OR />
 
+      <div className="inline-block">
         <Link href="/account/forgot-password">
           <a>
             <span className="cursor-pointer text-blue-500">
@@ -89,25 +85,20 @@ export const Login = () => {
             </span>
           </a>
         </Link>
-      </Form>
-
-      <CreateAnAccount />
-    </AccountForm>
+      </div>
+    </>
   )
 }
-export default Login
 
-const CreateAnAccount = () => (
-  <Form>
-    <span>
-      New to Infinite Closet?{' '}
-      <Link href="/account/register">
-        <a>
-          <span className="cursor-pointer text-blue-500">
-            Create an account
-          </span>
-        </a>
-      </Link>
-    </span>
-  </Form>
+export const CreateAnAccount = () => (
+  <span>
+    New to Infinite Closet?{' '}
+    <Link href="/account/register">
+      <a>
+        <span className="cursor-pointer text-blue-500">Create an account</span>
+      </a>
+    </Link>
+  </span>
 )
+
+export default Login

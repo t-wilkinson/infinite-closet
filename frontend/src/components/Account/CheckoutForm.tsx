@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import axios from 'axios'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import './CheckoutForm.module.css'
-import { getURL } from '@/utils/api'
 import { StrapiUser } from '@/utils/models'
 
-import resolveConfig from 'tailwindcss/resolveConfig'
-import tailwindConfig from 'tailwind.config'
-
-const fullConfig = resolveConfig(tailwindConfig)
+// import resolveConfig from 'tailwindcss/resolveConfig'
+// import tailwindConfig from 'tailwind.config'
+// const fullConfig = resolveConfig(tailwindConfig)
 
 import { Submit } from '@/Form'
 

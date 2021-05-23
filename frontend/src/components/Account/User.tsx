@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import axios from 'axios'
 
 export const User = ({ children }) => {
   return (
@@ -15,8 +16,20 @@ export const User = ({ children }) => {
 export default User
 
 const SideMenu = () => (
-  <div className="w-full mb-8 sm:mb-0 sm:w-64 bg-gray-light p-4 rounded-sm">
+  <div className="w-full mb-8 sm:mb-0 sm:w-64 bg-gray-light p-4 rounded-sm items-start">
     <SideLink href="/user/profile">Profile</SideLink>
+    <SideButton
+      onClick={() => {
+        axios
+          .post('/account/logout', {}, { withCredentials: true })
+          .then((res) => {
+            window.location.href = '/'
+          })
+          .catch((err) => console.error(err))
+      }}
+    >
+      Logout
+    </SideButton>
   </div>
 )
 
@@ -24,4 +37,10 @@ const SideLink = ({ href, children }) => (
   <Link href={href}>
     <a>{children}</a>
   </Link>
+)
+
+const SideButton = ({ onClick, children }) => (
+  <button onClick={onClick} className="inline-block">
+    {children}
+  </button>
 )

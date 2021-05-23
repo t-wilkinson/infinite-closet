@@ -4,17 +4,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import useAnalytics from '@/utils/useAnalytics'
-import Form, {
-  Input,
-  Submit,
-  Warnings,
-  PasswordVisible,
-  FormHeader,
-  OR,
-} from '@/Form'
+import { Input, Submit, Warnings, FormHeader, OR } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
-
-import AccountForm from './AccountForm'
 
 type Status = 'success' | 'in-fields' | 'server-error'
 
@@ -38,7 +29,7 @@ export const ForgotPassword = () => {
         { withCredentials: true },
       )
       .then((res) => {
-        // setStatus("success")
+        setStatus('success')
         app?.logEvent('form_submit', {
           type: 'account.forgot-password',
           user: cleaned.email,
@@ -53,30 +44,28 @@ export const ForgotPassword = () => {
   }
 
   return (
-    <AccountForm>
-      <Form onSubmit={onSubmit}>
-        <FormHeader label="Forgot password?" />
+    <>
+      <FormHeader label="Forgot password?" />
 
-        {status === 'server-error' && <Warnings warnings={warnings} />}
-        <Input {...fields.email} />
-        <Submit
-          disabled={!isValid(fields) || status === 'success'}
-          onSubmit={() => onSubmit()}
-        >
-          Request Password Reset
-        </Submit>
+      {status === 'server-error' && <Warnings warnings={warnings} />}
+      <Input {...fields.email} />
+      <Submit
+        disabled={!isValid(fields) || status === 'success'}
+        onSubmit={onSubmit}
+      >
+        Request Password Reset
+      </Submit>
 
-        <OR />
+      <OR />
 
-        <Link href="/account/register">
-          <a>
-            <span className="cursor-pointer text-blue-500">
-              Create a new Account
-            </span>
-          </a>
-        </Link>
-      </Form>
-    </AccountForm>
+      <Link href="/account/register">
+        <a>
+          <span className="cursor-pointer text-blue-500">
+            Create a new Account
+          </span>
+        </a>
+      </Link>
+    </>
   )
 }
 export default ForgotPassword

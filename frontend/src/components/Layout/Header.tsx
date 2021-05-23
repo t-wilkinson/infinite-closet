@@ -14,7 +14,7 @@ const SmallHeader = () => {
   const dispatch = useDispatch()
 
   return (
-    <div className="p-4 border-b border-gray-light mb-6 flex md:hidden items-center">
+    <>
       <div className="flex-row items-center content-between w-full mr-2 select-none">
         <button
           onClick={() => dispatch(layoutActions.toggleHeader())}
@@ -30,12 +30,12 @@ const SmallHeader = () => {
         </Link>
       </div>
       <HeaderAside />
-    </div>
+    </>
   )
 }
 
 const LargeHeader = ({ user, router }) => (
-  <div className="z-30 items-center hidden w-full pt-4 mb-8 md:flex select-none relative ">
+  <>
     <div className="flex-row justify-center w-full items-center max-w-screen-xl relative">
       <LargeHeaderLogo router={router} />
       {process.env.NEXT_PUBLIC_RELEASE ? (
@@ -45,14 +45,14 @@ const LargeHeader = ({ user, router }) => (
       ) : null}
     </div>
     <Navbar />
-  </div>
+  </>
 )
 
-const LargeHeaderLogo = ({ router }) => (
+export const LargeHeaderLogo = ({ router }) => (
   <Link href="/">
     <a>
       {router.pathname === '/' || !process.env.NEXT_PUBLIC_RELEASE ? (
-        <div className="items-center mb-8 cursor-pointer">
+        <div className="items-center mb-4 cursor-pointer">
           <div className="w-20 mb-2">
             <Icon name="logo" className="text-pri" />
           </div>
@@ -106,8 +106,12 @@ export const Header = () => {
 
   return (
     <header>
-      <SmallHeader />
-      <LargeHeader user={user} router={router} />
+      <div className="p-4 border-b border-gray-light mb-6 flex md:hidden items-center">
+        <SmallHeader />
+      </div>
+      <div className="z-30 items-center hidden w-full pt-4 md:flex select-none relative mb-4">
+        <LargeHeader user={user} router={router} />
+      </div>
     </header>
   )
 }
