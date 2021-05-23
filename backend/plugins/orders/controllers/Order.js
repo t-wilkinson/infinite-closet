@@ -19,12 +19,25 @@ module.exports = {
     const body = ctx.request.body;
     const user = ctx.state.user;
 
+    if (!["cart", "list"].includes(body.status)) {
+      return;
+    }
+
+    const previousOrders = await strapi.query("order", "orders").find({
+      product: body.product,
+      size: body.size,
+    });
+    const previousQuantity = previousOrders.reduce(
+      (sum, order) => sum + order.quantity,
+      0
+    );
+
     const order = await strapi.query("order", "orders").create({
-      status: "cart",
+      status: body.status,
       product: body.product,
       date: body.date,
       rentalLength: body.rentalLength.toLowerCase(),
-      quantity: body.quantity,
+      quantity: previousQuantity + body.quantity,
       user: user.id,
       size: body.size,
     });
@@ -37,9 +50,6 @@ module.exports = {
 
   async getCart(ctx) {
     const user = ctx.state.user;
-    const numAvailable = await strapi.plugins[
-      "orders"
-    ].services.order.numAvailable();
 
     let cart = await strapi.query("order", "orders").find(
       {
@@ -48,14 +58,18 @@ module.exports = {
       },
       ["product", "product.designer", "product.images"]
     );
+
+    const numAvailable = await strapi.plugins[
+      "orders"
+    ].services.order.numAvailable(cart);
+
+    // add total and available quantity to each order
     cart = cart.map((order) => {
-      const availableKey = strapi.plugins["orders"].services.order.availableKey(
-        order
-      );
+      const key = strapi.plugins["orders"].services.order.toKey(order);
       return {
         ...order,
         price: strapi.plugins["orders"].services.order.price(order),
-        available: numAvailable[availableKey],
+        available: numAvailable[key],
       };
     });
 
@@ -75,17 +89,16 @@ module.exports = {
   },
 
   async checkout(ctx) {
-    // TODO: make sure date is available
     const body = ctx.request.body;
     const numAvailable = await strapi.plugins[
       "orders"
-    ].services.order.numAvailable();
+    ].services.order.numAvailable(body.cart);
 
     const updates = body.cart.map((order) => {
-      const availableKey = strapi.plugins["orders"].services.order.availableKey(
-        order
-      );
-      if (order.quantity <= numAvailable[availableKey]) {
+      const key = strapi.plugins["orders"].services.order.toKey(order);
+      if (!strapi.plugins["orders"].services.order.dateValid(order)) {
+        return Promise.reject(`${dayjs(order.date)} is not valid date`);
+      } else if (order.quantity > 0 && order.quantity <= numAvailable[key]) {
         return strapi.query("order", "orders").update(
           { id: order.id },
           {
@@ -95,8 +108,8 @@ module.exports = {
           }
         );
       } else {
-        return new Promise((_, rej) =>
-          rej(`Not enough quantity available for order ${order.id}`)
+        return Promise.reject(
+          `Not enough quantity available for order ${order.id}`
         );
       }
     });
@@ -114,7 +127,6 @@ module.exports = {
   },
 
   async amount(ctx) {
-    const user = ctx.state.user;
     const amount = strapi.plugins["orders"].services.order.amount(body.order);
     ctx.send({ amount });
   },
@@ -180,7 +192,7 @@ module.exports = {
         // only update status once payment and delivery are valid
         strapi
           .query("order", "orders")
-          .update({ id: order.id }, { status: "recieving", shipment: res.id })
+          .update({ id: order.id }, { status: "shipping", shipment: res.id })
       )
 
       .then(() => {

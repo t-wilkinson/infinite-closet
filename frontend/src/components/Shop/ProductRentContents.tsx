@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon } from '@/components'
@@ -10,13 +11,15 @@ import { OneTime } from './types'
 import DatePicker from './DatePicker'
 
 export const ProductRentContents = ({ product, state }) => {
+  const router = useRouter()
   const Contents = productRentContents[state.rentType]
   const user = useSelector((state) => state.account.user)
   const dispatch = useDispatch()
 
   return (
-    <div className="h-64">
+    <div className="h-96">
       <Contents
+        router={router}
         user={user}
         product={product}
         state={state}
@@ -39,15 +42,19 @@ interface Size {
 }
 
 const productRentContents = {
-  OneTime: ({ dispatch, product, state, user }) => {
+  OneTime: ({ dispatch, product, state, router }) => {
     const [sizeState, setSizeState] = React.useState(false)
+    const [status, setStatus] = React.useState<null | string>(null)
 
     const addToCart = () => {
+      let quantity = parseInt(state.quantity, 10)
+      setStatus('adding')
       axios
         .post(
           '/orders',
           {
-            quantity: state.quantity,
+            status: 'cart',
+            quantity: quantity > 0 ? quantity : 1,
             size: product.sizes[state.size].size,
             date: state.selectedDate.toJSON(),
             rentalLength: state.oneTime,
@@ -55,8 +62,12 @@ const productRentContents = {
           },
           { withCredentials: true },
         )
+        .then((res) => {
+          router.push('/user/checkout')
+        })
         .catch((err) => {
-          console.error(err)
+          console.error
+          setStatus('error')
         })
     }
 
@@ -93,13 +104,22 @@ const productRentContents = {
                     dispatch(shopActions.changeSize(index))
                     setSizeState(false)
                   }}
-                  className="items-center cursor-pointer"
+                  className="items-center cursor-pointer bg-white"
                 >
                   {size.size}
                 </div>
               ))}
             </div>
           </div>
+        </SelectorItem>
+
+        <SelectorItem label="Quantity" className="my-2 w-full">
+          <input
+            type="number"
+            className="w-32 border-gray border p-2"
+            value={state.quantity}
+            onChange={(e) => dispatch(shopActions.setQuantity(e.target.value))}
+          />
         </SelectorItem>
 
         <SelectorItem label="Rental time" className="my-2">
@@ -136,9 +156,17 @@ const productRentContents = {
         <Submit
           onSubmit={addToCart}
           className="my-2 self-center rounded-sm w-full"
-          disabled={!state.selectedDate || state.size === undefined}
+          disabled={
+            !state.selectedDate ||
+            state.size === undefined ||
+            status === 'adding'
+          }
         >
-          Add to Cart
+          {status === 'adding'
+            ? 'Adding...'
+            : status === 'error'
+            ? 'Unable to add to cart'
+            : 'Add to Cart'}
         </Submit>
       </>
     )

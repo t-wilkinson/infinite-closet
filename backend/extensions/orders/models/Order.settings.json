@@ -39,7 +39,10 @@
     },
     "rentalLength": {
       "type": "enumeration",
-      "enum": ["short", "long"]
+      "enum": [
+        "short",
+        "long"
+      ]
     },
     "address": {
       "model": "address"
@@ -57,9 +60,8 @@
       "model": "product"
     },
     "user": {
-      "model": "user",
       "plugin": "users-permissions",
-      "via": "order"
+      "model": "user"
     }
   }
 }

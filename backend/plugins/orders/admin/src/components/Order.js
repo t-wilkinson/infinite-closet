@@ -1,39 +1,57 @@
 import React from "react";
 import styled from "styled-components";
+import dayjs from "dayjs";
+const duration = require("dayjs/plugin/duration");
+dayjs.extend(duration);
 
+// TODO: this is copied from backend
 const rentalLengths = {
   short: 4,
   long: 8,
 };
 
-const rentalRange = (order) => {
-  let sendDate = new Date(order.date);
-  sendDate.setDate(sendDate.getDate() - 1);
+const DAYS_TO_SHIP = 2;
+const DAYS_TO_RECIEVE = 2;
+const DAYS_TO_CLEAN = 2;
 
-  let recieveDate = new Date(order.date);
-  recieveDate.setDate(
-    recieveDate.getDate() + rentalLengths[order.rentalLength] + 1
-  );
+function toRange({ date, length }) {
+  date = dayjs(date);
+  const rentalLength = rentalLengths[length];
+  return {
+    start: date.subtract(DAYS_TO_SHIP, "day"),
+    returning: date.add(dayjs.duration({ days: rentalLength })),
+    cleaning: date.add(
+      dayjs.duration({ days: rentalLength + DAYS_TO_RECIEVE })
+    ),
+    end: date.add(
+      dayjs.duration({ days: rentalLength + DAYS_TO_RECIEVE + DAYS_TO_CLEAN })
+    ),
+  };
+}
 
-  return { planning: sendDate, recieving: recieveDate };
+const showRange = (ranges, status) => {
+  let date;
+  switch (status) {
+    case "planning":
+      date = ranges.start;
+      break;
+    case "shipping":
+      date = ranges.returning;
+      break;
+    case "cleaning":
+      date = ranges.cleaning;
+      break;
+  }
+  return dayjs(date).format("ddd, MMM DD");
 };
 
-const showDate = (dates, status) => {
-  // return a more readable date
-  let date = dates[status].toString().split(/ /).slice(0, 4);
-  date[0] = date[0] + ",";
-  date[2] = date[2] + ",";
-  date = date.join(" ");
-  return date;
-};
-
-const Order = ({ className, order, ...props }) => {
-  const dates = rentalRange(order);
+const Order = ({ selected, className, order, ...props }) => {
+  const range = toRange(order);
 
   return (
-    <tr className={className} {...props}>
+    <tr className={`${className} ${selected ? "selected" : ""}`} {...props}>
       <td className="order__field">{order.status}</td>
-      <td className="order__field">{showDate(dates, order.status)}</td>
+      <td className="order__field">{showRange(range, order.status)}</td>
     </tr>
   );
 };
@@ -41,6 +59,11 @@ const Order = ({ className, order, ...props }) => {
 const OrderWrapper = styled(Order)`
   .order__field {
     padding: 0.25rem;
+  }
+
+  &.selected {
+    border: 1px solid black;
+    border-radius: 4px;
   }
 `;
 

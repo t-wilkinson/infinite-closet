@@ -18,6 +18,7 @@ export default User
 const SideMenu = () => (
   <div className="w-full mb-8 sm:mb-0 sm:w-64 bg-gray-light p-4 rounded-sm items-start">
     <SideLink href="/user/profile">Profile</SideLink>
+    <SideLink href="/user/orders">Orders</SideLink>
     <SideButton
       onClick={() => {
         axios

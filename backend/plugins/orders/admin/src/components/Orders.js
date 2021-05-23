@@ -11,7 +11,8 @@ const Orders = ({ plugin, className }) => {
     // fetch orders
     // also fetch respective product designer because it is not included
     fetch(
-      strapi.backendURL + "/orders?status_in=recieving&status_in=planning",
+      strapi.backendURL +
+        "/orders?status_in=planning&status_in=shipping&status_in=cleaning",
       {
         method: "GET",
       }
@@ -58,6 +59,7 @@ const Orders = ({ plugin, className }) => {
             <Order
               key={order.id}
               order={order}
+              selected={selectedOrder === index}
               onClick={() => selectOrder(index)}
             />
           ))}

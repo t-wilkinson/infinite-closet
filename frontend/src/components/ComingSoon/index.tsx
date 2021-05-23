@@ -5,6 +5,7 @@ import { Divider, Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 
 export const ComingSoon = () => {
+  // TODO: use router.back
   return (
     <div className="items-center bg-white flex-grow">
       <div className="flex-grow justify-center items-center">

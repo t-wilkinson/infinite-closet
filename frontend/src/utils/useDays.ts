@@ -1,3 +1,5 @@
+/* This is meant to be displayed to the user so we don't use utc
+ */
 import React from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 
@@ -44,4 +46,5 @@ export const useDays = (curDay: Dayjs) => {
     days: ([] as Dayjs[]).concat(prevMonth, curMonth, nextMonth),
   }
 }
+
 export default useDays

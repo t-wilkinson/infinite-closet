@@ -2,7 +2,8 @@ import React from 'react'
 import axios from 'axios'
 import Image from 'next/image'
 import dayjs from 'dayjs'
-import 'dayjs/locale/en-gb'
+import utc from 'dayjs/plugin/utc'
+dayjs.extend(utc)
 
 import { fetchAPI, getURL } from '@/utils/api'
 import { Submit } from '@/Form'
@@ -11,8 +12,8 @@ import { Divider, Icon, BlueLink } from '@/components'
 import { PaymentMethods, AddPaymentMethod } from './PaymentMethod'
 import { Addresses, AddAddress } from './Address'
 
-type PaymentStatus = 'failed' | 'succeeded' | 'processing' | 'disabled'
 type Popup = 'none' | 'address' | 'payment'
+type Status = null | 'checkout' | 'error' | 'success'
 
 const initialState = {
   paymentMethod: undefined,
@@ -21,60 +22,40 @@ const initialState = {
   addresses: [],
   popup: 'none' as Popup,
   error: undefined,
-  status: 'disabled' as PaymentStatus,
+  status: null,
   cart: [],
 }
 
 const reducer = (state, action) => {
+  // prettier-ignore
   switch (action.type) {
-    case 'fill-cart':
-      return { ...state, cart: action.payload }
-    case 'remove-cart-item':
-      return {
-        ...state,
-        cart: state.cart.filter((order) => order.id !== action.payload),
-      }
+    case 'fill-cart': return { ...state, cart: action.payload }
+    case 'remove-cart-item': return { ...state, cart: state.cart.filter((order) => order.id !== action.payload), }
 
-    case 'edit-payment':
-      return { ...state, popup: 'payment' }
-    case 'edit-address':
-      return { ...state, popup: 'address' }
-    case 'close-popup':
-      return { ...state, popup: 'none' }
+    case 'status-checkout': return {...state, status: 'checkout'}
+    case 'status-error': return {...state, status: 'error'}
+    case 'status-success': return {...state, status: 'success'}
 
-    case 'choose-address':
-      return { ...state, address: action.payload }
-    case 'set-addresses':
-      return { ...state, addresses: action.payload }
+    case 'edit-payment': return { ...state, popup: 'payment' }
+    case 'edit-address': return { ...state, popup: 'address' }
+    case 'close-popup': return { ...state, popup: 'none' }
 
-    case 'choose-payment-method':
-      return { ...state, paymentMethod: action.payload }
-    case 'add-payment-method':
-      return {
-        ...state,
-        paymentMethods: [...state.paymentMethods, action.payload],
-      }
-    case 'set-payment-methods':
-      return {
-        ...state,
-        paymentMethods: action.payload,
-      }
+    case 'choose-address': return { ...state, address: action.payload }
+    case 'set-addresses': return { ...state, addresses: action.payload }
+
+    case 'choose-payment-method': return { ...state, paymentMethod: action.payload }
+    case 'add-payment-method': return { ...state, paymentMethods: [...state.paymentMethods, action.payload], }
+    case 'set-payment-methods': return { ...state, paymentMethods: action.payload, }
     case 'remove-payment-method': {
-      const paymentMethods = [...state.paymentMethods]
-      paymentMethods.splice(action.payload, 1)
+      const paymentMethods = [...state.paymentMethods].splice(action.payload, 1)
       return { ...state, paymentMethods }
     }
 
-    case 'payment-error':
-      return { ...state, paymentStatus: 'disabled', error: action.payload }
-    case 'payment-succeeded':
-      return {
-        ...state,
-        paymentStatus: action.payload ?? 'succeeded',
-        error: null,
-      }
+    case 'payment-error': return { ...state, paymentStatus: 'disabled', error: action.payload }
+    case 'payment-succeeded': return { ...state, paymentStatus: action.payload ?? 'succeeded', error: null, }
+    case 'payment-processing': return { ...state, paymentStatus: 'processing' }
     case 'payment-failed': {
-      let error
+      let error: string
       if (action.payload.error?.message) {
         error = `Payment failed ${action.payload.error.message}`
       } else {
@@ -82,28 +63,39 @@ const reducer = (state, action) => {
       }
       return { ...state, paymentStatus: 'failed', error: error }
     }
-    case 'payment-processing':
-      return { ...state, paymentStatus: 'processing' }
 
-    default:
-      return state
+    default: return state
   }
 }
 
 export const Checkout = ({ user, data }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
+  const fetchCart = () =>
+    fetchAPI(`/orders/cart/${user.id}`)
+      .then((data) => dispatch({ type: 'fill-cart', payload: data.cart }))
+      .catch((err) => console.error(err))
 
   const checkout = () => {
     dispatch({ type: 'payment-succeeded' })
-    axios.post(
-      '/orders/checkout',
-      {
-        address: state.address,
-        paymentMethod: state.paymentMethod,
-        cart: state.cart,
-      },
-      { withCredentials: true },
-    )
+    dispatch({ type: 'status-checkout' })
+    axios
+      .post(
+        '/orders/checkout',
+        {
+          address: state.address,
+          paymentMethod: state.paymentMethod,
+          cart: state.cart,
+        },
+        { withCredentials: true },
+      )
+      .then((res) => {
+        dispatch({ type: 'status-success' })
+        fetchCart()
+      })
+      .catch((err) => {
+        console.error(err)
+        dispatch({ type: 'status-error' })
+      })
   }
 
   React.useEffect(() => {
@@ -119,9 +111,7 @@ export const Checkout = ({ user, data }) => {
         })
       }
 
-      fetchAPI(`/orders/cart/${user.id}`)
-        .then((data) => dispatch({ type: 'fill-cart', payload: data.cart }))
-        .catch((err) => console.error(err))
+      fetchCart()
 
       fetchAPI('/account/payment-methods')
         .then((res) => {
@@ -175,8 +165,18 @@ export const Checkout = ({ user, data }) => {
         ) : (
           <div className="w-full">
             <Cart cart={state.cart} dispatch={dispatch} />
-            <Submit onSubmit={checkout} className="">
-              {state.cart.some((order) => order.available <= 0)
+            <Submit
+              onSubmit={checkout}
+              className=""
+              disabled={['checkout'].includes(state.status)}
+            >
+              {state.status === 'checkout'
+                ? 'Checkout Out...'
+                : state.status === 'error'
+                ? 'Unable to Checkout'
+                : state.status === 'success'
+                ? 'Successfully Checked Out'
+                : state.cart.some((order) => order.available <= 0)
                 ? 'Checkout Available Items'
                 : 'Checkout'}
             </Submit>
@@ -235,7 +235,7 @@ const Cart = ({ dispatch, cart }) => {
 }
 
 const CartItem = ({ dispatch, product, ...order }) => {
-  const date = dayjs(order.date)
+  const date = dayjs.utc(order.date).local() // order.date is utc
   const startDate = date.format('ddd, MMM D')
   const endDate = date
     .add(rentalLengths[order.rentalLength], 'day')
@@ -251,7 +251,7 @@ const CartItem = ({ dispatch, product, ...order }) => {
 
   return (
     <div
-      className={`flex-row items-center border p-4 rounded-sm relative
+      className={`flex-row items-center border p-4 rounded-sm relative bg-white my-2
         ${order.available <= 0 ? 'border-warning' : 'border-gray'}
       `}
     >
@@ -259,7 +259,9 @@ const CartItem = ({ dispatch, product, ...order }) => {
         onClick={removeItem}
         className="absolute top-0 right-0 m-2 cursor-pointer"
       >
-        <Icon name="close" size={20} />
+        <div className="p-1">
+          <Icon name="close" size={16} />
+        </div>
       </button>
       <div className="h-32 w-32 relative mr-4">
         <Image
@@ -277,15 +279,21 @@ const CartItem = ({ dispatch, product, ...order }) => {
         </span>
         <span>{order.size}</span>
         <span>
+          Checking out <Bold>{order.quantity}</Bold>{' '}
+          {order.quantity === 1 ? 'item' : 'items'}
+        </span>
+        <span>
           <Bold>£{order.price}</Bold>
         </span>
       </div>
       <div className="flex-grow items-end">
         <span>
-          {order.available === 1
-            ? `There is ${order.available} item left. Order now before it's gone!`
+          {order.available === undefined
+            ? ``
+            : order.available === 1
+            ? `There is 1 item left. Order now before it's gone!`
             : order.available <= 0
-            ? `There are no items left`
+            ? `There are not enough available items`
             : `There are ${order.available} items left`}
         </span>
       </div>

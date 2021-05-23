@@ -1,11 +1,11 @@
 import React from 'react'
 import dayjs, { Dayjs } from 'dayjs'
-import 'dayjs/locale/en-gb'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import isBetween from 'dayjs/plugin/isBetween'
 
 import { Icon } from '@/components'
+import useDays from '@/utils/useDays'
 
 import { shopActions } from './slice'
 
@@ -14,7 +14,7 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.tz.setDefault('Europe/London')
 dayjs.tz.guess()
-dayjs.locale('en-gb')
+// dayjs.locale('en-gb')
 
 export const DatePicker = ({ state, dispatch, rentalLength }) =>
   state.dateVisible && (
@@ -121,12 +121,6 @@ const Days = ({ days, state, dispatch, rentalLength }) => {
   )
 }
 
-const dateAvailable = (date: Dayjs) => {
-  const isNotSunday = date.day() !== 0
-  const enoughShippingTime = date.isAfter(dayjs().add(2, 'day'), 'day')
-  return isNotSunday && enoughShippingTime
-}
-
 const Day = ({
   date,
   selected = false,
@@ -150,45 +144,17 @@ const Day = ({
   </div>
 )
 
-const useDays = (curDay: Dayjs) => {
-  const [date, setDate] = React.useState(curDay || dayjs())
+const dateAvailable = (date: Dayjs) => {
+  date = date.tz('GMT')
+  const today = dayjs().tz('GMT')
 
-  const prevMonth: Dayjs[] = []
-  const nextMonth: Dayjs[] = []
-  const curMonth: Dayjs[] = []
+  const isNotSunday = date.day() !== 0
+  const enoughShippingTime = date.isAfter(
+    today
+      .add(2, 'day') // allow at least 2 days for shipping
+      .add(12, 'hour'), // shipping service won't deliver items requested after 2 days
+    'hour',
+  )
 
-  const monthDate = date.date(1)
-
-  // Previous Month
-  const prevDays = monthDate.day()
-  if (prevDays !== 0) {
-    const prevMonthDate = monthDate.subtract(prevDays, 'day')
-    for (var d = prevMonthDate.date(); d <= prevMonthDate.daysInMonth(); d++) {
-      prevMonth.push(prevMonthDate.date(d))
-    }
-  }
-
-  // Current Month
-  for (var d = monthDate.date(); d <= monthDate.daysInMonth(); d++) {
-    curMonth.push(monthDate.date(d))
-  }
-
-  // Next Month
-  let nextDays = 6 - date.date(date.daysInMonth()).day()
-  while (prevMonth.length + curMonth.length + nextDays < 7 * 6) {
-    nextDays = nextDays + 7
-  }
-  const nextMonthDate = monthDate.date(date.daysInMonth()).add(1, 'day')
-  for (var d = nextMonthDate.date(); d <= nextDays; d++) {
-    nextMonth.push(nextMonthDate.date(d))
-  }
-
-  return {
-    date,
-    setDate,
-    prevMonth,
-    curMonth,
-    nextMonth,
-    days: ([] as Dayjs[]).concat(prevMonth, curMonth, nextMonth),
-  }
+  return isNotSunday && enoughShippingTime
 }
