@@ -32,7 +32,7 @@ jobs:
 
       - name: Pull any changes
         env:
-          GITHUB_BRANCH: {{ github.ref }}
+          GITHUB_BRANCH: ${{ github.ref }}
         run: |
           ssh -T staging<<EOF
           branch="${GITHUB_BRANCH##*/}"
@@ -45,7 +45,7 @@ jobs:
 
       - name: Build frontend
         env:
-          GITHUB_BRANCH: {{ github.ref }}
+          GITHUB_BRANCH: ${{ github.ref }}
         run: |
           ssh -T staging <<EOF
           branch="${GITHUB_BRANCH##*/}"
