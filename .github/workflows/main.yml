@@ -39,19 +39,18 @@ jobs:
           GITHUB_BRANCH: dev # ${{ github.ref }}
         run: |
           ssh -tt staging <<EOF
-          set -e
+          # branch=${GITHUB_BRANCH##*/}
           pwd
-          mkdir -p "/www/infinite-closet/${GITHUB_BRANCH##*/}"
-          cd "/www/infinite-closet/${GITHUB_BRANCH##*/}"
+          mkdir -p /www/infinite-closet/dev
+          cd /www/infinite-closet/dev
           git fetch --all
-          git switch "${GITHUB_BRANCH##*/}"
-          git pull origin "${GITHUB_BRANCH##*/}"
+          git switch main
+          git pull origin main
           EOF
 
       - name: Build frontend
         run: |
           ssh -tt staging <<EOF
-          set -e
           pwd
           cd /www/infinite-closet/dev/frontend
           yarn install
@@ -60,8 +59,7 @@ jobs:
 
       - name: Build backend
         run: |
-          ssh -tt staging <<EOF
-          set -e
+          ssh -t staging <<EOF
           pwd
           cd /www/infinite-closet/dev/backend
           yarn install
