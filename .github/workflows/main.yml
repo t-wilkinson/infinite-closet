@@ -32,30 +32,36 @@ jobs:
 
       - name: Pull any changes
         env:
-          GITHUB_BRANCH: dev # ${{ github.ref }}
+          GITHUB_BRANCH: {{ github.ref }}
         run: |
           ssh -T staging<<EOF
-          # branch=${GITHUB_BRANCH##*/}
-          mkdir -p /www/infinite-closet/dev
-          cd /www/infinite-closet/dev
+          branch="${GITHUB_BRANCH##*/}"
+          mkdir -p "/www/infinite-closet/$branch"
+          cd "/www/infinite-closet/$branch"
           git fetch --all
-          git switch main
-          git pull origin main
+          git switch "$branch"
+          git pull origin "$branch"
           EOF
 
       - name: Build frontend
+        env:
+          GITHUB_BRANCH: {{ github.ref }}
         run: |
           ssh -T staging <<EOF
-          cd /www/infinite-closet/dev/frontend
+          branch="${GITHUB_BRANCH##*/}"
+          cd "/www/infinite-closet/$branch/frontend"
           yarn install
           yarn run sts # generate strapi typescript models for frontend
-          # yarn run build
+          [ "$branch" -eq "main" ] && yarn run build
           EOF
 
       - name: Build backend
+        env:
+          GITHUB_BRANCH: {{ github.ref }}
         run: |
           ssh -T staging <<EOF
-          cd /www/infinite-closet/dev/backend
+          branch="${GITHUB_BRANCH##*/}"
+          cd "/www/infinite-closet/$branch/backend"
           yarn install
-          yarn run build
+          [ "$branch" -eq "main" ] && yarn run build
           EOF
