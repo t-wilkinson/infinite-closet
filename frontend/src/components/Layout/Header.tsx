@@ -36,12 +36,14 @@ const SmallHeader = () => {
 
 const LargeHeader = ({ user, router }) => (
   <>
-    <div className="flex-row justify-center w-full items-center max-w-screen-xl relative h-32 w-full justify-between items-center">
+    <div className="lg:flex-row px-4 justify-center w-full items-center max-w-screen-xl relative h-32 w-full justify-between items-center">
       <LargeHeaderLogo router={router} />
-      <div className="w-full max-w-screen-md">
+      <div className="w-full lg:w-auto flex-grow mx-8">
         <Navbar />
       </div>
-      <Account user={user} />
+      <div className="absolute right-0 mt-4 mr-4 lg:m-0 lg:static">
+        <Account user={user} />
+      </div>
     </div>
   </>
 )
@@ -49,13 +51,7 @@ const LargeHeader = ({ user, router }) => (
 export const LargeHeaderLogo = ({ router }) => (
   <Link href="/">
     <a>
-      {router.pathname === '/' ? (
-        <span className="text-4xl font-header">INFINITE CLOSET</span>
-      ) : (
-        <div className="flex-row items-center mb-2 cursor-pointer">
-          <span className="text-4xl font-header">INFINITE CLOSET</span>
-        </div>
-      )}
+      <span className="text-4xl font-header">INFINITE CLOSET</span>
     </a>
   </Link>
 )

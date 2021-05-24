@@ -80,7 +80,6 @@ const Wrapper = ({ router, children }) => {
           const joinedWaitlist = JSON.parse(
             window.localStorage.getItem('joinedWaitlist'),
           )
-          console.log(!loggedIn && !joinedWaitlist)
           if (!loggedIn && !joinedWaitlist) {
             dispatch(accountActions.showPopup('email'))
           }

@@ -1,10 +1,12 @@
 import { useSelector } from '@/utils/store'
 
 export const useAnalytics = () => {
-  const consent = useSelector((state) => state.layout.cookieConsent)
+  const enabledStatistics = useSelector(
+    (state) => state.layout.cookieConsent.statistics,
+  )
   const analytics = useSelector((state) => state.layout.analytics)
 
-  if (consent?.statistics) return analytics
-  else return
+  if (enabledStatistics) return analytics
+  else return null
 }
 export default useAnalytics
