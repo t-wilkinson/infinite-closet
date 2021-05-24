@@ -46,7 +46,7 @@ jobs:
           git fetch --all
           git switch main
           git pull origin main
-          ~.
+          exit 0
           EOF
 
       - name: Build frontend
@@ -56,7 +56,6 @@ jobs:
           cd /www/infinite-closet/dev/frontend
           yarn install
           # yarn run build
-          exit 0
           EOF
 
       - name: Build backend
