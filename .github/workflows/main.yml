@@ -19,26 +19,22 @@ jobs:
       - name: Prepare ssh
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
-          SSH_HOST: ${{ secrets.HOST }}
-          GITHUB_BRANCH: dev # ${{ github.ref }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          GITHUB_BRANCH: "dev" # ${{ github.ref }}
         run: |
           mkdir -p ~/.ssh/
           echo "$SSH_KEY" > ~/.ssh/staging.key
           chmod 600 ~/.ssh/staging.key
-          if [ ! -e ~/.ssh/config ] || grep -v -q staging ~/.ssh/config ; then
-            cat >> ~/.ssh/config <<EOF
-            Host staging
-              HostName $SSH_HOST
-              User root
-              IdentityFile ~/.ssh/staging.key
-              StrictHostKeyChecking no
+          cat >> ~/.ssh/config <<EOF
+          Host staging
+            HostName $SSH_HOST
+            User root
+            IdentityFile ~/.ssh/staging.key
+            StrictHostKeyChecking no
           EOF
-          fi
 
       - name: Pull any changes
         env:
-          SSH_KEY: ${{ secrets.SSH_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
           GITHUB_BRANCH: dev # ${{ github.ref }}
         run: |
           ssh -tt staging <<EOF
