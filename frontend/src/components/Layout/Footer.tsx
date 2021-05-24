@@ -81,15 +81,17 @@ const Subscribe = () => {
   )
 }
 
-// const footerLinks = [
-//   [{hre
-// ]
+const footerLinks = [
+  { href: '/legal/terms-and-conditions', label: 'Legal Terms & Conditions' },
+  { href: '/legal/privacy-policy', label: 'Privacy & Cookie Policy' },
+]
 
 const FooterLinks = () => (
   <div className="items-center flex-row">
     <div className="w-full items-center">
-      <FooterLink href="/" label="Landing Page" />
-      <FooterLink href="/privacy-policy" label="Legal Terms and Conditions" />
+      {footerLinks.map((link) => (
+        <FooterLink key={link.label} {...link} />
+      ))}
     </div>
   </div>
 )

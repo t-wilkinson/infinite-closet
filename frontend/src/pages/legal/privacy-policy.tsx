@@ -1,10 +1,11 @@
-import PrivacyPolicy from '@/PrivacyPolicy'
+import Legal from '@/Legal'
 import Layout from '@/Layout'
+import { policies } from '@/Legal/constants'
 
 const Page = () => {
   return (
     <Layout title="Privacy Policy">
-      <PrivacyPolicy />
+      <Legal {...policies} />
     </Layout>
   )
 }

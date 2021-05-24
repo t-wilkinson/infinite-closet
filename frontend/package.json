@@ -15,6 +15,7 @@
     "@tailwindcss/aspect-ratio": "^0.2.0",
     "axios": "^0.21.1",
     "dayjs": "^1.10.4",
+    "firebase": "^8.6.2",
     "next": "10.x",
     "postcss-flexbugs-fixes": "^4.2.1",
     "postcss-preset-env": "^6.7.0",

@@ -2,25 +2,27 @@ import React from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Provider } from 'react-redux'
-import store from '@/utils/store'
 import axios from 'axios'
 import '@/styles/index.css'
 
 import useAnalytics from '@/utils/useAnalytics'
 import CookieConsent from '@/Layout/CookieConsent'
-import { useDispatch, useSelector } from '@/utils/store'
+import store, { useDispatch, useSelector } from '@/utils/store'
 import { accountActions } from '@/Account/slice'
 import Popup from '@/Account/Popup'
+import { layoutActions } from '@/Layout/slice'
+import firebase from 'firebase/app'
+import 'firebase/analytics'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_STRAPI_API_URL
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
-const App = ({ Component, pageProps, router }) => {
+const App = ({ router, Component, pageProps }) => {
   return (
     <>
       <Headers />
       <Provider store={store}>
-        <Wrapper>
+        <Wrapper router={router}>
           <Component {...pageProps} />
         </Wrapper>
       </Provider>
@@ -44,15 +46,28 @@ const Headers = () => (
   </Head>
 )
 
-const Wrapper = ({ children }) => {
-  useSaveScrollPos()
+const Wrapper = ({ router, children }) => {
+  // useSaveScrollPos()
   const dispatch = useDispatch()
   const headerOpen = useSelector((state) => state.layout.headerOpen)
   const popup = useSelector((state) => state.account.popup)
   const app = useAnalytics()
-  app?.setCurrentScreen(window.location.pathname)
 
   React.useEffect(() => {
+    app?.setCurrentScreen(router.asPath)
+    app?.logEvent('test', {
+      user: 'testing',
+    })
+  }, [router.pathname])
+
+  React.useEffect(() => {
+    if (firebase.apps.length === 0) {
+      firebase.initializeApp(
+        JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG.toString()),
+      )
+    }
+
+    dispatch(layoutActions.loadAnalytics(firebase.analytics()))
     axios
       .post('/account/login', {}, { withCredentials: true })
       .then((res) => {
@@ -65,8 +80,9 @@ const Wrapper = ({ children }) => {
           const joinedWaitlist = JSON.parse(
             window.localStorage.getItem('joinedWaitlist'),
           )
+          console.log(!loggedIn && !joinedWaitlist)
           if (!loggedIn && !joinedWaitlist) {
-            dispatch(accountActions.showPopup('register'))
+            dispatch(accountActions.showPopup('email'))
           }
         }
       })
@@ -74,18 +90,20 @@ const Wrapper = ({ children }) => {
   }, [])
 
   return (
-    <div
-      className={`h-screen
+    <>
+      <CookieConsent />
+      <div
+        className={`h-screen
         ${headerOpen ? 'overflow-hidden' : 'overflow-y-scroll'}
       `}
-    >
-      <CookieConsent />
-      <Popup popup={popup} />
-      <div className="min-h-screen">
-        <Banner />
-        {children}
+      >
+        <Popup popup={popup} />
+        <div className="min-h-screen">
+          <Banner />
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 

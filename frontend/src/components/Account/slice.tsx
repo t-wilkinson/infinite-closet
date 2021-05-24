@@ -8,7 +8,7 @@ interface State {
 }
 
 const initialState: State = {
-  popup: 'email',
+  popup: 'hidden',
 }
 
 export const accountSlice = createSlice({
