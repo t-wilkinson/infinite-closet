@@ -10,7 +10,6 @@ interface State {
   oneTime: OneTime
   membership: Membership
   dateVisible: boolean
-  quantity: string // use string for easier handling
   selectedDate?: Dayjs
   details?: string
   size?: number
@@ -21,7 +20,6 @@ const initialState: State = {
   oneTime: 'Short',
   membership: 'Short',
   dateVisible: false,
-  quantity: '1',
 }
 
 export const shopSlice = createSlice({
@@ -44,14 +42,6 @@ export const shopSlice = createSlice({
 
     selectDate(state, { payload }: PayloadAction<Dayjs>) {
       state.selectedDate = payload
-    },
-
-    setQuantity(state, { payload }: PayloadAction<string>) {
-      const quantity = parseInt(payload, 10)
-      if (quantity < 1) {
-        return
-      }
-      state.quantity = payload
     },
 
     showDate(state) {

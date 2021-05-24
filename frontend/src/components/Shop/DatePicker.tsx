@@ -150,9 +150,7 @@ const dateAvailable = (date: Dayjs) => {
 
   const isNotSunday = date.day() !== 0
   const enoughShippingTime = date.isAfter(
-    today
-      .add(2, 'day') // allow at least 2 days for shipping
-      .add(12, 'hour'), // shipping service won't deliver items requested after 2 days
+    today.add(1, 'day').add(12, 'hour'),
     'hour',
   )
 

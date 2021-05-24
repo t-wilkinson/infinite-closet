@@ -24,9 +24,6 @@ const OrderStatus = {
         <div>
           <span className="process__label">Size:</span> {order.size}
         </div>
-        <div>
-          <span className="process__label">Quantity:</span> {order.quantity}
-        </div>
         <button onClick={ship}>Ship</button>
       </div>
     );

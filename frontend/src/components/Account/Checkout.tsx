@@ -279,10 +279,6 @@ const CartItem = ({ dispatch, product, ...order }) => {
         </span>
         <span>{order.size}</span>
         <span>
-          Checking out <Bold>{order.quantity}</Bold>{' '}
-          {order.quantity === 1 ? 'item' : 'items'}
-        </span>
-        <span>
           <Bold>£{order.price}</Bold>
         </span>
       </div>

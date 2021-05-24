@@ -20,7 +20,7 @@ export const Checkbox = ({
         {value && <Icon name="check" className="w-3 h-3" style={{ color }} />}
       </div>
       &nbsp;&nbsp;
-      <span>{label}</span>
+      <span className="inline">{label}</span>
       {children}
     </div>
   </button>

@@ -23,21 +23,11 @@ module.exports = {
       return;
     }
 
-    const previousOrders = await strapi.query("order", "orders").find({
-      product: body.product,
-      size: body.size,
-    });
-    const previousQuantity = previousOrders.reduce(
-      (sum, order) => sum + order.quantity,
-      0
-    );
-
     const order = await strapi.query("order", "orders").create({
       status: body.status,
       product: body.product,
       date: body.date,
       rentalLength: body.rentalLength.toLowerCase(),
-      quantity: previousQuantity + body.quantity,
       user: user.id,
       size: body.size,
     });
@@ -63,7 +53,7 @@ module.exports = {
       "orders"
     ].services.order.numAvailable(cart);
 
-    // add total and available quantity to each order
+    // add price and available quantity to each order
     cart = cart.map((order) => {
       const key = strapi.plugins["orders"].services.order.toKey(order);
       return {
@@ -89,6 +79,7 @@ module.exports = {
   },
 
   async checkout(ctx) {
+    const user = ctx.state.body;
     const body = ctx.request.body;
     const numAvailable = await strapi.plugins[
       "orders"
@@ -98,7 +89,7 @@ module.exports = {
       const key = strapi.plugins["orders"].services.order.toKey(order);
       if (!strapi.plugins["orders"].services.order.dateValid(order)) {
         return Promise.reject(`${dayjs(order.date)} is not valid date`);
-      } else if (order.quantity > 0 && order.quantity <= numAvailable[key]) {
+      } else if (numAvailable[key] >= 1) {
         return strapi.query("order", "orders").update(
           { id: order.id },
           {
@@ -113,17 +104,38 @@ module.exports = {
         );
       }
     });
+
     const result = await Promise.allSettled(updates);
+    const cart = result.reduce((acc, settled) => {
+      if (settled.status === "fulfilled") {
+        acc.push(settled.value);
+      }
+      return acc;
+    }, []);
+
+    const amount = await strapi.plugins["orders"].services.order.cartAmount(
+      cart
+    );
+    stripe.paymentIntents
+      .create({
+        amount,
+        currency: "gbp",
+        customer: user.customer,
+        payment_method: body.paymentMethod,
+        off_session: false,
+        confirm: true,
+      })
+      .then((paymentIntent) =>
+        strapi
+          .query("order", "orders")
+          .update(
+            { id_in: cart.map((order) => order.id) },
+            { paymentIntent: paymentIntent.id }
+          )
+      )
+      .catch((err) => strapi.log.error(err));
 
     ctx.send({ status: 200, result });
-  },
-
-  async cartPrice(ctx) {
-    const user = ctx.state.user;
-    const price = strapi.plugins["orders"].services.order.cartPrice(
-      body.cart || user.cart
-    );
-    ctx.send({ price });
   },
 
   async amount(ctx) {
@@ -137,75 +149,66 @@ module.exports = {
     const { address } = order;
     const amount = await strapi.plugins["orders"].services.order.amount(order);
     const user = order.user;
+    const hivedBody = {
+      Collection: "Infinite Closet",
+      Collection_Address_Line_1: "22 Horder Rd",
+      Collection_Town: "London",
+      Collection_Postcode: "SW6 5EE",
+      Collection_Email_Address: "sarah.korich@infinitecloset.co.uk",
+      Recipient: address.first_name + " " + address.last_name,
+      Recipient_Address_Line_1: address.address,
+      Recipient_Town: address.town,
+      Recipient_Postcode: address.postcode,
+      Recipient_Email_Address: user.email,
+      Recipient_Phone_Number: user.phone_number,
+      Shipping_Class: "Next-Day", // Same-Day Next-Day 2-Day
+      Sender: "Infinite Closet",
+      Value_GBP: amount / 100,
+      // Sender_Chosen_Collection_Date: MM/DD/YYYY
+      // Sender_Chosen_Delivery_Date: MM/DD/YYYY
+    };
 
-    stripe.paymentIntents
-      .create({
-        amount,
-        currency: "gbp",
-        customer: user.customer,
-        payment_method: order.paymentMethod,
-        off_session: true,
-        confirm: true,
+    // stripe.paymentIntents
+    //   .create({
+    //     amount,
+    //     currency: "gbp",
+    //     customer: user.customer,
+    //     payment_method: order.paymentMethod,
+    //     off_session: true,
+    //     confirm: true,
+    //   })
+
+    //   .then((paymentIntent) =>
+    //     strapi
+    //       .query("order", "orders")
+    //       .update({ id: order.id }, { paymentIntent: paymentIntent.id })
+    //   )
+
+    if (process.NODE_ENV === "production") {
+      fetch(hived.parcels, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + hived.key,
+          "Content-Type": "application/json",
+        },
+        body: hivedBody,
       })
-
-      .then((paymentIntent) =>
-        strapi
-          .query("order", "orders")
-          .update({ id: order.id }, { paymentIntent: paymentIntent.id })
-      )
-
-      .then(() => {
-        if (process.env.NODE_ENV === "production") {
-          return fetch(hived.parcels, {
-            method: "POST",
-            headers: {
-              Authorization: "Bearer " + hived.key,
-              "Content-Type": "application/json",
-            },
-            body: {
-              Collection: "Infinite Closet",
-              Collection_Address_Line_1: "22 Horder Rd",
-              Collection_Town: "London",
-              Collection_Postcode: "SW6 5EE",
-              Collection_Email_Address: "sarah.korich@infinitecloset.co.uk",
-
-              Recipient: address.first_name + " " + address.last_name,
-              Recipient_Address_Line_1: address.address,
-              Recipient_Town: address.town,
-              Recipient_Postcode: address.postcode,
-              Recipient_Email_Address: user.email,
-              Recipient_Phone_Number: user.phone_number,
-
-              Shipping_Class: "One-Day",
-              Sender: "Infinite Closet",
-              Value_GBP: amount / 100, // 1000,
-              // Sender_Chosen_Collection_Date: MM/DD/YYYY
-              // Sender_Chosen_Delivery_Date: MM/DD/YYYY
-            },
-          }).then((res) => res.json());
-        } else {
-          return new Promise((res) => res());
-        }
-      })
-
-      .then((res) =>
-        // only update status once payment and delivery are valid
-        strapi
-          .query("order", "orders")
-          .update({ id: order.id }, { status: "shipping", shipment: res.id })
-      )
-
-      .then(() => {
-        // TODO: send email to user?
-      })
-
-      .catch((err) => {
-        // TODO: something failed, contact user with next step to take
-        if (err.error) {
-          // stripe error
-        } else {
-        }
-      });
+        .then((res) => res.json())
+        .then((res) =>
+          // only update status once payment and delivery are valid
+          strapi
+            .query("order", "orders")
+            .update({ id: order.id }, { status: "shipping", shipment: res.id })
+        )
+        .then(() => {
+          // TODO: send email to user?
+        })
+        .catch((err) => {
+          // TODO: something failed, contact user with next step to take
+          strapi.log.error(err);
+        });
+    } else {
+    }
 
     ctx.send({
       status: 200,

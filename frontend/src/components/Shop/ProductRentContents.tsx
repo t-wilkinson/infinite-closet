@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon } from '@/components'
-import { Submit } from '@/Form'
+import { Submit, Checkbox } from '@/Form'
 
 import { shopActions } from './slice'
 import { OneTime } from './types'
@@ -17,7 +17,7 @@ export const ProductRentContents = ({ product, state }) => {
   const dispatch = useDispatch()
 
   return (
-    <div className="h-96">
+    <div className="">
       <Contents
         router={router}
         user={user}
@@ -45,20 +45,20 @@ const productRentContents = {
   OneTime: ({ dispatch, product, state, router }) => {
     const [sizeState, setSizeState] = React.useState(false)
     const [status, setStatus] = React.useState<null | string>(null)
+    const [insurance, setInsurance] = React.useState(false)
 
     const addToCart = () => {
-      let quantity = parseInt(state.quantity, 10)
       setStatus('adding')
       axios
         .post(
           '/orders',
           {
             status: 'cart',
-            quantity: quantity > 0 ? quantity : 1,
             size: product.sizes[state.size].size,
             date: state.selectedDate.toJSON(),
             rentalLength: state.oneTime,
             product: product.id,
+            insurance,
           },
           { withCredentials: true },
         )
@@ -113,12 +113,11 @@ const productRentContents = {
           </div>
         </SelectorItem>
 
-        <SelectorItem label="Quantity" className="my-2 w-full">
-          <input
-            type="number"
-            className="w-32 border-gray border p-2"
-            value={state.quantity}
-            onChange={(e) => dispatch(shopActions.setQuantity(e.target.value))}
+        <SelectorItem label="Insurance" className="my-2 w-full">
+          <Checkbox
+            onChange={() => setInsurance(!insurance)}
+            value={insurance}
+            label="Include insurance?"
           />
         </SelectorItem>
 

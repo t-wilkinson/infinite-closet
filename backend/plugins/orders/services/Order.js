@@ -17,13 +17,14 @@ const rentalLengths = {
   long: 8,
 };
 
-const DAYS_TO_SHIP = 2;
+const DAYS_TO_SHIP = 1;
 const DAYS_TO_RECIEVE = 2;
 const DAYS_TO_CLEAN = 2;
 
-function toRange({ date, length }) {
+function toRange({ date, rentalLength }) {
   date = dayjs(date);
-  const rentalLength = rentalLengths[length];
+  rentalLength = rentalLengths[rentalLength];
+  // TODO: calculate how many days this item will take to ship based on status etc.
   return {
     start: date.subtract(DAYS_TO_SHIP, "day"),
     returning: date.add(dayjs.duration({ days: rentalLength })),
@@ -51,32 +52,55 @@ function toKey(order) {
   return `${order.size}_${productID}`;
 }
 
+/********************  IMPORTANT ********************
+ *
+ * PRICE: decimal units
+ * AMOUNT: smallest unit of currency
+ */
 const SMALLEST_CURRENCY_UNIT = 100;
+const INSURANCE_PRICE = 5;
 
 const rentalPrice = {
   short: "shortRentalPrice",
   long: "longRentalPrice",
 };
 
-const amount = (order) => price(order) * SMALLEST_CURRENCY_UNIT;
-const cartPrice = (cart) =>
-  cart.reduce((price, item) => price + amount(item), 0);
+// const shippingPrices = {
+//   "next-day": 9.95,
+//   "one-day": 0,
+//   "two-day": 0,
+// };
 
 function price(order) {
-  // returns cart price in smallest unit of currency
-  const orderPrice = order.product[rentalPrice[order.rentalLength]];
-  // stripe expects an integer price in smallest unit of currency
-  let price = order.quantity * orderPrice;
-  if (process.env.NODE_ENV === "development" && price === 0) {
-    price = 20;
-  }
-  return price;
+  // const date = dayjs(order.date);
+  // const today = dayjs();
+  // const dateBefore = (duration) =>
+  //   date.isBefore(today.add(dayjs.duration(duration)), "hour");
+  // const shippingType = dateBefore({ days: 1, hours: 12 })
+  //   ? "next-day"
+  //   : dateBefore({ days: 2, hours: 12 })
+  //   ? "one-day"
+  //   : "next-day";
+
+  // const shippingPrice = shippingPrices[shippingType];
+  const shippingPrice = 0;
+  const productPrice = order.product[rentalPrice[order.rentalLength]];
+  const insurancePrice = order.insurance ? INSURANCE_PRICE : 0;
+
+  return productPrice + insurancePrice + shippingPrice;
 }
+
+const amount = (order) => price(order) * SMALLEST_CURRENCY_UNIT;
+const cartPrice = (cart) =>
+  cart.reduce((price, item) => price + price(item), 0);
+const cartAmount = (cart) =>
+  cart.reduce((price, item) => price + amount(item), 0);
 
 module.exports = {
   price,
   amount,
   cartPrice,
+  cartAmount,
   toKey,
 
   dateValid(order) {
@@ -129,7 +153,7 @@ module.exports = {
       }
 
       // if request date overlaps with order duration
-      // then reduce available product quantity by order quantity
+      // then reduce available product quantity by 1
       const reqRange = reqRanges[key];
       const orderRange = toRange(order);
       const overlaps =
@@ -137,7 +161,7 @@ module.exports = {
         rangesOverlap(reqRange, orderRange) &&
         inProgress(order.status);
       if (overlaps) {
-        counter[key] -= order.quantity;
+        counter[key] -= 1;
       }
 
       return counter;

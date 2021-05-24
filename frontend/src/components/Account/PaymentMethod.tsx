@@ -11,7 +11,7 @@ import { loadStripe } from '@stripe/stripe-js'
 import { StrapiUser } from '@/utils/models'
 import { fetchAPI } from '@/utils/api'
 import { Icon } from '@/components'
-import { Submit } from '@/Form'
+import { Submit, Checkbox } from '@/Form'
 
 import './CheckoutForm.module.css'
 
@@ -106,6 +106,7 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
   const [processing, setProcessing] = React.useState(false)
   const [disabled, setDisabled] = React.useState(true)
   const [clientSecret, setClientSecret] = React.useState('')
+  const [authorised, setAuthorisation] = React.useState(false)
   const stripe = useStripe()
   const elements = useElements()
 
@@ -174,20 +175,7 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
         className="w-full max-w-sm w-full p-6 bg-white rounded-lg relative"
         onSubmit={(e) => e.preventDefault()}
       >
-        <div className="w-full items-center">
-          <span className="font-subheader text-3xl m-2">
-            Add Payment Method
-          </span>
-        </div>
-
-        <div className="w-full h-px bg-pri mb-4 mt-1 rounded-full" />
-
-        <button
-          className="absolute top-0 right-0 m-3"
-          onClick={() => dispatch({ type: 'close-popup' })}
-        >
-          <Icon name="close" size={20} />
-        </button>
+        <AddPaymentMethodHeader dispatch={dispatch} />
 
         <div className="my-8 border border-gray rounded-sm p-4">
           <CardElement
@@ -197,10 +185,15 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
           />
         </div>
 
+        <Authorise
+          setAuthorisation={setAuthorisation}
+          authorised={authorised}
+        />
+
         <div className="w-full items-center">
           <Submit
             className="w-full"
-            disabled={processing || disabled || succeeded}
+            disabled={processing || disabled || succeeded || !authorised}
             onSubmit={onSubmit}
           >
             {processing ? (
@@ -223,5 +216,40 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
     </div>
   )
 }
+
+const AddPaymentMethodHeader = ({ dispatch }) => (
+  <>
+    <div className="w-full items-center">
+      <span className="font-subheader text-3xl m-2">Add Payment Method</span>
+    </div>
+
+    <div className="w-full h-px bg-pri mb-4 mt-1 rounded-full" />
+
+    <button
+      className="absolute top-0 right-0 m-3"
+      onClick={() => dispatch({ type: 'close-popup' })}
+    >
+      <Icon name="close" size={20} />
+    </button>
+  </>
+)
+
+const Authorise = ({ setAuthorisation, authorised }) => (
+  <button
+    onClick={() => setAuthorisation(!authorised)}
+    aria-label="Authorize Infinite Closet to handle card details"
+  >
+    <div className="flex-row items-center">
+      <div className="items-center justify-center w-5 h-5 bg-white border border-black rounded-sm mr-4">
+        {authorised && <Icon name="check" className="w-3 h-3" />}
+      </div>
+      <span className="w-full text-left">
+        I authorise Infinite Closet to send instructions to the financial
+        institution that issued my card to take payments from my card account in
+        accordance with the terms of my agreement with you.
+      </span>
+    </div>
+  </button>
+)
 
 export default PaymentMethods
