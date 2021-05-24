@@ -21,6 +21,5 @@ export interface StrapiUser {
   phoneNumber?: string;
   addresses: StrapiAddress[];
   orders: any[];
-  order?: any;
   created_by: string;
 }

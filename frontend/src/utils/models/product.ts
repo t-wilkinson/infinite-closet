@@ -1,5 +1,6 @@
 import { StrapiDesigner } from './designer';
 import { StrapiFile } from './file';
+import { StrapiSize } from './custom/sizes';
 
 /**
  * Model definition for product
@@ -20,7 +21,7 @@ export interface StrapiProduct {
   styles?: string;
   weather?: string;
   categories?: string;
-  sizes: any[];
+  sizes: StrapiSize[];
   details?: string;
   stylistNotes?: string;
   created_by: string;

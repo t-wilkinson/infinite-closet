@@ -78,7 +78,7 @@ const HowItWorks = () => {
               header={k}
               icon={v.icon}
               selected={selected}
-              onClick={() => setSelected(k)}
+              onClick={() => setSelected(k as any)}
             />
           ))}
         </div>
