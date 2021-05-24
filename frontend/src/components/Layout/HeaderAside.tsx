@@ -23,17 +23,13 @@ const HeaderAside = () => {
           <Routes focused={focused} setFocused={setFocused} />
         </div>
 
-        {process.env.NEXT_PUBLIC_RELEASE ? (
-          <>
-            <Divider className="my-2" />
-            <AsideLink href="/account" label="My Accout" />
-            <AsideLink href="/about-us" label="About Us" />
-            <AsideLink href="/help" label="Help" />
-            <Divider className="my-2" />
-            <AsideLink href="/account/login" label="Sign In" />
-            <AsideLink href="/account/register" label="Register" />
-          </>
-        ) : null}
+        <Divider className="my-2" />
+        <AsideLink href="/account" label="My Accout" />
+        <AsideLink href="/about-us" label="About Us" />
+        <AsideLink href="/help" label="Help" />
+        <Divider className="my-2" />
+        <AsideLink href="/account/login" label="Sign In" />
+        <AsideLink href="/account/register" label="Register" />
       </aside>
     )
   )

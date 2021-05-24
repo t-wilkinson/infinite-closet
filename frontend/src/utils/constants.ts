@@ -5,10 +5,6 @@ export const socialMediaLinks = {
   tiktok: 'https://www.tiktok.com/@infinitecloset',
 }
 
-const clothingPath = process.env.NEXT_PUBLIC_RELEASE
-  ? '/products/clothing'
-  : null
-
 const imgs = [
   'Elegant-pieces-you_ll-keep-forever-1.png',
   'Elegant-pieces-you_ll-keep-forever-2.png',
@@ -59,12 +55,12 @@ const routes = [
   {
     label: 'Clothing',
     value: 'clothing',
-    href: clothingPath,
+    href: '/products/clothing',
     img: imgs[2],
     data: [
       {
         label: 'Category',
-        href: clothingPath,
+        href: '/products/clothing',
         data: [
           { label: 'Dresses', href: '/products/clothing/dresses' }, // TODO: more dynamic href
           { label: 'Jumpsuits', href: '/products/clothing/jumpsuits' },
