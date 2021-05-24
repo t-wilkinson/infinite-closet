@@ -6,7 +6,7 @@
     "develop:backend": "yarn --cwd backend develop",
     "develop:frontend": "wait-on http://api.dev.infinitecloset.co.uk/admin && yarn --cwd frontend develop",
     "develop": "FORCE_COLOR=1 npm-run-all -l -p develop:*",
-    "local:backend": "yarn --cwd backend develop",
+    "local:backend": "yarn --cwd backend develop:admin",
     "local:frontend": "wait-on http://api.infinitecloset.treywilkinson.com/admin && yarn --cwd frontend develop",
     "local": "FORCE_COLOR=1 npm-run-all -l -p local:*"
   },
