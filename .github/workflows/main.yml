@@ -2,7 +2,7 @@ name: Infinite Closet CI
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ main, dev ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -20,7 +20,6 @@ jobs:
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
-          GITHUB_BRANCH: "dev" # ${{ github.ref }}
         run: |
           mkdir -p ~/.ssh/
           echo "$SSH_KEY" > ~/.ssh/staging.key
@@ -38,7 +37,7 @@ jobs:
         env:
           GITHUB_BRANCH: dev # ${{ github.ref }}
         run: |
-          ssh -t staging<<EOF
+          ssh -T staging<<EOF
           # branch=${GITHUB_BRANCH##*/}
           pwd
           mkdir -p /www/infinite-closet/dev
@@ -46,25 +45,24 @@ jobs:
           git fetch --all
           git switch main
           git pull origin main
-          ~. # terminate connection
           EOF
 
       - name: Build frontend
         run: |
-          ssh -tt staging <<EOF
+          ssh -T staging <<EOF
           pwd
           cd /www/infinite-closet/dev/frontend
+          pwd
           yarn install
           # yarn run build
-          ~. # terminate connection
           EOF
 
       - name: Build backend
         run: |
-          ssh -t staging <<EOF
+          ssh -T staging <<EOF
           pwd
           cd /www/infinite-closet/dev/backend
+          pwd
           yarn install
           # yarn run build
-          ~. # terminate connection
           EOF
