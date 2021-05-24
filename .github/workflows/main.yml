@@ -13,10 +13,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      # # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      # - uses: actions/checkout@v2
 
-      - name: Build site
+      - name: Prepare ssh
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_HOST: ${{ secrets.HOST }}
@@ -32,7 +32,7 @@ jobs:
               User root
               IdentityFile ~/.ssh/staging.key
               StrictHostKeyChecking no
-            EOF
+          EOF
           fi
 
       - name: Pull any changes
