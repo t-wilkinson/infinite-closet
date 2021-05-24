@@ -56,21 +56,15 @@ jobs:
           (cd frontend
             yarn run build
 
-            if [ "$(pm2 id main:frontend) "= "[]" ]; then
-              pm2 start main:frontend
-            else
-              pm2 reload main:frontend
-            fi
+            pm2 delete -s main:frontend || :
+            pm2 start npm --name main:frontend -- run start
           )
 
           (cd backend
             yarn run build
 
-            if [ "$(pm2 id main:backend) "= "[]" ]; then
-              pm2 start main:backend
-            else
-              pm2 reload main:backend
-            fi
+            pm2 delete -s main:backend || :
+            pm2 start npm --name main:backend -- run start
           )
           EOF
 
@@ -80,9 +74,6 @@ jobs:
           ssh -T staging <<EOF
           cd "/www/infinite-closet/${{ env.branch }}"
 
-          if [ "$(pm2 id main:backend) "= "[]" ]; then
-            pm2 start main:backend
-          else
-            pm2 reload main:backend
-          fi
+            pm2 delete -s dev || :
+            pm2 start npm --name dev -- run develop
           EOF
