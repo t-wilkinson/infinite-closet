@@ -25,7 +25,7 @@ jobs:
           mkdir -p ~/.ssh/
           echo "$SSH_KEY" > ~/.ssh/staging.key
           chmod 600 ~/.ssh/staging.key
-          if grep -v -q staging ~/.ssh/config ; then
+          if [ ! -e ~/.ssh/config ] || grep -v -q staging ~/.ssh/config ; then
             cat >> ~/.ssh/config <<EOF
             Host staging
               HostName $SSH_HOST
@@ -41,7 +41,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           GITHUB_BRANCH: dev # ${{ github.ref }}
         run: |
-          ssh staging <<EOF
+          ssh -tt staging <<EOF
           set -e
           pwd
           mkdir -p "/www/infinite-closet/${GITHUB_BRANCH##*/}"
@@ -53,20 +53,20 @@ jobs:
 
       - name: Build frontend
         run: |
-          ssh staging <<EOF
+          ssh -tt staging <<EOF
           set -e
           pwd
           cd /www/infinite-closet/dev/frontend
           yarn install
-          yarn run build
+          # yarn run build
           EOF
 
       - name: Build backend
         run: |
-          ssh staging <<EOF
+          ssh -tt staging <<EOF
           set -e
           pwd
           cd /www/infinite-closet/dev/backend
           yarn install
-          yarn run build
+          # yarn run build
           EOF
