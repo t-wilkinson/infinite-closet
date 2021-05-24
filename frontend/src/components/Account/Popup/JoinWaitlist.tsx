@@ -1,12 +1,12 @@
 import React from 'react'
-import Link from 'next/link'
 import axios from 'axios'
 
-import { Icon } from '@/components'
-import { socialMediaLinks } from '@/utils/constants'
+// import { useDispatch } from '@/utils/store'
+// import { accountActions } from '@/Account/slice'
 import useAnalytics from '@/utils/useAnalytics'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
-import { Input, Checkbox, Submit } from '@/Form'
+import { FormHeader, Input, Checkbox, Submit } from '@/Form'
+import { BlueLink } from '@/components'
 
 const howDidYouFindUs = [
   { label: 'Social Media', value: 'social-media' },
@@ -16,34 +16,6 @@ const howDidYouFindUs = [
   { label: 'Other', value: 'other' },
 ]
 
-export const LandingPage = () => {
-  return (
-    <div className="w-full mb-6">
-      <div className="relative items-center min-h-screen overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover"
-          style={{
-            filter: 'blur(12px) brightness(0.5)',
-            transform: 'scale(1.05)',
-            backgroundImage: 'url(/images/brand/Facebook-Banner-shrunk.png)',
-          }}
-        />
-        <div className="z-10 items-center w-full py-16 h-full px-4 sm:px-0">
-          <div className="items-center w-full p-4 bg-white sm:my-92 sm:max-w-lg rounded-md">
-            <span className="text-4xl uppercase font-subheader text-center">
-              Join The Waitlist
-            </span>
-            <JoinWaitlist />
-            <FooterContact />
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default LandingPage
-
 type Status =
   | 'None'
   | 'ServerError'
@@ -51,35 +23,38 @@ type Status =
   | 'Submitted'
   | 'Submitting'
 
+const messages = {
+  Submitting: <span className="font-bold text-2xl">Submitting...</span>,
+  Submitted: (
+    <span className="font-bold text-center text-2xl">
+      Thank you for joining!
+    </span>
+  ),
+}
+
 const JoinWaitlist = () => {
+  // const dispatch = useDispatch()
   const [status, setStatus] = React.useState<Status>('None')
-  const messages = {
-    Submitting: <span className="font-bold text-2xl">Submitting...</span>,
-    Submitted: (
-      <span className="font-bold text-center text-2xl">
-        Thank you for joining!
-      </span>
-    ),
-  }
 
   return (
-    <div className="h-full w-full relative">
+    <>
       <WaitlistForm status={status} setStatus={setStatus} />
       {status in messages ? (
         <div className="absolute inset-0 bg-white z-10 justify-center items-center border border-gray rounded-md">
           {messages[status]}
         </div>
       ) : null}
-    </div>
+    </>
   )
 }
 
 const WaitlistForm = ({ status, setStatus }) => {
   const fields = useFields({
-    subscribe: { label: '' },
+    firstName: { constraints: 'required' },
+    lastName: { constraints: 'required' },
     checkbox: { constraints: 'required', label: '', defaultValue: 'other' },
+    subscribe: { label: '' },
     email: { constraints: 'required email', label: 'Email Address' },
-    name: { constraints: 'required', label: 'Name' },
     comment: { label: 'Leave a comment' },
   })
 
@@ -104,13 +79,20 @@ const WaitlistForm = ({ status, setStatus }) => {
           user: cleaned.email,
         })
       })
-      .then(() => setStatus('Submitted'))
+      .then(() => {
+        window.localStorage.setItem('joinedWaitlist', 'true')
+        setStatus('Submitted')
+      })
       .catch(() => setStatus('ServerError'))
   }
 
   return (
-    <div className="items-center w-full my-4">
-      <Input {...fields.name} />
+    <div className="items-center w-full">
+      <FormHeader label="Join Our Waitlist" />
+      <div className="w-full flex-row space-x-2">
+        <Input {...fields.firstName} />
+        <Input {...fields.lastName} />
+      </div>
       <Input {...fields.email} />
 
       <div className="w-full my-2">
@@ -122,18 +104,14 @@ const WaitlistForm = ({ status, setStatus }) => {
 
       <Input {...fields.comment} />
 
-      <div className="items-center my-2 md:flex-row">
+      <div className="my-2 md:flex-row items-start">
         <Checkbox {...fields.subscribe}>
           <span>&nbsp;&nbsp;I want to subscribe to the newsletter.</span>
         </Checkbox>
       </div>
-      <Link href="/privacy-policy">
-        <a>
-          <span className="underline cursor-pointer">View terms</span>
-        </a>
-      </Link>
+      <BlueLink href="/privacy-policy" label="View terms" />
 
-      <div className="my-2">
+      <div className="my-2 w-full">
         <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
           <span>Join</span>
         </Submit>
@@ -155,33 +133,6 @@ const WaitlistForm = ({ status, setStatus }) => {
   )
 }
 
-const FooterContact = () => (
-  <div className="flex-row items-center justify-between w-full">
-    <div>
-      <span className="text-gray">London, UK</span>
-      <Link href="mailto:info@infinitecloset.co.uk">
-        <a>
-          <span className="text-gray-dark">info@infinitecloset.co.uk</span>
-        </a>
-      </Link>
-    </div>
-    <div className="flex-row items-center">
-      <div className="items-center md:flex-row">
-        <SocialMediaIcon name="facebook" />
-        <div className="mt-2 md:mt-0">
-          <SocialMediaIcon name="instagram" />
-        </div>
-      </div>
-      <div className="items-center md:flex-row">
-        <SocialMediaIcon name="twitter" />
-        <div className="mt-2 md:mt-0">
-          <SocialMediaIcon name="tiktok" />
-        </div>
-      </div>
-    </div>
-  </div>
-)
-
 const Checkboxes = ({ label, value, onChange }) => (
   <>
     {howDidYouFindUs.map((v) => (
@@ -197,10 +148,4 @@ const Checkboxes = ({ label, value, onChange }) => (
   </>
 )
 
-const SocialMediaIcon = ({ name }) => (
-  <Link href={socialMediaLinks[name]}>
-    <a aria-label={`Social media link to ${name}`} className="mx-2">
-      <Icon name={name} className="w-6 h-6 text-black" />
-    </a>
-  </Link>
-)
+export default JoinWaitlist

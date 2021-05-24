@@ -8,11 +8,11 @@ import { Icon } from '@/components'
 
 const PopupRegister = dynamic(() => import('./Register'))
 const PopupSignIn = dynamic(() => import('./SignIn'))
-// const EmailSignIn = dynamic(() => import('./Email'))
+const PopupJoinWaitlist = dynamic(() => import('./JoinWaitlist'))
 
 const popups = {
   hidden: () => null,
-  // email: () => null,
+  email: PopupJoinWaitlist,
   register: PopupRegister,
   'sign-in': PopupSignIn,
 }

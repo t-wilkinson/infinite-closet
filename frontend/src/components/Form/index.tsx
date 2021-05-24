@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Icon } from '@/components'
+import { Icon, Divider } from '@/components'
 
 import { validate } from './useFields'
 
@@ -125,19 +125,17 @@ export const Form = ({
         e.preventDefault()
       }}
     >
-      <div className="w-full p-6 bg-white rounded-lg shadow-md">{children}</div>
+      <div className="w-full p-6 bg-white rounded-lg">{children}</div>
     </form>
   </div>
 )
 
 export const FormHeader = ({ label }) => (
   <>
-    <div className="items-center text-pri -mb-6">
-      <Icon name="logo" size={64} />
-    </div>
-    <span className="text-center font-subheader-light text-3xl mb-6">
-      {label}
-    </span>
+    {/* <div className="items-center text-pri -mb-6"> */}
+    {/*   <Icon name="logo" size={64} /> */}
+    {/* </div> */}
+    <span className="text-center font-subheader-light text-3xl">{label}</span>
   </>
 )
 

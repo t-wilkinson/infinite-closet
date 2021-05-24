@@ -61,7 +61,7 @@ export const Login = () => {
 
   return (
     <>
-      <FormHeader label="Sign in to Infinite Closet" />
+      <FormHeader label="Sign In" />
       <Warnings warnings={warnings} />
       <Input {...fields.email} />
       <Input {...fields.password} type={passwordVisible ? 'text' : 'password'}>

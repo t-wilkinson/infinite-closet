@@ -62,7 +62,10 @@ const Wrapper = ({ children }) => {
           dispatch(accountActions.login(res.data.user))
         } else {
           const loggedIn = JSON.parse(window.localStorage.getItem('loggedIn'))
-          if (!loggedIn) {
+          const joinedWaitlist = JSON.parse(
+            window.localStorage.getItem('joinedWaitlist'),
+          )
+          if (!loggedIn && !joinedWaitlist) {
             dispatch(accountActions.showPopup('register'))
           }
         }

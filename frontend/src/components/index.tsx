@@ -32,10 +32,11 @@ export const CheckBox = ({
   </button>
 )
 
-export const Divider = ({ visible = true, className = '' }) =>
-  visible && (
-    <div className={`border-gray-light border-b-2 w-full ${className}`} />
-  )
+export const Divider = ({
+  visible = true,
+  className = '',
+  border = 'border-gray-light',
+}) => visible && <div className={`${border} border-b-2 w-full ${className}`} />
 
 export const CallToAction = ({
   onClick = () => {},

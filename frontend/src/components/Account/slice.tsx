@@ -4,11 +4,11 @@ import { StrapiUser } from '@/utils/models'
 
 interface State {
   user?: StrapiUser
-  popup: 'hidden' | 'sign-in' | 'register' // TODO: take email first, then switch to actual register form
+  popup: 'hidden' | 'sign-in' | 'register' | 'email'
 }
 
 const initialState: State = {
-  popup: 'hidden',
+  popup: 'email',
 }
 
 export const accountSlice = createSlice({
