@@ -1,0 +1,72 @@
+name: Infinite Closet CI
+
+on:
+  push:
+    branches: [ dev ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Build site
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.HOST }}
+          GITHUB_BRANCH: dev # ${{ github.ref }}
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/staging.key
+          chmod 600 ~/.ssh/staging.key
+          if grep -v -q staging ~/.ssh/config ; then
+            cat >> ~/.ssh/config <<EOF
+            Host staging
+              HostName $SSH_HOST
+              User root
+              IdentityFile ~/.ssh/staging.key
+              StrictHostKeyChecking no
+            EOF
+          fi
+
+      - name: Pull any changes
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          GITHUB_BRANCH: dev # ${{ github.ref }}
+        run: |
+          ssh staging <<EOF
+          set -e
+          pwd
+          mkdir -p "/www/infinite-closet/${GITHUB_BRANCH##*/}"
+          cd "/www/infinite-closet/${GITHUB_BRANCH##*/}"
+          git fetch --all
+          git switch "${GITHUB_BRANCH##*/}"
+          git pull origin "${GITHUB_BRANCH##*/}"
+          ssh
+
+      - name: Build frontend
+        run: |
+          ssh staging <<EOF
+          set -e
+          pwd
+          cd /www/infinite-closet/dev/frontend
+          yarn install
+          yarn run build
+          EOF
+
+      - name: Build backend
+        run: |
+          ssh staging <<EOF
+          set -e
+          pwd
+          cd /www/infinite-closet/dev/backend
+          yarn install
+          yarn run build
+          EOF
