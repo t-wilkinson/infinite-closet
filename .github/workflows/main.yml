@@ -7,9 +7,7 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
     runs-on: ubuntu-latest
     steps:
@@ -30,38 +28,65 @@ jobs:
             Port 2222
           EOF
 
-      - name: Pull any changes
+      - name: Setup env vars
         env:
           GITHUB_BRANCH: ${{ github.ref }}
+        run: |
+          echo "branch=${GITHUB_BRANCH##*/}" >> $GITHUB_ENV
+
+      - name: Add changes to server
         run: |
           ssh -T staging<<EOF
-          branch="${GITHUB_BRANCH##*/}"
-          mkdir -p "/www/infinite-closet/$branch"
-          cd "/www/infinite-closet/$branch"
+          mkdir -p "/www/infinite-closet/${{ env.branch }}"
+          cd "/www/infinite-closet/${{ env.branch }}"
           git fetch --all
-          git switch "$branch"
-          git pull origin "$branch"
+          git switch "${{ env.branch }}"
+          git pull origin "${{ env.branch }}"
+          yarn install
+          (cd frontend && yarn install && yarn run sts)
+          (cd backend && yarn install)
           EOF
 
-      - name: Build frontend
-        env:
-          GITHUB_BRANCH: ${{ github.ref }}
+      - name: Build
+        if: ${{ env.branch == 'main' }}
         run: |
           ssh -T staging <<EOF
-          branch="${GITHUB_BRANCH##*/}"
-          cd "/www/infinite-closet/$branch/frontend"
-          yarn install
-          yarn run sts # generate strapi typescript models for frontend
-          [ "$branch" -eq "main" ] && yarn run build
+          cd "/www/infinite-closet/${{ env.branch }}"
+
+          # TODO: abstract this, maby separate bash script we include in repository?
+          (cd frontend
+            yarn run build
+
+            pm2 show main:frontend
+            if [[ $? -eq 0 ]]; then
+              pm2 restart main:frontend
+            else
+              pm2 start npm --name main:frontend -- run start
+            fi
+          )
+
+          (cd backend
+            yarn run build
+
+            pm2 show main:backend
+            if [[ $? -eq 0 ]]; then
+              pm2 restart main:backend
+            else
+              pm2 start npm --name main:backend -- run start
+            fi
+          )
           EOF
 
-      - name: Build backend
-        env:
-          GITHUB_BRANCH: {{ github.ref }}
+      - name: Run develop server
+        if: ${{ env.branch == 'dev' }}
         run: |
           ssh -T staging <<EOF
-          branch="${GITHUB_BRANCH##*/}"
-          cd "/www/infinite-closet/$branch/backend"
-          yarn install
-          [ "$branch" -eq "main" ] && yarn run build
+          cd "/www/infinite-closet/${{ env.branch }}"
+
+          pm2 show dev
+          if [[ $? -eq 0 ]]; then
+            pm2 restart dev
+          else
+            pm2 start npm --name dev -- run develop
+          fi
           EOF
