@@ -36,13 +36,13 @@ const SmallHeader = () => {
 
 const LargeHeader = ({ user, router }) => (
   <>
-    <div className="flex-row justify-center w-full items-center max-w-screen-xl relative">
+    <div className="flex-row justify-center w-full items-center max-w-screen-xl relative h-32 w-full justify-between items-center">
       <LargeHeaderLogo router={router} />
-      <div className="absolute right-0">
-        <Account user={user} />
+      <div className="w-full max-w-screen-md">
+        <Navbar />
       </div>
+      <Account user={user} />
     </div>
-    <Navbar />
   </>
 )
 
@@ -50,13 +50,7 @@ export const LargeHeaderLogo = ({ router }) => (
   <Link href="/">
     <a>
       {router.pathname === '/' ? (
-        <div className="items-center mb-4 cursor-pointer">
-          <div className="w-20 mb-2">
-            <Icon name="logo" className="text-pri" />
-          </div>
-          <span className="text-4xl font-header">INFINITE CLOSET</span>
-          {/* <span className="text-lg font-header">LESS IS MORE</span> */}
-        </div>
+        <span className="text-4xl font-header">INFINITE CLOSET</span>
       ) : (
         <div className="flex-row items-center mb-2 cursor-pointer">
           <span className="text-4xl font-header">INFINITE CLOSET</span>
@@ -79,11 +73,11 @@ const Account = ({ user }) => {
         <>
           <Link href="/account/login">
             <a>
-              <span className="font-bold">Sign In</span>
+              <span className="">Sign In</span>
             </a>
           </Link>
           {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
-          <IconLink href="/user/checkout" size={18} name="shopping-bag" />
+          {/* <IconLink href="/user/checkout" size={18} name="shopping-bag" /> */}
         </>
       )}
     </div>

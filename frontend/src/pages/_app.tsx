@@ -87,7 +87,7 @@ const Wrapper = ({ children }) => {
 }
 
 const Banner = () => (
-  <div className="items-center px-2 py-1 width-full bg-sec-light">
+  <div className="items-center px-2 py-1 width-full bg-sec text-white">
     <span className="text-norm">COMING JULY 1</span>
   </div>
 )

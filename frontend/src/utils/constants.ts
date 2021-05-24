@@ -5,30 +5,22 @@ export const socialMediaLinks = {
   tiktok: 'https://www.tiktok.com/@infinitecloset',
 }
 
-const imgs = [
-  'Elegant-pieces-you_ll-keep-forever-1.png',
-  'Elegant-pieces-you_ll-keep-forever-2.png',
-  'IMG_0457.jpg',
-  'IMG_0461.jpg',
-  'IMG_0459.jpg',
-  'IMG_0458.jpg',
-]
-
 const routes = [
   {
     label: 'How It Works',
     value: 'howitworks',
-    href: null,
-    img: imgs[0],
+    href: '/#how-it-works',
+    img: 'how-it-works-menu-image.jpg',
     data: [
       {
         label: null,
         href: null,
         data: [
-          { label: 'How it works', href: null },
+          { label: 'How It Works', href: '/#how-it-works' },
+          { label: 'Why Rent?', href: '/#why-rent' },
           { label: 'About Us', href: null },
-          { label: 'Customer feedback', href: null },
-          { label: 'Ambassador program', href: null },
+          { label: 'Customer Feedback', href: null },
+          { label: 'Ambassador Program', href: null },
         ],
       },
     ],
@@ -38,7 +30,7 @@ const routes = [
     value: 'trending',
     href: null,
     type: 'path',
-    img: imgs[1],
+    img: 'trending-menu-image.jpg',
     data: [
       {
         label: null,
@@ -56,7 +48,7 @@ const routes = [
     label: 'Clothing',
     value: 'clothing',
     href: '/products/clothing',
-    img: imgs[2],
+    img: 'clothing-menu-image.jpg',
     data: [
       {
         label: 'Category',
@@ -90,7 +82,7 @@ const routes = [
     label: 'Accessories',
     value: 'accessories',
     href: null,
-    img: imgs[3],
+    img: 'accessories-menu-image.jpg',
     data: [
       {
         label: 'Category',
@@ -124,7 +116,7 @@ const routes = [
     label: 'Blog',
     value: 'blog',
     href: null,
-    img: imgs[4],
+    img: null,
     data: [],
   },
 ] as const

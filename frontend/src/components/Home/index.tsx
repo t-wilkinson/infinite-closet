@@ -1,22 +1,29 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { useSelector } from '@/utils/store'
-
 export const Home = () => {
-  const layout = useSelector((state) => state.account)
-
   return (
-    <div className="items-center">
-      <div className="relative w-full h-128">
-        <Image
-          src="/images/home/Website-Banner---Homepage-.png"
-          layout="fill"
-          objectFit="cover"
-        />
+    <div className="w-full items-center">
+      <div className="items-center w-full max-w-screen-xl">
+        <div className="relative w-full max-w-screen-xl h-128 mb-8">
+          <div className="w-full h-full" style={{ transform: 'scaleX(-1)' }}>
+            <Image
+              src="/images/home-page/banner-image.jpg"
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+          <div className="absolute left-0" style={{ width: 800, height: 500 }}>
+            <Image
+              src="/images/home-page/discover-rent-love-gold.svg"
+              layout="fill"
+              objectFit="contain"
+            />
+          </div>
+        </div>
+        <HowItWorks />
+        <WhyRent />
       </div>
-      <HowItWorks />
-      <WhyRent />
     </div>
   )
 }
@@ -24,7 +31,7 @@ export const Home = () => {
 const howItWorks = {
   book: {
     label: 'Discover',
-    icon: 'how-it-works-1.svg',
+    icon: '1.svg',
     header: ({ selected }) => <div>Discover</div>,
     content: ({ selected }) => (
       <div>
@@ -36,7 +43,7 @@ const howItWorks = {
   },
   work: {
     label: 'Rent',
-    icon: 'how-it-works-2.svg',
+    icon: '2.svg',
     header: ({ selected }) => <div>Rent</div>,
     content: ({ selected }) => (
       <div>
@@ -50,7 +57,7 @@ const howItWorks = {
   },
   return: {
     label: 'Love',
-    icon: 'how-it-works-3.svg',
+    icon: '3.svg',
     header: ({ selected }) => <div>Love</div>,
     content: ({ selected }) => (
       <div>
@@ -68,7 +75,10 @@ const HowItWorks = () => {
   )
 
   return (
-    <div className="w-full bg-gray-light items-center px-4 py-12">
+    <div
+      className="w-full bg-pri-light items-center px-4 py-12"
+      id="how-it-works"
+    >
       <Heading>How It Works</Heading>
       <div className="max-w-screen-lg w-full items-center">
         <div className="flex-row justify-between w-full p-4">
@@ -106,13 +116,13 @@ const HowItWorksHeader = ({ icon, selected, header, ...props }) => {
           // }}
         >
           <Image
-            src={`/images/home/${icon}`}
+            src={`/images/home-page/how-it-works/${icon}`}
             layout="fill"
             objectFit="contain"
           />
         </div>
         <div>
-          <span className="my-1 text-2xl font-bold">
+          <span className="my-1 text-lg font-bold">
             {howItWorks[header].header({ selected: header === selected })}
           </span>
           {header === selected ? (
@@ -133,25 +143,25 @@ const HowItWorksContent = ({ selected, header }) =>
 
 const whyRent = [
   {
-    icon: 'why-rent-1.svg',
+    icon: '1.svg',
     label: 'Totally Flexible',
     content:
       'Ever changing styles, sizes, and brands. We’ve got you covered for every occasion, delivered right to your door.',
   },
   {
-    icon: 'why-rent-2.svg',
+    icon: '2.svg',
     label: 'Reduce Your Carbon Footprint',
     content:
       'Experiment with your style, not the planet (or your wallet)! Join the sharing economy and rent instead.',
   },
   {
-    icon: 'why-rent-3.svg',
+    icon: '3.svg',
     label: 'Reclaim Your Time',
     content:
       'The only laundry that cleans itself -- simply rent, wear, and return. We’ll take care of the rest.',
   },
   {
-    icon: 'why-rent-4.svg',
+    icon: '4.svg',
     label: '#SupportSmallBusinesses',
     content:
       'We’ll introduce you to new brands we know you’ll love - and promise to only partner with brands who share our vision of a more sustainable and ethical tomorrow.',
@@ -159,20 +169,20 @@ const whyRent = [
 ]
 
 const WhyRent = ({}) => (
-  <div className="my-8 w-full items-center">
+  <div className="my-8 w-full items-center" id="why-rent">
     <Heading>Why Rent?</Heading>
     <div className="flex-row justify-between flex-wrap w-full">
       {whyRent.map((item) => (
         <div key={item.label} className="flex-grow items-center my-20">
           <div className="w-64 items-center">
-            <div className="w-32 h-32 relative">
+            <div className="w-24 h-24 relative">
               <Image
-                src={`/images/home/${item.icon}`}
+                src={`/images/home-page/why-rent/${item.icon}`}
                 layout="fill"
                 objectFit="contain"
               />
             </div>
-            <span className="text-center font-bold text-2xl my-2">
+            <span className="text-center font-bold text-lg my-2">
               {item.label}
             </span>
             <span className="text-center">{item.content}</span>
@@ -184,7 +194,7 @@ const WhyRent = ({}) => (
 )
 
 const Heading = ({ children }) => (
-  <div className="flex-row w-full items-center">
+  <div className="flex-row w-full max-w-screen-xl items-center">
     <div className="h-px bg-pri rounded-full flex-grow mx-8" />
     <span className="font-subheader text-4xl">{children}</span>
     <div className="h-px bg-pri rounded-full flex-grow mx-8" />

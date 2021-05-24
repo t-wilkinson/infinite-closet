@@ -10,18 +10,20 @@ import { socialMediaLinks } from '@/utils/constants'
 export const Footer = () => (
   <>
     <Divider />
-    <footer className="flex flex-col items-center justify-evenly w-full pb-2 my-4 md:flex-row">
-      <div className="items-center flex-grow">
-        <span className="text-2xl font-subheader">NEWSLETTER</span>
-        <div className="content-center items-center rounded-sm">
-          <Subscribe />
+    <div className="items-center w-full">
+      <footer className="flex flex-col items-center justify-between w-full pb-2 my-4 md:flex-row max-w-screen-xl">
+        <div className="items-center">
+          <span className="text-2xl font-subheader">NEWSLETTER</span>
+          <div className="content-center items-center rounded-sm">
+            <Subscribe />
+          </div>
         </div>
-      </div>
-      <Divider className="my-4 md:hidden" />
-      <FooterLinks />
-      <Divider className="my-4 md:hidden" />
-      <FollowUs />
-    </footer>
+        <Divider className="my-4 md:hidden" />
+        <FooterLinks />
+        <Divider className="my-4 md:hidden" />
+        <FollowUs />
+      </footer>
+    </div>
   </>
 )
 export default Footer
@@ -84,7 +86,7 @@ const Subscribe = () => {
 // ]
 
 const FooterLinks = () => (
-  <div className="items-center flex-grow flex-row">
+  <div className="items-center flex-row">
     <div className="w-full items-center">
       <FooterLink href="/" label="Landing Page" />
       <FooterLink href="/privacy-policy" label="Legal Terms and Conditions" />
@@ -101,7 +103,7 @@ const FooterLink = ({ href, label }) => (
 )
 
 export const FollowUs = ({ className = '' }) => (
-  <div className={`items-center flex-grow ${className}`}>
+  <div className={`items-center ${className}`}>
     <span className="text-2xl font-subheader">Follow Us</span>
     <div className="flex-row my-4 width-full max-w-20 content-evenly space-x-2">
       <SocialMediaIcon name="facebook" />
