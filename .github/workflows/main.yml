@@ -38,7 +38,7 @@ jobs:
         env:
           GITHUB_BRANCH: dev # ${{ github.ref }}
         run: |
-          ssh -tt staging <<EOF
+          ssh -T staging<<EOF
           # branch=${GITHUB_BRANCH##*/}
           pwd
           mkdir -p /www/infinite-closet/dev
@@ -46,20 +46,22 @@ jobs:
           git fetch --all
           git switch main
           git pull origin main
+          ~.
           EOF
 
       - name: Build frontend
         run: |
-          ssh -tt staging <<EOF
+          ssh -T staging <<EOF
           pwd
           cd /www/infinite-closet/dev/frontend
           yarn install
           # yarn run build
+          exit 0
           EOF
 
       - name: Build backend
         run: |
-          ssh -t staging <<EOF
+          ssh -T staging <<EOF
           pwd
           cd /www/infinite-closet/dev/backend
           yarn install
