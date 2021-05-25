@@ -15,7 +15,7 @@ export const userSlice = createSlice({
     signin(state, { payload }: PayloadAction<StrapiUser>) {
       state.user = payload
     },
-    logout(state, { payload }: PayloadAction<StrapiUser>) {
+    signout(state, { payload }: PayloadAction<StrapiUser>) {
       state.user = payload
     },
   },

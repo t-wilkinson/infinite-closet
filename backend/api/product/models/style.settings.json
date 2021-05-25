@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "styles",
+  "info": {
+    "name": "Style",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false,
+    "timestamps": false,
+    "increments": false,
+    "comment": ""
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true
+    },
+    "value": {
+      "type": "string"
+    }
+  }
+}

@@ -2,7 +2,7 @@
   "kind": "collectionType",
   "collectionName": "products",
   "info": {
-    "name": "product",
+    "name": "Product",
     "description": ""
   },
   "options": {
@@ -39,29 +39,9 @@
     "images": {
       "collection": "file",
       "via": "related",
-      "allowedTypes": [
-        "images"
-      ],
+      "allowedTypes": ["images"],
       "plugin": "upload",
       "required": false
-    },
-    "colors": {
-      "type": "string"
-    },
-    "fits": {
-      "type": "string"
-    },
-    "occasions": {
-      "type": "string"
-    },
-    "styles": {
-      "type": "string"
-    },
-    "weather": {
-      "type": "string"
-    },
-    "categories": {
-      "type": "string"
     },
     "sizes": {
       "type": "component",
@@ -73,6 +53,25 @@
     },
     "stylistNotes": {
       "type": "richtext"
+    },
+
+    "colors": {
+      "collection": "color"
+    },
+    "fits": {
+      "collection": "fit"
+    },
+    "occasions": {
+      "collection": "occasion"
+    },
+    "styles": {
+      "collection": "style"
+    },
+    "weather": {
+      "collection": "weather"
+    },
+    "categories": {
+      "collection": "category"
     }
   }
 }

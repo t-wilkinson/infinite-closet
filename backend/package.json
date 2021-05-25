@@ -5,7 +5,7 @@
   "description": "A Strapi application",
   "scripts": {
     "develop": "strapi develop",
-    "develop:admin": "strapi develop --watch-admin",
+    "develop:admin": "strapi develop --watch-admin --browser false",
     "start": "strapi start",
     "build": "strapi build",
     "strapi": "strapi"

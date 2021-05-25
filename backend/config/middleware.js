@@ -20,7 +20,9 @@ module.exports = {
         "https://api.dev." + domain,
         "https://admin.dev." + domain,
 
+        // unable to fetch .env variables at this time
         "http://api.infinitecloset.treywilkinson.com",
+        "http://admin.infinitecloset.treywilkinson.com",
         "http://infinitecloset.treywilkinson.com",
       ],
     },

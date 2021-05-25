@@ -3,7 +3,7 @@ const _ = require("lodash");
 const { sanitizeEntity } = require("strapi-utils");
 
 module.exports = {
-  async login(ctx) {
+  async signin(ctx) {
     if (ctx.state.user) {
       return ctx.send({
         status: 200,
@@ -54,7 +54,7 @@ module.exports = {
     }
   },
 
-  async logout(ctx) {
+  async signout(ctx) {
     ctx.cookies.set("token", null);
     ctx.send({
       authorized: true,

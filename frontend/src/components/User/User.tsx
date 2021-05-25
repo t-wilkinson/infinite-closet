@@ -22,14 +22,14 @@ const SideMenu = () => (
     <SideButton
       onClick={() => {
         axios
-          .post('/account/logout', {}, { withCredentials: true })
+          .post('/account/signout', {}, { withCredentials: true })
           .then((res) => {
             window.location.href = '/'
           })
           .catch((err) => console.error(err))
       }}
     >
-      Logout
+      Sign Out
     </SideButton>
   </div>
 )

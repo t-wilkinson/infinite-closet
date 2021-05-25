@@ -26,16 +26,16 @@
     },
     {
       "method": "POST",
-      "path": "/account/login",
-      "handler": "account.login",
+      "path": "/account/signin",
+      "handler": "account.signin",
       "config": {
         "policies": []
       }
     },
     {
       "method": "POST",
-      "path": "/account/logout",
-      "handler": "account.logout",
+      "path": "/account/signout",
+      "handler": "account.signout",
       "config": {
         "policies": []
       }
