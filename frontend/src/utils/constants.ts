@@ -116,7 +116,7 @@ const routes = [
     label: 'Blog',
     value: 'blog',
     href: null,
-    img: null,
+    img: 'how-it-works-menu-image.jpg',
     data: [],
   },
 ] as const

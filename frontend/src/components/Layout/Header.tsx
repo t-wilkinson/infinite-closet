@@ -67,7 +67,7 @@ const Account = ({ user }) => {
         </>
       ) : (
         <>
-          <Link href="/account/login">
+          <Link href="/account/signin">
             <a>
               <span className="">Sign In</span>
             </a>

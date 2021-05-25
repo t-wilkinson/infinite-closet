@@ -6,7 +6,7 @@ export const Legal = ({ label, updated, data, children }) => (
   <div className="items-center mx-4">
     <div className="w-full max-w-screen-lg">
       <div className="items-center mb-4">
-        <span className="font-subheader text-center text-5xl">{label}</span>
+        <span className="font-subheader text-center text-3xl">{label}</span>
         <span className="text-gray-dark text-sm">Last Updated: {updated}</span>
       </div>
       {data.map((term) => (

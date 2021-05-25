@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Login from '@/Account/Login'
+import Signin from '@/Account/Signin'
 import { useDispatch } from '@/utils/store'
 import { accountActions } from '@/Account/slice'
 
@@ -9,7 +9,7 @@ export const Page = () => {
 
   return (
     <>
-      <Login />
+      <Signin />
       <div className="h-4" />
       <span>
         New to Infinite Closet?{' '}

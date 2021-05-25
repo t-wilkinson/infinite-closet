@@ -490,7 +490,7 @@ info@InfiniteCloset.co.uk
 
 You can also contact us through the feedback form available on our Site.
 
-Effective Date:	day of	,          `,
+Effective Date:	05/25,`,
         },
       ],
     },

@@ -37,7 +37,7 @@ export const Register = () => {
         { withCredentials: true },
       )
       .then((res) => {
-        dispatch(accountActions.login(res.data.user))
+        dispatch(userActions.signin(res.data.user))
         app?.logEvent('form_submit', {
           type: 'account.register',
           user: cleaned.email,
@@ -56,7 +56,7 @@ export const Register = () => {
 
   return (
     <>
-      <FormHeader label="Join Us" />
+      <FormHeader label="Join us for free" />
       <Warnings warnings={warnings} />
       <div className="flex-row space-x-2">
         <Input {...fields.firstName} />
@@ -84,7 +84,7 @@ export const AlreadyHaveAccount = () => {
   return (
     <span>
       Already have an account?{' '}
-      <Link href="/account/login">
+      <Link href="/account/signin">
         <a>
           <span className="cursor-pointer text-blue-500">Sign In</span>
         </a>

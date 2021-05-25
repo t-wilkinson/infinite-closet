@@ -18,7 +18,7 @@ import useFields, { isValid, cleanFields } from '@/Form/useFields'
 
 import { accountActions } from './slice'
 
-export const Login = () => {
+export const Signin = () => {
   const fields = useFields({
     email: { constraints: 'required email', label: 'Email Address' },
     password: { constraints: 'required', label: 'Password' },
@@ -41,9 +41,9 @@ export const Login = () => {
         { withCredentials: true },
       )
       .then((res) => {
-        dispatch(accountActions.login(res.data.user))
+        dispatch(userActions.signin(res.data.user))
         app?.logEvent('form_submit', {
-          type: 'account.login',
+          type: 'account.signin',
           user: cleaned.email,
         })
         router.push('/')
@@ -61,7 +61,7 @@ export const Login = () => {
 
   return (
     <>
-      <FormHeader label="Sign In" />
+      <FormHeader label="Sign in" />
       <Warnings warnings={warnings} />
       <Input {...fields.email} />
       <Input {...fields.password} type={passwordVisible ? 'text' : 'password'}>
@@ -71,8 +71,7 @@ export const Login = () => {
         />
       </Input>
       <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
-        {' '}
-        Sign In{' '}
+        Sign In
       </Submit>
 
       <OR />
@@ -101,4 +100,4 @@ export const CreateAnAccount = () => (
   </span>
 )
 
-export default Login
+export default Signin

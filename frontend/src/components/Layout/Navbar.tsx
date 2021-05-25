@@ -17,7 +17,7 @@ export const NavBar = () => {
 
       <div
         className={`absolute bottom-0 w-full transform translate-y-full bg-white items-center p-4 shadow-xl
-        ${visible ? '' : 'hidden'}
+        ${visible ? '' : 'invisible'}
         `}
       >
         {routes.map((route) => (

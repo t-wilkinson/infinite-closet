@@ -69,12 +69,12 @@ const Wrapper = ({ router, children }) => {
 
     dispatch(layoutActions.loadAnalytics(firebase.analytics()))
     axios
-      .post('/account/login', {}, { withCredentials: true })
+      .post('/account/signin', {}, { withCredentials: true })
       .then((res) => {
         if (res.data.user) {
           // loggedIn tracks if the user has logged into the web site
           window.localStorage.setItem('loggedIn', 'true')
-          dispatch(accountActions.login(res.data.user))
+          dispatch(userActions.signin(res.data.user))
         } else {
           const loggedIn = JSON.parse(window.localStorage.getItem('loggedIn'))
           const joinedWaitlist = JSON.parse(

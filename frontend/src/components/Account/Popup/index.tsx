@@ -7,14 +7,14 @@ import { useDispatch } from '@/utils/store'
 import { Icon } from '@/components'
 
 const PopupRegister = dynamic(() => import('./Register'))
-const PopupSignIn = dynamic(() => import('./SignIn'))
+const PopupSignin = dynamic(() => import('./Signin'))
 const PopupJoinWaitlist = dynamic(() => import('./JoinWaitlist'))
 
 const popups = {
   hidden: () => null,
   email: PopupJoinWaitlist,
   register: PopupRegister,
-  'sign-in': PopupSignIn,
+  signin: PopupSignin,
 }
 
 export const Popup = ({ popup }) => {

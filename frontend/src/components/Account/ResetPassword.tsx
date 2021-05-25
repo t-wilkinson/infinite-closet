@@ -15,7 +15,7 @@ import {
 } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 
-import { accountActions } from './slice'
+import { userActions } from './slice'
 
 export const ForgotPassword = () => {
   const fields = useFields({
@@ -41,7 +41,7 @@ export const ForgotPassword = () => {
         { withCredentials: true },
       )
       .then((res) => {
-        dispatch(accountActions.login(res.data.user))
+        dispatch(userActions.signin(res.data.user))
         app?.logEvent('form_submit', {
           type: 'account.reset-password',
           user: cleaned.email,

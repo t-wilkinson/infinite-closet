@@ -65,14 +65,14 @@ export async function getServerSideProps({ params, query }) {
   })
   const _filters = Filter.map((filter) => {
     const { filterName } = filterData[filter]
-    return str({ [filterName + '_contains']: query[filterName] })
+    return str({ [filterName + '.slug_in']: query[filterName] })
   })
     .filter((v) => v)
     .join('&')
 
   let _where = str({
     _sort: sort,
-    categories_contains: query.slug,
+    'categories.slug_in': query.slug,
   })
   _where = [_where, _filters].join('&')
 
@@ -81,6 +81,19 @@ export async function getServerSideProps({ params, query }) {
     fetchAPI(`/products?${_paging}&${_where}`),
     fetchAPI(`/designers`), // TODO: this includes all of designers relations
   ])
+
+  // TODO: could also move this to backend
+  //   // TODO: should maybe do this async
+  //   products.reduce((filters, product) => {
+  //     for (const filter in filters) {
+  //       for (const item of product[filter]) {
+  //         if (!(item.slug in filters[filter])) {
+  //           filters[filter][item.slug] = item
+  //         }
+  //       }
+  //     }
+  //     return filters
+  //   }, Filter.reduce((acc, filter) => (acc[filter.toLowerCase()] = {}, acc), {}))
 
   return {
     props: {

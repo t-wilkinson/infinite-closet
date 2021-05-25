@@ -16,7 +16,7 @@ export const PopupRegister = () => {
       </div>
       <span>
         Already have an account?{' '}
-        <button onClick={() => dispatch(accountActions.showPopup('sign-in'))}>
+        <button onClick={() => dispatch(accountActions.showPopup('signin'))}>
           <span className="cursor-pointer text-blue-500">Sign In</span>.
         </button>
       </span>

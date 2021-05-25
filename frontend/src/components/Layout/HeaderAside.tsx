@@ -28,7 +28,7 @@ const HeaderAside = () => {
         <AsideLink href="/about-us" label="About Us" />
         <AsideLink href="/help" label="Help" />
         <Divider className="my-2" />
-        <AsideLink href="/account/login" label="Sign In" />
+        <AsideLink href="/account/signin" label="Sign In" />
         <AsideLink href="/account/register" label="Register" />
       </aside>
     )

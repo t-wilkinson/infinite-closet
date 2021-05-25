@@ -2,7 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 
 import Form from '@/Form'
-import Login, { CreateAnAccount } from '@/Account/Login'
+import Signin, { CreateAnAccount } from '@/Account/Signin'
 import { LargeHeaderLogo } from '@/Layout/Header'
 
 export const Page = () => {
@@ -14,7 +14,7 @@ export const Page = () => {
       </div>
       <div className="bg-gray-light h-full pt-16">
         <Form>
-          <Login />
+          <Signin />
         </Form>
         <div className="h-4" />
         <Form>

@@ -121,7 +121,7 @@ export const AddAddress = ({ user, dispatch, state }) => {
       .then((res) => {
         dispatch({ type: 'close-popup' })
         dispatch({ type: 'set-addresses', payload: res.data.addresses })
-        accountDispatch(accountActions.login(res.data.user))
+        accountDispatch(userActions.signin(res.data.user))
       })
       .catch((err) => console.error(err))
   }

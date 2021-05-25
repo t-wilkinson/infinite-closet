@@ -135,7 +135,9 @@ export const FormHeader = ({ label }) => (
     {/* <div className="items-center text-pri -mb-6"> */}
     {/*   <Icon name="logo" size={64} /> */}
     {/* </div> */}
-    <span className="text-center font-subheader-light text-3xl">{label}</span>
+    <span className="text-center font-subheader-light text-3xl mb-4">
+      {label}
+    </span>
   </>
 )
 
