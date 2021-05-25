@@ -1,8 +1,8 @@
 {
   "kind": "collectionType",
-  "collectionName": "designers",
+  "collectionName": "documents",
   "info": {
-    "name": "Designer",
+    "name": "Document",
     "description": ""
   },
   "options": {
@@ -11,21 +11,16 @@
     "draftAndPublish": true
   },
   "attributes": {
+    "content": {
+      "type": "richtext"
+    },
     "name": {
       "type": "string",
       "required": true
     },
     "slug": {
       "type": "uid",
-      "targetField": "name",
-      "required": true
-    },
-    "products": {
-      "collection": "product",
-      "via": "designer"
-    },
-    "description": {
-      "type": "text"
+      "targetField": "name"
     }
   }
 }

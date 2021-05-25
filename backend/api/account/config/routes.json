@@ -24,6 +24,7 @@
         "policies": []
       }
     },
+
     {
       "method": "POST",
       "path": "/account/signin",
@@ -40,6 +41,7 @@
         "policies": []
       }
     },
+
     {
       "method": "POST",
       "path": "/account/wallet",

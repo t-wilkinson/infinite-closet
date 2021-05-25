@@ -11,10 +11,6 @@
     "draftAndPublish": true
   },
   "attributes": {
-    "designer": {
-      "model": "designer",
-      "via": "products"
-    },
     "name": {
       "type": "string",
       "required": true
@@ -25,10 +21,12 @@
       "required": true
     },
     "shortRentalPrice": {
-      "type": "decimal"
+      "type": "decimal",
+      "required": true
     },
     "longRentalPrice": {
-      "type": "decimal"
+      "type": "decimal",
+      "required": true
     },
     "retailPrice": {
       "type": "decimal"
@@ -39,9 +37,9 @@
     "images": {
       "collection": "file",
       "via": "related",
-      "allowedTypes": ["images"],
+      "allowedTypes": ["images", "videos"],
       "plugin": "upload",
-      "required": false
+      "required": true
     },
     "sizes": {
       "type": "component",
@@ -54,7 +52,14 @@
     "stylistNotes": {
       "type": "richtext"
     },
-
+    "designer": {
+      "via": "products",
+      "model": "designer",
+      "required": true
+    },
+    "categories": {
+      "collection": "category"
+    },
     "colors": {
       "collection": "color"
     },
@@ -69,9 +74,6 @@
     },
     "weather": {
       "collection": "weather"
-    },
-    "categories": {
-      "collection": "category"
     }
   }
 }

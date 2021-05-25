@@ -2,26 +2,27 @@
 
 const fs = require("fs");
 const path = require("path");
+var findup = require('findup-sync');
 
 const {
   categories,
   // products
 } = require("../../data/data");
 
-const findPublicRole = async () => {
-  const result = await strapi.query("role", "users-permissions").findOne({
-    type: "public",
-  });
-  return result;
-};
+// const findPublicRole = async () => {
+//   const result = await strapi.query("role", "users-permissions").findOne({
+//     type: "public",
+//   });
+//   return result;
+// };
 
 const setDefaultPermissions = async () => {
-  const role = await findPublicRole();
+  // const role = await findPublicRole();
   const permissions_applications = await strapi
     .query("permission", "users-permissions")
     .find({
-      type: "application",
-      role: role.id,
+      // type: "application",
+      // role: role.id,
     });
   await Promise.all(
     permissions_applications.map((p) =>

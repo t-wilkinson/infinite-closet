@@ -30,6 +30,7 @@ const nDigit = (size) => {
   return num;
 };
 
+
 const setCookieSession = (cookies, jwt) => {
   cookies.set("token", jwt, {
     httpOnly: true,

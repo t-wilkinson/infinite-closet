@@ -14,31 +14,34 @@ export const NavBar = () => {
       onMouseLeave={() => setVisible(null)}
     >
       <Sections visible={visible} setVisible={setVisible} />
-      <div style={{ height: 1 }} className="bg-pri w-full" />
+      {visible && <div className="h-px bg-pri w-full -mt-px z-10" />}
       <div
         className={`absolute bottom-0 w-full transform translate-y-full bg-white items-center shadow-xl
         `}
       >
-        {routes.map((route) => (
-          route.value !== 'blog' && <div
-            key={route.value}
-            className={`flex-row w-full max-w-screen-xl p-4
+        {routes.map(
+          (route) =>
+            route.value !== 'blog' && (
+              <div
+                key={route.value}
+                className={`flex-row w-full max-w-screen-xl p-4
             ${route.value === visible ? '' : 'hidden'}
             `}
-          >
-            <Image
-              alt={`${route.label} page`}
-              src={
-                `/images/header/${route.img}` ??
-                '/images/brand/Logo-Lockup---Gray.jpg'
-              }
-              height={350}
-              width={350}
-              objectFit="contain"
-            />
-            <PageRoutes route={route} />
-          </div>
-        ))}
+              >
+                <Image
+                  alt={`${route.label} page`}
+                  src={
+                    `/images/header/${route.img}` ??
+                    '/images/brand/Logo-Lockup---Gray.jpg'
+                  }
+                  height={350}
+                  width={350}
+                  objectFit="contain"
+                />
+                <PageRoutes route={route} />
+              </div>
+            ),
+        )}
       </div>
     </div>
   )
@@ -47,7 +50,7 @@ export default NavBar
 
 const Sections = ({ visible, setVisible }) => (
   <div className="items-center justify-center max-w-screen-xl w-full">
-    <div className="flex-row w-full justify-evenly">
+    <div className="flex-row w-full justify-between">
       {routes.map(({ value, label, href }, i) => (
         <div
           key={i}
@@ -56,15 +59,19 @@ const Sections = ({ visible, setVisible }) => (
             ${value == 'blog' ? '' : visible === value ? 'bg-pri-light' : ''}
           `}
         >
-          { value == 'blog'
-            ?  <div><span className="p-2 text-gray font-subheader">{label}</span></div>
-            :
-          <Link href={href ?? '#'}>
-            <a>
-              <span className="p-2 cursor-pointer font-subheader">{label}</span>
-            </a>
-          </Link>
-          }
+          {value == 'blog' ? (
+            <div>
+              <span className="p-2 text-gray font-subheader">{label}</span>
+            </div>
+          ) : (
+            <Link href={href ?? '#'}>
+              <a>
+                <span className="p-2 cursor-pointer font-subheader">
+                  {label}
+                </span>
+              </a>
+            </Link>
+          )}
         </div>
       ))}
     </div>

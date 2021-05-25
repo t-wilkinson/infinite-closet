@@ -4,6 +4,7 @@ const { sanitizeEntity } = require("strapi-utils");
 
 module.exports = {
   async signin(ctx) {
+
     if (ctx.state.user) {
       return ctx.send({
         status: 200,

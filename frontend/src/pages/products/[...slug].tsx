@@ -76,13 +76,13 @@ export async function getServerSideProps({ params, query }) {
   })
   _where = [_where, _filters].join('&')
 
-  const [productsCount, products, designers] = await Promise.all([
+  const [productsCount, products] = await Promise.all([
     fetchAPI(`/products/count?${_where}`),
     fetchAPI(`/products?${_paging}&${_where}`),
-    fetchAPI(`/designers`), // TODO: this includes all of designers relations
   ])
 
-  // TODO: could also move this to backend
+  // !TODO: could also move this to backend
+  const designers = []
   //   // TODO: should maybe do this async
   //   products.reduce((filters, product) => {
   //     for (const filter in filters) {

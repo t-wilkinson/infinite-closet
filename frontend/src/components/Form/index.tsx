@@ -80,7 +80,7 @@ export const Input = ({
         </label>
 
         <div
-          className={`w-full h-full flex-row justify-between border rounded-sm transform duration-200
+          className={`w-full h-full flex-row justify-between items-center border rounded-sm transform duration-200
             ${focused ? 'border-sec' : ''}
             ${
               changed && validations.length > 0

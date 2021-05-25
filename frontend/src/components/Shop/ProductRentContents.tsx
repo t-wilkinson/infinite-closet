@@ -13,11 +13,11 @@ import DatePicker from './DatePicker'
 export const ProductRentContents = ({ product, state }) => {
   const router = useRouter()
   const Contents = productRentContents[state.rentType]
-  const user = useSelector((state) => state.account.user)
+  const user = useSelector((state) => state.user.data)
   const dispatch = useDispatch()
 
   return (
-    <div className="">
+    <div className="h-96">
       <Contents
         router={router}
         user={user}
@@ -46,7 +46,7 @@ const productRentContents = {
     const [sizeState, setSizeState] = React.useState(false)
     const [status, setStatus] = React.useState<null | string>(null)
     const [insurance, setInsurance] = React.useState(false)
-
+    console.log(state.selectedDate.toJSON())
     const addToCart = () => {
       setStatus('adding')
       axios

@@ -15,8 +15,7 @@ import {
   FormHeader,
 } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
-
-import { accountActions } from './slice'
+import { userActions } from '@/User/slice'
 
 export const Signin = () => {
   const fields = useFields({
@@ -61,7 +60,7 @@ export const Signin = () => {
 
   return (
     <>
-      <FormHeader label="Sign in" />
+      <FormHeader label="Sign In" />
       <Warnings warnings={warnings} />
       <Input {...fields.email} />
       <Input {...fields.password} type={passwordVisible ? 'text' : 'password'}>

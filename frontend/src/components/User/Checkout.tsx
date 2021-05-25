@@ -1,16 +1,16 @@
 import React from 'react'
 import axios from 'axios'
-import Image from 'next/image'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
-import { fetchAPI, getURL } from '@/utils/api'
+import { fetchAPI } from '@/utils/api'
 import { Submit } from '@/Form'
-import { Divider, Icon, BlueLink } from '@/components'
+import { Divider, BlueLink } from '@/components'
 
-import { PaymentMethods, AddPaymentMethod } from './PaymentMethod'
+import { PaymentMethods, AddPaymentMethod } from './Payment'
 import { Addresses, AddAddress } from './Address'
+import Cart from './Cart'
 
 type Popup = 'none' | 'address' | 'payment'
 type Status = null | 'checkout' | 'error' | 'success'
@@ -22,7 +22,7 @@ const initialState = {
   addresses: [],
   popup: 'none' as Popup,
   error: undefined,
-  status: null,
+  status: null as Status,
   cart: [],
 }
 
@@ -135,23 +135,23 @@ export const Checkout = ({ user, data }) => {
   }, [user])
 
   return (
-    <div className="w-full items-center px-4 mb-8 bg-gray-light">
-      <div className="w-full justify-center max-w-screen-xl min-h-full flex-row space-x-4 my-4">
+    <div className="w-full items-center bg-gray-light px-4">
+      <div className="w-full justify-center max-w-screen-xl flex-row space-x-4 my-4">
         <div className="w-2/5">
           <SideItem>
             <Address state={state} dispatch={dispatch} user={user} />
           </SideItem>
-          <Divider className="my-4" />
+          <div className="my-2" />
           <SideItem>
             <Payment state={state} dispatch={dispatch} user={user} />
           </SideItem>
           {/* TODO: add cart summary */}
           {/* <SideItem> */}
-          {/* <Summary cart={state.cart} /> */}
+          {/*   <Summary state={state} /> */}
           {/* </SideItem> */}
         </div>
         {state.cart.length === 0 ? (
-          <div className="w-full items-center h-64 justify-center bg-white rounded-sm ">
+          <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
             <span className="font-bold text-xl flex flex-col items-center">
               <div>Hmm... Your cart looks empty. </div>
               <div>
@@ -176,7 +176,9 @@ export const Checkout = ({ user, data }) => {
                 ? 'Unable to Checkout'
                 : state.status === 'success'
                 ? 'Successfully Checked Out'
-                : state.cart.some((order) => order.available <= 0)
+                : state.cart.some(
+                    (order) => order.available <= 0 || !order.dateValid,
+                  )
                 ? 'Checkout Available Items'
                 : 'Checkout'}
             </Submit>
@@ -187,8 +189,8 @@ export const Checkout = ({ user, data }) => {
   )
 }
 
-const SideItem = (props) => (
-  <div className="space-y-2 bg-white p-4 rounded-sm" {...props} />
+const SideItem = (props: object) => (
+  <div className="space-y-2 bg-white p-3 rounded-sm " {...props} />
 )
 
 const Address = ({ state, user, dispatch }) => (
@@ -197,6 +199,7 @@ const Address = ({ state, user, dispatch }) => (
     {state.popup === 'address' && (
       <AddAddress user={user} dispatch={dispatch} state={state} />
     )}
+    <div className="h-0" />
     <button
       className="flex p-2 bg-white rounded-sm border border-gray justify-center"
       onClick={() => dispatch({ type: 'edit-address' })}
@@ -219,85 +222,7 @@ const Payment = ({ state, user, dispatch }) => (
   </>
 )
 
-const rentalLengths = {
-  short: 4,
-  long: 8,
-}
-
-const Cart = ({ dispatch, cart }) => {
-  return (
-    <div className="w-full">
-      {cart.map((item) => (
-        <CartItem key={item.id} dispatch={dispatch} {...item} />
-      ))}
-    </div>
-  )
-}
-
-const CartItem = ({ dispatch, product, ...order }) => {
-  const date = dayjs.utc(order.date).local() // order.date is utc
-  const startDate = date.format('ddd, MMM D')
-  const endDate = date
-    .add(rentalLengths[order.rentalLength], 'day')
-    .format('ddd, MMM D')
-  const Bold = (props) => <span className="font-bold" {...props} />
-
-  const removeItem = () => {
-    axios
-      .delete(`/orders/cart/${order.id}`, { withCredentials: true })
-      .then((res) => dispatch({ type: 'remove-cart-item', payload: order.id }))
-      .catch((err) => console.error(err))
-  }
-
-  return (
-    <div
-      className={`flex-row items-center border p-4 rounded-sm relative bg-white my-2
-        ${order.available <= 0 ? 'border-warning' : 'border-gray'}
-      `}
-    >
-      <button
-        onClick={removeItem}
-        className="absolute top-0 right-0 m-2 cursor-pointer"
-      >
-        <div className="p-1">
-          <Icon name="close" size={16} />
-        </div>
-      </button>
-      <div className="h-32 w-32 relative mr-4">
-        <Image
-          src={getURL(product.images[0].url)}
-          layout="fill"
-          objectFit="contain"
-        />
-      </div>
-      <div>
-        <span>
-          {product.name} by <Bold>{product.designer.name}</Bold>
-        </span>
-        <span>
-          {startDate} - {endDate}
-        </span>
-        <span>{order.size}</span>
-        <span>
-          <Bold>£{order.price}</Bold>
-        </span>
-      </div>
-      <div className="flex-grow items-end">
-        <span>
-          {order.available === undefined
-            ? ``
-            : order.available === 1
-            ? `There is 1 item left. Order now before it's gone!`
-            : order.available <= 0
-            ? `There are not enough available items`
-            : `There are ${order.available} items left`}
-        </span>
-      </div>
-    </div>
-  )
-}
-
-const Summary = ({ cart }) => {
+const Summary = ({ state }) => {
   return <> </>
 }
 

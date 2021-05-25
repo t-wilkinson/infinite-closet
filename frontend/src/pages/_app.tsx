@@ -3,16 +3,17 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Provider } from 'react-redux'
 import axios from 'axios'
+import firebase from 'firebase/app'
+import 'firebase/analytics'
 import '@/styles/index.css'
 
 import useAnalytics from '@/utils/useAnalytics'
-import CookieConsent from '@/Layout/CookieConsent'
 import store, { useDispatch, useSelector } from '@/utils/store'
-import { accountActions } from '@/Account/slice'
+import CookieConsent from '@/Layout/CookieConsent'
 import Popup from '@/Account/Popup'
+import { accountActions } from '@/Account/slice'
 import { layoutActions } from '@/Layout/slice'
-import firebase from 'firebase/app'
-import 'firebase/analytics'
+import { userActions } from '@/User/slice'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_STRAPI_API_URL
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -55,9 +56,6 @@ const Wrapper = ({ router, children }) => {
 
   React.useEffect(() => {
     app?.setCurrentScreen(router.asPath)
-    app?.logEvent('test', {
-      user: 'testing',
-    })
   }, [router.pathname])
 
   React.useEffect(() => {

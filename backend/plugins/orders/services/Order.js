@@ -1,10 +1,10 @@
 "use strict";
 
 const dayjs = require("dayjs");
+const duration = require("dayjs/plugin/duration");
+const isBetween = require("dayjs/plugin/isBetween");
 const utc = require("dayjs/plugin/utc");
 const timezone = require("dayjs/plugin/timezone");
-const isBetween = require("dayjs/plugin/isBetween");
-const duration = require("dayjs/plugin/duration");
 
 dayjs.extend(duration);
 dayjs.extend(isBetween);

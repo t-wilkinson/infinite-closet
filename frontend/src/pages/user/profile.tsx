@@ -1,5 +1,5 @@
-import Profile from '@/Account/Profile'
-import User from '@/Account/User'
+import Profile from '@/User/Profile'
+import User from '@/User'
 import Layout from '@/Layout'
 
 export const Page = () => {

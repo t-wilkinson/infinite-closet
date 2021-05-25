@@ -5,14 +5,14 @@ import { Icon } from '@/components'
 import { Input, Submit } from '@/Form'
 import { useFields, cleanFields } from '@/Form/useFields'
 import { useDispatch } from '@/utils/store'
-import { accountActions } from '@/Account/slice'
+import { userActions } from '@/User/slice'
 
 export const Addresses = ({ addresses, state, dispatch }) => {
   return (
     <div className="space-y-4">
-      <span className="font-subheader text-2xl my-2">
+      <span className="font-subheader text-xl lg:text-2xl my-2">
         Addresses
-        <div className="w-full h-px bg-pri mt-2 mb-1 " />
+        <div className="w-full h-px bg-pri mt-2 -mb-2" />
       </span>
       {addresses.map((address) => (
         <Address

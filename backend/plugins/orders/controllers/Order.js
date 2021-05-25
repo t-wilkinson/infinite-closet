@@ -3,8 +3,17 @@
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 const { generateAPI } = require("../../../api/utils");
 const fetch = require("node-fetch");
+const dayjs = require("dayjs");
+const duration = require("dayjs/plugin/duration");
+const isBetween = require("dayjs/plugin/isBetween");
+const utc = require("dayjs/plugin/utc");
+const timezone = require("dayjs/plugin/timezone");
 
-// TODO: hardcode settings for now
+dayjs.extend(duration);
+dayjs.extend(isBetween);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 const hived = {
   parcels: "https://api.airtable.com/v0/appDFURl2nEJd1XEF/Parcels",
   postcodes: "https://api.airtable.com/v0/app5ZWdAtj21xnZrh/Postcodes",
@@ -12,7 +21,6 @@ const hived = {
 };
 
 module.exports = {
-  // TODO: probably don't need this
   ...generateAPI("order", "orders"),
 
   async create(ctx) {
@@ -56,10 +64,16 @@ module.exports = {
     // add price and available quantity to each order
     cart = cart.map((order) => {
       const key = strapi.plugins["orders"].services.order.toKey(order);
+      const dateValid = strapi.plugins["orders"].services.order.dateValid(
+        order
+      );
+
       return {
         ...order,
         price: strapi.plugins["orders"].services.order.price(order),
         available: numAvailable[key],
+        valid: dateValid,
+        dateValid,
       };
     });
 
@@ -79,7 +93,7 @@ module.exports = {
   },
 
   async checkout(ctx) {
-    const user = ctx.state.body;
+    const user = ctx.state.user;
     const body = ctx.request.body;
     const numAvailable = await strapi.plugins[
       "orders"
@@ -112,10 +126,12 @@ module.exports = {
       }
       return acc;
     }, []);
+    strapi.log.info("result -> %o", result);
 
     const amount = await strapi.plugins["orders"].services.order.cartAmount(
       cart
     );
+
     stripe.paymentIntents
       .create({
         amount,
@@ -143,7 +159,6 @@ module.exports = {
     ctx.send({ amount });
   },
 
-  // TODO: this method should be protected
   async ship(ctx) {
     const { order } = ctx.request.body;
     const { address } = order;
@@ -215,7 +230,6 @@ module.exports = {
     });
   },
 
-  // TODO: this method should be protected
   async complete(ctx) {
     const body = ctx.request.body;
     const { order } = body;

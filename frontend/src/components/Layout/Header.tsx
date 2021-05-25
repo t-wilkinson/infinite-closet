@@ -35,17 +35,27 @@ const SmallHeader = () => {
 }
 
 const LargeHeader = ({ user, router }) => (
-  <>
-    <div className="lg:flex-row px-4 justify-center w-full items-center max-w-screen-xl relative h-32 w-full justify-between items-center">
+  <div
+    className={`max-w-screen-xl w-full justify-center
+      ${router.pathname === '/' ? 'lg:h-32' : 'lg:h-16'}
+    `}
+  >
+    <div className="lg:flex-row w-full relative justify-between items-center px-2">
       <LargeHeaderLogo router={router} />
-      <div className="w-full lg:w-auto flex-grow mx-8">
+      <div className="w-full mt-2 lg:mt-0 lg:w-auto flex-grow mx-8">
         <Navbar />
       </div>
       <div className="absolute right-0 mt-4 mr-4 lg:m-0 lg:static">
         <Account user={user} />
       </div>
+      <div className="h-px bg-pri w-full lg:hidden" />
     </div>
-  </>
+    <div
+      className={`h-px bg-pri w-full hidden lg:flex
+    ${router.pathname === '/' ? 'mt-8' : 'mt-2'}
+    `}
+    />
+  </div>
 )
 
 export const LargeHeaderLogo = ({ router }) => (
@@ -69,7 +79,7 @@ const Account = ({ user }) => {
         <>
           <Link href="/account/signin">
             <a>
-              <span className="">Sign In</span>
+              <span className="">Sign in</span>
             </a>
           </Link>
           {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
@@ -89,7 +99,7 @@ const IconLink = ({ size, name, href }) => (
 )
 
 export const Header = () => {
-  const user = useSelector((state) => state.account.user)
+  const user = useSelector((state) => state.user.data)
   const router = useRouter()
 
   return (

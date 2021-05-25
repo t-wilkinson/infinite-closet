@@ -3,7 +3,7 @@ import { RootState } from '@/utils/store'
 import { StrapiUser } from '@/utils/models'
 
 interface State {
-  user?: StrapiUser
+  data?: StrapiUser
 }
 
 const initialState: State = {}
@@ -13,10 +13,10 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     signin(state, { payload }: PayloadAction<StrapiUser>) {
-      state.user = payload
+      state.data = payload
     },
     signout(state, { payload }: PayloadAction<StrapiUser>) {
-      state.user = payload
+      state.data = payload
     },
   },
 })

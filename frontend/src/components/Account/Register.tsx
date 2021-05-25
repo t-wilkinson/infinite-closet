@@ -8,6 +8,7 @@ import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { accountActions } from '@/Account/slice'
+import { userActions } from '@/User/slice'
 
 export const Register = () => {
   const fields = useFields({

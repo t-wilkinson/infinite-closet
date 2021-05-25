@@ -10,7 +10,7 @@ import { socialMediaLinks } from '@/utils/constants'
 export const Footer = () => (
   <>
     <Divider />
-    <div className="items-center w-full">
+    <div className="items-center w-full px-2">
       <footer className="flex flex-col items-center justify-between w-full pb-2 my-4 md:flex-row max-w-screen-xl">
         <div className="items-center">
           <span className="text-2xl font-subheader">NEWSLETTER</span>
@@ -63,14 +63,14 @@ const Subscribe = () => {
   }
 
   return (
-    <div className="relative p-2 pt-0">
+    <div className="relative m-2 pt-0">
       {status === 'Submitting' || status === 'Submitted' ? (
-        <div className="absolute inset-0 bg-white z-20 items-center justify-center font-bold">
+        <div className="absolute inset-0 bg-white z-20 items-center justify-center font-bold rounded-sm border border-gray">
           {messages[status]}
         </div>
       ) : null}
       <Input {...fields.newsletterEmail}>
-        <div className="h-full absolute right-0 mr-2 justify-center">
+        <div className="mr-2 justify-center">
           <Icon name="email" size={20} />
         </div>
       </Input>

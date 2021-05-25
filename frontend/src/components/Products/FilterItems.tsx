@@ -47,7 +47,7 @@ export const FilterItems: FilterItems = {
     return (
       <>
         <Input {...form.search} className="w-full">
-          <div className="absolute right-0 top-0 bottom-0 justify-center mr-2 pointer-events-none">
+          <div className="justify-center pr-2 pointer-events-none h-full bg-white">
             <Icon name="search" size={20} />
           </div>
         </Input>

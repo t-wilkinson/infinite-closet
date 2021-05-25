@@ -1,9 +1,9 @@
 import { useSelector } from '@/utils/store'
-import Checkout from '@/Account/Checkout'
+import Checkout from '@/User/Checkout'
 import Layout from '@/Layout'
 
 const Page = ({ data }) => {
-  const user = useSelector((state) => state.account.user)
+  const user = useSelector((state) => state.user.data)
 
   // TODO: allow guests
   if (!user) {

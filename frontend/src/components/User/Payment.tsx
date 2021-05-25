@@ -11,7 +11,7 @@ import { loadStripe } from '@stripe/stripe-js'
 import { StrapiUser } from '@/utils/models'
 import { fetchAPI } from '@/utils/api'
 import { Icon } from '@/components'
-import { Submit, Checkbox } from '@/Form'
+import { Submit } from '@/Form'
 
 import './CheckoutForm.module.css'
 
@@ -23,9 +23,9 @@ const toTitleCase = (string: string) =>
 export const PaymentMethods = ({ user, state, dispatch }) => {
   return (
     <div className="space-y-4">
-      <span className="font-subheader text-2xl my-2">
+      <span className="font-subheader text-xl lg:text-2xl my-2">
         Payment Methods
-        <div className="w-full h-px bg-pri mt-2 mb-1 " />
+        <div className="w-full h-px bg-pri mt-2 -mb-2 " />
       </span>
       {state.paymentMethods.map((paymentMethod) => (
         <PaymentMethod
@@ -251,5 +251,3 @@ const Authorise = ({ setAuthorisation, authorised }) => (
     </div>
   </button>
 )
-
-export default PaymentMethods
