@@ -7,6 +7,7 @@ import { routes } from '@/utils/constants'
 export const NavBar = () => {
   const [visible, setVisible] = React.useState<string>()
 
+  // TODO: make sure images are loaded
   return (
     <div
       className="items-center w-full relative z-30"
@@ -14,16 +15,14 @@ export const NavBar = () => {
     >
       <Sections visible={visible} setVisible={setVisible} />
       <div style={{ height: 1 }} className="bg-pri w-full" />
-
       <div
-        className={`absolute bottom-0 w-full transform translate-y-full bg-white items-center p-4 shadow-xl
-        ${visible ? '' : 'invisible'}
+        className={`absolute bottom-0 w-full transform translate-y-full bg-white items-center shadow-xl
         `}
       >
         {routes.map((route) => (
-          <div
+          route.value !== 'blog' && <div
             key={route.value}
-            className={`flex-row w-full max-w-screen-xl
+            className={`flex-row w-full max-w-screen-xl p-4
             ${route.value === visible ? '' : 'hidden'}
             `}
           >
@@ -53,16 +52,19 @@ const Sections = ({ visible, setVisible }) => (
         <div
           key={i}
           onMouseEnter={() => setVisible(value)}
-          className={`
-            relative
-            ${visible === value ? 'cursor-pointer bg-pri-light text-black' : ''}
+          className={` relative justify-center
+            ${value == 'blog' ? '' : visible === value ? 'bg-pri-light' : ''}
           `}
         >
+          { value == 'blog'
+            ?  <div><span className="p-2 text-gray font-subheader">{label}</span></div>
+            :
           <Link href={href ?? '#'}>
             <a>
               <span className="p-2 cursor-pointer font-subheader">{label}</span>
             </a>
           </Link>
+          }
         </div>
       ))}
     </div>
