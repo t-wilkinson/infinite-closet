@@ -46,7 +46,7 @@ const productRentContents = {
     const [sizeState, setSizeState] = React.useState(false)
     const [status, setStatus] = React.useState<null | string>(null)
     const [insurance, setInsurance] = React.useState(false)
-    console.log(state.selectedDate.toJSON())
+
     const addToCart = () => {
       setStatus('adding')
       axios

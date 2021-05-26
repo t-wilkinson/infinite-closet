@@ -13,7 +13,7 @@ import { Addresses, AddAddress } from './Address'
 import Cart from './Cart'
 
 type Popup = 'none' | 'address' | 'payment'
-type Status = null | 'checkout' | 'error' | 'success'
+type Status = null | 'checking-out' | 'error' | 'success'
 
 const initialState = {
   paymentMethod: undefined,
@@ -32,7 +32,7 @@ const reducer = (state, action) => {
     case 'fill-cart': return { ...state, cart: action.payload }
     case 'remove-cart-item': return { ...state, cart: state.cart.filter((order) => order.id !== action.payload), }
 
-    case 'status-checkout': return {...state, status: 'checkout'}
+    case 'status-checkout': return {...state, status: 'checking-out'}
     case 'status-error': return {...state, status: 'error'}
     case 'status-success': return {...state, status: 'success'}
 
@@ -168,17 +168,20 @@ export const Checkout = ({ user, data }) => {
             <Submit
               onSubmit={checkout}
               className=""
-              disabled={['checkout'].includes(state.status)}
+              disabled={
+                ['checking-out'].includes(state.status) ||
+                state.cart.every(isOrderValid)
+              }
             >
-              {state.status === 'checkout'
+              {state.status === 'checking-out'
                 ? 'Checkout Out...'
                 : state.status === 'error'
                 ? 'Unable to Checkout'
                 : state.status === 'success'
                 ? 'Successfully Checked Out'
-                : state.cart.some(
-                    (order) => order.available <= 0 || !order.dateValid,
-                  )
+                : state.cart.every(isOrderValid)
+                ? 'No Available Items'
+                : state.cart.some(isOrderValid)
                 ? 'Checkout Available Items'
                 : 'Checkout'}
             </Submit>
@@ -188,6 +191,8 @@ export const Checkout = ({ user, data }) => {
     </div>
   )
 }
+
+const isOrderValid = (order) => order.available <= 0 || !order.dateValid
 
 const SideItem = (props: object) => (
   <div className="space-y-2 bg-white p-3 rounded-sm " {...props} />

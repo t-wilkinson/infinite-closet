@@ -29,7 +29,7 @@ const Orders = ({ plugin, className }) => {
             )
               .then((res) => res.json())
               .then((res) => {
-                item.product.designer = res[0].designer;
+                item.product.designer = res[0];
                 return item;
               })
           )
@@ -67,7 +67,7 @@ const Orders = ({ plugin, className }) => {
       </table>
       <div className="details">
         {orders[selectedOrder] && (
-          <OrderDetails order={orders[selectedOrder]} />
+          <OrderDetails update={getOrders} order={orders[selectedOrder]} />
         )}
       </div>
     </div>

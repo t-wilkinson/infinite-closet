@@ -57,7 +57,7 @@ const Header = ({ router, data, totalPages, sortBy }) => {
 
       <div className="sm:flex-row items-end sm:items-center justify-between w-full">
         <span className="font-subheader text-xl self-start sm:self-center">
-          {router.query.slug[0]} ({data.productsCount})
+          {router.query.slug[0]} {/* ({data.productsCount}) */}
         </span>
         <div className="flex-row space-x-1">
           <div className="flex-row sm:hidden justify-end py-2">

@@ -1,5 +1,6 @@
 "use strict";
 
+const crypto = require("crypto");
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 const { generateAPI } = require("../../../api/utils");
 const fetch = require("node-fetch");
@@ -31,14 +32,27 @@ module.exports = {
       return;
     }
 
-    const order = await strapi.query("order", "orders").create({
+    const orderBody = {
       status: body.status,
       product: body.product,
       date: body.date,
       rentalLength: body.rentalLength.toLowerCase(),
       user: user.id,
       size: body.size,
-    });
+      insurance: body.insurance,
+    };
+    const matchingOrder = await strapi
+      .query("order", "orders")
+      .findOne({ product: body.product, status: body.status });
+
+    let order;
+    if (matchingOrder) {
+      order = await strapi
+        .query("order", "orders")
+        .update({ id: matchingOrder.id }, orderBody);
+    } else {
+      order = await strapi.query("order", "orders").create(orderBody);
+    }
 
     ctx.send({
       status: 200,
@@ -141,14 +155,28 @@ module.exports = {
         off_session: false,
         confirm: true,
       })
+
       .then((paymentIntent) =>
-        strapi
-          .query("order", "orders")
-          .update(
-            { id_in: cart.map((order) => order.id) },
-            { paymentIntent: paymentIntent.id }
+        Promise.allSettled(
+          cart.map((order) =>
+            strapi
+              .query("order", "orders")
+              .update({ id: order.id }, { paymentIntent: paymentIntent.id })
           )
+        )
       )
+
+      .then((settled) => {
+        const orders = settled.filter((settle) => settle.status == "fulfilled");
+        strapi.plugins["email"].services.email.send({
+          to: user.email,
+          subject: "Thank you for your purchase",
+          html: `We thank you for your purchase of £${
+            amount / 100
+          } and hope you enjoyed the experience.`,
+        });
+      })
+
       .catch((err) => strapi.log.error(err));
 
     ctx.send({ status: 200, result });
@@ -183,22 +211,6 @@ module.exports = {
       // Sender_Chosen_Delivery_Date: MM/DD/YYYY
     };
 
-    // stripe.paymentIntents
-    //   .create({
-    //     amount,
-    //     currency: "gbp",
-    //     customer: user.customer,
-    //     payment_method: order.paymentMethod,
-    //     off_session: true,
-    //     confirm: true,
-    //   })
-
-    //   .then((paymentIntent) =>
-    //     strapi
-    //       .query("order", "orders")
-    //       .update({ id: order.id }, { paymentIntent: paymentIntent.id })
-    //   )
-
     if (process.NODE_ENV === "production") {
       fetch(hived.parcels, {
         method: "POST",
@@ -210,19 +222,41 @@ module.exports = {
       })
         .then((res) => res.json())
         .then((res) =>
-          // only update status once payment and delivery are valid
           strapi
             .query("order", "orders")
             .update({ id: order.id }, { status: "shipping", shipment: res.id })
         )
         .then(() => {
-          // TODO: send email to user?
+          strapi.plugins["email"].services.email.send({
+            to: order.user.email,
+            subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
+            html: ``,
+          });
         })
         .catch((err) => {
           // TODO: something failed, contact user with next step to take
           strapi.log.error(err);
         });
     } else {
+      strapi
+        .query("order", "orders")
+        .update(
+          { id: order.id },
+          {
+            status: "shipping",
+            shipment: crypto.randomBytes(16).toString("base64"),
+          }
+        )
+        .then(() => {
+          strapi.plugins["email"].services.email.send({
+            to: `${order.user.email} <info+test@infinitecloset.co.uk>`,
+            subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
+            html: ``,
+          });
+        })
+        .catch((err) => {
+          strapi.log.error(err);
+        });
     }
 
     ctx.send({
@@ -230,17 +264,46 @@ module.exports = {
     });
   },
 
+  async cleaning(ctx) {
+    const body = ctx.request.body;
+    const { order } = body;
+    const res = await strapi
+      .query("order", "orders")
+      .update({ id: order.id }, { status: "cleaning" });
+    ctx.send({
+      status: 200,
+      order: res,
+    });
+  },
+
   async complete(ctx) {
     const body = ctx.request.body;
     const { order } = body;
-
     const res = await strapi
       .query("order", "orders")
       .update({ id: order.id }, { status: "completed" });
-
     ctx.send({
       status: 200,
       order: res,
     });
   },
 };
+
+/* Incase we want to charge user during shipment(not checkout)
+
+stripe.paymentIntents
+  .create({
+    amount,
+    currency: "gbp",
+    customer: user.customer,
+    payment_method: order.paymentMethod,
+    off_session: true,
+    confirm: true,
+  })
+
+  .then((paymentIntent) =>
+    strapi
+      .query("order", "orders")
+      .update({ id: order.id }, { paymentIntent: paymentIntent.id })
+  )
+*/

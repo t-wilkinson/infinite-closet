@@ -61,7 +61,7 @@ const Product = ({ data }) => {
 const details = [
   { key: 'details', label: 'Product Details' },
   { key: 'stylistNotes', label: 'Stylist Notes' },
-  { key: 'fit', label: 'Style & Fit' },
+  { key: 'sizingNotes', label: 'Style & Fit' },
   { key: 'share', label: 'Share' },
 ]
 

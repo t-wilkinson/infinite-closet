@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 // TODO: should be planning, shipping, cleaning
 const OrderStatus = {
-  planning: (order) => {
+  planning: ({ update, order }) => {
     const ship = () => {
       fetch(strapi.backendURL + "/orders/ship/" + order.id, {
         method: "POST",
@@ -13,13 +13,16 @@ const OrderStatus = {
         body: JSON.stringify({
           order,
         }),
-      }).catch((err) => console.error(err));
+      })
+        .then(() => update())
+        .catch((err) => console.error(err));
     };
 
     return (
       <div className="process">
         <div>
-          {order.product.name} by {order.product.designer.name}
+          {order.product.name} by{" "}
+          {order.product.designer && order.product.designer.name}
         </div>
         <div>
           <span className="process__label">Size:</span> {order.size}
@@ -29,7 +32,29 @@ const OrderStatus = {
     );
   },
 
-  shipping: (order) => {
+  shipping: ({ order, update }) => {
+    const complete = () => {
+      fetch(strapi.backendURL + `/orders/cleaning/${order.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          order,
+        }),
+      })
+        .then(() => update())
+        .catch((err) => console.error(err));
+    };
+
+    return (
+      <div className="recieving">
+        <button onClick={complete}>Recieved Order</button>
+      </div>
+    );
+  },
+
+  cleaning: ({ order, update }) => {
     const complete = () => {
       fetch(strapi.backendURL + `/orders/complete/${order.id}`, {
         method: "POST",
@@ -39,28 +64,9 @@ const OrderStatus = {
         body: JSON.stringify({
           order,
         }),
-      }).catch((err) => console.error(err));
-    };
-
-    return (
-      <div className="recieving">
-        <button onClick={complete}>Complete Order</button>
-      </div>
-    );
-  },
-
-  cleaning: (order) => {
-    const complete = () => {
-      fetch(strapi.backendURL + `/orders/${order.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...order,
-          status: "cleaning",
-        }),
-      }).catch((err) => console.error(err));
+      })
+        .then(() => update())
+        .catch((err) => console.error(err));
     };
 
     return (
@@ -71,18 +77,26 @@ const OrderStatus = {
   },
 };
 
-const OrderDetails = ({ order, className }) => {
+const OrderDetails = ({ className, order, update }) => {
   const Status = OrderStatus[order.status];
   return (
     <div className={className}>
-      <Status {...order} />
+      <Status order={order} update={update} />
     </div>
   );
 };
 
 const OrderDetailsWrapper = styled(OrderDetails)`
+  button {
+    margin-top: 8px;
+    padding: 0.25rem 1rem;
+    border-radius: 2px;
+    background: #ddd;
+  }
+
   .process,
-  .recieving {
+  .recieving,
+  .cleaning {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -102,12 +116,9 @@ const OrderDetailsWrapper = styled(OrderDetails)`
   }
 
   .recieving {
-    button {
-      margin-top: 8px;
-      padding: 0.25rem 1rem;
-      border-radius: 2px;
-      background: #ddd;
-    }
+  }
+
+  .cleaning {
   }
 `;
 export default OrderDetailsWrapper;

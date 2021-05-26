@@ -1,6 +1,6 @@
 import { Filter, SortBy, ProductRoutes } from './types'
 
-export const QUERY_LIMIT = 6
+export const QUERY_LIMIT = 2 * 3 * 2 // 2 or 3 columns
 
 // TODO: the field probably isnt necessary
 // TODO: dynamically get this
@@ -60,7 +60,7 @@ export const filterData = {
     label: 'Dates Available',
   },
   Designers: {
-    filterName: 'designer.slug',
+    filterName: 'designer',
   },
   Favorites: { filterName: undefined },
 } as const

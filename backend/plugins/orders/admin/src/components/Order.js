@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 const duration = require("dayjs/plugin/duration");
 dayjs.extend(duration);
 
-// TODO: this is copied from backend
+// TODO: this is copied from backend, move it to a route
 const rentalLengths = {
   short: 4,
   long: 8,

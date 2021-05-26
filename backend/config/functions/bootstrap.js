@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
-var findup = require('findup-sync');
+var findup = require("findup-sync");
 
 const {
   categories,
@@ -66,6 +66,12 @@ module.exports = async () => {
     } catch (e) {
       console.log(e);
     }
+  }
+
+  if (process.env.NODE_ENV !== "production") {
+    const today = new Date().toJSON();
+    await strapi.query("product").update({}, { published_at: today });
+    await strapi.query("designer").update({}, { published_at: today });
   }
 };
 

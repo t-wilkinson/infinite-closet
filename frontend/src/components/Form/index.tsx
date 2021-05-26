@@ -10,12 +10,13 @@ export const Checkbox = ({
   label,
   color = undefined,
   children = undefined,
+  className = 'flex-wrap',
 }) => (
   <button
     onClick={() => onChange(!value)}
     aria-label={`Toggle ${label} checkbox`}
   >
-    <div className="flex-row flex-wrap items-center">
+    <div className={`flex-row items-center ${className}`}>
       <div className="items-center justify-center w-5 h-5 bg-white border border-black rounded-sm">
         {value && <Icon name="check" className="w-3 h-3" style={{ color }} />}
       </div>
@@ -46,7 +47,7 @@ export const Input = ({
   const required = /required/.test(constraints)
 
   return (
-    <div className={`relative my-1 py-1 w-full h-full ${className}`}>
+    <div className={`relative my-1 py-1 w-full ${className}`}>
       <div
         className="relative"
         onFocus={() => {

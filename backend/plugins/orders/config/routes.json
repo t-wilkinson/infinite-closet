@@ -74,6 +74,14 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "POST",
+      "path": "/cleaning/:id",
+      "handler": "Order.cleaning",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

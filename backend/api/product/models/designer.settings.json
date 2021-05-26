@@ -16,6 +16,7 @@
       "required": true
     },
     "slug": {
+      "index": true,
       "type": "uid",
       "targetField": "name",
       "required": true

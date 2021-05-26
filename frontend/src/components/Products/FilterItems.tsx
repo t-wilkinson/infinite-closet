@@ -18,7 +18,9 @@ type FilterItems = {
 
 export const FilterItems: FilterItems = {
   Designers: ({ panel }) => {
-    const designers = useSelector((state) => state.layout.data.designers)
+    const designers = useSelector((state) =>
+      Object.values(state.layout.data.designers),
+    )
     const [matches, setMatches] = React.useState<number[]>([])
     const debounceMatches = React.useCallback(
       debounce(
@@ -46,24 +48,28 @@ export const FilterItems: FilterItems = {
 
     return (
       <>
-        <Input {...form.search} className="w-full">
-          <div className="justify-center pr-2 pointer-events-none h-full bg-white">
-            <Icon name="search" size={20} />
+        <div className="h-64 justify-start">
+          <Input {...form.search} className="w-full">
+            <div className="justify-center pr-2 pointer-events-none h-full bg-white">
+              <Icon name="search" size={20} />
+            </div>
+          </Input>
+          <div className="h-full space-y justify-start overflow-y-scroll">
+            {matchedIndexes.map((index: number) => {
+              const { slug, name } = designers[index]
+              return (
+                <CheckBox
+                  key={slug}
+                  setState={() => panel.toggle(slug)}
+                  state={panel.values.includes(slug)}
+                  className="flex-no-wrap"
+                >
+                  <span className="text-sm">&nbsp;&nbsp;{name}</span>
+                </CheckBox>
+              )
+            })}
           </div>
-        </Input>
-        {matchedIndexes.map((index: number) => {
-          const { slug, name } = designers[index]
-          return (
-            <CheckBox
-              key={slug}
-              setState={() => panel.toggle(slug)}
-              state={panel.values.includes(slug)}
-              p="sm"
-            >
-              <span>&nbsp;&nbsp;{name}</span>
-            </CheckBox>
-          )
-        })}
+        </div>
       </>
     )
   },

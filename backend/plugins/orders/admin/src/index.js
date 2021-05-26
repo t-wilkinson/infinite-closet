@@ -9,7 +9,7 @@ export default (strapi) => {
   const pluginDescription =
     pluginPkg.strapi.description || pluginPkg.description;
   const icon = pluginPkg.strapi.icon;
-  const name = "Order" || pluginPkg.strapi.name;
+  const name = "Orders" || pluginPkg.strapi.name;
 
   const plugin = {
     blockerComponent: null,

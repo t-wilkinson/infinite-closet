@@ -64,7 +64,6 @@ export const CartItem = ({ dispatch, product, ...order }) => {
           <span>
             {product.name} by <Bold>{product.designer.name}</Bold>
           </span>
-          {console.log(order)}
           <span className={`${order.dateValid ? '' : 'text-warning'}`}>
             {startDate} - {endDate}
           </span>
@@ -83,10 +82,10 @@ export const CartItem = ({ dispatch, product, ...order }) => {
               ? `There are not enough available items`
               : `There are ${order.available} items left`}
           </span>
+          <span className="text-warning">
+            {!order.dateValid && 'This rental date is no longer valid.'}
+          </span>
         </div>
-        <span className="text-warning">
-          {!order.dateValid && 'This rental date is no longer valid.'}
-        </span>
       </div>
     </div>
   )

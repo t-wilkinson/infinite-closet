@@ -79,7 +79,10 @@ const Wrapper = ({ router, children }) => {
             window.localStorage.getItem('joinedWaitlist'),
           )
           if (!loggedIn && !joinedWaitlist) {
-            dispatch(accountActions.showPopup('email'))
+            window.setTimeout(
+              () => dispatch(accountActions.showPopup('email')),
+              3000,
+            )
           }
         }
       })

@@ -8,7 +8,7 @@ module.exports = ({ env }) => ({
     settings: {
       defaultFrom: "Infinite Closet <info@infinitecloset.co.uk>",
       defaultReplyTo: "Infinite Closet <info@infinitecloset.co.uk>",
-      testAddress: "trey.wilkinson@infinitecloset.co.uk",
+      testAddress: "info+test@infinitecloset.co.uk",
     },
   },
 });

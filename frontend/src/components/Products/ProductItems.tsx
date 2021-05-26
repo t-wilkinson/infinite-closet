@@ -80,7 +80,7 @@ const Product = ({ item }: any) => {
 }
 
 const ProductImage = ({ images }) => (
-  <div className="relative h-full bg-gray-light">
+  <div className="relative h-full">
     {/* <div className="absolute top-0 right-0 p-2"> */}
     {/*   <Icon size={20} name="heart" /> */}
     {/* </div> */}
