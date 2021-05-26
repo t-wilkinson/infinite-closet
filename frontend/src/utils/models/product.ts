@@ -23,12 +23,13 @@ export interface StrapiProduct {
   sizes: StrapiSize[];
   details?: string;
   stylistNotes?: string;
-  designer: StrapiDesigner;
+  designer?: StrapiDesigner;
   categories: StrapiCategory[];
   colors: StrapiColor[];
   fits: StrapiFit[];
   occasions: StrapiOccasion[];
   styles: StrapiStyle[];
   weather: StrapiWeather[];
+  sizingNotes?: string;
   created_by: string;
 }

@@ -2,62 +2,61 @@ import { Filter, SortBy, ProductRoutes } from './types'
 
 export const QUERY_LIMIT = 2 * 3 * 2 // 2 or 3 columns
 
-// TODO: the field probably isnt necessary
-// TODO: dynamically get this
+// TODO: remove this
 export type FilterData = typeof filterData
 export const filterData = {
   Weather: {
     filterName: 'weather',
     data: [
-      { field: 'cold_weather', label: 'Cold Weather' },
-      { field: 'warm_weather', label: 'Warm Weather' },
-      { field: 'year_round', label: 'Year-Round' },
+      { slug: 'cold_weather', name: 'Cold Weather' },
+      { slug: 'warm_weather', name: 'Warm Weather' },
+      { slug: 'year_round', name: 'Year-Round' },
     ],
   },
   Occasions: {
     filterName: 'occasions',
     data: [
-      { label: 'Wedding', field: 'Wedding' },
-      { label: 'Date Night', field: 'Date Night' },
-      { label: 'Party', field: 'Party' },
-      { label: 'Brunch', field: 'Brunch' },
-      { label: 'Office', field: 'Office' },
-      { label: 'Cocktail', field: 'Cocktail' },
+      { name: 'Wedding', slug: 'Wedding' },
+      { name: 'Date Night', slug: 'Date Night' },
+      { name: 'Party', slug: 'Party' },
+      { name: 'Brunch', slug: 'Brunch' },
+      { name: 'Office', slug: 'Office' },
+      { name: 'Cocktail', slug: 'Cocktail' },
     ],
   },
   Colors: {
     filterName: 'colors',
     data: [
-      { color: 'white', label: 'White', value: '#ffffff' },
-      { color: 'gray', label: 'Gray', value: '#cccccc' },
-      { color: 'black', label: 'Black', value: '#000000' },
+      { color: 'white', name: 'White', value: '#ffffff' },
+      { color: 'gray', name: 'Gray', value: '#cccccc' },
+      { color: 'black', name: 'Black', value: '#000000' },
 
-      { color: 'red', label: 'Red', value: '#ff0000' },
-      { color: 'blue', label: 'Blue', value: '#4169E1' },
-      { color: 'green', label: 'Green', value: '#00ff00' },
-      { color: 'pink', label: 'Pink', value: '#FFC0CB' },
-      { color: 'orange', label: 'Orange', value: '#FFA500' },
+      { color: 'red', name: 'Red', value: '#ff0000' },
+      { color: 'blue', name: 'Blue', value: '#4169E1' },
+      { color: 'green', name: 'Green', value: '#00ff00' },
+      { color: 'pink', name: 'Pink', value: '#FFC0CB' },
+      { color: 'orange', name: 'Orange', value: '#FFA500' },
 
-      { color: 'emerald', label: 'Emerald', value: '#50C878' },
-      { color: 'champagne', label: 'Champagne', value: '#F7E7CE' },
+      { color: 'emerald', name: 'Emerald', value: '#50C878' },
+      { color: 'champagne', name: 'Champagne', value: '#F7E7CE' },
     ],
   },
   Style: {
     filterName: 'styles',
     data: [
-      { field: 'apple', label: 'Apple' },
-      { field: 'athletic', label: 'Athletic' },
-      { field: 'bump_friendly', label: 'Bump Friendly' },
-      { field: 'full_bust', label: 'Full Bust' },
-      { field: 'hourglass', label: 'Hourglass' },
-      { field: 'pear', label: 'Pear' },
-      { field: 'petite', label: 'Petite' },
-      { field: 'straight_narrow', label: 'Straight & Narrow' },
+      { slug: 'apple', name: 'Apple' },
+      { slug: 'athletic', name: 'Athletic' },
+      { slug: 'bump_friendly', name: 'Bump Friendly' },
+      { slug: 'full_bust', name: 'Full Bust' },
+      { slug: 'hourglass', name: 'Hourglass' },
+      { slug: 'pear', name: 'Pear' },
+      { slug: 'petite', name: 'Petite' },
+      { slug: 'straight_narrow', name: 'Straight & Narrow' },
     ],
   },
   DatesAvailable: {
     filterName: undefined,
-    label: 'Dates Available',
+    name: 'Dates Available',
   },
   Designers: {
     filterName: 'designer',
@@ -66,16 +65,16 @@ export const filterData = {
 } as const
 
 export const sortData: {
-  [sortBy in SortBy]: { label: string; value: string }
+  [sortBy in SortBy]: { name: string; value: string }
 } = {
-  Recommended: { label: 'Recommended', value: 'created_by' },
-  Newest: { label: 'Newest', value: 'created_by' },
+  Recommended: { name: 'Recommended', value: 'created_by' },
+  Newest: { name: 'Newest', value: 'created_by' },
   PriceLowHigh: {
-    label: 'Price (Low to High)',
+    name: 'Price (Low to High)',
     value: 'shortRentalPrice:ASC',
   },
   PriceHighLow: {
-    label: 'Price (High to Low)',
+    name: 'Price (High to Low)',
     value: 'shortRentalPrice:DESC',
   },
 } as const

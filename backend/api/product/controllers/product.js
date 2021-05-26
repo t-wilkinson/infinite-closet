@@ -1,5 +1,3 @@
-const { sanitizeEntity } = require("strapi-utils");
-
 const partitionObject = (object, predicate) =>
   Object.entries(object).reduce(
     ([left, right], item) => {
