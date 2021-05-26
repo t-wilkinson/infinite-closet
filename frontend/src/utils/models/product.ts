@@ -1,28 +1,34 @@
+import { StrapiCategory } from './category';
+import { StrapiColor } from './color';
 import { StrapiDesigner } from './designer';
 import { StrapiFile } from './file';
+import { StrapiFit } from './fit';
+import { StrapiOccasion } from './occasion';
 import { StrapiSize } from './custom/sizes';
+import { StrapiStyle } from './style';
+import { StrapiWeather } from './weather';
 
 /**
- * Model definition for product
+ * Model definition for Product
  */
 export interface StrapiProduct {
   id: string;
-  designer?: StrapiDesigner;
   name: string;
   slug: string;
-  shortRentalPrice?: number;
-  longRentalPrice?: number;
+  shortRentalPrice: number;
+  longRentalPrice: number;
   retailPrice?: number;
   purchasePrice?: number;
   images: StrapiFile[];
-  colors?: string;
-  fits?: string;
-  occasions?: string;
-  styles?: string;
-  weather?: string;
-  categories?: string;
   sizes: StrapiSize[];
   details?: string;
   stylistNotes?: string;
+  designer: StrapiDesigner;
+  categories: StrapiCategory[];
+  colors: StrapiColor[];
+  fits: StrapiFit[];
+  occasions: StrapiOccasion[];
+  styles: StrapiStyle[];
+  weather: StrapiWeather[];
   created_by: string;
 }
