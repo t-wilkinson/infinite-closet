@@ -82,7 +82,7 @@ export const Markdown = ({ src }) => {
   return (
     <>
       <Head>
-        <title>{data?.name || "Infinite Closet"}
+        <title>{data?.name || 'Infinite Closet'}</title>
       </Head>
       <Header />
       <div className="w-full items-center my-10">
@@ -107,4 +107,5 @@ export const Markdown = ({ src }) => {
     </>
   )
 }
+
 export default Markdown
