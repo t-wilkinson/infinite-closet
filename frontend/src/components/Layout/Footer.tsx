@@ -84,6 +84,7 @@ const Subscribe = () => {
 const footerLinks = [
   { href: '/legal/terms-and-conditions', label: 'Legal Terms & Conditions' },
   { href: '/legal/privacy-policy', label: 'Privacy & Cookie Policy' },
+  { href: '/faqs', label: 'FAQs' },
 ]
 
 const FooterLinks = () => (
