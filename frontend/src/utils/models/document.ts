@@ -7,4 +7,5 @@ export interface StrapiDocument {
   name: string;
   slug?: string;
   created_by: string;
+  updated_at: string;
 }

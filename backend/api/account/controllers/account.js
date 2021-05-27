@@ -4,7 +4,6 @@ const { sanitizeEntity } = require("strapi-utils");
 
 module.exports = {
   async signin(ctx) {
-
     if (ctx.state.user) {
       return ctx.send({
         status: 200,
@@ -29,7 +28,7 @@ module.exports = {
         ].services.jwt.getToken(ctx);
 
         if (id === undefined) {
-          return ctx.send({ status: 204 });
+          return ctx.send({ status: 401 });
         }
 
         // fetch authenticated user
@@ -37,11 +36,11 @@ module.exports = {
           "users-permissions"
         ].services.user.fetchAuthenticatedUser(id);
       } catch (err) {
-        return ctx.send({ status: 204 });
+        return ctx.send({ status: 401 });
       }
 
       if (!ctx.state.user) {
-        return ctx.send({ status: 204 });
+        return ctx.send({ status: 401 });
       }
 
       return ctx.send({
@@ -51,7 +50,7 @@ module.exports = {
         status: 200,
       });
     } else {
-      ctx.send({ status: 204 });
+      ctx.send({ status: 401 });
     }
   },
 

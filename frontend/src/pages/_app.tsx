@@ -86,7 +86,7 @@ const Wrapper = ({ router, children }) => {
           }
         }
       })
-      .catch((err) => console.error(err))
+      .catch(() => {})
   }, [])
 
   return (

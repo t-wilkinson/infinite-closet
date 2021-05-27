@@ -12,4 +12,5 @@ export interface StrapiPermission {
   policy?: string;
   role?: StrapiRole;
   created_by: string;
+  updated_at: string;
 }

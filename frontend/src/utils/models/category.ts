@@ -7,4 +7,5 @@ export interface StrapiCategory {
   slug: string;
   value?: string;
   created_by: string;
+  updated_at: string;
 }
