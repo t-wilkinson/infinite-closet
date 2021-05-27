@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
+import Head from 'next/head'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import gfm from 'remark-gfm'
@@ -80,6 +81,9 @@ export const Markdown = ({ src }) => {
 
   return (
     <>
+      <Head>
+        <title>{data?.name || "Infinite Closet"}
+      </Head>
       <Header />
       <div className="w-full items-center my-10">
         <div className="items-center mb-10">
