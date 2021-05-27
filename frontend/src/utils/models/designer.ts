@@ -10,4 +10,5 @@ export interface StrapiDesigner {
   products: StrapiProduct[];
   description?: string;
   created_by: string;
+  updated_at: string;
 }

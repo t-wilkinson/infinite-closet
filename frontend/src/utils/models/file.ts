@@ -19,4 +19,5 @@ export interface StrapiFile {
   provider_metadata?: { [key: string]: any };
   related: any[];
   created_by: string;
+  updated_at: string;
 }

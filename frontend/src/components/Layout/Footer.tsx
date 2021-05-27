@@ -82,9 +82,10 @@ const Subscribe = () => {
 }
 
 const footerLinks = [
-  { href: '/legal/terms-and-conditions', label: 'Legal Terms & Conditions' },
-  { href: '/legal/privacy-policy', label: 'Privacy & Cookie Policy' },
   { href: '/faqs', label: 'FAQs' },
+  { href: '/contact-us', label: 'Contact Us' },
+  { href: '/terms-and-conditions', label: 'Legal Terms & Conditions' },
+  { href: '/privacy', label: 'Privacy & Cookie Policy' },
 ]
 
 const FooterLinks = () => (

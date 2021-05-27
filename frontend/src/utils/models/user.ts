@@ -22,4 +22,5 @@ export interface StrapiUser {
   addresses: StrapiAddress[];
   orders: any[];
   created_by: string;
+  updated_at: string;
 }

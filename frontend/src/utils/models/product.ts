@@ -32,4 +32,5 @@ export interface StrapiProduct {
   weather: StrapiWeather[];
   sizingNotes?: string;
   created_by: string;
+  updated_at: string;
 }

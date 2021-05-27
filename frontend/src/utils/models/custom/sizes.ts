@@ -7,4 +7,5 @@ export interface StrapiSize {
   size: string;
   details?: string;
   created_by: string;
+  updated_at: string;
 }

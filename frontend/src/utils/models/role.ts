@@ -12,4 +12,5 @@ export interface StrapiRole {
   permissions: StrapiPermission[];
   users: StrapiUser[];
   created_by: string;
+  updated_at: string;
 }
