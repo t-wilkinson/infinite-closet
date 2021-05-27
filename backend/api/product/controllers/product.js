@@ -21,7 +21,7 @@ module.exports = {
       ["_start", "_limit", "_sort"].includes(k)
     );
     const products = await strapi.query("product").find(ctx.query);
-    const matchingProducts = await strapi.query("product").find(ctx._where);
+    const allMatchingProducts = await strapi.query("product").find(ctx._where);
     const count = await strapi.query("product").count(_where); // TODO: BUG: strapi overcounts relations
 
     const productFilters = [
@@ -34,7 +34,7 @@ module.exports = {
       "styles",
     ];
 
-    const availableFilters = matchingProducts.reduce(
+    const availableFilters = allMatchingProducts.reduce(
       (filters, product) => {
         for (const filter in filters) {
           const productFilter = product[filter];

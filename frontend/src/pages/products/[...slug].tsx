@@ -77,7 +77,7 @@ export async function getServerSideProps({ params, query }) {
   _where = [_where, _filters].join('&')
 
   const { products, count, filters } = await fetchAPI(
-    `/products?${_paging}&${_where}`,
+    `/products/filters?${_paging}&${_where}`,
   )
 
   return {

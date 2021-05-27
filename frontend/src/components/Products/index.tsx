@@ -110,7 +110,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
         </div>
       </button>
       <span className="mx-1">
-        {pageNumber} / {totalPages}
+        Page {pageNumber} {/* / {totalPages} */}
       </span>
       <button
         onClick={() => {

@@ -13,7 +13,7 @@ export const Home = () => {
               objectFit="cover"
             />
           </div>
-          <div className="absolute left-0" style={{ width: 800, height: 500 }}>
+          <div className="absolute left-0 md:max-w-2xl lg:max-w-4xl w-full h-128">
             <Image
               src="/images/home-page/discover-rent-love-gold.svg"
               layout="fill"
@@ -37,7 +37,7 @@ const howItWorks = {
       <div>
         Our platform allows you to rent our closet with a 4- or 8-day rental
         period. You can filter by color, style, occasion, and more. We know
-        we’ll have a dress that fits your special occasion!{' '}
+        we’ll have a dress that fits any occasion!
       </div>
     ),
   },
@@ -51,7 +51,7 @@ const howItWorks = {
         your delivery date options. Remember, we recommend choosing a rental
         beginning two days before your event. Select your dates and size and
         check out! It’s no different than your regular online shopping
-        experience.{' '}
+        experience.
       </div>
     ),
   },
@@ -60,11 +60,18 @@ const howItWorks = {
     icon: '3.svg',
     header: ({ selected }) => <div>Love</div>,
     content: ({ selected }) => (
-      <div>
-        Look great, feel great. Not only do you look amazing, but you’ve
-        supported an independent designer, and reduced your carbon footprint by
-        renting! Now that's what we call a win-win-win.{' '}
-      </div>
+      <ul>
+        <li>
+          Look great, feel great. Not only do you look amazing, but you’ve
+          supported a small business owner, and reduced your carbon footprint by
+          renting! Now that's what we call a win-win-win.
+        </li>
+        <li>
+          Simply return the item using our prepaid return label and leave a
+          review on our website for the next person! We’ll handle the dry
+          cleaning, so all you have to do is shop with us again! It’s that easy.
+        </li>
+      </ul>
     ),
   },
 }
@@ -109,7 +116,7 @@ const HowItWorksHeader = ({ icon, selected, header, ...props }) => {
     <div className="w-full items-center">
       <button aria-label={label} {...props}>
         <div
-          className="h-24 w-24 m-8 relative"
+          className="h-16 w-16 md:h-24 md:w-24 md:m-8 relative"
           // style={{
           //   filter:
           //     'invert(56%) sepia(36%) saturate(482%) hue-rotate(4deg) brightness(97%) contrast(94%)',
@@ -136,7 +143,7 @@ const HowItWorksHeader = ({ icon, selected, header, ...props }) => {
 
 const HowItWorksContent = ({ selected, header }) =>
   selected === header && (
-    <div className="h-32 sm:h-24 md:h-16">
+    <div className="sm:h-32 sm:h-24 md:h-16">
       {howItWorks[header].content({ selected: header === selected })}
     </div>
   )
@@ -144,7 +151,7 @@ const HowItWorksContent = ({ selected, header }) =>
 const whyRent = [
   {
     icon: '1.svg',
-    label: 'Totally Flexible',
+    label: 'Complete Flexibility',
     content:
       'Ever changing styles, sizes, and brands. We’ve got you covered for every occasion, delivered right to your door.',
   },
@@ -173,7 +180,7 @@ const WhyRent = ({}) => (
     <Heading>Why Rent?</Heading>
     <div className="flex-row justify-between flex-wrap w-full">
       {whyRent.map((item) => (
-        <div key={item.label} className="flex-grow items-center my-20">
+        <div key={item.label} className="flex-grow items-center my-4 md:my-20">
           <div className="w-64 items-center">
             <div className="w-24 h-24 relative">
               <Image
@@ -195,9 +202,11 @@ const WhyRent = ({}) => (
 
 const Heading = ({ children }) => (
   <div className="flex-row w-full max-w-screen-xl items-center">
-    <div className="h-px bg-pri rounded-full flex-grow mx-8" />
-    <span className="font-subheader text-4xl">{children}</span>
-    <div className="h-px bg-pri rounded-full flex-grow mx-8" />
+    <div className="hidden md:flex h-px bg-pri rounded-full flex-grow mx-8" />
+    <span className="font-subheader text-4xl text-center w-full md:w-auto">
+      {children}
+    </span>
+    <div className="hidden md:flex h-px bg-pri rounded-full flex-grow mx-8" />
   </div>
 )
 
