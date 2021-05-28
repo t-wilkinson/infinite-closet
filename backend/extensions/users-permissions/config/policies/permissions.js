@@ -1,6 +1,7 @@
 "use strict";
 
 const _ = require("lodash");
+const extensions = require("./extensions.js").permissions;
 
 module.exports = async (ctx, next) => {
   let role;
@@ -10,12 +11,7 @@ module.exports = async (ctx, next) => {
     return next();
   }
 
-  if (ctx.request && ctx.request.header && !ctx.request.header.authorization) {
-    const token = ctx.cookies.get("token");
-    if (token) {
-      ctx.request.header.authorization = "Bearer " + token;
-    }
-  }
+  extensions.addAuthorizationToken(ctx);
 
   if (ctx.request && ctx.request.header && ctx.request.header.authorization) {
     try {

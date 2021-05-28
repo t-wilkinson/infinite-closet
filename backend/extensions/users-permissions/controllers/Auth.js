@@ -11,35 +11,12 @@ const crypto = require("crypto");
 const _ = require("lodash");
 const grant = require("grant-koa");
 const { sanitizeEntity } = require("strapi-utils");
+const extensions = require("./extensions.js").Auth;
 
 const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const formatError = (error) => [
   { messages: [{ id: error.id, message: error.message, field: error.field }] },
 ];
-
-const normalize = (value) => {
-  return value
-    .toLowerCase()
-    .replace(/ /g, "-")
-    .replace(/[^a-z-]/g, "");
-};
-const nDigit = (size) => {
-  const min = 10 ** (size - 1);
-  const max = 10 ** size - 1;
-  const num = Math.floor(Math.random() * (max - min + 1)) + min;
-  return num;
-};
-
-
-const setCookieSession = (cookies, jwt) => {
-  cookies.set("token", jwt, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production" ? true : false,
-    maxAge: 1000 * 60 * 60 * 24 * 14, // 14 Day Age
-    overwrite: true,
-    domain: process.env.FRONTEND_DOMAIN,
-  });
-};
 
 module.exports = {
   async callback(ctx) {
@@ -157,8 +134,8 @@ module.exports = {
         const jwt = strapi.plugins["users-permissions"].services.jwt.issue({
           id: user.id,
         });
+        extensions.setCookieSession(ctx.cookies, jwt);
 
-        setCookieSession(ctx.cookies, jwt);
         ctx.send({
           user: sanitizeEntity(user.toJSON ? user.toJSON() : user, {
             model: strapi.query("user", "users-permissions").model,
@@ -447,11 +424,11 @@ module.exports = {
       // TODO: there are some ways to make this more efficient
       do {
         params.username =
-          normalize(params.firstName) +
+          extensions.normalize(params.firstName) +
           "-" +
-          normalize(params.lastName) +
+          extensions.normalize(params.lastName) +
           "-" +
-          nDigit(6);
+          extensions.nDigit(6);
       } while (
         await strapi
           .query("user", "users-permissions")
