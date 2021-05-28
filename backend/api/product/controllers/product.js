@@ -17,10 +17,40 @@ module.exports = {
   // add hidden field to privateAttributes
   // TODO: this is highly inefficient
   async query(ctx) {
-    const [_paging, _where] = partitionObject(ctx.query, ([k, _]) =>
+    const query =
+      process.env.NODE_ENV === "production"
+        ? ctx.query
+        : { ...ctx.query, ...{ _publicationState: "preview" } };
+
+    const [_paging, _where] = partitionObject(query, ([k, _]) =>
       ["_start", "_limit", "_sort"].includes(k)
     );
-    const products = await strapi.query("product").find(ctx.query);
+    let products;
+
+    // TODO: how do we AND filter all categories
+    // TODO: write a custom query
+
+    console.log(query);
+    // const products = await strapi.query("product").find({
+    //   _start: "1",
+    //   _limit: "12",
+    //   _where: [
+    //     { "categories.slug": "jumpsuit" },
+    //     { "categories.slug": "clothing" },
+    //   ],
+    // });
+
+    const knex = strapi.connections.default;
+    products = await knex("products")
+      .where("products.hiddenCategories", "like", "%clothing%")
+      .andWhere("products.hiddenCategories", "like", "%jumpsuit%");
+    // .whereNot("cities.published_at", null)
+    // .join("chefs", "restaurants.id", "chefs.restaurant_id")
+    // .select("restaurants.name as restaurant")
+
+    console.log(products);
+
+    products = await strapi.query("product").find(query);
     const allMatchingProducts = await strapi.query("product").find(ctx._where);
     const count = await strapi.query("product").count(_where); // TODO: BUG: strapi overcounts relations
 

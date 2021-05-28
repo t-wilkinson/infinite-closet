@@ -35,7 +35,6 @@ export const components = {
       <span className="block h-px bg-pri w-full my-2" />
     </>
   ),
-
   h3: ({ children }) => (
     <span className="block mt-4 mb-2 font-bold" children={children} />
   ),
@@ -64,6 +63,7 @@ export const components = {
   blockquote: ({ children }) => (
     <blockquote className="ml-8" children={children} />
   ),
+
   table: ({ children }) => (
     <table className="my-4 border border-gray" children={children} />
   ),
@@ -78,6 +78,21 @@ export const components = {
 export const Markdown = ({ src }) => {
   const data = useMarkdown(src)
   const updated_at = data && dayjs(data.updated_at).format('MM/DD/YY')
+
+  if (!data) {
+    return (
+      <>
+        <Head>
+          <title>Infinite Closet</title>
+        </Head>
+        <Header />
+        <div className="w-full items-center my-10">
+          <div className="items-center mb-10"></div>
+        </div>
+        <Footer />
+      </>
+    )
+  }
 
   return (
     <>
@@ -99,7 +114,7 @@ export const Markdown = ({ src }) => {
             className="markdown"
             remarkPlugins={[gfm]}
             components={components}
-            children={data?.content}
+            children={data.content}
           />
         </div>
       </div>

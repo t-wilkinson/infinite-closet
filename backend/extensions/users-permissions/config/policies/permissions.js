@@ -1,7 +1,7 @@
 "use strict";
 
 const _ = require("lodash");
-const extensions = require("./extensions.js").permissions;
+const extensions = require("../..//extensions.js").permissions;
 
 module.exports = async (ctx, next) => {
   let role;

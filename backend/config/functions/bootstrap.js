@@ -55,24 +55,24 @@ const isFirstRun = async () => {
 };
 
 module.exports = async () => {
-  await setDefaultPermissions();
-  const shouldSetDefaultPermissions = await isFirstRun();
-  if (shouldSetDefaultPermissions) {
-    try {
-      console.log("Setting up your starter...");
-      const files = fs.readdirSync(`./data/uploads`);
-      await createSeedData(files);
-      console.log("Ready to go");
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  // await setDefaultPermissions();
+  // const shouldSetDefaultPermissions = await isFirstRun();
+  // if (shouldSetDefaultPermissions) {
+  //   try {
+  //     console.log("Setting up your starter...");
+  //     const files = fs.readdirSync(`./data/uploads`);
+  //     await createSeedData(files);
+  //     console.log("Ready to go");
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
 
-  if (process.env.NODE_ENV !== "production") {
-    const today = new Date().toJSON();
-    await strapi.query("product").update({}, { published_at: today });
-    await strapi.query("designer").update({}, { published_at: today });
-  }
+  // if (process.env.NODE_ENV !== "production") {
+  //   const today = new Date().toJSON();
+  //   await strapi.query("product").update({}, { published_at: today });
+  //   await strapi.query("designer").update({}, { published_at: today });
+  // }
 };
 
 // const getFilesizeInBytes = filepath => {
