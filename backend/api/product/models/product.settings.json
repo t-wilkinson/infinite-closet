@@ -20,6 +20,10 @@
       "targetField": "name",
       "required": true
     },
+    "designer": {
+      "model": "designer",
+      "via": "products"
+    },
     "shortRentalPrice": {
       "type": "decimal",
       "required": true
@@ -37,10 +41,7 @@
     "images": {
       "collection": "file",
       "via": "related",
-      "allowedTypes": [
-        "images",
-        "videos"
-      ],
+      "allowedTypes": ["images", "videos"],
       "plugin": "upload",
       "required": true
     },
@@ -49,16 +50,17 @@
       "repeatable": true,
       "component": "custom.sizes"
     },
+
     "details": {
       "type": "richtext"
     },
     "stylistNotes": {
       "type": "richtext"
     },
-    "designer": {
-      "model": "designer",
-      "via": "products"
+    "sizingNotes": {
+      "type": "richtext"
     },
+
     "categories": {
       "collection": "category"
     },
@@ -77,11 +79,30 @@
     "weather": {
       "collection": "weather"
     },
-    "sizingNotes": {
-      "type": "richtext"
+
+    "categories_": {
+      "type": "string",
+      "private": true
     },
-    "test": {
-      "type": "string"
+    "colors_": {
+      "type": "string",
+      "private": true
+    },
+    "fits_": {
+      "type": "string",
+      "private": true
+    },
+    "occasions_": {
+      "type": "string",
+      "private": true
+    },
+    "styles_": {
+      "type": "string",
+      "private": true
+    },
+    "weather_": {
+      "type": "string",
+      "private": true
     }
   }
 }

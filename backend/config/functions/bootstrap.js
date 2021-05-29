@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
-var findup = require("findup-sync");
+const models = require("../../data/data.js").models;
 
 const {
   categories,
@@ -54,8 +54,25 @@ const isFirstRun = async () => {
   return !initHasRun;
 };
 
+const populatePrivateFields = () =>
+  strapi
+    .query("product")
+    .find(
+      {},
+      Object.keys(models).map((filter) => `${filter}`)
+    )
+    .then((products) =>
+      products.map((product) => {
+        let data = { id: product.id };
+        for (const filter of Object.keys(models)) {
+          const slugs = product[filter].map((v) => v.slug).join(",");
+          data[`${filter}_`] = slugs;
+        }
+        strapi.query("product").update({ id: product.id }, data);
+      })
+    );
+
 module.exports = async () => {
-  // await setDefaultPermissions();
   // const shouldSetDefaultPermissions = await isFirstRun();
   // if (shouldSetDefaultPermissions) {
   //   try {
@@ -68,11 +85,14 @@ module.exports = async () => {
   //   }
   // }
 
-  // if (process.env.NODE_ENV !== "production") {
-  //   const today = new Date().toJSON();
-  //   await strapi.query("product").update({}, { published_at: today });
-  //   await strapi.query("designer").update({}, { published_at: today });
-  // }
+  //   await populatePrivateFields();
+  //   await setDefaultPermissions();
+
+  if (process.env.NODE_ENV !== "production") {
+    // const today = new Date().toJSON();
+    // await strapi.query("product").update({}, { published_at: today });
+    // await strapi.query("designer").update({}, { published_at: today });
+  }
 };
 
 // const getFilesizeInBytes = filepath => {

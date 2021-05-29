@@ -65,14 +65,14 @@ export async function getServerSideProps({ params, query }) {
   })
   const _filters = Filter.map((filter) => {
     const { filterName } = filterData[filter]
-    return str({ [filterName + '.slug_in']: query[filterName] })
+    return str({ [filterName]: query[filterName] })
   })
     .filter((v) => v)
     .join('&')
 
   let _where = str({
     _sort: sort,
-    'categories.slug_in': query.slug,
+    categories: query.slug,
   })
   _where = [_where, _filters].join('&')
 
