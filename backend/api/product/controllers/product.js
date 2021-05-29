@@ -15,7 +15,7 @@ const partitionObject = (object, predicate) =>
   );
 
 const productFilters = [
-  "designer",
+  "designers",
   "fits",
   "colors",
   "occasions",
@@ -24,16 +24,17 @@ const productFilters = [
   "styles",
 ];
 
+const orderBy = (sort) => sort.split(":");
+
 const private = (key) => key + "_";
 
 const toRaw = (_where) => {
   const filterSlugs = _.pick(_where, productFilters);
   let values = [];
   let query = [];
-  console.log(filterSlugs);
 
   const addSlug = (filter, slug) => {
-    if (filter === "designer") {
+    if (filter === "designers") {
       values.push("designers.slug");
     } else {
       values.push(private(filter));
@@ -73,13 +74,12 @@ module.exports = {
         : { ...ctx.query, ...{ _publicationState: "preview" } };
 
     const [_paging, _where] = partitionObject(query, ([k, _]) =>
-      ["_start", "_limit", "_sort"].includes(k)
+      ["start", "limit", "sort"].includes(k)
     );
 
     let results;
     const knex = strapi.connections.default;
 
-    // TODO: sort
     // TODO: handle paging in SQL
     results = await knex
       .select(
@@ -87,11 +87,12 @@ module.exports = {
         knex.raw("to_json(upload_file.*) as image"),
         knex.raw("to_json(designers.*) as designer")
       )
+      .rank("rank", "upload_file_morph.order", "products.id")
       .from("products")
       .join("upload_file_morph", "products.id", "upload_file_morph.related_id")
       .join("upload_file", "upload_file_morph.upload_file_id", "upload_file.id")
       .join("designers", "products.designer", "designers.id")
-      .orderBy("upload_file_morph.order")
+      .orderBy(...orderBy(_paging.sort))
       .whereRaw(...toRaw(_where));
 
     /* results contains many duplicate products.
@@ -145,12 +146,15 @@ module.exports = {
               filterSlugs[filter].add(slug);
             }
           }
+        } else if (filter === "designers") {
+          filterSlugs[filter].add(product.designer);
         } else {
           filterSlugs[filter].add(product[filter]);
         }
       }
     }
 
+    // TODO: hide filters that are excluded by other filters (but not their own) [(color1 OR ...) AND (fit1 OR ...) AND ...]
     // query for unique filters found which match _where
     // prettier-ignore
     for (const [filter, slugs] of Object.entries(filterSlugs)) {
@@ -165,13 +169,13 @@ module.exports = {
           Array(slugs.size).fill(`${filter}.slug = ?`).join(" OR "),
           Array.from(slugs)
         );
-      } else if (filter === 'designer') {
-        const table = 'designers'
-        filters[table] = await knex
-        .select(`${table}.*`)
-        .from(table)
+      } else if (filter === 'designers') {
+        const field = 'designer'
+        filters[filter] = await knex
+        .select(`${filter}.*`)
+        .from(filter)
         .whereRaw(
-          Array(slugs.size).fill(`${table}.id = ?`).join(" OR "),
+          Array(slugs.size).fill(`${filter}.id = ?`).join(" OR "),
           Array.from(slugs)
         );
       } else {
@@ -179,8 +183,8 @@ module.exports = {
       }
     }
 
-    const start = parseInt(_paging._start) || 0;
-    const limit = parseInt(_paging._limit) || 20;
+    const start = parseInt(_paging.start) || 0;
+    const limit = parseInt(_paging.limit) || 20;
     const end = start + limit;
 
     ctx.send({

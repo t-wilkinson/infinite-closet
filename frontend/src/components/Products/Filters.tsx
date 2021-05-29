@@ -102,13 +102,10 @@ const FilterFooter = () => {
     dispatch(productsActions.closePanel())
 
     // turn panel filters into query
-    let filters = Object.entries(filterData).reduce(
-      (acc, [filter, { filterName }]) => {
-        if (filterName) acc[filterName] = panel.filters[filter]
-        return acc
-      },
-      {} as any,
-    )
+    let filters = Object.keys(filterData).reduce((acc, filter) => {
+      if (filter) acc[filter] = panel.filters[filter]
+      return acc
+    }, {} as any)
     if (panel.sortBy) filters.sort = panel.sortBy
 
     router.push({
@@ -150,40 +147,32 @@ const usePanel = (filter: Filter) => {
   const panel = useSelector((state) => productsSelectors.panelSelector(state))
   const dispatch = useDispatch()
 
-  // TODO: this only updates ui after fetching new data. Can we update ui before? Is this wise/necessary?
   const toggle = (payload: string) => {
     let values = new Set(panel.filters[filter])
     values.has(payload) ? values.delete(payload) : values.add(payload)
-    if (panel.open) {
-      dispatch(
-        productsActions.setPanelFilter({ filter, payload: Array.from(values) }),
-      )
-    } else {
-      router.push({
-        pathname: router.pathname,
-        query: {
-          ...router.query,
-          [filterData[filter].filterName]: Array.from(values),
-        },
-      })
-    }
+    dispatch(
+      productsActions.setPanelFilter({ filter, payload: Array.from(values) }),
+    )
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        [filter]: Array.from(values),
+      },
+    })
   }
 
   const set = (payload: string[]) => {
-    if (panel.open) {
-      dispatch(productsActions.setPanelFilter({ filter, payload: payload }))
-    } else {
-      router.push({
-        pathname: router.pathname,
-        query: {
-          ...router.query,
-          [filterData[filter].filterName]: payload,
-        },
-      })
-    }
+    dispatch(productsActions.setPanelFilter({ filter, payload: payload }))
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        [filter]: payload,
+      },
+    })
   }
 
-  // check if panel is open and if so pass those values in
   return {
     values: panel.filters[filter],
     toggle,

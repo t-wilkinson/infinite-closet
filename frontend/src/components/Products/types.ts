@@ -2,23 +2,20 @@
 export const ProductRoutes = ['clothing'] as const
 export type ProductRoutes = typeof ProductRoutes[number]
 
-export const FilterFields = ['colors', 'fits', 'occasions', 'styles'] as const
-export type FilterFields = typeof FilterFields[number]
-
 export const Filter = [
-  'Designers',
-  'Colors',
-  'DatesAvailable',
-  'Occasions',
-  'Favorites',
-  'Weather',
-  'Style',
+  'designers',
+  'colors',
+  'datesAvailable',
+  'occasions',
+  'favorites',
+  'weather',
+  'styles',
 ] as const
 export type Filter = typeof Filter[number]
 export type Filters = { [filter in Filter]: string[] }
 
 export const SortBy = [
-  'Recommended',
+  // 'Recommended',
   'Newest',
   'PriceLowHigh',
   'PriceHighLow',

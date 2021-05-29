@@ -5,12 +5,6 @@ import { Icon, CheckBox } from '@/components'
 import { useSelector } from '@/utils/store'
 import useFields from '@/Form/useFields'
 import { Input } from '@/Form'
-import {
-  StrapiColor,
-  StrapiOccasion,
-  StrapiWeather,
-  StrapiDesigner,
-} from '@/utils/models'
 
 import { Filter } from './types'
 
@@ -22,7 +16,7 @@ type FilterItems = {
 }
 
 export const FilterItems: FilterItems = {
-  Designers: ({ panel }) => {
+  designers: ({ panel }) => {
     const designers = useSelector((state) =>
       Object.values(state.layout.data.designers),
     )
@@ -32,7 +26,7 @@ export const FilterItems: FilterItems = {
         (search: string, designers: { slug: string; name: string }[]) => {
           fuzzySearch(
             search,
-            designers.map((designer) => designer.name),
+            designers.map((designer) => designer.slug),
           ).then((matches) => setMatches(matches))
         },
         300,
@@ -79,10 +73,9 @@ export const FilterItems: FilterItems = {
     )
   },
 
-  Colors: ({ panel }) => {
-    const colors = useSelector(
-      (state) =>
-        Object.values(state.layout.data.filters?.colors || []) as StrapiColor[],
+  colors: ({ panel }) => {
+    const colors = useSelector((state) =>
+      Object.values(state.layout.data.colors),
     )
 
     return (
@@ -123,18 +116,15 @@ export const FilterItems: FilterItems = {
     )
   },
 
-  DatesAvailable: () => (
+  datesAvailable: () => (
     <>
       <span>Coming Soon...</span>
     </>
   ),
 
-  Occasions: ({ filter, panel }) => {
-    const occasions = useSelector(
-      (state) =>
-        Object.values(
-          state.layout.data.filters?.occasions || [],
-        ) as StrapiOccasion[],
+  occasions: ({ panel }) => {
+    const occasions = useSelector((state) =>
+      Object.values(state.layout.data.occasions),
     )
 
     return (
@@ -144,18 +134,15 @@ export const FilterItems: FilterItems = {
     )
   },
 
-  Favorites: () => (
+  favorites: () => (
     <>
       <span>Coming Soon...</span>
     </>
   ),
 
-  Weather: ({ filter, panel }) => {
-    const weather = useSelector(
-      (state) =>
-        Object.values(
-          state.layout.data.filters?.weather || [],
-        ) as StrapiOccasion[],
+  weather: ({ panel }) => {
+    const weather = useSelector((state) =>
+      Object.values(state.layout.data.weather),
     )
 
     return (
@@ -165,12 +152,9 @@ export const FilterItems: FilterItems = {
     )
   },
 
-  Style: ({ filter, panel }) => {
-    const styles = useSelector(
-      (state) =>
-        Object.values(
-          state.layout.data.filters?.styles || [],
-        ) as StrapiOccasion[],
+  styles: ({ panel }) => {
+    const styles = useSelector((state) =>
+      Object.values(state.layout.data.styles),
     )
 
     return (
@@ -190,6 +174,7 @@ export default FilterItems
 async function fuzzySearch(search: string, values: string[]) {
   const emptyRegExp = String(new RegExp('', 'i'))
   const keywords: RegExp[] = search
+    .normalize('NFKD')
     .replace(/[^a-zA-Z0-9_\s]/g, '')
     .split(/\s+/g)
     .map((v) => new RegExp(v, 'i'))

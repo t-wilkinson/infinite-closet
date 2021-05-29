@@ -16,7 +16,7 @@
   "dependencies": {
     "dayjs": "^1.10.4",
     "googleapis": "^72.0.0",
-    "knex": "0.21.18",
+    "knex": "0.95.0",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
     "pg": "8.5.1",

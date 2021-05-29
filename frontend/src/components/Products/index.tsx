@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from '@/utils/store'
 
 import { Crumbs } from './BreadCrumbs'
 import { QUERY_LIMIT } from './constants'
-import { productsSelectors, productsActions } from './slice'
+import { productsActions } from './slice'
 import Filters, { FiltersCount } from './Filters'
 import ProductItems from './ProductItems'
 import Sort from './Sort'
@@ -29,7 +29,7 @@ export default Products
 const ProductItemsWrapper = ({ data, loading }) => {
   const router = useRouter()
   const totalPages = Math.ceil(data.productsCount / QUERY_LIMIT) || 1
-  const sortBy = useSelector((state) => productsSelectors.panelSortBy(state))
+  const sortBy = useSelector((state) => state.products.sortBy)
 
   return (
     <div className="w-full">
@@ -57,7 +57,7 @@ const Header = ({ router, data, totalPages, sortBy }) => {
 
       <div className="sm:flex-row items-end sm:items-center justify-between w-full">
         <span className="font-subheader text-xl self-start sm:self-center">
-          {router.query.slug[0]} {/* ({data.productsCount}) */}
+          {router.query.slug[0]} ({data.productsCount})
         </span>
         <div className="flex-row space-x-1">
           <div className="flex-row sm:hidden justify-end py-2">
@@ -110,7 +110,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
         </div>
       </button>
       <span className="mx-1">
-        Page {pageNumber} {/* / {totalPages} */}
+        {pageNumber} / {totalPages}
       </span>
       <button
         onClick={() => {

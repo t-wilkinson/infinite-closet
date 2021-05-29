@@ -3,15 +3,12 @@ import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '@/utils/store'
 import { SortBy, Filter, Filters } from './types'
 
+// TODO: remove unecessary items
 export interface State {
   data: any // TODO: can this be more abstract? in a Root state?
   pageNumber: number
   focusedFilter?: Filter
   loading: boolean
-  Designers: {
-    // TODO: does this need to be in redux state?
-    matches: string[]
-  }
   panel: {
     open: boolean
     sortBy: SortBy
@@ -25,24 +22,20 @@ const initialState: State = {
   data: {},
   pageNumber: 0,
   loading: false,
-  Designers: {
-    matches: [],
-  },
   panel: {
-    // TODO: move panel keys up a level? I don't think state.sortBy and state.filters are used
     open: false,
-    sortBy: 'Recommended',
+    sortBy: 'Newest',
     filters: {
-      Colors: [],
-      Designers: [],
-      DatesAvailable: [],
-      Occasions: [],
-      Favorites: [],
-      Weather: [],
-      Style: [],
+      colors: [],
+      designers: [],
+      datesAvailable: [],
+      occasions: [],
+      favorites: [],
+      weather: [],
+      styles: [],
     },
   },
-  sortBy: 'Recommended',
+  sortBy: 'Newest',
   filters: {},
 }
 
@@ -124,7 +117,6 @@ const productsSelectors = {
     [productsSelector, (_: any, filter: Filter) => filter],
     (products, filter) => products.focusedFilter === filter,
   ),
-  panelSortBy: createSelector([panelSelector], (panel) => panel.sortBy),
   panelFilter: createSelector(
     [panelSelector, (_: any, filter: Filter) => filter],
     (panel, filter) => panel.filters[filter],

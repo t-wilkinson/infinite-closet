@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
-import { Icon, CallToAction } from '@/components'
+import { CallToAction } from '@/components'
 import { getURL } from '@/utils/api'
 
 import { QUERY_LIMIT } from './constants'

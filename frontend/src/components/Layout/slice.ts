@@ -1,14 +1,25 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { RootState } from '@/utils/store'
-import { StrapiProduct, StrapiDesigner } from '@/utils/models'
+import {
+  StrapiProduct,
+  StrapiDesigner,
+  StrapiColor,
+  StrapiOccasion,
+  StrapiWeather,
+  StrapiStyle,
+} from '@/utils/models'
 
 import { CookieConsent } from './types'
 
 export interface State {
   data: {
     products: StrapiProduct[]
+    colors: StrapiColor[]
+    occasions: StrapiOccasion[]
+    weather: StrapiWeather[]
     designers: StrapiDesigner[]
+    styles: StrapiStyle[]
   }
   loading: boolean
   headerOpen: boolean
@@ -20,6 +31,10 @@ const initialState: State = {
   data: {
     products: [],
     designers: [],
+    colors: [],
+    occasions: [],
+    weather: [],
+    styles: [],
   },
   loading: false,
   headerOpen: false,

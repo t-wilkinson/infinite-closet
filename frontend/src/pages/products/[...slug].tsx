@@ -5,9 +5,9 @@ import qs from 'qs'
 import useData from '@/Layout/useData'
 import { useDispatch } from '@/utils/store'
 import { fetchAPI } from '@/utils/api'
-import { Filter, Filters, ProductRoutes, SortBy } from '@/Products/types'
+import { Filters, Filter, ProductRoutes, SortBy } from '@/Products/types'
 import Products from '@/Products'
-import { sortData, filterData } from '@/Products/constants'
+import { sortData } from '@/Products/constants'
 import { productsActions } from '@/Products/slice'
 import { QUERY_LIMIT } from '@/Products/constants'
 import Layout from '@/Layout'
@@ -19,17 +19,19 @@ export const Page = ({ data }) => {
   const loading = useData(data)
 
   React.useEffect(() => {
-    if (SortBy.includes(query.sort as any))
+    if (SortBy.includes(query.sort as any)) {
       dispatch(productsActions.setPanelSortBy(query.sort as any))
+    }
+  }, [loading, data])
 
+  React.useEffect(() => {
     const filters = Filter.reduce((acc, filter) => {
-      const { filterName } = filterData[filter]
-      switch (typeof query[filterName]) {
+      switch (typeof query[filter]) {
         case 'string':
-          acc[filter] = [query[filterName]]
+          acc[filter] = [query[filter]]
           break
         case 'object':
-          acc[filter] = query[filterName]
+          acc[filter] = query[filter]
           break
         default:
           acc[filter] = []
@@ -37,8 +39,9 @@ export const Page = ({ data }) => {
       }
       return acc
     }, {})
+
     dispatch(productsActions.setPanelFilters(filters as Filters))
-  }, [loading, data])
+  }, [data])
 
   return (
     <>
@@ -60,18 +63,15 @@ export async function getServerSideProps({ params, query }) {
   const page = query.page > 0 ? query.page : 1
   const sort = sortData[query.sort]?.value ?? 'created_by:ASC'
   const _paging = str({
-    _start: (page - 1) * QUERY_LIMIT,
-    _limit: QUERY_LIMIT,
+    start: (page - 1) * QUERY_LIMIT,
+    limit: QUERY_LIMIT,
   })
-  const _filters = Filter.map((filter) => {
-    const { filterName } = filterData[filter]
-    return str({ [filterName]: query[filterName] })
-  })
+  const _filters = Filter.map((filter) => str({ [filter]: query[filter] }))
     .filter((v) => v)
     .join('&')
 
   let _where = str({
-    _sort: sort,
+    sort: sort,
     categories: query.slug,
   })
   _where = [_where, _filters].join('&')
@@ -85,8 +85,7 @@ export async function getServerSideProps({ params, query }) {
       data: {
         products,
         productsCount: count,
-        designers: filters.designer,
-        filters,
+        ...filters,
       },
     },
   }

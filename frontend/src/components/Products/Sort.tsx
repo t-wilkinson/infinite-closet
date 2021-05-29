@@ -53,7 +53,7 @@ const DropDown = ({ focused, hover, sortBy }) => {
     if (panel.open) {
       dispatch(productsActions.setPanelSortBy(field as SortBy))
     } else {
-      if (field === 'Recommended') delete query.sort
+      if (field === 'Newest') delete query.sort
       else query.sort = field
 
       router.push({
@@ -73,7 +73,7 @@ const DropDown = ({ focused, hover, sortBy }) => {
         ${hover ? 'border-gray-light' : 'border-transparent'}
         `}
       >
-        {Object.entries(sortData).map(([field, { label }]) => (
+        {Object.entries(sortData).map(([field, { name }]) => (
           <div key={field} className="my-1">
             <button onClick={() => sortByField(field as SortBy)}>
               <div className="items-start w-full">
@@ -82,7 +82,7 @@ const DropDown = ({ focused, hover, sortBy }) => {
                     ${sortBy === field ? 'font-bold' : 'font-normal'}
                   `}
                 >
-                  {label}
+                  {name}
                 </span>
               </div>
             </button>
