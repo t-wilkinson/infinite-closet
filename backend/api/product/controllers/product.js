@@ -1,6 +1,23 @@
 const _ = require("lodash");
 const models = require("../../../data/data.js").models;
 
+class DefaultDict {
+  constructor(defaultInit) {
+    return new Proxy(
+      {},
+      {
+        get: (target, name) =>
+          name in target
+            ? target[name]
+            : (target[name] =
+                typeof defaultInit === "function"
+                  ? new defaultInit().valueOf()
+                  : defaultInit),
+      }
+    );
+  }
+}
+
 const partitionObject = (object, predicate) =>
   Object.entries(object).reduce(
     ([left, right], item) => {
@@ -24,9 +41,7 @@ const productFilters = [
   "styles",
 ];
 
-const orderBy = (sort) => sort.split(":");
-
-const private = (key) => key + "_";
+const toPrivate = (key) => key + "_";
 
 const toRaw = (_where) => {
   const filterSlugs = _.pick(_where, productFilters);
@@ -37,7 +52,7 @@ const toRaw = (_where) => {
     if (filter === "designers") {
       values.push("designers.slug");
     } else {
-      values.push(private(filter));
+      values.push(toPrivate(filter));
     }
     values.push(`%${slug}%`);
   };
@@ -92,15 +107,15 @@ module.exports = {
       .join("upload_file_morph", "products.id", "upload_file_morph.related_id")
       .join("upload_file", "upload_file_morph.upload_file_id", "upload_file.id")
       .join("designers", "products.designer", "designers.id")
-      .orderBy(...orderBy(_paging.sort))
+      .orderBy(..._paging.sort.split(":"))
       .whereRaw(...toRaw(_where));
 
     /* results contains many duplicate products.
      * we want to remove these duplicates
      */
-    let keys = {}; // maps product.id to location in products
-    const key = (product) => keys[product.id];
     let products = [];
+    let keys = {}; // maps product.id to location in `products`
+    const key = (product) => keys[product.id];
 
     for (const product of results) {
       if (!(product.id in keys)) {
@@ -118,30 +133,17 @@ module.exports = {
       }
     }
 
-    // get all the products that match categories
-    // find the unique collection of filters from their private fields
-    // fetch those
-
-    const filters = productFilters.reduce(
-      (acc, filter) => ((acc[filter] = {}), acc),
-      {}
-    );
-    const filterSlugs = productFilters.reduce(
-      (acc, filter) => ((acc[filter] = new Set()), acc),
-      {}
-    );
-
     // here we find all filters in products under only the category filter
-    // prettier-ignore
     results = await knex
-      .select("products.*") // TODO: only need relavant fields
+      .select("products.*")
       .from("products")
-      .whereRaw(...toRaw({categories: _where.categories}));
+      .whereRaw(...toRaw({ categories: _where.categories }));
 
+    let filterSlugs = new DefaultDict(Set);
     for (const product of results) {
-      for (const filter in filterSlugs) {
+      for (const filter of productFilters) {
         if (filter in models) {
-          for (const slug of product[private(filter)].split(",")) {
+          for (const slug of product[toPrivate(filter)].split(",")) {
             if (!(slug === "")) {
               filterSlugs[filter].add(slug);
             }
@@ -154,32 +156,36 @@ module.exports = {
       }
     }
 
-    // TODO: hide filters that are excluded by other filters (but not their own) [(color1 OR ...) AND (fit1 OR ...) AND ...]
     // query for unique filters found which match _where
-    // prettier-ignore
+    // TODO: don't show filters that would result in 0 products showing up
+    let filters = new DefaultDict({});
     for (const [filter, slugs] of Object.entries(filterSlugs)) {
       if (filter in models) {
+        // prettier-ignore
         filters[filter] = await knex
-        .select(`${filter}.*`)
-        .distinct(`${filter}.id`) // TODO: is distinct the most efficient way to handle this?
-        .from(filter)
-        .join(`products__${filter}`, `${filter}.id`, `products__${filter}.product_id`)
-        .join('products', `products__${filter}.product_id`, 'products.id')
-        .whereRaw(
-          Array(slugs.size).fill(`${filter}.slug = ?`).join(" OR "),
-          Array.from(slugs)
-        );
-      } else if (filter === 'designers') {
-        const field = 'designer'
+          .select(`${filter}.*`)
+          .distinct(`${filter}.id`) // TODO: is distinct the most efficient way to handle this?
+          .from(filter)
+          .join(`products__${filter}`, `${filter}.id`, `products__${filter}.product_id`)
+          .join('products', `products__${filter}.product_id`, 'products.id')
+          .whereRaw(
+            Array(slugs.size).fill(`${filter}.slug = ?`).join(" OR "),
+            Array.from(slugs)
+          );
+      } else if (filter === "designers") {
+        // prettier-ignore
         filters[filter] = await knex
-        .select(`${filter}.*`)
-        .from(filter)
-        .whereRaw(
-          Array(slugs.size).fill(`${filter}.id = ?`).join(" OR "),
-          Array.from(slugs)
-        );
+          .select(`${filter}.*`)
+          .from(filter)
+          .whereRaw(
+            Array(slugs.size).fill(`${filter}.id = ?`).join(" OR "),
+            Array.from(slugs)
+          );
       } else {
-        strapi.log.warn('controllers:product:query: the query query for %s is not implemented', filter)
+        strapi.log.warn(
+          "controllers:product:query: the query query for %s is not implemented",
+          filter
+        );
       }
     }
 

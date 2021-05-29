@@ -63,21 +63,19 @@ export async function getServerSideProps({ params, query }) {
   const page = query.page > 0 ? query.page : 1
   const sort = sortData[query.sort]?.value ?? 'created_by:ASC'
   const _paging = str({
+    sort,
     start: (page - 1) * QUERY_LIMIT,
     limit: QUERY_LIMIT,
   })
   const _filters = Filter.map((filter) => str({ [filter]: query[filter] }))
     .filter((v) => v)
     .join('&')
-
-  let _where = str({
-    sort: sort,
+  const _where = str({
     categories: query.slug,
   })
-  _where = [_where, _filters].join('&')
 
   const { products, count, filters } = await fetchAPI(
-    `/products/filters?${_paging}&${_where}`,
+    `/products/filters?${_paging}&${_where}&${_filters}`,
   )
 
   return {
