@@ -6,6 +6,7 @@ export interface StrapiCategory {
   name: string;
   slug: string;
   value?: string;
+  categories: StrapiCategory[];
   created_by: string;
   updated_at: string;
 }

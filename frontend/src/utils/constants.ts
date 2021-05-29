@@ -94,24 +94,6 @@ const routes = [
       },
     ],
   },
-  // {
-  //   label: 'Designers',
-  //   value: 'designers',
-  //   href: null,
-  //   img: null,
-  //   data: [
-  //     {
-  //       label: 'Category',
-  //       href: null,
-  //       data: [],
-  //     },
-  //     {
-  //       label: 'Trending Now',
-  //       href: null,
-  //       data: [],
-  //     },
-  //   ],
-  // },
   {
     label: 'Blog',
     value: 'blog',

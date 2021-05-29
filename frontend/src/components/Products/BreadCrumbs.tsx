@@ -1,57 +1,95 @@
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
+import { StrapiCategory } from '@/utils/models'
+import { useSelector } from '@/utils/store'
 import { capitalize } from '@/utils/helpers'
-import { routes } from '@/utils/constants'
 
 export const Crumbs = ({ slug, ...props }) => {
   return (
     <div {...props} style={{ flexDirection: 'row' }}>
-      {['browse', ...slug].map((v, i) => {
-        if (i === slug.length) return <span key={v}>{capitalize(v)}</span>
-        else
-          return (
-            <span key={v} className="text-gray-dark whitespace-pre">
-              {capitalize(v)} /{' '}
-            </span>
-          )
-      })}
+      {['browse', ...slug].map((v, i) => (
+        <Link key={v} href={`/products/${slug.slice(0, i).join('/')}`}>
+          <a>
+            {i === slug.length ? (
+              <span>{capitalize(v)}</span>
+            ) : (
+              <span className="text-gray-dark whitespace-pre">
+                {capitalize(v)} /{' '}
+              </span>
+            )}
+          </a>
+        </Link>
+      ))}
     </div>
   )
 }
 
 export const BreadCrumbs = ({}) => {
-  // TODO: remove .slice()
-  const slug = useRouter().query.slug.slice(0, 1) as string[]
+  const categories = useSelector((state) => state.layout.data.categories)
+  const category = categories[0]
 
   return (
     <div className="items-start mb-2 w-full px-1 hidden sm:flex">
       <span className="mb-4">
-        <Crumbs slug={slug} className="hidden sm:flex text-sm" />
+        <Crumbs
+          slug={categories.map((v) => v.slug)}
+          className="hidden sm:flex text-sm"
+        />
       </span>
-      {routes
-        .find((el) => el.value === slug[0])
-        ?.data[0].data.map((el: { label: string; href: string }) => {
-          if (el.href) {
-            return (
-              <Link key={el.label} href={el.href}>
-                <a>
-                  <span className="cursor-pointer hover:underline mb-1">
-                    {el.label}
-                  </span>
-                </a>
-              </Link>
-            )
-          } else {
-            return (
-              <span key={el.label} className="mb-1 text-gray">
-                {el.label}
-              </span>
-            )
-          }
-        })}
+
+      {category && (
+        <BreadCrumb
+          {...category}
+          categories={categories}
+          href={`/products/${category.slug}`}
+          level={0}
+        />
+      )}
     </div>
   )
+}
+
+const BreadCrumb = ({ slug, name, href, level, categories }) => {
+  const nextLevel = categories[level]
+  const isNextLevel = nextLevel?.slug === slug
+  const isMaxLevel = level >= categories.length
+  const shouldNest = isNextLevel && !isMaxLevel
+
+  return (
+    <div key={slug}>
+      {level !== 0 && <BreadCrumbLink key={slug} href={href} label={name} />}
+      <div style={{ marginLeft: level * 16 }}>
+        {shouldNest &&
+          nextLevel?.categories.map((category: StrapiCategory) => (
+            <BreadCrumb
+              key={slug + category.slug}
+              {...category}
+              href={`${href}/${category.slug}`}
+              level={level + 1}
+              categories={categories}
+            />
+          ))}
+      </div>
+    </div>
+  )
+}
+
+const BreadCrumbLink = ({ href, label }) => {
+  if (href) {
+    return (
+      <Link key={label} href={href}>
+        <a>
+          <span className="cursor-pointer hover:underline mb-1">{label}</span>
+        </a>
+      </Link>
+    )
+  } else {
+    return (
+      <span key={label} className="mb-1 text-gray">
+        {label}
+      </span>
+    )
+  }
 }
 
 export default BreadCrumbs

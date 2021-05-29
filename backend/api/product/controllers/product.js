@@ -82,6 +82,7 @@ const toRaw = (_where) => {
 };
 
 module.exports = {
+  // TODO: there are plenty of ways to speed this up when it bottlenecks
   async query(ctx) {
     const query =
       process.env.NODE_ENV === "production"
@@ -139,6 +140,11 @@ module.exports = {
       .from("products")
       .whereRaw(...toRaw({ categories: _where.categories }));
 
+    // TODO: don't show filters that would result in 0 products showing up
+    // for each filter, show slugs that would match at least one product, given all the other filters
+    // product holds the key information to solve this
+    // how do we structure filter relations to ensure this?
+
     let filterSlugs = new DefaultDict(Set);
     for (const product of results) {
       for (const filter of productFilters) {
@@ -157,7 +163,6 @@ module.exports = {
     }
 
     // query for unique filters found which match _where
-    // TODO: don't show filters that would result in 0 products showing up
     let filters = new DefaultDict({});
     for (const [filter, slugs] of Object.entries(filterSlugs)) {
       if (filter in models) {
@@ -189,6 +194,23 @@ module.exports = {
       }
     }
 
+    const queryCategories =
+      typeof query.categories === "string"
+        ? [query.categories]
+        : query.categories;
+    const unorderedCategories = await strapi.query("category").find({
+      slug_in: query.categories,
+    });
+    let categories = [];
+    for (const slug of queryCategories) {
+      category: for (const category of unorderedCategories) {
+        if (slug === category.slug) {
+          categories.push(category);
+          break category;
+        }
+      }
+    }
+
     const start = parseInt(_paging.start) || 0;
     const limit = parseInt(_paging.limit) || 20;
     const end = start + limit;
@@ -197,6 +219,7 @@ module.exports = {
       products: products.slice(start, end),
       count: products.length,
       filters,
+      categories,
     });
   },
 };

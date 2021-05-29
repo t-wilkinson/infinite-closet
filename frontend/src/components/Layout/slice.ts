@@ -8,6 +8,7 @@ import {
   StrapiOccasion,
   StrapiWeather,
   StrapiStyle,
+  StrapiCategory,
 } from '@/utils/models'
 
 import { CookieConsent } from './types'
@@ -20,6 +21,7 @@ export interface State {
     weather: StrapiWeather[]
     designers: StrapiDesigner[]
     styles: StrapiStyle[]
+    categories: StrapiCategory[]
   }
   loading: boolean
   headerOpen: boolean
@@ -29,6 +31,7 @@ export interface State {
 
 const initialState: State = {
   data: {
+    categories: [],
     products: [],
     designers: [],
     colors: [],

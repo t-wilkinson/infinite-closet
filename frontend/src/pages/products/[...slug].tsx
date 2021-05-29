@@ -26,16 +26,11 @@ export const Page = ({ data }) => {
 
   React.useEffect(() => {
     const filters = Filter.reduce((acc, filter) => {
+      // prettier-ignore
       switch (typeof query[filter]) {
-        case 'string':
-          acc[filter] = [query[filter]]
-          break
-        case 'object':
-          acc[filter] = query[filter]
-          break
-        default:
-          acc[filter] = []
-          break
+        case 'string': acc[filter] = [query[filter]]; break
+        case 'object': acc[filter] = query[filter]; break
+        default:       acc[filter] = []; break
       }
       return acc
     }, {})
@@ -62,6 +57,7 @@ export async function getServerSideProps({ params, query }) {
 
   const page = query.page > 0 ? query.page : 1
   const sort = sortData[query.sort]?.value ?? 'created_by:ASC'
+
   const _paging = str({
     sort,
     start: (page - 1) * QUERY_LIMIT,
@@ -74,7 +70,7 @@ export async function getServerSideProps({ params, query }) {
     categories: query.slug,
   })
 
-  const { products, count, filters } = await fetchAPI(
+  const { products, count, filters, categories } = await fetchAPI(
     `/products/filters?${_paging}&${_where}&${_filters}`,
   )
 
@@ -84,6 +80,7 @@ export async function getServerSideProps({ params, query }) {
         products,
         productsCount: count,
         ...filters,
+        categories,
       },
     },
   }

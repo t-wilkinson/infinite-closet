@@ -15,6 +15,7 @@ export interface StrapiProduct {
   id: string;
   name: string;
   slug: string;
+  designer?: StrapiDesigner;
   shortRentalPrice: number;
   longRentalPrice: number;
   retailPrice?: number;
@@ -23,14 +24,19 @@ export interface StrapiProduct {
   sizes: StrapiSize[];
   details?: string;
   stylistNotes?: string;
-  designer?: StrapiDesigner;
+  sizingNotes?: string;
   categories: StrapiCategory[];
   colors: StrapiColor[];
   fits: StrapiFit[];
   occasions: StrapiOccasion[];
   styles: StrapiStyle[];
   weather: StrapiWeather[];
-  sizingNotes?: string;
+  categories_?: string;
+  colors_?: string;
+  fits_?: string;
+  occasions_?: string;
+  styles_?: string;
+  weather_?: string;
   created_by: string;
   updated_at: string;
 }

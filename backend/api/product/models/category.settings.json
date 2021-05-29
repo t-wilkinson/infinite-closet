@@ -23,6 +23,9 @@
     },
     "value": {
       "type": "string"
+    },
+    "categories": {
+      "collection": "category"
     }
   }
 }
