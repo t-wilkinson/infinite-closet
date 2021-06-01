@@ -66,7 +66,7 @@ const productRentContents = {
           router.push('/user/checkout')
         })
         .catch((err) => {
-          console.error
+          console.error(err)
           setStatus('error')
         })
     }

@@ -2,7 +2,7 @@ const domain = 'infinitecloset.co.uk'
 
 module.exports = {
   i18n: {
-    locales: ['en-US', 'en-GB'],
+    locales: ['en-GB', 'en-US'],
     defaultLocale: 'en-GB',
   },
   images: {
