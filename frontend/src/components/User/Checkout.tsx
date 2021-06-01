@@ -6,7 +6,7 @@ dayjs.extend(utc)
 
 import { fetchAPI } from '@/utils/api'
 import { Submit } from '@/Form'
-import { Divider, BlueLink } from '@/components'
+import { BlueLink } from '@/components'
 
 import { PaymentMethods, AddPaymentMethod } from './Payment'
 import { Addresses, AddAddress } from './Address'

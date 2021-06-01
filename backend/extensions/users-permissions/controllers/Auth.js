@@ -380,7 +380,6 @@ module.exports = {
   },
 
   async register(ctx) {
-    console.log("hi");
     const pluginStore = await strapi.store({
       environment: "",
       type: "plugin",
@@ -562,7 +561,7 @@ module.exports = {
         _.pick(user, ["id"])
       );
 
-      setCookieSession(ctx.cookies, jwt);
+      extensions.setCookieSession(ctx.cookies, jwt);
       return ctx.send({ user: sanitizedUser });
     } catch (err) {
       const adminError = _.includes(err.message, "username")
