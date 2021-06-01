@@ -1,45 +1,25 @@
 import React from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
-
-import { CallToAction } from '@/components'
 
 export const Home = () => {
   return (
     <div className="w-full items-center">
       <div className="items-center w-full max-w-screen-xl">
         <div className="relative w-full max-w-screen-xl h-128 mb-8">
-          <div
-            className="w-full h-full"
-            style={{ transform: 'scaleX(-1)', filter: 'brightness(0.5)' }}
-          >
+          <div className="w-full h-full" style={{ transform: 'scaleX(-1)' }}>
             <Image
               src="/images/home-page/banner-image.jpg"
               layout="fill"
               objectFit="cover"
             />
           </div>
-          <div className="absolute h-full justify-start m-8 lg:m-20 items-end right-0">
-            <span className="font-subheader text-5xl lg:text-6xl text-white flex flex-col items-end lg:flex-row lg:space-x-4">
-              <span>Discover.</span> <span>Rent.</span> <span>Love.</span>
-            </span>
-            <div className="inline-block overflow-hidden rounded-sm mt-4">
-              <Link href="/products">
-                <a>
-                  <CallToAction className="text-lg">
-                    Browse Our Store
-                  </CallToAction>
-                </a>
-              </Link>
-            </div>
+          <div className="absolute left-0 md:max-w-2xl lg:max-w-4xl w-full h-128">
+            <Image
+              src="/images/home-page/discover-rent-love-gold.svg"
+              layout="fill"
+              objectFit="contain"
+            />
           </div>
-          {/* <div className="absolute left-0 md:max-w-2xl lg:max-w-4xl w-full h-128"> */}
-          {/*   <Image */}
-          {/*     src="/images/home-page/discover-rent-love-gold.svg" */}
-          {/*     layout="fill" */}
-          {/*     objectFit="contain" */}
-          {/*   /> */}
-          {/* </div> */}
         </div>
         <HowItWorks />
         <WhyRent />

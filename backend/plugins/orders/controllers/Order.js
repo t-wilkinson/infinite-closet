@@ -39,7 +39,6 @@ module.exports = {
       rentalLength: body.rentalLength.toLowerCase(),
       user: user.id,
       size: body.size,
-      insurance: body.insurance,
     };
     const matchingOrder = await strapi
       .query("order", "orders")

@@ -1,10 +1,10 @@
 import React from 'react'
 import debounce from 'lodash/debounce'
 
-import { Icon, CheckBox } from '@/components'
+import { Icon } from '@/components'
 import { useSelector } from '@/utils/store'
 import useFields from '@/Form/useFields'
-import { Input } from '@/Form'
+import { Input, Checkbox } from '@/Form'
 
 import { Filter } from './types'
 
@@ -14,6 +14,12 @@ type FilterItems = {
     panel: { values: string[]; toggle: (payload: string) => void }
   }) => any
 }
+
+const toTitleCase = (value) =>
+  value
+    .split(' ')
+    .map((v) => v.slice(0, 1).toUpperCase() + v.slice(1).toLowerCase())
+    .join(' ')
 
 export const FilterItems: FilterItems = {
   designers: ({ panel }) => {
@@ -55,16 +61,15 @@ export const FilterItems: FilterItems = {
           </Input>
           <div className="h-full space-y justify-start overflow-y-scroll">
             {matchedIndexes.map((index: number) => {
-              const { slug, name } = designers[index]
+              let { slug, name } = designers[index]
               return (
-                <CheckBox
+                <Checkbox
                   key={slug}
-                  setState={() => panel.toggle(slug)}
-                  state={panel.values.includes(slug)}
+                  onChange={() => panel.toggle(slug)}
+                  value={panel.values.includes(slug)}
                   className="flex-no-wrap"
-                >
-                  <span className="text-sm">&nbsp;&nbsp;{name}</span>
-                </CheckBox>
+                  label={toTitleCase(name)}
+                />
               )
             })}
           </div>
@@ -211,12 +216,11 @@ const pickFgColorFromBgColor = (
 const FilterCheckBoxes = ({ panel, data = undefined }) => {
   return data.map((v: { slug: string; name: string }) => (
     <div key={v.slug} className="py-0.5">
-      <CheckBox
-        setState={() => panel.toggle(v.slug)}
-        state={panel.values.includes(v.slug)}
-      >
-        <span>&nbsp;&nbsp;{v.name}</span>
-      </CheckBox>
+      <Checkbox
+        onChange={() => panel.toggle(v.slug)}
+        value={panel.values.includes(v.slug)}
+        label={v.name}
+      />
     </div>
   ))
 }

@@ -30,5 +30,5 @@ export const sortData: {
 
 // TODO: dynamically get these
 export const filtersByRoute: { readonly [key in ProductRoutes]: Filter[] } = {
-  clothing: ['designers', 'colors', 'occasions', 'weather', 'styles'],
+  clothing: ['designers', 'colors', 'occasions', 'weather'],
 }

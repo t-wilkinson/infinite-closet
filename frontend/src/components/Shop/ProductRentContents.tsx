@@ -17,7 +17,7 @@ export const ProductRentContents = ({ product, state }) => {
   const dispatch = useDispatch()
 
   return (
-    <div className="h-96">
+    <div className="h-64">
       <Contents
         router={router}
         user={user}
@@ -45,7 +45,6 @@ const productRentContents = {
   OneTime: ({ dispatch, product, state, router }) => {
     const [sizeState, setSizeState] = React.useState(false)
     const [status, setStatus] = React.useState<null | string>(null)
-    const [insurance, setInsurance] = React.useState(false)
 
     const addToCart = () => {
       setStatus('adding')
@@ -58,7 +57,6 @@ const productRentContents = {
             date: state.selectedDate.toJSON(),
             rentalLength: state.oneTime,
             product: product.id,
-            insurance,
           },
           { withCredentials: true },
         )
@@ -111,14 +109,6 @@ const productRentContents = {
               ))}
             </div>
           </div>
-        </SelectorItem>
-
-        <SelectorItem label="Insurance" className="my-2 w-full">
-          <Checkbox
-            onChange={() => setInsurance(!insurance)}
-            value={insurance}
-            label="Include insurance?"
-          />
         </SelectorItem>
 
         <SelectorItem label="Rental time" className="my-2">

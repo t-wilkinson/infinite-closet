@@ -6,6 +6,7 @@ import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
 import { getURL } from '@/utils/api'
+import { Checkbox } from '@/Form/'
 import { Icon } from '@/components'
 
 const rentalLengths = {
@@ -85,6 +86,16 @@ export const CartItem = ({ dispatch, product, ...order }) => {
           <span className="text-warning">
             {!order.dateValid && 'This rental date is no longer valid.'}
           </span>
+
+          <div>
+            <Checkbox
+              onChange={() => {}} // TODO
+              // onChange={() => setInsurance(!insurance)}
+              value={false}
+              // value={insurance}
+              label="Include insurance?"
+            />
+          </div>
         </div>
       </div>
     </div>

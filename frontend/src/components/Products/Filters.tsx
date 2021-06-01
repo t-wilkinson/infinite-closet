@@ -46,7 +46,7 @@ const FilterHeader = () => {
 
   return (
     <div className="flex-row items-end justify-between w-full my-4 px-2 flex-wrap">
-      <FiltersCount className="text-2xl font-subheader" />
+      <FiltersCount className="text-2xl" />
       <button
         onClick={() => {
           router.push({
@@ -76,9 +76,7 @@ const FilterWrapper = ({ selectFilter, filter }) => {
       <div>
         <button onClick={() => selectFilter()}>
           <div className="flex-row items-center justify-between py-4 px-2">
-            <span
-              className={`uppercase ${selected ? 'font-bold' : 'font-normal'}`}
-            >
+            <span className="font-bold">
               {filterData[filter].label ?? filter}
               {numToggled > 0 && ` (${numToggled})`}
             </span>

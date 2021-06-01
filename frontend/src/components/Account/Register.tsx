@@ -57,7 +57,7 @@ export const Register = () => {
 
   return (
     <>
-      <FormHeader label="Join us for free" />
+      <FormHeader label="Join Us For Free" />
       <Warnings warnings={warnings} />
       <div className="flex-row space-x-2">
         <Input {...fields.firstName} />
