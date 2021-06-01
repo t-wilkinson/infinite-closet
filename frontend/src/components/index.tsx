@@ -328,3 +328,17 @@ const icons = {
     </svg>
   ),
 }
+
+export const ScrollUp = () => (
+  <button
+    aria-label="Scroll up"
+    className="flex fixed bottom-0 right-0 items-center justify-center w-12 h-12 bg-white border border-gray rounded-full mr-2 md:mr-4 mb-2"
+    onClick={() => {
+      document
+        .getElementById('_app')
+        .scrollTo({ left: 0, top: 0, behavior: 'smooth' })
+    }}
+  >
+    <Icon name="up" size={18} />
+  </button>
+)

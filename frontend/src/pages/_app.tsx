@@ -1,5 +1,4 @@
 import React from 'react'
-import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Provider } from 'react-redux'
 import axios from 'axios'
@@ -22,7 +21,6 @@ axios.defaults.headers.post['Content-Type'] = 'application/json'
 const App = ({ router, Component, pageProps }) => {
   return (
     <>
-      <Headers />
       <Provider store={store}>
         <Wrapper router={router}>
           <Component {...pageProps} />
@@ -32,8 +30,6 @@ const App = ({ router, Component, pageProps }) => {
   )
 }
 export default App
-
-const Headers = () => <Head></Head>
 
 const Wrapper = ({ router, children }) => {
   // useSaveScrollPos()
@@ -81,6 +77,7 @@ const Wrapper = ({ router, children }) => {
     <>
       <CookieConsent />
       <div
+        id="_app"
         className={`h-screen
         ${headerOpen ? 'overflow-hidden' : 'overflow-y-scroll'}
       `}

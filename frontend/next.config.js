@@ -1,6 +1,10 @@
+const withPWA = require('next-pwa')
 const domain = 'infinitecloset.co.uk'
 
-module.exports = {
+module.exports = withPWA({
+  pwa: {
+    dest: 'public',
+  },
   i18n: {
     locales: ['en-GB', 'en-US'],
     defaultLocale: 'en-GB',
@@ -16,4 +20,4 @@ module.exports = {
       domain,
     ],
   },
-}
+})

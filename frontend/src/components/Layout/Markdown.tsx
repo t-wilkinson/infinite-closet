@@ -5,6 +5,7 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import gfm from 'remark-gfm'
 
+import { ScrollUp } from '@/components'
 import { StrapiDocument } from '@/utils/models'
 
 import Header from './Header'
@@ -119,6 +120,7 @@ export const Markdown = ({ src }) => {
         </div>
       </div>
       <Footer />
+      <ScrollUp />
     </>
   )
 }
