@@ -1,5 +1,29 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 
+const DESCRIPTION =
+  'Rent clothes from independent brands while cutting your carbon footprint, all while being more affordable. By creating an “unlimited” designer closet, we allow women to feel great every day.'
+const icons = [16, 32, 72, 128, 512]
+
+const Icons = ({ rel, sizes }) =>
+  sizes.map((size) => (
+    <link
+      key={size}
+      rel={rel}
+      sizes={`${size}x${size}`}
+      href={`/icons/logo-${size}.png`}
+    />
+  ))
+
+const palette = {
+  pri1: '#ad9253',
+  pri2: '#e7ddcb',
+  sec1: '#39603d',
+  sec2: '#a3bcb6',
+  black: '#000000',
+  white: '#ffffff',
+  red: '#ff3f22',
+}
+
 class MyDocument extends Document {
   static async getInitialProps(ctx) {
     const initialProps = await Document.getInitialProps(ctx)
@@ -16,112 +40,39 @@ class MyDocument extends Document {
             name="apple-mobile-web-app-status-bar-style"
             content="default"
           />
-          <meta name="apple-mobile-web-app-title" content="PWA App" />
-          <meta name="description" content="TODO" />
+          <meta name="apple-mobile-web-app-title" content="Infinite Closet" />
+          <meta name="description" content={DESCRIPTION} />
           <meta name="format-detection" content="telephone=no" />
           <meta name="mobile-web-app-capable" content="yes" />
-          <meta name="theme-color" content="#000000" />
+          <meta name="theme-color" content={palette.pri1} />
 
-          <link
-            rel="apple-touch-icon"
-            sizes="72x72"
-            href="/icons/logo-72.png"
-          />
-          <link
-            rel="apple-touch-icon"
-            sizes="128x128"
-            href="/icons/logo-128.png"
-          />
-          <link
-            rel="apple-touch-icon"
-            sizes="512x512"
-            href="/icons/logo-512.png"
-          />
-
-          <link rel="shortcut icon" href="/favicon.ico" />
-          <link rel="manifest" href="/manifest.json" />
-
-          <link
-            rel="icon"
-            type="image/png"
-            sizes="32x32"
-            href="/icons/logo-32.png"
-          />
-          <link
-            rel="icon"
-            type="image/png"
-            sizes="16x16"
-            href="/icons/logo-16.png"
-          />
-
-          <link
-            rel="mask-icon"
-            href="/static/icons/safari-pinned-tab.svg"
-            color="#5bbad5"
-          />
+          <Icons rel="apple-touch-icon" sizes={[72, 128, 512]} />
+          <Icons rel="icon" sizes={[16, 32]} />
+          <Icons rel="apple-touch-startup-image" sizes={[1024]} />
 
           <meta name="twitter:card" content="summary" />
-          <meta name="twitter:url" content="https://yourdomain.com" />
-          <meta name="twitter:title" content="PWA App" />
           <meta
-            name="twitter:description"
-            content="Best PWA App in the world"
+            name="twitter:url"
+            content={`https://${process.env.NEXT_PUBLIC_DOMAIN}`}
           />
+          <meta name="twitter:title" content="Infinite Closet" />
+          <meta name="twitter:description" content={DESCRIPTION} />
           <meta
             name="twitter:image"
-            content="https://yourdomain.com/static/icons/android-chrome-192x192.png"
+            content={`https://${process.env.NEXT_PUBLIC_DOMAIN}/icons/logo-128`}
           />
-          <meta name="twitter:creator" content="@DavidWShadow" />
           <meta property="og:type" content="website" />
-          <meta property="og:title" content="PWA App" />
-          <meta property="og:description" content="Best PWA App in the world" />
-          <meta property="og:site_name" content="PWA App" />
-          <meta property="og:url" content="https://yourdomain.com" />
+          <meta property="og:title" content="Infinite Closet" />
+          <meta property="og:description" content={DESCRIPTION} />
+          <meta property="og:site_name" content="Infinite Closet" />
+          <meta property="og:url" content={process.env.NEXT_PUBLIC_DOMAIN} />
           <meta
             property="og:image"
-            content="https://yourdomain.com/static/icons/apple-touch-icon.png"
+            content={`https://${process.env.NEXT_PUBLIC_DOMAIN}/icons/logo-128.png`}
           />
 
-          <link
-            rel="apple-touch-startup-image"
-            href="/static/images/apple_splash_2048.png"
-            sizes="2048x2732"
-          />
-          <link
-            rel="apple-touch-startup-image"
-            href="/static/images/apple_splash_1668.png"
-            sizes="1668x2224"
-          />
-          <link
-            rel="apple-touch-startup-image"
-            href="/static/images/apple_splash_1536.png"
-            sizes="1536x2048"
-          />
-          <link
-            rel="apple-touch-startup-image"
-            href="/static/images/apple_splash_1125.png"
-            sizes="1125x2436"
-          />
-          <link
-            rel="apple-touch-startup-image"
-            href="/static/images/apple_splash_1242.png"
-            sizes="1242x2208"
-          />
-          <link
-            rel="apple-touch-startup-image"
-            href="/static/images/apple_splash_750.png"
-            sizes="750x1334"
-          />
-          <link
-            rel="apple-touch-startup-image"
-            href="/static/images/apple_splash_640.png"
-            sizes="640x1136"
-          />
-
-          <meta
-            name="description"
-            content="Rent clothes from independent brands while cutting your carbon footprint, all while being more affordable. By creating an “unlimited” designer closet, we allow women to feel great every day."
-          />
+          <meta name="description" content={DESCRIPTION} />
+          <link rel="manifest" href="/manifest.json" />
           <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link rel="shortcut icon" href="/favicon.ico" />
           <link
