@@ -18,6 +18,7 @@ import { userActions } from '@/User/slice'
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_STRAPI_API_URL
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
+// TODO: fetch avaialable categories and similar for header etc.
 const App = ({ router, Component, pageProps }) => {
   return (
     <>

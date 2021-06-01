@@ -5,7 +5,9 @@ const duration = require("dayjs/plugin/duration");
 const isBetween = require("dayjs/plugin/isBetween");
 const utc = require("dayjs/plugin/utc");
 const timezone = require("dayjs/plugin/timezone");
+const isSameOrAfter = require("dayjs/plugin/isSameOrAfter");
 
+dayjs.extend(isSameOrAfter);
 dayjs.extend(duration);
 dayjs.extend(isBetween);
 dayjs.extend(utc);
@@ -104,15 +106,12 @@ module.exports = {
   toKey,
 
   dateValid(order) {
-    const date = dayjs(order.date).tz("GMT");
-    const today = dayjs().tz("GMT");
+    const date = dayjs(order.date).tz("Europe/London");
+    const today = dayjs().tz("Europe/London");
+
     const isNotSunday = date.day() !== 0;
-    const enoughShippingTime = date.isAfter(
-      today
-        .add(2, "day") // allow at least 2 days for shipping
-        .add(12, "hour"), // shipping service won't deliver items requested after 2 days
-      "hour"
-    );
+    const shippingCutoff = today.add(12, "hour").add(1, "day");
+    const enoughShippingTime = date.isSameOrAfter(shippingCutoff, "day");
 
     return isNotSunday && enoughShippingTime;
   },

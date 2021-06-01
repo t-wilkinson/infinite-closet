@@ -3,17 +3,19 @@ import dayjs, { Dayjs } from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import isBetween from 'dayjs/plugin/isBetween'
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
 import { Icon } from '@/components'
 import useDays from '@/utils/useDays'
 
 import { shopActions } from './slice'
 
+dayjs.extend(isSameOrAfter)
 dayjs.extend(isBetween)
 dayjs.extend(utc)
 dayjs.extend(timezone)
-dayjs.tz.setDefault('Europe/London')
 dayjs.tz.guess()
+dayjs.tz.setDefault('Europe/London')
 // dayjs.locale('en-gb')
 
 export const DatePicker = ({ state, dispatch, rentalLength }) =>
@@ -145,14 +147,10 @@ const Day = ({
 )
 
 const dateAvailable = (date: Dayjs) => {
-  date = date.tz('GMT')
-  const today = dayjs().tz('GMT')
-
+  const today = dayjs()
   const isNotSunday = date.day() !== 0
-  const enoughShippingTime = date.isAfter(
-    today.add(2, 'day').add(12, 'hour'),
-    'hour',
-  )
+  const shippingCutoff = today.add(12, 'hour').add(1, 'day')
+  const enoughShippingTime = date.isSameOrAfter(shippingCutoff, 'day')
 
   return isNotSunday && enoughShippingTime
 }

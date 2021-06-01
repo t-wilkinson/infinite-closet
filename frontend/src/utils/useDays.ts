@@ -2,6 +2,10 @@
  */
 import React from 'react'
 import dayjs, { Dayjs } from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+dayjs.extend(timezone)
+dayjs.tz.guess()
+dayjs.tz.setDefault('Europe/London')
 
 // Given curDay, find all days that would appear on a 7x6 calendar for curDay.Month
 export const useDays = (curDay: Dayjs) => {

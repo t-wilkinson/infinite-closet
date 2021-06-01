@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Divider, Icon } from '@/components'
+import { Divider } from '@/components'
 import { useSelector } from '@/utils/store'
 
 import ProductImages from './ProductImages'
