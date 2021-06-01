@@ -54,7 +54,8 @@ const isFirstRun = async () => {
   return !initHasRun;
 };
 
-const populatePrivateFields = () =>
+const populatePrivateFields = () => {
+    const today = new Date().toJSON();
   strapi
     .query("product")
     .find(
@@ -63,7 +64,7 @@ const populatePrivateFields = () =>
     )
     .then((products) =>
       products.map((product) => {
-        let data = { id: product.id };
+        let data = { id: product.id, published_at: today};
         for (const filter of Object.keys(models)) {
           const slugs = product[filter].map((v) => v.slug).join(",");
           data[`${filter}_`] = slugs;
@@ -71,28 +72,29 @@ const populatePrivateFields = () =>
         strapi.query("product").update({ id: product.id }, data);
       })
     );
+}
 
 module.exports = async () => {
-  // const shouldSetDefaultPermissions = await isFirstRun();
-  // if (shouldSetDefaultPermissions) {
-  //   try {
-  //     console.log("Setting up your starter...");
-  //     const files = fs.readdirSync(`./data/uploads`);
-  //     await createSeedData(files);
-  //     console.log("Ready to go");
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }
-
-  //   await populatePrivateFields();
-  //   await setDefaultPermissions();
-
-  if (process.env.NODE_ENV !== "production") {
-    // const today = new Date().toJSON();
-    // await strapi.query("product").update({}, { published_at: today });
-    // await strapi.query("designer").update({}, { published_at: today });
+  const shouldSetDefaultPermissions = await isFirstRun();
+  if (shouldSetDefaultPermissions) {
+    try {
+      console.log("Setting up your starter...");
+      const files = fs.readdirSync(`./data/uploads`);
+      await createSeedData(files);
+      console.log("Ready to go");
+    } catch (e) {
+      console.log(e);
+    }
   }
+
+    await populatePrivateFields();
+    await setDefaultPermissions();
+
+  // if (process.env.NODE_ENV !== "production") {
+  //   const today = new Date().toJSON();
+  //   await strapi.query("product").update({}, { published_at: today });
+  //   await strapi.query("designer").update({}, { published_at: today });
+  // }
 };
 
 // const getFilesizeInBytes = filepath => {
