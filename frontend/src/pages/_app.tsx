@@ -33,20 +33,7 @@ const App = ({ router, Component, pageProps }) => {
 }
 export default App
 
-const Headers = () => (
-  <Head>
-    <meta
-      name="description"
-      content="Rent clothes from independent brands while cutting your carbon footprint, all while being more affordable. By creating an “unlimited” designer closet, we allow women to feel great every day."
-    />
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Barlow:wght@200;300&family=Cinzel&family=Lato:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-  </Head>
-)
+const Headers = () => <Head></Head>
 
 const Wrapper = ({ router, children }) => {
   // useSaveScrollPos()

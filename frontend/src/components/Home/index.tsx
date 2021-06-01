@@ -19,11 +19,11 @@ export const Home = () => {
               objectFit="cover"
             />
           </div>
-          <div className="absolute h-full justify-start m-8 lg:m-20 items-start">
-            <span className="font-subheader text-5xl lg:text-6xl text-white flex flex-col lg:flex-row lg:space-x-4">
+          <div className="absolute h-full justify-start m-8 lg:m-20 items-end right-0">
+            <span className="font-subheader text-5xl lg:text-6xl text-white flex flex-col items-end lg:flex-row lg:space-x-4">
               <span>Discover.</span> <span>Rent.</span> <span>Love.</span>
             </span>
-            <div className="inline-block overflow-hidden rounded-sm mt-8">
+            <div className="inline-block overflow-hidden rounded-sm mt-4">
               <Link href="/products">
                 <a>
                   <CallToAction className="text-lg">

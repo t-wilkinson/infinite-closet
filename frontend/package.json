@@ -17,6 +17,7 @@
     "dayjs": "^1.10.4",
     "firebase": "^8.6.2",
     "next": "10.x",
+    "next-pwa": "^5.2.21",
     "postcss-flexbugs-fixes": "^4.2.1",
     "postcss-preset-env": "^6.7.0",
     "qs": "^6.10.1",
