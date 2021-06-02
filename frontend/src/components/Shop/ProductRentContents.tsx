@@ -17,7 +17,7 @@ export const ProductRentContents = ({ product, state }) => {
   const dispatch = useDispatch()
 
   return (
-    <div className="h-64">
+    <div className="h-96">
       <Contents
         router={router}
         user={user}
@@ -91,7 +91,7 @@ const productRentContents = {
             </div>
             <div
               className={`
-              w-32 absolute bottom-0 bg-white divide-y transform translate-y-full border border-gray
+              w-32 absolute bottom-0 bg-white divide-y transform translate-y-full border border-gray z-10
               ${sizeState ? '' : 'hidden'}
               `}
             >
@@ -146,12 +146,15 @@ const productRentContents = {
           onSubmit={addToCart}
           className="my-2 self-center rounded-sm w-full"
           disabled={
+            process.env.NODE_ENV === 'production' ||
             !state.selectedDate ||
             state.size === undefined ||
             status === 'adding'
           }
         >
-          {status === 'adding'
+          {process.env.NODE_ENV === 'production'
+            ? 'Coming Soon'
+            : status === 'adding'
             ? 'Adding...'
             : status === 'error'
             ? 'Unable to add to cart'

@@ -20,7 +20,11 @@ const HeaderAside = () => {
           <Header dispatch={dispatch} />
 
           <Divider />
-          <Routes focused={focused} setFocused={setFocused} />
+          <Routes
+            focused={focused}
+            setFocused={setFocused}
+            dispatch={dispatch}
+          />
         </div>
 
         <Divider className="my-2" />
@@ -53,7 +57,7 @@ const Header = ({ dispatch }) => (
   </div>
 )
 
-const Routes = ({ setFocused, focused }) => (
+const Routes = ({ dispatch, setFocused, focused }) => (
   <>
     {routes.map((section, i) => (
       <div key={section.value + '' + i}>
@@ -67,6 +71,7 @@ const Routes = ({ setFocused, focused }) => (
           section.data[0].data.map((v: any, i: number) => (
             <RouteContents
               key={v.label + '' + i}
+              dispatch={dispatch}
               focused={focused}
               section={section}
               item={v}
@@ -120,7 +125,7 @@ const RouteHeader = ({ setFocused, focused, section }) => {
   )
 }
 
-const RouteContents = ({ focused, item, section }) => (
+const RouteContents = ({ dispatch, focused, item, section }) => (
   <div
     className={`bg-gray-light items-start
       ${focused === section.value ? '' : 'hidden'}
@@ -128,7 +133,8 @@ const RouteContents = ({ focused, item, section }) => (
   >
     <Link href={item.href ?? '#'}>
       <a
-        className={`px-4 my-1 py-1
+        onClick={() => dispatch(layoutActions.closeHeader())}
+        className={`px-4 my-1 py-1 block w-full
           ${item.href ? 'hover:underline' : 'cursor-default text-gray-700'}
         `}
       >

@@ -66,7 +66,7 @@ const Product = ({ item }: any) => {
       <div className="m-2 lg:m-4">
         <Link href={`/shop/${item.designer?.slug}/${item.slug}`}>
           <a>
-            <div className="relative w-full h-0 overflow-hidden cursor-pointer aspect-w-2 aspect-h-3">
+            <div className="relative w-full md:h-0 overflow-hidden cursor-pointer md:aspect-w-2 md:aspect-h-3 h-96">
               <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-gray">
                 <ProductImage images={item.images} />
                 <ProductInfo item={item} />
