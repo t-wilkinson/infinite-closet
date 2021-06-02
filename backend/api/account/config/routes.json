@@ -2,6 +2,15 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/slack/chat",
+      "handler": "slack.postMessage",
+      "config": {
+        "policies": []
+      }
+    },
+
+    {
+      "method": "GET",
       "path": "/addresses/verify/:postcode",
       "handler": "addresses.verify",
       "config": {

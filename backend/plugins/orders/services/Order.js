@@ -19,7 +19,7 @@ const rentalLengths = {
   long: 8,
 };
 
-const DAYS_TO_SHIP = 1;
+const DAYS_TO_SHIP = 2;
 const DAYS_TO_RECIEVE = 2;
 const DAYS_TO_CLEAN = 2;
 
@@ -73,6 +73,34 @@ const rentalPrice = {
 //   "two-day": 0,
 // };
 
+function totalAmount(props) {
+  const price = totalPrice(props);
+
+  const amount = {};
+  for (const key in price) {
+    amount[key] = price[key] * SMALLEST_CURRENCY_UNIT;
+  }
+
+  return amount;
+}
+
+function totalPrice({ insurance, cart }) {
+  const insurancePrice = // TODO: performance
+    Object.entries(insurance).filter(
+      ([k, v]) =>
+        v && (cart.find((item) => item.id == k) || { valid: true }).valid // add insurance only if cart item is valid
+    ).length * INSURANCE_PRICE;
+  const subtotal = cartPrice(cart);
+
+  const total = subtotal + insurancePrice;
+
+  return {
+    subtotal,
+    insurance: insurancePrice,
+    total,
+  };
+}
+
 function price(order) {
   // const date = dayjs(order.date);
   // const today = dayjs();
@@ -94,11 +122,13 @@ function price(order) {
 
 const amount = (order) => price(order) * SMALLEST_CURRENCY_UNIT;
 const cartPrice = (cart) =>
-  cart.reduce((price, item) => price + price(item), 0);
+  cart.reduce((total, item) => total + price(item), 0);
 const cartAmount = (cart) =>
-  cart.reduce((price, item) => price + amount(item), 0);
+  cart.reduce((total, item) => total + amount(item), 0);
 
 module.exports = {
+  totalAmount,
+  totalPrice,
   price,
   amount,
   cartPrice,

@@ -3,9 +3,8 @@ const domain = 'infinitecloset.co.uk'
 
 module.exports = withPWA({
   pwa: {
-    // dest: 'public',
     disable: process.env.NODE_ENV === 'development',
-    // dest: 'public', // comment out this line
+    // dest: 'public',
     register: true,
     sw: '/sw.js',
   },

@@ -3,6 +3,7 @@ import Image from 'next/image'
 
 import { getURL } from '@/utils/api'
 import { Icon } from '@/components'
+import { StrapiFile } from '@/utils/models'
 
 type Action =
   | { type: 'focus-image'; index: number }
@@ -122,7 +123,7 @@ const ImagesLarge = ({ images, state, dispatch }) => (
       </button>
       {images
         .slice(state.startIndex, state.startIndex + 3)
-        .map((v: { url: string } & unknown, index: number) => (
+        .map((v: StrapiFile, index: number) => (
           <div
             key={v.url}
             className="w-24 lg:w-32 h-24 lg:h-32 my-2 cursor-pointer relative hover:opacity-75"
@@ -131,6 +132,7 @@ const ImagesLarge = ({ images, state, dispatch }) => (
             }}
           >
             <Image
+              alt={toAlt(images, index)}
               className="Product image"
               layout="fill"
               objectFit="contain"
@@ -151,11 +153,17 @@ const ImagesLarge = ({ images, state, dispatch }) => (
         </div>
       </button>
     </div>
-    <FocusedImage image={images[state.focusedImage]} />
+    <FocusedImage
+      alt={toAlt(images, state.focusedImage)}
+      image={images[state.focusedImage]}
+    />
   </div>
 )
 
-export const FocusedImage = ({ image }) => {
+const toAlt = (images, index) =>
+  images[index].alternativeText || images[0].alternativeText
+
+export const FocusedImage = ({ alt, image }) => {
   const [hover, setHover] = React.useState<{
     clientX: number
     clientY: number
@@ -180,9 +188,9 @@ export const FocusedImage = ({ image }) => {
     >
       <div>
         <Image
+          alt={alt}
           layout="fill"
           objectFit="contain"
-          alt="Main product image"
           src={getURL(image.url)}
         />
       </div>

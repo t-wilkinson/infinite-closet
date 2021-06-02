@@ -85,9 +85,9 @@ const OrdersWrapper = styled(Orders)`
 
 const Header = ({ className }) => (
   <thead className={className}>
-    <tr>
+    <tr className="header__tr">
       <td className="header__td">Status</td>
-      <td className="header__td">Date</td>
+      <td className="header__td">Next Action</td>
     </tr>
   </thead>
 );
@@ -95,6 +95,10 @@ const Header = ({ className }) => (
 const HeaderWrapper = styled(Header)`
   background: #ddd;
   font-weight: 800;
+
+  .header__tr {
+    border: 1px solid black;
+  }
 
   .header__td {
     padding: 0.5rem 0.25rem;

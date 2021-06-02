@@ -52,7 +52,6 @@ const OpenGraph = (product: StrapiProduct) => {
   } = product
   const router = useRouter()
   const url = router.asPath.split('?')[0]
-
   const description = `Rent ${name} by ${designer.name} for only ${shortRentalPrice} only at Infinite Closet.`
   const quantity = Object.values(sizes as { quantity: number }[]).reduce(
     (acc, { quantity }) => acc + quantity,
@@ -64,10 +63,8 @@ const OpenGraph = (product: StrapiProduct) => {
     { property: 'og:url', content: url },
     { property: 'og:type', content: 'og:product' },
     { property: 'og:title', content: `${name} by ${designer.name}` },
-    { property: 'og:locale', content: 'en_GB' },
     { property: 'og:description', content: description },
     images[0] && { property: 'og:image', content: images[0].url },
-    { property: 'og:site_name', content: 'Infinite Closet' },
     { property: 'product:price:amount', content: String(retailPrice) },
     { property: 'product:price:currency', content: 'GBP' },
     {

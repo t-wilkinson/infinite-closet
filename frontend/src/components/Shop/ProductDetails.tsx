@@ -43,11 +43,11 @@ const details = {
           url={createProductURL(product)}
           description={product.description}
         />,
-        <Share.Pinterest
-          url={createProductURL(product)}
-          description={product.description}
-          imageURL={product.images[0]}
-        />,
+        // <Share.Pinterest
+        //   url={createProductURL(product)}
+        //   description={product.description}
+        //   imageURL={product.images[0].url}
+        // />,
       ].map((share, i) => (
         <div key={i} className="w-16 h-8 relative cursor-pointer">
           {share}
@@ -58,4 +58,5 @@ const details = {
 } as const
 
 const createProductURL = ({ slug, designer: { slug: designer_slug } }) =>
-  `/shop/${designer_slug}/${slug}`
+  typeof window !== 'undefined' &&
+  `${process.env.NEXT_PUBLIC_DOMAIN}/shop/${designer_slug}/${slug}`

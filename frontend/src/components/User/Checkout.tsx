@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
+import { fmtPrice } from '@/utils/money'
 import { fetchAPI } from '@/utils/api'
 import { Submit } from '@/Form'
 import { BlueLink } from '@/components'
@@ -24,11 +25,16 @@ const initialState = {
   error: undefined,
   status: null as Status,
   cart: [],
+  insurance: {},
+  total: undefined,
 }
 
 const reducer = (state, action) => {
   // prettier-ignore
   switch (action.type) {
+    case 'toggle-insurance': return {...state, insurance: {...state.insurance,  [action.payload]: !state.insurance[action.payload]}}
+
+    case 'cart-total': return {...state, total: action.payload}
     case 'fill-cart': return { ...state, cart: action.payload }
     case 'remove-cart-item': return { ...state, cart: state.cart.filter((order) => order.id !== action.payload), }
 
@@ -85,6 +91,7 @@ export const Checkout = ({ user, data }) => {
           address: state.address,
           paymentMethod: state.paymentMethod,
           cart: state.cart,
+          insurance: state.insurance,
         },
         { withCredentials: true },
       )
@@ -134,23 +141,37 @@ export const Checkout = ({ user, data }) => {
     }
   }, [user])
 
+  React.useEffect(() => {
+    axios
+      .post('/orders/cart/total/price', {
+        insurance: state.insurance,
+        cart: state.cart,
+      })
+      .then((res) => dispatch({ type: 'cart-total', payload: res.data }))
+      .catch((err) => console.error(err))
+  }, [state.cart, state.insurance])
+
   return (
     <div className="w-full items-center bg-gray-light px-4">
       <div className="w-full justify-center max-w-screen-xl flex-row space-x-4 my-4">
-        <div className="w-2/5">
-          <SideItem>
+        <div className="w-2/5 space-y-4">
+          <SideItem label="Addresses">
             <Address state={state} dispatch={dispatch} user={user} />
           </SideItem>
-          <div className="my-2" />
-          <SideItem>
+          <SideItem label="Payment Methods">
             <Payment state={state} dispatch={dispatch} user={user} />
           </SideItem>
-          {/* TODO: add cart summary */}
-          {/* <SideItem> */}
-          {/*   <Summary state={state} /> */}
-          {/* </SideItem> */}
+          <SideItem label="Summary">
+            <Summary state={state} />
+          </SideItem>
         </div>
-        {state.cart.length === 0 ? (
+        {state.status === 'success' ? (
+          <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
+            <span className="font-bold text-xl flex flex-col items-center">
+              Thank you for your purchase!
+            </span>
+          </div>
+        ) : state.cart.length === 0 ? (
           <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
             <span className="font-bold text-xl flex flex-col items-center">
               <div>Hmm... Your cart looks empty. </div>
@@ -164,11 +185,16 @@ export const Checkout = ({ user, data }) => {
           </div>
         ) : (
           <div className="w-full">
-            <Cart cart={state.cart} dispatch={dispatch} />
+            <Cart
+              cart={state.cart}
+              dispatch={dispatch}
+              insurance={state.insurance}
+            />
             <Submit
               onSubmit={checkout}
               className=""
               disabled={
+                !(state.paymentMethod && state.address) ||
                 ['checking-out'].includes(state.status) ||
                 state.cart.every(isOrderValid)
               }
@@ -194,8 +220,14 @@ export const Checkout = ({ user, data }) => {
 
 const isOrderValid = (order) => order.available <= 0 || !order.dateValid
 
-const SideItem = (props: object) => (
-  <div className="space-y-2 bg-white p-3 rounded-sm " {...props} />
+const SideItem = ({ label, children }) => (
+  <div className="space-y-2 bg-white p-3 rounded-sm ">
+    <span className="font-subheader text-xl lg:text-2xl my-2">
+      {label}
+      <div className="w-full h-px bg-pri mt-2 -mb-2" />
+    </span>
+    {children}
+  </div>
 )
 
 const Address = ({ state, user, dispatch }) => (
@@ -227,8 +259,26 @@ const Payment = ({ state, user, dispatch }) => (
   </>
 )
 
-const Summary = ({ state }) => {
-  return <> </>
+const Summary = ({ state: { total } }) => {
+  if (!total) {
+    return <div />
+  }
+
+  return (
+    <div>
+      <Price label="Subtotal" price={total.subtotal} />
+      <Price label="Insurance" price={total.insurance} />
+      <div className="h-px bg-pri my-1" />
+      <Price label="Total" price={total.total} className="font-bold" />
+    </div>
+  )
 }
+
+const Price = ({ label, price, className = '' }) => (
+  <div className={`flex-row justify-between ${className}`}>
+    <span>{label}</span>
+    <span>{fmtPrice(price)}</span>
+  </div>
+)
 
 export default Checkout

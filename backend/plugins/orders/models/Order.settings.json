@@ -20,10 +20,14 @@
         "shipping",
         "cleaning",
         "completed",
-        "dropped"
+        "dropped",
+        "error"
       ],
       "default": "cart",
       "required": true
+    },
+    "message": {
+      "type": "string"
     },
     "size": {
       "type": "string",

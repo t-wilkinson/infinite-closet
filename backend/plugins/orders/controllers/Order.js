@@ -19,6 +19,7 @@ const hived = {
   parcels: "https://api.airtable.com/v0/appDFURl2nEJd1XEF/Parcels",
   postcodes: "https://api.airtable.com/v0/app5ZWdAtj21xnZrh/Postcodes",
   key: "keyzCmMhMH9fvKBPV",
+  shippingClass: "Next-Day", // Same-Day Next-Day 2-Day
 };
 
 module.exports = {
@@ -28,7 +29,7 @@ module.exports = {
     const body = ctx.request.body;
     const user = ctx.state.user;
 
-    if (!["cart", "list"].includes(body.status)) {
+    if (strapi.plugins["orders"].services.order.inProgress(body.status)) {
       return;
     }
 
@@ -123,6 +124,7 @@ module.exports = {
             address: body.address,
             paymentMethod: body.paymentMethod,
             status: "planning",
+            insurance: body.insurance[order.id] || false,
           }
         );
       } else {
@@ -141,13 +143,14 @@ module.exports = {
     }, []);
     strapi.log.info("result -> %o", result);
 
-    const amount = await strapi.plugins["orders"].services.order.cartAmount(
-      cart
-    );
+    const amount = await strapi.plugins["orders"].services.order.totalAmount({
+      cart,
+      insurance: body.insurance,
+    });
 
     stripe.paymentIntents
       .create({
-        amount,
+        amount: amount.total,
         currency: "gbp",
         customer: user.customer,
         payment_method: body.paymentMethod,
@@ -171,14 +174,33 @@ module.exports = {
           to: user.email,
           subject: "Thank you for your purchase",
           html: `We thank you for your purchase of £${
-            amount / 100
+            amount.total / 100
           } and hope you enjoyed the experience.`,
         });
+        return orders;
       })
 
       .catch((err) => strapi.log.error(err));
 
     ctx.send({ status: 200, result });
+  },
+
+  async totalPrice(ctx) {
+    const body = ctx.request.body;
+    const total = strapi.plugins["orders"].services.order.totalPrice({
+      cart: body.cart,
+      insurance: body.insurance,
+    });
+    ctx.send(total);
+  },
+
+  async totalAmount(ctx) {
+    const body = ctx.request.body;
+    const total = strapi.plugins["orders"].services.order.totalAmount({
+      cart: body.cart,
+      insurance: body.insurance,
+    });
+    ctx.send(total);
   },
 
   async amount(ctx) {
@@ -189,7 +211,9 @@ module.exports = {
   async ship(ctx) {
     const { order } = ctx.request.body;
     const { address } = order;
-    const amount = await strapi.plugins["orders"].services.order.amount(order);
+    const amount = await strapi.plugins["orders"].services.order.totalAmount(
+      order
+    );
     const user = order.user;
     const hivedBody = {
       Collection: "Infinite Closet",
@@ -197,15 +221,15 @@ module.exports = {
       Collection_Town: "London",
       Collection_Postcode: "SW6 5EE",
       Collection_Email_Address: "sarah.korich@infinitecloset.co.uk",
-      Recipient: address.first_name + " " + address.last_name,
+      Recipient: address.firstName + " " + address.lastName,
       Recipient_Address_Line_1: address.address,
       Recipient_Town: address.town,
       Recipient_Postcode: address.postcode,
       Recipient_Email_Address: user.email,
-      Recipient_Phone_Number: user.phone_number,
-      Shipping_Class: "Next-Day", // Same-Day Next-Day 2-Day
+      Recipient_Phone_Number: user.phoneNumber,
+      Shipping_Class: hived.shippingClass,
       Sender: "Infinite Closet",
-      Value_GBP: amount / 100,
+      Value_GBP: amount.total / 100,
       // Sender_Chosen_Collection_Date: MM/DD/YYYY
       // Sender_Chosen_Delivery_Date: MM/DD/YYYY
     };
@@ -217,7 +241,7 @@ module.exports = {
           Authorization: "Bearer " + hived.key,
           "Content-Type": "application/json",
         },
-        body: hivedBody,
+        body: JSON.stringify(hivedBody),
       })
         .then((res) => res.json())
         .then((res) =>
@@ -229,11 +253,35 @@ module.exports = {
           strapi.plugins["email"].services.email.send({
             to: order.user.email,
             subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
-            html: ``,
+            html: `Expect a delivery on ${dayjs(order.date).format(
+              "ddd, MMM DD"
+            )}.`,
           });
         })
         .catch((err) => {
-          // TODO: something failed, contact user with next step to take
+          strapi.query("order", "orders").update(
+            { id: order.id },
+            {
+              status: "error",
+              message: `Shipping order failed with error: ${err}.`,
+            }
+          );
+
+          strapi.plugins["email"].services.email.send({
+            to: "info@infinitecloset.co.uk",
+            subject: `Failed to ship order`,
+            html: `
+            Order:
+              ${JSON.stringify(order, null, 4)}
+
+            Error:
+              ${JSON.stringify(err, null, 4)}
+            `,
+            html: `Expect a delivery on ${dayjs(order.date).format(
+              "ddd, MMM DD"
+            )}.`,
+          });
+
           strapi.log.error(err);
         });
     } else {
@@ -246,14 +294,33 @@ module.exports = {
             shipment: crypto.randomBytes(16).toString("base64"),
           }
         )
+
         .then(() => {
           strapi.plugins["email"].services.email.send({
             to: `${order.user.email} <info+test@infinitecloset.co.uk>`,
             subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
-            html: ``,
+            html: `Expect a delivery on ${dayjs(order.date).format(
+              "ddd, MMM DD"
+            )}.`,
           });
         })
+
         .catch((err) => {
+          strapi.plugins["email"].services.email.send({
+            to: "info@infinitecloset.co.uk",
+            subject: `Failed to ship order`,
+            html: `
+            Order:
+              ${JSON.stringify(order, null, 4)}
+
+            Error:
+              ${JSON.stringify(err, null, 4)}
+            `,
+            html: `Expect a delivery on ${dayjs(order.date).format(
+              "ddd, MMM DD"
+            )}.`,
+          });
+
           strapi.log.error(err);
         });
     }
@@ -289,7 +356,6 @@ module.exports = {
 };
 
 /* Incase we want to charge user during shipment(not checkout)
-
 stripe.paymentIntents
   .create({
     amount,

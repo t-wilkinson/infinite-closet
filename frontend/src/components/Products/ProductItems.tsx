@@ -13,7 +13,7 @@ export const ProductItems = ({ data, loading }) => {
 
   if (data.productsCount === 0) {
     return (
-      <div className="items-center justify-center flex-grow px-1 h-64">
+      <div className="items-center justify-center flex-grow px-1 h-64 max-h-screen">
         <span className="py-8 text-xl font-bold">
           Sorry, we couldn't find any matches.
         </span>
@@ -85,7 +85,7 @@ const ProductImage = ({ images }) => (
     {/*   <Icon size={20} name="heart" /> */}
     {/* </div> */}
     <Image
-      alt="Product image"
+      alt={images[0].alternativeText}
       src={getURL(images[0].url)}
       layout="fill"
       objectFit="contain"

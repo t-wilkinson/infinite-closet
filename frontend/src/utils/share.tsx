@@ -14,19 +14,14 @@ interface SharePinterestConfig {
   imageURL: string
 }
 
-// const createParams = (obj: { [key: string]: string | undefined }) =>
-//   Object.entries(obj)
-//     .filter(([, v]) => v !== undefined)
-//     .map(([k, v]) => k + '=' + encodeURI(v as string))
-//     .join('&')
-
-const ratio = 32 / 13
-const size = 28
-const shareStyle = { width: size * ratio, height: size }
+// const ratio = 32 / 13
+// const size = 28
+// const shareStyle = { width: size * ratio, height: size }
 
 export default {
   Facebook: ({ url, description }: ShareFacebookConfig) => (
     <a
+      target="_blank"
       href={
         'https://www.facebook.com/sharer/sharer.php?' +
         qs.stringify({
@@ -50,13 +45,13 @@ export default {
 
   Pinterest: ({ url, description, imageURL }: SharePinterestConfig) => (
     <a
+      target="_blank"
       href={
-        'https://www.pinterest.com/pin/create/button?' +
+        'http://pinterest.com/pin/create/button/?' +
         qs.stringify({
           url,
           description,
-          media: imageURL,
-          method: 'button',
+          media: process.env.NEXT_PUBLIC_DOMAIN + imageURL,
         })
       }
     >
@@ -69,7 +64,3 @@ export default {
     </a>
   ),
 }
-
-// app_id=
-// https://www.facebook.com/sharer/sharer.php?u=%2Fshop%2Fdesigner-two%2Fshirt&quote=asdf&app_id=&redirect_uri=%2Fshop%2Fdesigner-two%2Fshirt&display=popup&kid_directed_site=0
-// https://www.facebook.com/sharer/sharer.php?u=%2Fshop%2Fdesigner-two%2Fshirt&quote=asdf&redirect_uri=%2Fshop%2Fdesigner-two%2Fshirt&display=popup&kid_directed_site=0

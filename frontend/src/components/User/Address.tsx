@@ -10,10 +10,6 @@ import { userActions } from '@/User/slice'
 export const Addresses = ({ addresses, state, dispatch }) => {
   return (
     <div className="space-y-4">
-      <span className="font-subheader text-xl lg:text-2xl my-2">
-        Addresses
-        <div className="w-full h-px bg-pri mt-2 -mb-2" />
-      </span>
       {addresses.map((address) => (
         <Address
           key={address.id}

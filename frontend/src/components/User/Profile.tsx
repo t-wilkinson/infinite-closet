@@ -27,7 +27,7 @@ export const Profile = () => {
   })
 
   return (
-    <div className="space-y-4">
+    <div>
       <span className="font-subheader text-2xl">Profile</span>
       <Fieldset name="Account Details">
         <Field {...accountDetailFields.firstName} />
@@ -64,16 +64,16 @@ const SubmitFields = ({ onSubmit, disabled }) => (
 )
 
 const Fieldset = ({ name, children }) => (
-  <>
-    <span className="">{name}</span>
-    <Divider />
+  <div className="my-4">
+    <span className="font-bold">{name}</span>
+    <Divider className="my-2" />
     <fieldset
       className="grid grid-cols-2 w-full gap-x-4 max-w-screen-sm"
       name={name}
     >
       {children}
     </fieldset>
-  </>
+  </div>
 )
 
 const Field = ({ ...props }: FieldType) => (

@@ -14,18 +14,14 @@ const DAYS_TO_SHIP = 2;
 const DAYS_TO_RECIEVE = 2;
 const DAYS_TO_CLEAN = 2;
 
-function toRange({ date, length }) {
+function toRange({ date, rentalLength }) {
   date = dayjs(date);
-  const rentalLength = rentalLengths[length];
+  rentalLength = rentalLengths[rentalLength];
   return {
-    start: date.subtract(DAYS_TO_SHIP, "day"),
-    returning: date.add(dayjs.duration({ days: rentalLength })),
-    cleaning: date.add(
-      dayjs.duration({ days: rentalLength + DAYS_TO_RECIEVE })
-    ),
-    end: date.add(
-      dayjs.duration({ days: rentalLength + DAYS_TO_RECIEVE + DAYS_TO_CLEAN })
-    ),
+    start: date.subtract(DAYS_TO_SHIP, "days"),
+    returning: date.add(rentalLength, "days"),
+    cleaning: date.add(rentalLength + DAYS_TO_RECIEVE, "days"),
+    end: date.add(rentalLength + DAYS_TO_RECIEVE + DAYS_TO_CLEAN, "days"),
   };
 }
 

@@ -1,29 +1,14 @@
 "use strict";
 
 const fs = require("fs");
-const path = require("path");
 const models = require("../../data/data.js").models;
 
-const {
-  categories,
-  // products
-} = require("../../data/data");
-
-// const findPublicRole = async () => {
-//   const result = await strapi.query("role", "users-permissions").findOne({
-//     type: "public",
-//   });
-//   return result;
-// };
+const { categories } = require("../../data/data");
 
 const setDefaultPermissions = async () => {
-  // const role = await findPublicRole();
   const permissions_applications = await strapi
     .query("permission", "users-permissions")
-    .find({
-      // type: "application",
-      // role: role.id,
-    });
+    .find({});
   await Promise.all(
     permissions_applications.map((p) =>
       strapi.query("permission", "users-permissions").update(
@@ -55,8 +40,8 @@ const isFirstRun = async () => {
 };
 
 const populatePrivateFields = () => {
-    const today = new Date().toJSON();
-  strapi
+  const today = new Date().toJSON();
+  return strapi
     .query("product")
     .find(
       {},
@@ -64,7 +49,7 @@ const populatePrivateFields = () => {
     )
     .then((products) =>
       products.map((product) => {
-        let data = { id: product.id, published_at: today};
+        let data = { id: product.id, published_at: today };
         for (const filter of Object.keys(models)) {
           const slugs = product[filter].map((v) => v.slug).join(",");
           data[`${filter}_`] = slugs;
@@ -72,7 +57,7 @@ const populatePrivateFields = () => {
         strapi.query("product").update({ id: product.id }, data);
       })
     );
-}
+};
 
 module.exports = async () => {
   const shouldSetDefaultPermissions = await isFirstRun();
@@ -87,39 +72,35 @@ module.exports = async () => {
     }
   }
 
+  if (process.env.NODE_ENV !== "production") {
     await populatePrivateFields();
     await setDefaultPermissions();
-
-  // if (process.env.NODE_ENV !== "production") {
-  //   const today = new Date().toJSON();
-  //   await strapi.query("product").update({}, { published_at: today });
-  //   await strapi.query("designer").update({}, { published_at: today });
-  // }
+  }
 };
 
-// const getFilesizeInBytes = filepath => {
-//   var stats = fs.statSync(filepath);
-//   var fileSizeInBytes = stats["size"];
-//   return fileSizeInBytes;
-// };
-
 const createSeedData = async (files) => {
-  // const handleFiles = (data) => {
-  //   var file = files.find(x => x.includes(data.slug));
-  //   file = `./data/uploads/${file}`;
+  const getFilesizeInBytes = (filepath) => {
+    var stats = fs.statSync(filepath);
+    var fileSizeInBytes = stats["size"];
+    return fileSizeInBytes;
+  };
 
-  //   const size = getFilesizeInBytes(file);
-  //   const array = file.split(".");
-  //   const ext = array[array.length - 1]
-  //   const mimeType = `image/.${ext}`;
-  //   const image = {
-  //     path: file,
-  //     name: `${data.slug}.${ext}`,
-  //     size,
-  //     type: mimeType
-  //   };
-  //   return image
-  // }
+  const handleFiles = (data) => {
+    var file = files.find((x) => x.includes(data.slug));
+    file = `./data/uploads/${file}`;
+
+    const size = getFilesizeInBytes(file);
+    const array = file.split(".");
+    const ext = array[array.length - 1];
+    const mimeType = `image/.${ext}`;
+    const image = {
+      path: file,
+      name: `${data.slug}.${ext}`,
+      size,
+      type: mimeType,
+    };
+    return image;
+  };
 
   const categoriesPromises = categories.map(({ ...rest }) => {
     return strapi.services.category.create({
@@ -127,27 +108,5 @@ const createSeedData = async (files) => {
     });
   });
 
-  // const productsPromises = products.map(async product => {
-  //   const image = handleFiles(product)
-
-  //   const files = {
-  //     image
-  //   };
-
-  //   try {
-  //     const entry = await strapi.query('product').create(product);
-
-  //     if (files) {
-  //       await strapi.entityService.uploadFiles(entry, files, {
-  //         model: 'product'
-  //       });
-  //     }
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-
-  // });
-
   await Promise.all(categoriesPromises);
-  // await Promise.all(productsPromises);
 };

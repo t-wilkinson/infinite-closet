@@ -23,10 +23,6 @@ const toTitleCase = (string: string) =>
 export const PaymentMethods = ({ user, state, dispatch }) => {
   return (
     <div className="space-y-4">
-      <span className="font-subheader text-xl lg:text-2xl my-2">
-        Payment Methods
-        <div className="w-full h-px bg-pri mt-2 -mb-2 " />
-      </span>
       {state.paymentMethods.map((paymentMethod) => (
         <PaymentMethod
           key={paymentMethod.id}

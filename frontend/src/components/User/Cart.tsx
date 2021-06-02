@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
+import { fmtPrice } from '@/utils/money'
 import { getURL } from '@/utils/api'
 import { Checkbox } from '@/Form/'
 import { Icon } from '@/components'
@@ -14,17 +15,24 @@ const rentalLengths = {
   long: 8,
 }
 
-export const Cart = ({ dispatch, cart }) => {
+export const Cart = ({ dispatch, cart, insurance }) => {
   return (
     <div className="w-full space-y-2">
-      {cart.map((item) => (
-        <CartItem key={item.id} dispatch={dispatch} {...item} />
-      ))}
+      {cart.map((item) => {
+        return (
+          <CartItem
+            key={item.id}
+            dispatch={dispatch}
+            insurance_={insurance[item.id]}
+            {...item}
+          />
+        )
+      })}
     </div>
   )
 }
 
-export const CartItem = ({ dispatch, product, ...order }) => {
+export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
   const date = dayjs.utc(order.date).local() // order.date is utc
   const startDate = date.format('ddd, MMM D')
   const endDate = date
@@ -60,20 +68,26 @@ export const CartItem = ({ dispatch, product, ...order }) => {
           objectFit="contain"
         />
       </div>
+
       <div className="lg:flex-row w-full items-start lg:items-center lg:justify-between">
         <div>
           <span>
             {product.name} by <Bold>{product.designer.name}</Bold>
           </span>
-          <span className={`${order.dateValid ? '' : 'text-warning'}`}>
-            {startDate} - {endDate}
-          </span>
+          <div className="flex flex-row items-center">
+            <span className={` ${order.dateValid ? '' : 'text-warning'} `}>
+              {startDate} - {endDate}
+            </span>
+            {!order.dateValid && (
+              <Hover>This rental date is no longer valid.</Hover>
+            )}
+          </div>
           <span>{order.size}</span>
           <span>
-            <Bold>£{order.price}</Bold>
+            <Bold>{fmtPrice(order.price)}</Bold>
           </span>
         </div>
-        <div className="items-end">
+        <div className="items-start lg:items-end">
           <span>
             {order.available === undefined
               ? ``
@@ -83,21 +97,43 @@ export const CartItem = ({ dispatch, product, ...order }) => {
               ? `There are not enough available items`
               : `There are ${order.available} items left`}
           </span>
-          <span className="text-warning">
-            {!order.dateValid && 'This rental date is no longer valid.'}
-          </span>
 
-          <div>
+          <div className="relative flex-row items-center">
             <Checkbox
-              onChange={() => {}} // TODO
-              // onChange={() => setInsurance(!insurance)}
-              value={false}
-              // value={insurance}
-              label="Include insurance?"
+              onChange={() =>
+                dispatch({ type: 'toggle-insurance', payload: order.id })
+              }
+              value={insurance_}
+              label="Include insurance"
             />
+            <Hover>
+              We offer damage protection with every item, which renters can opt
+              in to purchase for £5 per order. Damage protection covers the cost
+              of the repair (I.e.—stain removal, broken zippers, missing
+              beading), up to a max of £50. This does not cover: Damage beyond
+              repair Theft or loss of item Damages beyond the £50 repair fee
+            </Hover>
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+const Hover = ({ children }) => {
+  const [hover, setHover] = React.useState(false)
+  return (
+    <div
+      className="relative p-1 ml-1 w-4 h-4 bg-sec-light rounded-full items-center justify-center text-sm"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      <span className="text-black">?</span>
+      {hover && (
+        <div className="p-2 z-10 border-gray border rounded-md bg-white absolute top-0 left-0 m-4 w-64 text-norm text-left">
+          {children}
+        </div>
+      )}
     </div>
   )
 }

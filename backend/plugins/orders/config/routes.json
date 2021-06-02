@@ -26,6 +26,23 @@
     },
 
     {
+      "method": "POST",
+      "path": "/cart/total/price",
+      "handler": "Order.totalPrice",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/cart/total/amount",
+      "handler": "Order.totalAmount",
+      "config": {
+        "policies": []
+      }
+    },
+
+    {
       "method": "GET",
       "path": "/cart/:user_id",
       "handler": "Order.getCart",

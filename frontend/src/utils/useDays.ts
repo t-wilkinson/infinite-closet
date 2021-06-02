@@ -9,7 +9,9 @@ dayjs.tz.setDefault('Europe/London')
 
 // Given curDay, find all days that would appear on a 7x6 calendar for curDay.Month
 export const useDays = (curDay: Dayjs) => {
-  const [date, setDate] = React.useState(curDay ?? dayjs())
+  const [date, setDate] = React.useState(
+    curDay ?? dayjs().millisecond(0).second(0).minute(0).hour(0),
+  )
 
   const prevMonth: Dayjs[] = []
   const nextMonth: Dayjs[] = []

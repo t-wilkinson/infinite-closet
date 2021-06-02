@@ -98,6 +98,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
         onClick={() => {
           const page = pageNumber > 1 ? pageNumber - 1 : pageNumber
           if (page !== pageNumber) {
+            document.getElementById('_app').scrollTo({ top: 0 })
             router.push({
               pathname: router.pathname,
               query: { ...router.query, page },
@@ -116,6 +117,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
         onClick={() => {
           const page = pageNumber < totalPages ? pageNumber + 1 : pageNumber
           if (page !== pageNumber) {
+            document.getElementById('_app').scrollTo({ top: 0 })
             router.push({
               pathname: router.pathname,
               query: { ...router.query, page },

@@ -75,7 +75,7 @@ export const Register = () => {
         />
       </Input>
       <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
-        Sign Up
+        Register
       </Submit>
     </>
   )

@@ -102,13 +102,25 @@ module.exports = {
         "products.*",
         knex.raw("to_json(upload_file.*) as image"),
         knex.raw("to_json(designers.*) as designer")
+        // knex.raw("to_json(components_custom_sizes.*) as sizes")
       )
       .rank("rank", "upload_file_morph.order", "products.id")
       .from("products")
       .join("upload_file_morph", "products.id", "upload_file_morph.related_id")
       .join("upload_file", "upload_file_morph.upload_file_id", "upload_file.id")
       .join("designers", "products.designer", "designers.id")
+      // .join(
+      //   "products_components",
+      //   "products.id",
+      //   "products_components.product_id"
+      // )
+      // .join(
+      //   "components_custom_sizes",
+      //   "products_components.component_id",
+      //   "components_custom_sizes.id"
+      // )
       .orderBy(..._paging.sort.split(":"))
+      // .where("products_components.component_type", "components_custom_sizes")
       .whereRaw(...toRaw(_where));
 
     /* results contains many duplicate products.

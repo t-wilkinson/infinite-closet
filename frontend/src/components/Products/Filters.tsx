@@ -83,7 +83,7 @@ const FilterWrapper = ({ selectFilter, filter }) => {
             <Icon name={selected ? 'down' : 'up'} size={12} />
           </div>
         </button>
-        <div className={`bg-gray-light p-4 ${selected ? 'flex' : 'hidden'}`}>
+        <div className={`p-4 ${selected ? 'flex' : 'hidden'}`}>
           <Filter key={filter} filter={filter} panel={panel} />
         </div>
       </div>
