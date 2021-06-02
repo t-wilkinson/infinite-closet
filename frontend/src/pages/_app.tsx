@@ -1,5 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 import { Provider } from 'react-redux'
 import axios from 'axios'
 import firebase from 'firebase/app'
@@ -13,6 +14,7 @@ import Popup from '@/Account/Popup'
 import { accountActions } from '@/Account/slice'
 import { layoutActions } from '@/Layout/slice'
 import { userActions } from '@/User/slice'
+const FourOFour = dynamic(() => import('@/pages/404'))
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_STRAPI_API_URL
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -30,6 +32,23 @@ const App = ({ router, Component, pageProps }) => {
   )
 }
 export default App
+
+const allowedPages = [
+  '/404',
+  'about-us',
+  '/account/forgot-password',
+  '/account/register',
+  '/account/reset-password',
+  '/account/signin',
+  'contact-us',
+  'faqs',
+  '/',
+  '/privacy',
+  '/products/[...slug]/',
+  '/shop/[designer]/[item]',
+  '/terms-and-conditions',
+  '/user/profile',
+]
 
 const Wrapper = ({ router, children }) => {
   // useSaveScrollPos()
@@ -72,6 +91,10 @@ const Wrapper = ({ router, children }) => {
       })
       .catch(() => {})
   }, [])
+
+  if (!allowedPages.includes(router.pathname)) {
+    children = <FourOFour />
+  }
 
   return (
     <>

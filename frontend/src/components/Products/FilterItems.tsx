@@ -50,6 +50,11 @@ export const FilterItems: FilterItems = {
     const matchedIndexes = useMatches
       ? matches
       : designers.map((_: unknown, i: number) => i)
+    const sortedMatchedIndexes = matchedIndexes.sort((i1, i2) =>
+      Number(
+        designers[i1].slug.toUpperCase() > designers[i2].slug.toUpperCase(),
+      ),
+    )
 
     return (
       <>
@@ -60,7 +65,7 @@ export const FilterItems: FilterItems = {
             </div>
           </Input>
           <div className="h-full space-y justify-start overflow-y-scroll">
-            {matchedIndexes.map((index: number) => {
+            {sortedMatchedIndexes.map((index: number) => {
               let { slug, name } = designers[index]
               return (
                 <Checkbox
@@ -235,14 +240,16 @@ const pickFgColorFromBgColor = (
   return r * 0.299 + g * 0.587 + b * 0.114 > 186 ? darkColor : lightColor
 }
 
-const FilterCheckboxes = ({ panel, data = undefined }) => {
-  return data.map((v: { slug: string; name: string }) => (
-    <div key={v.slug} className="py-0.5">
-      <Checkbox
-        onChange={() => panel.toggle(v.slug)}
-        value={panel.values.includes(v.slug)}
-        label={<span className="whitespace-no-wrap">{v.name}</span>}
-      />
-    </div>
-  ))
+const FilterCheckboxes = ({ panel, data }) => {
+  return data
+    ?.sort((v1, v2) => Number(v1.slug > v2.slug))
+    .map((v: { slug: string; name: string }) => (
+      <div key={v.slug} className="py-0.5">
+        <Checkbox
+          onChange={() => panel.toggle(v.slug)}
+          value={panel.values.includes(v.slug)}
+          label={<span className="whitespace-no-wrap">{v.name}</span>}
+        />
+      </div>
+    ))
 }

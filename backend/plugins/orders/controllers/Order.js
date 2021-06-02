@@ -19,7 +19,7 @@ const hived = {
   parcels: "https://api.airtable.com/v0/appDFURl2nEJd1XEF/Parcels",
   postcodes: "https://api.airtable.com/v0/app5ZWdAtj21xnZrh/Postcodes",
   key: "keyzCmMhMH9fvKBPV",
-  shippingClass: "Next-Day", // Same-Day Next-Day 2-Day
+  shippingClass: "2-Day", // Same-Day Next-Day 2-Day
 };
 
 module.exports = {
@@ -233,6 +233,7 @@ module.exports = {
   },
 
   async ship(ctx) {
+    // TODO: also request an item to be picked back up!!!
     const { order } = ctx.request.body;
     const { address } = order;
     const amount = await strapi.plugins["orders"].services.order.totalAmount(

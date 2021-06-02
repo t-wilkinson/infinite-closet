@@ -140,7 +140,7 @@ module.exports = {
     const today = dayjs().tz("Europe/London");
 
     const isNotSunday = date.day() !== 0;
-    const shippingCutoff = today.add(12, "hour").add(1, "day");
+    const shippingCutoff = today.add(12, "hour").add(DAYS_TO_SHIP, "day");
     const enoughShippingTime = date.isSameOrAfter(shippingCutoff, "day");
 
     return isNotSunday && enoughShippingTime;
