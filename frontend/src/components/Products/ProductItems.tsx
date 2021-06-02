@@ -86,7 +86,7 @@ const ProductImage = ({ images }) => (
     {/* </div> */}
     <Image
       alt={images[0].alternativeText}
-      src={getURL(images[0].url)}
+      src={getURL(images[0].formats.small.url)}
       layout="fill"
       objectFit="contain"
     />

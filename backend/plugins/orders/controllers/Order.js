@@ -60,6 +60,30 @@ module.exports = {
     });
   },
 
+  async status(ctx) {
+    const user = ctx.state.user;
+
+    let orders = await strapi
+      .query("order", "orders")
+      .find({ user: user.id }, [
+        "product",
+        "product.designer",
+        "product.images",
+      ]);
+
+    // add price to each order
+    orders = orders.map((order) => {
+      return {
+        ...order,
+        price: strapi.plugins["orders"].services.order.price(order),
+      };
+    });
+
+    ctx.send({
+      orders,
+    });
+  },
+
   async getCart(ctx) {
     const user = ctx.state.user;
 

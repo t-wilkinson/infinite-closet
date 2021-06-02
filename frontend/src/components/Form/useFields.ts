@@ -78,7 +78,7 @@ export const useFields: (config: FieldsConfig) => Fields = (config) => {
   const fields = Object.entries(config).reduce((acc, [field, v]) => {
     v = Object.assign(
       {
-        label: toTitlecase(field),
+        label: toTitleCase(field),
         type: 'text',
         constraints: '',
         onChange: () => {},
@@ -103,7 +103,7 @@ export const useFields: (config: FieldsConfig) => Fields = (config) => {
 }
 export default useFields
 
-const toTitlecase = (value: string) => {
+const toTitleCase = (value: string) => {
   let titlecase = value.replace(/([A-Z])/g, ' $1')
   titlecase = titlecase.charAt(0).toUpperCase() + titlecase.slice(1)
   return titlecase

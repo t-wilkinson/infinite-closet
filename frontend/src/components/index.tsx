@@ -342,3 +342,21 @@ export const ScrollUp = () => (
     <Icon name="up" size={18} />
   </button>
 )
+
+export const Hover = ({ children }) => {
+  const [hover, setHover] = React.useState(false)
+  return (
+    <div
+      className="relative p-1 ml-1 w-4 h-4 bg-sec-light rounded-full items-center justify-center text-sm"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      <span className="text-black">?</span>
+      {hover && (
+        <div className="p-2 z-10 border-gray border rounded-md bg-white absolute top-0 left-0 m-4 w-64 text-norm text-left">
+          {children}
+        </div>
+      )}
+    </div>
+  )
+}

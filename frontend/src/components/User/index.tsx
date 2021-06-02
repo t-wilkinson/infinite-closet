@@ -15,24 +15,24 @@ export const User = ({ children }) => {
 }
 export default User
 
-const SideMenu = () => (
-  <div className="w-full mb-8 sm:mb-0 sm:w-64 bg-gray-light p-4 rounded-sm items-start">
-    <SideLink href="/user/profile">Profile</SideLink>
-    {/* <SideLink href="/user/checkout">Cart</SideLink> */}
-    <SideButton
-      onClick={() => {
-        axios
-          .post('/account/signout', {}, { withCredentials: true })
-          .then((res) => {
-            window.location.href = '/'
-          })
-          .catch((err) => console.error(err))
-      }}
-    >
-      Sign out
-    </SideButton>
-  </div>
-)
+const SideMenu = () => {
+  const signout = () => {
+    axios
+      .post('/account/signout', {}, { withCredentials: true })
+      .then((res) => {
+        window.location.href = '/'
+      })
+      .catch((err) => console.error(err))
+  }
+
+  return (
+    <div className="w-full mb-8 sm:mb-0 sm:w-64 bg-gray-light p-4 rounded-sm items-start">
+      <SideLink href="/user/profile">Profile</SideLink>
+      <SideLink href="/user/orders">Orders</SideLink>
+      <SideButton onClick={signout}>Sign out</SideButton>
+    </div>
+  )
+}
 
 const SideLink = ({ href, children }) => (
   <Link href={href}>

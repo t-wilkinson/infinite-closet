@@ -65,7 +65,10 @@ export default ProductImages
 
 const ImagesSmall = ({ images, state, dispatch }) => (
   <div className="items-center justify-center sm:hidden h-80">
-    <FocusedImage image={images[state.focusedImage]} />
+    <FocusedImage
+      alt={toAlt(images, state.focusedImage)}
+      image={images[state.focusedImage]}
+    />
     <div className="mr-4 flex-row items-center mt-4 space-x-2">
       <button
         onClick={() =>
@@ -123,9 +126,9 @@ const ImagesLarge = ({ images, state, dispatch }) => (
       </button>
       {images
         .slice(state.startIndex, state.startIndex + 3)
-        .map((v: StrapiFile, index: number) => (
+        .map((image: StrapiFile, index: number) => (
           <div
-            key={v.url}
+            key={image.url}
             className="w-24 lg:w-32 h-24 lg:h-32 my-2 cursor-pointer relative hover:opacity-75"
             onClick={() => {
               dispatch({ type: 'focus-image', index: state.startIndex + index })
@@ -136,7 +139,7 @@ const ImagesLarge = ({ images, state, dispatch }) => (
               className="Product image"
               layout="fill"
               objectFit="contain"
-              src={getURL(v.url)}
+              src={getURL(image.formats.thumbnail.url)}
             />
           </div>
         ))}
@@ -168,6 +171,7 @@ export const FocusedImage = ({ alt, image }) => {
     clientX: number
     clientY: number
   }>()
+
   /*
   const scale = 2
   const scaleFactor = 1 - 1 / scale
@@ -191,7 +195,7 @@ export const FocusedImage = ({ alt, image }) => {
           alt={alt}
           layout="fill"
           objectFit="contain"
-          src={getURL(image.url)}
+          src={getURL(image.formats.large.url)}
         />
       </div>
     </div>
