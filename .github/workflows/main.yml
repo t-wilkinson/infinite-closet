@@ -47,7 +47,7 @@ jobs:
           (cd backend && yarn install)
           EOF
 
-      - name: Build
+      - name: Build production server
         if: ${{ env.branch == 'main' }}
         run: |
           ssh -T staging <<EOF
@@ -55,14 +55,12 @@ jobs:
 
           (cd frontend
             yarn run build
-
             pm2 delete -s main:frontend || :
             pm2 start npm --name main:frontend -- run start
           )
 
           (cd backend
             yarn run build
-
             pm2 delete -s main:backend || :
             pm2 start npm --name main:backend -- run start
           )
@@ -73,7 +71,6 @@ jobs:
         run: |
           ssh -T staging <<EOF
           cd "/www/infinite-closet/${{ env.branch }}"
-
             pm2 delete -s dev || :
             pm2 start npm --name dev -- run develop
           EOF
