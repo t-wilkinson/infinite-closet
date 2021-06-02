@@ -105,12 +105,13 @@ const ProductInfo = ({ item }) => (
     <div className="flex-grow">
       <span className="font-bold">{item.designer?.name}</span>
       <span>{item.name}</span>
-      <div className="flex-row mt-4">
+      <div className="flex-col md:flex-row mt-4">
         <span className="font-bold">
           {rentalPrice(item.shortRentalPrice, item.longRentalPrice)}
         </span>
         <span className="font-gray">
-          &nbsp;{'| '} £{item.retailPrice || '-'} retail
+          <span className="hidden md:inline">&nbsp;{'| '}</span> £
+          {item.retailPrice || '-'} retail
         </span>
       </div>
     </div>
