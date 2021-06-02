@@ -68,7 +68,11 @@ export const FilterItems: FilterItems = {
                   onChange={() => panel.toggle(slug)}
                   value={panel.values.includes(slug)}
                   className="flex-no-wrap"
-                  label={toTitleCase(name)}
+                  label={
+                    <span className="whitespace-no-wrap">
+                      {toTitleCase(name)}
+                    </span>
+                  }
                 />
               )
             })}
@@ -152,7 +156,7 @@ export const FilterItems: FilterItems = {
 
     return (
       <>
-        <FilterCheckBoxes panel={panel} data={occasions} />
+        <FilterCheckboxes panel={panel} data={occasions} />
       </>
     )
   },
@@ -170,7 +174,7 @@ export const FilterItems: FilterItems = {
 
     return (
       <>
-        <FilterCheckBoxes panel={panel} data={weather} />
+        <FilterCheckboxes panel={panel} data={weather} />
       </>
     )
   },
@@ -182,7 +186,7 @@ export const FilterItems: FilterItems = {
 
     return (
       <>
-        <FilterCheckBoxes panel={panel} data={styles} />
+        <FilterCheckboxes panel={panel} data={styles} />
       </>
     )
   },
@@ -231,13 +235,13 @@ const pickFgColorFromBgColor = (
   return r * 0.299 + g * 0.587 + b * 0.114 > 186 ? darkColor : lightColor
 }
 
-const FilterCheckBoxes = ({ panel, data = undefined }) => {
+const FilterCheckboxes = ({ panel, data = undefined }) => {
   return data.map((v: { slug: string; name: string }) => (
     <div key={v.slug} className="py-0.5">
       <Checkbox
         onChange={() => panel.toggle(v.slug)}
         value={panel.values.includes(v.slug)}
-        label={v.name}
+        label={<span className="whitespace-no-wrap">{v.name}</span>}
       />
     </div>
   ))

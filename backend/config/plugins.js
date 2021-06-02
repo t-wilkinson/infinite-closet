@@ -11,7 +11,6 @@ module.exports = ({ env }) => ({
   email: {
     provider: "google-workspace",
     providerOptions: {
-      // apiKey: env("SENDGRID_API_KEY"),
       subject: "info@infinitecloset.co.uk",
     },
     settings: {
