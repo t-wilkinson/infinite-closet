@@ -63,14 +63,15 @@ const Routes = ({ setFocused, focused }) => (
           focused={focused}
           section={section}
         />
-        {section.data[0].data.map((v: any, i: number) => (
-          <RouteContents
-            key={v.label + '' + i}
-            focused={focused}
-            section={section}
-            item={v}
-          />
-        ))}
+        {section.data[0] &&
+          section.data[0].data.map((v: any, i: number) => (
+            <RouteContents
+              key={v.label + '' + i}
+              focused={focused}
+              section={section}
+              item={v}
+            />
+          ))}
       </div>
     ))}
   </>
@@ -106,11 +107,14 @@ const RouteHeader = ({ setFocused, focused, section }) => {
         <span
           className={`uppercase
           ${focused === section.value ? 'body-bold' : 'body'}
+          ${section.value === 'blog' ? 'text-gray' : ''}
           `}
         >
           {section.label}
         </span>
-        <Icon name={focused === section.value ? 'down' : 'up'} size={12} />
+        {section.value !== 'blog' && (
+          <Icon name={focused === section.value ? 'down' : 'up'} size={12} />
+        )}
       </div>
     </button>
   )
