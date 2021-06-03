@@ -31,25 +31,6 @@ const routes = [
     ],
   },
   {
-    label: 'Trending',
-    value: 'trending',
-    href: null,
-    type: 'path',
-    img: 'trending-menu-image.jpg',
-    data: [
-      {
-        label: null,
-        href: null,
-        data: [
-          { label: 'New In', href: null },
-          { label: 'Top Rated', href: null },
-          { label: 'Our Picks', href: null },
-          { label: 'Brand Spotlight', href: null },
-        ],
-      },
-    ],
-  },
-  {
     label: 'Clothing',
     value: 'clothing',
     href: '/products/clothing',
@@ -79,6 +60,25 @@ const routes = [
           { label: 'Brunch', href: null },
           { label: 'Office', href: null },
           { label: 'Cocktail', href: null },
+        ],
+      },
+    ],
+  },
+  {
+    label: 'Trending',
+    value: 'trending',
+    href: null,
+    type: 'path',
+    img: 'trending-menu-image.jpg',
+    data: [
+      {
+        label: null,
+        href: null,
+        data: [
+          { label: 'New In', href: null },
+          { label: 'Top Rated', href: null },
+          { label: 'Our Picks', href: null },
+          { label: 'Brand Spotlight', href: null },
         ],
       },
     ],
