@@ -1,6 +1,7 @@
 "use strict";
 const _ = require("lodash");
 const { sanitizeEntity } = require("strapi-utils");
+const Auth = require("../../../extensions/users-permissions/extensions").Auth;
 
 module.exports = {
   async signin(ctx) {
@@ -55,12 +56,8 @@ module.exports = {
   },
 
   async signout(ctx) {
-    // TODO: cookie is not being cleared
+    Auth.setCookieSession(ctx.cookies, null, { maxAge: 0 });
 
-    ctx.cookies.set("token.sig", "", { maxAge: 0 });
-    ctx.cookies.set("token", null, { expires: Date.now() });
-    ctx.cookies.set("token");
-    console.log(ctx.cookies.get("token"));
     ctx.send({
       authorized: true,
       message: "Successfully ended session",
