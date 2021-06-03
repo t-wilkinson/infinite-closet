@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+    volumes:
+      - ./:/app
+    depends_on:
+      - db
+    environment:
+      - SLACK_CLIENT_ID=1246207316551.2121921529701
+      - SLACK_SECRET=76342489a4e8a01767daf258dafdf6f2
+      - SLACK_SIGNING_SECRET=694b8e8b3c2808d74a37c465b32af8e7
+      - SLACK_USER_OAUTH_TOKEN=xoxp-1246207316551-2036086457495-2118281801238-062c3f57d4bd93889bb517e48c12dd2d
+      - SLACK_BOT_OAUTH_TOKEN=xoxb-1246207316551-2125274885315-nXCX64Gl2QUdmXbiZglAzqNk
+      - NEXT_PUBLIC_DOMAIN=https://infinitecloset.treywilkinson.com
+      - NEXT_PUBLIC_STRAPI_API_URL=https://api.infinitecloset.treywilkinson.com
+
+  db:
+    image: postgres:13
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgres/data
+
+  # nginx:
+  #   image: nginx:1.21
+  #   restart: always
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   command: nginx -g 'daemon off;'
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./nginx/includes:/etc/nginx/includes:ro
+  #     - ./nginx/letsencrypt:/etc/letsencrypt:ro
+
+volumes:
+  postgres:

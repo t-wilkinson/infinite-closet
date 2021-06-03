@@ -5,13 +5,13 @@ ENV NODE_ENV=production
 WORKDIR /app
 COPY ["package.json", "package-lock.json*", "./"]
 RUN yarn install
-COPY . .
+# COPY . .
 
 FROM base as test
 RUN echo testing...
 
 FROM base as development
-RUN echo building production...
+RUN echo building development...
 
 FROM base as prod
 RUN echo building production...
