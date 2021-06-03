@@ -55,7 +55,12 @@ module.exports = {
   },
 
   async signout(ctx) {
-    ctx.cookies.set("token", null);
+    // TODO: cookie is not being cleared
+
+    ctx.cookies.set("token.sig", "", { maxAge: 0 });
+    ctx.cookies.set("token", null, { expires: Date.now() });
+    ctx.cookies.set("token");
+    console.log(ctx.cookies.get("token"));
     ctx.send({
       authorized: true,
       message: "Successfully ended session",

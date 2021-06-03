@@ -30,7 +30,7 @@ export const Popup = ({ popup }) => {
     >
       <Form>
         <button
-          className="absolute top-0 right-0 m-4"
+          className="absolute top-0 right-0 m-4 z-20"
           onClick={() => dispatch(accountActions.hidePopup())}
         >
           <Icon name="close" size={20} />
