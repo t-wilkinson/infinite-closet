@@ -1,6 +1,7 @@
 "use strict";
 const _ = require("lodash");
 const { sanitizeEntity } = require("strapi-utils");
+const Auth = require("../../../extensions/users-permissions/extensions").Auth;
 
 module.exports = {
   async signin(ctx) {
@@ -55,7 +56,8 @@ module.exports = {
   },
 
   async signout(ctx) {
-    ctx.cookies.set("token", null);
+    Auth.setCookieSession(ctx.cookies, null, { maxAge: 0 });
+
     ctx.send({
       authorized: true,
       message: "Successfully ended session",
