@@ -27,13 +27,14 @@ const Auth = {
     return num;
   },
 
-  setCookieSession(cookies, jwt) {
+  setCookieSession(cookies, jwt, config = {}) {
     cookies.set("token", jwt, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production" ? true : false,
       maxAge: 1000 * 60 * 60 * 24 * 14, // 14 Day Age
       overwrite: true,
       domain: process.env.FRONTEND_DOMAIN,
+      ...config,
     });
   },
 };

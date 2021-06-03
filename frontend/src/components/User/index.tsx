@@ -2,6 +2,9 @@ import React from 'react'
 import Link from 'next/link'
 import axios from 'axios'
 
+import { useDispatch } from '@/utils/store'
+import { userActions } from '@/User/slice'
+
 export const User = ({ children }) => {
   return (
     <div className="w-full items-center px-4 xl:px-0 mb-4">
@@ -16,10 +19,13 @@ export const User = ({ children }) => {
 export default User
 
 const SideMenu = () => {
+  const dispatch = useDispatch()
+
   const signout = () => {
     axios
       .post('/account/signout', {}, { withCredentials: true })
       .then((res) => {
+        dispatch(userActions.signout())
         window.location.href = '/'
       })
       .catch((err) => console.error(err))
