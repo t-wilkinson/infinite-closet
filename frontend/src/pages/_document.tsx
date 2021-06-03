@@ -1,7 +1,7 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 
-const DESCRIPTION =
-  'Rent clothes from independent brands while cutting your carbon footprint, all while being more affordable. By creating an “unlimited” designer closet, we allow women to feel great every day.'
+const DESCRIPTION = `London's premier independent designer rental platform, giving you access to sustainable and ethical luxury brands. IC's "unlimited" closet offers the latest trends, dry cleaning, and next day delivery. The fashion revolution is here.`
+
 const icons = [16, 32, 72, 128, 512]
 
 const Icons = ({ rel, sizes }) =>
@@ -58,6 +58,7 @@ class MyDocument extends Document {
           <Icons rel="icon" sizes={[16, 32]} />
           <Icons rel="apple-touch-startup-image" sizes={[1024]} />
 
+          <meta name="facebook-domain-verification" content="wuxo0tqtkgp3bqbxaevv93a31m490y" />
           <meta property="og:site_name" content="Infinite Closet" />
           <meta property="og:locale" content="en_GB" />
         </Head>

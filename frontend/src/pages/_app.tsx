@@ -68,6 +68,11 @@ const Wrapper = ({ router, children }) => {
       )
     }
 
+    const showPopup = () => {
+      window.setTimeout(() => dispatch(accountActions.showPopup('email')), 5000)
+      document.getElementById('_app').removeEventListener('scroll', showPopup)
+    }
+
     dispatch(layoutActions.loadAnalytics(firebase.analytics()))
     axios
       .post('/account/signin', {}, { withCredentials: true })
@@ -82,10 +87,7 @@ const Wrapper = ({ router, children }) => {
             window.localStorage.getItem('joinedWaitlist'),
           )
           if (!loggedIn && !joinedWaitlist) {
-            window.setTimeout(
-              () => dispatch(accountActions.showPopup('email')),
-              3000,
-            )
+            document.getElementById('_app').addEventListener('scroll', showPopup)
           }
         }
       })

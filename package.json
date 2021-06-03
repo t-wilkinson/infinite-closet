@@ -1,7 +1,7 @@
 {
   "name": "infinite-closet",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "scripts": {
     "develop:backend": "yarn --cwd backend develop",
     "develop:frontend": "wait-on http://app:1337 && yarn --cwd frontend develop",

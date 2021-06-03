@@ -23,7 +23,7 @@ module.exports = {
 
   async waitlist(ctx) {
     const body = ctx.request.body;
-    const name = `${body.fistName} ${body.lastName}`;
+    const name = `${body.firstName} ${body.lastName}`;
 
     strapi.plugins["email"].services.email.send({
       to: body.email,
