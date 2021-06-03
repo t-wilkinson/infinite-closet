@@ -4,11 +4,8 @@
   "version": "0.0.0",
   "scripts": {
     "develop:backend": "yarn --cwd backend develop",
-    "develop:frontend": "wait-on http://api.dev.infinitecloset.co.uk/admin && yarn --cwd frontend develop",
-    "develop": "FORCE_COLOR=1 npm-run-all -l -p develop:*",
-    "local:backend": "yarn --cwd backend develop:admin",
-    "local:frontend": "wait-on http://admin.infinitecloset.treywilkinson.com && yarn --cwd frontend develop",
-    "local": "FORCE_COLOR=1 npm-run-all -l -p local:*"
+    "develop:frontend": "wait-on http://app:1337 && yarn --cwd frontend develop",
+    "develop": "FORCE_COLOR=1 npm-run-all -l -p develop:*"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.168",
