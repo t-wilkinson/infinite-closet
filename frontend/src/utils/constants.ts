@@ -42,11 +42,11 @@ const routes = [
         data: [
           { label: 'Dresses', href: '/products/clothing/dresses' }, // TODO: more dynamic href
           { label: 'Jumpsuits', href: '/products/clothing/jumpsuits' },
+          { label: 'Gowns', href: '/products/clothing/gowns' },
           { label: 'Tops', href: null },
           { label: 'Outerwear', href: null },
           { label: 'Pants', href: null },
           { label: 'Skirts', href: null },
-          { label: 'Gowns', href: null },
           { label: 'Maternity', href: null },
         ],
       },
