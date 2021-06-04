@@ -87,7 +87,9 @@ const Wrapper = ({ router, children }) => {
             window.localStorage.getItem('joinedWaitlist'),
           )
           if (!loggedIn && !joinedWaitlist) {
-            document.getElementById('_app').addEventListener('scroll', showPopup)
+            document
+              .getElementById('_app')
+              .addEventListener('scroll', showPopup)
           }
         }
       })

@@ -9,6 +9,8 @@ services:
     depends_on:
       - db
     environment:
+      - NEXT_PUBLIC_FACEBOOK_APP_ID=471225744010546
+      - NEXT_PUBLIC_LOCAL_SERVER_DOMAIN=http://app:1337
       - SLACK_CLIENT_ID=1246207316551.2121921529701
       - SLACK_SECRET=76342489a4e8a01767daf258dafdf6f2
       - SLACK_SIGNING_SECRET=694b8e8b3c2808d74a37c465b32af8e7
@@ -24,18 +26,6 @@ services:
       - 5432:5432
     volumes:
       - postgres:/var/lib/postgres/data
-
-  # nginx:
-  #   image: nginx:1.21
-  #   restart: always
-  #   ports:
-  #     - 80:80
-  #     - 443:443
-  #   command: nginx -g 'daemon off;'
-  #   volumes:
-  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-  #     - ./nginx/includes:/etc/nginx/includes:ro
-  #     - ./nginx/letsencrypt:/etc/letsencrypt:ro
 
 volumes:
   postgres:

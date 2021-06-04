@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "develop:backend": "yarn --cwd backend develop",
-    "develop:frontend": "wait-on http://app:1338 && yarn --cwd frontend develop",
+    "develop:frontend": "wait-on http://app:1337 && yarn --cwd frontend develop",
     "develop": "FORCE_COLOR=1 npm-run-all -l -p develop:*"
   },
   "devDependencies": {

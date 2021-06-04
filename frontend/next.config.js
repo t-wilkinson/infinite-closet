@@ -20,6 +20,7 @@ module.exports = withPWA({
       'api.dev.' + domain,
       'dev.' + domain,
       'api.' + domain,
+      'app',
       domain,
     ],
   },

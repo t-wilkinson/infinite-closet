@@ -1,10 +1,10 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import axios from 'axios'
 
 import Shop from '@/Shop'
 import Header from '@/Layout/Header'
 import Footer from '@/Layout/Footer'
-import { fetchAPI } from '@/utils/api'
 import useData from '@/Layout/useData'
 import { StrapiProduct } from '@/utils/models'
 
@@ -31,7 +31,11 @@ export default Page
 
 export async function getServerSideProps({ params }) {
   const [product] = await Promise.all([
-    fetchAPI(`/products?_limit=1&slug=${params.item}`),
+    axios
+      .get(
+        `${process.env.NEXT_PUBLIC_LOCAL_SERVER_DOMAIN}/products?_limit=1&slug=${params.item}`,
+      )
+      .then((res) => res.data),
   ])
 
   return {
