@@ -60,7 +60,7 @@ export const ProductItems = ({ data, loading }) => {
 
 export default ProductItems
 
-const Product = ({ item }: any) => {
+export const Product = ({ item }: any) => {
   return (
     <div className="w-1/2 lg:w-1/3">
       <div className="m-2 lg:m-4">
