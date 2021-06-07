@@ -16,7 +16,7 @@ import { layoutActions } from '@/Layout/slice'
 import { userActions } from '@/User/slice'
 const FourOFour = dynamic(() => import('@/pages/404'))
 
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_STRAPI_API_URL
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 // TODO: fetch avaialable categories and similar for header etc.

@@ -84,7 +84,6 @@ const toRaw = (_where) => {
 module.exports = {
   // TODO: there are plenty of ways to speed this up when it bottlenecks
   async query(ctx) {
-    console.log(1);
     const query =
       process.env.NODE_ENV === "production"
         ? ctx.query

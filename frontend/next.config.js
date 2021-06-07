@@ -8,6 +8,9 @@ module.exports = withPWA({
     register: true,
     sw: '/sw.js',
   },
+  workbox: {
+    mode: 'production',
+  },
   i18n: {
     locales: ['en-GB', 'en-US'],
     defaultLocale: 'en-GB',

@@ -10,10 +10,8 @@
     "build": "ENV_PATH=.env.production strapi build",
     "strapi": "strapi"
   },
-  "devDependencies": {
-    "strapi-provider-email-google-workspace": "file:providers/strapi-provider-email-google-workspace"
-  },
   "dependencies": {
+    "strapi-provider-email-google-workspace": "file:providers/strapi-provider-email-google-workspace",
     "dayjs": "^1.10.4",
     "googleapis": "^72.0.0",
     "knex": "0.95.0",

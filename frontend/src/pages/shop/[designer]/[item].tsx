@@ -33,7 +33,7 @@ export async function getServerSideProps({ params }) {
   const [product] = await Promise.all([
     axios
       .get(
-        `${process.env.NEXT_PUBLIC_LOCAL_SERVER_DOMAIN}/products?_limit=1&slug=${params.item}`,
+        `${process.env.NEXT_PUBLIC_BACKEND}/products?_limit=1&slug=${params.item}`,
       )
       .then((res) => res.data),
   ])

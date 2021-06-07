@@ -9,7 +9,7 @@ export function getURL(url: string) {
     return url
   }
 
-  return `${process.env.NEXT_PUBLIC_LOCAL_SERVER_DOMAIN}${url}`
+  return `${process.env.NEXT_PUBLIC_BACKEND}${url}`
 }
 
 // Helper to make GET requests to Strapi
