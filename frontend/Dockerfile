@@ -10,11 +10,11 @@ FROM node:alpine AS builder
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
+ARG NODE_ENV
 ARG NEXT_PUBLIC_FRONTEND
 ARG NEXT_PUBLIC_BACKEND
 ARG NEXT_PUBLIC_FIREBASE_CONFIG
 ARG NEXT_PUBLIC_STRIPE_KEY
-ARG NODE_ENV
 RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
 
 # Production image, copy all the files and run next

@@ -4,10 +4,14 @@ import Link from 'next/link'
 
 import { routes } from '@/utils/constants'
 
+// TODO: use nextjs caching
+const myLoader = ({ src, width, quality }) => {
+  return `${src}?w=${width}&q=${quality || 75}`
+}
+
 export const NavBar = () => {
   const [visible, setVisible] = React.useState<string>()
 
-  // TODO: make sure images are loaded
   return (
     <div
       className="items-center w-full relative z-30"
@@ -29,6 +33,7 @@ export const NavBar = () => {
             `}
               >
                 <Image
+                  loader={myLoader}
                   alt={`${route.label} page`}
                   src={
                     `/images/header/${route.img}` ??

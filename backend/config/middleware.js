@@ -20,10 +20,6 @@ module.exports = {
         "https://api.dev." + domain,
         "https://admin.dev." + domain,
 
-        `http://api.${process.env.FRONTEND_DOMAIN}`,
-        `http://admin.${process.env.FRONTEND_DOMAIN}`,
-        `http://${process.env.FRONTEND_DOMAIN}`,
-
         `https://api.${process.env.FRONTEND_DOMAIN}`,
         `https://admin.${process.env.FRONTEND_DOMAIN}`,
         `https://${process.env.FRONTEND_DOMAIN}`,

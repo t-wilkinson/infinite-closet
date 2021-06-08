@@ -23,6 +23,7 @@ export const Home = () => {
               src="/images/home-page/banner-image.jpg"
               layout="fill"
               objectFit="cover"
+              priority={true}
             />
           </div>
           <div className="absolute left-0 md:max-w-2xl lg:max-w-4xl w-full h-128">

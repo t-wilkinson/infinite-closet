@@ -106,4 +106,3 @@ coverage
 # Docker
 ############################
 
-docker-compose.local.*

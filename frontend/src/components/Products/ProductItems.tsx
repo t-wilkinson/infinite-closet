@@ -79,14 +79,23 @@ export const Product = ({ item }: any) => {
   )
 }
 
+// TODO: use nextjs caching
+const myLoader = ({ src, width, quality }) => {
+  return `${src}?w=${width}&q=${quality || 75}`
+  // return `https://infinitecloset.treywilkinson.com/_next/image?url=${encodeURIComponent(
+  //   src,
+  // )}&w=${width}&q=${quality || 75}`
+}
+
 const ProductImage = ({ images }) => (
   <div className="relative h-full">
     {/* <div className="absolute top-0 right-0 p-2"> */}
     {/*   <Icon size={20} name="heart" /> */}
     {/* </div> */}
     <Image
+      loader={myLoader}
       alt={images[0].alternativeText}
-      src={getURL(images[0].formats.small.url)}
+      src={getURL(images[0].formats.small?.url)}
       layout="fill"
       objectFit="contain"
     />
