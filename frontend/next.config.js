@@ -1,19 +1,15 @@
-// const withPWA = require('next-pwa')
+const withPWA = require('next-pwa')
 const domain = 'infinitecloset.co.uk'
 
-// module.exports = withPWA({
-//   pwa: {
-//     disable: process.env.NODE_ENV === 'development',
-//     // dest: 'public',
-//     register: true,
-//     sw: '/sw.js',
-//   },
-//   workbox: {
-//     mode: 'production',
-//   },
-module.exports = {
+module.exports = withPWA({
   pwa: {
-    disable: true,
+    disable: process.env.NODE_ENV === 'development',
+    // dest: 'public',
+    register: true,
+    sw: '/sw.js',
+  },
+  workbox: {
+    mode: 'production',
   },
   i18n: {
     locales: ['en-GB', 'en-US'],
@@ -27,8 +23,7 @@ module.exports = {
       'api.dev.' + domain,
       'dev.' + domain,
       'api.' + domain,
-      'app',
       domain,
     ],
   },
-}
+})
