@@ -5,7 +5,7 @@ export const QUERY_LIMIT = 2 * 3 * 2 // 2 or 3 columns
 type FilterData = { [key in Filter]: { label: string } }
 export const filterData: FilterData = {
   designers: { label: 'Designers' },
-  colors: { label: 'Colors' },
+  colors: { label: 'Colours' },
   datesAvailable: { label: 'Dates Available' },
   occasions: { label: 'Occasions' },
   favorites: { label: 'Favorites' },
