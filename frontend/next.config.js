@@ -5,11 +5,9 @@ module.exports = withPWA({
   pwa: {
     disable: process.env.NODE_ENV === 'development',
     // dest: 'public',
+    mode: 'production',
     register: true,
     sw: '/sw.js',
-  },
-  workbox: {
-    mode: 'production',
   },
   i18n: {
     locales: ['en-GB', 'en-US'],

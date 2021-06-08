@@ -2,51 +2,42 @@ version: '3.3'
 
 services:
   frontend:
-    networks:
-      - prod
     ports:
       - 3000:3000
     build:
       context: ../frontend
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_FRONTEND=https://infinitecloset.co.uk
-        - NEXT_PUBLIC_BACKEND=https://api.infinitecloset.co.uk
-        - NEXT_PUBLIC_FIREBASE_CONFIG={"apiKey":"AIzaSyBI3rlnkvpZLXyx9jyGJ2Z8J02fFqpIsP0","authDomain":"infinite-closet-ec4f9.firebaseapp.com","projectId":"infinite-closet-ec4f9","storageBucket":"infinite-closet-ec4f9.appspot.com","messagingSenderId":"68497379094","appId":"1:68497379094:web:5eb66bb420ce5ba8754a37","measurementId":"G-THH3387PML"}
-        - NEXT_PUBLIC_STRIPE_KEY=pk_live_51Ikb9lDnNgAk4A84Zq3oNRb9NcwzLLfEMBoThNAMRWldaJEBHEITMcQgeS36V4uWxmmQ03pBjaezlbTIXm82hydp003lgQxup6
+        NEXT_PUBLIC_FRONTEND: 'https://infinitecloset.co.uk'
+        NEXT_PUBLIC_BACKEND: 'https://api.infinitecloset.co.uk'
+        NEXT_PUBLIC_FIREBASE_CONFIG: '{"apiKey":"AIzaSyBI3rlnkvpZLXyx9jyGJ2Z8J02fFqpIsP0","authDomain":"infinite-closet-ec4f9.firebaseapp.com","projectId":"infinite-closet-ec4f9","storageBucket":"infinite-closet-ec4f9.appspot.com","messagingSenderId":"68497379094","appId":"1:68497379094:web:5eb66bb420ce5ba8754a37","measurementId":"G-THH3387PML"}'
+        NEXT_PUBLIC_STRIPE_KEY: pk_live_51Ikb9lDnNgAk4A84Zq3oNRb9NcwzLLfEMBoThNAMRWldaJEBHEITMcQgeS36V4uWxmmQ03pBjaezlbTIXm82hydp003lgQxup6
 
   backend:
     depends_on:
       - db
-    networks:
-      - prod
     build:
       context: ../backend
       dockerfile: Dockerfile
     ports:
       - 1337:1337
     environment:
-      - NODE_ENV=production
-      - STRIPE_KEY=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
-      - FRONTEND_DOMAIN=infinitecloset.co.uk
-      - DATABASE_NAME=infinite-closet
-      - DATABASE_USERNAME=infinite-closet
-      - DATABASE_PASSWORD=Kingston2020
-      - DATABASE_HOST=db
+      NODE_ENV: production
+      STRIPE_KEY: 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
+      FRONTEND_DOMAIN: infinitecloset.co.uk
+      DATABASE_NAME: infinite-closet
+      DATABASE_USERNAME: infinite-closet
+      DATABASE_PASSWORD: Kingston2020
+      DATABASE_HOST: db
 
   db:
-    image: postgres
-    networks:
-      - prod
+    image: postgres:13
     environment:
-      - POSTGRES_DB=infinite-closet
-      - POSTGRES_USER=infinite-closet
-      - POSTGRES_PASSWORD=Kingston2020
+      POSTGRES_DB: infinite-closet
+      POSTGRES_USER: infinite-closet
+      POSTGRES_PASSWORD: Kingston2020
     volumes:
       - postgres-prod:/var/lib/postgresql/data
-
-networks:
-  prod:
 
 volumes:
   postgres-prod:

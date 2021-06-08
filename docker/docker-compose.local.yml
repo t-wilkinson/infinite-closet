@@ -10,7 +10,7 @@ services:
 
   backend:
     ports:
+      - 1339:1337
       - 8000:8000
-      - 1338:1337
     environment:
-      FRONTEND_DOMAIN: 'infinitecloset.treywilkinson.com'
+      FRONTEND_DOMAIN: infinitecloset.treywilkinson.com
