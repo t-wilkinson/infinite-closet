@@ -29,6 +29,7 @@ services:
       DATABASE_USERNAME: infinite-closet
       DATABASE_PASSWORD: Kingston2020
       DATABASE_HOST: db
+      DATABASE_PORT: 5432
 
   db:
     image: postgres:13
@@ -38,6 +39,8 @@ services:
       POSTGRES_PASSWORD: Kingston2020
     volumes:
       - postgres-prod:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
 
 volumes:
   postgres-prod:
