@@ -195,7 +195,7 @@ export const FocusedImage = ({ alt, image }) => {
           alt={alt}
           layout="fill"
           objectFit="contain"
-          src={getURL(image.formats.large.url)}
+          src={getURL(image.formats.large?.url || image.url)}
         />
       </div>
     </div>

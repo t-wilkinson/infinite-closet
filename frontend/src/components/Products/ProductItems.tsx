@@ -112,10 +112,7 @@ export const Product = ({ item }: any) => {
                       >
                         <ProductImage
                           alt={image.alternativeText}
-                          src={getURL(
-                            image.formats.small?.url ||
-                              image.formats.thumbnail.url,
-                          )}
+                          src={getURL(image.formats.small?.url || image.url)}
                         />
                       </div>
                     </div>
