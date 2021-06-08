@@ -2,7 +2,7 @@ name: Infinite Closet CI
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ main, dev, staging]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -37,40 +37,33 @@ jobs:
       - name: Add changes to server
         run: |
           ssh -T staging<<EOF
-          mkdir -p "/www/infinite-closet/${{ env.branch }}"
-          cd "/www/infinite-closet/${{ env.branch }}"
-          git fetch --all
-          git switch "${{ env.branch }}"
-          git pull origin "${{ env.branch }}"
-          yarn install
-          (cd frontend && yarn install && yarn run sts)
-          (cd backend && yarn install)
+          mkdir -p /www/infinite-closet/${{ env.branch }}
+          cd /www/infinite-closet/${{ env.branch }}
+          git fetch origin ${{ env.branch }}
+          git switch ${{ env.branch }}
+          git pull origin ${{ env.branch }}
           EOF
 
       - name: Build production server
         if: ${{ env.branch == 'main' }}
         run: |
           ssh -T staging <<EOF
-          cd "/www/infinite-closet/${{ env.branch }}"
-
-          (cd frontend
-            yarn run build
-            pm2 delete -s main:frontend || :
-            pm2 start npm --name main:frontend -- run start
-          )
-
-          (cd backend
-            yarn run build
-            pm2 delete -s main:backend || :
-            pm2 start npm --name main:backend -- run start
-          )
+          cd /www/infinite-closet/${{ env.branch }}
+          docker/run prod build --paralell
+          docker/run prod up
           EOF
 
       - name: Run develop server
         if: ${{ env.branch == 'dev' }}
         run: |
           ssh -T staging <<EOF
-          cd "/www/infinite-closet/${{ env.branch }}"
-            pm2 delete -s dev || :
-            pm2 start npm --name dev -- run develop
+          cd /www/infinite-closet/${{ env.branch }}
+          docker/run dev up
+          EOF
+
+      - name: Run staging
+        if: ${{ env.branch == 'staging' }}
+        run: |
+          ssh -T staging <<EOF
+          cd /www/infinite-closet/${{ env.branch }}
           EOF

@@ -1,7 +1,19 @@
 import React from 'react'
+import axios from 'axios'
 import Image from 'next/image'
 
+import { Product } from '@/Products/ProductItems'
+
 export const Home = () => {
+  const [products, setProducts] = React.useState([])
+
+  React.useEffect(() => {
+    axios
+      .get('/products?designer.slug=retrofete&_limit=4')
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.log(err))
+  }, [])
+
   return (
     <div className="w-full items-center">
       <div className="items-center w-full max-w-screen-xl">
@@ -22,6 +34,7 @@ export const Home = () => {
           </div>
         </div>
         <HowItWorks />
+        <ProductItems products={products} />
         <WhyRent />
       </div>
     </div>
@@ -175,6 +188,19 @@ const whyRent = [
   },
 ]
 
+const ProductItems = ({ products }) => {
+  return (
+    <div className="my-8 w-full">
+      <Heading>Our Pick</Heading>
+      <div className="my-8 w-full flex-wrap lg:flex-no-wrap flex-row">
+        {products.map((product) => (
+          <Product key={product.id} item={product} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 const WhyRent = ({}) => (
   <div className="my-8 w-full items-center" id="why-rent">
     <Heading>Why Rent?</Heading>
@@ -202,11 +228,11 @@ const WhyRent = ({}) => (
 
 const Heading = ({ children }) => (
   <div className="flex-row w-full max-w-screen-xl items-center">
-    <div className="hidden md:flex h-px bg-pri rounded-full flex-grow mx-8" />
+    <div className="hidden md:flex h-px bg-pri rounded-full flex-grow mr-8" />
     <span className="font-subheader text-4xl text-center w-full md:w-auto">
       {children}
     </span>
-    <div className="hidden md:flex h-px bg-pri rounded-full flex-grow mx-8" />
+    <div className="hidden md:flex h-px bg-pri rounded-full flex-grow ml-8" />
   </div>
 )
 

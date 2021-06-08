@@ -51,7 +51,7 @@ export default {
         qs.stringify({
           url,
           description,
-          media: process.env.NEXT_PUBLIC_DOMAIN + imageURL,
+          media: process.env.NEXT_PUBLIC_FRONTEND + imageURL,
         })
       }
     >

@@ -59,4 +59,4 @@ const details = {
 
 const createProductURL = ({ slug, designer: { slug: designer_slug } }) =>
   typeof window !== 'undefined' &&
-  `${process.env.NEXT_PUBLIC_DOMAIN}/shop/${designer_slug}/${slug}`
+  `${process.env.NEXT_PUBLIC_FRONTEND}/shop/${designer_slug}/${slug}`

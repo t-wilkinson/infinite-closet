@@ -1,0 +1,16 @@
+version: '3.3'
+
+services:
+  frontend:
+    environment:
+      NEXT_PUBLIC_FRONTEND: 'https://infinitecloset.treywilkinson.com'
+      NEXT_PUBLIC_BACKEND: 'https://api.infinitecloset.treywilkinson.com'
+      HTTPS_PROXY: 'https://127.0.0.1:443'
+      NO_PROXY: ".infinitecloset.treywilkinson.com,*.infinitecloset.treywilkinson.com,*.treywilkinson.com,.treywilkinson.com"
+
+  backend:
+    ports:
+      - 1339:1337
+      - 8000:8000
+    environment:
+      FRONTEND_DOMAIN: infinitecloset.treywilkinson.com

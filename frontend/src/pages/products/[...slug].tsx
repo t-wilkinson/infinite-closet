@@ -1,6 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import qs from 'qs'
+import axios from 'axios'
 
 import useData from '@/Layout/useData'
 import { useDispatch } from '@/utils/store'
@@ -70,9 +71,11 @@ export async function getServerSideProps({ params, query }) {
     categories: query.slug,
   })
 
-  const { products, count, filters, categories } = await fetchAPI(
-    `/products/filters?${_paging}&${_where}&${_filters}`,
-  )
+  const { products, count, filters, categories } = await axios
+    .get(
+      `${process.env.NEXT_PUBLIC_BACKEND}/products/filters?${_paging}&${_where}&${_filters}`,
+    )
+    .then((res) => res.data)
 
   return {
     props: {
