@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 declare -A profiles
 profiles[prod]="-f docker/docker-compose.yml -f docker/docker-compose.prod.yml"
 profiles[dev]="-f docker/docker-compose.yml -f docker/docker-compose.dev.yml"

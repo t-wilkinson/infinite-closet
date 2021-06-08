@@ -1,12 +1,12 @@
 # syntax=docker/dockerfile:1
 
-FROM node:alpine AS deps
+FROM node:14-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-FROM node:alpine AS builder
+FROM node:14-alpine AS builder
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
@@ -18,7 +18,7 @@ ARG NEXT_PUBLIC_STRIPE_KEY
 RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
 
 # Production image, copy all the files and run next
-FROM node:alpine AS runner
+FROM node:14-alpine AS runner
 WORKDIR /app
 ARG NODE_ENV
 RUN addgroup -g 1001 -S nodejs

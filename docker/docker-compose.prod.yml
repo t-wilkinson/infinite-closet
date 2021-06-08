@@ -2,6 +2,10 @@ version: '3.3'
 
 services:
   frontend:
+    networks:
+      - prod
+    ports:
+      - 3000:3000
     build:
       context: ../frontend
       dockerfile: Dockerfile
@@ -11,12 +15,11 @@ services:
         - NEXT_PUBLIC_FIREBASE_CONFIG={"apiKey":"AIzaSyBI3rlnkvpZLXyx9jyGJ2Z8J02fFqpIsP0","authDomain":"infinite-closet-ec4f9.firebaseapp.com","projectId":"infinite-closet-ec4f9","storageBucket":"infinite-closet-ec4f9.appspot.com","messagingSenderId":"68497379094","appId":"1:68497379094:web:5eb66bb420ce5ba8754a37","measurementId":"G-THH3387PML"}
         - NEXT_PUBLIC_STRIPE_KEY=pk_live_51Ikb9lDnNgAk4A84Zq3oNRb9NcwzLLfEMBoThNAMRWldaJEBHEITMcQgeS36V4uWxmmQ03pBjaezlbTIXm82hydp003lgQxup6
 
-    ports:
-      - 3000:3000
-
   backend:
     depends_on:
       - db
+    networks:
+      - prod
     build:
       context: ../backend
       dockerfile: Dockerfile
@@ -33,12 +36,17 @@ services:
 
   db:
     image: postgres
+    networks:
+      - prod
     environment:
-      POSTGRES_DB: infinite-closet
-      POSTGRES_USER: infinite-closet
-      POSTGRES_PASSWORD: Kingston2020
+      - POSTGRES_DB=infinite-closet
+      - POSTGRES_USER=infinite-closet
+      - POSTGRES_PASSWORD=Kingston2020
     volumes:
       - postgres-prod:/var/lib/postgresql/data
+
+networks:
+  prod:
 
 volumes:
   postgres-prod:
