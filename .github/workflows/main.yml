@@ -37,29 +37,27 @@ jobs:
       - name: Add changes to server
         run: |
           ssh -T staging<<EOF
-          mkdir -p "/www/infinite-closet/${{ env.branch }}"
-          cd "/www/infinite-closet/${{ env.branch }}"
-          git fetch --all
-          git switch "${{ env.branch }}"
-          git pull origin "${{ env.branch }}"
+          mkdir -p /www/infinite-closet/${{ env.branch }}
+          cd /www/infinite-closet/${{ env.branch }}
+          git fetch origin ${{ env.branch }}
+          git switch ${{ env.branch }}
+          git pull origin ${{ env.branch }}
           EOF
 
       - name: Build production server
         if: ${{ env.branch == 'main' }}
         run: |
           ssh -T staging <<EOF
-          cd "/www/infinite-closet/${{ env.branch }}"
-
+          cd /www/infinite-closet/${{ env.branch }}
           docker/run prod build --paralell
           docker/run prod up
-
           EOF
 
       - name: Run develop server
         if: ${{ env.branch == 'dev' }}
         run: |
           ssh -T staging <<EOF
-          cd "/www/infinite-closet/${{ env.branch }}"
+          cd /www/infinite-closet/${{ env.branch }}
           docker/run dev up
           EOF
 
@@ -67,5 +65,5 @@ jobs:
         if: ${{ env.branch == 'staging' }}
         run: |
           ssh -T staging <<EOF
-          cd "/www/infinite-closet/${{ env.branch }}"
+          cd /www/infinite-closet/${{ env.branch }}
           EOF
