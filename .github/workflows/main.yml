@@ -2,7 +2,7 @@ name: Infinite Closet CI
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ main, dev, staging]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -42,9 +42,6 @@ jobs:
           git fetch --all
           git switch "${{ env.branch }}"
           git pull origin "${{ env.branch }}"
-          yarn install
-          (cd frontend && yarn install && yarn run sts)
-          (cd backend && yarn install)
           EOF
 
       - name: Build production server
@@ -53,17 +50,9 @@ jobs:
           ssh -T staging <<EOF
           cd "/www/infinite-closet/${{ env.branch }}"
 
-          (cd frontend
-            yarn run build
-            pm2 delete -s main:frontend || :
-            pm2 start npm --name main:frontend -- run start
-          )
+          docker/run prod build --paralell
+          docker/run prod up
 
-          (cd backend
-            yarn run build
-            pm2 delete -s main:backend || :
-            pm2 start npm --name main:backend -- run start
-          )
           EOF
 
       - name: Run develop server
@@ -71,6 +60,12 @@ jobs:
         run: |
           ssh -T staging <<EOF
           cd "/www/infinite-closet/${{ env.branch }}"
-            pm2 delete -s dev || :
-            pm2 start npm --name dev -- run develop
+          docker/run dev up
+          EOF
+
+      - name: Run staging
+        if: ${{ env.branch == 'staging' }}
+        run: |
+          ssh -T staging <<EOF
+          cd "/www/infinite-closet/${{ env.branch }}"
           EOF

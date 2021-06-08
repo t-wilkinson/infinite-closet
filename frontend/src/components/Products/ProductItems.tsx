@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 
 import { CallToAction } from '@/components'
 import { getURL } from '@/utils/api'
+import { StrapiFile } from '@/utils/models'
 
 import { QUERY_LIMIT } from './constants'
 
@@ -61,6 +62,14 @@ export const ProductItems = ({ data, loading }) => {
 export default ProductItems
 
 export const Product = ({ item }: any) => {
+  const [hover, setHover] = React.useState<number>()
+  const [index, setIndex] = React.useState<number>(0)
+
+  const wrap = (i: number) => i % item.images.length
+  const rotate = () => {
+    setIndex((i) => wrap(i + 1))
+  }
+
   return (
     <div className="w-1/2 lg:w-1/3">
       <div className="m-2 lg:m-4">
@@ -68,7 +77,50 @@ export const Product = ({ item }: any) => {
           <a>
             <div className="relative w-full md:h-0 overflow-hidden cursor-pointer md:aspect-w-2 md:aspect-h-3 h-96">
               <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-gray">
-                <ProductImage images={item.images} />
+                <div
+                  className="w-full h-full relative"
+                  onMouseOver={() => {
+                    if (!hover) {
+                      const startRotate = () =>
+                        setHover(window.setInterval(rotate, 2000))
+                      setHover(window.setTimeout(startRotate, 500))
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    setIndex(0)
+                    window.clearTimeout(hover)
+                    window.clearInterval(hover)
+                    setHover(undefined)
+                  }}
+                >
+                  {item.images.map((image: StrapiFile, i: number) => (
+                    <div className="absolute inset-0 z-0" key={i}>
+                      <div
+                        className={`transition-opacity duration-1000 w-full h-full
+                        ${
+                          i === 0 && !hover
+                            ? 'opacity-100' // only show first image if not hovering
+                            : !hover
+                            ? 'hidden' // if not hovering, hide all other images
+                            : index === i
+                            ? 'opacity-0' // opacity (1 -> 0) the current image
+                            : wrap(index + 1) === i
+                            ? 'opacity-100' // transition to the next image
+                            : 'opacity-0' // otherwise hide the image
+                        }
+                      `}
+                      >
+                        <ProductImage
+                          alt={image.alternativeText}
+                          src={getURL(
+                            image.formats.small?.url ||
+                              image.formats.thumbnail.url,
+                          )}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
                 <ProductInfo item={item} />
               </div>
             </div>
@@ -87,15 +139,15 @@ const myLoader = ({ src, width, quality }) => {
   // )}&w=${width}&q=${quality || 75}`
 }
 
-const ProductImage = ({ images }) => (
+const ProductImage = ({ alt, src }) => (
   <div className="relative h-full">
     {/* <div className="absolute top-0 right-0 p-2"> */}
     {/*   <Icon size={20} name="heart" /> */}
     {/* </div> */}
     <Image
       loader={myLoader}
-      alt={images[0].alternativeText}
-      src={getURL(images[0].formats.small?.url)}
+      alt={alt}
+      src={src}
       layout="fill"
       objectFit="contain"
     />
