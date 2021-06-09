@@ -3,7 +3,6 @@ name: Infinite Closet CI
 on:
   push:
     branches: [ main, dev, staging]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -11,6 +10,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Setup env vars
+        env:
+          GITHUB_BRANCH: ${{ github.ref }}
+        run: |
+          echo "branch=${GITHUB_BRANCH##*/}" >> $GITHUB_ENV
+
       - name: Prepare ssh
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
@@ -26,30 +31,22 @@ jobs:
             IdentityFile ~/.ssh/staging.key
             StrictHostKeyChecking no
             Port 2222
+            RemoteCommand cd /www/infinite-closet/${{ env.branch }}
           EOF
 
-      - name: Setup env vars
-        env:
-          GITHUB_BRANCH: ${{ github.ref }}
-        run: |
-          echo "branch=${GITHUB_BRANCH##*/}" >> $GITHUB_ENV
-
-      - name: Add changes to server
+      - name: Update server with changes
         run: |
           ssh -T staging<<EOF
-          mkdir -p /www/infinite-closet/${{ env.branch }}
-          cd /www/infinite-closet/${{ env.branch }}
-          git fetch origin ${{ env.branch }}
           git switch ${{ env.branch }}
-          git pull origin ${{ env.branch }}
+          git fetch
+          git pull
           EOF
 
       - name: Build production server
         if: ${{ env.branch == 'main' }}
         run: |
           ssh -T staging <<EOF
-          cd /www/infinite-closet/${{ env.branch }}
-          docker/run prod build --paralell
+          docker/run prod build --parallel
           docker/run prod up
           EOF
 
@@ -57,7 +54,6 @@ jobs:
         if: ${{ env.branch == 'dev' }}
         run: |
           ssh -T staging <<EOF
-          cd /www/infinite-closet/${{ env.branch }}
           docker/run dev up
           EOF
 
@@ -65,5 +61,4 @@ jobs:
         if: ${{ env.branch == 'staging' }}
         run: |
           ssh -T staging <<EOF
-          cd /www/infinite-closet/${{ env.branch }}
           EOF
