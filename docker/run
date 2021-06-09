@@ -4,4 +4,4 @@ profiles[prod]="-p prod -f docker/docker-compose.yml -f docker/docker-compose.pr
 profiles[dev]="-p dev -f docker/docker-compose.yml -f docker/docker-compose.dev.yml"
 profiles[local]="-p local -f docker/docker-compose.yml -f docker/docker-compose.dev.yml -f docker/docker-compose.local.yml"
 
-docker-compose ${profiles[$1]} ${@:2}
+COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose ${profiles[$1]} ${@:2}

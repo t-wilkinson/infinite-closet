@@ -1,14 +1,18 @@
 # syntax=docker/dockerfile:1
 
-FROM node:14-alpine
+FROM node:14-alpine as deps
 WORKDIR /app
-COPY ./package.json ./
-COPY ./yarn.lock ./
+COPY package.json yarn.lock .
 COPY ./providers ./providers
-RUN yarn install
-COPY . .
+RUN yarn install --frozen-lockfile
 
-ENV NODE_ENV production
-RUN yarn build
-EXPOSE 1337
-CMD ["yarn", "start"]
+FROM node:14-alpine as builder
+WORKDIR /app
+COPY . .
+COPY --from=deps /app/node_modules ./node_modules
+ARG NODE_ENV
+RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
+
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nodejs -u 1001
+USER nodejs

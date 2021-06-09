@@ -12,6 +12,7 @@ services:
         NEXT_PUBLIC_BACKEND: 'https://api.infinitecloset.co.uk'
         NEXT_PUBLIC_FIREBASE_CONFIG: '{"apiKey":"AIzaSyBI3rlnkvpZLXyx9jyGJ2Z8J02fFqpIsP0","authDomain":"infinite-closet-ec4f9.firebaseapp.com","projectId":"infinite-closet-ec4f9","storageBucket":"infinite-closet-ec4f9.appspot.com","messagingSenderId":"68497379094","appId":"1:68497379094:web:5eb66bb420ce5ba8754a37","measurementId":"G-THH3387PML"}'
         NEXT_PUBLIC_STRIPE_KEY: pk_live_51Ikb9lDnNgAk4A84Zq3oNRb9NcwzLLfEMBoThNAMRWldaJEBHEITMcQgeS36V4uWxmmQ03pBjaezlbTIXm82hydp003lgQxup6
+    command: yarn start
 
   backend:
     depends_on:
@@ -19,28 +20,32 @@ services:
     build:
       context: ../backend
       dockerfile: Dockerfile
+      args:
+        NODE_ENV: production
     ports:
       - 1337:1337
     environment:
+      DATABASE_HOST: db
+      DATABASE_NAME: infinite-closet
+      DATABASE_PASSWORD: Kingston2020
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: infinite-closet
+      FRONTEND_DOMAIN: infinitecloset.co.uk
       NODE_ENV: production
       STRIPE_KEY: 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
-      FRONTEND_DOMAIN: infinitecloset.co.uk
-      DATABASE_NAME: infinite-closet
-      DATABASE_USERNAME: infinite-closet
-      DATABASE_PASSWORD: Kingston2020
-      DATABASE_HOST: db
-      DATABASE_PORT: 5432
+    volumes:
+      ../backend:/app
+    command: yarn start
 
   db:
-    image: postgres:13
     environment:
       POSTGRES_DB: infinite-closet
       POSTGRES_USER: infinite-closet
       POSTGRES_PASSWORD: Kingston2020
     volumes:
-      - postgres-prod:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
     ports:
       - 5432:5432
 
 volumes:
-  postgres-prod:
+  postgres:
