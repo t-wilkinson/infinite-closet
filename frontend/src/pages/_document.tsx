@@ -58,7 +58,10 @@ class MyDocument extends Document {
           <Icons rel="icon" sizes={[16, 32]} />
           <Icons rel="apple-touch-startup-image" sizes={[1024]} />
 
-          <meta name="facebook-domain-verification" content="wuxo0tqtkgp3bqbxaevv93a31m490y" />
+          <meta
+            name="facebook-domain-verification"
+            content="wuxo0tqtkgp3bqbxaevv93a31m490y"
+          />
           <meta property="og:site_name" content="Infinite Closet" />
           <meta property="og:locale" content="en_GB" />
         </Head>

@@ -13,7 +13,8 @@ const grant = require("grant-koa");
 const { sanitizeEntity } = require("strapi-utils");
 const extensions = require("../extensions.js").Auth;
 
-const emailRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const emailRegExp =
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const formatError = (error) => [
   { messages: [{ id: error.id, message: error.message, field: error.field }] },
 ];
@@ -272,9 +273,10 @@ module.exports = {
     // Ability to pass OAuth callback dynamically
     grantConfig[provider].callback =
       _.get(ctx, "query.callback") || grantConfig[provider].callback;
-    grantConfig[provider].redirect_uri = strapi.plugins[
-      "users-permissions"
-    ].services.providers.buildRedirectUri(provider);
+    grantConfig[provider].redirect_uri =
+      strapi.plugins["users-permissions"].services.providers.buildRedirectUri(
+        provider
+      );
 
     return grant(grantConfig)(ctx, next);
   },
@@ -512,6 +514,7 @@ module.exports = {
       email: params.email,
     });
 
+    console.log(0);
     if (user && user.provider === params.provider) {
       return ctx.badRequest(
         null,
@@ -521,6 +524,7 @@ module.exports = {
         })
       );
     }
+    console.log(1);
 
     if (user && user.provider !== params.provider && settings.unique_email) {
       return ctx.badRequest(
@@ -531,6 +535,7 @@ module.exports = {
         })
       );
     }
+    console.log(2);
 
     try {
       if (!settings.email_confirmation) {
@@ -564,6 +569,7 @@ module.exports = {
       extensions.setCookieSession(ctx.cookies, jwt);
       return ctx.send({ user: sanitizedUser });
     } catch (err) {
+      console.log(err);
       const adminError = _.includes(err.message, "username")
         ? {
             id: "Auth.form.error.username.taken",
@@ -578,9 +584,8 @@ module.exports = {
   async emailConfirmation(ctx, next, returnUser) {
     const { confirmation: confirmationToken } = ctx.query;
 
-    const { user: userService, jwt: jwtService } = strapi.plugins[
-      "users-permissions"
-    ].services;
+    const { user: userService, jwt: jwtService } =
+      strapi.plugins["users-permissions"].services;
 
     if (_.isEmpty(confirmationToken)) {
       return ctx.badRequest("token.invalid");
