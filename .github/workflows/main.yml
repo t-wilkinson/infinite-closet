@@ -31,7 +31,7 @@ jobs:
             IdentityFile ~/.ssh/staging.key
             StrictHostKeyChecking no
             Port 2222
-            RemoteCommand cd /www/infinite-closet/${{ env.branch }}
+            RemoteCommand cd /www/infinite-closet/${{ env.branch }} && exec bash -l
           EOF
 
       - name: Update server with changes
