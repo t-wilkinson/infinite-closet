@@ -59,6 +59,9 @@ const Wrapper = ({ router, children }) => {
 
   React.useEffect(() => {
     app?.setCurrentScreen(router.asPath)
+    if (!document.title) {
+      document.title = 'Infinite Closet'
+    }
   }, [router.pathname])
 
   React.useEffect(() => {

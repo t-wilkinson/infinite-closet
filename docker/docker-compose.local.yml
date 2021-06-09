@@ -2,16 +2,11 @@ version: '3.3'
 
 services:
   frontend:
-    ports:
-      - 3002:3000
     environment:
       NEXT_PUBLIC_FRONTEND: 'https://infinitecloset.treywilkinson.com'
       NEXT_PUBLIC_BACKEND: 'https://api.infinitecloset.treywilkinson.com'
 
   backend:
-    ports:
-      - 1339:1337
-      - 8000:8000
     environment:
       FRONTEND_DOMAIN: infinitecloset.treywilkinson.com
-    command: yarn run develop:admin
+    command: yarn run develop
