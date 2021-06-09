@@ -102,7 +102,7 @@ const routes = [
   {
     label: 'Blog',
     value: 'blog',
-    href: null,
+    href: '/blogs',
     img: 'how-it-works-menu-image.jpg',
     data: [],
   },

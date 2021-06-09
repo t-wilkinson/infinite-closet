@@ -2,7 +2,6 @@ import React from 'react'
 import axios from 'axios'
 
 export const Page = ({ blogs }) => {
-  console.log(blogs)
   return (
     <>
       {blogs.map((blog) => (

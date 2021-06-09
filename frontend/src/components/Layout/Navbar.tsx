@@ -61,14 +61,10 @@ const Sections = ({ visible, setVisible }) => (
           key={i}
           onMouseEnter={() => setVisible(value)}
           className={` relative justify-center
-            ${value == 'blog' ? '' : visible === value ? 'bg-pri-light' : ''}
+            ${visible === value ? 'bg-pri-light' : ''}
           `}
         >
-          {value == 'blog' ? (
-            <div>
-              <span className="p-2 text-gray font-subheader">{label}</span>
-            </div>
-          ) : (
+          {
             <Link href={href ?? '#'}>
               <a>
                 <span className="p-2 cursor-pointer font-subheader">
@@ -76,7 +72,7 @@ const Sections = ({ visible, setVisible }) => (
                 </span>
               </a>
             </Link>
-          )}
+          }
         </div>
       ))}
     </div>
