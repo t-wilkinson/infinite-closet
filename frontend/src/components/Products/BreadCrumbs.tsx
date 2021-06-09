@@ -54,10 +54,13 @@ const BreadCrumb = ({ slug, name, href, level, categories }) => {
   const isNextLevel = nextLevel?.slug === slug
   const isMaxLevel = level >= categories.length
   const shouldNest = isNextLevel && !isMaxLevel
+  const selectedSlug = categories.slice(-1)[0].slug
 
   return (
     <div key={slug}>
-      {level !== 0 && <BreadCrumbLink key={slug} href={href} label={name} />}
+      <span className={`${selectedSlug === slug ? 'font-bold' : ''}`}>
+        {level !== 0 && <BreadCrumbLink key={slug} href={href} label={name} />}
+      </span>
       <div style={{ marginLeft: level * 16 }}>
         {shouldNest &&
           nextLevel?.categories.map((category: StrapiCategory) => (
