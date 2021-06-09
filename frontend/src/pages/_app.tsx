@@ -34,15 +34,17 @@ const App = ({ router, Component, pageProps }) => {
 export default App
 
 const allowedPages = [
+  '/',
   '/404',
   '/about-us',
   '/account/forgot-password',
   '/account/register',
   '/account/reset-password',
   '/account/signin',
+  '/blogs',
+  '/blogs/[slug]',
   '/contact-us',
   '/faqs',
-  '/',
   '/privacy',
   '/products/[...slug]',
   '/shop/[designer]/[item]',

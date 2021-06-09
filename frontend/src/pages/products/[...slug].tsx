@@ -72,9 +72,7 @@ export async function getServerSideProps({ params, query }) {
   })
 
   const { products, count, filters, categories } = await axios
-    .get(
-      `${process.env.NEXT_PUBLIC_BACKEND}/products/filters?${_paging}&${_where}&${_filters}`,
-    )
+    .get(`/products/filters?${_paging}&${_where}&${_filters}`)
     .then((res) => res.data)
 
   return {

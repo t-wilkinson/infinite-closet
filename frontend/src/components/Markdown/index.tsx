@@ -1,33 +1,13 @@
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
-import Head from 'next/head'
 import axios from 'axios'
-import dayjs from 'dayjs'
 import gfm from 'remark-gfm'
+import dayjs from 'dayjs'
+import Head from 'next/head'
 
+import Header from '@/Layout/Header'
+import Footer from '@/Layout/Footer'
 import { ScrollUp } from '@/components'
-import { StrapiDocument } from '@/utils/models'
-
-import Header from './Header'
-import Footer from './Footer'
-
-export const useMarkdown = (src: string) => {
-  const [data, setData] = React.useState<StrapiDocument | null>()
-
-  React.useEffect(() => {
-    axios
-      .get(`/documents?slug=${src}`)
-      .then((res) => {
-        if (res.data[0]) {
-          setData(res.data[0])
-        } else {
-        }
-      })
-      .catch((err) => console.error(err))
-  }, [])
-
-  return data
-}
 
 export const components = {
   h2: ({ children }) => (
@@ -39,7 +19,6 @@ export const components = {
   h3: ({ children }) => (
     <span className="block mt-4 mb-2 font-bold" children={children} />
   ),
-
   p: ({ children }) => <p className="my-2" children={children} />,
   ul: ({ children }) => <ul className="mb-4 list-disc" children={children} />,
   ol: ({ children }) => (
@@ -76,53 +55,54 @@ export const components = {
   ),
 }
 
-export const Markdown = ({ src }) => {
-  const data = useMarkdown(src)
-  const updated_at = data && dayjs(data.updated_at).format('MM/DD/YY')
-
-  if (!data) {
-    return (
-      <>
-        <Head>
-          <title>Infinite Closet</title>
-        </Head>
-        <Header />
-        <div className="w-full items-center my-10">
-          <div className="items-center mb-10"></div>
-        </div>
-        <Footer />
-      </>
-    )
-  }
+export const MarkdownWrapper = ({ updated_at, name, content }) => {
+  updated_at = dayjs(updated_at).format('MM/DD/YY')
 
   return (
     <>
       <Head>
-        <title>{data?.name || 'Infinite Closet'}</title>
+        <title>{name}</title>
       </Head>
       <Header />
       <div className="w-full items-center my-10">
         <div className="items-center mb-10">
-          <span className="font-subheader text-center text-4xl">
-            {data?.name}
-          </span>
+          <span className="font-subheader text-center text-4xl">{name}</span>
           <span className="text-gray-dark text-sm">
             Last Updated: {updated_at}
           </span>
         </div>
-        <div className="w-full px-4 lg:px-0 lg:max-w-screen-lg">
-          <ReactMarkdown
-            className="markdown"
-            remarkPlugins={[gfm]}
-            components={components}
-            children={data.content}
-          />
-        </div>
+        <Markdown content={content} />
       </div>
       <Footer />
       <ScrollUp />
     </>
   )
 }
+
+export const Markdown = ({ content }) => (
+  <div className="w-full px-4 lg:px-0 lg:max-w-screen-lg">
+    <ReactMarkdown
+      className="markdown"
+      remarkPlugins={[gfm]}
+      components={components}
+      children={content}
+    />
+  </div>
+)
+
+export const fetchMarkdown =
+  ({ slug = undefined, path = '/documents' }) =>
+  async ({ resolvedUrl }) => {
+    if (!slug) {
+      slug = resolvedUrl.split('/').slice(-1)[0]
+    }
+    return {
+      props: {
+        data: {
+          ...(await axios.get(`${path}?slug=${slug}`)).data[0],
+        },
+      },
+    }
+  }
 
 export default Markdown
