@@ -514,7 +514,6 @@ module.exports = {
       email: params.email,
     });
 
-    console.log(0);
     if (user && user.provider === params.provider) {
       return ctx.badRequest(
         null,
@@ -524,7 +523,6 @@ module.exports = {
         })
       );
     }
-    console.log(1);
 
     if (user && user.provider !== params.provider && settings.unique_email) {
       return ctx.badRequest(
@@ -535,7 +533,6 @@ module.exports = {
         })
       );
     }
-    console.log(2);
 
     try {
       if (!settings.email_confirmation) {
@@ -569,7 +566,6 @@ module.exports = {
       extensions.setCookieSession(ctx.cookies, jwt);
       return ctx.send({ user: sanitizedUser });
     } catch (err) {
-      console.log(err);
       const adminError = _.includes(err.message, "username")
         ? {
             id: "Auth.form.error.username.taken",
