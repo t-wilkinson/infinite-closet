@@ -17,6 +17,11 @@ for run in json.load(sys.stdin)["check_runs"]:
         profiles[dev]="-p dev -f docker/compose.yml -f docker/compose.dev.yml"
         profiles[local]="-p local -f docker/compose.yml -f docker/compose.dev.yml -f docker/compose.local.yml"
 
-        COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose ${profiles[$1]} ${@:2}
+        declare -A nodeenv
+        nodeenv[prod]=production
+        nodeenv[dev]=development
+        nodeenv[local]=development
+
+        NODE_ENV=${nodeenv[$1]} COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose ${profiles[$1]} ${@:2}
         ;;
 esac

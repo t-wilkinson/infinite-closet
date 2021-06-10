@@ -46,8 +46,7 @@ jobs:
         if: ${{ env.branch == 'main' }}
         run: |
           ssh -T staging <<EOF
-          docker/run prod build
-          docker/run prod up -d
+          docker/run prod up -d --build
           EOF
 
       - name: Run develop server

@@ -8,10 +8,10 @@
     "develop:admin": "strapi develop --watch-admin --browser false",
     "start": "strapi start",
     "build": "strapi build",
-    "strapi": "strapi"
+    "strapi": "strapi",
+    "test": "jest"
   },
   "dependencies": {
-    "strapi-provider-email-google-workspace": "file:providers/strapi-provider-email-google-workspace",
     "dayjs": "^1.10.4",
     "googleapis": "^72.0.0",
     "knex": "0.95.0",
@@ -26,6 +26,7 @@
     "strapi-plugin-email": "3.5.4",
     "strapi-plugin-upload": "3.5.4",
     "strapi-plugin-users-permissions": "3.5.4",
+    "strapi-provider-email-google-workspace": "file:providers/strapi-provider-email-google-workspace",
     "strapi-utils": "3.5.4",
     "stripe": "^8.148.0",
     "ws": "^7.4.6"
@@ -42,5 +43,8 @@
     "node": ">=10.16.0 <=14.x.x",
     "npm": "^6.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^27.0.4"
+  }
 }
