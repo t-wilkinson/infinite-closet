@@ -81,11 +81,6 @@ const toRaw = (_where) => {
   return [query.join(" AND "), values];
 };
 
-const addRaw = ([query, bindings], conjunction, where) => [
-  `${query} ${conjunction} ${where}`,
-  bindings,
-];
-
 async function queryProducts(knex, _where, _paging) {
   // TODO: handle paging in SQL
   // TODO: include sizes
@@ -109,8 +104,6 @@ async function queryProducts(knex, _where, _paging) {
     .where("upload_file_morph.related_type", "products")
     .whereNotNull("products.published_at")
     .whereRaw(...toRaw(_where));
-
-  // .whereRaw(...addRaw(toRaw(_where), 'AND', 'products.published_at IS NOT NULL'));
 
   /* results contains many duplicate products.
    * we want to remove these duplicates
@@ -177,26 +170,31 @@ async function queryFilters(knex, _where) {
   let filters = new DefaultDict({});
   for (const [filter, slugs] of Object.entries(filterSlugs)) {
     if (filter in models) {
-      // prettier-ignore
       filters[filter] = await knex
-      .select(`${filter}.*`)
-      .distinct(`${filter}.id`) // TODO: is distinct the most efficient way to handle this?
-      .from(filter)
-      .join(`products__${filter}`, `${filter}.id`, `products__${filter}.product_id`)
-      .join('products', `products__${filter}.product_id`, 'products.id')
-      .whereRaw(
-        Array(slugs.size).fill(`${filter}.slug = ?`).join(" OR "),
-        Array.from(slugs)
-      );
+        .select(`${filter}.*`)
+        .distinct(`${filter}.id`) // TODO: is distinct the most efficient way to handle this?
+        .from(filter)
+        .join(
+          `products__${filter}`,
+          `${filter}.id`,
+          `products__${filter}.product_id`
+        )
+        .join("products", `products__${filter}.product_id`, "products.id")
+        .whereNotNull("products.published_at")
+        .whereRaw(
+          Array(slugs.size).fill(`${filter}.slug = ?`).join(" OR "),
+          Array.from(slugs)
+        );
     } else if (filter === "designers") {
       // prettier-ignore
       filters[filter] = await knex
-      .select(`${filter}.*`)
-      .from(filter)
-      .whereRaw(
-        Array(slugs.size).fill(`${filter}.id = ?`).join(" OR "),
-        Array.from(slugs)
-      );
+        .select(`${filter}.*`)
+        .from(filter)
+        .whereNotNull("products.published_at")
+        .whereRaw(
+          Array(slugs.size).fill(`${filter}.id = ?`).join(" OR "),
+          Array.from(slugs)
+        );
     } else {
       strapi.log.warn(
         "controllers:product:query: the query query for %s is not implemented",
