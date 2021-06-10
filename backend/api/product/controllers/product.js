@@ -137,7 +137,7 @@ async function queryFilters(knex, _where) {
     .select("products.*")
     .from("products")
     .whereNotNull("products.published_at")
-    .whereRaw(toRaw({ categories: _where.categories }));
+    .whereRaw(...toRaw({ categories: _where.categories }));
 
   /* TODO: don't show filters that would result in 0 products showing up
    * for each filter, show slugs that would match at least one product, given all the other filters
