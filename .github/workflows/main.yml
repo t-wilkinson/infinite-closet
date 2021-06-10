@@ -54,7 +54,7 @@ jobs:
         if: ${{ env.branch == 'dev' }}
         run: |
           ssh -T staging <<EOF
-          docker/run dev up -d
+          docker/run dev up -d --build
           EOF
 
       - name: Run staging
