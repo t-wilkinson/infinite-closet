@@ -185,7 +185,6 @@ async function queryFilters(knex, _where) {
       filters[filter] = await knex
         .select(`${filter}.*`)
         .from(filter)
-        .whereNotNull("products.published_at")
         .whereRaw(
           Array(slugs.size).fill(`${filter}.id = ?`).join(" OR "),
           Array.from(slugs)
