@@ -9,4 +9,5 @@ export interface StrapiCategory {
   categories: StrapiCategory[];
   created_by: string;
   updated_at: string;
+  published_at: string;
 }

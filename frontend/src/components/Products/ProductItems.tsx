@@ -155,7 +155,7 @@ const rentalPrice = (low: number, high: number): string => {
   if (!low && !high) {
     return '£-'
   }
-  return low === high ? `£${low}` : `£${low} - ${high}`
+  return low === high ? `£${low}` : `£${low} - £${high}`
 }
 
 const ProductInfo = ({ item }) => (

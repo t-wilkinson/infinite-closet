@@ -20,6 +20,7 @@ export const components = {
     <span className="block mt-4 mb-2 font-bold" children={children} />
   ),
   p: ({ children }) => <p className="my-2" children={children} />,
+  pre: ({ children }) => <p className="my-2" children={children} />,
   ul: ({ children }) => <ul className="mb-4 list-disc" children={children} />,
   ol: ({ children }) => (
     <ol className="mb-4 list-decimal" children={children} />
@@ -104,5 +105,13 @@ export const fetchMarkdown =
       },
     }
   }
+
+export const readingTime = (content: string) => {
+  const words = content.split(/[ \n]/).filter((v) => v).length
+  const wordsPerMinute = words / 200
+  const [minutes, _seconds] = wordsPerMinute.toString().split('.').map(Number)
+  const seconds = Math.floor(_seconds * 0.6)
+  return [minutes, seconds]
+}
 
 export default Markdown

@@ -11,4 +11,5 @@ export interface StrapiDesigner {
   description?: string;
   created_by: string;
   updated_at: string;
+  published_at: string;
 }

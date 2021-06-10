@@ -8,4 +8,5 @@ export interface StrapiStyle {
   value?: string;
   created_by: string;
   updated_at: string;
+  published_at: string;
 }

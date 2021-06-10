@@ -20,4 +20,5 @@ export interface StrapiFile {
   related: any[];
   created_by: string;
   updated_at: string;
+  published_at: string;
 }

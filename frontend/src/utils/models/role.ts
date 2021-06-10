@@ -13,4 +13,5 @@ export interface StrapiRole {
   users: StrapiUser[];
   created_by: string;
   updated_at: string;
+  published_at: string;
 }

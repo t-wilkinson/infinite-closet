@@ -10,4 +10,5 @@ export interface StrapiAddress {
   lastName: string;
   created_by: string;
   updated_at: string;
+  published_at: string;
 }

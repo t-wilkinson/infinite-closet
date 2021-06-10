@@ -1,4 +1,5 @@
 export * from './address';
+export * from './blog';
 export * from './category';
 export * from './color';
 export * from './custom/sizes';

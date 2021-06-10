@@ -29,6 +29,7 @@ module.exports = {
   addField: (interfaceName) => [
     { name: 'created_by', type: 'string' },
     { name: 'updated_at', type: 'string' },
+    { name: 'published_at', type: 'string' },
   ],
 
   // optional, builtin function used if undefined return

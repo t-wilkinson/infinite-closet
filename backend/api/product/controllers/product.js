@@ -81,8 +81,153 @@ const toRaw = (_where) => {
   return [query.join(" AND "), values];
 };
 
+const addRaw = ([query, bindings], conjunction, where) => [
+  `${query} ${conjunction} ${where}`,
+  bindings,
+];
+
+async function queryProducts(knex, _where, _paging) {
+  // TODO: handle paging in SQL
+  // TODO: include sizes
+  // prettier-ignore
+  const results = await knex
+    .select(
+      "products.*",
+      knex.raw("to_json(upload_file.*) as image"),
+      knex.raw("to_json(designers.*) as designer")
+      // knex.raw("to_json(components_custom_sizes.*) as sizes")
+    )
+    .rank("rank", "upload_file_morph.order", "products.id")
+    .from("products")
+    .join("upload_file_morph", "products.id", "upload_file_morph.related_id")
+    .join("upload_file", "upload_file_morph.upload_file_id", "upload_file.id")
+    .join("designers", "products.designer", "designers.id")
+    // .join( "products_components", "products.id", "products_components.product_id")
+    // .join( "components_custom_sizes", "products_components.component_id", "components_custom_sizes.id")
+    .orderBy(..._paging.sort.split(":"))
+    // .where("products_components.component_type", "components_custom_sizes")
+    .whereNotNull("products.published_at")
+    .whereRaw(...addRaw(toRaw(_where), 'AND', 'products.published_at IS NOT NULL'));
+
+  /* results contains many duplicate products.
+   * we want to remove these duplicates
+   */
+  let products = [];
+  let keys = {}; // maps product.id to location in `products`
+  const key = (product) => keys[product.id];
+
+  for (const product of results) {
+    if (!(product.id in keys)) {
+      // initialize product.id in keys
+      keys[product.id] = products.length;
+      products.push(product);
+
+      // TODO: efficiency: should we query the designer here to remove querying duplicates?
+      // initialize image list and product to products
+      product.images = [product.image];
+      delete product.image;
+      products[key(product)] = product;
+    } else {
+      products[key(product)].images.push(product.image);
+    }
+  }
+
+  return products;
+}
+
+async function queryFilters(knex, _where) {
+  // here we find all filters in products under only the category filter
+  const results = await knex
+    .select("products.*")
+    .from("products")
+    .whereRaw(
+      ...addRaw(
+        toRaw({ categories: _where.categories }),
+        "AND",
+        "products.published_at IS NOT NULL"
+      )
+    );
+
+  /* TODO: don't show filters that would result in 0 products showing up
+   * for each filter, show slugs that would match at least one product, given all the other filters
+   * product holds the key information to solve this
+   * how do we structure filter relations to ensure this?
+   */
+  let filterSlugs = new DefaultDict(Set);
+  for (const product of results) {
+    for (const filter of productFilters) {
+      if (filter in models) {
+        for (const slug of product[toPrivate(filter)].split(",")) {
+          if (!(slug === "")) {
+            filterSlugs[filter].add(slug);
+          }
+        }
+      } else if (filter === "designers") {
+        filterSlugs[filter].add(product.designer);
+      } else {
+        filterSlugs[filter].add(product[filter]);
+      }
+    }
+  }
+
+  // query for unique filters found which match _where
+  let filters = new DefaultDict({});
+  for (const [filter, slugs] of Object.entries(filterSlugs)) {
+    if (filter in models) {
+      // prettier-ignore
+      filters[filter] = await knex
+      .select(`${filter}.*`)
+      .distinct(`${filter}.id`) // TODO: is distinct the most efficient way to handle this?
+      .from(filter)
+      .join(`products__${filter}`, `${filter}.id`, `products__${filter}.product_id`)
+      .join('products', `products__${filter}.product_id`, 'products.id')
+      .whereRaw(
+        Array(slugs.size).fill(`${filter}.slug = ?`).join(" OR "),
+        Array.from(slugs)
+      );
+    } else if (filter === "designers") {
+      // prettier-ignore
+      filters[filter] = await knex
+      .select(`${filter}.*`)
+      .from(filter)
+      .whereRaw(
+        Array(slugs.size).fill(`${filter}.id = ?`).join(" OR "),
+        Array.from(slugs)
+      );
+    } else {
+      strapi.log.warn(
+        "controllers:product:query: the query query for %s is not implemented",
+        filter
+      );
+    }
+  }
+}
+
+async function queryCategories(query) {
+  const queryCategories =
+    typeof query.categories === "string"
+      ? [query.categories]
+      : query.categories;
+  const unorderedCategories = await strapi.query("category").find({
+    slug_in: query.categories,
+  });
+  let categories = [];
+  for (const slug of queryCategories) {
+    category: for (const category of unorderedCategories) {
+      if (slug === category.slug) {
+        categories.push(category);
+        break category;
+      }
+    }
+  }
+  return categories;
+}
+
+const DEFAULT_PAGE = 0;
+const DEFAULT_PAGE_SIZE = 20;
+
 module.exports = {
-  // TODO: there are plenty of ways to speed this up when it bottlenecks
+  // TODO: there are plenty of ways to speed this up *when* it bottlenecks
   async query(ctx) {
     const query =
       process.env.NODE_ENV === "production"
@@ -93,138 +238,15 @@ module.exports = {
       ["start", "limit", "sort"].includes(k)
     );
 
-    let results;
     const knex = strapi.connections.default;
+    const [products, filters, categories] = await Promise.all([
+      queryProducts(knex, _where, _paging),
+      queryFilters(knex, _where),
+      queryCategories(query),
+    ]);
 
-    // TODO: handle paging in SQL
-    results = await knex
-      .select(
-        "products.*",
-        knex.raw("to_json(upload_file.*) as image"),
-        knex.raw("to_json(designers.*) as designer")
-        // knex.raw("to_json(components_custom_sizes.*) as sizes")
-      )
-      .rank("rank", "upload_file_morph.order", "products.id")
-      .from("products")
-      .join("upload_file_morph", "products.id", "upload_file_morph.related_id")
-      .join("upload_file", "upload_file_morph.upload_file_id", "upload_file.id")
-      .join("designers", "products.designer", "designers.id")
-      // .join(
-      //   "products_components",
-      //   "products.id",
-      //   "products_components.product_id"
-      // )
-      // .join(
-      //   "components_custom_sizes",
-      //   "products_components.component_id",
-      //   "components_custom_sizes.id"
-      // )
-      .orderBy(..._paging.sort.split(":"))
-      // .where("products_components.component_type", "components_custom_sizes")
-      .whereRaw(...toRaw(_where));
-
-    /* results contains many duplicate products.
-     * we want to remove these duplicates
-     */
-    let products = [];
-    let keys = {}; // maps product.id to location in `products`
-    const key = (product) => keys[product.id];
-
-    for (const product of results) {
-      if (!(product.id in keys)) {
-        // initialize product.id in keys
-        keys[product.id] = products.length;
-        products.push(product);
-
-        // TODO: efficiency: should we query the designer here to remove querying duplicates?
-        // initialize image list and product to products
-        product.images = [product.image];
-        delete product.image;
-        products[key(product)] = product;
-      } else {
-        products[key(product)].images.push(product.image);
-      }
-    }
-
-    // here we find all filters in products under only the category filter
-    results = await knex
-      .select("products.*")
-      .from("products")
-      .whereRaw(...toRaw({ categories: _where.categories }));
-
-    // TODO: don't show filters that would result in 0 products showing up
-    // for each filter, show slugs that would match at least one product, given all the other filters
-    // product holds the key information to solve this
-    // how do we structure filter relations to ensure this?
-
-    let filterSlugs = new DefaultDict(Set);
-    for (const product of results) {
-      for (const filter of productFilters) {
-        if (filter in models) {
-          for (const slug of product[toPrivate(filter)].split(",")) {
-            if (!(slug === "")) {
-              filterSlugs[filter].add(slug);
-            }
-          }
-        } else if (filter === "designers") {
-          filterSlugs[filter].add(product.designer);
-        } else {
-          filterSlugs[filter].add(product[filter]);
-        }
-      }
-    }
-
-    // query for unique filters found which match _where
-    let filters = new DefaultDict({});
-    for (const [filter, slugs] of Object.entries(filterSlugs)) {
-      if (filter in models) {
-        // prettier-ignore
-        filters[filter] = await knex
-          .select(`${filter}.*`)
-          .distinct(`${filter}.id`) // TODO: is distinct the most efficient way to handle this?
-          .from(filter)
-          .join(`products__${filter}`, `${filter}.id`, `products__${filter}.product_id`)
-          .join('products', `products__${filter}.product_id`, 'products.id')
-          .whereRaw(
-            Array(slugs.size).fill(`${filter}.slug = ?`).join(" OR "),
-            Array.from(slugs)
-          );
-      } else if (filter === "designers") {
-        // prettier-ignore
-        filters[filter] = await knex
-          .select(`${filter}.*`)
-          .from(filter)
-          .whereRaw(
-            Array(slugs.size).fill(`${filter}.id = ?`).join(" OR "),
-            Array.from(slugs)
-          );
-      } else {
-        strapi.log.warn(
-          "controllers:product:query: the query query for %s is not implemented",
-          filter
-        );
-      }
-    }
-
-    const queryCategories =
-      typeof query.categories === "string"
-        ? [query.categories]
-        : query.categories;
-    const unorderedCategories = await strapi.query("category").find({
-      slug_in: query.categories,
-    });
-    let categories = [];
-    for (const slug of queryCategories) {
-      category: for (const category of unorderedCategories) {
-        if (slug === category.slug) {
-          categories.push(category);
-          break category;
-        }
-      }
-    }
-
-    const start = parseInt(_paging.start) || 0;
-    const limit = parseInt(_paging.limit) || 20;
+    const start = parseInt(_paging.start) || DEFAULT_PAGE;
+    const limit = parseInt(_paging.limit) || DEFAULT_PAGE_SIZE;
     const end = start + limit;
 
     ctx.send({

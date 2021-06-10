@@ -23,4 +23,5 @@ export interface StrapiUser {
   orders: any[];
   created_by: string;
   updated_at: string;
+  published_at: string;
 }

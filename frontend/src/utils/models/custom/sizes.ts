@@ -8,4 +8,5 @@ export interface StrapiSize {
   details?: string;
   created_by: string;
   updated_at: string;
+  published_at: string;
 }
