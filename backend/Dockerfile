@@ -12,7 +12,6 @@ COPY . .
 COPY --from=deps /app/node_modules ./node_modules
 ARG NODE_ENV
 RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
-
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nodejs -u 1001
 USER nodejs

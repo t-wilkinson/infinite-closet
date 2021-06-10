@@ -4,10 +4,12 @@ services:
   frontend:
     environment:
       NEXT_PUBLIC_FACEBOOK_APP_ID: 471225744010546
+    restart: always
 
   backend:
     depends_on:
       - db
+    restart: always
     environment:
       SLACK_CLIENT_ID: 1246207316551.2121921529701
       SLACK_SECRET: 76342489a4e8a01767daf258dafdf6f2
