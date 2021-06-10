@@ -106,8 +106,11 @@ async function queryProducts(knex, _where, _paging) {
     // .join( "components_custom_sizes", "products_components.component_id", "components_custom_sizes.id")
     .orderBy(..._paging.sort.split(":"))
     // .where("products_components.component_type", "components_custom_sizes")
+    .where("upload_file_morph.related_type", "products")
     .whereNotNull("products.published_at")
-    .whereRaw(...addRaw(toRaw(_where), 'AND', 'products.published_at IS NOT NULL'));
+    .whereRaw(...toRaw(_where));
+
+  // .whereRaw(...addRaw(toRaw(_where), 'AND', 'products.published_at IS NOT NULL'));
 
   /* results contains many duplicate products.
    * we want to remove these duplicates
@@ -201,6 +204,8 @@ async function queryFilters(knex, _where) {
       );
     }
   }
+
+  return filters;
 }
 
 async function queryCategories(query) {
