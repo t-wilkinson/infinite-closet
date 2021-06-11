@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon } from '@/components'
-import { Submit, Checkbox } from '@/Form'
+import { Submit } from '@/Form'
 
 import { shopActions } from './slice'
 import { OneTime } from './types'
@@ -41,7 +41,7 @@ interface Size {
   quantity: number
 }
 
-const productRentContents = {
+export const productRentContents = {
   OneTime: ({ dispatch, product, state, router }) => {
     const [sizeState, setSizeState] = React.useState(false)
     const [status, setStatus] = React.useState<null | string>(null)
@@ -60,7 +60,7 @@ const productRentContents = {
           },
           { withCredentials: true },
         )
-        .then((res) => {
+        .then(() => {
           router.push('/user/checkout')
         })
         .catch((err) => {
@@ -79,7 +79,8 @@ const productRentContents = {
 
         <SelectorItem label="Size" className="my-2 z-10 w-full">
           <div className="relative items-start w-full">
-            <div
+            <button
+              aria-label="Dropdown product sizes"
               className="p-2 border border-gray relative cursor-pointer w-32 justify-between flex-row"
               onClick={() => setSizeState((state) => !state)}
             >
@@ -88,7 +89,7 @@ const productRentContents = {
                 product.sizes[state.size].size) ||
                 'Select Size'}
               <Icon name="down" size={16} className="mt-1" />
-            </div>
+            </button>
             <div
               className={`
               w-32 absolute bottom-0 bg-white divide-y transform translate-y-full border border-gray z-10
@@ -96,16 +97,17 @@ const productRentContents = {
               `}
             >
               {product.sizes.map((size: Size, index: number) => (
-                <div
+                <button
                   key={size.id}
+                  aria-label="Dropdown sizes"
                   onClick={() => {
                     dispatch(shopActions.changeSize(index))
                     setSizeState(false)
                   }}
-                  className="items-center cursor-pointer bg-white"
+                  className="justify-center cursor-pointer bg-white"
                 >
                   {size.size}
-                </div>
+                </button>
               ))}
             </div>
           </div>

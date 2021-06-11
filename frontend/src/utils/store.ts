@@ -11,7 +11,7 @@ import {
   useDispatch as useDispatch_,
 } from 'react-redux'
 
-const store = configureStore({
+export const storeOptions = {
   reducer: {
     user: userSlice,
     layout: layoutSlice,
@@ -19,13 +19,16 @@ const store = configureStore({
     account: accountSlice,
     shop: shopSlice,
   },
-  middleware: (getDefaultMiddleware) =>
+  middleware: (getDefaultMiddleware: any) =>
     getDefaultMiddleware({
       serializableCheck: false,
     }),
-})
+}
+
+const store = configureStore(storeOptions)
 
 export default store
+export type Store = typeof store
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 export const useDispatch = () => useDispatch_<AppDispatch>()

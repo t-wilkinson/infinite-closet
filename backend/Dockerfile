@@ -18,8 +18,5 @@ FROM test as development-build
 
 FROM test as production-build
 RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
-USER nodejs
 
 FROM ${NODE_ENV}-build as final
