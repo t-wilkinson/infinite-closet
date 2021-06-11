@@ -5,8 +5,12 @@ services:
     environment:
       NEXT_PUBLIC_FRONTEND: 'https://infinitecloset.treywilkinson.com'
       NEXT_PUBLIC_BACKEND: 'https://api.infinitecloset.treywilkinson.com'
+    volumes:
+      - ../frontend:/app
 
   backend:
     environment:
       FRONTEND_DOMAIN: infinitecloset.treywilkinson.com
     command: yarn run develop
+    volumes:
+      - ../backend:/app
