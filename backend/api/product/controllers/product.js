@@ -81,11 +81,6 @@ const toRaw = (_where) => {
   return [query.join(" AND "), values];
 };
 
-const addRaw = ([query, bindings], conjunction, where) => [
-  `${query} ${conjunction} ${where}`,
-  bindings,
-];
-
 async function queryProducts(knex, _where, _paging) {
   // TODO: handle paging in SQL
   // TODO: include sizes
@@ -106,8 +101,9 @@ async function queryProducts(knex, _where, _paging) {
     // .join( "components_custom_sizes", "products_components.component_id", "components_custom_sizes.id")
     .orderBy(..._paging.sort.split(":"))
     // .where("products_components.component_type", "components_custom_sizes")
+    .where("upload_file_morph.related_type", "products")
     .whereNotNull("products.published_at")
-    .whereRaw(...addRaw(toRaw(_where), 'AND', 'products.published_at IS NOT NULL'));
+    .whereRaw(...toRaw(_where));
 
   /* results contains many duplicate products.
    * we want to remove these duplicates
@@ -140,13 +136,8 @@ async function queryFilters(knex, _where) {
   const results = await knex
     .select("products.*")
     .from("products")
-    .whereRaw(
-      ...addRaw(
-        toRaw({ categories: _where.categories }),
-        "AND",
-        "products.published_at IS NOT NULL"
-      )
-    );
+    .whereNotNull("products.published_at")
+    .whereRaw(...toRaw({ categories: _where.categories }));
 
   /* TODO: don't show filters that would result in 0 products showing up
    * for each filter, show slugs that would match at least one product, given all the other filters
@@ -174,26 +165,30 @@ async function queryFilters(knex, _where) {
   let filters = new DefaultDict({});
   for (const [filter, slugs] of Object.entries(filterSlugs)) {
     if (filter in models) {
-      // prettier-ignore
       filters[filter] = await knex
-      .select(`${filter}.*`)
-      .distinct(`${filter}.id`) // TODO: is distinct the most efficient way to handle this?
-      .from(filter)
-      .join(`products__${filter}`, `${filter}.id`, `products__${filter}.product_id`)
-      .join('products', `products__${filter}.product_id`, 'products.id')
-      .whereRaw(
-        Array(slugs.size).fill(`${filter}.slug = ?`).join(" OR "),
-        Array.from(slugs)
-      );
+        .select(`${filter}.*`)
+        .distinct(`${filter}.id`) // TODO: is distinct the most efficient way to handle this?
+        .from(filter)
+        .join(
+          `products__${filter}`,
+          `${filter}.id`,
+          `products__${filter}.product_id`
+        )
+        .join("products", `products__${filter}.product_id`, "products.id")
+        .whereNotNull("products.published_at")
+        .whereRaw(
+          Array(slugs.size).fill(`${filter}.slug = ?`).join(" OR "),
+          Array.from(slugs)
+        );
     } else if (filter === "designers") {
       // prettier-ignore
       filters[filter] = await knex
-      .select(`${filter}.*`)
-      .from(filter)
-      .whereRaw(
-        Array(slugs.size).fill(`${filter}.id = ?`).join(" OR "),
-        Array.from(slugs)
-      );
+        .select(`${filter}.*`)
+        .from(filter)
+        .whereRaw(
+          Array(slugs.size).fill(`${filter}.id = ?`).join(" OR "),
+          Array.from(slugs)
+        );
     } else {
       strapi.log.warn(
         "controllers:product:query: the query query for %s is not implemented",
@@ -201,6 +196,8 @@ async function queryFilters(knex, _where) {
       );
     }
   }
+
+  return filters;
 }
 
 async function queryCategories(query) {

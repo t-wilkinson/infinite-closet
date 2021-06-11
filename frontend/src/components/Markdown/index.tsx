@@ -93,10 +93,13 @@ export const Markdown = ({ content }) => (
 
 export const fetchMarkdown =
   ({ slug = undefined, path = '/documents' }) =>
-  async ({ resolvedUrl }) => {
-    if (!slug) {
+  async ({ query, resolvedUrl }) => {
+    if (!slug && query.slug) {
+      slug = query.slug
+    } else if (!slug) {
       slug = resolvedUrl.split('/').slice(-1)[0]
     }
+
     return {
       props: {
         data: {
