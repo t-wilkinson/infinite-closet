@@ -101,7 +101,10 @@ const Wrapper = ({ router, children }) => {
       .catch(() => {})
   }, [])
 
-  if (!allowedPages.includes(router.pathname)) {
+  if (
+    !allowedPages.includes(router.pathname) &&
+    process.env.NODE_ENV === 'production'
+  ) {
     children = <FourOFour />
   }
 

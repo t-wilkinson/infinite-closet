@@ -15,8 +15,6 @@ services:
       NEXT_PUBLIC_FIREBASE_CONFIG: '{"apiKey":"AIzaSyC3eakvWXGZVM2vKN69pXViyPsHyQghCys","authDomain":"infinite-closet-1614373277543.firebaseapp.com","projectId":"infinite-closet-1614373277543","storageBucket":"infinite-closet-1614373277543.appspot.com","messagingSenderId":"703454257680","appId":"1:703454257680:web:ffd5aeb011088bfe6b6095","measurementId":"G-K4XJMWSGN9"}'
       NEXT_PUBLIC_STRIPE_KEY: pk_test_51Ikb9lDnNgAk4A84M2EKzMFOlpQG65VHqqw8ZKlY8KwfgGHLEadvakIIJM7dA6HzVewnWZvJ2BPR9ZGq9SwfKBFJ00PTz0SIz5
     command: yarn run develop
-    volumes:
-      - ../frontend:/app
     working_dir: /app
 
   backend:
@@ -29,8 +27,6 @@ services:
       - 1338:1337
     command: yarn run develop
     working_dir: /app
-    volumes:
-      - ../backend:/app
     environment:
       DATABASE_HOST: db
       DATABASE_NAME: infinite-closet-dev
