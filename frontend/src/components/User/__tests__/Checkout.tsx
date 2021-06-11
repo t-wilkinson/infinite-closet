@@ -1,4 +1,4 @@
-// import React from 'react'
+import React from 'react'
 // import ProductRentContents from '../ProductRentContents'
 // import { render, fireEvent, RenderResult, within } from '@/utils/test'
 
