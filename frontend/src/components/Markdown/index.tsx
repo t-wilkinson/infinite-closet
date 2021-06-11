@@ -2,12 +2,13 @@ import React from 'react'
 import ReactMarkdown from 'react-markdown'
 import axios from 'axios'
 import gfm from 'remark-gfm'
+import rehypeRaw from 'rehype-raw'
 import dayjs from 'dayjs'
 import Head from 'next/head'
 
 import Header from '@/Layout/Header'
 import Footer from '@/Layout/Footer'
-import { ScrollUp } from '@/components'
+import { ScrollUp, BlueLink } from '@/components'
 
 export const components = {
   h2: ({ children }) => (
@@ -16,6 +17,7 @@ export const components = {
       <span className="block h-px bg-pri w-full my-2" />
     </>
   ),
+  a: ({ children, href }) => <BlueLink label={children} href={href} />,
   h3: ({ children }) => (
     <span className="block mt-4 mb-2 font-bold" children={children} />
   ),
@@ -84,6 +86,7 @@ export const Markdown = ({ content }) => (
   <div className="w-full px-4 lg:px-0 lg:max-w-screen-lg">
     <ReactMarkdown
       className="markdown"
+      rehypePlugins={[rehypeRaw]}
       remarkPlugins={[gfm]}
       components={components}
       children={content}

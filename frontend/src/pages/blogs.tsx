@@ -31,7 +31,9 @@ export const Page = ({ blogs }) => {
                   </div>
                   <div className="w-48 h-48 relative">
                     <Image
-                      src={getURL(blog.image.url)}
+                      src={getURL(
+                        (blog.thumbnail || blog.image).formats.small.url,
+                      )}
                       layout="fill"
                       objectFit="cover"
                     />

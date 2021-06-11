@@ -14,6 +14,7 @@ module.exports = withPWA({
     defaultLocale: 'en-GB',
   },
   images: {
+    // TODO: use domain from env var
     domains: [
       'infinitecloset.treywilkinson.com',
       'api.infinitecloset.treywilkinson.com',

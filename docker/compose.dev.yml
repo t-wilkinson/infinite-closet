@@ -2,11 +2,6 @@ version: '3.3'
 
 services:
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: development
     ports:
       - 3001:3000
     environment:
@@ -18,11 +13,6 @@ services:
     working_dir: /app
 
   backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: development
     ports:
       - 1338:1337
     command: yarn run develop

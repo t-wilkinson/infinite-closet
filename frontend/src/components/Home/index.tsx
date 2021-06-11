@@ -190,7 +190,7 @@ const whyRent = [
 
 const ProductItems = ({ products }) => {
   return (
-    <div className="my-8 w-full">
+    <div className="my-8 w-full" id="our-pick">
       <Heading>Our Pick</Heading>
       <div className="my-8 w-full flex-wrap lg:flex-no-wrap flex-row">
         {products.map((product) => (

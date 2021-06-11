@@ -6,12 +6,8 @@ html {
   font-family: 'Lato', sans-serif;
 }
 
-div,
-button {
-  display: flex;
-}
-
 div {
+  display: flex;
   flex-direction: column;
 }
 

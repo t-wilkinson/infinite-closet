@@ -42,7 +42,7 @@ interface Size {
 }
 
 export const productRentContents = {
-  OneTime: ({ dispatch, product, state, router }) => {
+  OneTime: ({ user, dispatch, product, state, router }) => {
     const [sizeState, setSizeState] = React.useState(false)
     const [status, setStatus] = React.useState<null | string>(null)
 
@@ -81,7 +81,7 @@ export const productRentContents = {
           <div className="relative items-start w-full">
             <button
               aria-label="Dropdown product sizes"
-              className="p-2 border border-gray relative cursor-pointer w-32 justify-between flex-row"
+              className="flex p-2 border border-gray relative cursor-pointer w-32 justify-between flex-row"
               onClick={() => setSizeState((state) => !state)}
             >
               {(state.size !== undefined &&
@@ -104,7 +104,7 @@ export const productRentContents = {
                     dispatch(shopActions.changeSize(index))
                     setSizeState(false)
                   }}
-                  className="justify-center cursor-pointer bg-white"
+                  className="flex justify-center cursor-pointer bg-white"
                 >
                   {size.size}
                 </button>
@@ -150,12 +150,15 @@ export const productRentContents = {
           disabled={
             process.env.NODE_ENV === 'production' ||
             !state.selectedDate ||
+            !user ||
             state.size === undefined ||
             status === 'adding'
           }
         >
           {process.env.NODE_ENV === 'production'
             ? 'Coming Soon'
+            : !user
+            ? 'Please sign in'
             : status === 'adding'
             ? 'Adding...'
             : status === 'error'

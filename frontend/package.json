@@ -24,13 +24,10 @@
     "react-markdown": "^6.0.2",
     "react-redux": "^7.2.3",
     "redux": "^4.0.5",
+    "rehype-raw": "^5.1.0",
     "remark-gfm": "^1.0.0"
   },
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.14.5",
-    "@babel/preset-env": "^7.14.5",
-    "@babel/preset-react": "^7.14.5",
-    "@babel/preset-typescript": "^7.14.5",
     "@tailwindcss/aspect-ratio": "^0.2.0",
     "@testing-library/react": "^11.2.7",
     "@types/jest": "^26.0.23",
@@ -39,8 +36,6 @@
     "@types/react": "^17.0.3",
     "@types/react-test-renderer": "^17.0.1",
     "babel-jest": "^27.0.2",
-    "babel-plugin-module-resolver": "^4.1.0",
-    "babel-plugin-preval": "^5.0.0",
     "jest": "^27.0.4",
     "postcss-flexbugs-fixes": "^4.2.1",
     "postcss-preset-env": "^6.7.0",

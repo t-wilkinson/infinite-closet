@@ -10,6 +10,7 @@ export interface StrapiBlog {
   slug?: string;
   image?: StrapiFile;
   subtitle?: string;
+  thumbnail?: StrapiFile;
   created_by: string;
   updated_at: string;
   published_at: string;
