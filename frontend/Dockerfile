@@ -11,7 +11,6 @@ FROM node:14-alpine AS test
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
-FROM node:14-alpine AS builder
 RUN yarn run test --passWithNoTests
 
 FROM test AS development-runner
