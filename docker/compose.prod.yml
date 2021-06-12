@@ -35,6 +35,8 @@ services:
       NODE_ENV: production
       STRIPE_KEY: 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
     command: yarn start
+    volumes:
+      - ../backend/public:/app/public
 
   db:
     environment:

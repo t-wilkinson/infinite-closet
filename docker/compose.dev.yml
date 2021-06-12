@@ -36,6 +36,8 @@ services:
       FRONTEND_DOMAIN: dev.infinitecloset.co.uk
       NODE_ENV: development
       STRIPE_KEY: sk_test_51Ikb9lDnNgAk4A84a08Vrtj9h0K7Zg6C3HLSEhbZXRkC2E3wX2y9JDo67TOZI8spmVj4nvaHSamVwiKUokS9Kg5S00whW8RV3K
+    volumes:
+      - ../backend/public:/app/public
 
   db:
     environment:

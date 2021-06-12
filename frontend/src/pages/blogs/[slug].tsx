@@ -37,7 +37,7 @@ export const components = {
   ),
 
   img: ({ src }) => (
-    <div className="max-w-md relative" style={{ maxHeight: 550 }}>
+    <div className="max-w-md relative">
       <img src={getURL(src)} />
     </div>
   ),
