@@ -8,7 +8,7 @@ import Head from 'next/head'
 
 import Header from '@/Layout/Header'
 import Footer from '@/Layout/Footer'
-import { ScrollUp, BlueLink } from '@/components'
+import { ScrollUp } from '@/components'
 
 export const components = {
   h2: ({ children }) => (
@@ -17,7 +17,11 @@ export const components = {
       <span className="block h-px bg-pri w-full my-2" />
     </>
   ),
-  a: ({ children, href }) => <BlueLink label={children} href={href} />,
+  a: ({ children, href }) => (
+    <a href={href}>
+      <span className="cursor-pointer text-blue-500">{children}</span>
+    </a>
+  ),
   h3: ({ children }) => (
     <span className="block mt-4 mb-2 font-bold" children={children} />
   ),
@@ -88,6 +92,7 @@ export const Markdown = ({ content }) => (
       className="markdown"
       rehypePlugins={[rehypeRaw]}
       remarkPlugins={[gfm]}
+      // @ts-ignore
       components={components}
       children={content}
     />

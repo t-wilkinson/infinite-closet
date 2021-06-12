@@ -37,7 +37,7 @@ export const components = {
   ),
 
   img: ({ src }) => (
-    <div className="max-w-md relative">
+    <div className="max-w-md relative" style={{ maxHeight: 550 }}>
       <img src={getURL(src)} />
     </div>
   ),
@@ -70,6 +70,7 @@ const Blog = ({ published_at, updated_at, name, content, subtitle, image }) => {
               className="markdown"
               rehypePlugins={[rehypeRaw]}
               remarkPlugins={[gfm]}
+              // @ts-ignore
               components={components}
               children={content}
             />
