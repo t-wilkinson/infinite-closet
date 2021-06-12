@@ -8,6 +8,7 @@ services:
       context: ../frontend
       dockerfile: Dockerfile
       args:
+        NODE_ENV: production
         NEXT_PUBLIC_FRONTEND: 'https://infinitecloset.co.uk'
         NEXT_PUBLIC_BACKEND: 'https://api.infinitecloset.co.uk'
         NEXT_PUBLIC_FIREBASE_CONFIG: '{"apiKey":"AIzaSyBI3rlnkvpZLXyx9jyGJ2Z8J02fFqpIsP0","authDomain":"infinite-closet-ec4f9.firebaseapp.com","projectId":"infinite-closet-ec4f9","storageBucket":"infinite-closet-ec4f9.appspot.com","messagingSenderId":"68497379094","appId":"1:68497379094:web:5eb66bb420ce5ba8754a37","measurementId":"G-THH3387PML"}'
