@@ -119,7 +119,7 @@ const Wrapper = ({ router, children }) => {
       >
         <Popup popup={popup} />
         <div className="min-h-screen">
-          <Banner />
+          {/* <Banner /> */}
           {children}
         </div>
       </div>
