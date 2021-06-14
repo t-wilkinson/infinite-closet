@@ -18,8 +18,12 @@ export const validate = (
         )
       case 'required':
         return Boolean(value) || `Please include your ${field.toLowerCase()}`
-      case 'number':
+      case 'decimal':
+        return /^\d*\.?\d{0,2}$/.test(value) || `${field} must be a number`
+      case 'integer':
         return /^\d*$/.test(value) || `${field} must be a number`
+      case 'number':
+        return /^\d*\.?\d*$/.test(value) || `${field} must be a number`
       case 'max-width':
         return (
           value.length <= Number(props[0]) ||
@@ -69,7 +73,7 @@ export const cleanFields = (fields: Fields): { [field: string]: any } => {
 // TODO: preserve order of fields?
 export const useFields: (config: FieldsConfig) => Fields = (config) => {
   const initialState = Object.keys(config).reduce(
-    (acc, k) => ((acc[k] = config[k].defaultValue ?? ''), acc),
+    (acc, k) => ((acc[k] = config[k].default ?? ''), acc),
     {},
   )
   const reducer = (state, { type, payload }) => ({ ...state, [type]: payload })

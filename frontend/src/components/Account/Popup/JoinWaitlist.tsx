@@ -52,7 +52,7 @@ const WaitlistForm = ({ status, setStatus }) => {
   const fields = useFields({
     firstName: { constraints: 'required' },
     lastName: { constraints: 'required' },
-    checkbox: { constraints: 'required', label: '', defaultValue: 'other' },
+    checkbox: { constraints: 'required', label: '', default: 'other' },
     subscribe: { label: '' },
     email: { constraints: 'required email', label: 'Email Address' },
     comment: { label: 'Leave a comment' },
@@ -63,8 +63,9 @@ const WaitlistForm = ({ status, setStatus }) => {
     setStatus('Submitting')
 
     const cleaned = cleanFields(fields)
-    const marketing = howDidYouFindUs.find((v) => v.value == cleaned.checkbox)
-      ?.label
+    const marketing = howDidYouFindUs.find(
+      (v) => v.value == cleaned.checkbox,
+    )?.label
 
     axios
       .post('/account/waitlist', {

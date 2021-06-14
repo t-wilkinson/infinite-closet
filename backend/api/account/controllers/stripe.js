@@ -1,9 +1,7 @@
 "use strict";
 const _ = require("lodash");
 const { sanitizeEntity } = require("strapi-utils");
-const stripe = require("stripe")(
-  "sk_test_51Ikb9lDnNgAk4A84a08Vrtj9h0K7Zg6C3HLSEhbZXRkC2E3wX2y9JDo67TOZI8spmVj4nvaHSamVwiKUokS9Kg5S00whW8RV3K"
-);
+const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 module.exports = {
   async paymentMethods(ctx) {

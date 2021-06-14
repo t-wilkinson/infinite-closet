@@ -12,25 +12,16 @@ function render(
     ...renderOptions
   } = {},
 ) {
+  store.dispatch = jest.fn()
+
   function Wrapper({ children }) {
     return <Provider store={store}>{children}</Provider>
   }
-  return rtlRender(ui, { wrapper: Wrapper, ...renderOptions })
+
+  let component = rtlRender(ui, { wrapper: Wrapper, ...renderOptions })
+  component.store = store
+  return component
 }
 
 export * from '@testing-library/react'
 export { render }
-
-export const createStore = (initialState = {}) =>
-  configureStore({ ...storeOptions, preloadedState: initialState })
-
-//   beforeEach(() => {
-//     store = createStore()
-//     store.dispatch = jest.fn()
-
-//     component = renderer.create(
-//       <Provider store={store}>
-//         <ProductRentContents product={mockProduct} state={mockState} />
-//       </Provider>,
-//     )
-//   })

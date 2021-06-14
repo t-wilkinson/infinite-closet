@@ -13,6 +13,7 @@ import CookieConsent from '@/Layout/CookieConsent'
 import Popup from '@/Account/Popup'
 import { accountActions } from '@/Account/slice'
 import { layoutActions } from '@/Layout/slice'
+import Banner from '@/Layout/Banner'
 import { userActions } from '@/User/slice'
 const FourOFour = dynamic(() => import('@/pages/404'))
 
@@ -62,6 +63,7 @@ const Wrapper = ({ router, children }) => {
   React.useEffect(() => {
     app?.setCurrentScreen(router.asPath)
     if (!document.title) {
+      console.log(document.title)
       document.title = 'Infinite Closet'
     }
   }, [router.pathname])
@@ -119,19 +121,13 @@ const Wrapper = ({ router, children }) => {
       >
         <Popup popup={popup} />
         <div className="min-h-screen">
-          {/* <Banner /> */}
+          <Banner />
           {children}
         </div>
       </div>
     </>
   )
 }
-
-const Banner = () => (
-  <div className="items-center px-2 py-1 width-full bg-sec text-white">
-    <span className="text-norm">COMING JULY 1</span>
-  </div>
-)
 
 const useSaveScrollPos = () => {
   const scrollState = React.useRef({}).current

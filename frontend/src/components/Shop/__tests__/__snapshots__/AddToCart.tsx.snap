@@ -1,0 +1,137 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shop product renders correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="h-96"
+  >
+    <div
+      class="my-2 z-10 w-full"
+    >
+      <span
+        class="font-bold my-2"
+      >
+        Size
+      </span>
+      <div
+        class="relative items-start w-full"
+      >
+        <button
+          aria-label="Dropdown product sizes"
+          class="flex p-2 border border-gray relative cursor-pointer w-32 justify-between flex-row"
+        >
+          Select Size
+          <div
+            class="fill-current mt-1"
+            style="width: 16px; height: 16px;"
+          >
+            <svg
+              viewBox="0 0 451.847 451.847"
+            >
+              <path
+                d="M225.923,354.706c-8.098,0-16.195-3.092-22.369-9.263L9.27,151.157c-12.359-12.359-12.359-32.397,0-44.751 c12.354-12.354,32.388-12.354,44.748,0l171.905,171.915l171.906-171.909c12.359-12.354,32.391-12.354,44.744,0 c12.365,12.354,12.365,32.392,0,44.751L248.292,345.449C242.115,351.621,234.018,354.706,225.923,354.706z"
+              />
+            </svg>
+          </div>
+        </button>
+        <div
+          class="
+              w-32 absolute bottom-0 bg-white divide-y transform translate-y-full border border-gray z-10
+              hidden
+              "
+        >
+          <button
+            aria-label="Dropdown sizes"
+            class="flex justify-center cursor-pointer bg-white"
+          >
+            MD
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="my-2"
+    >
+      <span
+        class="font-bold my-2"
+      >
+        Rental time
+      </span>
+      <div
+        class="flex-row justify-between w-full flex-wrap"
+      >
+        <div
+          class="mr-6"
+        >
+          <button
+            class="flex-row flex items-center"
+          >
+            <div
+              class="w-4 h-4 rounded-full border border-gray items-center justify-center mr-2"
+            >
+              <div
+                class="w-3 h-3 rounded-full
+        bg-sec-light
+        "
+              />
+            </div>
+            <span>
+              4-day rental
+            </span>
+          </button>
+          <button
+            class="flex-row flex items-center"
+          >
+            <div
+              class="w-4 h-4 rounded-full border border-gray items-center justify-center mr-2"
+            >
+              <div
+                class="w-3 h-3 rounded-full
+        
+        "
+              />
+            </div>
+            <span>
+              8-day rental
+            </span>
+          </button>
+        </div>
+        <button
+          class="flex flex-grow border border-gray py-2 px-2 rounded-sm rounded-sm flex-row flex-grow justify-between items-center"
+        >
+          <span />
+          <div
+            class="fill-current text-gray"
+            style="width: 24px; height: 24px;"
+          >
+            <svg
+              viewBox="0 0 511.977 511.977"
+            >
+              <path
+                d="m14.977 390.988h392c3.516 0 6.914-1.23 9.609-3.472 3.765-3.153 89.652-77.038 94.889-236.528h-421c-5.217 144.774-84.315 212.822-85.137 213.501-4.819 4.072-6.592 10.723-4.424 16.641 2.153 5.903 7.764 9.858 14.063 9.858z"
+              />
+              <path
+                d="m496.976 60.988h-75v-15c0-8.4-6.6-15-15-15s-15 6.6-15 15v15h-76v-15c0-8.4-6.6-15-15-15s-15 6.6-15 15v15h-75v-15c0-8.4-6.6-15-15-15s-15 6.6-15 15v15h-75c-8.4 0-15 6.6-15 15v45h421v-45c0-8.4-6.6-15-15-15z"
+              />
+              <path
+                d="m435.849 410.515c-8.145 6.782-18.369 10.474-28.872 10.474h-316v45c0 8.291 6.709 15 15 15h391c8.291 0 15-6.709 15-15v-168.146c-28.92 70.951-69.276 106.937-76.128 112.672z"
+              />
+            </svg>
+          </div>
+        </button>
+      </div>
+    </div>
+    <button
+      aria-label="Submit form"
+      class="p-4 text-white mt-4 rounded-sm
+      bg-pri-light
+      my-2 self-center rounded-sm w-full
+    "
+      disabled=""
+      type="submit"
+    >
+      Please sign in
+    </button>
+  </div>
+</DocumentFragment>
+`;

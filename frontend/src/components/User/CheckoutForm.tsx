@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import './CheckoutForm.module.css'
+
 import { StrapiUser } from '@/utils/models'
 
 // import resolveConfig from 'tailwindcss/resolveConfig'
@@ -42,7 +43,7 @@ export const CheckoutForm = ({
 
   const handleChange = async (event) => {
     if (event.error) {
-      dispatch({ type: 'payment-failure', payload: event.error })
+      dispatch({ type: 'payment-failed', payload: event.error })
     }
   }
 

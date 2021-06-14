@@ -59,12 +59,12 @@ const Address = ({
 
 export const UpdateAddress = ({ user, dispatch, state, address }) => {
   const fields = useFields({
-    firstName: { constraints: 'required', defaultValue: address.firstName },
-    lastName: { constraints: 'required', defaultValue: address.lastName },
-    address: { constraints: 'required', defaultValue: address.address },
-    town: { constraints: 'required', defaultValue: address.town },
-    postcode: { constraints: 'required', defaultValue: address.postcode },
-    mobileNumber: { constraints: 'required', defaultValue: user.phoneNumber },
+    firstName: { constraints: 'required', default: address.firstName },
+    lastName: { constraints: 'required', default: address.lastName },
+    address: { constraints: 'required', default: address.address },
+    town: { constraints: 'required', default: address.town },
+    postcode: { constraints: 'required', default: address.postcode },
+    mobileNumber: { constraints: 'required', default: user.phoneNumber },
   })
 
   const onSubmit = () => {
@@ -95,12 +95,12 @@ export const UpdateAddress = ({ user, dispatch, state, address }) => {
 
 export const AddAddress = ({ user, dispatch, state }) => {
   const fields = useFields({
-    firstName: { constraints: 'required', defaultValue: user.firstName },
-    lastName: { constraints: 'required', defaultValue: user.lastName },
-    address: { constraints: 'required', defaultValue: '' },
-    town: { constraints: 'required', defaultValue: '' },
-    postcode: { constraints: 'required', defaultValue: '' },
-    mobileNumber: { constraints: 'required', defaultValue: user.phoneNumber },
+    firstName: { constraints: 'required', default: user.firstName },
+    lastName: { constraints: 'required', default: user.lastName },
+    address: { constraints: 'required', default: '' },
+    town: { constraints: 'required', default: '' },
+    postcode: { constraints: 'required', default: '' },
+    mobileNumber: { constraints: 'required', default: user.phoneNumber },
   })
   const accountDispatch = useDispatch()
 

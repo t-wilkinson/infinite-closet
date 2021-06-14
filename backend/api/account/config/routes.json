@@ -10,6 +10,15 @@
     },
 
     {
+      "method": "POST",
+      "path": "/launch-party/join",
+      "handler": "launch.join",
+      "config": {
+        "policies": []
+      }
+    },
+
+    {
       "method": "GET",
       "path": "/addresses/verify/:postcode",
       "handler": "addresses.verify",

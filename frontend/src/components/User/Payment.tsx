@@ -1,21 +1,14 @@
 import React from 'react'
 import axios from 'axios'
-import {
-  Elements,
-  CardElement,
-  useStripe,
-  useElements,
-} from '@stripe/react-stripe-js'
-import { loadStripe } from '@stripe/stripe-js'
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
 import { StrapiUser } from '@/utils/models'
 import { fetchAPI } from '@/utils/api'
 import { Icon } from '@/components'
 import { Submit } from '@/Form'
+import { PaymentWrapper } from '@/Form/Payments'
 
 import './CheckoutForm.module.css'
-
-const promise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY)
 
 const toTitleCase = (string: string) =>
   string.charAt(0).toUpperCase() + string.slice(1)
@@ -91,9 +84,9 @@ type AddPaymentMethod = {
 }
 
 export const AddPaymentMethod = ({ user, state, dispatch }) => (
-  <Elements stripe={promise}>
+  <PaymentWrapper>
     <AddPaymentMethodForm user={user} state={state} dispatch={dispatch} />
-  </Elements>
+  </PaymentWrapper>
 )
 
 export const AddPaymentMethodForm = ({ user, state, dispatch }) => {

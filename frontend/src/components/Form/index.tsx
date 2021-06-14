@@ -34,6 +34,8 @@ export const Input = ({
   constraints,
   value,
   type,
+  before = undefined,
+  after = undefined,
   children = undefined,
   className = '',
 }) => {
@@ -90,9 +92,9 @@ export const Input = ({
             }
             `}
         >
+          {before && <div className="ml-2">{before}</div>}
           <input
-            className={`p-2 py-3 outline-none w-full h-full
-            `}
+            className="p-2 py-3 outline-none w-full h-full"
             id={field}
             name={field}
             type={type}
@@ -100,6 +102,7 @@ export const Input = ({
             onChange={onChange_}
           />
           {children}
+          {after && <div className="mr-2">{after}</div>}
         </div>
       </div>
     </div>
