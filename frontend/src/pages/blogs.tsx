@@ -15,13 +15,13 @@ export const Page = ({ blogs }) => {
     <>
       <Header />
       <div className="items-center py-8 space-y-4 h-full">
-        <span className="font-subheader text-4xl">Blogs</span>
+        <span className="font-subheader text-4xl mb-4">Blogs</span>
         {blogs.map((blog: StrapiBlog) => {
           const [minutes] = readingTime(blog.content)
           return (
             <Link key={blog.id} href={`/blogs/${blog.slug}`}>
               <a>
-                <div className="flex-row max-w-xl items-center rounded-md p-4">
+                <div className="flex-row max-w-xl items-center rounded-md p-4 border border-gray-light">
                   <div className="w-full">
                     <span className="text-xl font-bold">{blog.title}</span>
                     <span className="text-gray text-sm">{blog.subtitle}</span>
