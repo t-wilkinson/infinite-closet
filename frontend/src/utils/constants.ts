@@ -100,8 +100,8 @@ const routes = [
     ],
   },
   {
-    label: 'Blog',
-    value: 'blog',
+    label: 'Blogs',
+    value: 'blogs',
     href: '/blogs',
     img: 'how-it-works-menu-image.jpg',
     data: [],

@@ -112,12 +112,12 @@ const RouteHeader = ({ setFocused, focused, section }) => {
         <span
           className={`uppercase
           ${focused === section.value ? 'body-bold' : 'body'}
-          ${section.value === 'blog' ? 'text-gray' : ''}
+          ${section.value === 'blogs' ? 'text-gray' : ''}
           `}
         >
           {section.label}
         </span>
-        {section.value !== 'blog' && (
+        {section.value !== 'blogs' && (
           <Icon name={focused === section.value ? 'down' : 'up'} size={12} />
         )}
       </div>

@@ -25,7 +25,7 @@ export const NavBar = () => {
       >
         {routes.map(
           (route) =>
-            route.value !== 'blog' && (
+            route.value !== 'blogs' && (
               <div
                 key={route.value}
                 className={`flex-row w-full max-w-screen-xl p-4
