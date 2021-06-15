@@ -2,12 +2,14 @@ import React from 'react'
 import Link from 'next/link'
 
 export const Banner = () => (
-  <div className="items-center px-2 py-1 width-full bg-sec text-white">
+  <div className="items-center px-2 py-1 bg-sec text-white flex-row w-full justify-center">
     <Link href="/launch-party">
       <a>
-        <span className="text-norm underline">
-          JOIN OUR LAUNCH PARTY ON TODO
-        </span>
+        <q>
+          <strong>Give Your Best</strong>
+        </q>{' '}
+        launch party tickets:&nbsp;
+        <span className="text-norm underline">Now available</span>
       </a>
     </Link>
   </div>

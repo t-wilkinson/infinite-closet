@@ -18,7 +18,7 @@ export const NavBar = () => {
       onMouseLeave={() => setVisible(null)}
     >
       <Sections visible={visible} setVisible={setVisible} />
-      {visible && <div className="h-px bg-pri w-full -mt-px z-10" />}
+      {visible && <div className="h-px bg-pri-light w-full -mt-px z-10" />}
       <div
         className={`absolute bottom-0 w-full transform translate-y-full bg-white items-center shadow-xl
         `}

@@ -55,9 +55,10 @@ export const validate = (
 export const validateField = (field: Field) =>
   validate(field.field, field.value, field.constraints)
 
-export const isValid = (fields: Fields): boolean => {
-  return Object.values(fields)
-    .map((field) => validate(field.label, field.value, field.constraints))
+export const isValid = (fields: Fields, include?: string[]): boolean => {
+  return Object.entries(fields)
+    .filter(([field, _]) => (include ? include.includes(field) : true))
+    .map(([_, field]) => validate(field.label, field.value, field.constraints))
     .every((v) => v.length === 0)
 }
 

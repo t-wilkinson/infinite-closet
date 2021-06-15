@@ -90,6 +90,22 @@ export const Icon = ({
 
 // TODO: this is ~ 24K not compressed
 const icons = {
+  pin: (
+    <svg viewBox="0 0 512 512">
+      <path
+        d="M256,0C161.896,0,85.333,76.563,85.333,170.667c0,28.25,7.063,56.26,20.49,81.104L246.667,506.5
+        c1.875,3.396,5.448,5.5,9.333,5.5s7.458-2.104,9.333-5.5l140.896-254.813c13.375-24.76,20.438-52.771,20.438-81.021
+        C426.667,76.563,350.104,0,256,0z M256,256c-47.052,0-85.333-38.281-85.333-85.333c0-47.052,38.281-85.333,85.333-85.333
+        s85.333,38.281,85.333,85.333C341.333,217.719,303.052,256,256,256z"
+      />
+    </svg>
+  ),
+  clock: (
+    <svg viewBox="0 0 512 512">
+      <path d="m256 512c-141.164062 0-256-114.835938-256-256s114.835938-256 256-256 256 114.835938 256 256-114.835938 256-256 256zm0-480c-123.519531 0-224 100.480469-224 224s100.480469 224 224 224 224-100.480469 224-224-100.480469-224-224-224zm0 0" />
+      <path d="m368 394.667969c-4.097656 0-8.191406-1.558594-11.308594-4.695313l-112-112c-3.007812-3.007812-4.691406-7.082031-4.691406-11.304687v-149.335938c0-8.832031 7.167969-16 16-16s16 7.167969 16 16v142.699219l107.308594 107.308594c6.25 6.25 6.25 16.382812 0 22.632812-3.117188 3.136719-7.210938 4.695313-11.308594 4.695313zm0 0" />
+    </svg>
+  ),
   user: (
     <svg viewBox="0 0 512 512">
       <path
@@ -343,17 +359,25 @@ export const ScrollUp = () => (
   </button>
 )
 
-export const Hover = ({ children }) => {
+export const Hover = ({ type = 'info', children }) => {
   const [hover, setHover] = React.useState(false)
   return (
     <div
-      className="relative p-1 ml-1 w-4 h-4 bg-sec-light rounded-full items-center justify-center text-sm"
+      className={`relative p-1 ml-1 w-5 h-5 rounded-full items-center justify-center text-sm
+        ${type === 'caution' ? 'border border-gray' : 'bg-sec-light'}
+      `}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <span className="text-black">?</span>
+      <span
+        className={`text-xs
+        ${type === 'caution' ? 'text-warning' : 'text-black'}
+        `}
+      >
+        {type === 'caution' ? '!' : '?'}
+      </span>
       {hover && (
-        <div className="p-2 z-10 border-gray border rounded-md bg-white absolute top-0 left-0 m-4 w-64 text-norm text-left">
+        <div className="p-2 z-10 border-gray border rounded-md bg-white absolute left-0 m-4 w-64 text-norm text-left">
           {children}
         </div>
       )}

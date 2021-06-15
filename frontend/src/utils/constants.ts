@@ -23,7 +23,7 @@ const routes = [
         data: [
           { label: 'How It Works', href: '/#how-it-works' },
           { label: 'Why Rent?', href: '/#why-rent' },
-          { label: 'About Us', href: null },
+          { label: 'About Us', href: '/about-us' },
           { label: 'Customer Feedback', href: null },
           { label: 'Ambassador Program', href: null },
         ],

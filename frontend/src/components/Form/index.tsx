@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Icon, Divider } from '@/components'
+import { Icon } from '@/components'
 
 import { validate } from './useFields'
 
@@ -38,6 +38,7 @@ export const Input = ({
   after = undefined,
   children = undefined,
   className = '',
+  ...props
 }) => {
   const [changed, setChanged] = React.useState(false)
   const onChange_ = (e) => {
@@ -94,6 +95,7 @@ export const Input = ({
         >
           {before && <div className="ml-2">{before}</div>}
           <input
+            {...props}
             className="p-2 py-3 outline-none w-full h-full"
             id={field}
             name={field}
@@ -154,8 +156,8 @@ export const Submit = ({
 }) => (
   <button
     aria-label="Submit form"
-    className={`p-4 text-white mt-4 rounded-sm
-      ${disabled ? 'bg-pri-light' : 'bg-pri'}
+    className={`p-4 text-white mt-4 rounded-sm border
+      ${disabled ? 'border-pri-light bg-pri-light' : 'border-pri bg-pri'}
       ${className}
     `}
     type="submit"

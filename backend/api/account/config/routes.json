@@ -10,8 +10,16 @@
     },
 
     {
+      "method": "GET",
+      "path": "/launch/party/promo",
+      "handler": "launch.promo",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "POST",
-      "path": "/launch-party/join",
+      "path": "/launch/party/join",
       "handler": "launch.join",
       "config": {
         "policies": []
