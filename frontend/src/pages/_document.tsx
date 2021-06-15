@@ -59,6 +59,10 @@ class MyDocument extends Document {
           <Icons rel="apple-touch-startup-image" sizes={[1024]} />
 
           <meta
+            name="p:domain_verify"
+            content="4d7af672c9be421551d0e61eb19d60f2"
+          />
+          <meta
             name="facebook-domain-verification"
             content="wuxo0tqtkgp3bqbxaevv93a31m490y"
           />
