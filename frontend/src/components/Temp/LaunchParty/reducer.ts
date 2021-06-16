@@ -1,5 +1,4 @@
 type Status = null | 'checking-out' | 'error' | 'success'
-type Hover = null | 'donation'
 type Info = 'info' | 'payment'
 
 export const initialState = {
@@ -7,7 +6,6 @@ export const initialState = {
   error: undefined,
   paymentStatus: undefined,
   donation: 0,
-  hover: null as Hover,
   edit: 'info' as Info,
   promoValid: undefined,
 }
@@ -21,9 +19,6 @@ export const reducer = (state, action) => {
 
     case 'edit-info': return {...state, edit: 'info'}
     case 'edit-payment': return {...state, edit: 'payment'}
-
-    case 'hover-donation': return {...state, hover: 'donation'}
-    case 'hover-leave': return {...state, hover: null}
 
     case 'donation-amount': return {...state, donation: action.payload}
 

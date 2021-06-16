@@ -43,21 +43,27 @@ module.exports = {
         intent = await stripe.paymentIntents.confirm(body.paymentIntent);
       }
 
-      if (intent.success) {
+      const response = generateResponse(intent);
+
+      // TODO:
+      if (response.success) {
         strapi.plugins["email"].services.email.send({
           to: body.email,
           subject: "Thanks for joining our launch party!",
           html: `
-          Order Total: ${ticketPrice}
-          Saturday, July 3, 2021 from 8pm to 12am (BST)
-          At Home Grown
-          `,
+<ul>
+<li>Order Total: £${ticketPrice}</li>
+<li>Saturday, July 3, 2021 from 8pm to 12am (BST)</li>
+<li>At Home Grown</li>
+</ul>
+`,
         });
 
-        strapi.query("client").create({
+        await strapi.query("clients").create({
           slug: body.email,
           context: "launch_party",
           metadata: {
+            intent: intent.id,
             donation: body.donation,
             promo: body.promoCode,
             email: body.email,
@@ -67,8 +73,9 @@ module.exports = {
         });
       }
 
-      return ctx.send(generateResponse(intent));
+      return ctx.send(response);
     } catch (e) {
+      strapi.log.error(e);
       return ctx.send({ error: "Could not process payment" });
     }
   },

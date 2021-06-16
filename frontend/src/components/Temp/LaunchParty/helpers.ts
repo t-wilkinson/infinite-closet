@@ -1,3 +1,5 @@
+import axios from 'axios'
+
 export function handleServerResponse(response, stripe, dispatch) {
   if (response.error) {
     // Show error from server on payment form
@@ -19,7 +21,7 @@ export function handleStripeJsResult(result, stripe, dispatch) {
     // The card action has been handled
     // The PaymentIntent can be confirmed again on the server
     axios
-      .post('/launch-party/join', {
+      .post('/launch/party/join', {
         paymentIntent: result.paymentIntent.id,
       })
       .then((res) => handleServerResponse(res.data, stripe, dispatch))

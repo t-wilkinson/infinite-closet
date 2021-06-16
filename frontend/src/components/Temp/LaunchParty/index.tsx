@@ -57,11 +57,6 @@ export const JoinLaunchParty = () => {
         ) : (
           <Pay fields={fields} dispatch={dispatch} state={state} />
         )}
-        {state.error && (
-          <div className="text-warning card-error" role="alert">
-            {state.error}
-          </div>
-        )}
       </form>
     </div>
   )
@@ -170,6 +165,14 @@ const Pay = ({ fields, dispatch, state }) => {
 
       <PaymentCard handleChange={handleChange} />
 
+      <div className="w-full items-center">
+        {state.error && (
+          <div className="text-warning card-error" role="alert">
+            {state.error}
+          </div>
+        )}
+      </div>
+
       <Join fields={fields} state={state} dispatch={dispatch} />
     </>
   )
@@ -232,18 +235,10 @@ const Donation = ({ dispatch, state, donation }) => {
     <div className="mb-4">
       <div className="flex-row items-center">
         Additional Donation
-        <span
-          className="w-5 h-5 ml-1 text-xs bg-sec-light rounded-full inline-block flex items-center justify-center relative"
-          onMouseEnter={() => dispatch({ type: 'hover-donation' })}
-          onMouseLeave={() => dispatch({ type: 'hover-leave' })}
-        >
-          ?
-          {state.hover === 'donation' && (
-            <div className="absolute left-0 mt-4 ml-4 w-48 h-16 bg-white border border-gray rounded-md z-10 p-4">
-              Something about organization
-            </div>
-          )}
-        </span>
+        <Hover>
+          Give Your Best connects pre-loved clothes with those who don't just
+          need them, but choose them.
+        </Hover>
       </div>
 
       <div className="flex-row items-center">

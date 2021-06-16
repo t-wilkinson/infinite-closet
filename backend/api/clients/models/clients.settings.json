@@ -1,8 +1,8 @@
 {
   "kind": "collectionType",
-  "collectionName": "clients",
+  "collectionName": "client",
   "info": {
-    "name": "Clients",
+    "name": "Client",
     "description": ""
   },
   "options": {
