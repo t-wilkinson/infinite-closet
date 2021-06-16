@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "clients",
+  "info": {
+    "name": "Clients",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "metadata": {
+      "type": "json"
+    },
+    "context": {
+      "type": "enumeration",
+      "enum": [
+        "waitlist",
+        "launch_party",
+        "newsletter"
+      ]
+    },
+    "slug": {
+      "type": "uid"
+    }
+  }
+}

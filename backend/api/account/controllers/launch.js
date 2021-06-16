@@ -24,15 +24,17 @@ module.exports = {
         : body.promoCode === PROMO_CODE
         ? PROMO_DISCOUNT
         : 0;
-    const donationPrice = body.donation + TICKET_PRICE - discount;
-    const donationAmount = donationPrice.toFixed(2) * SMALLEST_CURRENCY_UNIT;
+    const ticketPrice = Number(
+      (body.donation + TICKET_PRICE - discount).toFixed(2)
+    );
+    const ticketAmount = ticketPrice * SMALLEST_CURRENCY_UNIT;
 
     try {
       let intent;
       if (body.paymentMethod) {
         intent = await stripe.paymentIntents.create({
           payment_method: body.paymentMethod,
-          amount: donationAmount,
+          amount: ticketAmount,
           currency: "gbp",
           confirm: true,
           confirmation_method: "manual",
@@ -42,8 +44,27 @@ module.exports = {
       }
 
       if (intent.success) {
-        // TODO: send email to user
-        // TODO: send email/add to database
+        strapi.plugins["email"].services.email.send({
+          to: body.email,
+          subject: "Thanks for joining our launch party!",
+          html: `
+          Order Total: ${ticketPrice}
+          Saturday, July 3, 2021 from 8pm to 12am (BST)
+          At Home Grown
+          `,
+        });
+
+        strapi.query("client").create({
+          slug: body.email,
+          context: "launch_party",
+          metadata: {
+            donation: body.donation,
+            promo: body.promoCode,
+            email: body.email,
+            name: body.name,
+            phone: body.phone,
+          },
+        });
       }
 
       return ctx.send(generateResponse(intent));

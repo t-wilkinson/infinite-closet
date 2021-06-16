@@ -303,9 +303,12 @@ const Join = ({ dispatch, state, fields }) => {
           throw res.error
         } else {
           return axios.post('/launch/party/join', {
+            name: `${cleaned.firstName} ${cleaned.lastName}`,
+            email: cleaned.email,
+            phone: cleaned.phoneNumber ? cleaned.phoneNumber : undefined,
             paymentMethod: res.paymentMethod.id,
             donation: cleaned.donation,
-            promoCode: cleaned.promoCode,
+            promoCode: state.promoValid ? cleaned.promoCode : '',
           })
         }
       })
