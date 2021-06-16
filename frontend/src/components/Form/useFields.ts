@@ -10,42 +10,22 @@ export const validate = (
 ): Valid[] => {
   const isValid = (value: string, constraint: string): Valid => {
     const [type, ...props] = constraint.split(':')
+    // prettier-ignore
     switch (type) {
-      case 'email':
-        return (
-          /^.+@.+\..+$/.test(value) ||
-          `Please enter a valid ${field.toLowerCase()}`
-        )
-      case 'required':
-        return Boolean(value) || `Please include your ${field.toLowerCase()}`
-      case 'decimal':
-        return /^\d*\.?\d{0,2}$/.test(value) || `${field} must be a number`
-      case 'integer':
-        return /^\d*$/.test(value) || `${field} must be a number`
-      case 'number':
-        return /^\d*\.?\d*$/.test(value) || `${field} must be a number`
-      case 'max-width':
-        return (
-          value.length <= Number(props[0]) ||
-          `${field} must be at most ${props[0]} characters long`
-        )
-      case 'min-width':
-        return (
-          value.length >= Number(props[0]) ||
-          `${field} must be at least ${props[0]} characters long`
-        )
-      case 'regex':
-        return (
-          RegExp(props[0]).test(value) ||
-          `${field} does not have the correct format`
-        )
-      case '':
-        return true
-      default:
-        return true
+      case 'email': return /^.+@.+\..+$/.test(value)            || `Please enter a valid ${field.toLowerCase()}`
+      case 'required': return Boolean(value)                    || `Please include your ${field.toLowerCase()}`
+      case 'decimal': return /^\d*\.?\d{0,2}$/.test(value)      || `${field} must be a number`
+      case 'integer': return /^\d*$/.test(value)                || `${field} must be a number`
+      case 'number': return /^\d*\.?\d*$/.test(value)           || `${field} must be a number`
+      case 'max-width': return value.length <= Number(props[0]) || `${field} must be at most ${props[0]} characters long`
+      case 'min-width': return value.length >= Number(props[0]) || `${field} must be at least ${props[0]} characters long`
+      case 'regex': return RegExp(props[0]).test(value)         || `${field} does not have the correct format`
+      case '': return true
+      default: return true
     }
   }
 
+  constraints = constraints.replace('password', 'min-width:8 max-width:30')
   return constraints
     .split(' ')
     .map((constraint) => isValid(value, constraint))
@@ -70,8 +50,6 @@ export const cleanFields = (fields: Fields): { [field: string]: any } => {
   }, {})
 }
 
-// TODO: take an optional object which sets the default values?
-// TODO: preserve order of fields?
 export const useFields: (config: FieldsConfig) => Fields = (config) => {
   const initialState = Object.keys(config).reduce(
     (acc, k) => ((acc[k] = config[k].default ?? ''), acc),

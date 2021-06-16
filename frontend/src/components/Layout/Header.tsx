@@ -10,7 +10,7 @@ import { layoutActions } from './slice'
 import Navbar from './Navbar'
 const HeaderAside = dynamic(() => import('./HeaderAside'))
 
-const SmallHeader = () => {
+const SmallHeader = ({ router }) => {
   const dispatch = useDispatch()
 
   return (
@@ -21,11 +21,15 @@ const SmallHeader = () => {
           aria-label="Toggle side navigation"
           className="p-2"
         >
-          <Icon name="menu" size={28} />
+          <Icon name="menu" size={32} />
         </button>
         <Link href="/">
           <a>
-            <span className="p-2 font-header text-xl">INFINITE CLOSET</span>
+            {router.pathname === '/' ? (
+              <h1 className="p-2 font-header text-xl">INFINITE CLOSET</h1>
+            ) : (
+              <span className="p-2 font-header text-xl">INFINITE CLOSET</span>
+            )}
           </a>
         </Link>
       </div>
@@ -61,7 +65,11 @@ const LargeHeader = ({ user, router }) => (
 export const LargeHeaderLogo = ({ router }) => (
   <Link href="/">
     <a>
-      <span className="text-4xl font-header">INFINITE CLOSET</span>
+      {router.pathname === '/' ? (
+        <h1 className="text-4xl font-header">INFINITE CLOSET</h1>
+      ) : (
+        <span className="text-4xl font-header">INFINITE CLOSET</span>
+      )}
     </a>
   </Link>
 )
@@ -105,7 +113,7 @@ export const Header = () => {
   return (
     <header>
       <div className="p-4 border-b border-gray-light mb-6 flex md:hidden items-center">
-        <SmallHeader />
+        <SmallHeader router={router} />
       </div>
       <div className="z-30 items-center hidden w-full pt-4 md:flex select-none relative mb-4">
         <LargeHeader user={user} router={router} />

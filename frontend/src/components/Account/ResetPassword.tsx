@@ -16,9 +16,9 @@ import {
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { userActions } from '@/User/slice'
 
-export const ForgotPassword = () => {
+export const ResetPassword = () => {
   const fields = useFields({
-    password: { constraints: 'required', label: 'Password' },
+    password: { constraints: 'required password', label: 'Password' },
   })
   const router = useRouter()
   const dispatch = useDispatch()
@@ -80,4 +80,4 @@ export const ForgotPassword = () => {
   )
 }
 
-export default ForgotPassword
+export default ResetPassword

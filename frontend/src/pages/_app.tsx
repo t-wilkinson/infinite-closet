@@ -13,6 +13,7 @@ import CookieConsent from '@/Layout/CookieConsent'
 import Popup from '@/Account/Popup'
 import { accountActions } from '@/Account/slice'
 import { layoutActions } from '@/Layout/slice'
+import SkipLink from '@/Layout/SkipLink'
 import Banner from '@/Layout/Banner'
 import { userActions } from '@/User/slice'
 const FourOFour = dynamic(() => import('@/pages/404'))
@@ -63,7 +64,6 @@ const Wrapper = ({ router, children }) => {
   React.useEffect(() => {
     app?.setCurrentScreen(router.asPath)
     if (!document.title) {
-      console.log(document.title)
       document.title = 'Infinite Closet'
     }
   }, [router.pathname])
@@ -119,6 +119,7 @@ const Wrapper = ({ router, children }) => {
         ${headerOpen ? 'overflow-hidden' : 'overflow-y-scroll'}
       `}
       >
+        <SkipLink />
         <Popup popup={popup} />
         <div className="min-h-screen">
           <Banner />

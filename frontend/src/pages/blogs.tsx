@@ -14,8 +14,7 @@ export const Page = ({ blogs }) => {
   return (
     <>
       <Header />
-      <div className="items-center py-8 space-y-4 h-full">
-        <span className="font-subheader text-4xl mb-4">Blogs</span>
+      <main id="main" className="items-center py-8 space-y-4 h-full">
         {blogs.map((blog: StrapiBlog) => {
           const [minutes] = readingTime(blog.content)
           return (
@@ -35,6 +34,7 @@ export const Page = ({ blogs }) => {
                       src={getURL(
                         (blog.thumbnail || blog.image).formats.small.url,
                       )}
+                      alt={blog.image.alternativeText}
                       layout="fill"
                       objectFit="cover"
                     />
@@ -44,7 +44,7 @@ export const Page = ({ blogs }) => {
             </Link>
           )
         })}
-      </div>
+      </main>
       <Footer />
     </>
   )

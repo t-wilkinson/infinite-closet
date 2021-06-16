@@ -14,7 +14,8 @@ button {
   font-weight: inherit;
 }
 
-div {
+div,
+main {
   display: flex;
   flex-direction: column;
 }

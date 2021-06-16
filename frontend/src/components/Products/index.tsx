@@ -59,7 +59,7 @@ const Header = ({ router, data, totalPages, sortBy }) => {
         <span className="font-subheader text-xl self-start sm:self-center">
           {router.query.slug[0]} ({data.productsCount})
         </span>
-        <div className="flex-row space-x-1">
+        <div className="flex-row space-x-1 items-center mb-1 md:mb-0">
           <div className="flex-row sm:hidden justify-end py-2">
             <button
               onClick={() => {
@@ -67,9 +67,14 @@ const Header = ({ router, data, totalPages, sortBy }) => {
               }}
             >
               <div className="flex-row items-center">
-                <Icon size={14} name="settings" />
+                <div className="hidden md:flex">
+                  <Icon name="settings" size={14} />
+                </div>
+                <div className="md:hidden">
+                  <Icon name="settings" size={18} />
+                </div>
                 <div className="w-1" />
-                <FiltersCount />
+                <FiltersCount className="text-lg" />
               </div>
             </button>
           </div>
@@ -92,6 +97,16 @@ const PageNavigation = ({ totalPages, ...props }) => {
   const router = useRouter()
   const pageNumber = Number(router.query.page) || 1
 
+  React.useEffect(() => {
+    if (pageNumber > totalPages) {
+      document.getElementById('_app').scrollTo({ top: 0 })
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, page: 1 },
+      })
+    }
+  }, [pageNumber, totalPages])
+
   return (
     <div className="flex-row items-center justify-end" {...props}>
       <button
@@ -106,11 +121,14 @@ const PageNavigation = ({ totalPages, ...props }) => {
           }
         }}
       >
-        <div className="p-1 border border-gray-light rounded-sm">
+        <div className="hidden md:flex p-1 border border-gray-light rounded-sm">
           <Icon name="left" size={16} />
         </div>
+        <div className="md:hidden p-2 border border-gray-light rounded-sm">
+          <Icon name="left" size={20} />
+        </div>
       </button>
-      <span className="mx-1">
+      <span className="mx-1 text-lg">
         {pageNumber} / {totalPages}
       </span>
       <button
@@ -125,8 +143,11 @@ const PageNavigation = ({ totalPages, ...props }) => {
           }
         }}
       >
-        <div className="p-1 border border-gray-light rounded-sm">
+        <div className="hidden md:flex p-1 border border-gray-light rounded-sm">
           <Icon name="right" size={16} />
+        </div>
+        <div className="md:hidden p-2 border border-gray-light rounded-sm">
+          <Icon name="right" size={20} />
         </div>
       </button>
     </div>

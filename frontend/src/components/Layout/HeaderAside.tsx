@@ -50,9 +50,9 @@ const Header = ({ dispatch }) => (
     <button
       onClick={() => dispatch(layoutActions.toggleHeader())}
       aria-label="Toggle side navigation"
-      className="p-4"
+      className="p-3"
     >
-      <Icon name="close" size={20} />
+      <Icon name="close" size={24} />
     </button>
   </div>
 )

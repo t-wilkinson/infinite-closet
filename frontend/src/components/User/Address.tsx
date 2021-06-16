@@ -32,10 +32,11 @@ const Address = ({
   firstName,
   lastName,
 }) => (
-  <div
-    className={`border bg-gray-light p-4 flex-row cursor-pointer items-center
+  <button
+    className={`flex border bg-gray-light p-4 flex-row cursor-pointer items-center
     ${id === state.address ? 'border-black' : ''}
     `}
+    aria-label={`Choose address with name of {firstName} {lastName} in {address} {town} {postcode}`}
     onClick={() => dispatch({ type: 'choose-address', payload: id })}
   >
     <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
@@ -54,7 +55,7 @@ const Address = ({
       <span>{town}</span>
       <span>{postcode}</span>
     </div>
-  </div>
+  </button>
 )
 
 export const UpdateAddress = ({ user, dispatch, state, address }) => {

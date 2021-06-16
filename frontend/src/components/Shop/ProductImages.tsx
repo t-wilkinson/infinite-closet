@@ -127,7 +127,7 @@ const ImagesLarge = ({ images, state, dispatch }) => (
       {images
         .slice(state.startIndex, state.startIndex + 3)
         .map((image: StrapiFile, index: number) => (
-          <div
+          <button
             key={image.url}
             className="w-24 lg:w-32 h-24 lg:h-32 my-2 cursor-pointer relative hover:opacity-75"
             onClick={() => {
@@ -141,7 +141,7 @@ const ImagesLarge = ({ images, state, dispatch }) => (
               objectFit="contain"
               src={getURL(image.formats.thumbnail.url)}
             />
-          </div>
+          </button>
         ))}
       <button
         onClick={() =>

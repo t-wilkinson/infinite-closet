@@ -22,8 +22,8 @@ export const Profile = () => {
 
   const resetPasswordFields = useFields({
     currentPassword: {},
-    password: {},
-    confirmPassword: {},
+    password: { constraints: 'password' },
+    confirmPassword: { constraints: 'password' },
   })
 
   return (

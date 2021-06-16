@@ -17,7 +17,7 @@ export const ProductRentContents = ({ product, state }) => {
   const dispatch = useDispatch()
 
   return (
-    <div className="h-96">
+    <div className="h-64">
       <Contents
         router={router}
         user={user}
@@ -79,7 +79,12 @@ export const productRentContents = {
 
         <SelectorItem label="Size" className="my-2 z-10 w-full">
           <div className="relative items-start w-full">
+            {/* select elements are too difficult to style
+                divs don't act like buttons
+                buttons can't use aria-role
+            */}
             <button
+              tabIndex={0}
               aria-label="Dropdown product sizes"
               className="flex p-2 border border-gray relative cursor-pointer w-32 justify-between flex-row"
               onClick={() => setSizeState((state) => !state)}
@@ -99,6 +104,7 @@ export const productRentContents = {
               {product.sizes.map((size: Size, index: number) => (
                 <button
                   key={size.id}
+                  tabIndex={0}
                   aria-label="Dropdown sizes"
                   onClick={() => {
                     dispatch(shopActions.changeSize(index))

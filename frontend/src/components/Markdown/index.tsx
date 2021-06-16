@@ -13,7 +13,7 @@ import { ScrollUp } from '@/components'
 export const components = {
   h2: ({ children }) => (
     <>
-      <strong className="font-subheader text-xl mt-8" children={children} />
+      <h2 className="font-subheader text-xl mt-8" children={children} />
       <span className="block h-px bg-pri w-full my-2" />
     </>
   ),
@@ -23,7 +23,7 @@ export const components = {
     </a>
   ),
   h3: ({ children }) => (
-    <span className="block mt-4 mb-2 font-bold" children={children} />
+    <h3 className="block mt-4 mb-2 font-bold" children={children} />
   ),
   p: ({ children }) => <p className="my-2" children={children} />,
   pre: ({ children }) => <p className="my-2" children={children} />,
@@ -71,15 +71,15 @@ export const MarkdownWrapper = ({ updated_at, name, content }) => {
         <title>{name}</title>
       </Head>
       <Header />
-      <div className="w-full items-center my-10">
+      <main id="main" className="flex flex-col w-full items-center my-10">
         <div className="items-center mb-10">
-          <span className="font-subheader text-center text-4xl">{name}</span>
+          <h1 className="font-subheader text-center text-4xl">{name}</h1>
           <span className="text-gray-dark text-sm">
             Last Updated: {updated_at}
           </span>
         </div>
         <Markdown content={content} />
-      </div>
+      </main>
       <Footer />
       <ScrollUp />
     </>

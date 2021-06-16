@@ -74,14 +74,13 @@ export const Icon = ({
   style = {},
   ...props
 }: Icon) => {
+  const sizes = size ? { width: size, height: size } : {}
+
   return (
     <div
       className={`fill-current ${className}`}
+      style={{ ...style, ...sizes }}
       {...props}
-      style={{
-        ...style,
-        ...(size ? { width: size, height: size } : {}),
-      }}
     >
       {icons[name]}
     </div>

@@ -12,20 +12,31 @@ export const ProductDeatils = ({ state, selected, item, product }) => {
   const Details =
     details[item.key] ||
     (() => (
-      <div className={`bg-gray-light px-2 py-4 ${selected ? '' : 'hidden'} `}>
+      // <div className={`bg-gray-light px-2 py-4 ${selected ? '' : 'hidden'} `}>
+      <div className={`bg-gray-light px-2 py-4`}>
         <span>{product[item.key]}</span>
       </div>
     ))
 
   return (
     <>
-      <button onClick={() => dispatch(shopActions.toggleDetails(item.key))}>
-        <div className="px-2 py-4 flex-row justify-between items-center">
-          <span className={`${selected ? 'font-bold' : ''}`}>{item.label}</span>
-          <Icon size={12} name={selected ? 'down' : 'up'} />
-        </div>
-      </button>
-      <Details state={state} selected={selected} product={product} />
+      <details
+        onClick={(e) => {
+          e.preventDefault()
+          dispatch(shopActions.toggleDetails(item.key))
+        }}
+        open={selected}
+      >
+        <summary className="list-none cursor-pointer">
+          <div className="px-2 py-4 flex-row justify-between items-center">
+            <span className={`${selected ? 'font-bold' : ''}`}>
+              {item.label}
+            </span>
+            <Icon size={12} name={selected ? 'down' : 'up'} />
+          </div>
+        </summary>
+        <Details state={state} selected={selected} product={product} />
+      </details>
     </>
   )
 }
@@ -58,5 +69,4 @@ const details = {
 } as const
 
 const createProductURL = ({ slug, designer: { slug: designer_slug } }) =>
-  typeof window !== 'undefined' &&
   `${process.env.NEXT_PUBLIC_FRONTEND}/shop/${designer_slug}/${slug}`

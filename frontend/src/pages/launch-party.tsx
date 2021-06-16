@@ -14,7 +14,7 @@ const Page = () => {
         <title>Launch Party</title>
       </Head>
       <Header />
-      <div className="w-full h-full items-center pb-8 bg-gray-light">
+      <main id="main" className="w-full h-full items-center pb-8 bg-gray-light">
         <div className="w-full max-w-screen-lg items-center">
           <h1 className="font-bold text-4xl my-4">Join Our Launch Party</h1>
           {/* TODO */}
@@ -30,12 +30,12 @@ const Page = () => {
                 <JoinLaunchParty />
               </div>
             </PaymentWrapper>
-            <div className="rounded-md px-6 py-2 w-full max-w-xs h-36 bg-white">
+            <div className="rounded-md px-6 py-2 w-full mb-6 lg:mb-0 max-w-xs h-36 bg-white">
               <Details />
             </div>
           </div>
         </div>
-      </div>
+      </main>
       <Footer />
     </>
   )

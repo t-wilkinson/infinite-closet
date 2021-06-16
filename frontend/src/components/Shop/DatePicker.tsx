@@ -18,8 +18,11 @@ dayjs.tz.guess()
 dayjs.tz.setDefault('Europe/London')
 // dayjs.locale('en-gb')
 
-export const DatePicker = ({ state, dispatch, rentalLength }) =>
-  state.dateVisible && (
+export const DatePicker = ({ state, dispatch, rentalLength }) => {
+  if (!state.dateVisible) {
+    return null
+  }
+  return (
     <div className="fixed inset-0 items-center justify-center bg-opacity-50 bg-black z-20">
       <div className="bg-white p-6">
         <div className="self-end pb-4">
@@ -31,14 +34,22 @@ export const DatePicker = ({ state, dispatch, rentalLength }) =>
       </div>
     </div>
   )
+}
 
 export default DatePicker
 
 const Date = ({ state, rentalLength, dispatch }) => {
   const { date, setDate, days } = useDays(state.selectedDate)
+  const ref = React.useRef()
+
+  React.useEffect(() => {
+    if (ref.current) {
+      ref.current.focus()
+    }
+  }, [])
 
   return (
-    <div>
+    <div ref={ref} tabIndex={-1}>
       <div className="flex-row items-center justify-between w-full">
         <button onClick={() => setDate((d) => d.subtract(1, 'month'))}>
           <div className="border-gray-light border p-2">

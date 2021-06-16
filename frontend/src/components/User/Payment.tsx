@@ -34,9 +34,12 @@ const PaymentMethod = ({
   state,
   card: { brand, exp_month, exp_year, last4 },
 }) => (
-  <div
-    className={`border bg-gray-light p-4 flex-row cursor-pointer items-center
+  <button
+    className={`flex border bg-gray-light p-4 flex-row cursor-pointer items-center
     ${id === state.paymentMethod ? 'border-black' : ''}
+    `}
+    aria-label={`Choose ${toTitleCase(brand)}
+      card ending in ${last4} which expires on ${exp_month}/${exp_year}
     `}
     onClick={() => dispatch({ type: 'choose-payment-method', payload: id })}
   >
@@ -56,7 +59,7 @@ const PaymentMethod = ({
         Expires {exp_month}/{exp_year}
       </span>
     </div>
-  </div>
+  </button>
 )
 
 const cardStyle = {

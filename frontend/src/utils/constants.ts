@@ -65,6 +65,22 @@ const routes = [
     ],
   },
   {
+    label: 'Accessories',
+    value: 'accessories',
+    href: null,
+    img: 'accessories-menu-image.jpg',
+    data: [
+      {
+        label: 'Category',
+        href: null,
+        data: [
+          { label: 'Bags', href: null },
+          { label: 'Jewelry', href: null },
+        ],
+      },
+    ],
+  },
+  {
     label: 'Trending',
     value: 'trending',
     href: null,
@@ -79,22 +95,6 @@ const routes = [
           { label: 'Top Rated', href: null },
           { label: 'Our Picks', href: null },
           { label: 'Brand Spotlight', href: null },
-        ],
-      },
-    ],
-  },
-  {
-    label: 'Accessories',
-    value: 'accessories',
-    href: null,
-    img: 'accessories-menu-image.jpg',
-    data: [
-      {
-        label: 'Category',
-        href: null,
-        data: [
-          { label: 'Bags', href: null },
-          { label: 'Jewelry', href: null },
         ],
       },
     ],

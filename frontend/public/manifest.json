@@ -1,18 +1,28 @@
 {
   "version": "1.0.0",
   "name": "Infinite Closet",
-  "short_name": "InfiniteCloset",
+  "short_name": "Infinite Closet",
   "manifest_version": 2,
   "theme_color": "#ad9253",
-  "background_color": "#404040",
+  "background_color": "#ad9253",
   "display": "fullscreen",
   "orientation": "portrait",
   "scope": "/",
   "start_url": "/",
   "icons": [
     {
-      "src": "/icons/hanger.png",
-      "sizes": "1500x1500",
+      "src": "/icons/logo-tan/logo-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/logo-tan/logo-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/logo-tan/logo-192.png",
+      "sizes": "192x192",
       "type": "image/png"
     }
   ],

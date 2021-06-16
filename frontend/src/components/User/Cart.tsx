@@ -60,6 +60,7 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
       <div className="h-32 w-32 relative mr-4">
         <Image
           src={getURL(product.images[0].url)}
+          alt={product.images[0].alternativeText}
           layout="fill"
           objectFit="contain"
         />

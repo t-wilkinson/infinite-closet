@@ -41,16 +41,24 @@ export const Input = ({
   ...props
 }) => {
   const [changed, setChanged] = React.useState(false)
+  const [focus, setFocus] = React.useState(false)
+  // Only show outline when navigating by keyboard
+  const [focused, setFocused] = React.useState(false)
+  const [mouse, setMouse] = React.useState(false)
   const onChange_ = (e) => {
     setChanged(true)
     onChange(e.target.value)
   }
-  const [focused, setFocused] = React.useState(false)
   const validations = validate(label, value, constraints)
   const required = /required/.test(constraints)
 
   return (
-    <div className={`relative my-1 py-1 w-full ${className}`}>
+    <div
+      className={`relative my-1 py-1 w-full
+        ${className}
+        ${focus ? 'outline-black' : ''}
+      `}
+    >
       <div
         className="relative"
         onFocus={() => {
@@ -96,12 +104,17 @@ export const Input = ({
           {before && <div className="ml-2">{before}</div>}
           <input
             {...props}
-            className="p-2 py-3 outline-none w-full h-full"
+            className="p-2 py-3 w-full h-full outline-none"
             id={field}
             name={field}
             type={type}
             value={value}
             onChange={onChange_}
+            // Only show outline when navigating by keyboard
+            onMouseDown={() => setMouse(true)}
+            onMouseUp={() => setMouse(false)}
+            onFocus={() => !mouse && setFocus(true)}
+            onBlur={() => setFocus(false)}
           />
           {children}
           {after && <div className="mr-2">{after}</div>}

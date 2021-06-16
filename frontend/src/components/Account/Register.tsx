@@ -7,7 +7,6 @@ import { Input, Submit, Warnings, PasswordVisible, FormHeader } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
-import { accountActions } from '@/Account/slice'
 import { userActions } from '@/User/slice'
 
 export const Register = () => {
@@ -15,7 +14,7 @@ export const Register = () => {
     firstName: { constraints: 'required' },
     lastName: { constraints: '', label: 'Last Name' },
     email: { constraints: 'required email', label: 'Email Address' },
-    password: { constraints: 'required' },
+    password: { constraints: 'required password' },
   })
   const router = useRouter()
   const dispatch = useDispatch()

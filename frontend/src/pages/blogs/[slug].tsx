@@ -36,9 +36,9 @@ export const components = {
     <figure className="flex flex-col items-center my-8" children={children} />
   ),
 
-  img: ({ src }) => (
+  img: ({ src, alt = '' }) => (
     <div className="max-w-md relative">
-      <img src={getURL(src)} />
+      <img src={getURL(src)} alt={alt} />
     </div>
   ),
 }
@@ -53,17 +53,22 @@ const Blog = ({ published_at, updated_at, name, content, subtitle, image }) => {
         <title>{name}</title>
       </Head>
       <Header />
-      <div className="w-full items-center my-10">
+      <main id="main" className="w-full items-center my-10">
         <div className="w-full max-w-screen-md">
           <div className="items-left mb-10">
-            <span className="font-bold text-left text-4xl">{name}</span>
-            <span className="text-gray text-left text-lg">{subtitle}</span>
+            <h1 className="font-bold text-left text-4xl">{name}</h1>
+            <h2 className="text-gray text-left text-lg">{subtitle}</h2>
             <span className="text-gray-dark text-sm mt-2">
               {dayjs(published_at).format('MMM DD')} · {minutes} min read
             </span>
           </div>
           <div className="relative w-full h-128">
-            <Image src={getURL(image.url)} layout="fill" objectFit="contain" />
+            <Image
+              src={getURL(image.url)}
+              alt={image.alternativeText}
+              layout="fill"
+              objectFit="contain"
+            />
           </div>
           <div className="w-full px-4 lg:px-0">
             <ReactMarkdown
@@ -76,7 +81,7 @@ const Blog = ({ published_at, updated_at, name, content, subtitle, image }) => {
             />
           </div>
         </div>
-      </div>
+      </main>
       <Footer />
       <ScrollUp />
     </>

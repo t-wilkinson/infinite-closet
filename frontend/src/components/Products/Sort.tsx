@@ -9,7 +9,6 @@ import { sortData } from './constants'
 import { SortBy } from './types'
 
 export const Sort = ({ sortBy }: { sortBy: SortBy }) => {
-  const [focused, setFocused] = React.useState(false)
   const [hover, setHover] = React.useState(false)
 
   return (
@@ -18,15 +17,17 @@ export const Sort = ({ sortBy }: { sortBy: SortBy }) => {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
-      <button
-        onClick={() => setFocused(!focused)}
-        onBlur={() => setFocused(false)}
-      >
+      <button>
         <div
-          className={`flex-row items-center border-l border-r border-t p-2 relative
+          className={`flex-row items-center border-l border-r border-t p-2 relative text-lg
          ${hover ? 'border-gray-light' : 'border-transparent'}`}
         >
-          <Icon name="sort" size={14} />
+          <div className="hidden md:flex">
+            <Icon name="sort" size={14} />
+          </div>
+          <div className="md:hidden">
+            <Icon name="sort" size={18} />
+          </div>
           <div className="w-1" />
           <span>Sort By</span>
           <div
@@ -37,13 +38,13 @@ export const Sort = ({ sortBy }: { sortBy: SortBy }) => {
         </div>
       </button>
 
-      <DropDown focused={false} hover={hover} sortBy={sortBy} />
+      <DropDown hover={hover} sortBy={sortBy} />
     </div>
   )
 }
 export default Sort
 
-const DropDown = ({ focused, hover, sortBy }) => {
+const DropDown = ({ hover, sortBy }) => {
   const panel = useSelector((state) => productsSelectors.panelSelector(state))
   const dispatch = useDispatch()
   const router = useRouter()
@@ -66,7 +67,7 @@ const DropDown = ({ focused, hover, sortBy }) => {
   }
 
   return (
-    (focused || hover) && (
+    hover && (
       <div
         className={`p-2 left-0 w-48 items-start absolute bottom-0 transform translate-y-full bg-white
         border-l border-b border-r border-t

@@ -2,7 +2,7 @@ import Document, { Html, Head, Main, NextScript } from 'next/document'
 
 const DESCRIPTION = `London's premier independent designer rental platform, giving you access to sustainable and ethical luxury brands. IC's "unlimited" closet offers the latest trends, dry cleaning, and next day delivery. The fashion revolution is here.`
 
-const icons = [16, 32, 72, 128, 512]
+const icons = [16, 32, 72, 128, 512] as const
 
 const Icons = ({ rel, sizes }) =>
   sizes.map((size) => (
