@@ -71,7 +71,7 @@ export const MarkdownWrapper = ({ updated_at, name, content }) => {
         <title>{name}</title>
       </Head>
       <Header />
-      <main id="main" className="flex flex-col w-full items-center my-10">
+      <main className="flex flex-col w-full items-center my-10">
         <div className="items-center mb-10">
           <h1 className="font-subheader text-center text-4xl">{name}</h1>
           <span className="text-gray-dark text-sm">

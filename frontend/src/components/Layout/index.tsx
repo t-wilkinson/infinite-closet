@@ -9,9 +9,7 @@ export const Layout = ({ title = 'Infinite Closet', children }) => (
       <title>{title}</title>
     </Head>
     <Header />
-    <main id="main" tabIndex={0}>
-      {children}
-    </main>
+    <main tabIndex={0}>{children}</main>
     <Footer />
   </>
 )

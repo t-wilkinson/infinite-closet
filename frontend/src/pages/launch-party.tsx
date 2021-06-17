@@ -14,7 +14,7 @@ const Page = () => {
         <title>Launch Party</title>
       </Head>
       <Header />
-      <main id="main" className="w-full h-full items-center pb-8 bg-gray-light">
+      <main className="w-full h-full items-center pb-8 bg-gray-light">
         <div className="w-full max-w-screen-lg items-center">
           <h1 className="font-bold text-4xl my-4">Join Our Launch Party</h1>
           {/* TODO */}

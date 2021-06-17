@@ -53,7 +53,7 @@ const Blog = ({ published_at, updated_at, name, content, subtitle, image }) => {
         <title>{name}</title>
       </Head>
       <Header />
-      <main id="main" className="w-full items-center my-10">
+      <main className="w-full items-center my-10">
         <div className="w-full max-w-screen-md">
           <div className="items-left mb-10">
             <h1 className="font-bold text-left text-4xl">{name}</h1>

@@ -14,7 +14,7 @@ export const Page = ({ blogs }) => {
   return (
     <>
       <Header />
-      <main id="main" className="items-center py-8 space-y-4 h-full">
+      <main className="items-center py-8 space-y-4 h-full">
         {blogs.map((blog: StrapiBlog) => {
           const [minutes] = readingTime(blog.content)
           return (
