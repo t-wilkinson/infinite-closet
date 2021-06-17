@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
+import useAnalytics from '@/utils/useAnalytics'
 import { CallToAction, Hover } from '@/components'
 import { useSelector } from '@/utils/store'
 import { Input, Submit } from '@/Form'
@@ -276,11 +277,17 @@ const DonationAddition = ({ dispatch, amount, selected }) => (
 const Join = ({ dispatch, state, fields }) => {
   const elements = useElements()
   const stripe = useStripe()
+  const analytics = useAnalytics()
 
   const onSubmit = async (ev) => {
     ev.preventDefault()
     dispatch({ type: 'payment-processing' })
     const cleaned = cleanFields(fields)
+
+    analytics?.logEvent('form-submit', {
+      type: 'launch-party.join',
+      user: cleaned.email,
+    })
 
     stripe
       .createPaymentMethod({

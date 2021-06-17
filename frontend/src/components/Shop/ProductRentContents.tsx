@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 
+import useAnalytics from '@/utils/useAnalytics'
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon } from '@/components'
 import { Submit } from '@/Form'
@@ -45,6 +46,7 @@ export const productRentContents = {
   OneTime: ({ user, dispatch, product, state, router }) => {
     const [sizeState, setSizeState] = React.useState(false)
     const [status, setStatus] = React.useState<null | string>(null)
+    const analytics = useAnalytics()
 
     const addToCart = () => {
       setStatus('adding')
@@ -62,6 +64,9 @@ export const productRentContents = {
         )
         .then(() => {
           router.push('/user/checkout')
+          analytics?.logEvent('add_to_cart', {
+            user: user.email,
+          })
         })
         .catch((err) => {
           console.error(err)

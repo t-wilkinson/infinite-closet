@@ -22,7 +22,7 @@ export const ResetPassword = () => {
   })
   const router = useRouter()
   const dispatch = useDispatch()
-  const app = useAnalytics()
+  const analytics = useAnalytics()
   const [warnings, setWarnings] = React.useState<string[]>([])
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false)
   const code = router.query.code
@@ -41,7 +41,7 @@ export const ResetPassword = () => {
       )
       .then((res) => {
         dispatch(userActions.signin(res.data.user))
-        app?.logEvent('form-submit', {
+        analytics?.logEvent('form-submit', {
           type: 'account.reset-password',
           user: cleaned.email,
         })

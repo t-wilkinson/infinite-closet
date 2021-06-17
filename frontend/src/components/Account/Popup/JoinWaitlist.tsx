@@ -58,7 +58,7 @@ const WaitlistForm = ({ status, setStatus }) => {
     comment: { label: 'Leave a comment' },
   })
 
-  const app = useAnalytics()
+  const analytics = useAnalytics()
   const onSubmit = () => {
     setStatus('Submitting')
 
@@ -75,7 +75,7 @@ const WaitlistForm = ({ status, setStatus }) => {
       })
       .then(() => {
         setStatus('Submitting')
-        app?.logEvent('form_submit', {
+        analytics?.logEvent('form_submit', {
           type: 'waitlist',
           user: cleaned.email,
         })

@@ -16,7 +16,7 @@ export const ForgotPassword = () => {
   const [warnings, setWarnings] = React.useState<string[]>([])
   const [status, setStatus] = React.useState<Status>('in-fields')
   const router = useRouter()
-  const app = useAnalytics()
+  const analytics = useAnalytics()
 
   const onSubmit = () => {
     const cleaned = cleanFields(fields)
@@ -30,7 +30,7 @@ export const ForgotPassword = () => {
       )
       .then((res) => {
         setStatus('success')
-        app?.logEvent('form_submit', {
+        analytics?.logEvent('form_submit', {
           type: 'account.forgot-password',
           user: cleaned.email,
         })

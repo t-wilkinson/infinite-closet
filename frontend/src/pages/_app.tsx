@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import { Provider } from 'react-redux'
 import axios from 'axios'
-import firebase from 'firebase/app'
+import firebase from 'firebase/analytics'
 import 'firebase/analytics'
 import '@/styles/index.css'
 
@@ -59,18 +59,18 @@ const Wrapper = ({ router, children }) => {
   const dispatch = useDispatch()
   const headerOpen = useSelector((state) => state.layout.headerOpen)
   const popup = useSelector((state) => state.account.popup)
-  const app = useAnalytics()
+  const analytics = useAnalytics()
 
   React.useEffect(() => {
-    app?.setCurrentScreen(router.asPath)
+    analytics?.setCurrentScreen(router.asPath)
     if (!document.title) {
       document.title = 'Infinite Closet'
     }
   }, [router.pathname])
 
   React.useEffect(() => {
-    if (firebase.apps.length === 0) {
-      firebase.initializeApp(
+    if (window.firebase.apps.length === 0) {
+      window.firebase.initializeApp(
         JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG.toString()),
       )
     }

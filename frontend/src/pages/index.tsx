@@ -24,7 +24,7 @@ export const Home = () => {
             style={{ transform: 'scaleX(-1)' }}
           >
             <Image
-              src="/media/home/banner-image.jpg"
+              src="/media/home/banner.jpg"
               alt=""
               layout="fill"
               objectFit="cover"
@@ -142,7 +142,7 @@ const HowItWorksHeader = ({ icon, selected, header, ...props }) => {
           // }}
         >
           <Image
-            src={`/media/home/how-it-works-${icon}`}
+            src={`/media/home/${icon}`}
             alt={label}
             layout="fill"
             objectFit="contain"
@@ -218,7 +218,7 @@ const WhyRent = ({}) => (
             <div className="w-24 h-24 relative">
               <Image
                 alt={item.label}
-                src={`/media/home/why-rent-${item.icon}`}
+                src={`/media/home/${item.icon}`}
                 layout="fill"
                 objectFit="contain"
               />

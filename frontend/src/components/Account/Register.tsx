@@ -18,7 +18,7 @@ export const Register = () => {
   })
   const router = useRouter()
   const dispatch = useDispatch()
-  const app = useAnalytics()
+  const analytics = useAnalytics()
   const [warnings, setWarnings] = React.useState<string[]>([])
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false)
 
@@ -38,7 +38,7 @@ export const Register = () => {
       )
       .then((res) => {
         dispatch(userActions.signin(res.data.user))
-        app?.logEvent('form_submit', {
+        analytics?.logEvent('form_submit', {
           type: 'account.register',
           user: cleaned.email,
         })
