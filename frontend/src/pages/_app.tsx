@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import { Provider } from 'react-redux'
 import axios from 'axios'
-import firebase from 'firebase/analytics'
+import firebase from 'firebase/app'
 import 'firebase/analytics'
 import '@/styles/index.css'
 
