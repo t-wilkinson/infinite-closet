@@ -39,14 +39,17 @@ const Subscribe = () => {
     },
   })
 
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault()
     const cleaned = cleanFields(fields)
     axios
       .post('/account/newsletter', {
         email: cleaned.newsletterEmail,
       })
       .then(() => setStatus('Submitted'))
-      .catch(() => setStatus('Error'))
+      .catch(() => {
+        setStatus('Error')
+      })
   }
 
   const messages = {
@@ -63,21 +66,27 @@ const Subscribe = () => {
   }
 
   return (
-    <div className="relative m-2 pt-0">
+    <form className="flex flex-col relative m-2 pt-0"
+     onSubmit={onSubmit}>
       {status === 'Submitting' || status === 'Submitted' ? (
         <div className="absolute inset-0 bg-white z-20 items-center justify-center font-bold rounded-sm border border-gray">
           {messages[status]}
-        </div>
-      ) : null}
+        </div >
+      ) : status === 'Error'
+        ? <div className="text-warning">
+        Couldn't send you an email. Try again?
+      </div>
+      : null
+      }
       <Input {...fields.newsletterEmail}>
         <div className="mr-2 justify-center">
           <Icon name="email" size={20} />
         </div>
       </Input>
-      <Submit disabled={!isValid(fields)} onSubmit={() => onSubmit()}>
+      <Submit disabled={!isValid(fields)}>
         Submit
       </Submit>
-    </div>
+    </form>
   )
 }
 

@@ -310,7 +310,7 @@ const Join = ({ dispatch, state, fields }) => {
             phone: cleaned.phoneNumber ? cleaned.phoneNumber : undefined,
             paymentMethod: res.paymentMethod.id,
             donation: cleaned.donation,
-            promoCode: state.promoValid ? cleaned.promoCode : '',
+            promoCode: state.promoValid ? cleaned.promoCode : null,
           })
         }
       })

@@ -11,8 +11,6 @@ const PROMO_CODE = "ICGYBGUEST";
 module.exports = {
   async promo(ctx) {
     const code = ctx.query.code;
-    console.log(code);
-    console.log(code === PROMO_CODE || code === "GIVEYOURBEST");
     ctx.send(code === PROMO_CODE || code === "GIVEYOURBEST");
   },
 
@@ -60,11 +58,11 @@ module.exports = {
         });
 
         await strapi.query("clients").create({
-          slug: body.email,
+          client: body.email,
           context: "launch_party",
           metadata: {
-            intent: intent.id,
-            donation: body.donation,
+            paymentIntent: intent.id,
+            donation: `£${body.donation}`,
             promo: body.promoCode,
             email: body.email,
             name: body.name,

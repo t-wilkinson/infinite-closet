@@ -100,7 +100,8 @@ module.exports = {
           html: options.html || options.text,
         };
 
-        strapi.log.info("email:send -> %o", emailOptions);
+        const {from, subject, replyTo} = emailOptions
+        strapi.log.info("email:send -> %o", {from, subject, replyTo,});
         return client.send(emailOptions);
       },
     };

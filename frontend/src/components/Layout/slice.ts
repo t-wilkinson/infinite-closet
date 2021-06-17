@@ -42,7 +42,7 @@ const initialState: State = {
   loading: false,
   headerOpen: false,
   cookieConsent: {
-    given: true,
+    given: false,
     statistics: false,
   },
 }

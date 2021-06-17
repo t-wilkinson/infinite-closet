@@ -22,8 +22,8 @@
         "newsletter"
       ]
     },
-    "slug": {
-      "type": "uid"
+    "client": {
+      "type": "string"
     }
   }
 }

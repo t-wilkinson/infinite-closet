@@ -69,8 +69,8 @@ const Wrapper = ({ router, children }) => {
   }, [router.pathname])
 
   React.useEffect(() => {
-    if (window.firebase.apps.length === 0) {
-      window.firebase.initializeApp(
+    if (firebase.apps.length === 0) {
+      firebase.initializeApp(
         JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG.toString()),
       )
     }
