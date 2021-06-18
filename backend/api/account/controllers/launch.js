@@ -51,7 +51,7 @@ module.exports = {
           html: `
 <ul>
 <li>Order Total: £${ticketPrice}</li>
-<li>Saturday, July 3, 2021 from 8pm to 12am (BST)</li>
+<li>Saturday, August 7, 2021 from 8pm to 12am (BST)</li>
 <li>At Home Grown</li>
 </ul>
 `,

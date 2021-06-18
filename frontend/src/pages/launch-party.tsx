@@ -46,8 +46,8 @@ const Details = () => (
     <div className="flex-row">
       <Icon name="clock" size={20} className="text-gray mr-6 mt-2" />
       <div className="">
-        <span>Saturday, July 3, 2021</span>
-        <span>8pm to 12am</span>
+        <span>Saturday, August 7, 2021</span>
+        <span>8pm to 12am (BST)</span>
       </div>
     </div>
     <span className="flex flex-row items-center">
