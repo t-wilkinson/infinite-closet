@@ -57,8 +57,8 @@ module.exports = {
 `,
         });
 
-        await strapi.query("clients").create({
-          client: body.email,
+        await strapi.query("contact").create({
+          contact: body.email,
           context: "launch_party",
           metadata: {
             paymentIntent: intent.id,
