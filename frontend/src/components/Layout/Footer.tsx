@@ -66,26 +66,21 @@ const Subscribe = () => {
   }
 
   return (
-    <form className="flex flex-col relative m-2 pt-0"
-     onSubmit={onSubmit}>
+    <form className="flex flex-col relative m-2 pt-0" onSubmit={onSubmit}>
       {status === 'Submitting' || status === 'Submitted' ? (
         <div className="absolute inset-0 bg-white z-20 items-center justify-center font-bold rounded-sm border border-gray">
           {messages[status]}
-        </div >
-      ) : status === 'Error'
-        ? <div className="text-warning">
-        Couldn't send you an email. Try again?
-      </div>
-      : null
-      }
-      <Input {...fields.newsletterEmail}>
-        <div className="mr-2 justify-center">
-          <Icon name="email" size={20} />
         </div>
-      </Input>
-      <Submit disabled={!isValid(fields)}>
-        Submit
-      </Submit>
+      ) : status === 'Error' ? (
+        <div className="text-warning">
+          Couldn't send you an email. Try again?
+        </div>
+      ) : null}
+      <Input
+        {...fields.newsletterEmail}
+        after={<Icon name="email" size={20} />}
+      ></Input>
+      <Submit disabled={!isValid(fields)}>Submit</Submit>
     </form>
   )
 }

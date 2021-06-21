@@ -71,24 +71,25 @@ export const Input = ({
       >
         <label
           htmlFor={field}
-          className={`bg-white rounded-sm border-sec absolute z-10 left-0 m-2 my-4 px-1 transform duration-200 pointer-events-none leading-3
+          className={`rounded-sm border-sec absolute z-10 left-0 px-2 transform duration-200 pointer-events-none w-full h-full flex items-center
           ${focused ? 'text-sec' : 'text-gray'}
           `}
           style={{
-            bottom: -2,
             ...(focused || value
-              ? { transform: 'translate(-5px, -30px) scale(0.9)' }
-              : { transform: 'translate(-0px, -6px) ' }),
+              ? { transform: 'translate(-5%, -50%) scale(0.9)' }
+              : { transform: 'translate(-0px, -0px) ' }),
           }}
         >
-          {changed && validations.length ? (
-            <Warning>{validations[0]}</Warning>
-          ) : (
-            <>
-              {label}
-              {required ? <span className="text-base">*</span> : null}
-            </>
-          )}
+          <span className="bg-white px-1 leading-none">
+            {changed && validations.length ? (
+              <Warning>{validations[0]}</Warning>
+            ) : (
+              <>
+                {label}
+                {required ? <span className="text-base">*</span> : null}
+              </>
+            )}
+          </span>
         </label>
 
         <div
