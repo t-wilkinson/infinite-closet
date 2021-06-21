@@ -83,51 +83,14 @@ const toRaw = (_where) => {
 
 async function queryProducts(knex, _where, _paging) {
   // TODO: handle paging in SQL
-  // TODO: include sizes
-  // prettier-ignore
   const results = await knex
-    .select(
-      "products.*",
-      knex.raw("to_json(upload_file.*) as image"),
-      knex.raw("to_json(designers.*) as designer")
-      // knex.raw("to_json(components_custom_sizes.*) as sizes")
-    )
-    .rank("rank", "upload_file_morph.order", "products.id")
+    .select("products.id as id")
     .from("products")
-    .join("upload_file_morph", "products.id", "upload_file_morph.related_id")
-    .join("upload_file", "upload_file_morph.upload_file_id", "upload_file.id")
-    .join("designers", "products.designer", "designers.id")
-    // .join( "products_components", "products.id", "products_components.product_id")
-    // .join( "components_custom_sizes", "products_components.component_id", "components_custom_sizes.id")
-    .orderBy(..._paging.sort.split(":"))
-    // .where("products_components.component_type", "components_custom_sizes")
-    .where("upload_file_morph.related_type", "products")
+    .orderByRaw(_paging.sort.replace(":", ' '))
     .whereNotNull("products.published_at")
     .whereRaw(...toRaw(_where));
 
-  /* results contains many duplicate products.
-   * we want to remove these duplicates
-   */
-  let products = [];
-  let keys = {}; // maps product.id to location in `products`
-  const key = (product) => keys[product.id];
-
-  for (const product of results) {
-    if (!(product.id in keys)) {
-      // initialize product.id in keys
-      keys[product.id] = products.length;
-      products.push(product);
-
-      // TODO: efficiency: should we query the designer here to remove querying duplicates?
-      // initialize image list and product to products
-      product.images = [product.image];
-      delete product.image;
-      products[key(product)] = product;
-    } else {
-      products[key(product)].images.push(product.image);
-    }
-  }
-
+  const products = await Promise.all(results.map(({id}) => strapi.query('product').findOne({id}, ['designer', 'images', 'sizes'])))
   return products;
 }
 
@@ -226,15 +189,13 @@ const DEFAULT_PAGE_SIZE = 20;
 module.exports = {
   // TODO: there are plenty of ways to speed this up *when* it bottlenecks
   async query(ctx) {
-    const query =
-      process.env.NODE_ENV === "production"
-        ? ctx.query
-        : { ...ctx.query, ...{ _publicationState: "preview" } };
+    const query =ctx.query
 
     const [_paging, _where] = partitionObject(query, ([k, _]) =>
       ["start", "limit", "sort"].includes(k)
     );
 
+    // TODO: can be sped up by a lot. use the results of `queryProducts` for the other two
     const knex = strapi.connections.default;
     const [products, filters, categories] = await Promise.all([
       queryProducts(knex, _where, _paging),

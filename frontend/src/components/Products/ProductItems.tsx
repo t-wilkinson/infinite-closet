@@ -62,13 +62,6 @@ export const ProductItems = ({ data, loading }) => {
 export default ProductItems
 
 export const Product = ({ item }: any) => {
-  const [hover, setHover] = React.useState<number>()
-  const [index, setIndex] = React.useState<number>(0)
-
-  const wrap = (i: number) => i % item.images.length
-  const rotate = () => {
-    setIndex((i) => wrap(i + 1))
-  }
 
   return (
     <div className="w-1/2 lg:w-1/3">
@@ -77,47 +70,7 @@ export const Product = ({ item }: any) => {
           <a>
             <div className="relative w-full md:h-0 overflow-hidden cursor-pointer md:aspect-w-2 md:aspect-h-3 h-96">
               <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-gray">
-                <div
-                  className="w-full h-full relative"
-                  onMouseOver={() => {
-                    if (!hover) {
-                      const startRotate = () =>
-                        setHover(window.setInterval(rotate, 2000))
-                      setHover(window.setTimeout(startRotate, 500))
-                    }
-                  }}
-                  onMouseLeave={() => {
-                    setIndex(0)
-                    window.clearTimeout(hover)
-                    window.clearInterval(hover)
-                    setHover(undefined)
-                  }}
-                >
-                  {item.images.map((image: StrapiFile, i: number) => (
-                    <div className="absolute inset-0 z-0" key={i}>
-                      <div
-                        className={`transition-opacity duration-1000 w-full h-full
-                        ${
-                          i === 0 && !hover
-                            ? 'opacity-100' // only show first image if not hovering
-                            : !hover
-                            ? 'hidden' // if not hovering, hide all other images
-                            : index === i
-                            ? 'opacity-0' // opacity (1 -> 0) the current image
-                            : wrap(index + 1) === i
-                            ? 'opacity-100' // transition to the next image
-                            : 'opacity-0' // otherwise hide the image
-                        }
-                      `}
-                      >
-                        <ProductImage
-                          alt={image.alternativeText}
-                          src={getURL(image.formats.small?.url || image.url)}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <ProductImages item={item} />
                 <ProductInfo item={item} />
               </div>
             </div>
@@ -126,6 +79,56 @@ export const Product = ({ item }: any) => {
       </div>
     </div>
   )
+}
+
+const ProductImages = ({item}) => {
+  const [hover, setHover] = React.useState<number>()
+  const [index, setIndex] = React.useState<number>(0)
+  const wrap = (i: number) => i % item.images.length
+  const rotate = () => {
+    setIndex((i) => wrap(i + 1))
+  }
+
+  return <div
+    className="w-full h-full relative"
+    onMouseOver={() => {
+      if (!hover) {
+        const startRotate = () =>
+          setHover(window.setInterval(rotate, 2000))
+        setHover(window.setTimeout(startRotate, 500))
+      }
+    }}
+    onMouseLeave={() => {
+      setIndex(0)
+      window.clearTimeout(hover)
+      window.clearInterval(hover)
+      setHover(undefined)
+    }}
+  >
+    {item.images.map((image: StrapiFile, i: number) => (
+      <div className="absolute inset-0 z-0" key={i}>
+        <div
+          className={`transition-opacity duration-1000 w-full h-full
+            ${ i === 0 && !hover
+                ? 'opacity-100' // only show first image if not hovering
+                : !hover
+                  ? 'hidden' // if not hovering, hide all other images
+                  : index === i
+                    ? 'opacity-0' // opacity (1 -> 0) the current image
+                    : wrap(index + 1) === i
+                      ? 'opacity-100' // transition to the next image
+                      : 'opacity-0' // otherwise hide the image
+            }
+            `}
+        >
+          <ProductImage
+            alt={image.alternativeText}
+            src={getURL(image.formats.small?.url || image.url)}
+          />
+        </div>
+      </div>
+    ))}
+  </div>
 }
 
 // TODO: use nextjs caching
@@ -163,7 +166,10 @@ const ProductInfo = ({ item }) => (
     <div className="flex-grow">
       <span className="font-bold">{item.designer?.name}</span>
       <span>{item.name}</span>
-      <div className="flex-col md:flex-row mt-4">
+      <span>
+        {item.sizes.map(v => v.internalSize || v.size).join(', ')}
+      </span>
+      <div className="flex-col md:flex-row">
         <span className="font-bold">
           {rentalPrice(item.shortRentalPrice, item.longRentalPrice)}
         </span>

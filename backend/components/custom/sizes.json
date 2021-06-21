@@ -17,8 +17,8 @@
       "type": "string",
       "required": true
     },
-    "details": {
-      "type": "richtext"
+    "internalSize": {
+      "type": "string"
     }
   }
 }
