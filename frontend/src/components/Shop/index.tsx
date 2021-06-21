@@ -44,9 +44,9 @@ const Product = ({ data }) => {
       <div className="mb-4" />
       {details.map((item, index) => (
         <React.Fragment key={item.key}>
-          <Divider visible={index !== 0} />
           <ProductDetails
             key={item.key}
+            index={index}
             item={item}
             selected={item.key === state.details}
             state={state}

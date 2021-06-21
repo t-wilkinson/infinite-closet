@@ -1,12 +1,13 @@
 import React from 'react'
 
+import { Divider } from '@/components'
 import { Icon } from '@/components'
 import Share from '@/utils/share'
 import { useDispatch } from '@/utils/store'
 
 import { shopActions } from './slice'
 
-export const ProductDeatils = ({ state, selected, item, product }) => {
+export const ProductDeatils = ({index, state, selected, item, product }) => {
   const dispatch = useDispatch()
 
   const Details =
@@ -18,8 +19,13 @@ export const ProductDeatils = ({ state, selected, item, product }) => {
       </div>
     ))
 
+  if (!details[item.key] && !product[item.key]) {
+    return null
+  }
+
   return (
     <>
+        <Divider visible={index !== 0} />
       <details
         onClick={(e) => {
           e.preventDefault()
