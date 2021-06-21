@@ -94,8 +94,8 @@ const ProductImages = ({item}) => {
     onMouseOver={() => {
       if (!hover) {
         const startRotate = () =>
-          setHover(window.setInterval(rotate, 2000))
-        setHover(window.setTimeout(startRotate, 500))
+          setHover(window.setInterval(rotate, 1000))
+        setHover(window.setTimeout(startRotate, 1000))
       }
     }}
     onMouseLeave={() => {
