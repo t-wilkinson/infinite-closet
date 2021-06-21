@@ -111,6 +111,11 @@ const Pay = ({ fields, dispatch, state }) => {
 
   return (
     <>
+      <div className="mb-2 w-full flex-row justify-between items-center">
+        <span>Ticket Price</span>
+        <span className="">£{TICKET_PRICE.toFixed(2)}</span>
+      </div>
+
       <div className="flex-row mb-2">
         <div className="w-80">
           <PromoCode state={state} dispatch={dispatch} fields={fields} />
@@ -137,11 +142,6 @@ const Pay = ({ fields, dispatch, state }) => {
       <div className="mb-2 w-full flex-row justify-between items-center">
         <span>Promo Discount</span>
         <span className="">-£{discount.toFixed(2)}</span>
-      </div>
-
-      <div className="mb-2 w-full flex-row justify-between items-center">
-        <span>Ticket Price</span>
-        <span className="">£{TICKET_PRICE.toFixed(2)}</span>
       </div>
 
       <div className="flex-row mb-2">

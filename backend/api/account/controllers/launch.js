@@ -52,7 +52,7 @@ module.exports = {
 <ul>
 <li>Order Total: £${ticketPrice}</li>
 <li>Saturday, August 7, 2021 from 8pm to 12am (BST)</li>
-<li>At Home Grown</li>
+<li>44 Great Cumberland Pl, London W1H 7BS</li>
 </ul>
 `,
         });

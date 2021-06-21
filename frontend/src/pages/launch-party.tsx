@@ -16,7 +16,7 @@ const Page = () => {
       <Header />
       <main className="w-full h-full items-center pb-8 bg-gray-light">
         <div className="w-full max-w-screen-lg items-center">
-          <h1 className="font-bold text-4xl my-4">Join Our Launch Party</h1>
+          <h1 className="font-bold text-4xl my-4">Join our Launch Party</h1>
           {/* TODO */}
           <div className="text-lg mb-4">
             <span>
@@ -53,7 +53,7 @@ const Details = () => (
     <span className="flex flex-row items-center">
       {/* TODO */}
       <Icon name="pin" size={20} className="text-gray mr-6" />
-      Home Grown
+      44 Great Cumberland Pl, London W1H 7BS
     </span>
   </div>
 )
