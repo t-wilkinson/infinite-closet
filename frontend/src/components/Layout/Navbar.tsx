@@ -1,7 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import axios from 'axios'
 
+import { StrapiCategory } from '@/utils/models'
 import { routes } from '@/utils/constants'
 
 // TODO: use nextjs caching
@@ -11,20 +13,32 @@ const myLoader = ({ src, width, quality }) => {
 
 export const NavBar = () => {
   const [visible, setVisible] = React.useState<string>()
+  const [serverRoutes, setServerRoutes] = React.useState([])
+
+  React.useEffect(() => {
+    axios
+      .get('/products/routes')
+      .then((res) => setServerRoutes(res.data.routes))
+      .catch((err) => console.error(err))
+  }, [])
 
   return (
     <div
       className="items-center w-full relative z-30"
       onMouseLeave={() => setVisible(null)}
     >
-      <Sections visible={visible} setVisible={setVisible} />
+      <Sections
+        visible={visible}
+        setVisible={setVisible}
+        serverRoutes={serverRoutes}
+      />
       {visible && <div className="h-px bg-pri-light w-full -mt-px z-10" />}
     </div>
   )
 }
 export default NavBar
 
-const Sections = ({ visible, setVisible }) => (
+const Sections = ({ visible, setVisible, serverRoutes }) => (
   <div className="items-center justify-center max-w-screen-xl w-full">
     <nav className="flex flex-row w-full justify-around relative">
       {routes.map((route, i) => (
@@ -34,7 +48,11 @@ const Sections = ({ visible, setVisible }) => (
             visible={visible}
             setVisible={setVisible}
           />
-          <SectionsContent route={route} visible={visible} />
+          <SectionsContent
+            route={route}
+            visible={visible}
+            serverRoutes={serverRoutes}
+          />
         </div>
       ))}
     </nav>
@@ -46,8 +64,8 @@ const SectionsRoute = ({ route, visible, setVisible }) => (
     onMouseEnter={() => setVisible(route.value)}
     onFocus={() => setVisible(route.value)}
     className={` relative justify-center
-            ${visible === route.value ? 'bg-pri-light' : ''}
-          `}
+      ${visible === route.value ? 'bg-pri-light' : ''}
+      `}
   >
     {
       <Link href={route.href ?? '#'}>
@@ -61,7 +79,7 @@ const SectionsRoute = ({ route, visible, setVisible }) => (
   </div>
 )
 
-const SectionsContent = ({ route, visible }) => {
+const SectionsContent = ({ route, visible, serverRoutes }) => {
   const selected = route.value === visible && route.value !== 'blogs'
 
   if (!selected) {
@@ -80,28 +98,57 @@ const SectionsContent = ({ route, visible }) => {
       />
 
       <div key={route.value}>
-        <PageRoutes route={route} />
+        <PageRoutes route={route} serverRoutes={serverRoutes} />
       </div>
     </div>
   )
 }
 
-const PageRoutes = ({ route }: { route: typeof routes[number] }) => (
-  <div className="flex-row">
-    {route.data.map((column, i) => (
-      <div key={i}>
-        {column.label && (
-          <ColumnHeader href={column.href}>{column.label}</ColumnHeader>
-        )}
-        {column.data.map((row, i) => (
-          <ColumnItem key={i} href={row.href}>
-            {row.label}
-          </ColumnItem>
-        ))}
-      </div>
-    ))}
-  </div>
-)
+const PageRoutes = ({
+  route,
+  serverRoutes,
+}: {
+  route: typeof routes[number]
+  serverRoutes: { [key: string]: StrapiCategory }
+}) => {
+  return (
+    <div className="flex-row">
+      {route.data.map((column, i) => (
+        <div key={i}>
+          {column.label && (
+            <ColumnHeader href={column.href}>{column.label}</ColumnHeader>
+          )}
+          <PageColumnItems column={column} serverRoutes={serverRoutes} />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+const PageColumnItems = ({ column, serverRoutes }) => {
+  const serverRows =
+    (serverRoutes[column.value] && serverRoutes[column.value].categories) || []
+  const rows = column.data
+    .reduce((acc, route) => {
+      if (serverRows.every((row) => row.slug !== route.slug)) {
+        route.slug = null
+        acc = [...acc, route]
+      }
+      return acc
+    }, serverRows)
+    .sort((v) => (v.href === undefined ? v.slug === null : v.href === null))
+
+  return rows.map((row, i) => (
+    <ColumnItem
+      key={i}
+      href={
+        row.href ? row.href : row.slug ? `${column.href}/${row.slug}` : null
+      }
+    >
+      {row.name}
+    </ColumnItem>
+  ))
+}
 
 const ColumnHeader = ({ href, children }) => (
   <span className="px-4 font-bold">
@@ -121,16 +168,16 @@ const ColumnHeader = ({ href, children }) => (
 
 const ColumnItem = ({ href, children }) => (
   <span className="px-4">
-    <Link href={href ?? '#'}>
-      <a>
-        <span
-          className={`p-1 text-sm
-        ${href ? 'hover:underline' : 'cursor-default text-gray-700'}
-        `}
-        >
-          {children}
-        </span>
-      </a>
-    </Link>
+    {href ? (
+      <Link href={href}>
+        <a>
+          <span className="p-1 text-sm hover:underline">{children}</span>
+        </a>
+      </Link>
+    ) : (
+      <span className="p-1 text-sm cursor-default text-gray-700">
+        {children}
+      </span>
+    )}
   </span>
 )

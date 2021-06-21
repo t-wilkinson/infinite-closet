@@ -253,4 +253,19 @@ module.exports = {
       categories,
     });
   },
+
+  async routes(ctx) {
+    const categories = await strapi.query("category").find({
+      slug_in: ["clothing", "occasion"],
+    });
+
+    let routes = {};
+    for (const category of categories) {
+      routes[category.slug] = category;
+    }
+
+    ctx.send({
+      routes,
+    });
+  },
 };

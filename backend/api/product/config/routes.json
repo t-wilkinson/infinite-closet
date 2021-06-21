@@ -11,6 +11,15 @@
 
     {
       "method": "GET",
+      "path": "/products/routes",
+      "handler": "product.routes",
+      "config": {
+        "policies": []
+      }
+    },
+
+    {
+      "method": "GET",
       "path": "/designers",
       "handler": "designer.find",
       "config": {
