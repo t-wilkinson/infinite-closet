@@ -38,7 +38,7 @@ export const CookieConsent = () => {
         <span className="">
           This site uses cookies to improve your experience. Find our more
           on&nbsp;
-          <BlueLink href="/privacy-policy" label="how we use cookies" />.
+          <BlueLink href="/privacy" label="how we use cookies" />.
         </span>
         <div className="h-4" />
 

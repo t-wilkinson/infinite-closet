@@ -110,7 +110,7 @@ const WaitlistForm = ({ status, setStatus }) => {
           <span>&nbsp;&nbsp;I want to subscribe to the newsletter.</span>
         </Checkbox>
       </div>
-      <BlueLink href="/privacy-policy" label="View terms" />
+      <BlueLink href="/privacy" label="View terms" />
 
       <div className="my-2 w-full">
         <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
