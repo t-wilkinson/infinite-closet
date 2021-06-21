@@ -11,8 +11,10 @@ services:
 
   backend:
     image: node:14
+    ports:
+      - 8000:8000
     environment:
       FRONTEND_DOMAIN: infinitecloset.treywilkinson.com
-    command: yarn run develop
+    command: yarn run develop:admin
     volumes:
       - ../backend:/app

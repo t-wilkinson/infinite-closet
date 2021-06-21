@@ -5,12 +5,18 @@ module.exports = {
     cors: {
       enabled: true,
       origin: [
+        "http://0.0.0.0:3000",
+        "http://0.0.0.0:1337",
+        "http://0.0.0.0:8000",
+
         "http://localhost:3000",
         "http://localhost:1337",
 
         "http://localhost:3001",
         "http://localhost:1338",
         "http://localhost:8000",
+
+        "https://localhost",
 
         "https://" + domain,
         "https://api." + domain,
