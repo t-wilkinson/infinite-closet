@@ -8,7 +8,7 @@ export const Banner = () => {
         <q>
           <strong>Give Your Best</strong>
         </q>
-        &nbsp; launch party coming soon
+        &nbsp; launch party coming August 7th
       </div>
     )
   }
