@@ -103,6 +103,10 @@
     "weather_": {
       "type": "string",
       "private": true
+    },
+    "sizes_": {
+      "type": "string",
+      "private": true
     }
   }
 }

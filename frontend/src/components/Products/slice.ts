@@ -33,6 +33,7 @@ const initialState: State = {
       favorites: [],
       weather: [],
       styles: [],
+      sizes: [],
     },
   },
   sortBy: 'Newest',

@@ -166,8 +166,8 @@ const ProductInfo = ({ item }) => (
     <div className="flex-grow">
       <span className="font-bold">{item.designer?.name}</span>
       <span>{item.name}</span>
-      <span>
-        {item.sizes.map(v => v.internalSize || v.size).join(', ')}
+      <span className="text-sm">
+        {item.sizes.map(v => v.size).join(', ')}
       </span>
       <div className="flex-col md:flex-row">
         <span className="font-bold">

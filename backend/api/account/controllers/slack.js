@@ -26,33 +26,33 @@ const WebSocket = require("ws");
 //   },
 // });
 
-const slackConfig = {
-  channel: "C017G6ES2CE",
-};
+// const slackConfig = {
+//   channel: "C017G6ES2CE",
+// };
 
-const slack = async ({ path, body = {}, method = "POST" }) => {
-  if (method === "POST") {
-    return fetch(`https://slack.com/api/${path}`, {
-      method,
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        Authorization: "Bearer " + process.env.SLACK_USER_OAUTH_TOKEN,
-      },
-      body: JSON.stringify({ ...body, ...slackConfig }),
-    }).then((res) => res.json());
-  } else {
-    return fetch(
-      `https://slack.com/api/${path}?token=${process.env.SLACK_BOT_OAUTH_TOKEN}`,
-      {
-        method,
-        headers: {
-          "Content-type": "application/x-www-form-urlencoded",
-          Authorization: "Bearer " + process.env.SLACK_BOT_OAUTH_TOKEN,
-        },
-      }
-    ).then((res) => res.json());
-  }
-};
+// const slack = async ({ path, body = {}, method = "POST" }) => {
+//   if (method === "POST") {
+//     return fetch(`https://slack.com/api/${path}`, {
+//       method,
+//       headers: {
+//         "Content-Type": "application/json; charset=utf-8",
+//         Authorization: "Bearer " + process.env.SLACK_USER_OAUTH_TOKEN,
+//       },
+//       body: JSON.stringify({ ...body, ...slackConfig }),
+//     }).then((res) => res.json());
+//   } else {
+//     return fetch(
+//       `https://slack.com/api/${path}?token=${process.env.SLACK_BOT_OAUTH_TOKEN}`,
+//       {
+//         method,
+//         headers: {
+//           "Content-type": "application/x-www-form-urlencoded",
+//           Authorization: "Bearer " + process.env.SLACK_BOT_OAUTH_TOKEN,
+//         },
+//       }
+//     ).then((res) => res.json());
+//   }
+// };
 
 // slack({ path: "rtm.connect", method: "GET" }).then((res) => console.log(res));
 

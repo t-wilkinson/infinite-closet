@@ -10,6 +10,7 @@ export const Filter = [
   'favorites',
   'weather',
   'styles',
+  'sizes',
 ] as const
 export type Filter = typeof Filter[number]
 export type Filters = { [filter in Filter]: string[] }

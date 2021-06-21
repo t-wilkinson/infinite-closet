@@ -172,6 +172,19 @@ export const FilterItems: FilterItems = {
     </>
   ),
 
+  sizes: ({ panel }) => {
+    const sizes = useSelector((state) =>
+      Object.values(state.layout.data.sizes).map(v => ({name: v.internalSize || v.size, slug: v.size})).sort(),
+    )
+
+    return (
+      <>
+        <FilterCheckboxes panel={panel} data={sizes} />
+      </>
+    )
+  },
+
+
   weather: ({ panel }) => {
     const weather = useSelector((state) =>
       Object.values(state.layout.data.weather),

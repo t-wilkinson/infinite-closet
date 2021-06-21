@@ -39,6 +39,7 @@ const productFilters = [
   "weather",
   "categories",
   "styles",
+  "sizes",
 ];
 
 const toPrivate = (key) => key + "_";
@@ -128,21 +129,27 @@ async function queryFilters(knex, _where) {
   let filters = new DefaultDict({});
   for (const [filter, slugs] of Object.entries(filterSlugs)) {
     if (filter in models) {
-      filters[filter] = await knex
-        .select(`${filter}.*`)
-        .distinct(`${filter}.id`) // TODO: is distinct the most efficient way to handle this?
-        .from(filter)
-        .join(
-          `products__${filter}`,
-          `${filter}.id`,
-          `products__${filter}.product_id`
-        )
-        .join("products", `products__${filter}.product_id`, "products.id")
-        .whereNotNull("products.published_at")
-        .whereRaw(
-          Array(slugs.size).fill(`${filter}.slug = ?`).join(" OR "),
-          Array.from(slugs)
-        );
+      if (filter === 'sizes') {
+        // prettier-ignore
+        filters[filter] = await knex
+          .select(`components_custom_sizes.* as sizes`)
+          .from("components_custom_sizes")
+          .distinctOn("components_custom_sizes.size")
+          .whereRaw(
+            Array(slugs.size).fill(`components_custom_sizes.size = ?`).join(" OR "),
+            Array.from(slugs)
+          );
+        console.log(filters[filter])
+      } else {
+        filters[filter] = await knex
+          .select(`${filter}.*`)
+          .distinct(`${filter}.id`)
+          .from(filter)
+          .whereRaw(
+            Array(slugs.size).fill(`${filter}.slug = ?`).join(" OR "),
+            Array.from(slugs)
+          );
+      }
     } else if (filter === "designers") {
       // prettier-ignore
       filters[filter] = await knex

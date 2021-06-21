@@ -9,6 +9,7 @@ import {
   StrapiWeather,
   StrapiStyle,
   StrapiCategory,
+  StrapiSize,
 } from '@/utils/models'
 
 import { CookieConsent } from './types'
@@ -22,6 +23,7 @@ export interface State {
     designers: StrapiDesigner[]
     styles: StrapiStyle[]
     categories: StrapiCategory[]
+    sizes: StrapiSize[]
   }
   loading: boolean
   headerOpen: boolean
@@ -38,6 +40,7 @@ const initialState: State = {
     occasions: [],
     weather: [],
     styles: [],
+    sizes: [],
   },
   loading: false,
   headerOpen: false,

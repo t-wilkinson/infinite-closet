@@ -16,9 +16,6 @@
     "size": {
       "type": "string",
       "required": true
-    },
-    "internalSize": {
-      "type": "string"
     }
   }
 }

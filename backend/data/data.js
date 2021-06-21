@@ -6,5 +6,6 @@ module.exports = {
     occasions: "occasion",
     styles: "style",
     weather: "weather",
+    sizes: "size",
   },
 };

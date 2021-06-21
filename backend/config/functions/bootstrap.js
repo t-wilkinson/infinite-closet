@@ -51,7 +51,12 @@ const populatePrivateFields = () => {
       products.map((product) => {
         let data = { id: product.id, published_at: today };
         for (const filter of Object.keys(models)) {
-          const slugs = product[filter].map((v) => v.slug).join(",");
+          let slugs
+          if (filter === 'sizes') {
+            slugs = product[filter].map((v) => v.innerSize || v.size).join(",");
+          } else {
+            slugs = product[filter].map((v) => v.slug).join(",");
+          }
           data[`${filter}_`] = slugs;
         }
         strapi.query("product").update({ id: product.id }, data);
