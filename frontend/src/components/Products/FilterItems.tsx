@@ -6,6 +6,7 @@ import { useSelector } from '@/utils/store'
 import useFields from '@/Form/useFields'
 import { Input, Checkbox } from '@/Form'
 
+import {sortSizes} from './helpers'
 import { Filter } from './types'
 
 type FilterItems = {
@@ -174,12 +175,12 @@ export const FilterItems: FilterItems = {
 
   sizes: ({ panel }) => {
     const sizes = useSelector((state) =>
-      Object.values(state.layout.data.sizes).map(v => ({name: v.internalSize || v.size, slug: v.size})).sort(),
+        Object.values(state.layout.data.sizes).map(v => ({name: v.size, slug: v.size})).sort(sortSizes),
     )
 
     return (
       <>
-        <FilterCheckboxes panel={panel} data={sizes} />
+        <FilterCheckboxes panel={panel} data={sizes} sort={false} />
       </>
     )
   },
@@ -253,10 +254,11 @@ const pickFgColorFromBgColor = (
   return r * 0.299 + g * 0.587 + b * 0.114 > 186 ? darkColor : lightColor
 }
 
-const FilterCheckboxes = ({ panel, data }) => {
+const FilterCheckboxes = ({ panel, data, sort=true}) => {
+  data = sort ? data?.sort((v1, v2) => Number(v1.slug > v2.slug)) : data
+
   return data
-    ?.sort((v1, v2) => Number(v1.slug > v2.slug))
-    .map((v: { slug: string; name: string }) => (
+    ?.map((v: { slug: string; name: string }) => (
       <div key={v.slug} className="py-0.5">
         <Checkbox
           onChange={() => panel.toggle(v.slug)}

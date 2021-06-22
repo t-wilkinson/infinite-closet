@@ -7,6 +7,7 @@ import { CallToAction } from '@/components'
 import { getURL } from '@/utils/api'
 import { StrapiFile } from '@/utils/models'
 
+import {sortSizes} from './helpers'
 import { QUERY_LIMIT } from './constants'
 
 export const ProductItems = ({ data, loading }) => {
@@ -167,7 +168,7 @@ const ProductInfo = ({ item }) => (
       <span className="font-bold">{item.designer?.name}</span>
       <span>{item.name}</span>
       <span className="text-sm">
-        {item.sizes.map(v => v.size).join(', ')}
+        {item.sizes.map(v => v.size).sort(sortSizes).join(', ')}
       </span>
       <div className="flex-col md:flex-row">
         <span className="font-bold">

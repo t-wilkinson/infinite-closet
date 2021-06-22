@@ -4,13 +4,14 @@ import rehypeRaw from 'rehype-raw'
 import dayjs from 'dayjs'
 import Head from 'next/head'
 import Image from 'next/image'
+import axios from 'axios'
 
 import { getURL } from '@/utils/api'
 import Header from '@/Layout/Header'
 import Footer from '@/Layout/Footer'
 import { ScrollUp } from '@/components'
 import { readingTime } from '@/Markdown'
-import { fetchMarkdown, components as _components } from '@/Markdown'
+import { components as _components } from '@/Markdown'
 
 export const components = {
   ..._components,
@@ -43,7 +44,7 @@ export const components = {
   ),
 }
 
-const Blog = ({ published_at, updated_at, name, content, subtitle, image }) => {
+const Blog = ({ published_at, updated_at, name, content, subtitle, image, ...props}) => {
   updated_at = dayjs(updated_at).format('MM/DD/YY')
   const [minutes] = readingTime(content)
 
@@ -91,5 +92,18 @@ const Blog = ({ published_at, updated_at, name, content, subtitle, image }) => {
 export const Page = ({ data }) => {
   return <Blog {...data} name={data.title} />
 }
-export const getServerSideProps = fetchMarkdown({ path: '/blogs' })
+
+const fetchMarkdown =
+  async ({ query, resolvedUrl }) => {
+    return {
+      props: {
+        data: {
+          ...(await axios.get(`/blogs?slug=${query.slug}`)).data[0],
+        },
+      },
+    }
+  }
+
+
+export const getServerSideProps = fetchMarkdown
 export default Page

@@ -112,10 +112,10 @@ async function queryFilters(knex, _where) {
   for (const product of results) {
     for (const filter of productFilters) {
       if (filter in models) {
-        for (const slug of product[toPrivate(filter)].split(",")) {
-          if (!(slug === "")) {
-            filterSlugs[filter].add(slug);
-          }
+        const slugs =product[toPrivate(filter)]
+        if (!slugs) { continue }
+        for (const slug of slugs.split(",")) {
+          filterSlugs[filter].add(slug);
         }
       } else if (filter === "designers") {
         filterSlugs[filter].add(product.designer);

@@ -99,8 +99,9 @@ export const Markdown = ({ content }) => (
   </div>
 )
 
+// Odd bug: seems `props.data.slug` is passed back in and used for similar calls
 export const fetchMarkdown =
-  ({ slug = undefined, path = '/documents' }) =>
+  ({ slug = null, path = '/documents' }) =>
   async ({ query, resolvedUrl }) => {
     if (!slug && query.slug) {
       slug = query.slug

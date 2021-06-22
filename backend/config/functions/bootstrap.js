@@ -23,22 +23,6 @@ const setDefaultPermissions = async () => {
   );
 };
 
-const isFirstRun = async () => {
-  const pluginStore = strapi.store({
-    environment: strapi.config.environment,
-    type: "type",
-    name: "setup",
-  });
-  const initHasRun = await pluginStore.get({
-    key: "initHasRun",
-  });
-  await pluginStore.set({
-    key: "initHasRun",
-    value: true,
-  });
-  return !initHasRun;
-};
-
 const populatePrivateFields = () => {
   const today = new Date().toJSON();
   return strapi
@@ -65,53 +49,58 @@ const populatePrivateFields = () => {
 };
 
 module.exports = async () => {
-  const shouldSetDefaultPermissions = await isFirstRun();
-  if (shouldSetDefaultPermissions) {
-    try {
-      console.log("Setting up your starter...");
-      // const files = fs.readdirSync(`./data/uploads`);
-      // await createSeedData(files);
-      console.log("Ready to go");
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  await populatePrivateFields();
 
   if (process.env.NODE_ENV !== "production") {
-    await populatePrivateFields();
     await setDefaultPermissions();
   }
 };
 
-const createSeedData = async (files) => {
-  const getFilesizeInBytes = (filepath) => {
-    var stats = fs.statSync(filepath);
-    var fileSizeInBytes = stats["size"];
-    return fileSizeInBytes;
-  };
+// const isFirstRun = async () => {
+//   const pluginStore = strapi.store({
+//     environment: strapi.config.environment,
+//     type: "type",
+//     name: "setup",
+//   });
+//   const initHasRun = await pluginStore.get({
+//     key: "initHasRun",
+//   });
+//   await pluginStore.set({
+//     key: "initHasRun",
+//     value: true,
+//   });
+//   return !initHasRun;
+// };
 
-  const handleFiles = (data) => {
-    var file = files.find((x) => x.includes(data.slug));
-    file = `./data/uploads/${file}`;
+// const createSeedData = async (files) => {
+//   const getFilesizeInBytes = (filepath) => {
+//     var stats = fs.statSync(filepath);
+//     var fileSizeInBytes = stats["size"];
+//     return fileSizeInBytes;
+//   };
 
-    const size = getFilesizeInBytes(file);
-    const array = file.split(".");
-    const ext = array[array.length - 1];
-    const mimeType = `image/.${ext}`;
-    const image = {
-      path: file,
-      name: `${data.slug}.${ext}`,
-      size,
-      type: mimeType,
-    };
-    return image;
-  };
+//   const handleFiles = (data) => {
+//     var file = files.find((x) => x.includes(data.slug));
+//     file = `./data/uploads/${file}`;
 
-  const categoriesPromises = categories.map(({ ...rest }) => {
-    return strapi.services.category.create({
-      ...rest,
-    });
-  });
+//     const size = getFilesizeInBytes(file);
+//     const array = file.split(".");
+//     const ext = array[array.length - 1];
+//     const mimeType = `image/.${ext}`;
+//     const image = {
+//       path: file,
+//       name: `${data.slug}.${ext}`,
+//       size,
+//       type: mimeType,
+//     };
+//     return image;
+//   };
 
-  await Promise.all(categoriesPromises);
-};
+//   const categoriesPromises = categories.map(({ ...rest }) => {
+//     return strapi.services.category.create({
+//       ...rest,
+//     });
+//   });
+
+//   await Promise.all(categoriesPromises);
+// };
