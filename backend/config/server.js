@@ -6,7 +6,7 @@ module.exports = ({ env }) => ({
   admin: {
     host: env("HOST", "0.0.0.0"),
     autoOpen: false,
-    url: `https://admin.${process.env.FRONTEND_DOMAIN}`,
+    url: '/admin',
     auth: {
       secret: env("ADMIN_JWT_SECRET", "ec27516c3ddbb82286803e7d5308c81b"),
     },
