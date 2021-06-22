@@ -37,14 +37,32 @@ export const components = {
     <figure className="flex flex-col items-center my-8" children={children} />
   ),
 
+  table: ({ children }) => (
+    <div className="w-full items-center">
+      <table children={children} className="my-4" />
+    </div>
+  ),
+
+  th: ({ children }) => (
+    <th children={children} className="bg-white w-full flex justify-center" />
+  ),
+
+  td: ({ children }) => (
+    <td
+      children={children}
+      className="text-center flex justify-center bg-white whitespace-pre-wrap"
+    />
+  ),
+
   img: ({ src, alt = '' }) => (
-    <div className="max-w-md relative">
-      <img src={getURL(src)} alt={alt} />
+    <div className="max-w-md w-full relative h-full" style={{ maxHeight: 800 }}>
+      <img src={src} alt={alt} />
     </div>
   ),
 }
 
-const Blog = ({ published_at, updated_at, name, content, subtitle, image, ...props}) => {
+const Blog = ({ published_at, updated_at, name, content, subtitle, image }) => {
+  content = content.replace(/\|\n\n(\s*)\|/g, '|\n$1|') // remove extra new lines for markdown tables
   updated_at = dayjs(updated_at).format('MM/DD/YY')
   const [minutes] = readingTime(content)
 
@@ -93,17 +111,15 @@ export const Page = ({ data }) => {
   return <Blog {...data} name={data.title} />
 }
 
-const fetchMarkdown =
-  async ({ query, resolvedUrl }) => {
-    return {
-      props: {
-        data: {
-          ...(await axios.get(`/blogs?slug=${query.slug}`)).data[0],
-        },
+const fetchMarkdown = async ({ query, resolvedUrl }) => {
+  return {
+    props: {
+      data: {
+        ...(await axios.get(`/blogs?slug=${query.slug}`)).data[0],
       },
-    }
+    },
   }
-
+}
 
 export const getServerSideProps = fetchMarkdown
 export default Page
