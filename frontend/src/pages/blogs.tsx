@@ -21,7 +21,7 @@ export const Page = ({ blogs }) => {
             <Link key={blog.id} href={`/blogs/${blog.slug}`}>
               <a>
                 <div className="flex-row max-w-xl items-center rounded-md p-4 border border-gray-light">
-                  <div className="w-full">
+                  <div className="w-full mr-2">
                     <span className="text-xl font-bold">{blog.title}</span>
                     <span className="text-gray text-sm">{blog.subtitle}</span>
                     <span className="text-gray text-xs mt-2">

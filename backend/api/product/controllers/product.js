@@ -125,7 +125,8 @@ async function queryFilters(knex, _where) {
     }
   }
 
-  // query for unique filters found which match _where
+  // slugs contain only filters that match product categories
+  // get all filters that match these slugs
   let filters = new DefaultDict({});
   for (const [filter, slugs] of Object.entries(filterSlugs)) {
     if (filter in models) {
@@ -139,7 +140,6 @@ async function queryFilters(knex, _where) {
             Array(slugs.size).fill(`components_custom_sizes.size = ?`).join(" OR "),
             Array.from(slugs)
           );
-        console.log(filters[filter])
       } else {
         filters[filter] = await knex
           .select(`${filter}.*`)
