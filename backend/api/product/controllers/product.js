@@ -87,11 +87,15 @@ async function queryProducts(knex, _where, _paging) {
   const results = await knex
     .select("products.id as id")
     .from("products")
-    .orderByRaw(_paging.sort.replace(":", ' '))
+    .orderByRaw(_paging.sort.replace(":", " "))
     .whereNotNull("products.published_at")
     .whereRaw(...toRaw(_where));
 
-  const products = await Promise.all(results.map(({id}) => strapi.query('product').findOne({id}, ['designer', 'images', 'sizes'])))
+  const products = await Promise.all(
+    results.map(({ id }) =>
+      strapi.query("product").findOne({ id }, ["designer", "images", "sizes"])
+    )
+  );
   return products;
 }
 
@@ -112,8 +116,10 @@ async function queryFilters(knex, _where) {
   for (const product of results) {
     for (const filter of productFilters) {
       if (filter in models) {
-        const slugs =product[toPrivate(filter)]
-        if (!slugs) { continue }
+        const slugs = product[toPrivate(filter)];
+        if (!slugs) {
+          continue;
+        }
         for (const slug of slugs.split(",")) {
           filterSlugs[filter].add(slug);
         }
@@ -130,9 +136,9 @@ async function queryFilters(knex, _where) {
   let filters = new DefaultDict({});
   for (const [filter, slugs] of Object.entries(filterSlugs)) {
     if (filter in models) {
-      if (filter === 'sizes') {
+      if (filter === "sizes") {
         // prettier-ignore
-        filters[filter] = await knex
+        let sizes = await knex
           .select(`components_custom_sizes.* as sizes`)
           .from("components_custom_sizes")
           .distinctOn("components_custom_sizes.size")
@@ -140,6 +146,19 @@ async function queryFilters(knex, _where) {
             Array(slugs.size).fill(`components_custom_sizes.size = ?`).join(" OR "),
             Array.from(slugs)
           );
+
+        sizes = sizes.reduce((acc, size) => {
+          if (size.sizeRange) {
+            for (const value of strapi.services.size.range(size)) {
+              acc.add(value);
+            }
+          } else {
+            acc.add(size.size);
+          }
+          return acc;
+        }, new Set());
+        sizes = Array.from(sizes).map(strapi.services.size.normalize);
+        filters[filter] = sizes;
       } else {
         filters[filter] = await knex
           .select(`${filter}.*`)
@@ -196,7 +215,7 @@ const DEFAULT_PAGE_SIZE = 20;
 module.exports = {
   // TODO: there are plenty of ways to speed this up *when* it bottlenecks
   async query(ctx) {
-    const query =ctx.query
+    const query = ctx.query;
 
     const [_paging, _where] = partitionObject(query, ([k, _]) =>
       ["start", "limit", "sort"].includes(k)
@@ -234,6 +253,32 @@ module.exports = {
 
     ctx.send({
       routes,
+    });
+  },
+
+  async shopItem(ctx) {
+    const slug = ctx.params.slug;
+    const product = await strapi.query("product").findOne({ slug });
+    ctx.send(product);
+  },
+
+  async sizeChart(ctx) {
+    let sizeChart = await strapi.query("size-chart").find();
+    sizeChart = sizeChart.map((chart) =>
+      Object.entries(chart).reduce((acc, [k, v]) => {
+        acc[strapi.services.size.normalize(k)] = v;
+        return acc;
+      }, {})
+    );
+
+    const sizeEnum = strapi.services.size
+      .enum()
+      .map(strapi.services.size.normalize);
+
+    ctx.send({
+      chart: sizeChart,
+      sizeEnum,
+      measurements: ["hips", "waist", "bust"],
     });
   },
 };

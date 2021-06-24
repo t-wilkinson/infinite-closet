@@ -7,15 +7,63 @@
   },
   "options": {},
   "attributes": {
+    "size": {
+      "type": "enumeration",
+      "enum": [
+        "XXS",
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "_2XL",
+        "_3XL",
+        "_4XL",
+        "_5XL",
+        "_6XL"
+      ]
+    },
+    "sizeRange": {
+      "type": "enumeration",
+      "enum": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "_2XL",
+        "_3XL",
+        "_4XL",
+        "_5XL",
+        "_6XL"
+      ]
+    },
+
     "quantity": {
       "type": "integer",
       "default": 1,
       "min": 0,
       "required": true
     },
-    "size": {
-      "type": "string",
-      "required": true
+    "units": {
+      "type": "enumeration",
+      "enum": ["cm", "inch"],
+      "default": "cm"
+    },
+    "hips": {
+      "type": "decimal"
+    },
+    "waist": {
+      "type": "decimal"
+    },
+    "bust": {
+      "type": "decimal"
+    },
+    "armpitWidth": {
+      "type": "decimal"
+    },
+    "lengthFromShoulder": {
+      "type": "decimal"
     }
   }
 }

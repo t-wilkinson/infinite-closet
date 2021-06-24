@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "size_charts",
+  "info": {
+    "name": "Size Chart",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "XXS": {
+      "type": "string"
+    },
+    "XS": {
+      "type": "string"
+    },
+    "S": {
+      "type": "string"
+    },
+    "M": {
+      "type": "string"
+    },
+    "L": {
+      "type": "string"
+    },
+    "XL": {
+      "type": "string"
+    },
+    "_2XL": {
+      "type": "string"
+    },
+    "_3XL": {
+      "type": "string"
+    },
+    "_4XL": {
+      "type": "string"
+    },
+    "_5XL": {
+      "type": "string"
+    },
+    "_6XL": {
+      "type": "string"
+    }
+  }
+}

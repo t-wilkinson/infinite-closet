@@ -6,12 +6,13 @@ import useAnalytics from '@/utils/useAnalytics'
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon } from '@/components'
 import { Submit } from '@/Form'
+import { toTitleCase } from '@/utils/helpers'
 
 import { shopActions } from './slice'
 import { OneTime } from './types'
 import DatePicker from './DatePicker'
 
-export const ProductRentContents = ({ product, state }) => {
+export const ProductRentContents = ({ data, product, state }) => {
   const router = useRouter()
   const Contents = productRentContents[state.rentType]
   const user = useSelector((state) => state.user.data)
@@ -20,6 +21,7 @@ export const ProductRentContents = ({ product, state }) => {
   return (
     <div className="h-64">
       <Contents
+        data={data}
         router={router}
         user={user}
         product={product}
@@ -43,9 +45,9 @@ interface Size {
 }
 
 export const productRentContents = {
-  OneTime: ({ user, dispatch, product, state, router }) => {
-    const [sizeState, setSizeState] = React.useState(false)
+  OneTime: ({ data, user, dispatch, product, state, router }) => {
     const [status, setStatus] = React.useState<null | string>(null)
+    const [chartOpen, setChartOpen] = React.useState(false)
     const analytics = useAnalytics()
 
     const addToCart = () => {
@@ -83,44 +85,24 @@ export const productRentContents = {
         />
 
         <SelectorItem label="Size" className="my-2 z-10 w-full">
-          <div className="relative items-start w-full">
+          {chartOpen && (
+            <SizeChart
+              measurements={data.sizeChart.measurements}
+              product={product}
+              chart={data.sizeChart.chart}
+              sizeEnum={data.sizeChart.sizeEnum}
+              close={() => setChartOpen(false)}
+            />
+          )}
+          <div className="relative flex-row justify-between items-center w-full">
             {/* select elements are too difficult to style
                 divs don't act like buttons
                 buttons can't use aria-role
             */}
-            <button
-              tabIndex={0}
-              aria-label="Dropdown product sizes"
-              className="flex p-2 border border-gray relative cursor-pointer w-32 justify-between flex-row"
-              onClick={() => setSizeState((state) => !state)}
-            >
-              {(state.size !== undefined &&
-                product.sizes[state.size] !== undefined &&
-                product.sizes[state.size].size) ||
-                'Select Size'}
-              <Icon name="down" size={16} className="mt-1" />
+            <SizeSelector dispatch={dispatch} product={product} state={state} />
+            <button onClick={() => setChartOpen((state) => !state)}>
+              <span className="underline">Size Chart</span>
             </button>
-            <div
-              className={`
-              w-32 absolute bottom-0 bg-white divide-y transform translate-y-full border border-gray z-10
-              ${sizeState ? '' : 'hidden'}
-              `}
-            >
-              {product.sizes.map((size: Size, index: number) => (
-                <button
-                  key={size.id}
-                  tabIndex={0}
-                  aria-label="Dropdown sizes"
-                  onClick={() => {
-                    dispatch(shopActions.changeSize(index))
-                    setSizeState(false)
-                  }}
-                  className="flex justify-center cursor-pointer bg-white"
-                >
-                  {size.size}
-                </button>
-              ))}
-            </div>
           </div>
         </SelectorItem>
 
@@ -191,6 +173,123 @@ export const productRentContents = {
       <span className="font-subheader text-center text-3xl">Coming Soon</span>
     </div>
   ),
+}
+
+const SizeSelector = ({ product, state, dispatch }) => {
+  const [sizeState, setSizeState] = React.useState(false)
+
+  return (
+    <>
+      <button
+        tabIndex={0}
+        aria-label="Dropdown product sizes"
+        className="flex p-2 border border-gray relative cursor-pointer w-32 justify-between flex-row"
+        onClick={() => setSizeState((state) => !state)}
+      >
+        {(state.size !== undefined &&
+          product.sizes[state.size] !== undefined &&
+          product.sizes[state.size].size) ||
+          'Select Size'}
+        <Icon name="down" size={16} className="mt-1" />
+      </button>
+      <div
+        className={`
+        w-32 absolute bottom-0 bg-white divide-y transform translate-y-full border border-gray z-10
+        ${sizeState ? '' : 'hidden'}
+        `}
+      >
+        {product.sizes.map((size: Size, index: number) => (
+          <button
+            key={size.id}
+            tabIndex={0}
+            aria-label="Dropdown sizes"
+            onClick={() => {
+              dispatch(shopActions.changeSize(index))
+              setSizeState(false)
+            }}
+            className="flex justify-center cursor-pointer bg-white"
+          >
+            {size.size}
+          </button>
+        ))}
+      </div>
+    </>
+  )
+}
+
+const SizeChart = ({ product, sizeEnum, chart, close, measurements }) => {
+  return (
+    <div
+      className="absolute bg-white border-gray border p-4 z-10 pt-8 space-y-4 overflow-y-scroll"
+      style={{ maxHeight: 600 }}
+    >
+      <button onClick={close} className="absolute top-0 right-0">
+        <div className="p-4">
+          <Icon name="close" size={16} />
+        </div>
+      </button>
+
+      <table className="table-fixed border border-gray-light">
+        <thead className="border border-gray-light">
+          <tr className="border-b border-gray-light">
+            <th colSpan={chart.length + 1}>Womens Clothing</th>
+          </tr>
+          <tr className="border-b border-gray-light">
+            <th scope="col" />
+            {chart.map((item) => (
+              <th key={item.name} scope="col" className="w-12">
+                {item.name}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="p-2">
+          {sizeEnum.map((size) => (
+            <tr key={size} className="border-t border-gray-light">
+              <th scope="row" className="p-1">
+                {size}
+              </th>
+              {chart.map((item) => (
+                <td key={item.name} className="text-center">
+                  {item[size] || '-'}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <table className="table-fixed border border-gray-light">
+        <thead className="border border-gray-light">
+          <tr className="border-b border-gray-light">
+            <th colSpan={chart.length + 1}>{product.name} Measurements</th>
+          </tr>
+          <tr className="border-b border-gray-light">
+            <th scope="col" />
+            {measurements.map((measurement) => (
+              <th key={measurement} className="text-center">
+                {toTitleCase(measurement)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="p-2">
+          {product.sizes.map((size) => (
+            <tr key={size.id} className="border-t border-gray-light">
+              <th scope="row" className="p-1">
+                {size.sizeRange ? `${size.size}/${size.sizeRange}` : size.size}
+              </th>
+              {measurements.map((measurement) => (
+                <td key={measurement} className="text-center">
+                  {size[measurement] || '-'}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
 }
 
 const SelectorItem = ({ label, children, ...props }) => (

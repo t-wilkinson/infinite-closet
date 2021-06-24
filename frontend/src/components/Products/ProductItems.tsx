@@ -7,7 +7,7 @@ import { CallToAction } from '@/components'
 import { getURL } from '@/utils/api'
 import { StrapiFile } from '@/utils/models'
 
-import {sortSizes} from './helpers'
+import { sortSizes } from './helpers'
 import { QUERY_LIMIT } from './constants'
 
 export const ProductItems = ({ data, loading }) => {
@@ -63,7 +63,6 @@ export const ProductItems = ({ data, loading }) => {
 export default ProductItems
 
 export const Product = ({ item }: any) => {
-
   return (
     <div className="w-1/2 lg:w-1/3">
       <div className="m-2 lg:m-4">
@@ -82,7 +81,7 @@ export const Product = ({ item }: any) => {
   )
 }
 
-const ProductImages = ({item}) => {
+const ProductImages = ({ item }) => {
   const [hover, setHover] = React.useState<number>()
   const [index, setIndex] = React.useState<number>(0)
   const wrap = (i: number) => i % item.images.length
@@ -90,46 +89,48 @@ const ProductImages = ({item}) => {
     setIndex((i) => wrap(i + 1))
   }
 
-  return <div
-    className="w-full h-full relative"
-    onMouseOver={() => {
-      if (!hover) {
-        const startRotate = () =>
-          setHover(window.setInterval(rotate, 1000))
-        setHover(window.setTimeout(startRotate, 1000))
-      }
-    }}
-    onMouseLeave={() => {
-      setIndex(0)
-      window.clearTimeout(hover)
-      window.clearInterval(hover)
-      setHover(undefined)
-    }}
-  >
-    {item.images.map((image: StrapiFile, i: number) => (
-      <div className="absolute inset-0 z-0" key={i}>
-        <div
-          className={`transition-opacity duration-1000 w-full h-full
-            ${ i === 0 && !hover
+  return (
+    <div
+      className="w-full h-full relative"
+      onMouseOver={() => {
+        if (!hover) {
+          const startRotate = () => setHover(window.setInterval(rotate, 1000))
+          setHover(window.setTimeout(startRotate, 1000))
+        }
+      }}
+      onMouseLeave={() => {
+        setIndex(0)
+        window.clearTimeout(hover)
+        window.clearInterval(hover)
+        setHover(undefined)
+      }}
+    >
+      {item.images.map((image: StrapiFile, i: number) => (
+        <div className="absolute inset-0 z-0" key={i}>
+          <div
+            className={`transition-opacity duration-1000 w-full h-full
+            ${
+              i === 0 && !hover
                 ? 'opacity-100' // only show first image if not hovering
                 : !hover
-                  ? 'hidden' // if not hovering, hide all other images
-                  : index === i
-                    ? 'opacity-0' // opacity (1 -> 0) the current image
-                    : wrap(index + 1) === i
-                      ? 'opacity-100' // transition to the next image
-                      : 'opacity-0' // otherwise hide the image
+                ? 'hidden' // if not hovering, hide all other images
+                : index === i
+                ? 'opacity-0' // opacity (1 -> 0) the current image
+                : wrap(index + 1) === i
+                ? 'opacity-100' // transition to the next image
+                : 'opacity-0' // otherwise hide the image
             }
             `}
-        >
-          <ProductImage
-            alt={image.alternativeText}
-            src={getURL(image.formats.small?.url || image.url)}
-          />
+          >
+            <ProductImage
+              alt={image.alternativeText}
+              src={getURL(image.formats.small?.url || image.url)}
+            />
+          </div>
         </div>
-      </div>
-    ))}
-  </div>
+      ))}
+    </div>
+  )
 }
 
 // TODO: use nextjs caching
@@ -168,7 +169,10 @@ const ProductInfo = ({ item }) => (
       <span className="font-bold">{item.designer?.name}</span>
       <span>{item.name}</span>
       <span className="text-sm">
-        {item.sizes.map(v => v.size).sort(sortSizes).join(', ')}
+        {item.sizes
+          .map((v) => v.size)
+          .sort(sortSizes)
+          .join(', ')}
       </span>
       <div className="flex-col md:flex-row">
         <span className="font-bold">

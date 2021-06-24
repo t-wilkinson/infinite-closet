@@ -6,7 +6,7 @@ import { useSelector } from '@/utils/store'
 import useFields from '@/Form/useFields'
 import { Input, Checkbox } from '@/Form'
 
-import {sortSizes} from './helpers'
+import { sortSizes } from './helpers'
 import { Filter } from './types'
 
 type FilterItems = {
@@ -175,7 +175,9 @@ export const FilterItems: FilterItems = {
 
   sizes: ({ panel }) => {
     const sizes = useSelector((state) =>
-        Object.values(state.layout.data.sizes).map(v => ({name: v.size, slug: v.size})).sort(sortSizes),
+      Object.values(state.layout.data.sizes)
+        .sort(sortSizes)
+        .map((size) => ({ name: size, slug: size })),
     )
 
     return (
@@ -184,7 +186,6 @@ export const FilterItems: FilterItems = {
       </>
     )
   },
-
 
   weather: ({ panel }) => {
     const weather = useSelector((state) =>
@@ -254,17 +255,16 @@ const pickFgColorFromBgColor = (
   return r * 0.299 + g * 0.587 + b * 0.114 > 186 ? darkColor : lightColor
 }
 
-const FilterCheckboxes = ({ panel, data, sort=true}) => {
+const FilterCheckboxes = ({ panel, data, sort = true }) => {
   data = sort ? data?.sort((v1, v2) => Number(v1.slug > v2.slug)) : data
 
-  return data
-    ?.map((v: { slug: string; name: string }) => (
-      <div key={v.slug} className="py-0.5">
-        <Checkbox
-          onChange={() => panel.toggle(v.slug)}
-          value={panel.values.includes(v.slug)}
-          label={<span className="whitespace-no-wrap">{v.name}</span>}
-        />
-      </div>
-    ))
+  return data?.map((v: { slug: string; name: string }) => (
+    <div key={v.slug} className="py-0.5">
+      <Checkbox
+        onChange={() => panel.toggle(v.slug)}
+        value={panel.values.includes(v.slug)}
+        label={<span className="whitespace-no-wrap">{v.name}</span>}
+      />
+    </div>
+  ))
 }

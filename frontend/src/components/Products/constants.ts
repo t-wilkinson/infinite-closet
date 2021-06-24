@@ -11,7 +11,7 @@ export const filterData: FilterData = {
   favorites: { label: 'Favorites' },
   weather: { label: 'Weather' },
   styles: { label: 'Styles' },
-  sizes: {label: "Sizes" },
+  sizes: { label: 'Sizes' },
 }
 
 export const sortData: {
@@ -31,5 +31,5 @@ export const sortData: {
 
 // TODO: dynamically get these
 export const filtersByRoute: { readonly [key in ProductRoutes]: Filter[] } = {
-  clothing: ['designers', 'colors', 'occasions', 'weather',],
+  clothing: ['designers', 'colors', 'occasions', 'weather', 'sizes'],
 }

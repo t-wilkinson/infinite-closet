@@ -27,33 +27,10 @@ export const Page = ({ data }) => {
     </>
   )
 }
-export default Page
-
-export async function getServerSideProps({ params }) {
-  const [product] = await Promise.all([
-    axios
-      .get(
-        `${process.env.NEXT_PUBLIC_BACKEND}/products?_limit=1&slug=${params.item}`,
-      )
-      .then((res) => res.data),
-  ])
-
-  return {
-    props: {
-      data: { product: product[0] },
-    },
-  }
-}
 
 const OpenGraph = (product: StrapiProduct) => {
-  const {
-    name,
-    designer,
-    shortRentalPrice,
-    images,
-    sizes,
-    retailPrice,
-  } = product
+  const { name, designer, shortRentalPrice, images, sizes, retailPrice } =
+    product
   const router = useRouter()
   const url = router.asPath.split('?')[0]
   const description = `Rent ${name} by ${designer.name} for only ${shortRentalPrice} only at Infinite Closet.`
@@ -85,3 +62,17 @@ const OpenGraph = (product: StrapiProduct) => {
     </Head>
   )
 }
+
+export async function getServerSideProps({ params }) {
+  const [sizeChart, product] = await Promise.all([
+    axios.get('/products/size-chart').then((res) => res.data),
+    axios.get(`/products/shop/${params.item}`).then((res) => res.data),
+  ])
+
+  return {
+    props: {
+      data: { sizeChart, product },
+    },
+  }
+}
+export default Page

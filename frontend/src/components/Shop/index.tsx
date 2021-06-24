@@ -40,7 +40,7 @@ const Product = ({ data }) => {
       )}
       <Divider className="mb-4" />
       <ProductRentHeaders product={product} state={state} />
-      <ProductRentContents product={product} state={state} />
+      <ProductRentContents data={data} product={product} state={state} />
       <div className="mb-4" />
       {details.map((item, index) => (
         <React.Fragment key={item.key}>

@@ -35,8 +35,8 @@ const populatePrivateFields = () => {
       products.map((product) => {
         let data = { id: product.id, published_at: today };
         for (const filter of Object.keys(models)) {
-          let slugs
-          if (filter === 'sizes') {
+          let slugs;
+          if (filter === "sizes") {
             slugs = product[filter].map((v) => v.innerSize || v.size).join(",");
           } else {
             slugs = product[filter].map((v) => v.slug).join(",");
