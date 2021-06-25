@@ -45,7 +45,7 @@ const routes = [
         type: 'slug',
         data: [
           { name: 'Dresses', slug: 'dresses' }, // TODO: more dynamic href
-          { name: 'Jumpsuits', slug: 'jumpsuit' },
+          { name: 'Jumpsuits', slug: 'jumpsuits' },
           { name: 'Gowns', slug: 'gowns' },
           { name: 'Tops', slug: 'tops' },
           { name: 'Outerwear', slug: 'outerwear' },
