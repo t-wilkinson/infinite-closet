@@ -128,7 +128,8 @@ const PageRoutes = ({
 const PageColumnItems = ({ column, serverRoutes }) => {
   // TODO: the logic is kind of a mess
   const defaultRoutes =
-    (serverRoutes.routes[column.value] &&
+    (serverRoutes.routes &&
+      serverRoutes.routes[column.value] &&
       serverRoutes.routes[column.value].categories) ||
     []
 
@@ -137,7 +138,10 @@ const PageColumnItems = ({ column, serverRoutes }) => {
 
   const rows = column.data
     .reduce((acc, route) => {
-      if (column.value !== 'occasions' && !serverRoutes.routes[column.value]) {
+      if (
+        column.value !== 'occasions' &&
+        !(serverRoutes.routes && serverRoutes.routes[column.value])
+      ) {
         acc = [...acc, route]
       } else if (serverRows.every((row) => row.slug !== route.slug)) {
         route.slug = null
