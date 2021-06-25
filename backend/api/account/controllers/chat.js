@@ -54,8 +54,6 @@ const WebSocket = require("ws");
 //   }
 // };
 
-// slack({ path: "rtm.connect", method: "GET" }).then((res) => console.log(res));
-
 module.exports = {
   async send(ctx) {
     const res = await slack({

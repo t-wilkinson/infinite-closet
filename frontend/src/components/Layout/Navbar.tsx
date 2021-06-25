@@ -18,7 +18,7 @@ export const NavBar = () => {
   React.useEffect(() => {
     axios
       .get('/products/routes')
-      .then((res) => setServerRoutes(res.data.routes))
+      .then((res) => setServerRoutes(res.data))
       .catch((err) => console.error(err))
   }, [])
 
@@ -126,23 +126,40 @@ const PageRoutes = ({
 }
 
 const PageColumnItems = ({ column, serverRoutes }) => {
+  // TODO: the logic is kind of a mess
+  const defaultRoutes =
+    (serverRoutes.routes[column.value] &&
+      serverRoutes.routes[column.value].categories) ||
+    []
+
   const serverRows =
-    (serverRoutes[column.value] && serverRoutes[column.value].categories) || []
+    column.value === 'occasions' ? serverRoutes.occasions : defaultRoutes
+
   const rows = column.data
     .reduce((acc, route) => {
-      if (serverRows.every((row) => row.slug !== route.slug)) {
+      if (column.value !== 'occasions' && !serverRoutes.routes[column.value]) {
+        acc = [...acc, route]
+      } else if (serverRows.every((row) => row.slug !== route.slug)) {
         route.slug = null
         acc = [...acc, route]
       }
       return acc
     }, serverRows)
-    .sort((v) => (v.href === undefined ? v.slug === null : v.href === null))
+    .sort((row) => row.slug === undefined)
 
   return rows.map((row, i) => (
     <ColumnItem
       key={i}
       href={
-        row.href ? row.href : row.slug ? `${column.href}/${row.slug}` : null
+        row.slug === null
+          ? null
+          : column.type === 'slug'
+          ? `${column.href}/${row.slug}`
+          : column.type === 'query'
+          ? `${column.href}?${column.value}=${row.slug}`
+          : column.type === 'href'
+          ? `${column.href}/${row.slug}`
+          : null
       }
     >
       {row.name}

@@ -243,7 +243,7 @@ module.exports = {
 
   async routes(ctx) {
     const categories = await strapi.query("category").find({
-      slug_in: ["clothing", "occasion"],
+      slug_in: ["clothing"],
     });
 
     let routes = {};
@@ -251,8 +251,11 @@ module.exports = {
       routes[category.slug] = category;
     }
 
+    const occasions = await strapi.query("occasion").find({});
+
     ctx.send({
       routes,
+      occasions,
     });
   },
 

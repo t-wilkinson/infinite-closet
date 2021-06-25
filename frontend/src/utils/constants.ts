@@ -19,13 +19,15 @@ const routes = [
     data: [
       {
         label: null,
-        href: null,
+        href: '',
+        value: 'howitworks',
+        type: 'href',
         data: [
-          { name: 'How It Works', href: '/#how-it-works' },
-          { name: 'Why Rent?', href: '/#why-rent' },
-          { name: 'About Us', href: '/about-us' },
-          { name: 'Customer Feedback', href: null },
-          { name: 'Ambassador Program', href: null },
+          { name: 'How It Works', slug: '#how-it-works' },
+          { name: 'Why Rent?', slug: '#why-rent' },
+          { name: 'About Us', slug: 'about-us' },
+          { name: 'Customer Feedback', slug: null },
+          { name: 'Ambassador Program', slug: null },
         ],
       },
     ],
@@ -40,6 +42,7 @@ const routes = [
         label: 'Category',
         href: '/products/clothing',
         value: 'clothing',
+        type: 'slug',
         data: [
           { name: 'Dresses', slug: 'dresses' }, // TODO: more dynamic href
           { name: 'Jumpsuits', slug: 'jumpsuit' },
@@ -54,15 +57,9 @@ const routes = [
       {
         label: 'Occasions',
         value: 'occasions',
-        href: '/products/occasions',
-        data: [
-          { name: 'Wedding', slug: 'wedding' },
-          { name: 'Date Night', slug: 'date-night' },
-          { name: 'Party', slug: 'party' },
-          { name: 'Brunch', slug: 'brunch' },
-          { name: 'Office', slug: 'office' },
-          { name: 'Cocktail', slug: 'cocktail' },
-        ],
+        href: '/products/clothing',
+        type: 'query',
+        data: [],
       },
     ],
   },
@@ -71,6 +68,7 @@ const routes = [
     value: 'accessories',
     href: null,
     img: 'accessories-menu-image.jpg',
+    type: null,
     data: [
       {
         label: 'Category',
@@ -86,7 +84,7 @@ const routes = [
     label: 'Trending',
     value: 'trending',
     href: null,
-    type: 'path',
+    type: null,
     img: 'trending-menu-image.jpg',
     data: [
       {
