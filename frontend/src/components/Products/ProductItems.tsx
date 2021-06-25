@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 import { CallToAction } from '@/components'
 import { getURL } from '@/utils/api'
-import { StrapiFile } from '@/utils/models'
+import { StrapiProduct, StrapiFile } from '@/utils/models'
 
 import { sortSizes } from './helpers'
 import { QUERY_LIMIT } from './constants'
@@ -52,8 +52,8 @@ export const ProductItems = ({ data, loading }) => {
   } else {
     return (
       <div className="w-full flex-row flex-wrap">
-        {data.products?.map((item: any) => (
-          <Product key={item.id} item={item} />
+        {data.products?.map((product: StrapiProduct) => (
+          <Product key={product.id} product={product} />
         ))}
       </div>
     )
@@ -62,16 +62,16 @@ export const ProductItems = ({ data, loading }) => {
 
 export default ProductItems
 
-export const Product = ({ item }: any) => {
+export const Product = ({ product }: any) => {
   return (
     <div className="w-1/2 lg:w-1/3">
       <div className="m-2 lg:m-4">
-        <Link href={`/shop/${item.designer?.slug}/${item.slug}`}>
+        <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
           <a>
             <div className="relative w-full md:h-0 overflow-hidden cursor-pointer md:aspect-w-2 md:aspect-h-3 h-96">
               <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-gray">
-                <ProductImages item={item} />
-                <ProductInfo item={item} />
+                <ProductImages product={product} />
+                <ProductInfo product={product} />
               </div>
             </div>
           </a>
@@ -81,10 +81,10 @@ export const Product = ({ item }: any) => {
   )
 }
 
-const ProductImages = ({ item }) => {
+const ProductImages = ({ product }) => {
   const [hover, setHover] = React.useState<number>()
   const [index, setIndex] = React.useState<number>(0)
-  const wrap = (i: number) => i % item.images.length
+  const wrap = (i: number) => i % product.images.length
   const rotate = () => {
     setIndex((i) => wrap(i + 1))
   }
@@ -105,7 +105,7 @@ const ProductImages = ({ item }) => {
         setHover(undefined)
       }}
     >
-      {item.images.map((image: StrapiFile, i: number) => (
+      {product.images.map((image: StrapiFile, i: number) => (
         <div className="absolute inset-0 z-0" key={i}>
           <div
             className={`transition-opacity duration-1000 w-full h-full
@@ -163,24 +163,24 @@ const rentalPrice = (low: number, high: number): string => {
   return low === high ? `£${low}` : `£${low} - £${high}`
 }
 
-const ProductInfo = ({ item }) => (
+const ProductInfo = ({ product }) => (
   <div className="flex-row justify-between mt-4">
     <div className="flex-grow">
-      <span className="font-bold">{item.designer?.name}</span>
-      <span>{item.name}</span>
+      <span className="font-bold">{product.designer?.name}</span>
+      <span>{product.name}</span>
       <span className="text-sm">
-        {item.sizes
+        {product.sizes
           .map((v) => v.size)
           .sort(sortSizes)
           .join(', ')}
       </span>
       <div className="flex-col md:flex-row">
         <span className="font-bold">
-          {rentalPrice(item.shortRentalPrice, item.longRentalPrice)}
+          {rentalPrice(product.shortRentalPrice, product.longRentalPrice)}
         </span>
         <span className="font-gray">
           <span className="hidden md:inline">&nbsp;{'| '}</span> £
-          {item.retailPrice || '-'} retail
+          {product.retailPrice || '-'} retail
         </span>
       </div>
     </div>

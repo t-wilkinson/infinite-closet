@@ -5,15 +5,23 @@ import gfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import dayjs from 'dayjs'
 import Head from 'next/head'
+import Link from 'next/link'
 
 import Header from '@/Layout/Header'
 import Footer from '@/Layout/Footer'
-import { ScrollUp } from '@/components'
+import { ScrollUp, Divider } from '@/components'
+
+const headingToID = (heading: string): string =>
+  heading.toLowerCase().replace(/ /g, '-')
 
 export const components = {
   h2: ({ children }) => (
     <>
-      <h2 className="font-subheader text-xl mt-8" children={children} />
+      <h2
+        id={headingToID(children[0])}
+        className="font-subheader text-xl mt-8"
+        children={children}
+      />
       <span className="block h-px bg-pri w-full my-2" />
     </>
   ),
@@ -23,7 +31,11 @@ export const components = {
     </a>
   ),
   h3: ({ children }) => (
-    <h3 className="block mt-4 mb-2 font-bold" children={children} />
+    <h3
+      id={headingToID(children[0])}
+      className="block mt-4 mb-2 font-bold"
+      children={children}
+    />
   ),
   p: ({ children }) => <p className="my-2" children={children} />,
   pre: ({ children }) => <p className="my-2" children={children} />,
@@ -62,7 +74,12 @@ export const components = {
   ),
 }
 
-export const MarkdownWrapper = ({ updated_at, name, content }) => {
+export const MarkdownWrapper = ({
+  updated_at,
+  name,
+  content,
+  children = null,
+}) => {
   updated_at = dayjs(updated_at).format('MM/DD/YY')
 
   return (
@@ -78,11 +95,83 @@ export const MarkdownWrapper = ({ updated_at, name, content }) => {
             Last Updated: {updated_at}
           </span>
         </div>
-        <Markdown content={content} />
+        <div className="flex-row">
+          <div className="w-1/3">
+            <TableOfContents />
+          </div>
+          <div>
+            <Markdown content={content} />
+            {children}
+          </div>
+        </div>
       </main>
       <Footer />
       <ScrollUp />
     </>
+  )
+}
+
+export const TableOfContents = () => {
+  const [headings, setHeadings] = React.useState([])
+  const [selected, setSelected] = React.useState(null)
+
+  React.useEffect(() => {
+    const headings = []
+
+    const toc = (hier, heading) => {
+      const lvl = Number(heading.tagName.match(/\d+/)[0]) - 1
+      if (lvl === 2 && headings[hier]) {
+        headings[hier].children.push(heading.innerText)
+      } else if (lvl === 1) {
+        hier = headings.length
+        headings.push({ heading: heading.innerText, children: [] })
+      }
+      return hier
+
+      // if (lvl < hier.length) {
+      //   hier = hier.slice(0, lvl)
+      // } else if (lvl > hier.length) {
+      // } else {
+      // }
+    }
+
+    Array.from(document.querySelectorAll('h2,h3')).reduce(
+      (hier, heading) => toc(hier, heading),
+      -1,
+    ),
+      setHeadings(headings)
+  }, [])
+
+  if (headings.length === 0) {
+    return null
+  }
+
+  return (
+    <div className="w-full items-start p-4 space-y-2">
+      <Divider />
+      <nav className="flex flex-col w-full space-y-2">
+        {headings.map(({ heading, children }) => (
+          <React.Fragment key={heading}>
+            <Link href={`#${headingToID(heading)}`}>
+              <a onClick={() => setSelected(heading)}>
+                <span className="text-lg font-subheader hover:underline">
+                  {heading}
+                </span>
+              </a>
+            </Link>
+            {/* {selected === heading && */}
+            {/*   children.map((heading) => ( */}
+            {/*     <Link key={heading} href={`#${headingToID(heading)}`}> */}
+            {/*       <a> */}
+            {/*         <span className="text-lg hover:underline">{heading}</span> */}
+            {/*       </a> */}
+            {/*     </Link> */}
+            {/*   ))} */}
+          </React.Fragment>
+        ))}
+      </nav>
+      <Divider />
+    </div>
   )
 }
 

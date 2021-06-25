@@ -45,7 +45,7 @@ const initialState: State = {
   loading: false,
   headerOpen: false,
   cookieConsent: {
-    given: false,
+    given: null,
     statistics: false,
   },
 }
@@ -74,6 +74,9 @@ export const layoutSlice = createSlice({
     },
     closeHeader(state) {
       state.headerOpen = false
+    },
+    clearConsent(state) {
+      state.cookieConsent = { ...initialState.cookieConsent, given: false }
     },
     giveConsent(
       state,

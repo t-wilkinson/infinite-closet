@@ -5,7 +5,6 @@ import axios from 'axios'
 
 import useData from '@/Layout/useData'
 import { useDispatch } from '@/utils/store'
-import { fetchAPI } from '@/utils/api'
 import { Filters, Filter, ProductRoutes, SortBy } from '@/Products/types'
 import Products from '@/Products'
 import { sortData } from '@/Products/constants'

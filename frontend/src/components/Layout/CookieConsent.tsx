@@ -13,9 +13,12 @@ export const CookieConsent = () => {
 
   const consent = useSelector((state) => state.layout.cookieConsent)
   const setConsent = (consent: Omit<Consent, 'given'>) => {
-    localStorage.setItem('cookieConsent', JSON.stringify(consent))
     dispatch(layoutActions.giveConsent(consent))
   }
+
+  React.useEffect(() => {
+    localStorage.setItem('cookieConsent', JSON.stringify(consent))
+  }, [consent])
 
   //   const fields = useFields({
   //     statistics: { label: 'Statistics' },
@@ -25,10 +28,12 @@ export const CookieConsent = () => {
     const consent = JSON.parse(localStorage.getItem('cookieConsent'))
     if (consent) {
       dispatch(layoutActions.giveConsent(consent))
+    } else {
+      dispatch(layoutActions.clearConsent())
     }
   }, [])
 
-  if (consent.given) {
+  if (consent.given === true || consent.given === null) {
     return null
   }
 

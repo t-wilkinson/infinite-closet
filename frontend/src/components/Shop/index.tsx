@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 
 import { Divider } from '@/components'
 import { useSelector } from '@/utils/store'
@@ -31,7 +32,13 @@ const Product = ({ data }) => {
         {/* <Rating rating={4.5} /> */}
         {/* <Icon name="heart" size={24} /> */}
       </div>
-      <span className="pt-4 font-bold text-xl">{product.designer.name}</span>
+      <Link href={`/designers/${product.designer.slug}`}>
+        <a>
+          <span className="pt-4 font-bold text-xl hover:underline">
+            {product.designer.name}
+          </span>
+        </a>
+      </Link>
       <span className="">{product.name}</span>
       {product.retailPrice && (
         <span className="pb-2 text-gray-dark">
@@ -43,14 +50,14 @@ const Product = ({ data }) => {
       <ProductRentContents data={data} product={product} state={state} />
       <div className="mb-4" />
       {details.map((item, index) => (
-        <React.Fragment key={item.key}>
+        <React.Fragment key={item.label}>
           <ProductDetails
-            key={item.key}
             index={index}
             item={item}
-            selected={item.key === state.details}
+            selected={item.value === state.details}
             state={state}
             product={product}
+            content={toValue(item.value, product)}
           />
         </React.Fragment>
       ))}
@@ -58,11 +65,15 @@ const Product = ({ data }) => {
   )
 }
 
+const toValue = (v: string | ((o: object) => any), o: object) =>
+  typeof v === 'function' ? v(o) : o[v]
+
 const details = [
-  { key: 'details', label: 'Product Details' },
-  { key: 'stylistNotes', label: 'Stylist Notes' },
-  { key: 'sizingNotes', label: 'Style & Fit' },
-  { key: 'share', label: 'Share' },
+  { value: 'details', label: 'Product Details' },
+  { value: 'stylistNotes', label: 'Stylist Notes' },
+  { value: 'sizingNotes', label: 'Style & Fit' },
+  { value: 'share', label: 'Share' },
+  { value: (o: any) => o.designer.notes, label: 'Designer' },
 ]
 
 const Rating = ({ rating }: any) => (

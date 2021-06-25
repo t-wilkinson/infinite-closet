@@ -7,10 +7,10 @@ import { StrapiFile } from '@/utils/models'
 
 type Action =
   | { type: 'focus-image'; index: number }
-| { type: 'decrease-focus'; length: number }
-| { type: 'increase-focus'; length: number }
-| { type: 'shift-decrease' }
-| { type: 'shift-increase'; length: number }
+  | { type: 'decrease-focus'; length: number }
+  | { type: 'increase-focus'; length: number }
+  | { type: 'shift-decrease' }
+  | { type: 'shift-increase'; length: number }
 
 const reducer = (state: State, action: Action) => {
   switch (action.type) {
@@ -18,13 +18,13 @@ const reducer = (state: State, action: Action) => {
       return { ...state, focusedImage: action.index }
     case 'decrease-focus':
       return {
-      ...state,
-      focusedImage:
-        state.focusedImage <= 0 ? action.length - 1 : state.focusedImage - 1,
-    }
+        ...state,
+        focusedImage:
+          state.focusedImage <= 0 ? action.length - 1 : state.focusedImage - 1,
+      }
     case 'increase-focus':
       let i = state.focusedImage
-    return { ...state, focusedImage: i >= action.length - 1 ? 0 : i + 1 }
+      return { ...state, focusedImage: i >= action.length - 1 ? 0 : i + 1 }
     case 'shift-decrease': {
       const i = state.startIndex
       return { ...state, startIndex: i > 0 ? i - 1 : i }
@@ -73,9 +73,9 @@ const ImagesSmall = ({ images, state, dispatch }) => (
       <button
         onClick={() =>
           dispatch({
-          type: 'decrease-focus',
-          length: images.length,
-        })
+            type: 'decrease-focus',
+            length: images.length,
+          })
         }
       >
         <div className="p-2 items-center">
@@ -98,9 +98,9 @@ const ImagesSmall = ({ images, state, dispatch }) => (
       <button
         onClick={() =>
           dispatch({
-          type: 'increase-focus',
-          length: images.length,
-        })
+            type: 'increase-focus',
+            length: images.length,
+          })
         }
       >
         <div className="p-2 items-center">
@@ -167,24 +167,12 @@ const toAlt = (images, index) =>
   images[index].alternativeText || images[0].alternativeText
 
 export const FocusedImage = ({ alt, image }) => {
-  const [hover, setHover] = React.useState<{
-    clientX: number
-    clientY: number
-  }>()
+  const [hover, setHover] = React.useState()
   const [layout, setLayout] = React.useState()
   const ref = React.useRef()
-  const [animation, setAnimation] = React.useState()
-  const [animate, setAnimate] = React.useState({x: 0, y: 0})
 
   const scale = 2
   const scaleFactor = 1 - 1 / scale
-
-  React.useEffect(() => {
-    if (!hover) return
-      // x: scaleFactor * (layout.left + layout.width / 2 - hover.clientX)
-      // y: scaleFactor * (layout.top + layout.height / 2 - hover.clientY)
-      //   duration: 1.5,
-  }, [hover])
 
   return (
     <div
@@ -196,12 +184,18 @@ export const FocusedImage = ({ alt, image }) => {
         ref={ref}
         className="relative w-full h-full overflow-hidden"
         style={{
-          transition: '0.25s transform ease-in-out, 0.25s left ease-out, 0.25s top ease-out',
+          transition:
+            '0.25s transform ease-in-out, 0.25s left ease-out, 0.25s top ease-out',
           transform: `scale(${hover ? scale : 1})`,
-          left: (layout && hover) ? scaleFactor * (layout.left + layout.width / 2 - hover.clientX) : 0,
-          top: (layout && hover)  ? scaleFactor * (layout.top + layout.height / 2 - hover.clientY) : 0,
+          left:
+            layout && hover
+              ? scaleFactor * (layout.left + layout.width / 2 - hover.clientX)
+              : 0,
+          top:
+            layout && hover
+              ? scaleFactor * (layout.top + layout.height / 2 - hover.clientY)
+              : 0,
         }}
-        id="#test"
         onMouseMove={(e) => {
           setLayout(e.target.getBoundingClientRect())
         }}

@@ -94,7 +94,7 @@ export const productRentContents = {
               close={() => setChartOpen(false)}
             />
           )}
-          <div className="relative flex-row justify-between items-center w-full">
+          <div className="relative flex-row justify-start space-x-4 items-center w-full">
             {/* select elements are too difficult to style
                 divs don't act like buttons
                 buttons can't use aria-role
@@ -179,7 +179,7 @@ const SizeSelector = ({ product, state, dispatch }) => {
   const [sizeState, setSizeState] = React.useState(false)
 
   return (
-    <>
+    <div>
       <button
         tabIndex={0}
         aria-label="Dropdown product sizes"
@@ -213,7 +213,7 @@ const SizeSelector = ({ product, state, dispatch }) => {
           </button>
         ))}
       </div>
-    </>
+    </div>
   )
 }
 

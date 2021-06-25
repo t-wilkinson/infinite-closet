@@ -21,11 +21,14 @@
       "required": true
     },
     "products": {
-      "via": "designer",
-      "collection": "product"
+      "collection": "product",
+      "via": "designer"
+    },
+    "notes": {
+      "type": "richtext"
     },
     "description": {
-      "type": "text"
+      "type": "richtext"
     }
   }
 }

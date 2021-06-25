@@ -21,8 +21,8 @@
       "required": true
     },
     "designer": {
-      "model": "designer",
-      "via": "products"
+      "via": "products",
+      "model": "designer"
     },
     "shortRentalPrice": {
       "type": "decimal",
@@ -41,7 +41,10 @@
     "images": {
       "collection": "file",
       "via": "related",
-      "allowedTypes": ["images", "videos"],
+      "allowedTypes": [
+        "images",
+        "videos"
+      ],
       "plugin": "upload",
       "required": true
     },

@@ -4,32 +4,39 @@ import { Divider } from '@/components'
 import { Icon } from '@/components'
 import Share from '@/utils/share'
 import { useDispatch } from '@/utils/store'
+import Markdown from '@/Markdown'
 
 import { shopActions } from './slice'
 
-export const ProductDeatils = ({index, state, selected, item, product }) => {
+export const ProductDetails = ({
+  content,
+  index,
+  state,
+  selected,
+  item,
+  product,
+}) => {
   const dispatch = useDispatch()
 
   const Details =
-    details[item.key] ||
+    details[item.value] ||
     (() => (
-      // <div className={`bg-gray-light px-2 py-4 ${selected ? '' : 'hidden'} `}>
-      <div className={`bg-gray-light px-2 py-4`}>
-        <span>{product[item.key]}</span>
+      <div className="bg-gray-light px-2 py-4">
+        <Markdown content={content} />
       </div>
     ))
 
-  if (!details[item.key] && !product[item.key]) {
+  if (!details[item.value] && !content) {
     return null
   }
 
   return (
     <>
-        <Divider visible={index !== 0} />
+      <Divider visible={index !== 0} />
       <details
         onClick={(e) => {
           e.preventDefault()
-          dispatch(shopActions.toggleDetails(item.key))
+          dispatch(shopActions.toggleDetails(item.value))
         }}
         open={selected}
       >
@@ -46,7 +53,6 @@ export const ProductDeatils = ({index, state, selected, item, product }) => {
     </>
   )
 }
-export default ProductDeatils
 
 const details = {
   share: ({ selected, product }) => (
@@ -76,3 +82,5 @@ const details = {
 
 const createProductURL = ({ slug, designer: { slug: designer_slug } }) =>
   `${process.env.NEXT_PUBLIC_FRONTEND}/shop/${designer_slug}/${slug}`
+
+export default ProductDetails

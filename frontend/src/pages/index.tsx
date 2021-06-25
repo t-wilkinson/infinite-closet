@@ -10,7 +10,9 @@ export const Home = () => {
 
   React.useEffect(() => {
     axios
-      .get('/products?slug_in=camilla-dress&slug_in=etude-wrap&slug_in=shelley-jumpsuit&slug_in=monique-plunged-cross-back-maxi-dress')
+      .get(
+        '/products?slug_in=camilla-dress&slug_in=etude-wrap&slug_in=shelley-jumpsuit&slug_in=monique-plunged-cross-back-maxi-dress',
+      )
       .then((res) => setProducts(res.data))
       .catch((err) => console.log(err))
   }, [])
@@ -201,7 +203,7 @@ const ProductItems = ({ products }) => {
       <Heading>Our Pick</Heading>
       <div className="my-8 w-full flex-wrap lg:flex-no-wrap flex-row">
         {products.map((product) => (
-          <Product key={product.id} item={product} />
+          <Product key={product.id} product={product} />
         ))}
       </div>
     </div>

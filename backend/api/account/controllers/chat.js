@@ -57,7 +57,7 @@ const WebSocket = require("ws");
 // slack({ path: "rtm.connect", method: "GET" }).then((res) => console.log(res));
 
 module.exports = {
-  async postMessage(ctx) {
+  async send(ctx) {
     const res = await slack({
       path: "chat.postMessage",
       body: {
@@ -65,5 +65,21 @@ module.exports = {
       },
     });
     return ctx.send(res);
+  },
+
+  async contact(ctx) {
+    const body = ctx.request.body;
+
+    await strapi.query("contact").create({
+      contact: body.email,
+      context: "contact",
+      metadata: {
+        name: body.name,
+        email: body.email,
+        comment: body.comment,
+        subscribe: body.subscribe,
+        marketing: body.marketing,
+      },
+    });
   },
 };

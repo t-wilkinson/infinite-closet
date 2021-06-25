@@ -53,8 +53,8 @@ const routes = [
       },
       {
         label: 'Occasions',
-        value: 'occasion',
-        href: null,
+        value: 'occasions',
+        href: '/products/occasions',
         data: [
           { name: 'Wedding', slug: 'wedding' },
           { name: 'Date Night', slug: 'date-night' },
