@@ -96,9 +96,7 @@ export const MarkdownWrapper = ({
           </span>
         </div>
         <div className="flex-row">
-          <div className="w-1/3">
-            <TableOfContents />
-          </div>
+          <TableOfContents />
           <div>
             <Markdown content={content} />
             {children}
@@ -147,7 +145,7 @@ export const TableOfContents = () => {
   }
 
   return (
-    <div className="w-full items-start p-4 space-y-2">
+    <div className="w-1/3 items-start p-4 space-y-2">
       <Divider />
       <nav className="flex flex-col w-full space-y-2">
         {headings.map(({ heading, children }) => (
