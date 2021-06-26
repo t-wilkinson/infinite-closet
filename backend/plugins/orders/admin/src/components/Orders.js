@@ -52,33 +52,64 @@ const Orders = ({ plugin, className }) => {
 
   return (
     <div className={className}>
-      <table className="order">
-        <HeaderWrapper />
-        <tbody>
-          {orders.map((order, index) => (
-            <Order
-              key={order.id}
-              order={order}
-              selected={selectedOrder === index}
-              onClick={() => selectOrder(index)}
-            />
-          ))}
-        </tbody>
-      </table>
-      <div className="details">
-        {orders[selectedOrder] && (
-          <OrderDetails update={getOrders} order={orders[selectedOrder]} />
-        )}
-      </div>
+      <HeadingWrapper />
+      <main>
+        <table className="order">
+          <HeaderWrapper />
+          <tbody>
+            {orders.map((order, index) => (
+              <Order
+                key={order.id}
+                order={order}
+                selected={selectedOrder === index}
+                onClick={() => selectOrder(index)}
+              />
+            ))}
+          </tbody>
+        </table>
+        <div className="details">
+          {orders[selectedOrder] && (
+            <OrderDetails update={getOrders} order={orders[selectedOrder]} />
+          )}
+        </div>
+      </main>
     </div>
   );
 };
 
 const OrdersWrapper = styled(Orders)`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  height: 100%;
+  background: white;
+  padding: 18px 30px 66px 30px;
 
-  .order {
+  main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  table {
+    box-shadow: 0 2px 4px #e3e9f3;
+    border-radius: 3px;
+    table-layout: fixed;
+  }
+
+  thead {
+    background: #f3f3f3;
+    color: black;
+    font-weight: 800;
+    font-size: 1.3rem;
+  }
+
+  td {
+    padding: 0 25px;
+  }
+
+  tbody td {
+    border-top: 1px solid #f1f1f2 !important;
+  }
+
+  tbody tr:hover {
+    background-color: #f7f8f8;
     cursor: pointer;
   }
 `;
@@ -93,15 +124,25 @@ const Header = ({ className }) => (
 );
 
 const HeaderWrapper = styled(Header)`
-  background: #ddd;
-  font-weight: 800;
-
   .header__tr {
-    border: 1px solid black;
   }
 
   .header__td {
     padding: 0.5rem 0.25rem;
+  }
+`;
+
+const Heading = ({ className }) => (
+  <div className={className}>
+    <h1>Orders</h1>
+  </div>
+);
+
+const HeadingWrapper = styled(Heading)`
+  h1 {
+    font-size: 2.4rem;
+    font-weight: 600;
+    padding: 0.5rem;
   }
 `;
 

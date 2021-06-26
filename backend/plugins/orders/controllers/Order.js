@@ -165,7 +165,6 @@ module.exports = {
       }
       return acc;
     }, []);
-    strapi.log.info("result -> %o", result);
 
     const amount = await strapi.plugins["orders"].services.order.totalAmount({
       cart,

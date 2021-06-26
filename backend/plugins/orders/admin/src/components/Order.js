@@ -15,11 +15,10 @@ const showRange = (ranges, status) => {
 
 const Order = ({ selected, className, order, ...props }) => {
   const [range, setRange] = React.useState();
-  console.log(range);
 
   React.useEffect(() => {
     fetch(
-      `${strapi.backendURL}?date=${order.date}&length=${order.rentalLength}`,
+      `${strapi.backendURL}/orders/dates/range?date=${order.date}&length=${order.rentalLength}`,
       {
         method: "GET",
       }
@@ -31,7 +30,9 @@ const Order = ({ selected, className, order, ...props }) => {
   return (
     <tr className={`${className} ${selected ? "selected" : ""}`} {...props}>
       <td className="order__field">{order.status}</td>
-      <td className="order__field">{showRange(range, order.status)}</td>
+      <td className="order__field">
+        {range && showRange(range, order.status)}
+      </td>
     </tr>
   );
 };
@@ -42,8 +43,8 @@ const OrderWrapper = styled(Order)`
   }
 
   &.selected {
-    border: 1px solid black;
     border-radius: 4px;
+    background: #f3f3f3;
   }
 `;
 

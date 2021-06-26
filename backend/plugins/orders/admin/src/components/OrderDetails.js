@@ -25,7 +25,8 @@ const OrderStatus = {
           {order.product.designer && order.product.designer.name}
         </div>
         <div>
-          <span className="process__label">Size:</span> {order.size}
+          <span className="process__label">Size:</span>{" "}
+          {order.size.replace("_", "")}
         </div>
         <button onClick={ship}>Ship</button>
       </div>
@@ -87,11 +88,16 @@ const OrderDetails = ({ className, order, update }) => {
 };
 
 const OrderDetailsWrapper = styled(OrderDetails)`
+  * {
+    color: black;
+  }
+
   button {
     margin-top: 8px;
     padding: 0.25rem 1rem;
     border-radius: 2px;
-    background: #ddd;
+    background: #007eff;
+    color: white;
   }
 
   .process,
@@ -103,15 +109,7 @@ const OrderDetailsWrapper = styled(OrderDetails)`
   }
 
   .process {
-    button {
-      margin-top: 8px;
-      padding: 0.25rem 1rem;
-      border-radius: 2px;
-      background: #ddd;
-    }
-
     .process__label {
-      // font-weight: 700;
     }
   }
 
