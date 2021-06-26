@@ -69,11 +69,11 @@ const toValue = (v: string | ((o: object) => any), o: object) =>
   typeof v === 'function' ? v(o) : o[v]
 
 const details = [
+  { value: (o: any) => o.designer.notes, label: 'Designer' },
   { value: 'details', label: 'Product Details' },
   { value: 'stylistNotes', label: 'Stylist Notes' },
   { value: 'sizingNotes', label: 'Style & Fit' },
   { value: 'share', label: 'Share' },
-  { value: (o: any) => o.designer.notes, label: 'Designer' },
 ]
 
 const Rating = ({ rating }: any) => (

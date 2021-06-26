@@ -19,7 +19,7 @@ export const ProductRentContents = ({ data, product, state }) => {
   const dispatch = useDispatch()
 
   return (
-    <div className="h-64">
+    <div className="">
       <Contents
         data={data}
         router={router}
@@ -163,13 +163,13 @@ export const productRentContents = {
   },
 
   Membership: () => (
-    <div className="justify-center items-center flex-grow">
+    <div className="justify-center items-center flex-grow h-64">
       <span className="font-subheader text-center text-3xl">Coming Soon</span>
     </div>
   ),
 
   Purchase: () => (
-    <div className="justify-center items-center flex-grow">
+    <div className="justify-center items-center flex-grow h-64">
       <span className="font-subheader text-center text-3xl">Coming Soon</span>
     </div>
   ),

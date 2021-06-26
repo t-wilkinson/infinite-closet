@@ -26,6 +26,7 @@ export const ProductDetails = ({
       </div>
     ))
 
+  // TODO: move this statement to parent
   if (!details[item.value] && !content) {
     return null
   }
