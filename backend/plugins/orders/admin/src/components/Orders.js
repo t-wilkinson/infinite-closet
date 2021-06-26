@@ -10,13 +10,9 @@ const Orders = ({ plugin, className }) => {
   const getOrders = () => {
     // fetch orders
     // also fetch respective product designer because it is not included
-    fetch(
-      strapi.backendURL +
-        "/orders?status_in=planning&status_in=shipping&status_in=cleaning",
-      {
-        method: "GET",
-      }
-    )
+    fetch(strapi.backendURL + "/orders?status_in=planning&status_in=cleaning", {
+      method: "GET",
+    })
       .then((res) => res.json())
       .then((res) =>
         Promise.allSettled(
@@ -79,7 +75,6 @@ const Orders = ({ plugin, className }) => {
 
 const OrdersWrapper = styled(Orders)`
   height: 100%;
-  background: white;
   padding: 18px 30px 66px 30px;
 
   main {

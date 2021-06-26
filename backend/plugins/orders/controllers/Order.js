@@ -3,7 +3,6 @@
 const crypto = require("crypto");
 const stripe = require("stripe")(process.env.STRIPE_KEY);
 const { generateAPI } = require("../../../api/utils");
-const fetch = require("node-fetch");
 const dayjs = require("dayjs");
 const duration = require("dayjs/plugin/duration");
 const isBetween = require("dayjs/plugin/isBetween");
@@ -15,13 +14,7 @@ dayjs.extend(isBetween);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const hived = {
-  parcels: "https://api.airtable.com/v0/appDFURl2nEJd1XEF/Parcels",
-  postcodes: "https://api.airtable.com/v0/app5ZWdAtj21xnZrh/Postcodes",
-  key: "keyzCmMhMH9fvKBPV",
-  shippingClass: "2-Day", // Same-Day Next-Day 2-Day
-};
-
+// TODO: separate into multiple files
 module.exports = {
   ...generateAPI("order", "orders"),
 
@@ -234,44 +227,17 @@ module.exports = {
   async ship(ctx) {
     // TODO: also request an item to be picked back up!!!
     const { order } = ctx.request.body;
-    const { address } = order;
-    const amount = await strapi.plugins["orders"].services.order.totalAmount(
-      order
-    );
-    const user = order.user;
-    const hivedBody = {
-      Collection: "Infinite Closet",
-      Collection_Address_Line_1: "22 Horder Rd",
-      Collection_Town: "London",
-      Collection_Postcode: "SW6 5EE",
-      Collection_Email_Address: "sarah.korich@infinitecloset.co.uk",
-      Recipient: address.firstName + " " + address.lastName,
-      Recipient_Address_Line_1: address.address,
-      Recipient_Town: address.town,
-      Recipient_Postcode: address.postcode,
-      Recipient_Email_Address: user.email,
-      Recipient_Phone_Number: user.phoneNumber,
-      Shipping_Class: hived.shippingClass,
-      Sender: "Infinite Closet",
-      Value_GBP: amount.total / 100,
-      // Sender_Chosen_Collection_Date: MM/DD/YYYY
-      // Sender_Chosen_Delivery_Date: MM/DD/YYYY
-    };
 
     if (process.NODE_ENV === "production") {
-      fetch(hived.parcels, {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + hived.key,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(hivedBody),
-      })
+      strapi
+        .query("order", "orders")
+        .update({ id: order.id }, { status: "shipping" })
+        .then(() => strapi.plugins["orders"].services.hived.ship(order))
         .then((res) => res.json())
         .then((res) =>
           strapi
             .query("order", "orders")
-            .update({ id: order.id }, { status: "shipping", shipment: res.id })
+            .update({ id: order.id }, { shipment: res.id })
         )
         .then(() => {
           strapi.plugins["email"].services.email.send({
@@ -295,15 +261,22 @@ module.exports = {
             to: "info@infinitecloset.co.uk",
             subject: `Failed to ship order`,
             html: `
-            Order:
-              ${JSON.stringify(order, null, 4)}
+            <dl>
+              <dt>Order</dt>
+              <dd>
+                <code>
+                  ${JSON.stringify(order, null, 4)}
+                </code>
+              </dd>
 
-            Error:
-              ${JSON.stringify(err, null, 4)}
+              <dt>Error</dt>
+              <dd>
+                <code>
+                ${JSON.stringify(err, null, 4)}
+                </code>
+              </dd>
+            </dl>
             `,
-            html: `Expect a delivery on ${dayjs(order.date).format(
-              "ddd, MMM DD"
-            )}.`,
           });
 
           strapi.log.error(err);
@@ -334,15 +307,22 @@ module.exports = {
             to: "info@infinitecloset.co.uk",
             subject: `Failed to ship order`,
             html: `
-            Order:
-              ${JSON.stringify(order, null, 4)}
+            <dl>
+              <dt>Order</dt>
+              <dd>
+                <code>
+                  ${JSON.stringify(order, null, 4)}
+                </code>
+              </dd>
 
-            Error:
-              ${JSON.stringify(err, null, 4)}
-            `,
-            html: `Expect a delivery on ${dayjs(order.date).format(
-              "ddd, MMM DD"
-            )}.`,
+              <dt>Error</dt>
+              <dd>
+                <code>
+                ${JSON.stringify(err, null, 4)}
+                </code>
+              </dd>
+            </dl>
+          `,
           });
 
           strapi.log.error(err);
@@ -350,17 +330,6 @@ module.exports = {
     }
 
     ctx.send({});
-  },
-
-  async cleaning(ctx) {
-    const body = ctx.request.body;
-    const { order } = body;
-    const res = await strapi
-      .query("order", "orders")
-      .update({ id: order.id }, { status: "cleaning" });
-    ctx.send({
-      order: res,
-    });
   },
 
   async complete(ctx) {
@@ -398,7 +367,6 @@ module.exports = {
   async toRange(ctx) {
     const query = ctx.request.query;
     const { date, length } = query;
-    console.log(typeof length);
     const range = strapi.plugins["orders"].services.order.toRange({
       date,
       rentalLength: length,

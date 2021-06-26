@@ -1,4 +1,5 @@
 "use strict";
+// TODO: create `date` and `price` service
 
 const dayjs = require("dayjs");
 const isBetween = require("dayjs/plugin/isBetween");
@@ -11,7 +12,6 @@ dayjs.extend(isBetween);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-// TODO: this is copied from frontend
 const rentalLengths = {
   short: 4,
   long: 8,
@@ -79,7 +79,7 @@ function totalAmount(props) {
 }
 
 function totalPrice({ insurance, cart }) {
-  const insurancePrice = // TODO: performance
+  const insurancePrice =
     Object.entries(insurance).filter(
       ([k, v]) =>
         v && (cart.find((item) => item.id == k) || { valid: true }).valid // add insurance only if cart item is valid
@@ -121,6 +121,7 @@ const cartAmount = (cart) =>
   cart.reduce((total, item) => total + amount(item), 0);
 
 module.exports = {
+  // TODO: should move this to separate file
   totalAmount,
   totalPrice,
   price,
@@ -131,13 +132,19 @@ module.exports = {
   toRange,
   inProgress,
 
-  dateValid(date) {
+  dateValid(date, same = false) {
     date = dayjs(date).tz("Europe/London");
     const today = dayjs().tz("Europe/London");
 
     const isNotSunday = date.day() !== 0;
     const shippingCutoff = today.add(12, "hour").add(DAYS_TO_SHIP, "day");
-    const enoughShippingTime = date.isSameOrAfter(shippingCutoff, "day");
+
+    let enoughShippingTime;
+    if (same) {
+      enoughShippingTime = date.isSame(shippingCutoff, "day");
+    } else {
+      enoughShippingTime = date.isSameOrAfter(shippingCutoff, "day");
+    }
 
     return isNotSunday && enoughShippingTime;
   },

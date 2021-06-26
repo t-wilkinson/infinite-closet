@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-// TODO: should be planning, shipping, cleaning
+// TODO: should be planning, shipping
 const OrderStatus = {
   planning: ({ update, order }) => {
     const ship = () => {
@@ -29,28 +29,6 @@ const OrderStatus = {
           {order.size.replace("_", "")}
         </div>
         <button onClick={ship}>Ship</button>
-      </div>
-    );
-  },
-
-  shipping: ({ order, update }) => {
-    const complete = () => {
-      fetch(strapi.backendURL + `/orders/cleaning/${order.id}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          order,
-        }),
-      })
-        .then(() => update())
-        .catch((err) => console.error(err));
-    };
-
-    return (
-      <div className="recieving">
-        <button onClick={complete}>Recieved Order</button>
       </div>
     );
   },
