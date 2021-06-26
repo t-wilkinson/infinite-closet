@@ -32,6 +32,7 @@ const initialState = {
 const reducer = (state, action) => {
   // prettier-ignore
   switch (action.type) {
+    case 'clear-insurance': return {...state, insurance: {}}
     case 'toggle-insurance': return {...state, insurance: {...state.insurance,  [action.payload]: !state.insurance[action.payload]}}
 
     case 'cart-total': return {...state, total: action.payload}
@@ -97,6 +98,7 @@ export const Checkout = ({ user, data }) => {
       )
       .then((res) => {
         dispatch({ type: 'status-success' })
+        dispatch({ type: 'clear-insurance' })
         fetchCart()
       })
       .catch((err) => {

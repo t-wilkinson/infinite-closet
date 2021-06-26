@@ -4,22 +4,18 @@ import dayjs from "dayjs";
 
 const showRange = (ranges, status) => {
   let date;
+  // prettier-ignore
   switch (status) {
-    case "planning":
-      date = ranges.start;
-      break;
-    case "shipping":
-      date = ranges.returning;
-      break;
-    case "cleaning":
-      date = ranges.cleaning;
-      break;
+    case "planning": date = ranges.start; break;
+    case "shipping": date = ranges.returning; break;
+    case "cleaning": date = ranges.cleaning; break;
   }
   return dayjs(date).format("ddd, MMM DD");
 };
 
 const Order = ({ selected, className, order, ...props }) => {
   const [range, setRange] = React.useState();
+  console.log(range);
 
   React.useEffect(() => {
     fetch(

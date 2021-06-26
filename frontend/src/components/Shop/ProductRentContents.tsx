@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from '@/utils/store'
 import { Icon } from '@/components'
 import { Submit } from '@/Form'
 import { toTitleCase } from '@/utils/helpers'
+import { unNormalizeSize } from '@/Products/helpers'
 
 import { shopActions } from './slice'
 import { OneTime } from './types'
@@ -57,7 +58,7 @@ export const productRentContents = {
           '/orders',
           {
             status: 'cart',
-            size: product.sizes[state.size].size,
+            size: unNormalizeSize(product.sizes[state.size].size),
             date: state.selectedDate.toJSON(),
             rentalLength: state.oneTime,
             product: product.id,

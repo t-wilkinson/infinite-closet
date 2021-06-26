@@ -11,6 +11,7 @@ import { sortData } from '@/Products/constants'
 import { productsActions } from '@/Products/slice'
 import { QUERY_LIMIT } from '@/Products/constants'
 import Layout from '@/Layout'
+import { normalizeSize } from '@/Products/helpers'
 
 export const Page = ({ data }) => {
   const router = useRouter()
@@ -73,6 +74,12 @@ export async function getServerSideProps({ params, query }) {
   const { products, count, filters, categories } = await axios
     .get(`/products/filters?${_paging}&${_where}&${_filters}`)
     .then((res) => res.data)
+
+  for (const product of products) {
+    for (const [key, size] of Object.entries(product.sizes)) {
+      product.sizes[key].size = normalizeSize(size.size)
+    }
+  }
 
   return {
     props: {

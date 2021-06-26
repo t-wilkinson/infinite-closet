@@ -12,6 +12,10 @@ const sizeOrders = [
   '6XL',
 ]
 
+export const normalizeSizes = (sizes) => sizes.map(normalizeSize)
+export const normalizeSize = (size) => size.replace('_', '')
+export const unNormalizeSize = (size) => size.replace(/^(\d)/, '_$1')
+
 export const sortSizes = (s1, s2) => {
   return sizeOrders.indexOf(s1) - sizeOrders.indexOf(s2)
 }

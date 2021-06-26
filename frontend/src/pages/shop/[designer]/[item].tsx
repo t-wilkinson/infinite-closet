@@ -7,6 +7,7 @@ import Header from '@/Layout/Header'
 import Footer from '@/Layout/Footer'
 import useData from '@/Layout/useData'
 import { StrapiProduct } from '@/utils/models'
+import { normalizeSize } from '@/Products/helpers'
 
 export const Page = ({ data }) => {
   const loading = useData(data)
@@ -68,6 +69,10 @@ export async function getServerSideProps({ params }) {
     axios.get('/products/size-chart').then((res) => res.data),
     axios.get(`/products/shop/${params.item}`).then((res) => res.data),
   ])
+
+  for (const [key, size] of Object.entries(product.sizes)) {
+    product.sizes[key].size = normalizeSize(size.size)
+  }
 
   return {
     props: {
