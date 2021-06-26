@@ -103,7 +103,7 @@ module.exports = {
     cart = cart.map((order) => {
       const key = strapi.plugins["orders"].services.order.toKey(order);
       const dateValid = strapi.plugins["orders"].services.order.dateValid(
-        order
+        order.date
       );
 
       return {
@@ -139,7 +139,7 @@ module.exports = {
 
     const updates = body.cart.map((order) => {
       const key = strapi.plugins["orders"].services.order.toKey(order);
-      if (!strapi.plugins["orders"].services.order.dateValid(order)) {
+      if (!strapi.plugins["orders"].services.order.dateValid(order.date)) {
         return Promise.reject(`${dayjs(order.date)} is not valid date`);
       } else if (numAvailable[key] >= 1) {
         return strapi.query("order", "orders").update(
@@ -350,9 +350,7 @@ module.exports = {
         });
     }
 
-    ctx.send({
-      status: 200,
-    });
+    ctx.send({});
   },
 
   async cleaning(ctx) {
@@ -362,7 +360,6 @@ module.exports = {
       .query("order", "orders")
       .update({ id: order.id }, { status: "cleaning" });
     ctx.send({
-      status: 200,
       order: res,
     });
   },
@@ -374,9 +371,41 @@ module.exports = {
       .query("order", "orders")
       .update({ id: order.id }, { status: "completed" });
     ctx.send({
-      status: 200,
       order: res,
     });
+  },
+
+  async dateValid(ctx) {
+    const params = ctx.request.params;
+    const isValid = strapi.plugins["orders"].services.order.dateValid(
+      params.date
+    );
+
+    ctx.send({ valid: isValid });
+  },
+
+  async datesValid(ctx) {
+    const body = ctx.request.body;
+
+    let validDates = {};
+    for (const date of body.dates) {
+      validDates[date] =
+        strapi.plugins["orders"].services.order.dateValid(date);
+    }
+
+    ctx.send({ valid: validDates });
+  },
+
+  async toRange(ctx) {
+    const query = ctx.request.query;
+    const { date, length } = query;
+    console.log(typeof length);
+    const range = strapi.plugins["orders"].services.order.toRange({
+      date,
+      rentalLength: length,
+    });
+
+    ctx.send({ range });
   },
 };
 

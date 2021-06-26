@@ -7,7 +7,7 @@ import { CallToAction } from '@/components'
 import { getURL } from '@/utils/api'
 import { StrapiProduct, StrapiFile } from '@/utils/models'
 
-import { sortSizes } from './helpers'
+import { sortSizes, sizeRange } from './helpers'
 import { QUERY_LIMIT } from './constants'
 
 export const ProductItems = ({ data, loading }) => {
@@ -66,16 +66,16 @@ export const Product = ({ product }: any) => {
   return (
     <div className="w-1/2 lg:w-1/3">
       <div className="m-2 lg:m-4">
-        <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
-          <a>
-            <div className="relative w-full md:h-0 overflow-hidden cursor-pointer md:aspect-w-2 md:aspect-h-3 h-96">
-              <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-gray">
+        <div className="relative w-full md:h-0 overflow-hidden md:aspect-w-2 md:aspect-h-3 h-96">
+          <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-gray">
+            <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
+              <a className="w-full h-full">
                 <ProductImages product={product} />
-                <ProductInfo product={product} />
-              </div>
-            </div>
-          </a>
-        </Link>
+              </a>
+            </Link>
+            <ProductInfo product={product} />
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -166,13 +166,16 @@ const rentalPrice = (low: number, high: number): string => {
 const ProductInfo = ({ product }) => (
   <div className="flex-row justify-between mt-4">
     <div className="flex-grow">
-      <span className="font-bold">{product.designer?.name}</span>
+      <Link href={`/designers/${product.designer?.slug}`}>
+        <a>
+          <span className="font-bold hover:underline">
+            {product.designer?.name}
+          </span>
+        </a>
+      </Link>
       <span>{product.name}</span>
       <span className="text-sm">
-        {product.sizes
-          .map((v) => v.size)
-          .sort(sortSizes)
-          .join(', ')}
+        {sizeRange(product.sizes).sort(sortSizes).join(', ')}
       </span>
       <div className="flex-col md:flex-row">
         <span className="font-bold">

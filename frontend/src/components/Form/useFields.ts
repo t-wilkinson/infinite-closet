@@ -9,7 +9,9 @@ export const validate = (
   constraints: string,
 ): Valid[] => {
   const isValid = (value: string, constraint: string): Valid => {
+    constraint = constraint.replace(/<space>/g, ' ')
     const [type, ...props] = constraint.split(':')
+
     // prettier-ignore
     switch (type) {
       case 'email': return /^.+@.+\..+$/.test(value)            || `Please enter a valid ${field.toLowerCase()}`
@@ -20,12 +22,17 @@ export const validate = (
       case 'max-width': return value.length <= Number(props[0]) || `${field} must be at most ${props[0]} characters long`
       case 'min-width': return value.length >= Number(props[0]) || `${field} must be at least ${props[0]} characters long`
       case 'regex': return RegExp(props[0]).test(value)         || `${field} does not have the correct format`
+      case 'contains': return RegExp(`[${props[0].replace(']', '\\]')}]`).test(value)           || `${field} must contain one of ${props[0].split('').join(' ')}`
+      case '!contains': return !RegExp(`[${props[0].replace(']', '\\]')}]`).test(value)           || `${field} must not contain any of ${props[0].split('').join(' ')}`
       case '': return true
       default: return true
     }
   }
 
-  constraints = constraints.replace('password', 'min-width:8 max-width:30')
+  constraints = constraints.replace(
+    'password',
+    'min-width:8 max-width:30 contains:~!@#$%^*-_=+[{]}/;,.?',
+  )
   return constraints
     .split(' ')
     .map((constraint) => isValid(value, constraint))

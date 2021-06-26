@@ -1,29 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import dayjs from "dayjs";
-const duration = require("dayjs/plugin/duration");
-dayjs.extend(duration);
-
-// TODO: this is copied from backend, move it to a route
-const rentalLengths = {
-  short: 4,
-  long: 8,
-};
-
-const DAYS_TO_SHIP = 2;
-const DAYS_TO_RECIEVE = 2;
-const DAYS_TO_CLEAN = 2;
-
-function toRange({ date, rentalLength }) {
-  date = dayjs(date);
-  rentalLength = rentalLengths[rentalLength];
-  return {
-    start: date.subtract(DAYS_TO_SHIP, "days"),
-    returning: date.add(rentalLength, "days"),
-    cleaning: date.add(rentalLength + DAYS_TO_RECIEVE, "days"),
-    end: date.add(rentalLength + DAYS_TO_RECIEVE + DAYS_TO_CLEAN, "days"),
-  };
-}
 
 const showRange = (ranges, status) => {
   let date;
@@ -42,7 +19,18 @@ const showRange = (ranges, status) => {
 };
 
 const Order = ({ selected, className, order, ...props }) => {
-  const range = toRange(order);
+  const [range, setRange] = React.useState();
+
+  React.useEffect(() => {
+    fetch(
+      `${strapi.backendURL}?date=${order.date}&length=${order.rentalLength}`,
+      {
+        method: "GET",
+      }
+    )
+      .then((res) => res.json())
+      .then((res) => setRange(res.range));
+  }, []);
 
   return (
     <tr className={`${className} ${selected ? "selected" : ""}`} {...props}>

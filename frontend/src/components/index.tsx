@@ -358,7 +358,7 @@ export const ScrollUp = () => (
   </button>
 )
 
-export const Hover = ({ type = 'info', children }) => {
+export const Hover = ({ type = 'info', children, position = 'left-0' }) => {
   const [hover, setHover] = React.useState(false)
   return (
     <div
@@ -375,11 +375,14 @@ export const Hover = ({ type = 'info', children }) => {
       >
         {type === 'caution' ? '!' : '?'}
       </span>
-      {hover && (
-        <div className="p-2 z-10 border-gray border rounded-md bg-white absolute left-0 m-4 w-64 text-norm text-left">
-          {children}
-        </div>
-      )}
+      <div
+        className={`p-2 z-10 border-gray border rounded-md bg-white absolute m-4 w-64 text-norm text-left
+        ${position}
+        ${hover ? '' : 'invisible'}
+        `}
+      >
+        {children}
+      </div>
     </div>
   )
 }

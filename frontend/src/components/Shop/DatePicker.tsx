@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 import dayjs, { Dayjs } from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
@@ -83,6 +84,16 @@ const Date = ({ state, rentalLength, dispatch }) => {
 
 const Days = ({ days, state, dispatch, rentalLength }) => {
   const [hover, setHover] = React.useState<Dayjs>()
+  const [valid, setValid] = React.useState({})
+
+  React.useEffect(() => {
+    axios
+      .post('/orders/dates/valid', {
+        dates: days,
+      })
+      .then((res) => setValid(res.data.valid))
+      .catch((err) => console.error(err))
+  }, [])
 
   return (
     <div className="border-gray-light border-r border-b">
@@ -94,7 +105,7 @@ const Days = ({ days, state, dispatch, rentalLength }) => {
               <button
                 key={date.day()}
                 onMouseEnter={() => {
-                  if (dateAvailable(date)) setHover(date)
+                  if (valid[date.toJSON()]) setHover(date)
                   else setHover(undefined)
                 }}
                 onClick={() => {
@@ -106,7 +117,7 @@ const Days = ({ days, state, dispatch, rentalLength }) => {
               >
                 <Day
                   date={date}
-                  unavailable={!dateAvailable(date)}
+                  unavailable={!valid[date.toJSON()]}
                   selected={
                     state.selectedDate &&
                     date.isBetween(
@@ -156,13 +167,3 @@ const Day = ({
     <span>{date.date()}</span>
   </div>
 )
-
-const dateAvailable = (date: Dayjs) => {
-  date = date.tz('Europe/London')
-  const today = dayjs().tz('Europe/London')
-  const isNotSunday = date.day() !== 0
-  const shippingCutoff = today.add(12, 'hour').add(2, 'day')
-  const enoughShippingTime = date.isSameOrAfter(shippingCutoff, 'day')
-
-  return isNotSunday && enoughShippingTime
-}

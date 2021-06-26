@@ -153,7 +153,7 @@ export const Checkout = ({ user, data }) => {
 
   return (
     <div className="w-full items-center bg-gray-light px-4">
-      <div className="w-full justify-center max-w-screen-xl flex-row space-x-4 my-4">
+      <div className="w-full justify-center max-w-screen-xl flex-row space-x-4 my-4 h-full">
         <div className="w-2/5 space-y-4">
           <SideItem label="Addresses">
             <Address state={state} dispatch={dispatch} user={user} />

@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import React from 'react'
+import Link from 'next/link'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -69,7 +70,14 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
       <div className="lg:flex-row w-full items-start lg:items-center lg:justify-between">
         <div>
           <span>
-            {product.name} by <Bold>{product.designer.name}</Bold>
+            {product.name} by &nbsp;
+            <Link href={`/designers/${product.designer.slug}`}>
+              <a target="_blank">
+                <span className="pt-4 font-bold hover:underline">
+                  {product.designer.name}
+                </span>
+              </a>
+            </Link>
           </span>
           <div className="flex flex-row items-center">
             <span className={` ${order.dateValid ? '' : 'text-warning'} `}>
@@ -89,8 +97,9 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
             {order.available === undefined
               ? ``
               : order.available === 1
-              ? `There is 1 item left. Order now before it's gone!`
-              : order.available <= 0
+              ? `There is 1 item left.`
+              : // ? `There is 1 item left. Order now before it's gone!`
+              order.available <= 0
               ? `There are not enough available items`
               : `There are ${order.available} items left`}
           </span>
@@ -103,7 +112,7 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
               value={insurance_}
               label="Include insurance"
             />
-            <Hover>
+            <Hover position="right-0">
               We offer damage protection with every item, which renters can opt
               in to purchase for £5 per order. Damage protection covers the cost
               of the repair (I.e.—stain removal, broken zippers, missing

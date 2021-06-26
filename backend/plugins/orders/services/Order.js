@@ -1,14 +1,12 @@
 "use strict";
 
 const dayjs = require("dayjs");
-const duration = require("dayjs/plugin/duration");
 const isBetween = require("dayjs/plugin/isBetween");
 const utc = require("dayjs/plugin/utc");
 const timezone = require("dayjs/plugin/timezone");
 const isSameOrAfter = require("dayjs/plugin/isSameOrAfter");
 
 dayjs.extend(isSameOrAfter);
-dayjs.extend(duration);
 dayjs.extend(isBetween);
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -28,14 +26,10 @@ function toRange({ date, rentalLength }) {
   rentalLength = rentalLengths[rentalLength];
   // TODO: calculate how many days this item will take to ship based on status etc.
   return {
-    start: date.subtract(DAYS_TO_SHIP, "day"),
-    returning: date.add(dayjs.duration({ days: rentalLength })),
-    cleaning: date.add(
-      dayjs.duration({ days: rentalLength + DAYS_TO_RECIEVE })
-    ),
-    end: date.add(
-      dayjs.duration({ days: rentalLength + DAYS_TO_RECIEVE + DAYS_TO_CLEAN })
-    ),
+    start: date.subtract(DAYS_TO_SHIP, "days"),
+    returning: date.add(rentalLength, "days"),
+    cleaning: date.add(rentalLength + DAYS_TO_RECIEVE, "days"),
+    end: date.add(rentalLength + DAYS_TO_RECIEVE + DAYS_TO_CLEAN, "days"),
   };
 }
 
@@ -134,9 +128,11 @@ module.exports = {
   cartPrice,
   cartAmount,
   toKey,
+  toRange,
+  inProgress,
 
-  dateValid(order) {
-    const date = dayjs(order.date).tz("Europe/London");
+  dateValid(date) {
+    date = dayjs(date).tz("Europe/London");
     const today = dayjs().tz("Europe/London");
 
     const isNotSunday = date.day() !== 0;

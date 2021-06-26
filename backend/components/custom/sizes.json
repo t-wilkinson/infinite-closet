@@ -38,7 +38,6 @@
         "_6XL"
       ]
     },
-
     "quantity": {
       "type": "integer",
       "default": 1,
@@ -47,7 +46,9 @@
     },
     "units": {
       "type": "enumeration",
-      "enum": ["cm", "inch"],
+      "enum": [
+        "cm"
+      ],
       "default": "cm"
     },
     "hips": {
