@@ -4,7 +4,7 @@ const hived = {
   parcels: "https://api.airtable.com/v0/appDFURl2nEJd1XEF/Parcels",
   postcodes: "https://api.airtable.com/v0/app5ZWdAtj21xnZrh/Postcodes",
   key: "keyzCmMhMH9fvKBPV",
-  shippingClass: "2-Day", // Same-Day Next-Day 2-Day
+  // shippingClass: "2-Day", // Same-Day Next-Day 2-Day
 };
 
 const addresses = {
@@ -31,9 +31,9 @@ const toAddress = (addr, role) => {
 
   for (const [k, v] of Object.entries(addr)) {
     if (k === "Name") {
-      res[`${type}`] = v;
+      res[`${role}`] = v;
     } else {
-      res[`${type}_${k}`] = v;
+      res[`${role}_${k}`] = v;
     }
   }
 
@@ -67,13 +67,15 @@ module.exports = {
       Object.assign(
         hivedBody,
         toAddress(addresses.infinitecloset, "Collection"),
-        toAddress(orderAddress, "Recipient")
+        toAddress(orderAddress, "Recipient"),
+        { Shipping_Class: "Next-Day" }
       );
     } else if (order.status === "cleaning") {
       Object.assign(
         hivedBody,
         toAddress(orderAddress, "Collection"),
-        toAddress(addresses.oxwash, "Recipient")
+        toAddress(addresses.oxwash, "Recipient"),
+        { Shipping_Class: "2-Day" }
       );
     }
 

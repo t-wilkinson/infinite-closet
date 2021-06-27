@@ -18,7 +18,7 @@ const rentalLengths = {
 };
 
 const HOURS_SEND_CLIENT = 2 * 24; // TODO: if order.date is before 12:00pm, 24 hours
-const HOURS_SEND_CLEANERS = 1 * 24;
+const HOURS_SEND_CLEANERS = 2 * 24;
 const HOURS_TO_CLEAN = 1 * 24;
 
 module.exports = {
@@ -26,10 +26,11 @@ module.exports = {
     rentalLength = rentalLengths[rentalLength];
     const shipping = dayjs(shippingDate || date).tz("Europe/London");
     const start = shipping.subtract(HOURS_SEND_CLIENT, "hours");
-    const cleaning = shipping.add(rentalLength + HOURS_SEND_CLEANERS, "hours");
+    const rentalOver = shipping.add(rentalLength, "hours");
+    const cleaning = over.add(HOURS_SEND_CLEANERS, "hours");
     const end = cleaning.add(HOURS_TO_CLEAN, "hours");
 
-    return { start, shipping, cleaning, end };
+    return { start, shipping, rentalOver, cleaning, end };
   },
 
   rangesOverlap(range1, range2) {
@@ -38,15 +39,13 @@ module.exports = {
     );
   },
 
-  valid(date, same = false) {
+  valid(date) {
     date = dayjs(date).tz("Europe/London");
     const today = dayjs().tz("Europe/London");
 
     const isNotSunday = date.day() !== 0;
     const shippingCutoff = today.add(HOURS_SEND_CLIENT, "hours");
-    const enoughShippingTime = same
-      ? date.isSame(shippingCutoff, "day")
-      : date.isSameOrAfter(shippingCutoff, "day");
+    const enoughShippingTime = date.isSameOrAfter(shippingCutoff, "day");
 
     return isNotSunday && enoughShippingTime;
   },

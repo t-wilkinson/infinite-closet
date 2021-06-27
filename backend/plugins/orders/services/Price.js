@@ -4,7 +4,9 @@
  *
  * PRICE: decimal units
  * AMOUNT: smallest unit of currency
- */
+ *
+ ********************  IMPORTANT ********************/
+
 const SMALLEST_CURRENCY_UNIT = 100;
 const INSURANCE_PRICE = 5;
 

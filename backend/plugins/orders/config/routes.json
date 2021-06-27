@@ -74,15 +74,6 @@
         "policies": ["plugins::users-permissions.permissions"]
       }
     },
-
-    {
-      "method": "GET",
-      "path": "/amount",
-      "handler": "Order.amount",
-      "config": {
-        "policies": ["plugins::users-permissions.permissions"]
-      }
-    },
     {
       "method": "GET",
       "path": "/",
@@ -99,7 +90,6 @@
         "policies": ["plugins::users-permissions.permissions"]
       }
     },
-
     {
       "method": "POST",
       "path": "/ship/:id",
@@ -114,6 +104,14 @@
       "handler": "Order.complete",
       "config": {
         "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/amount",
+      "handler": "Order.amount",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
       }
     }
   ]

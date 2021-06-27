@@ -49,6 +49,7 @@ module.exports = {
     });
   },
 
+  // TODO: remove this, use PUT instead
   async removeCartItem(ctx) {
     const { id } = ctx.params;
     const order = await strapi

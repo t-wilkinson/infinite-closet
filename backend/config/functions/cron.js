@@ -14,11 +14,10 @@ module.exports = {
       .find({ status: "shipping" });
     for (const order of orders) {
       const range = strapi.plugins["orders"].services.date.range(order);
-      const valid = strapi.plugins["orders"].services.date.valid(
-        range.cleaning,
-        true
-      );
-      if (valid) {
+      date = dayjs(range.rentalOver).tz("Europe/London");
+      const today = dayjs().tz("Europe/London");
+
+      if (date.isSame(today, "day")) {
         strapi.log.info("cleaning order %o", order.id);
         strapi
           .query("order", "orders")

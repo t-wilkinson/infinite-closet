@@ -21,6 +21,7 @@ module.exports = {
     ctx.send({ amount });
   },
 
+  // TODO: remove this, use PUT instead
   async complete(ctx) {
     const body = ctx.request.body;
     const { order } = body;
