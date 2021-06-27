@@ -96,7 +96,7 @@ module.exports = {
       return acc;
     }, []);
 
-    const amount = await strapi.plugins["orders"].services.price.totalAmount({
+    const amount = strapi.plugins["orders"].services.price.totalAmount({
       cart,
       insurance: body.insurance,
     });
@@ -123,12 +123,16 @@ module.exports = {
 
       .then((settled) => {
         const orders = settled.filter((settle) => settle.status == "fulfilled");
-        strapi.plugins["email"].services.email.send({
+        strapi.services.mailchimp.template("checkout-cart", {
           to: user.email,
-          subject: "Thank you for your purchase",
-          html: `We thank you for your purchase of £${
-            amount.total / 100
-          } and hope you enjoyed the experience.`,
+          global_merge_vars: [
+            {
+              name: "total_price",
+              content: strapi.plugins["orders"].services.price.toPrice(
+                amount.total
+              ),
+            },
+          ],
         });
         return orders;
       })

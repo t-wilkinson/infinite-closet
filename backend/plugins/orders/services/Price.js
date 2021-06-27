@@ -21,6 +21,9 @@ const rentalPrice = {
 //   "two-day": 0,
 // };
 
+const toAmount = (price) => price * SMALLEST_CURRENCY_UNIT;
+const toPrice = (amount) => amount / SMALLEST_CURRENCY_UNIT;
+
 function totalAmount(props) {
   const price = totalPrice(props);
 
@@ -68,7 +71,7 @@ function price(order) {
   return productPrice + insurancePrice + shippingPrice;
 }
 
-const amount = (order) => price(order) * SMALLEST_CURRENCY_UNIT;
+const amount = (order) => toAmount(price(order));
 const cartPrice = (cart) =>
   cart.reduce((total, item) => total + price(item), 0);
 const cartAmount = (cart) =>
@@ -81,4 +84,6 @@ module.exports = {
   amount,
   cartPrice,
   cartAmount,
+  toPrice,
+  toAmount,
 };

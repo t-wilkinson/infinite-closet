@@ -43,18 +43,9 @@ module.exports = {
 
       const response = generateResponse(intent);
 
-      // TODO:
       if (response.success) {
-        strapi.plugins["email"].services.email.send({
+        strapi.services.mailchimp.template("join-launch-party", {
           to: body.email,
-          subject: "Thanks for joining our launch party!",
-          html: `
-<ul>
-<li>Order Total: £${ticketPrice}</li>
-<li>Saturday, August 7, 2021 from 8pm to 12am (BST)</li>
-<li>44 Great Cumberland Pl, London W1H 7BS</li>
-</ul>
-`,
         });
 
         await strapi.query("contact").create({

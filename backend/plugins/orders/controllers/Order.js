@@ -111,44 +111,29 @@ module.exports = {
         )
 
         .then(() => {
-          strapi.plugins["email"].services.email.send({
+          strapi.services.mailchimp.template("order-shipped", {
             to: order.user.email,
             subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
-            html: `Expect a delivery on ${dayjs(order.date).format(
-              "ddd, MMM DD"
-            )}.`,
+            global_merge_vars: [
+              {
+                name: "shipping_date",
+                content: dayjs(order.date).format("ddd, MMM DD"),
+              },
+            ],
           });
         })
 
         .catch((err) => {
-          strapi.query("order", "orders").update(
-            { id: order.id },
-            {
-              status: "error",
-              message: `Shipping order failed with error: ${err}.`,
-            }
-          );
+          strapi
+            .query("order", "orders")
+            .update({ id: order.id }, { status: "error", message: err });
 
-          strapi.plugins["email"].services.email.send({
+          strapi.services.mailchimp.template("order-shipping-failure", {
             to: "info@infinitecloset.co.uk",
-            subject: `Failed to ship order`,
-            html: `
-            <dl>
-              <dt>Order</dt>
-              <dd>
-                <code>
-                  ${JSON.stringify(order, null, 4)}
-                </code>
-              </dd>
-
-              <dt>Error</dt>
-              <dd>
-                <code>
-                ${JSON.stringify(err, null, 4)}
-                </code>
-              </dd>
-            </dl>
-            `,
+            global_merge_vars: [
+              { name: "order", content: JSON.stringify(order, null, 4) },
+              { name: "error", content: JSON.stringify(err, null, 4) },
+            ],
           });
 
           strapi.log.error(err);
@@ -166,36 +151,34 @@ module.exports = {
         )
 
         .then(() => {
-          strapi.plugins["email"].services.email.send({
-            to: `${order.user.email} <info+test@infinitecloset.co.uk>`,
+          strapi.services.mailchimp.template("order-shipped", {
+            to: [
+              {
+                name: order.user.email,
+                email: "info+test@infinitecloset.co.uk",
+              },
+            ],
             subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
-            html: `Expect a delivery on ${dayjs(order.date).format(
-              "ddd, MMM DD"
-            )}.`,
+            global_merge_vars: [
+              {
+                name: "shipping_date",
+                content: dayjs(order.date).format("ddd, MMM DD"),
+              },
+            ],
           });
         })
 
         .catch((err) => {
-          strapi.plugins["email"].services.email.send({
-            to: "info@infinitecloset.co.uk",
-            subject: `Failed to ship order`,
-            html: `
-            <dl>
-              <dt>Order</dt>
-              <dd>
-                <code>
-                  ${JSON.stringify(order, null, 4)}
-                </code>
-              </dd>
+          strapi
+            .query("order", "orders")
+            .update({ id: order.id }, { status: "error", message: err });
 
-              <dt>Error</dt>
-              <dd>
-                <code>
-                ${JSON.stringify(err, null, 4)}
-                </code>
-              </dd>
-            </dl>
-          `,
+          strapi.services.mailchimp.template("order-shipping-failure", {
+            to: "info@infinitecloset.co.uk",
+            global_merge_vars: [
+              { name: "order", content: JSON.stringify(order, null, 4) },
+              { name: "error", content: JSON.stringify(err, null, 4) },
+            ],
           });
 
           strapi.log.error(err);

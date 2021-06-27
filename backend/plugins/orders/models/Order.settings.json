@@ -27,7 +27,7 @@
       "required": true
     },
     "message": {
-      "type": "string"
+      "type": "json"
     },
     "size": {
       "type": "string",
