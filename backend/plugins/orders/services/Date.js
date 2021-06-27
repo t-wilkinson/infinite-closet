@@ -12,26 +12,24 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const rentalLengths = {
-  short: 4,
-  long: 8,
+  // first and last day of the rental are 12 hours each
+  short: (4 - 1) * 24,
+  long: (8 - 1) * 24,
 };
 
-const DAYS_TO_SHIP = 2;
-const DAYS_TO_RECIEVE = 2;
-const DAYS_TO_CLEAN = 2;
+const HOURS_SEND_CLIENT = 2 * 24; // TODO: if order.date is before 12:00pm, 24 hours
+const HOURS_SEND_CLEANERS = 1 * 24;
+const HOURS_TO_CLEAN = 1 * 24;
 
 module.exports = {
-  range({ date, rentalLength }) {
-    date = dayjs(date);
+  range({ date, shippingDate, rentalLength }) {
     rentalLength = rentalLengths[rentalLength];
-    // TODO: calculate how many days this item will take to ship based on status etc.
-    // !TODO: need to take into account if before 12:00pm
-    return {
-      start: date.subtract(DAYS_TO_SHIP, "days"),
-      returning: date.add(rentalLength, "days"),
-      cleaning: date.add(rentalLength + DAYS_TO_RECIEVE, "days"),
-      end: date.add(rentalLength + DAYS_TO_RECIEVE + DAYS_TO_CLEAN, "days"),
-    };
+    const shipping = dayjs(shippingDate || date).tz("Europe/London");
+    const start = shipping.subtract(HOURS_SEND_CLIENT, "hours");
+    const cleaning = shipping.add(rentalLength + HOURS_SEND_CLEANERS, "hours");
+    const end = cleaning.add(HOURS_TO_CLEAN, "hours");
+
+    return { start, shipping, cleaning, end };
   },
 
   rangesOverlap(range1, range2) {
@@ -45,14 +43,10 @@ module.exports = {
     const today = dayjs().tz("Europe/London");
 
     const isNotSunday = date.day() !== 0;
-    const shippingCutoff = today.add(12, "hour").add(DAYS_TO_SHIP, "day");
-
-    let enoughShippingTime;
-    if (same) {
-      enoughShippingTime = date.isSame(shippingCutoff, "day");
-    } else {
-      enoughShippingTime = date.isSameOrAfter(shippingCutoff, "day");
-    }
+    const shippingCutoff = today.add(HOURS_SEND_CLIENT, "hours");
+    const enoughShippingTime = same
+      ? date.isSame(shippingCutoff, "day")
+      : date.isSameOrAfter(shippingCutoff, "day");
 
     return isNotSunday && enoughShippingTime;
   },

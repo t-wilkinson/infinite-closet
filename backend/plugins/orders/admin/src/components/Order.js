@@ -7,7 +7,6 @@ const showRange = (ranges, status) => {
   // prettier-ignore
   switch (status) {
     case "planning": date = ranges.start; break;
-    case "shipping": date = ranges.returning; break;
     case "cleaning": date = ranges.cleaning; break;
   }
   return dayjs(date).format("ddd, MMM DD");

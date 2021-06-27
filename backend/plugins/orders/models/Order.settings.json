@@ -36,6 +36,9 @@
     "date": {
       "type": "date"
     },
+    "shippingDate": {
+      "type": "date"
+    },
     "rentalLength": {
       "type": "enumeration",
       "enum": ["short", "long"]

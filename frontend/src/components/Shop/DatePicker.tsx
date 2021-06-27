@@ -17,7 +17,6 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.tz.guess()
 dayjs.tz.setDefault('Europe/London')
-// dayjs.locale('en-gb')
 
 export const DatePicker = ({ state, dispatch, rentalLength }) => {
   if (!state.dateVisible) {

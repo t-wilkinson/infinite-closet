@@ -21,6 +21,17 @@ module.exports = {
     ctx.send({ amount });
   },
 
+  async complete(ctx) {
+    const body = ctx.request.body;
+    const { order } = body;
+    const res = await strapi
+      .query("order", "orders")
+      .update({ id: order.id }, { status: "completed" });
+    ctx.send({
+      order: res,
+    });
+  },
+
   async create(ctx) {
     const body = ctx.request.body;
     const user = ctx.state.user;
@@ -67,13 +78,9 @@ module.exports = {
         "product.images",
       ]);
 
-    // add price to each order
-    orders = orders.map((order) => {
-      return {
-        ...order,
-        price: strapi.plugins["orders"].services.price.price(order),
-      };
-    });
+    for (const order of orders) {
+      order.price = strapi.plugins["orders"].services.price.price(order);
+    }
 
     ctx.send({
       orders,
@@ -81,20 +88,27 @@ module.exports = {
   },
 
   async ship(ctx) {
-    // TODO: also request an item to be picked back up!!!
     const { order } = ctx.request.body;
 
     if (process.NODE_ENV === "production") {
       strapi
         .query("order", "orders")
-        .update({ id: order.id }, { status: "shipping" })
+        .update(
+          { id: order.id },
+          {
+            status: "shipping",
+            shippingDate: dayjs().tz("Europe/London").toJSON(),
+          }
+        )
         .then(() => strapi.plugins["orders"].services.hived.ship(order))
         .then((res) => res.json())
+
         .then((res) =>
           strapi
             .query("order", "orders")
             .update({ id: order.id }, { shipment: res.id })
         )
+
         .then(() => {
           strapi.plugins["email"].services.email.send({
             to: order.user.email,
@@ -104,6 +118,7 @@ module.exports = {
             )}.`,
           });
         })
+
         .catch((err) => {
           strapi.query("order", "orders").update(
             { id: order.id },
@@ -145,6 +160,7 @@ module.exports = {
           {
             status: "shipping",
             shipment: crypto.randomBytes(16).toString("base64"),
+            shippingDate: dayjs().tz("Europe/London").toJSON(),
           }
         )
 
@@ -186,16 +202,5 @@ module.exports = {
     }
 
     ctx.send({});
-  },
-
-  async complete(ctx) {
-    const body = ctx.request.body;
-    const { order } = body;
-    const res = await strapi
-      .query("order", "orders")
-      .update({ id: order.id }, { status: "completed" });
-    ctx.send({
-      order: res,
-    });
   },
 };
