@@ -12,6 +12,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@mailchimp/mailchimp_transactional": "^1.0.27",
     "dayjs": "^1.10.4",
     "googleapis": "^72.0.0",
     "knex": "0.95.0",

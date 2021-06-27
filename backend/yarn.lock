@@ -1637,6 +1637,13 @@
   dependencies:
     vary "^1.1.2"
 
+"@mailchimp/mailchimp_transactional@^1.0.27":
+  version "1.0.27"
+  resolved "https://registry.yarnpkg.com/@mailchimp/mailchimp_transactional/-/mailchimp_transactional-1.0.27.tgz#3be11f84d1d0a5103c872546f82b92dafe5d84cc"
+  integrity sha512-gGW9uKTemMC6zYc/aW0Jxfl28H235Vrb04UVtWBPTFDa8eVrjHDH13Gdb7Gdct8x0+KTZRDS/4qMbiRVHkqVUw==
+  dependencies:
+    axios "^0.21.1"
+
 "@purest/config@^1.0.0":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@purest/config/-/config-1.0.1.tgz#d7dc6a0629032fd98d4ae5f59bec26ba1465c8e0"
