@@ -7,45 +7,75 @@ const hived = {
   shippingClass: "2-Day", // Same-Day Next-Day 2-Day
 };
 
-const collections = {
-  shipping: {
-    Collection: "Infinite Closet",
-    Collection_Address_Line_1: "22 Horder Rd",
-    Collection_Town: "London",
-    Collection_Postcode: "SW6 5EE",
-    Collection_Email_Address: "sarah.korich@infinitecloset.co.uk",
+const addresses = {
+  infinitecloset: {
+    Name: "Infinite Closet",
+    Address_Line_1: "22 Horder Rd",
+    Town: "London",
+    Postcode: "SW6 5EE",
+    Email_Address: "sarah.korich@infinitecloset.co.uk",
   },
-  cleaning: {
-    Collection: "Oxwash",
-    Collection_Address_Line_1: "Avro House",
-    Collection_Address_Line_2: "Unit AH003",
-    Collection_Address_Line_3: "Havelock Terrace",
-    Collection_Town: "London",
-    Collection_Postcode: "SW8 4AS",
-    Collection_Email_Address: "battersea@oxwash.com",
+  oxwash: {
+    Name: "Oxwash",
+    Address_Line_1: "Avro House",
+    Address_Line_2: "Unit AH003",
+    Address_Line_3: "Havelock Terrace",
+    Town: "London",
+    Postcode: "SW8 4AS",
+    Email_Address: "battersea@oxwash.com",
   },
+};
+
+const toAddress = (addr, role) => {
+  const res = {};
+
+  for (const [k, v] of Object.entries(addr)) {
+    if (k === "Name") {
+      res[`${type}`] = v;
+    } else {
+      res[`${type}_${k}`] = v;
+    }
+  }
+
+  return res;
 };
 
 module.exports = {
   ship(order) {
-    const price = strapi.plugins["orders"].services.order.price(order);
+    const price = strapi.plugins["orders"].services.price.price(order);
     const { address } = order;
     const user = order.user;
 
-    const hivedBody = {
-      ...collections[order.status],
-      Recipient: address.firstName + " " + address.lastName,
-      Recipient_Address_Line_1: address.address,
-      Recipient_Town: address.town,
-      Recipient_Postcode: address.postcode,
-      Recipient_Email_Address: user.email,
-      Recipient_Phone_Number: user.phoneNumber,
+    const orderAddress = {
+      Name: address.firstName + " " + address.lastName,
+      Address_Line_1: address.address,
+      Town: address.town,
+      Postcode: address.postcode,
+      Email_Address: user.email,
+      Phone_Number: user.phoneNumber,
+    };
+
+    let hivedBody = {
       Shipping_Class: hived.shippingClass,
       Sender: "Infinite Closet",
       Value_GBP: price,
       // Sender_Chosen_Collection_Date: MM/DD/YYYY
       // Sender_Chosen_Delivery_Date: MM/DD/YYYY
     };
+
+    if (order.status === "shipping") {
+      Object.assign(
+        hivedBody,
+        toAddress(addresses.infinitecloset, "Collection"),
+        toAddress(orderAddress, "Recipient")
+      );
+    } else if (order.status === "cleaning") {
+      Object.assign(
+        hivedBody,
+        toAddress(orderAddress, "Collection"),
+        toAddress(addresses.oxwash, "Recipient")
+      );
+    }
 
     return fetch(hived.parcels, {
       method: "POST",

@@ -1,42 +1,7 @@
 "use strict";
-// TODO: create `date` and `price` service
-
-const dayjs = require("dayjs");
-const isBetween = require("dayjs/plugin/isBetween");
-const utc = require("dayjs/plugin/utc");
-const timezone = require("dayjs/plugin/timezone");
-const isSameOrAfter = require("dayjs/plugin/isSameOrAfter");
-
-dayjs.extend(isSameOrAfter);
-dayjs.extend(isBetween);
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
-const rentalLengths = {
-  short: 4,
-  long: 8,
-};
-
-const DAYS_TO_SHIP = 2;
-const DAYS_TO_RECIEVE = 2;
-const DAYS_TO_CLEAN = 2;
-
-function toRange({ date, rentalLength }) {
-  date = dayjs(date);
-  rentalLength = rentalLengths[rentalLength];
-  // TODO: calculate how many days this item will take to ship based on status etc.
-  return {
-    start: date.subtract(DAYS_TO_SHIP, "days"),
-    returning: date.add(rentalLength, "days"),
-    cleaning: date.add(rentalLength + DAYS_TO_RECIEVE, "days"),
-    end: date.add(rentalLength + DAYS_TO_RECIEVE + DAYS_TO_CLEAN, "days"),
-  };
-}
 
 const inProgress = (status) =>
   ["planning", "shipping", "cleaning"].includes(status);
-const rangesOverlap = (range1, range2) =>
-  !(range1.end.isBefore(range2.start) || range1.start.isAfter(range2.end));
 
 function toKey(order) {
   let productID;
@@ -48,110 +13,14 @@ function toKey(order) {
   return `${order.size}_${productID}`;
 }
 
-/********************  IMPORTANT ********************
- *
- * PRICE: decimal units
- * AMOUNT: smallest unit of currency
- */
-const SMALLEST_CURRENCY_UNIT = 100;
-const INSURANCE_PRICE = 5;
-
-const rentalPrice = {
-  short: "shortRentalPrice",
-  long: "longRentalPrice",
-};
-
-// const shippingPrices = {
-//   "next-day": 9.95,
-//   "one-day": 0,
-//   "two-day": 0,
-// };
-
-function totalAmount(props) {
-  const price = totalPrice(props);
-
-  const amount = {};
-  for (const key in price) {
-    amount[key] = price[key] * SMALLEST_CURRENCY_UNIT;
-  }
-
-  return amount;
-}
-
-function totalPrice({ insurance, cart }) {
-  const insurancePrice =
-    Object.entries(insurance).filter(
-      ([k, v]) =>
-        v && (cart.find((item) => item.id == k) || { valid: true }).valid // add insurance only if cart item is valid
-    ).length * INSURANCE_PRICE;
-  const subtotal = cartPrice(cart);
-
-  const total = subtotal + insurancePrice;
-
-  return {
-    subtotal,
-    insurance: insurancePrice,
-    total,
-  };
-}
-
-function price(order) {
-  // const date = dayjs(order.date);
-  // const today = dayjs();
-  // const dateBefore = (duration) =>
-  //   date.isBefore(today.add(dayjs.duration(duration)), "hour");
-  // const shippingType = dateBefore({ days: 1, hours: 12 })
-  //   ? "next-day"
-  //   : dateBefore({ days: 2, hours: 12 })
-  //   ? "one-day"
-  //   : "next-day";
-
-  // const shippingPrice = shippingPrices[shippingType];
-  const shippingPrice = 0;
-  const productPrice = order.product[rentalPrice[order.rentalLength]];
-  const insurancePrice = order.insurance ? INSURANCE_PRICE : 0;
-
-  return productPrice + insurancePrice + shippingPrice;
-}
-
-const amount = (order) => price(order) * SMALLEST_CURRENCY_UNIT;
-const cartPrice = (cart) =>
-  cart.reduce((total, item) => total + price(item), 0);
-const cartAmount = (cart) =>
-  cart.reduce((total, item) => total + amount(item), 0);
-
 module.exports = {
-  // TODO: should move this to separate file
-  totalAmount,
-  totalPrice,
-  price,
-  amount,
-  cartPrice,
-  cartAmount,
   toKey,
-  toRange,
   inProgress,
 
-  dateValid(date, same = false) {
-    date = dayjs(date).tz("Europe/London");
-    const today = dayjs().tz("Europe/London");
-
-    const isNotSunday = date.day() !== 0;
-    const shippingCutoff = today.add(12, "hour").add(DAYS_TO_SHIP, "day");
-
-    let enoughShippingTime;
-    if (same) {
-      enoughShippingTime = date.isSame(shippingCutoff, "day");
-    } else {
-      enoughShippingTime = date.isSameOrAfter(shippingCutoff, "day");
-    }
-
-    return isNotSunday && enoughShippingTime;
-  },
-
+  // calculate number of available products for each cart item
   async numAvailable(cart = []) {
     const reqRanges = cart.reduce((acc, order) => {
-      acc[toKey(order)] = toRange(order);
+      acc[toKey(order)] = strapi.plugins["orders"].services.date.range(order);
       return acc;
     }, {});
 
@@ -187,10 +56,13 @@ module.exports = {
       // if request date overlaps with order duration
       // then reduce available product quantity by 1
       const reqRange = reqRanges[key];
-      const orderRange = toRange(order);
+      const orderRange = strapi.plugins["orders"].services.date.range(order);
       const overlaps =
         reqRange &&
-        rangesOverlap(reqRange, orderRange) &&
+        strapi.plugins["orders"].services.date.rangesOverlap(
+          reqRange,
+          orderRange
+        ) &&
         inProgress(order.status);
       if (overlaps) {
         counter[key] -= 1;

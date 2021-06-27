@@ -145,7 +145,7 @@ export const Checkout = ({ user, data }) => {
 
   React.useEffect(() => {
     axios
-      .post('/orders/cart/total/price', {
+      .post('/orders/cart/price', {
         insurance: state.insurance,
         cart: state.cart,
       })
