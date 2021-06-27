@@ -53,7 +53,11 @@ export const JoinLaunchParty = () => {
   return (
     <div className="w-full">
       <form id="payment-form">
-        {state.edit === 'info' ? (
+        {state.paymentStatus === 'succeeded' ? (
+          <div className="w-full h-64 justify-center items-center">
+            <span className="font-bold text-xl">Thank You!</span>
+          </div>
+        ) : state.edit === 'info' ? (
           <UserInfo dispatch={dispatch} fields={fields} />
         ) : (
           <Pay fields={fields} dispatch={dispatch} state={state} />
@@ -315,9 +319,11 @@ const Join = ({ dispatch, state, fields }) => {
         }
       })
 
-      .then((res) => {
-        return handleServerResponse(res.data, stripe, dispatch)
-      })
+      .then((res) => handleServerResponse(res.data, stripe, dispatch))
+
+      .then(() =>
+        window.localStorage.setItem('launch-party', JSON.stringify(true)),
+      )
 
       .catch((err) => {
         dispatch({ type: 'payment-failed', payload: err })

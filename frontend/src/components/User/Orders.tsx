@@ -27,7 +27,7 @@ export const Orders = () => {
   }
 
   return (
-    <div>
+    <div className="h-full">
       {orders.map((order) => (
         <OrderItem key={order.id} {...order} />
       ))}
@@ -70,14 +70,17 @@ export const OrderItem = ({ dispatch, product, insurance_, ...order }) => {
         <span>
           <Bold>{fmtPrice(order.price)}</Bold>
         </span>
-        <span className="text-pri">{toTitleCase(order.status)}</span>
+        <span className="text-pri">{statuses[order.status]}</span>
       </div>
     </div>
   )
 }
 
-const toTitleCase = (value: string) => {
-  return value.charAt(0).toUpperCase() + value.slice(1)
+const statuses = {
+  planning: 'Recieved',
+  shipping: 'In cleaning',
+  cleaning: 'In cleaning',
+  completed: 'Completed',
 }
 
 export default Orders

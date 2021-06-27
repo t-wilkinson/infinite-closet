@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { useSelector } from '@/utils/store'
 import Checkout from '@/User/Checkout'
 import Layout from '@/Layout'
@@ -5,9 +7,15 @@ import Layout from '@/Layout'
 const Page = ({ data }) => {
   const user = useSelector((state) => state.user.data)
 
-  // TODO: allow guests
-  if (!user) {
-    return <div></div>
+  React.useEffect(() => {
+    if (user === null) {
+      window.location.pathname = '/'
+      return null
+    }
+  }, [])
+
+  if (user === undefined) {
+    return null
   }
 
   return (

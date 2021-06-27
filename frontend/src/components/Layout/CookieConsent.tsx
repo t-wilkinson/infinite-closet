@@ -17,7 +17,7 @@ export const CookieConsent = () => {
   }
 
   React.useEffect(() => {
-    localStorage.setItem('cookieConsent', JSON.stringify(consent))
+    localStorage.setItem('cookie-consent', JSON.stringify(consent))
   }, [consent])
 
   //   const fields = useFields({
@@ -25,7 +25,7 @@ export const CookieConsent = () => {
   //   })
 
   React.useEffect(() => {
-    const consent = JSON.parse(localStorage.getItem('cookieConsent'))
+    const consent = JSON.parse(localStorage.getItem('cookie-consent'))
     if (consent) {
       dispatch(layoutActions.giveConsent(consent))
     } else {

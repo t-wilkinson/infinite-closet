@@ -14,18 +14,22 @@ const default_message = {
 };
 
 module.exports = {
-  send(message) {
-    return mailchimp.messages.send({ message });
+  async send(message) {
+    return await mailchimp.messages.send({ message });
   },
-  template(template_name, message) {
+  async template(template_name, message) {
     // message.to expects [{email, name, type}], not [email]
-    for (const key in message.to) {
-      if (typeof message.to[key] === "string") {
-        message.to[key] = { email: message.to[key] };
+    if (typeof message.to === "string") {
+      message.to = [{ email: message.to }];
+    } else {
+      for (const key in message.to) {
+        if (typeof message.to[key] === "string") {
+          message.to[key] = { email: message.to[key] };
+        }
       }
     }
 
-    return mailchimp.messages.sendTemplate({
+    return await mailchimp.messages.sendTemplate({
       template_name,
       template_content: [],
       message: { ...default_message, ...message },

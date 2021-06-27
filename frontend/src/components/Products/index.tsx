@@ -39,6 +39,7 @@ const ProductItemsWrapper = ({ data, loading }) => {
         totalPages={totalPages}
         sortBy={sortBy}
       />
+      <div id="mySize"></div>
       <ProductItems data={data} loading={loading} />
       <Footer totalPages={totalPages} />
     </div>

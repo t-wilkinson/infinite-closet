@@ -44,8 +44,9 @@ module.exports = {
       const response = generateResponse(intent);
 
       if (response.success) {
-        strapi.services.mailchimp.template("join-launch-party", {
+        await strapi.services.mailchimp.template("join-launch-party", {
           to: body.email,
+          global_merge_vars: [{ name: "ticket_price", content: ticketPrice }],
         });
 
         await strapi.query("contact").create({

@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import axios from 'axios'
 
 import { useDispatch } from '@/utils/store'
@@ -20,6 +21,7 @@ export default User
 
 const SideMenu = () => {
   const dispatch = useDispatch()
+  const router = useRouter()
 
   const signout = () => {
     axios
@@ -33,16 +35,20 @@ const SideMenu = () => {
 
   return (
     <div className="w-full mb-8 sm:mb-0 sm:w-64 bg-gray-light p-4 rounded-sm items-start">
-      <SideLink href="/user/profile">Profile</SideLink>
-      <SideLink href="/user/orders">Orders</SideLink>
+      <SideLink active={/profile/.test(router.pathname)} href="/user/profile">
+        Profile
+      </SideLink>
+      <SideLink active={/orders/.test(router.pathname)} href="/user/orders">
+        Orders
+      </SideLink>
       <SideButton onClick={signout}>Sign out</SideButton>
     </div>
   )
 }
 
-const SideLink = ({ href, children }) => (
+const SideLink = ({ active, href, children }) => (
   <Link href={href}>
-    <a>{children}</a>
+    <a className={`${active ? 'font-bold' : ''}`}>{children}</a>
   </Link>
 )
 

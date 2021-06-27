@@ -61,6 +61,26 @@ const Wrapper = ({ router, children }) => {
   const popup = useSelector((state) => state.account.popup)
   const analytics = useAnalytics()
 
+  // TODO: remove this
+  // decided to change naming scheme
+  React.useEffect(() => {
+    for (const item of [
+      'launch-party',
+      'joined-waitlist',
+      'logged-in',
+      'cookie-consent',
+    ]) {
+      const key = item
+        .split('-')
+        .map((v, i) => (i ? v[0].toUpperCase() + v.slice(1) : v))
+        .join('')
+      const value = JSON.parse(window.localStorage.getItem(key))
+      if (value) {
+        window.localStorage.setItem(item, JSON.stringify(value))
+      }
+    }
+  }, [])
+
   React.useEffect(() => {
     analytics?.setCurrentScreen(router.asPath)
     if (!document.title) {
@@ -86,12 +106,13 @@ const Wrapper = ({ router, children }) => {
       .then((res) => {
         if (res.data.user) {
           // loggedIn tracks if the user has logged into the web site
-          window.localStorage.setItem('loggedIn', 'true')
+          window.localStorage.setItem('logged-in', 'true')
           dispatch(userActions.signin(res.data.user))
         } else {
-          const loggedIn = JSON.parse(window.localStorage.getItem('loggedIn'))
+          dispatch(userActions.signout())
+          const loggedIn = JSON.parse(window.localStorage.getItem('logged-in'))
           const joinedWaitlist = JSON.parse(
-            window.localStorage.getItem('joinedWaitlist'),
+            window.localStorage.getItem('joined-waitlist'),
           )
           if (!loggedIn && !joinedWaitlist) {
             document

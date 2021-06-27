@@ -2,6 +2,12 @@ import React from 'react'
 import Link from 'next/link'
 
 export const Banner = () => {
+  const [joined, setJoined] = React.useState(false)
+
+  React.useEffect(() => {
+    setJoined(JSON.parse(window.localStorage.getItem('launch-party')))
+  }, [])
+
   if (process.env.NODE_ENV === 'production') {
     return (
       <div className="items-center px-2 py-1 bg-sec text-white flex-row w-full justify-center">
@@ -20,10 +26,16 @@ export const Banner = () => {
           <q>
             <strong>Give Your Best</strong>
           </q>{' '}
-          launch party tickets:&nbsp;
-          <span className="text-norm underline block md:inline">
-            Now available
-          </span>
+          {joined ? (
+            'launch party coming August 7th'
+          ) : (
+            <>
+              launch party tickets:&nbsp;
+              <span className="text-norm underline block md:inline">
+                Now available
+              </span>
+            </>
+          )}
         </a>
       </Link>
     </div>

@@ -110,7 +110,7 @@ module.exports = {
             .update({ id: order.id }, { shipment: res.id })
         )
 
-        .then(() => {
+        .then(() =>
           strapi.services.mailchimp.template("order-shipped", {
             to: order.user.email,
             subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
@@ -120,15 +120,15 @@ module.exports = {
                 content: dayjs(order.date).format("ddd, MMM DD"),
               },
             ],
-          });
-        })
+          })
+        )
 
-        .catch((err) => {
-          strapi
+        .catch(async (err) => {
+          await strapi
             .query("order", "orders")
             .update({ id: order.id }, { status: "error", message: err });
 
-          strapi.services.mailchimp.template("order-shipping-failure", {
+          await strapi.services.mailchimp.template("order-shipping-failure", {
             to: "info@infinitecloset.co.uk",
             global_merge_vars: [
               { name: "order", content: JSON.stringify(order, null, 4) },
@@ -150,7 +150,7 @@ module.exports = {
           }
         )
 
-        .then(() => {
+        .then(() =>
           strapi.services.mailchimp.template("order-shipped", {
             to: [
               {
@@ -165,15 +165,15 @@ module.exports = {
                 content: dayjs(order.date).format("ddd, MMM DD"),
               },
             ],
-          });
-        })
+          })
+        )
 
-        .catch((err) => {
-          strapi
+        .catch(async (err) => {
+          await strapi
             .query("order", "orders")
             .update({ id: order.id }, { status: "error", message: err });
 
-          strapi.services.mailchimp.template("order-shipping-failure", {
+          await strapi.services.mailchimp.template("order-shipping-failure", {
             to: "info@infinitecloset.co.uk",
             global_merge_vars: [
               { name: "order", content: JSON.stringify(order, null, 4) },

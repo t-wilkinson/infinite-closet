@@ -121,8 +121,11 @@ module.exports = {
         )
       )
 
-      .then((settled) => {
-        const orders = settled.filter((settle) => settle.status == "fulfilled");
+      .then((settled) =>
+        settled.filter((settle) => settle.status == "fulfilled")
+      )
+
+      .then(() =>
         strapi.services.mailchimp.template("checkout-cart", {
           to: user.email,
           global_merge_vars: [
@@ -133,9 +136,8 @@ module.exports = {
               ),
             },
           ],
-        });
-        return orders;
-      })
+        })
+      )
 
       .catch((err) => strapi.log.error(err));
 

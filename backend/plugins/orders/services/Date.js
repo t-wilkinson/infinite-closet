@@ -27,7 +27,7 @@ module.exports = {
     const shipping = dayjs(shippingDate || date).tz("Europe/London");
     const start = shipping.subtract(HOURS_SEND_CLIENT, "hours");
     const rentalOver = shipping.add(rentalLength, "hours");
-    const cleaning = over.add(HOURS_SEND_CLEANERS, "hours");
+    const cleaning = rentalOver.add(HOURS_SEND_CLEANERS, "hours");
     const end = cleaning.add(HOURS_TO_CLEAN, "hours");
 
     return { start, shipping, rentalOver, cleaning, end };

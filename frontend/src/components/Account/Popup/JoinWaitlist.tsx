@@ -81,7 +81,7 @@ const WaitlistForm = ({ status, setStatus }) => {
         })
       })
       .then(() => {
-        window.localStorage.setItem('joinedWaitlist', 'true')
+        window.localStorage.setItem('joined-waitlist', 'true')
         setStatus('Submitted')
       })
       .catch(() => setStatus('ServerError'))

@@ -5,7 +5,7 @@ module.exports = {
   async newsletter(ctx) {
     const body = ctx.request.body;
 
-    strapi.services.mailchimp.template("newsletter-subscription", {
+    await strapi.services.mailchimp.template("newsletter-subscription", {
       to: body.email,
     });
 
@@ -23,7 +23,7 @@ module.exports = {
   async waitlist(ctx) {
     const body = ctx.request.body;
 
-    strapi.services.mailchimp.template("waitlist-subscription", {
+    await strapi.services.mailchimp.template("waitlist-subscription", {
       to: [{ name: body.name, email: body.email }],
     });
 

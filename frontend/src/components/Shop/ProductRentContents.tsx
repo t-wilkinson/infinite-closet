@@ -77,6 +77,18 @@ export const productRentContents = {
         })
     }
 
+    React.useEffect(() => {
+      var settings = {
+        integration_code: 'SC-A8B4CC5D',
+        retailer_token: 'EfrpfcDJyCWwju2rrf6fqz2t',
+      }
+      var s = document.createElement('script')
+      s.src = 'https://widget.mysz.io/v1/assets/js/mysize-connect.js'
+      s.async = true
+      window.MYSIZE = Object.assign(window.MYSIZE || {}, settings)
+      document.body.appendChild(s)
+    }, [])
+
     return (
       <>
         <DatePicker
@@ -104,6 +116,9 @@ export const productRentContents = {
             <button onClick={() => setChartOpen((state) => !state)}>
               <span className="underline">Size Chart</span>
             </button>
+          </div>
+          <div className="relative">
+            <div id="mySize" />
           </div>
         </SelectorItem>
 

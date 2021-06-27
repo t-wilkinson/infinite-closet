@@ -2,7 +2,10 @@ import React from 'react'
 
 export const SkipLink = () => {
   const onClick = (e) => {
-    document.querySelector('main').focus()
+    const main = document.querySelector('main')
+    if (main) {
+      main.focus()
+    }
   }
 
   return (
