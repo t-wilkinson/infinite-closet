@@ -77,6 +77,27 @@
     "orders": {
       "plugin": "orders",
       "collection": "order"
+    },
+    "chestSize": {
+      "type": "string"
+    },
+    "hipsSize": {
+      "type": "string"
+    },
+    "waistSize": {
+      "type": "string"
+    },
+    "dressSize": {
+      "type": "string"
+    },
+    "height": {
+      "type": "string"
+    },
+    "weight": {
+      "type": "string"
+    },
+    "dateOfBirth": {
+      "type": "string"
     }
   }
 }

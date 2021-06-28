@@ -9,6 +9,24 @@ import useFields, { isValid, cleanFields } from '@/Form/useFields'
 
 type Status = 'success' | 'in-fields' | 'server-error'
 
+export const requestChangePassword = async (fields, analytics) => {
+  const cleaned = cleanFields(fields)
+  return await axios
+    .post(
+      '/auth/forgot-password',
+      {
+        email: cleaned.email,
+      },
+      { withCredentials: true },
+    )
+    .then((res) =>
+      analytics?.logEvent('form_submit', {
+        type: 'account.forgot-password',
+        user: cleaned.email,
+      }),
+    )
+}
+
 export const ForgotPassword = () => {
   const fields = useFields({
     email: { constraints: 'required email', label: 'Email Address' },
@@ -19,21 +37,9 @@ export const ForgotPassword = () => {
   const analytics = useAnalytics()
 
   const onSubmit = () => {
-    const cleaned = cleanFields(fields)
-    axios
-      .post(
-        '/auth/forgot-password',
-        {
-          email: cleaned.email,
-        },
-        { withCredentials: true },
-      )
-      .then((res) => {
+    requestChangePassword(fields, analytics)
+      .then(() => {
         setStatus('success')
-        analytics?.logEvent('form_submit', {
-          type: 'account.forgot-password',
-          user: cleaned.email,
-        })
         router.push('/')
       })
       .catch((err) => {

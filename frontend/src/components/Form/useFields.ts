@@ -2,6 +2,35 @@ import React from 'react'
 
 import { FieldsConfig, Field, Fields, Valid } from './types'
 
+export const fieldChanged = (field: Field) => field.default !== field.value
+export const fieldsChanged = (fields: Fields) =>
+  Object.values(fields).map(fieldChanged)
+export const changedFields = (fields: Fields) =>
+  Object.entries(fields).reduce((acc, [k, field]) => {
+    if (fieldChanged(field)) {
+      acc[k] = field
+    }
+    return acc
+  }, {})
+
+export const validateField = (field: Field) =>
+  validate(field.field, field.value, field.constraints)
+
+export const isValid = (fields: Fields, include?: string[]): boolean => {
+  return Object.entries(fields)
+    .filter(([field, _]) => (include ? include.includes(field) : true))
+    .map(([_, field]) => validate(field.label, field.value, field.constraints))
+    .every((v) => v.length === 0)
+}
+
+export const cleanFields = (fields: Fields): { [field: string]: any } => {
+  return Object.entries(fields).reduce((acc, [k, v]) => {
+    if (typeof v.value === 'string') acc[k] = v.value.trim()
+    else acc[k] = v.value
+    return acc
+  }, {})
+}
+
 // TODO: this should be an object of functions
 export const validate = (
   field: string,
@@ -39,24 +68,6 @@ export const validate = (
     .filter((v) => v !== true)
 }
 
-export const validateField = (field: Field) =>
-  validate(field.field, field.value, field.constraints)
-
-export const isValid = (fields: Fields, include?: string[]): boolean => {
-  return Object.entries(fields)
-    .filter(([field, _]) => (include ? include.includes(field) : true))
-    .map(([_, field]) => validate(field.label, field.value, field.constraints))
-    .every((v) => v.length === 0)
-}
-
-export const cleanFields = (fields: Fields): { [field: string]: any } => {
-  return Object.entries(fields).reduce((acc, [k, v]) => {
-    if (typeof v.value === 'string') acc[k] = v.value.trim()
-    else acc[k] = v.value
-    return acc
-  }, {})
-}
-
 export const useFields: (config: FieldsConfig) => Fields = (config) => {
   const initialState = Object.keys(config).reduce(
     (acc, k) => ((acc[k] = config[k].default ?? ''), acc),
@@ -72,6 +83,8 @@ export const useFields: (config: FieldsConfig) => Fields = (config) => {
         type: 'text',
         constraints: '',
         onChange: () => {},
+        default: '',
+        placeholder: '',
       },
       v,
     )
@@ -80,7 +93,9 @@ export const useFields: (config: FieldsConfig) => Fields = (config) => {
       label: v.label,
       type: v.type,
       value: state[field],
+      default: v.default,
       constraints: v.constraints,
+      placeholder: v.placeholder,
       onChange: (value: string) => {
         dispatch({ type: field, payload: value })
         v.onChange(value)

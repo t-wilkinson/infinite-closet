@@ -6,6 +6,8 @@ export type Field = {
   value: any
   constraints: string
   onChange: (value: any) => void
+  placeholder: string
+  default: string
 }
 
 export type Fields = {
@@ -19,6 +21,7 @@ export type FieldsConfig = {
     label?: string
     onChange?: (value: string) => void
     type?: string
+    placeholder?: string
   }
 }
 

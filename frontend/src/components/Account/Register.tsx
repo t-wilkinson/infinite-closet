@@ -3,7 +3,7 @@ import Link from 'next/link'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 
-import { Input, Submit, Warnings, PasswordVisible, FormHeader } from '@/Form'
+import { Input, Submit, Warnings, Password, FormHeader } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
@@ -20,7 +20,6 @@ export const Register = () => {
   const dispatch = useDispatch()
   const analytics = useAnalytics()
   const [warnings, setWarnings] = React.useState<string[]>([])
-  const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false)
 
   const onSubmit = () => {
     const cleaned = cleanFields(fields)
@@ -63,16 +62,7 @@ export const Register = () => {
         <Input {...fields.lastName} />
       </div>
       <Input {...fields.email} />
-      <Input
-        // TODO: this logic should be in useFields
-        {...fields.password}
-        type={passwordVisible ? 'text' : 'password'}
-      >
-        <PasswordVisible
-          passwordVisible={passwordVisible}
-          setPasswordVisible={setPasswordVisible}
-        />
-      </Input>
+      <Password {...fields.password} />
       <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
         Register
       </Submit>

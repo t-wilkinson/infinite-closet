@@ -21,6 +21,13 @@ export interface StrapiUser {
   phoneNumber?: string;
   addresses: StrapiAddress[];
   orders: any[];
+  chestSize?: string;
+  hipsSize?: string;
+  waistSize?: string;
+  dressSize?: string;
+  height?: string;
+  weight?: string;
+  dateOfBirth?: string;
   created_by: string;
   updated_at: string;
   published_at: string;

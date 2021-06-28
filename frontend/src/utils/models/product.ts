@@ -37,6 +37,7 @@ export interface StrapiProduct {
   occasions_?: string;
   styles_?: string;
   weather_?: string;
+  sizes_?: string;
   created_by: string;
   updated_at: string;
   published_at: string;

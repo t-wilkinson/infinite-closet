@@ -38,11 +38,16 @@ export const getServerSideProps = async ({ params }) => {
   const [designers] = await Promise.all([
     axios.get(`/designers?slug=${params.slug}`),
   ])
+  const designer = designers.data[0]
+  for (const product of designer.products) {
+    product.designer = { ...designer }
+    delete product.designer.products
+  }
 
   return {
     props: {
       data: {
-        designer: designers.data[0],
+        designer,
       },
     },
   }

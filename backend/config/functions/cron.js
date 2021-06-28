@@ -14,7 +14,7 @@ module.exports = {
       .find({ status: "shipping" });
     for (const order of orders) {
       const range = strapi.plugins["orders"].services.date.range(order);
-      date = dayjs(range.rentalOver).tz("Europe/London");
+      const date = dayjs(range.rentalOver).tz("Europe/London");
       const today = dayjs().tz("Europe/London");
 
       if (date.isSame(today, "day")) {

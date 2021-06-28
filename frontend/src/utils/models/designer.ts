@@ -8,6 +8,7 @@ export interface StrapiDesigner {
   name: string;
   slug: string;
   products: StrapiProduct[];
+  notes?: string;
   description?: string;
   created_by: string;
   updated_at: string;

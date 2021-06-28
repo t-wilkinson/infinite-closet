@@ -27,7 +27,7 @@ export const Orders = () => {
   }
 
   return (
-    <div className="h-full">
+    <div className="">
       {orders.map((order) => (
         <OrderItem key={order.id} {...order} />
       ))}
@@ -45,7 +45,7 @@ export const OrderItem = ({ dispatch, product, insurance_, ...order }) => {
 
   return (
     <div
-      className={`flex-row items-center border p-4 rounded-sm relative bg-white
+      className={`flex-row items-center border p-4 rounded-sm relative bg-white my-2
         ${order.available <= 0 ? 'border-warning' : 'border-gray'}
         `}
     >

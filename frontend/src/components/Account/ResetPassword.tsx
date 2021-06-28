@@ -5,14 +5,7 @@ import { useRouter } from 'next/router'
 
 import useAnalytics from '@/utils/useAnalytics'
 import { useDispatch } from '@/utils/store'
-import {
-  Input,
-  Submit,
-  Warnings,
-  PasswordVisible,
-  FormHeader,
-  OR,
-} from '@/Form'
+import { Submit, Warnings, Password, FormHeader, OR } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { userActions } from '@/User/slice'
 
@@ -24,7 +17,6 @@ export const ResetPassword = () => {
   const dispatch = useDispatch()
   const analytics = useAnalytics()
   const [warnings, setWarnings] = React.useState<string[]>([])
-  const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false)
   const code = router.query.code
 
   const onSubmit = () => {
@@ -57,12 +49,7 @@ export const ResetPassword = () => {
     <>
       <FormHeader label="Reset password" />
       <Warnings warnings={warnings} />
-      <Input {...fields.password} type={passwordVisible ? 'text' : 'password'}>
-        <PasswordVisible
-          passwordVisible={passwordVisible}
-          setPasswordVisible={setPasswordVisible}
-        />
-      </Input>
+      <Password {...fields.password} />
       <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
         Password Reset
       </Submit>

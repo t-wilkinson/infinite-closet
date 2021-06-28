@@ -6,14 +6,7 @@ import { useRouter } from 'next/router'
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
-import {
-  Input,
-  Submit,
-  OR,
-  Warnings,
-  PasswordVisible,
-  FormHeader,
-} from '@/Form'
+import { Input, Submit, OR, Warnings, Password, FormHeader } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { userActions } from '@/User/slice'
 
@@ -26,7 +19,6 @@ export const Signin = () => {
   const dispatch = useDispatch()
   const analytics = useAnalytics()
   const [warnings, setWarnings] = React.useState<string[]>([])
-  const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false)
 
   const onSubmit = () => {
     const cleaned = cleanFields(fields)
@@ -63,12 +55,7 @@ export const Signin = () => {
       <FormHeader label="Sign In" />
       <Warnings warnings={warnings} />
       <Input {...fields.email} />
-      <Input {...fields.password} type={passwordVisible ? 'text' : 'password'}>
-        <PasswordVisible
-          passwordVisible={passwordVisible}
-          setPasswordVisible={setPasswordVisible}
-        />
-      </Input>
+      <Password {...fields.password} />
       <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
         Sign In
       </Submit>
