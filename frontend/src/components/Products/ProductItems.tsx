@@ -173,7 +173,11 @@ const ProductInfo = ({ product }) => (
           </span>
         </a>
       </Link>
-      <span>{product.name}</span>
+      <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
+        <a className="hover:underline">
+          <span>{product.name}</span>
+        </a>
+      </Link>
       <span className="text-sm">
         {sizeRange(product.sizes).sort(sortSizes).join(', ')}
       </span>

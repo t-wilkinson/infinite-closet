@@ -87,7 +87,9 @@ const UserInfo = ({ fields, dispatch }) => {
         <CallToAction
           onClick={() => dispatch({ type: 'edit-payment' })}
           disabled={disabled}
-          className={`mt-2 ${disabled ? 'bg-pri-light' : 'bg-pri'}`}
+          className={`mt-2 ${
+            disabled ? 'bg-pri-light' : 'hover:bg-sec bg-pri'
+          }`}
           type="button"
         >
           Continue
@@ -337,7 +339,7 @@ const Join = ({ dispatch, state, fields }) => {
   return (
     <div className="w-full flex-row items-center">
       <button
-        className="flex w-32 mt-4 items-center flex-col border border-gray rounded-sm p-4 mr-4"
+        className="flex w-32 mt-3 items-center flex-col border border-gray rounded-sm p-3 mr-4"
         type="button"
         onClick={() => dispatch({ type: 'edit-info' })}
       >
