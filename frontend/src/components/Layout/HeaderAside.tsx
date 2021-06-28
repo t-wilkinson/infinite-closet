@@ -1,29 +1,39 @@
 import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import axios from 'axios'
 
 import { routes } from '@/utils/constants'
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon, Divider } from '@/components'
+import { toRows } from '@/Layout/Navbar'
 
 import { layoutActions } from './slice'
 
 const HeaderAside = () => {
   const dispatch = useDispatch()
   const [focused, setFocused] = React.useState<string>()
+  const [serverRoutes, setServerRoutes] = React.useState([])
   const headerOpen = useSelector((state) => state.layout.headerOpen)
+
+  React.useEffect(() => {
+    axios
+      .get('/products/routes')
+      .then((res) => setServerRoutes(res.data))
+      .catch((err) => console.error(err))
+  }, [])
 
   return (
     headerOpen && (
       <aside className="fixed inset-0 bg-white z-30 border-b border-gray-light">
         <div className="w-full h-full overflow-auto">
           <Header dispatch={dispatch} />
-
           <Divider />
           <Routes
             focused={focused}
             setFocused={setFocused}
             dispatch={dispatch}
+            serverRoutes={serverRoutes}
           />
         </div>
 
@@ -57,20 +67,21 @@ const Header = ({ dispatch }) => (
   </div>
 )
 
-const Routes = ({ dispatch, setFocused, focused }) => (
+const Routes = ({ serverRoutes, dispatch, setFocused, focused }) => (
   <>
     {routes.map((section, i) => (
       <div key={section.value + '' + i}>
         <RouteHeader
           key={section.value + '' + i}
+          dispatch={dispatch}
           setFocused={setFocused}
           focused={focused}
           section={section}
         />
         {section.data[0] &&
-          section.data[0].data.map((v: any, i: number) => (
+          toRows(section.data[0], serverRoutes).map((v: any, i: number) => (
             <RouteContents
-              key={v.label + '' + i}
+              key={v.name + v.slug + v.href}
               dispatch={dispatch}
               focused={focused}
               section={section}
@@ -99,7 +110,20 @@ const AsideLink = ({ href, label }) => {
   )
 }
 
-const RouteHeader = ({ setFocused, focused, section }) => {
+const RouteHeader = ({ setFocused, focused, section, dispatch }) => {
+  if (section.value === 'blogs') {
+    return (
+      <Link href={section.href}>
+        <a
+          className="p-4 items-center justify-between flex-row"
+          onClick={() => dispatch(layoutActions.closeHeader())}
+        >
+          <span className={`uppercase`}>{section.label}</span>
+        </a>
+      </Link>
+    )
+  }
+
   return (
     <button
       aria-label="Toggle aside menu sub routes"
@@ -112,14 +136,11 @@ const RouteHeader = ({ setFocused, focused, section }) => {
         <span
           className={`uppercase
           ${focused === section.value ? 'body-bold' : 'body'}
-          ${section.value === 'blogs' ? 'text-gray' : ''}
           `}
         >
           {section.label}
         </span>
-        {section.value !== 'blogs' && (
-          <Icon name={focused === section.value ? 'down' : 'up'} size={12} />
-        )}
+        <Icon name={focused === section.value ? 'down' : 'up'} size={12} />
       </div>
     </button>
   )
@@ -138,7 +159,7 @@ const RouteContents = ({ dispatch, focused, item, section }) => (
           ${item.href ? 'hover:underline' : 'cursor-default text-gray-700'}
         `}
       >
-        <span>{item.label}</span>
+        <span>{item.name}</span>
       </a>
     </Link>
   </div>

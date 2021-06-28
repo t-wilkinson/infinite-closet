@@ -125,8 +125,8 @@ const PageRoutes = ({
   )
 }
 
-const PageColumnItems = ({ column, serverRoutes }) => {
-  // TODO: the logic is kind of a mess
+// TODO: the logic is kind of a mess
+export const toRows = (column, serverRoutes) => {
   const defaultRoutes =
     (serverRoutes.routes &&
       serverRoutes.routes[column.value] &&
@@ -137,24 +137,22 @@ const PageColumnItems = ({ column, serverRoutes }) => {
     column.value === 'occasions' ? serverRoutes.occasions : defaultRoutes
 
   const rows = column.data
-    .reduce((acc, route) => {
+    .reduce((acc, row) => {
       if (
         column.value !== 'occasions' &&
         !(serverRoutes.routes && serverRoutes.routes[column.value])
       ) {
-        acc = [...acc, route]
-      } else if (serverRows.every((row) => row.slug !== route.slug)) {
-        route.slug = null
-        acc = [...acc, route]
+        acc = [...acc, row]
+      } else if (serverRows.every((r) => r.slug !== row.slug)) {
+        row.slug = null
+        acc = [...acc, row]
       }
       return acc
     }, serverRows)
     .sort((row) => row.slug === undefined)
-
-  return rows.map((row, i) => (
-    <ColumnItem
-      key={i}
-      href={
+    .map((row) => ({
+      ...row,
+      href:
         row.slug === null
           ? null
           : column.type === 'slug'
@@ -163,9 +161,21 @@ const PageColumnItems = ({ column, serverRoutes }) => {
           ? `${column.href}?${column.value}=${row.slug}`
           : column.type === 'href'
           ? `${column.href}/${row.slug}`
-          : null
-      }
-    >
+          : null,
+    }))
+
+  if (column.value === 'clothing') {
+    console.log(rows)
+  }
+
+  return rows
+}
+
+const PageColumnItems = ({ column, serverRoutes }) => {
+  const rows = toRows(column, serverRoutes)
+
+  return rows.map((row, i) => (
+    <ColumnItem key={row.name + row.slug + row.href} href={row.href}>
       {row.name}
     </ColumnItem>
   ))
