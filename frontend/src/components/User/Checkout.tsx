@@ -7,7 +7,7 @@ dayjs.extend(utc)
 import { fmtPrice } from '@/utils/money'
 import { fetchAPI } from '@/utils/api'
 import { Submit } from '@/Form'
-import { BlueLink } from '@/components'
+import { BlueLink, Icon } from '@/components'
 
 import { PaymentMethods, AddPaymentMethod } from './Payment'
 import { Addresses, AddAddress } from './Address'
@@ -108,39 +108,37 @@ export const Checkout = ({ user, data }) => {
   }
 
   React.useEffect(() => {
-    if (user) {
+    dispatch({
+      type: 'set-addresses',
+      payload: user.addresses,
+    })
+    if (user.addresses && user.addresses[0] && user.addresses[0].id) {
       dispatch({
-        type: 'set-addresses',
-        payload: user.addresses,
+        type: 'choose-address',
+        payload: user.addresses[0].id,
       })
-      if (user.addresses && user.addresses[0] && user.addresses[0].id) {
-        dispatch({
-          type: 'choose-address',
-          payload: user.addresses[0].id,
-        })
-      }
-
-      fetchCart()
-
-      fetchAPI('/account/payment-methods')
-        .then((res) => {
-          dispatch({
-            type: 'set-payment-methods',
-            payload: res.paymentMethods,
-          })
-          if (
-            res.paymentMethods &&
-            res.paymentMethods[0] &&
-            res.paymentMethods[0].id
-          ) {
-            dispatch({
-              type: 'choose-payment-method',
-              payload: res.paymentMethods[0].id,
-            })
-          }
-        })
-        .catch((err) => console.error(err))
     }
+
+    fetchCart()
+
+    fetchAPI('/account/payment-methods')
+      .then((res) => {
+        dispatch({
+          type: 'set-payment-methods',
+          payload: res.paymentMethods,
+        })
+        if (
+          res.paymentMethods &&
+          res.paymentMethods[0] &&
+          res.paymentMethods[0].id
+        ) {
+          dispatch({
+            type: 'choose-payment-method',
+            payload: res.paymentMethods[0].id,
+          })
+        }
+      })
+      .catch((err) => console.error(err))
   }, [user])
 
   React.useEffect(() => {
@@ -234,9 +232,31 @@ const SideItem = ({ label, children }) => (
 
 const Address = ({ state, user, dispatch }) => (
   <>
-    <Addresses addresses={user.addresses} state={state} dispatch={dispatch} />
+    <Addresses
+      userId={user.id}
+      addresses={user.addresses}
+      state={state}
+      dispatch={dispatch}
+    />
     {state.popup === 'address' && (
-      <AddAddress user={user} dispatch={dispatch} state={state} />
+      <div className="fixed inset-0 z-30 bg-black bg-opacity-50 items-center justify-center">
+        <div className="w-full max-w-sm w-full p-6 bg-white rounded-lg relative">
+          <div className="w-full items-center">
+            <span className="font-bold text-3xl mt-2">Add Address</span>
+          </div>
+
+          <div className="w-full h-px bg-pri mb-6 mt-1 rounded-full" />
+
+          <button
+            className="absolute top-0 right-0 m-3"
+            type="button"
+            onClick={() => dispatch({ type: 'close-popup' })}
+          >
+            <Icon name="close" size={20} />
+          </button>
+          <AddAddress user={user} dispatch={dispatch} />
+        </div>
+      </div>
     )}
     <div className="h-0" />
     <button

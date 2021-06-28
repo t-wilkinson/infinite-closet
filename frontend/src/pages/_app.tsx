@@ -15,7 +15,7 @@ import { accountActions } from '@/Account/slice'
 import { layoutActions } from '@/Layout/slice'
 import SkipLink from '@/Layout/SkipLink'
 import Banner from '@/Layout/Banner'
-import { userActions } from '@/User/slice'
+import { signin } from '@/User'
 const FourOFour = dynamic(() => import('@/pages/404'))
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND
@@ -48,6 +48,7 @@ const allowedPages = [
   '/contact-us',
   '/faqs',
   '/privacy',
+  '/designers/[slug]',
   '/products/[...slug]',
   '/shop/[designer]/[item]',
   '/terms-and-conditions',
@@ -103,13 +104,9 @@ const Wrapper = ({ router, children }) => {
     dispatch(layoutActions.loadAnalytics(firebase.analytics()))
     axios
       .post('/account/signin', {}, { withCredentials: true })
-      .then((res) => {
-        if (res.data.user) {
-          // loggedIn tracks if the user has logged into the web site
-          window.localStorage.setItem('logged-in', 'true')
-          dispatch(userActions.signin(res.data.user))
-        } else {
-          dispatch(userActions.signout())
+      .then(() => signin(dispatch))
+      .then((user) => {
+        if (!user) {
           const loggedIn = JSON.parse(window.localStorage.getItem('logged-in'))
           const joinedWaitlist = JSON.parse(
             window.localStorage.getItem('joined-waitlist'),

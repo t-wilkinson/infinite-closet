@@ -21,8 +21,8 @@ module.exports = {
         strapi.log.info("cleaning order %o", order.id);
         strapi
           .query("order", "orders")
-          .update({ id: order.id }, { status: "cleaning" });
-        strapi.plugins["orders"].services.hived.ship(order);
+          .update({ id: order.id }, { status: "cleaning" })
+          .then(() => strapi.plugins["orders"].services.hived.ship(order));
       }
     }
   },

@@ -7,6 +7,8 @@ import { fetchAPI } from '@/utils/api'
 import { Icon } from '@/components'
 import { Submit } from '@/Form'
 import { PaymentWrapper } from '@/Form/Payments'
+import { useDispatch } from '@/utils/store'
+import { signin } from '@/User'
 
 import './CheckoutForm.module.css'
 
@@ -33,34 +35,50 @@ const PaymentMethod = ({
   dispatch,
   state,
   card: { brand, exp_month, exp_year, last4 },
-}) => (
-  <button
-    className={`flex border bg-gray-light p-4 flex-row cursor-pointer items-center
-    ${id === state.paymentMethod ? 'border-black' : ''}
-    `}
-    aria-label={`Choose ${toTitleCase(brand)}
+}) => {
+  const rootDispatch = useDispatch()
+  const removePaymentMethod = () => {
+    axios
+      .delete(`/account/payment-methods/${id}`, { withCredentials: true })
+      .then(() => signin(rootDispatch))
+      .catch((err) => console.error(err))
+  }
+
+  return (
+    <button
+      className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
+      ${id === state.paymentMethod ? 'border-black' : ''}
+      `}
+      aria-label={`Choose ${toTitleCase(brand)}
       card ending in ${last4} which expires on ${exp_month}/${exp_year}
-    `}
-    onClick={() => dispatch({ type: 'choose-payment-method', payload: id })}
-  >
-    <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
-      <div
-        className={`w-3 h-3 rounded-full
+      `}
+      onClick={() => dispatch({ type: 'choose-payment-method', payload: id })}
+    >
+      <button
+        className="absolute top-0 right-0 p-2"
+        type="button"
+        onClick={removePaymentMethod}
+      >
+        <Icon name="close" size={16} />
+      </button>
+      <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
+        <div
+          className={`w-3 h-3 rounded-full
           ${id === state.paymentMethod ? 'bg-pri' : ''}
           `}
-      />
-    </div>
-
-    <div className="justify-between">
-      <span>
-        {toTitleCase(brand)} ending in {last4}
-      </span>
-      <span>
-        Expires {exp_month}/{exp_year}
-      </span>
-    </div>
-  </button>
-)
+        />
+      </div>
+      <div className="items-start justify-between">
+        <span>
+          {toTitleCase(brand)} ending in {last4}
+        </span>
+        <span>
+          Expires {exp_month}/{exp_year}
+        </span>
+      </div>
+    </button>
+  )
+}
 
 const cardStyle = {
   style: {
@@ -212,10 +230,10 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
 const AddPaymentMethodHeader = ({ dispatch }) => (
   <>
     <div className="w-full items-center">
-      <span className="font-subheader text-3xl m-2">Add Payment Method</span>
+      <span className="font-bold text-3xl mt-2">Add Payment Method</span>
     </div>
 
-    <div className="w-full h-px bg-pri mb-4 mt-1 rounded-full" />
+    <div className="w-full h-px bg-pri mb-6 mt-1 rounded-full" />
 
     <button
       className="absolute top-0 right-0 m-3"

@@ -11,7 +11,9 @@ import useFields, {
 import { Divider } from '@/components'
 import { Size } from '@/Products/constants'
 import { useDispatch, useSelector } from '@/utils/store'
-import { userActions } from '@/User/slice'
+
+import { userActions } from './slice'
+import { AddAddress } from './Address'
 
 export const Profile = () => {
   const user = useSelector((state) => state.user.data)
@@ -47,7 +49,7 @@ export const Profile = () => {
       <span className="font-subheader text-2xl">Profile</span>
       <AccountDetails user={user} setStatus={setStatus} />
       <FitsAndPreferences user={user} setStatus={setStatus} />
-      {/* <Addresses user={user} setStatus={setStatus} /> */}
+      <Addresses user={user} setStatus={setStatus} />
       {/* <ResetPassword /> */}
     </div>
   )
@@ -165,7 +167,11 @@ const ResetPassword = ({ user, setStatus }) => {
 }
 
 const Addresses = ({ user, setStatus }) => {
-  return <></>
+  return (
+    <>
+      <AddAddress user={user} dispatch={() => {}} />
+    </>
+  )
 }
 
 const SubmitFields = ({ onSubmit, disabled }) => (

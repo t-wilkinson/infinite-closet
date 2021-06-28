@@ -32,4 +32,12 @@ module.exports = {
       clientSecret: intent.client_secret,
     });
   },
+
+  async detachPaymentMethods(ctx) {
+    const { id } = ctx.params;
+    const paymentMethod = await stripe.paymentMethods.detach(id);
+    ctx.send({
+      paymentMethod,
+    });
+  },
 };

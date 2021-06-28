@@ -7,6 +7,21 @@ import { useDispatch } from '@/utils/store'
 import { userActions } from '@/User/slice'
 import { useSelector } from '@/utils/store'
 
+export const signin = async (dispatch) => {
+  return axios
+    .post('/account/signin', {}, { withCredentials: true })
+    .then((res) => {
+      if (res.data.user) {
+        // loggedIn tracks if the user has logged into the web site
+        window.localStorage.setItem('logged-in', 'true')
+        dispatch(userActions.signin(res.data.user))
+      } else {
+        dispatch(userActions.signout())
+      }
+      return res.data.user
+    })
+}
+
 export const User = ({ children }) => {
   const user = useSelector((state) => state.user.data)
 

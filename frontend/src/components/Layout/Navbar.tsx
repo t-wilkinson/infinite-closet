@@ -134,10 +134,11 @@ export const toRows = (column, serverRoutes) => {
     []
 
   const serverRows =
-    column.value === 'occasions' ? serverRoutes.occasions : defaultRoutes
+    (column.value === 'occasions' ? serverRoutes.occasions : defaultRoutes) ||
+    []
 
-  const rows = column.data
-    .reduce((acc, row) => {
+  const rows = (
+    column.data.reduce((acc, row) => {
       if (
         column.value !== 'occasions' &&
         !(serverRoutes.routes && serverRoutes.routes[column.value])
@@ -148,7 +149,8 @@ export const toRows = (column, serverRoutes) => {
         acc = [...acc, row]
       }
       return acc
-    }, serverRows)
+    }, serverRows) || column.data
+  )
     .sort((row) => row.slug === undefined)
     .map((row) => ({
       ...row,

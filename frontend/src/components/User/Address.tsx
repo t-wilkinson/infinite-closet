@@ -5,9 +5,9 @@ import { Icon } from '@/components'
 import { Input, Submit } from '@/Form'
 import { useFields, cleanFields } from '@/Form/useFields'
 import { useDispatch } from '@/utils/store'
-import { userActions } from '@/User/slice'
+import { signin } from './'
 
-export const Addresses = ({ addresses, state, dispatch }) => {
+export const Addresses = ({ userId, addresses, state, dispatch }) => {
   return (
     <div className="space-y-4">
       {addresses.map((address) => (
@@ -15,6 +15,7 @@ export const Addresses = ({ addresses, state, dispatch }) => {
           key={address.id}
           state={state}
           dispatch={dispatch}
+          userId={userId}
           {...address}
         />
       ))}
@@ -31,34 +32,54 @@ const Address = ({
   postcode,
   firstName,
   lastName,
-}) => (
-  <button
-    className={`flex border bg-gray-light p-4 flex-row cursor-pointer items-center
+  userId,
+}) => {
+  const rootDispatch = useDispatch()
+
+  const removeAddress = () => {
+    axios
+      .delete(`/account/${userId}/addresses/${id}`, { withCredentials: true })
+      .then(() => signin(rootDispatch))
+      .catch((err) => console.error(err))
+  }
+
+  return (
+    <button
+      className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
     ${id === state.address ? 'border-black' : ''}
     `}
-    aria-label={`Choose address with name of {firstName} {lastName} in {address} {town} {postcode}`}
-    onClick={() => dispatch({ type: 'choose-address', payload: id })}
-  >
-    <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
-      <div
-        className={`w-3 h-3 rounded-full
+      aria-label={`Choose address with name of {firstName} {lastName} in {address} {town} {postcode}`}
+      onClick={() => dispatch({ type: 'choose-address', payload: id })}
+    >
+      <button
+        className="absolute top-0 right-0 p-2"
+        type="button"
+        onClick={removeAddress}
+      >
+        <Icon name="close" size={16} />
+      </button>
+
+      <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
+        <div
+          className={`w-3 h-3 rounded-full
           ${id === state.address ? 'bg-pri' : ''}
-          `}
-      />
-    </div>
+  `}
+        />
+      </div>
 
-    <div>
-      <span>
-        {firstName} {lastName}
-      </span>
-      <span>{address}</span>
-      <span>{town}</span>
-      <span>{postcode}</span>
-    </div>
-  </button>
-)
+      <div className="items-start">
+        <span>
+          {firstName} {lastName}
+        </span>
+        <span>{address}</span>
+        <span>{town}</span>
+        <span>{postcode}</span>
+      </div>
+    </button>
+  )
+}
 
-export const UpdateAddress = ({ user, dispatch, state, address }) => {
+export const UpdateAddress = ({ user, dispatch, address }) => {
   const fields = useFields({
     firstName: { constraints: 'required', default: address.firstName },
     lastName: { constraints: 'required', default: address.lastName },
@@ -84,17 +105,10 @@ export const UpdateAddress = ({ user, dispatch, state, address }) => {
       .catch((err) => console.error(err))
   }
 
-  return (
-    <EditAddress
-      onSubmit={onSubmit}
-      fields={fields}
-      dispatch={dispatch}
-      state={state}
-    />
-  )
+  return <EditAddress onSubmit={onSubmit} fields={fields} />
 }
 
-export const AddAddress = ({ user, dispatch, state }) => {
+export const AddAddress = ({ user, dispatch }) => {
   const fields = useFields({
     firstName: { constraints: 'required', default: user.firstName },
     lastName: { constraints: 'required', default: user.lastName },
@@ -103,7 +117,7 @@ export const AddAddress = ({ user, dispatch, state }) => {
     postcode: { constraints: 'required', default: '' },
     mobileNumber: { constraints: 'required', default: user.phoneNumber },
   })
-  const accountDispatch = useDispatch()
+  const rootDispatch = useDispatch()
 
   const onSubmit = () => {
     const cleaned = cleanFields(fields)
@@ -117,80 +131,55 @@ export const AddAddress = ({ user, dispatch, state }) => {
       )
       .then((res) => {
         dispatch({ type: 'close-popup' })
-        dispatch({ type: 'set-addresses', payload: res.data.addresses })
-        accountDispatch(userActions.signin(res.data.user))
+        signin(rootDispatch)
       })
       .catch((err) => console.error(err))
   }
 
-  return (
-    <EditAddress
-      onSubmit={onSubmit}
-      fields={fields}
-      dispatch={dispatch}
-      state={state}
-    />
-  )
+  return <EditAddress onSubmit={onSubmit} fields={fields} />
 }
 
-const EditAddress = ({ onSubmit, fields, dispatch, state }) => {
+const EditAddress = ({ onSubmit, fields }) => {
   const [valid, setValid] = React.useState(true)
 
-  if (state.popup !== 'address') {
-    return <div />
-  }
-
   const validatePostcode = () => {
-    onSubmit()
     if (process.env.NODE_ENV === 'production') {
       axios
         .get(`/addresses/verify/${fields.postcode.value}`)
         .then((res) => {
           setValid(res.data.valid)
-          onSubmit()
+          if (res.data.valid) {
+            onSubmit()
+          }
         })
         .catch((err) => setValid(false))
+    } else {
+      onSubmit()
     }
   }
 
   return (
-    <div className="fixed inset-0 z-30 bg-black bg-opacity-50 items-center justify-center">
-      <form
-        className="w-full max-w-sm w-full p-6 bg-white rounded-lg relative"
-        onSubmit={(e) => {
-          e.preventDefault()
-          validatePostcode()
-        }}
-      >
-        <div className="w-full items-center">
-          <span className="font-subheader text-3xl m-2">Add Address</span>
-        </div>
-
-        <div className="w-full h-px bg-pri mb-4 mt-1 rounded-full" />
-
-        <button
-          className="absolute top-0 right-0 m-3"
-          type="button"
-          onClick={() => dispatch({ type: 'close-popup' })}
-        >
-          <Icon name="close" size={20} />
-        </button>
-        {!valid && (
-          <span className="text-warning my-2">
-            Sorry, we do not currently serve this location.
-          </span>
-        )}
-        <div className="grid grid-flow-row grid-cols-2 w-full gap-x-4">
-          {Object.keys(fields).map((field) => (
-            <Input key={field} {...fields[field]} />
-          ))}
-        </div>
-        <div className="w-full items-center">
-          <Submit disabled={!valid} className="w-full">
-            Submit
-          </Submit>
-        </div>
-      </form>
-    </div>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        validatePostcode()
+      }}
+    >
+      <div className="grid grid-flow-row grid-cols-2 w-full gap-x-4">
+        {Object.keys(fields).map((field) => (
+          <Input key={field} {...fields[field]} />
+        ))}
+      </div>
+      {!valid && (
+        <span className="text-warning mb-2 inline-block">
+          Sorry, we do not currently serve this location.
+        </span>
+      )}
+      <div className="w-full items-center">
+        <Submit disabled={!valid} className="w-full">
+          Submit
+        </Submit>
+      </div>
+    </form>
   )
 }

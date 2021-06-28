@@ -41,7 +41,31 @@ const toAddress = (addr, role) => {
 };
 
 module.exports = {
-  ship(order) {
+  async verify(postcode) {
+    let valid;
+
+    try {
+      const res = await fetch(hived.postcodes, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + hived.key,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fields: {
+            Recipient_Postcode: postcode,
+          },
+        }),
+      }).then((res) => res.json());
+      valid = res.fields.Address_in_delivery_Area === "Valid";
+    } catch {
+      valid = false;
+    }
+
+    return valid;
+  },
+
+  async ship(order) {
     const price = strapi.plugins["orders"].services.price.price(order);
     const { address } = order;
     const user = order.user;
@@ -79,7 +103,7 @@ module.exports = {
       );
     }
 
-    return fetch(hived.parcels, {
+    return await fetch(hived.parcels, {
       method: "POST",
       headers: {
         Authorization: "Bearer " + hived.key,
