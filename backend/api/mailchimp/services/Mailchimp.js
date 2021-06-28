@@ -10,29 +10,43 @@ const default_message = {
   merge_language: "handlebars",
   from_email: "info@infinitecloset.co.uk",
   from_name: "Infinite Closet",
-  subject: "",
+  subject: "Infinite Closet",
 };
 
-module.exports = {
-  async send(message) {
-    return await mailchimp.messages.send({ message });
-  },
-  async template(template_name, message) {
-    // message.to expects [{email, name, type}], not [email]
-    if (typeof message.to === "string") {
-      message.to = [{ email: message.to }];
-    } else {
-      for (const key in message.to) {
-        if (typeof message.to[key] === "string") {
-          message.to[key] = { email: message.to[key] };
-        }
+// message.to expects [{email, name, type}], not [email]
+const normalizeTo = (to) => {
+  const res = [];
+  if (typeof to === "string") {
+    res.push({ email: to });
+  } else {
+    for (const email in to) {
+      if (typeof email === "string") {
+        res.push({ email });
+      } else {
+        res.push(email);
       }
     }
+  }
+  return res;
+};
 
+const normalizeMessage = (message) => {
+  return { ...default_message, ...message, to: normalizeTo(message.to) };
+};
+
+// TODO: use more intuitive global_merge_vars? `{name: content}`
+module.exports = {
+  async send(message) {
+    return await mailchimp.messages.send({
+      message: normalizeMessage(message),
+    });
+  },
+
+  async template(template_name, message) {
     return await mailchimp.messages.sendTemplate({
       template_name,
       template_content: [],
-      message: { ...default_message, ...message },
+      message: normalizeMessage(message),
     });
   },
 };

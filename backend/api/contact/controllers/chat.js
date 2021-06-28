@@ -1,7 +1,38 @@
 "use strict";
 
-const fetch = require("node-fetch");
-const WebSocket = require("ws");
+const _ = require("lodash");
+
+module.exports = {
+  async contact(ctx) {
+    const body = ctx.request.body;
+
+    await strapi.services.mailchimp.template("contact-us", {
+      to: "info@infinitecloset.co.uk",
+      subject: `[Contact] ${body.firstName} ${body.lastName}`,
+      global_merge_vars: [
+        { name: "firstName", content: body.firstName },
+        { name: "lastName", content: body.lastName },
+        { name: "emailAddress", content: body.emailAddress },
+        { name: "phoneNumber", content: body.phoneNumber },
+        { name: "message", content: body.message },
+      ],
+    });
+
+    await strapi.query("contact").create({
+      contact: body.email,
+      context: "contact",
+      metadata: {
+        firstName: body.firstname,
+        lastName: body.lastName,
+        email: body.emailAddress,
+        phoneNumber: body.phoneNumber,
+      },
+    });
+  },
+};
+
+// const fetch = require("node-fetch");
+// const WebSocket = require("ws");
 
 // const wss = new WebSocket.Server({
 //   port: 8080,
@@ -53,31 +84,3 @@ const WebSocket = require("ws");
 //     ).then((res) => res.json());
 //   }
 // };
-
-module.exports = {
-  async send(ctx) {
-    const res = await slack({
-      path: "chat.postMessage",
-      body: {
-        text: "bot says hello!",
-      },
-    });
-    return ctx.send(res);
-  },
-
-  async contact(ctx) {
-    const body = ctx.request.body;
-
-    await strapi.query("contact").create({
-      contact: body.email,
-      context: "contact",
-      metadata: {
-        name: body.name,
-        email: body.email,
-        comment: body.comment,
-        subscribe: body.subscribe,
-        marketing: body.marketing,
-      },
-    });
-  },
-};
