@@ -92,7 +92,7 @@ const Days = ({ days, state, dispatch, rentalLength }) => {
       })
       .then((res) => setValid(res.data.valid))
       .catch((err) => console.error(err))
-  }, [])
+  }, [days])
 
   return (
     <div className="border-gray-light border-r border-b">

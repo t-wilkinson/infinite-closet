@@ -47,3 +47,4 @@ export const Size = [
   '5XL',
   '6XL',
 ] as const
+export type Size = typeof Size[number]

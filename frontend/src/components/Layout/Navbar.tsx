@@ -164,10 +164,6 @@ export const toRows = (column, serverRoutes) => {
           : null,
     }))
 
-  if (column.value === 'clothing') {
-    console.log(rows)
-  }
-
   return rows
 }
 

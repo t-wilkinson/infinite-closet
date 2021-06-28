@@ -12,6 +12,7 @@ import { productsActions } from '@/Products/slice'
 import { QUERY_LIMIT } from '@/Products/constants'
 import Layout from '@/Layout'
 import { normalizeSize } from '@/Products/helpers'
+import { StrapiSize } from '@/utils/models'
 
 export const Page = ({ data }) => {
   const router = useRouter()
@@ -76,8 +77,9 @@ export async function getServerSideProps({ params, query }) {
     .then((res) => res.data)
 
   for (const product of products) {
-    for (const [key, size] of Object.entries(product.sizes)) {
-      product.sizes[key].size = normalizeSize(size.size)
+    for (const [key, size] of Object.entries(product.sizes as StrapiSize[])) {
+      product.sizes[key].size = normalizeSize(size.size || '')
+      product.sizes[key].sizeRange = normalizeSize(size.sizeRange || '')
     }
   }
 
