@@ -33,7 +33,10 @@ const populatePrivateFields = () => {
     )
     .then((products) =>
       products.map((product) => {
-        let data = { id: product.id, published_at: today };
+        let data = { id: product.id };
+        if (process.env.NODE_ENV !== "production") {
+          data.published_at = today;
+        }
         for (const filter of Object.keys(models)) {
           let slugs;
           if (filter === "sizes") {

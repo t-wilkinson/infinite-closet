@@ -134,7 +134,7 @@ const HowItWorksHeader = ({ icon, selected, header, ...props }) => {
   const label = howItWorks[header].label
 
   return (
-    <div className="w-full items-center">
+    <div className="w-full items-center flex-shrink">
       <button aria-label={`Show ${label}`} {...props}>
         <div
           className="h-16 w-16 md:h-24 md:w-24 md:m-8 relative"
@@ -165,7 +165,7 @@ const HowItWorksHeader = ({ icon, selected, header, ...props }) => {
 
 const HowItWorksContent = ({ selected, header }) =>
   selected === header && (
-    <div className="sm:h-32 sm:h-24 md:h-16">
+    <div className="sm:h-32 sm:h-24 md:h-16 flex-shrink">
       {howItWorks[header].content({ selected: header === selected })}
     </div>
   )
@@ -203,7 +203,7 @@ const ProductItems = ({ products }) => {
       <Heading>Our Pick</Heading>
       <div className="my-8 w-full flex-wrap lg:flex-no-wrap flex-row">
         {products.map((product) => (
-          <Product key={product.id} product={product} />
+          <Product product={product} />
         ))}
       </div>
     </div>

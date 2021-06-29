@@ -14,7 +14,9 @@ export const Account = ({ title = 'Infinite Closet', children }) => {
       <div className="items-center mt-3">
         <LargeHeaderLogo router={router} />
       </div>
-      <main className="bg-gray-light h-full pt-16">{children}</main>
+      <main className="bg-gray-light h-full flex-shrink flex-grow pt-16">
+        {children}
+      </main>
     </>
   )
 }

@@ -14,10 +14,15 @@ button {
   font-weight: inherit;
 }
 
+details summary::-webkit-details-marker {
+  display: none;
+}
+
 div,
 main {
   display: flex;
   flex-direction: column;
+  min-height: min-content;
 }
 
 .font-subheader {

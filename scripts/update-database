@@ -1,0 +1,9 @@
+#!/bin/sh
+if [[ $(dirname $(pwd)) != 'infinte-closet' ]]; then
+    echo 'Please run in root directory'
+    exit 1
+fi
+
+rsync -avz infinitecloset:/www/infinite-closet/main/backend/public/uploads/ ./backend/public/uploads
+ssh infinitecloset 'docker exec dev_db_1 pg_dump -d infinite-closet-dev -U test -CcO | bzip2'  | bunzip2 | docker exec -i local_db_1 psql -d infinite-closet-dev -U test
+

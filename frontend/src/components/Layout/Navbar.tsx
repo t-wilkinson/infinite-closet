@@ -139,6 +139,9 @@ export const toRows = (column, serverRoutes) => {
 
   const rows = (
     column.data.reduce((acc, row) => {
+      if (row.slug === undefined) {
+        row.slug === null
+      }
       if (
         column.value !== 'occasions' &&
         !(serverRoutes.routes && serverRoutes.routes[column.value])
@@ -151,7 +154,21 @@ export const toRows = (column, serverRoutes) => {
       return acc
     }, serverRows) || column.data
   )
-    .sort((row) => (row.slug === undefined ? 1 : -1))
+    .sort((r1, r2) => {
+      const s1 = r1.slug
+      const s2 = r2.slug
+      const alphabeticalOrder =
+        r1.name < r2.name ? -1 : r1.name > r2.name ? 1 : 0
+      if (s1 === null && s2 === null) {
+        return alphabeticalOrder
+      } else if (s1 !== null && s2 !== null) {
+        return alphabeticalOrder
+      } else if (s1 === null) {
+        return 1
+      } else {
+        return -1
+      }
+    })
     .map((row) => ({
       ...row,
       href:

@@ -15,6 +15,7 @@ const HeaderAside = () => {
   const [focused, setFocused] = React.useState<string>()
   const [serverRoutes, setServerRoutes] = React.useState([])
   const headerOpen = useSelector((state) => state.layout.headerOpen)
+  const user = useSelector((state) => state.user.data)
 
   React.useEffect(() => {
     axios
@@ -35,15 +36,23 @@ const HeaderAside = () => {
             dispatch={dispatch}
             serverRoutes={serverRoutes}
           />
-        </div>
 
-        <Divider className="my-2" />
-        <AsideLink href="/account" label="My Accout" />
-        <AsideLink href="/about-us" label="About Us" />
-        <AsideLink href="/help" label="Help" />
-        <Divider className="my-2" />
-        <AsideLink href="/account/signin" label="Sign In" />
-        <AsideLink href="/account/register" label="Register" />
+          <Divider className="my-2" />
+          {user ? (
+            <>
+              <AsideLink href="/user/profile" label="My Accout" />
+              <AsideLink href="/user/checkout" label="Checkout" />
+            </>
+          ) : (
+            <>
+              <AsideLink href="/account/signin" label="Sign In" />
+              <AsideLink href="/account/register" label="Register" />
+            </>
+          )}
+          <AsideLink href="/about-us" label="About Us" />
+          <AsideLink href="/help" label="Help" />
+          <Divider className="my-2" />
+        </div>
       </aside>
     )
   )

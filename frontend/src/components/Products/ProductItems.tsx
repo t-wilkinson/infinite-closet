@@ -53,7 +53,7 @@ export const ProductItems = ({ data, loading }) => {
     return (
       <div className="w-full flex-row flex-wrap">
         {data.products?.map((product: StrapiProduct) => (
-          <Product key={product.id} product={product} />
+          <Product product={product} />
         ))}
       </div>
     )
@@ -64,15 +64,37 @@ export default ProductItems
 
 export const Product = ({ product }: any) => {
   return (
-    <div className="w-1/2 lg:w-1/3">
-      <div className="m-2 lg:m-4">
-        <div className="relative w-full md:h-0 overflow-hidden md:aspect-w-2 md:aspect-h-3 h-96">
-          <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-gray">
+    // <div className="w-1/2 lg:w-1/3 flex-shrink">
+    //   <div className="m-2 lg:m-4">
+    //     <div className="relative w-full md:h-0 overflow-hidden md:aspect-w-2 md:aspect-h-3 h-96">
+    //       <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-gray">
+    //         <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
+    //           <a className="w-full h-full">
+    //             <ProductImages product={product} />
+    //           </a>
+    //         </Link>
+    //         <ProductInfo product={product} />
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
+
+    <div className="w-1/2 lg:w-1/3 flex-shrink">
+      <div className="m-2 lg:m-4 w-full">
+        <div className="w-full h-full p-2 border-transparent border hover:border-gray">
+          <div
+            className="relative w-full md:h-0"
+            style={{
+              paddingTop: '173%',
+            }}
+          >
             <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
-              <a className="w-full h-full">
+              <a className="absolute inset-0 w-full h-full">
                 <ProductImages product={product} />
               </a>
             </Link>
+          </div>
+          <div className="w-full h-full flex-grow flex-shrink-0">
             <ProductInfo product={product} />
           </div>
         </div>
@@ -105,10 +127,12 @@ const ProductImages = ({ product }) => {
         setHover(undefined)
       }}
     >
-      {product.images.map((image: StrapiFile, i: number) => (
-        <div className="absolute inset-0 z-0" key={i}>
-          <div
-            className={`transition-opacity duration-1000 w-full h-full
+      {product.images.map((image: StrapiFile, i: number) => {
+        const format = image.formats.small || image
+        return (
+          <div className="absolute inset-0 z-0" key={format.url}>
+            <div
+              className={`transition-opacity duration-1000 w-full h-full
             ${
               i === 0 && !hover
                 ? 'opacity-100' // only show first image if not hovering
@@ -121,14 +145,16 @@ const ProductImages = ({ product }) => {
                 : 'opacity-0' // otherwise hide the image
             }
             `}
-          >
-            <ProductImage
-              alt={image.alternativeText}
-              src={getURL(image.formats.small?.url || image.url)}
-            />
+            >
+              <ProductImage
+                alt={image.alternativeText}
+                src={getURL(format.url)}
+                ratio={format.height / format.width}
+              />
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
@@ -141,7 +167,7 @@ const myLoader = ({ src, width, quality }) => {
   // )}&w=${width}&q=${quality || 75}`
 }
 
-const ProductImage = ({ alt, src }) => (
+const ProductImage = ({ alt, src, ratio }) => (
   <div className="relative h-full">
     {/* <div className="absolute top-0 right-0 p-2"> */}
     {/*   <Icon size={20} name="heart" /> */}
@@ -151,7 +177,7 @@ const ProductImage = ({ alt, src }) => (
       alt={alt}
       src={src}
       layout="fill"
-      objectFit="contain"
+      objectFit={ratio > 1.8 ? 'contain' : 'cover'}
     />
   </div>
 )
@@ -164,7 +190,7 @@ const rentalPrice = (low: number, high: number): string => {
 }
 
 const ProductInfo = ({ product }) => (
-  <div className="flex-row justify-between mt-4">
+  <div className="flex-row justify-between mt-4 relative flex-grow">
     <div className="flex-grow">
       <Link href={`/designers/${product.designer?.slug}`}>
         <a>

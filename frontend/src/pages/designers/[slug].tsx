@@ -23,7 +23,7 @@ export const Page = ({ data }) => {
 
           <div className="flex-row flex-wrap w-full">
             {designer.products.map((product: StrapiProduct) => (
-              <Product key={product.slug} product={product} />
+              <Product product={product} />
             ))}
           </div>
         </div>
