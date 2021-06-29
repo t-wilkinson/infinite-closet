@@ -85,7 +85,7 @@ export const Product = ({ product }: any) => {
           <div
             className="relative w-full md:h-0"
             style={{
-              paddingTop: '173%',
+              paddingTop: '100%',
             }}
           >
             <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
@@ -177,7 +177,8 @@ const ProductImage = ({ alt, src, ratio }) => (
       alt={alt}
       src={src}
       layout="fill"
-      objectFit={ratio > 1.8 ? 'contain' : 'cover'}
+      objectFit="contain"
+      // objectFit={ratio > 1.8 ? 'contain' : 'cover'}
     />
   </div>
 )
