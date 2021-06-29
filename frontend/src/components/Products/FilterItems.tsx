@@ -52,9 +52,9 @@ export const FilterItems: FilterItems = {
       ? matches
       : designers.map((_: unknown, i: number) => i)
     const sortedMatchedIndexes = matchedIndexes.sort((i1, i2) =>
-      Number(
-        designers[i1].slug.toUpperCase() > designers[i2].slug.toUpperCase(),
-      ),
+      designers[i1].slug.toUpperCase() > designers[i2].slug.toUpperCase()
+        ? 1
+        : -1,
     )
 
     return (
@@ -256,7 +256,7 @@ const pickFgColorFromBgColor = (
 }
 
 const FilterCheckboxes = ({ panel, data, sort = true }) => {
-  data = sort ? data?.sort((v1, v2) => Number(v1.slug > v2.slug)) : data
+  data = sort ? data?.sort((v1, v2) => (v1.slug > v2.slug ? 1 : -1)) : data
 
   return data?.map((v: { slug: string; name: string }) => (
     <div key={v.slug} className="py-0.5">

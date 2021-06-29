@@ -46,7 +46,18 @@ function range({ startDate, shippingDate, rentalLength }) {
   const start = arrival(shipped);
   const end = start.add(rentalLength, "hours");
   const cleaned = end.add(HOURS_SEND_CLEANERS, "hours"); // at this point the order arrives at the cleaner
-  const completed = cleaned.add(HOURS_TO_CLEAN, "hours");
+
+  // oxwash doesn't operate on saturday/sunday
+  // check if arrival date is on sunday, friday, or saturday
+  let CLEANING_DELAY = 0;
+  if (cleaned.date() === 0) {
+    CLEANING_DELAY += 24;
+  } else if (cleaned.date() === 5) {
+    CLEANING_DELAY += 48;
+  } else if (cleaned.date() === 6) {
+    CLEANING_DELAY += 72;
+  }
+  const completed = cleaned.add(HOURS_TO_CLEAN + CLEANING_DELAY, "hours");
 
   return { shipped, start, end, cleaned, completed };
 }

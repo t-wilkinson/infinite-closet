@@ -9,8 +9,8 @@ import {
   StrapiWeather,
   StrapiStyle,
   StrapiCategory,
-  StrapiSize,
 } from '@/utils/models'
+import { Size } from '@/Products/constants'
 
 import { CookieConsent } from './types'
 
@@ -23,7 +23,7 @@ export interface State {
     designers: StrapiDesigner[]
     styles: StrapiStyle[]
     categories: StrapiCategory[]
-    sizes: StrapiSize[]
+    sizes: Size[]
   }
   loading: boolean
   headerOpen: boolean

@@ -77,7 +77,7 @@ const UserInfo = ({ fields, dispatch }) => {
 
   return (
     <>
-      <div className="flex-row space-x-4">
+      <div className="flex-row space-x-4 -mb-2">
         <Input {...fields.firstName} />
         <Input {...fields.lastName} />
       </div>
@@ -87,9 +87,8 @@ const UserInfo = ({ fields, dispatch }) => {
         <CallToAction
           onClick={() => dispatch({ type: 'edit-payment' })}
           disabled={disabled}
-          className={`mt-2 ${
-            disabled ? 'bg-pri-light' : 'hover:bg-sec bg-pri'
-          }`}
+          className={`mt-2
+          `}
           type="button"
         >
           Continue

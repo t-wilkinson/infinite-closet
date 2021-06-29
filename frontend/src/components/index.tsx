@@ -52,7 +52,10 @@ export const CallToAction = ({
     aria-label="Activate call to action"
   >
     <div
-      className={`items-center content-center p-4 bg-pri ${className}`}
+      className={`items-center content-center p-3 bg-pri
+        ${className}
+        ${disabled ? 'bg-pri-light' : 'hover:bg-sec bg-pri'}
+      `}
       {...props}
     >
       <span className="text-white" children={children} />

@@ -6,8 +6,8 @@ const showRange = (range, status) => {
   let date;
   // prettier-ignore
   switch (status) {
-    case "planning": date = range.shipped; break;
-    case "cleaning": date = range.cleaned; break;
+    case "planning": date = range.shipped; break; // when planning, order needs to be shipped
+    case "cleaning": date = range.completed; break; // when/after cleaning, order is completed once recieved
   }
   return dayjs(date).format("ddd, MMM DD");
 };
