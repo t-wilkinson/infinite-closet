@@ -5,7 +5,7 @@ module.exports = {
       {
         '@babel/preset-env': {
           targets: {
-            browsers: ['>0.03%'],
+            browsers: ['>0.3%', 'not dead'],
             corejs: { version: 3, proposals: true },
           },
           useBuiltIns: 'entry',

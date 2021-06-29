@@ -24,6 +24,9 @@ main {
   -ms-flex-direction: column;
   flex-direction: column;
   -webkit-box-orient: vertical;
+
+  flex: 0 1 auto;
+  min-height: min-content;
 }
 
 .font-subheader {
