@@ -151,7 +151,9 @@ export const toRows = (column, serverRoutes) => {
       return acc
     }, serverRows) || column.data
   )
-    .sort((row) => (row.slug === undefined ? 1 : -1))
+    .sort((r1, r2) =>
+      r1.slug === r2.slug ? 0 : r1.slug === undefined ? -1 : 0,
+    )
     .map((row) => ({
       ...row,
       href:
