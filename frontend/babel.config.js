@@ -2,11 +2,12 @@ module.exports = {
   presets: [
     'next/babel',
     {
-      'preset-env': {
+      '@babel/preset-env': {
         targets: {
           browsers: ['>0.03%'],
+          corejs: { version: 3, proposals: true },
         },
-        useBuiltIns: 'usage',
+        useBuiltIns: 'entry',
       },
     },
   ],
