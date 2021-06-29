@@ -53,7 +53,7 @@ function totalPrice({ insurance, cart }) {
 }
 
 function price(order) {
-  // const date = dayjs(order.date);
+  // const date = dayjs(order.startDate);
   // const today = dayjs();
   // const dateBefore = (duration) =>
   //   date.isBefore(today.add(dayjs.duration(duration)), "hour");

@@ -53,12 +53,17 @@ export const productRentContents = {
 
     const addToCart = () => {
       setStatus('adding')
+      const size = product.sizes[state.size]
+      if (!size) {
+        setStatus('error')
+      }
+
       axios
         .post(
           '/orders',
           {
             status: 'cart',
-            size: unNormalizeSize(product.sizes[state.size].size),
+            size: unNormalizeSize(size.size),
             date: state.selectedDate.toJSON(),
             rentalLength: state.oneTime,
             product: product.id,

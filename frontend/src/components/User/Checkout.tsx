@@ -178,7 +178,7 @@ export const Checkout = ({ user, data }) => {
               <div>
                 <BlueLink
                   href="/products/clothing"
-                  label="Would you like to go shopping?"
+                  label="Would you like to browse our collection?"
                 />
               </div>
             </span>

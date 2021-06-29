@@ -6,8 +6,8 @@ export const socialMediaLinks = {
 }
 
 export const rentalLengths = {
-  short: 4,
-  long: 8,
+  short: 4 - 1,
+  long: 8 - 1,
 }
 
 const routes = [

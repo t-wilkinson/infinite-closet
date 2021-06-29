@@ -4,7 +4,7 @@ const hived = {
   parcels: "https://api.airtable.com/v0/appDFURl2nEJd1XEF/Parcels",
   postcodes: "https://api.airtable.com/v0/app5ZWdAtj21xnZrh/Postcodes",
   key: "keyzCmMhMH9fvKBPV",
-  // shippingClass: "2-Day", // Same-Day Next-Day 2-Day
+  shippingClass: "2-Day", // Same-Day Next-Day 2-Day
 };
 
 const addresses = {
@@ -81,7 +81,10 @@ module.exports = {
 
     let hivedBody = {
       Shipping_Class: hived.shippingClass,
-      Sender: "Infinite Closet",
+      Sender:
+        process.env.NODE_ENV === "production"
+          ? "Infinite Closet"
+          : "Infinite Closet Testing",
       Value_GBP: price,
       // Sender_Chosen_Collection_Date: MM/DD/YYYY
       // Sender_Chosen_Delivery_Date: MM/DD/YYYY
@@ -92,7 +95,7 @@ module.exports = {
         hivedBody,
         toAddress(addresses.infinitecloset, "Collection"),
         toAddress(orderAddress, "Recipient"),
-        { Shipping_Class: "Next-Day" }
+        { Shipping_Class: "2-Day" }
       );
     } else if (order.status === "cleaning") {
       Object.assign(
@@ -103,13 +106,17 @@ module.exports = {
       );
     }
 
-    return await fetch(hived.parcels, {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + hived.key,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(hivedBody),
-    });
+    if (process.env.NODE_ENV === "production") {
+      return await fetch(hived.parcels, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + hived.key,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(hivedBody),
+      }).then((res) => res.json());
+    } else {
+      return { id: crypto.randomBytes(16).toString("base64") };
+    }
   },
 };

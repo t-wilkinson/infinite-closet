@@ -33,11 +33,11 @@
       "type": "string",
       "required": true
     },
-    "date": {
+    "startDate": {
       "type": "date"
     },
     "shippingDate": {
-      "type": "date"
+      "type": "datetime"
     },
     "rentalLength": {
       "type": "enumeration",

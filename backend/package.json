@@ -9,12 +9,11 @@
     "start": "strapi start",
     "build": "strapi build",
     "strapi": "strapi",
-    "test": "jest"
+    "test": "jest --forceExit --detectOpenHandles"
   },
   "dependencies": {
     "@mailchimp/mailchimp_transactional": "^1.0.27",
     "dayjs": "^1.10.4",
-    "googleapis": "^72.0.0",
     "knex": "0.95.0",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
@@ -30,6 +29,7 @@
     "strapi-provider-email-google-workspace": "file:providers/strapi-provider-email-google-workspace",
     "strapi-utils": "3.5.4",
     "stripe": "^8.148.0",
+    "googleapis": "^72.0.0",
     "ws": "^7.4.6"
   },
   "author": {
@@ -46,6 +46,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "jest": "^27.0.4"
+    "jest": "^27.0.4",
+    "supertest": "^6.1.3",
+    "sqlite3": "^5.0.2"
   }
 }

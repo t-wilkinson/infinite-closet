@@ -7,7 +7,7 @@
   "keywords": [
     "email",
     "strapi",
-    "sendgrid"
+    "google"
   ],
   "strapi": {
     "isProvider": true

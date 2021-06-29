@@ -23,7 +23,7 @@ export const DatePicker = ({ state, dispatch, rentalLength }) => {
     return null
   }
   return (
-    <div className="fixed inset-0 items-center justify-center bg-opacity-50 bg-black z-20">
+    <div className="fixed inset-0 items-center justify-center bg-opacity-50 bg-black z-30">
       <div className="bg-white p-6">
         <div className="self-end pb-4">
           <button onClick={() => dispatch(shopActions.hideDate())}>

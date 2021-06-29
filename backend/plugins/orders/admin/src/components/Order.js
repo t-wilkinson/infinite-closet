@@ -2,12 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import dayjs from "dayjs";
 
-const showRange = (ranges, status) => {
+const showRange = (range, status) => {
   let date;
   // prettier-ignore
   switch (status) {
-    case "planning": date = ranges.start; break;
-    case "cleaning": date = ranges.cleaning; break;
+    case "planning": date = range.shipped; break;
+    case "cleaning": date = range.cleaned; break;
   }
   return dayjs(date).format("ddd, MMM DD");
 };
@@ -16,12 +16,10 @@ const Order = ({ selected, className, order, ...props }) => {
   const [range, setRange] = React.useState();
 
   React.useEffect(() => {
-    fetch(
-      `${strapi.backendURL}/orders/dates/range?date=${order.date}&length=${order.rentalLength}`,
-      {
-        method: "GET",
-      }
-    )
+    fetch(`${strapi.backendURL}/orders/dates/range`, {
+      method: "POST",
+      body: JSON.stringify(order),
+    })
       .then((res) => res.json())
       .then((res) => setRange(res.range));
   }, []);

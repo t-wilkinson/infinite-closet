@@ -2,13 +2,8 @@
 
 module.exports = {
   async range(ctx) {
-    const query = ctx.request.query;
-    const { date, length } = query;
-    const range = strapi.plugins["orders"].services.date.range({
-      date,
-      rentalLength: length,
-    });
-
+    const body = ctx.request.body;
+    const range = strapi.plugins["orders"].services.date.range(body);
     ctx.send({ range });
   },
 

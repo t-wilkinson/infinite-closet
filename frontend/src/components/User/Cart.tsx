@@ -4,7 +4,10 @@ import Link from 'next/link'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+
 dayjs.extend(utc)
+dayjs.extend(timezone)
 
 import { fmtPrice } from '@/utils/money'
 import { getURL } from '@/utils/api'
@@ -31,7 +34,7 @@ export const Cart = ({ dispatch, cart, insurance }) => {
 }
 
 export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
-  const date = dayjs.utc(order.date).local() // order.date is utc
+  const date = dayjs(order.startDate).tz('Europe/London') // order.startDate is utc
   const startDate = date.format('ddd, MMM D')
   const endDate = date
     .add(rentalLengths[order.rentalLength], 'day')
