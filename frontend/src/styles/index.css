@@ -14,18 +14,14 @@ button {
   font-weight: inherit;
 }
 
+details summary::-webkit-details-marker {
+  display: none;
+}
+
 div,
 main {
-  display: flex; /* NEW, Spec - Firefox, Chrome, Opera */
-  display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6, BB7 */
-  display: -ms-flexbox; /* TWEENER - IE 10 */
-  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
-
-  -ms-flex-direction: column;
+  display: flex;
   flex-direction: column;
-  -webkit-box-orient: vertical;
-
-  flex: 0 1 auto;
   min-height: min-content;
 }
 

@@ -32,7 +32,7 @@ const ProductItemsWrapper = ({ data, loading }) => {
   const sortBy = useSelector((state) => state.products.sortBy)
 
   return (
-    <div className="w-full">
+    <div className="w-full flex-shrink">
       <Header
         router={router}
         data={data}

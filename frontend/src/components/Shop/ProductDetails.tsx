@@ -41,7 +41,7 @@ export const ProductDetails = ({
         }}
         open={selected}
       >
-        <summary className="list-none cursor-pointer">
+        <summary className="list-none cursor-pointer appearance-none">
           <div className="px-2 py-4 flex-row justify-between items-center">
             <span className={`${selected ? 'font-bold' : ''}`}>
               {item.label}
