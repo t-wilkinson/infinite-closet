@@ -64,28 +64,13 @@ export default ProductItems
 
 export const Product = ({ product }: any) => {
   return (
-    // <div className="w-1/2 lg:w-1/3 flex-shrink">
-    //   <div className="m-2 lg:m-4">
-    //     <div className="relative w-full md:h-0 overflow-hidden md:aspect-w-2 md:aspect-h-3 h-96">
-    //       <div className="absolute top-0 left-0 w-full h-full p-2 border-transparent border hover:border-gray">
-    //         <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
-    //           <a className="w-full h-full">
-    //             <ProductImages product={product} />
-    //           </a>
-    //         </Link>
-    //         <ProductInfo product={product} />
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
-
     <div className="w-1/2 lg:w-1/3 flex-shrink">
       <div className="m-2 lg:m-4 w-full">
         <div className="w-full h-full p-2 border-transparent border hover:border-gray">
           <div
             className="relative w-full md:h-0"
             style={{
-              paddingTop: '173%',
+              paddingTop: '120%',
             }}
           >
             <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
@@ -177,7 +162,8 @@ const ProductImage = ({ alt, src, ratio }) => (
       alt={alt}
       src={src}
       layout="fill"
-      objectFit={ratio > 1.8 ? 'contain' : 'cover'}
+      // objectFit="contain"
+      objectFit={ratio > 1.4 ? 'contain' : 'cover'}
     />
   </div>
 )
@@ -192,18 +178,22 @@ const rentalPrice = (low: number, high: number): string => {
 const ProductInfo = ({ product }) => (
   <div className="flex-row justify-between mt-4 relative flex-grow">
     <div className="flex-grow">
-      <Link href={`/designers/${product.designer?.slug}`}>
-        <a>
-          <span className="font-bold hover:underline">
-            {product.designer?.name}
-          </span>
-        </a>
-      </Link>
-      <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
-        <a className="hover:underline">
-          <span>{product.name}</span>
-        </a>
-      </Link>
+      <div className="inline-block">
+        <Link href={`/designers/${product.designer?.slug}`}>
+          <a>
+            <span className="font-bold hover:underline">
+              {product.designer?.name}
+            </span>
+          </a>
+        </Link>
+      </div>
+      <div className="inline-block">
+        <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
+          <a className="hover:underline">
+            <span>{product.name}</span>
+          </a>
+        </Link>
+      </div>
       <span className="text-sm">
         {sizeRange(product.sizes).sort(sortSizes).join(', ')}
       </span>
