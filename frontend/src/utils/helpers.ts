@@ -8,3 +8,6 @@ export const toTitleCase = (value: string) => {
   titlecase = titlecase.charAt(0).toUpperCase() + titlecase.slice(1)
   return titlecase
 }
+
+export const browser = (browser: string) =>
+  RegExp(browser, 'i').test(window.navigator.userAgent)
