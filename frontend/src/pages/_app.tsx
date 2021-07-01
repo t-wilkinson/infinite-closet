@@ -17,12 +17,31 @@ import SkipLink from '@/Layout/SkipLink'
 import Banner from '@/Layout/Banner'
 import { signin } from '@/User'
 const FourOFour = dynamic(() => import('@/pages/404'))
+import { browser } from '@/utils/helpers'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 // TODO: fetch avaialable categories and similar for header etc.
 const App = ({ router, Component, pageProps }) => {
+  React.useEffect(() => {
+    const sheet = document.styleSheets[1]
+
+    if (browser('chrome')) {
+      sheet.insertRule(
+        `div, main {
+            min-height: auto;
+          }`,
+      )
+    } else if (browser('safari')) {
+      sheet.insertRule(
+        `div, main {
+            min-height: min-content;
+          }`,
+      )
+    }
+  }, [])
+
   return (
     <>
       <Provider store={store}>
