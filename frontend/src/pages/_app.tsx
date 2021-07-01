@@ -25,21 +25,19 @@ axios.defaults.headers.post['Content-Type'] = 'application/json'
 // TODO: fetch avaialable categories and similar for header etc.
 const App = ({ router, Component, pageProps }) => {
   React.useEffect(() => {
-    const sheet = document.styleSheets[0]
+    const sheet = document.styleSheets[1]
 
     if (browser('chrome')) {
       sheet.insertRule(
         `div, main {
-        min-height: auto;
-      }`,
-        1,
+					min-height: auto;
+				}`,
       )
     } else if (browser('safari')) {
       sheet.insertRule(
         `div, main {
-        min-height: min-content;
-      }`,
-        1,
+					min-height: min-content;
+				}`,
       )
     }
   }, [])
