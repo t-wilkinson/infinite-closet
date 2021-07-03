@@ -23,6 +23,7 @@ services:
       dockerfile: Dockerfile
       args:
         NODE_ENV: production
+        FRONTEND_DOMAIN: infinitecloset.co.uk
     ports:
       - 1337:1337
     environment:
