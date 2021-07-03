@@ -283,7 +283,9 @@ const SizeChart = ({ product, sizeEnum, chart, close, measurements }) => {
       <table className="table-fixed border border-gray-light">
         <thead className="border border-gray-light">
           <tr className="border-b border-gray-light">
-            <th colSpan={chart.length + 1}>{product.name} Measurements</th>
+            <th className="text-center" colSpan={chart.length + 1}>
+              {product.name} Measurements (cm)
+            </th>
           </tr>
           <tr className="border-b border-gray-light">
             <th scope="col" />

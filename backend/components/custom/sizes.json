@@ -8,6 +8,7 @@
   "options": {},
   "attributes": {
     "size": {
+      "unique": false,
       "type": "enumeration",
       "enum": [
         "XXS",
@@ -24,6 +25,7 @@
       ]
     },
     "sizeRange": {
+      "unique": false,
       "type": "enumeration",
       "enum": [
         "XS",
@@ -46,9 +48,7 @@
     },
     "units": {
       "type": "enumeration",
-      "enum": [
-        "cm"
-      ],
+      "enum": ["cm"],
       "default": "cm"
     },
     "hips": {
