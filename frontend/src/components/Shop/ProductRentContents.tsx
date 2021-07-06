@@ -122,9 +122,9 @@ export const productRentContents = {
               <span className="underline">Size Chart</span>
             </button>
           </div>
-          <div className="relative">
-            <div id="mySize" />
-          </div>
+          {/* <div className="relative"> */}
+          {/*   <div id="mySize" /> */}
+          {/* </div> */}
         </SelectorItem>
 
         <SelectorItem label="Rental time" className="my-2">
