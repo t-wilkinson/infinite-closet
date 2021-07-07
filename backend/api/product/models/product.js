@@ -20,7 +20,7 @@ module.exports = {
         if (filter === "sizes") {
           const sizes = await strapi
             .query("custom.sizes")
-            .find({ id_in: data[filter].map((v) => v.id) });
+            .find({ id_in: data[filter].map((v) => v.id).filter((id) => id) });
           let slugs = new Set();
 
           for (const size of sizes) {
@@ -38,7 +38,7 @@ module.exports = {
         } else if (filter in data) {
           const values = await strapi
             .query(model)
-            .find({ id_in: data[filter] });
+            .find({ id_in: data[filter].filter((id) => id) });
           const slugs = values.map((v) => v.slug).join(",");
           data[`${filter}_`] = slugs;
         }
