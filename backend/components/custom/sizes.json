@@ -8,6 +8,7 @@
   "options": {},
   "attributes": {
     "size": {
+      "required": false,
       "unique": false,
       "type": "enumeration",
       "enum": [
@@ -25,6 +26,7 @@
       ]
     },
     "sizeRange": {
+      "required": false,
       "unique": false,
       "type": "enumeration",
       "enum": [
