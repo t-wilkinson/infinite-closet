@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
 ARG NODE_ENV=development
+ARG FRONTEND_DOMAIN
 
 # alpine wont work for now because of the low-level `sharp` library
 FROM node:14-buster-slim as deps

@@ -70,7 +70,7 @@ export const Product = ({ product }: any) => {
           <div
             className="relative w-full md:h-0"
             style={{
-              paddingTop: '120%',
+              paddingTop: '100%',
             }}
           >
             <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
