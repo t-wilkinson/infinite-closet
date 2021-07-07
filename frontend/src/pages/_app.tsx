@@ -30,14 +30,14 @@ const App = ({ router, Component, pageProps }) => {
     if (browser('chrome')) {
       sheet.insertRule(
         `div, main {
-            min-height: auto;
-          }`,
+					min-height: auto;
+				}`,
       )
     } else if (browser('safari')) {
       sheet.insertRule(
         `div, main {
-            min-height: min-content;
-          }`,
+					min-height: min-content;
+				}`,
       )
     }
   }, [])
