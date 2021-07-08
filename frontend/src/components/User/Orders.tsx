@@ -81,8 +81,8 @@ export const OrderItem = ({ dispatch, product, insurance_, ...order }) => {
 
 const statuses = {
   planning: 'Recieved',
-  shipping: 'In cleaning',
-  cleaning: 'In cleaning',
+  shipping: 'In use',
+  cleaning: 'Completed',
   completed: 'Completed',
 }
 

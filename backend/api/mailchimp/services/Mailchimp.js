@@ -30,8 +30,25 @@ const normalizeTo = (to) => {
   return res;
 };
 
+const normalizeVars = (merge_vars) => {
+  if (Array.isArray(merge_vars)) {
+    return merge_vars;
+  } else {
+    return Object.entries(merge_vars).map(([k, v]) => ({
+      name: k,
+      content: v,
+    }));
+  }
+};
+
 const normalizeMessage = (message) => {
-  return { ...default_message, ...message, to: normalizeTo(message.to) };
+  let msg = { ...default_message, ...message };
+
+  msg.to = normalizeTo(message.to);
+  if ("global_merge_vars" in message) {
+    msg.global_merge_vars = normalizeVars(message.global_merge_vars);
+  }
+  return msg;
 };
 
 // TODO: use more intuitive global_merge_vars? `{name: content}`

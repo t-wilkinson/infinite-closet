@@ -47,8 +47,8 @@ class MyDocument extends Document {
           <meta name="theme-color" content={palette.pri1} />
 
           <link rel="manifest" href="/manifest.json" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link rel="shortcut icon" href="/favicon.ico" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link
             href="https://fonts.googleapis.com/css2?family=Barlow:wght@200;300&family=Cinzel&family=Lato:wght@400;700&display=swap"
             rel="stylesheet"

@@ -97,5 +97,5 @@ module.exports = {
     'active',
     'disabled',
   ],
-  plugins: [require('@tailwindcss/aspect-ratio')],
+  plugins: [],
 }

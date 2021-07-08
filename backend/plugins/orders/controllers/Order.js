@@ -90,6 +90,7 @@ module.exports = {
 
   async ship(ctx) {
     let { order } = ctx.request.body;
+    const user = order.user;
 
     if (order.status === "shipping") {
       ctx.send({ message: "Already shipping" });
@@ -102,6 +103,9 @@ module.exports = {
         shippingDate: dayjs().tz("Europe/London").toJSON(),
       }
     );
+    order = await strapi
+      .query("order", "orders")
+      .findOne({ id: order.id }, ["product", "user"]);
 
     const onError = async (err) => {
       await strapi
@@ -121,12 +125,11 @@ module.exports = {
       strapi.services.mailchimp.template("order-shipped", {
         to,
         subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
-        global_merge_vars: [
-          {
-            name: "shipping_date",
-            content: dayjs(order.startDate).format("ddd, MMM DD"),
-          },
-        ],
+        global_merge_vars: {
+          firstName: user.firstName,
+          image: order.product.image.url,
+          shippingDate: dayjs(order.startDate).format("ddd, MMM DD"),
+        },
       });
 
     if (process.NODE_ENV === "production") {
