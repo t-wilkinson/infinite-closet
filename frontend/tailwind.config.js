@@ -43,17 +43,17 @@ module.exports = {
       colors: {
         ...palette,
         pri: {
-          default: palette.pri1,
+          DEFAULT: palette.pri1,
           light: palette.pri2,
         },
         sec: {
-          default: palette.sec1,
+          DEFAULT: palette.sec1,
           light: palette.sec2,
         },
         gray: {
           ...colors.gray,
           light: '#efefef',
-          default: '#5f6368',
+          DEFAULT: '#5f6368',
           dark: '#505050',
         },
         fg: palette.black,
@@ -63,7 +63,7 @@ module.exports = {
       container: {
         center: true,
         padding: {
-          default: '1rem',
+          DEFAULT: '1rem',
           md: '2rem',
         },
       },

@@ -1,0 +1,36 @@
+{
+  "name": "react-emails-example",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "autoprefixer": "^10.2.6",
+    "babel-cli": "6.24.1",
+    "babel-eslint": "7.0.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
+    "babel-preset-react-app": "3.1.1",
+    "eslint": "4.9.0",
+    "eslint-config-airbnb": "16.1.0",
+    "eslint-config-react-app": "0.3.0",
+    "eslint-plugin-flowtype": "2.21.0",
+    "eslint-plugin-import": "2.7.0",
+    "eslint-plugin-jsx-a11y": "6.0.2",
+    "eslint-plugin-react": "7.4.0",
+    "node-fetch": "2.1.2",
+    "postcss": "^8.3.5",
+    "react-scripts": "1.1.4",
+    "tailwindcss": "^2.2.4"
+  },
+  "dependencies": {
+    "date-fns": "1.28.3",
+    "dayjs": "^1.10.6",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "scripts": {
+    "build": "NODE_ENV=production npx tailwindcss -i ./src/tailwind.css -o ./src/inlined.css && NODE_ENV=production babel src --out-dir build",
+    "css": "NODE_ENV=development npx tailwindcss -i ./src/tailwind.css -o ./src/inlined.css",
+    "start": "react-scripts start",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
