@@ -5,12 +5,9 @@
 
 # testing
 /coverage
+!/build
 
 # Compiled files
-/build
-/emails
-
-inlined.css
 
 # misc
 .DS_Store
