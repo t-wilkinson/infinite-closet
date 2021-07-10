@@ -3,11 +3,24 @@
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 const dayjs = require('dayjs');
 
+function orderValid(order, numAvailable, dateValid) {
+  return (
+    dateValid &&
+    numAvailable[strapi.plugins['orders'].services.order.toKey(order)] > 1
+  );
+}
+
 module.exports = {
   async totalPrice(ctx) {
     const body = ctx.request.body;
+    const numAvailable = await strapi.plugins[
+      'orders'
+    ].services.order.numAvailable(body.cart);
+
     const total = strapi.plugins['orders'].services.price.totalPrice({
-      cart: body.cart,
+      cart: body.cart.filter((order) =>
+        orderValid(order, numAvailable, order.dateValid)
+      ),
       insurance: body.insurance,
     });
     ctx.send(total);
@@ -39,7 +52,7 @@ module.exports = {
         ...order,
         price: strapi.plugins['orders'].services.price.price(order),
         available: numAvailable[key],
-        valid: dateValid,
+        valid: orderValid(order, numAvailable, dateValid),
         dateValid,
         shippingClass:
           strapi.plugins['orders'].services.date.shippingClass(order),
