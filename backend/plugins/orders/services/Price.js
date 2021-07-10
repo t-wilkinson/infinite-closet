@@ -15,11 +15,10 @@ const rentalPrice = {
   long: 'longRentalPrice',
 };
 
-// const shippingPrices = {
-//   "next-day": 9.95,
-//   "one-day": 0,
-//   "two-day": 0,
-// };
+const shippingPrices = {
+  one: 9.95,
+  two: 0,
+};
 
 const toAmount = (price) => price * SMALLEST_CURRENCY_UNIT;
 const toPrice = (amount) => amount / SMALLEST_CURRENCY_UNIT;
@@ -29,7 +28,7 @@ function totalAmount(props) {
 
   const amount = {};
   for (const key in price) {
-    amount[key] = price[key] * SMALLEST_CURRENCY_UNIT;
+    amount[key] = toAmount(price[key]);
   }
 
   return amount;
@@ -43,28 +42,27 @@ function totalPrice({ insurance, cart }) {
     ).length * INSURANCE_PRICE;
   const subtotal = cartPrice(cart);
 
-  const total = subtotal + insurancePrice;
+  const shippingPrice = cart.reduce((acc, order) => {
+    if (order.shippingClass) {
+      return acc + shippingPrices[order.shippingClass];
+    }
+    return acc;
+  }, 0);
+  const total = subtotal + insurancePrice + shippingPrice;
 
   return {
     subtotal,
+    shipping: shippingPrice,
     insurance: insurancePrice,
     total,
   };
 }
 
 function price(order) {
-  // const date = dayjs(order.startDate);
-  // const today = dayjs();
-  // const dateBefore = (duration) =>
-  //   date.isBefore(today.add(dayjs.duration(duration)), "hour");
-  // const shippingType = dateBefore({ days: 1, hours: 12 })
-  //   ? "next-day"
-  //   : dateBefore({ days: 2, hours: 12 })
-  //   ? "one-day"
-  //   : "next-day";
+  const shippingClass =
+    strapi.plugins['orders'].services.date.shippingClass(order);
+  const shippingPrice = shippingPrices[shippingClass];
 
-  // const shippingPrice = shippingPrices[shippingType];
-  const shippingPrice = 0;
   const productPrice = order.product[rentalPrice[order.rentalLength]];
   const insurancePrice = order.insurance ? INSURANCE_PRICE : 0;
 

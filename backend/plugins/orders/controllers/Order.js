@@ -81,6 +81,7 @@ module.exports = {
       ]);
 
     for (const order of orders) {
+      strapi.plugins['orders'].services.date.shippingClass(order);
       order.price = strapi.plugins['orders'].services.price.price(order);
     }
 
@@ -101,7 +102,7 @@ module.exports = {
       { id: order.id },
       {
         status: 'shipping',
-        shippingDate: dayjs().tz('Europe/London').toJSON(),
+        shippingDate: strapi.plugins['orders'].services.date.day().toJSON(),
       }
     );
     order = await strapi

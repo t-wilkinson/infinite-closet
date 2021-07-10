@@ -28,8 +28,8 @@ module.exports = {
       orders.map(async (order) => {
         const user = order.user;
         const range = strapi.plugins['orders'].services.date.range(order);
-        const date = dayjs(range.start).tz('Europe/London');
-        const today = dayjs().tz('Europe/London');
+        const date = strapi.plugins['orders'].services.date.day(range.start);
+        const today = strapi.plugins['orders'].services.date.day();
 
         if (!date.isSame(today, 'day')) return;
         const complete = await strapi.plugins[
@@ -57,8 +57,8 @@ module.exports = {
   async sendToCleaners(orders) {
     for (const order of orders) {
       const range = strapi.plugins['orders'].services.date.range(order);
-      const date = dayjs(range.end).tz('Europe/London');
-      const today = dayjs().tz('Europe/London');
+      const date = strapi.plugins['orders'].services.date.day(range.end);
+      const today = strapi.plugins['orders'].services.date.day();
       if (date.isSame(today, 'day')) continue;
 
       strapi.log.info('cleaning order %o', order.id);

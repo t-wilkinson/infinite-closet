@@ -41,6 +41,8 @@ module.exports = {
         available: numAvailable[key],
         valid: dateValid,
         dateValid,
+        shippingClass:
+          strapi.plugins['orders'].services.date.shippingClass(order),
       };
     });
 

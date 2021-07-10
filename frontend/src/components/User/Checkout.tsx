@@ -290,6 +290,7 @@ const Summary = ({ state: { total } }) => {
     <div>
       <Price label="Subtotal" price={total.subtotal} />
       <Price label="Insurance" price={total.insurance} />
+      <Price label="Shipping" price={total.shipping} />
       <div className="h-px bg-pri my-1" />
       <Price label="Total" price={total.total} className="font-bold" />
     </div>
