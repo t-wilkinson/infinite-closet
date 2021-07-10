@@ -311,10 +311,12 @@ const Join = ({ dispatch, state, fields }) => {
         } else {
           return axios.post('/launch/party/join', {
             name: `${cleaned.firstName} ${cleaned.lastName}`,
+            firstName: cleaned.firstName,
+            lastName: cleaned.lastName,
             email: cleaned.email,
             phone: cleaned.phoneNumber ? cleaned.phoneNumber : undefined,
             paymentMethod: res.paymentMethod.id,
-            donation: cleaned.donation,
+            donation: parseFloat(cleaned.donation),
             promoCode: state.promoValid ? cleaned.promoCode : null,
           })
         }

@@ -53,7 +53,7 @@ export const ProductItems = ({ data, loading }) => {
     return (
       <div className="w-full flex-row flex-wrap">
         {data.products?.map((product: StrapiProduct) => (
-          <Product product={product} />
+          <Product key={product.id} product={product} />
         ))}
       </div>
     )

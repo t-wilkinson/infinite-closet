@@ -1,26 +1,26 @@
-"use strict";
+'use strict';
 
-const _ = require("lodash");
+const _ = require('lodash');
 
 module.exports = {
   async contact(ctx) {
     const body = ctx.request.body;
 
-    await strapi.services.mailchimp.template("contact-us", {
-      to: "info@infinitecloset.co.uk",
+    await strapi.services.mailchimp.template('contact-us', {
+      to: 'info@infinitecloset.co.uk',
       subject: `[Contact] ${body.firstName} ${body.lastName}`,
-      global_merge_vars: [
-        { name: "firstName", content: body.firstName },
-        { name: "lastName", content: body.lastName },
-        { name: "emailAddress", content: body.emailAddress },
-        { name: "phoneNumber", content: body.phoneNumber },
-        { name: "message", content: body.message },
-      ],
+      global_merge_vars: {
+        firstName: body.firstName,
+        lastName: body.lastName,
+        emailAddress: body.emailAddress,
+        phoneNumber: body.phoneNumber,
+        message: body.message,
+      },
     });
 
-    await strapi.query("contact").create({
+    await strapi.query('contact').create({
       contact: body.email,
-      context: "contact",
+      context: 'contact',
       metadata: {
         firstName: body.firstname,
         lastName: body.lastName,

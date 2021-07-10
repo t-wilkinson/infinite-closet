@@ -1,5 +1,5 @@
-const _ = require("lodash");
-const models = require("../../../data/data.js").models;
+const _ = require('lodash');
+const models = require('../../../data/data.js').models;
 
 class DefaultDict {
   constructor(defaultInit) {
@@ -10,7 +10,7 @@ class DefaultDict {
           name in target
             ? target[name]
             : (target[name] =
-                typeof defaultInit === "function"
+                typeof defaultInit === 'function'
                   ? new defaultInit().valueOf()
                   : defaultInit),
       }
@@ -32,17 +32,17 @@ const partitionObject = (object, predicate) =>
   );
 
 const productFilters = [
-  "designers",
-  "fits",
-  "colors",
-  "occasions",
-  "weather",
-  "categories",
-  "styles",
-  "sizes",
+  'designers',
+  'fits',
+  'colors',
+  'occasions',
+  'weather',
+  'categories',
+  'styles',
+  'sizes',
 ];
 
-const toPrivate = (key) => key + "_";
+const toPrivate = (key) => key + '_';
 
 const toRaw = (_where) => {
   const filterSlugs = _.pick(_where, productFilters);
@@ -50,8 +50,8 @@ const toRaw = (_where) => {
   let query = [];
 
   const addSlug = (filter, slug) => {
-    if (filter === "designers") {
-      values.push("designers.slug");
+    if (filter === 'designers') {
+      values.push('designers.slug');
     } else {
       values.push(toPrivate(filter));
     }
@@ -62,40 +62,40 @@ const toRaw = (_where) => {
   // (category1 AND ...) AND (color1 OR ...) AND (occasion1 OR ...) AND ...
   for (const [filter, slugs] of Object.entries(filterSlugs)) {
     // slugs is either a single string or list of strings
-    if (typeof slugs === "string") {
+    if (typeof slugs === 'string') {
       addSlug(filter, slugs);
-      query.push("?? like ?");
+      query.push('?? like ?');
     } else {
       const q = [];
       for (const slug of slugs) {
         addSlug(filter, slug);
-        q.push("?? like ?");
+        q.push('?? like ?');
       }
-      if (filter === "categories") {
-        query.push(q.join(" AND "));
+      if (filter === 'categories') {
+        query.push(q.join(' AND '));
       } else {
-        query.push("( " + q.join(" OR ") + " )");
+        query.push('( ' + q.join(' OR ') + ' )');
       }
     }
   }
 
-  return [query.join(" AND "), values];
+  return [query.join(' AND '), values];
 };
 
 async function queryProducts(knex, _where, _paging) {
   // TODO: handle paging in SQL
-  const sort = `products.${_paging.sort.replace(":", " ")}`;
+  const sort = `products.${_paging.sort.replace(':', ' ')}`;
   const results = await knex
-    .select("products.id as id")
-    .from("products")
-    .join("designers", "products.designer", "designers.id")
+    .select('products.id as id')
+    .from('products')
+    .join('designers', 'products.designer', 'designers.id')
     .orderByRaw(sort)
-    .whereNotNull("products.published_at")
+    .whereNotNull('products.published_at')
     .whereRaw(...toRaw(_where));
 
   const products = await Promise.all(
     results.map(({ id }) =>
-      strapi.query("product").findOne({ id }, ["designer", "images", "sizes"])
+      strapi.query('product').findOne({ id }, ['designer', 'images', 'sizes'])
     )
   );
   return products;
@@ -104,9 +104,9 @@ async function queryProducts(knex, _where, _paging) {
 async function queryFilters(knex, _where) {
   // here we find all filters in products under only the category filter
   const results = await knex
-    .select("products.*")
-    .from("products")
-    .whereNotNull("products.published_at")
+    .select('products.*')
+    .from('products')
+    .whereNotNull('products.published_at')
     .whereRaw(...toRaw({ categories: _where.categories }));
 
   /* TODO: don't show filters that would result in 0 products showing up
@@ -122,10 +122,10 @@ async function queryFilters(knex, _where) {
         if (!slugs) {
           continue;
         }
-        for (const slug of slugs.split(",")) {
+        for (const slug of slugs.split(',')) {
           filterSlugs[filter].add(slug);
         }
-      } else if (filter === "designers") {
+      } else if (filter === 'designers') {
         filterSlugs[filter].add(product.designer);
       } else {
         filterSlugs[filter].add(product[filter]);
@@ -138,14 +138,14 @@ async function queryFilters(knex, _where) {
   let filters = new DefaultDict({});
   for (const [filter, slugs] of Object.entries(filterSlugs)) {
     if (filter in models) {
-      if (filter === "sizes") {
+      if (filter === 'sizes') {
         // prettier-ignore
         let sizes = await knex
-          .select(`components_custom_sizes.* as sizes`)
-          .from("components_custom_sizes")
-          .distinctOn("components_custom_sizes.size")
+          .select('components_custom_sizes.* as sizes')
+          .from('components_custom_sizes')
+          .distinctOn('components_custom_sizes.size')
           .whereRaw(
-            Array(slugs.size).fill(`components_custom_sizes.size = ?`).join(" OR "),
+            Array(slugs.size).fill('components_custom_sizes.size = ?').join(' OR '),
             Array.from(slugs)
           );
 
@@ -167,22 +167,22 @@ async function queryFilters(knex, _where) {
           .distinct(`${filter}.id`)
           .from(filter)
           .whereRaw(
-            Array(slugs.size).fill(`${filter}.slug = ?`).join(" OR "),
+            Array(slugs.size).fill(`${filter}.slug = ?`).join(' OR '),
             Array.from(slugs)
           );
       }
-    } else if (filter === "designers") {
+    } else if (filter === 'designers') {
       // prettier-ignore
       filters[filter] = await knex
         .select(`${filter}.*`)
         .from(filter)
         .whereRaw(
-          Array(slugs.size).fill(`${filter}.id = ?`).join(" OR "),
+          Array(slugs.size).fill(`${filter}.id = ?`).join(' OR '),
           Array.from(slugs)
         );
     } else {
       strapi.log.warn(
-        "controllers:product:query: the query query for %s is not implemented",
+        'controllers:product:query: the query query for %s is not implemented',
         filter
       );
     }
@@ -193,10 +193,10 @@ async function queryFilters(knex, _where) {
 
 async function queryCategories(query) {
   const queryCategories =
-    typeof query.categories === "string"
+    typeof query.categories === 'string'
       ? [query.categories]
       : query.categories;
-  const unorderedCategories = await strapi.query("category").find({
+  const unorderedCategories = await strapi.query('category').find({
     slug_in: query.categories,
   });
   let categories = [];
@@ -220,7 +220,7 @@ module.exports = {
     const query = ctx.query;
 
     const [_paging, _where] = partitionObject(query, ([k, _]) =>
-      ["start", "limit", "sort"].includes(k)
+      ['start', 'limit', 'sort'].includes(k)
     );
 
     // TODO: can be sped up by a lot. use the results of `queryProducts` for the other two
@@ -244,8 +244,8 @@ module.exports = {
   },
 
   async routes(ctx) {
-    const categories = await strapi.query("category").find({
-      slug_in: ["clothing"],
+    const categories = await strapi.query('category').find({
+      slug_in: ['clothing'],
     });
 
     let routes = {};
@@ -253,7 +253,7 @@ module.exports = {
       routes[category.slug] = category;
     }
 
-    const occasions = await strapi.query("occasion").find({});
+    const occasions = await strapi.query('occasion').find({});
 
     ctx.send({
       routes,
@@ -263,12 +263,12 @@ module.exports = {
 
   async shopItem(ctx) {
     const slug = ctx.params.slug;
-    const product = await strapi.query("product").findOne({ slug });
+    const product = await strapi.query('product').findOne({ slug });
     ctx.send(product);
   },
 
   async sizeChart(ctx) {
-    let sizeChart = await strapi.query("size-chart").find();
+    let sizeChart = await strapi.query('size-chart').find();
     sizeChart = sizeChart.map((chart) =>
       Object.entries(chart).reduce((acc, [k, v]) => {
         acc[strapi.services.size.normalize(k)] = v;
@@ -283,7 +283,7 @@ module.exports = {
     ctx.send({
       chart: sizeChart,
       sizeEnum,
-      measurements: ["hips", "waist", "bust"],
+      measurements: ['hips', 'waist', 'bust'],
     });
   },
 };

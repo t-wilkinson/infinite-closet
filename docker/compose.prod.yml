@@ -33,6 +33,7 @@ services:
       DATABASE_PORT: 5432
       DATABASE_USERNAME: infinite-closet
       FRONTEND_DOMAIN: infinitecloset.co.uk
+      BACKEND_DOMAIN: api.infinitecloset.co.uk
       NODE_ENV: production
       STRIPE_KEY: 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
     command: yarn start

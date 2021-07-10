@@ -8,7 +8,7 @@ import { Submit, Input } from '@/Form'
 type Status = 'progress' | 'processing' | 'success' | 'error'
 
 export const Page = ({ data }) => {
-  const [status, setStatus] = React.useState<Status>('success')
+  const [status, setStatus] = React.useState<Status>('progress')
 
   const fields = useFields({
     firstName: { constraints: 'required' },

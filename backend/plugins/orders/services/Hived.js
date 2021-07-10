@@ -1,6 +1,6 @@
 const fetch = require("node-fetch");
 
-const hived = {
+const hivedApi = {
   parcels: "https://api.airtable.com/v0/appDFURl2nEJd1XEF/Parcels",
   postcodes: "https://api.airtable.com/v0/app5ZWdAtj21xnZrh/Postcodes",
   key: "keyzCmMhMH9fvKBPV",
@@ -40,83 +40,97 @@ const toAddress = (addr, role) => {
   return res;
 };
 
-module.exports = {
-  async verify(postcode) {
-    let valid;
+async function fetchHived(url, method, body = {}) {
+  return fetch(url, {
+    method,
+    headers: {
+      Authorization: "Bearer " + hivedApi.key,
+      "Content-Type": "application/json",
+    },
+    body:
+      method === "GET"
+        ? undefined
+        : JSON.stringify({
+            fields: body,
+          }),
+  }).then((res) => res.json());
+}
 
-    try {
-      const res = await fetch(hived.postcodes, {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + hived.key,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fields: {
-            Recipient_Postcode: postcode,
-          },
-        }),
-      }).then((res) => res.json());
-      valid = res.fields.Address_in_delivery_Area === "Valid";
-    } catch {
-      valid = false;
-    }
-
-    return valid;
+const api = {
+  shipment: {
+    ship: (shipment) => fetchHived(hivedApi.parcels, "POST", shipment),
+    retrieve: (shipment) =>
+      fetchHived(`${hivedApi.parcels}/${shipment}`, "GET"),
+    complete: (shipment) =>
+      fetchHived(`${hivedApi.parcels}/${shipment}`, "GET").then(
+        (res) => res.Tracking_ID_Complete === "COMPLETE"
+      ),
   },
-
-  async ship(order) {
-    const price = strapi.plugins["orders"].services.price.price(order);
-    const { address } = order;
-    const user = order.user;
-
-    const orderAddress = {
-      Name: address.firstName + " " + address.lastName,
-      Address_Line_1: address.address,
-      Town: address.town,
-      Postcode: address.postcode,
-      Email_Address: user.email,
-      Phone_Number: user.phoneNumber,
-    };
-
-    let hivedBody = {
-      Shipping_Class: hived.shippingClass,
-      Sender:
-        process.env.NODE_ENV === "production"
-          ? "Infinite Closet"
-          : "Infinite Closet Testing",
-      Value_GBP: price,
-      // Sender_Chosen_Collection_Date: MM/DD/YYYY
-      // Sender_Chosen_Delivery_Date: MM/DD/YYYY
-    };
-
-    if (order.status === "shipping") {
-      Object.assign(
-        hivedBody,
-        toAddress(addresses.infinitecloset, "Collection"),
-        toAddress(orderAddress, "Recipient"),
-        { Shipping_Class: "2-Day" }
-      );
-    } else if (order.status === "cleaning") {
-      Object.assign(
-        hivedBody,
-        toAddress(orderAddress, "Collection"),
-        toAddress(addresses.oxwash, "Recipient"),
-        { Shipping_Class: "2-Day" }
-      );
-    }
-
-    if (process.env.NODE_ENV === "production") {
-      return await fetch(hived.parcels, {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + hived.key,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(hivedBody),
-      }).then((res) => res.json());
-    } else {
-      return { id: crypto.randomBytes(16).toString("base64") };
-    }
+  postcode: {
+    verify: (postcode) =>
+      fetchHived(hivedApi.postcodes, "GET", { Recipient_Postcode: postcode }),
   },
 };
+
+async function verify(postcode) {
+  let valid;
+
+  try {
+    const res = api.postcode.verify(postcode);
+    valid = res.fields.Address_in_delivery_Area === "Valid";
+  } catch {
+    valid = false;
+  }
+
+  return valid;
+}
+
+async function ship(order) {
+  const price = strapi.plugins["orders"].services.price.price(order);
+  const { address } = order;
+  const user = order.user;
+
+  const orderAddress = {
+    Name: address.firstName + " " + address.lastName,
+    Address_Line_1: address.address,
+    Town: address.town,
+    Postcode: address.postcode,
+    Email_Address: user.email,
+    Phone_Number: user.phoneNumber,
+  };
+
+  let hivedBody = {
+    Shipping_Class: hivedApi.shippingClass,
+    Sender:
+      process.env.NODE_ENV === "production"
+        ? "Infinite Closet"
+        : "Infinite Closet Testing",
+    Value_GBP: price,
+    // Sender_Chosen_Collection_Date: MM/DD/YYYY
+    // Sender_Chosen_Delivery_Date: MM/DD/YYYY
+  };
+
+  if (order.status === "shipping") {
+    Object.assign(
+      hivedBody,
+      toAddress(addresses.infinitecloset, "Collection"),
+      toAddress(orderAddress, "Recipient"),
+      { Shipping_Class: "2-Day" }
+    );
+  } else if (order.status === "cleaning") {
+    Object.assign(
+      hivedBody,
+      toAddress(orderAddress, "Collection"),
+      toAddress(addresses.oxwash, "Recipient"),
+      { Shipping_Class: "2-Day" }
+    );
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    return await api.shipment.ship(hivedBody);
+  } else {
+    return { id: crypto.randomBytes(16).toString("base64") };
+  }
+}
+
+module.exports = { fetchHived, api, verify, ship };

@@ -15,6 +15,7 @@ services:
       - 8000:8000
     environment:
       FRONTEND_DOMAIN: infinitecloset.treywilkinson.com
+      BACKEND_DOMAIN: api.infinitecloset.treywilkinson.com
     command: yarn run develop:admin
     volumes:
       - ../backend:/app

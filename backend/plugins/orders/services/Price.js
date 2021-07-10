@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /********************  IMPORTANT ********************
  *
@@ -11,8 +11,8 @@ const SMALLEST_CURRENCY_UNIT = 100;
 const INSURANCE_PRICE = 5;
 
 const rentalPrice = {
-  short: "shortRentalPrice",
-  long: "longRentalPrice",
+  short: 'shortRentalPrice',
+  long: 'longRentalPrice',
 };
 
 // const shippingPrices = {

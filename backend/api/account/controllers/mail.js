@@ -1,17 +1,18 @@
-"use strict";
-const _ = require("lodash");
+'use strict';
+const _ = require('lodash');
 
 module.exports = {
   async newsletter(ctx) {
     const body = ctx.request.body;
 
-    await strapi.services.mailchimp.template("newsletter-subscription", {
+    await strapi.services.mailchimp.template('newsletter-subscription', {
       to: body.email,
+      subscription: 'You Made The List!',
     });
 
-    await strapi.query("contact").create({
+    await strapi.query('contact').create({
       contact: body.email,
-      context: "newsletter",
+      context: 'newsletter',
       metadata: {
         email: body.email,
       },
@@ -23,13 +24,14 @@ module.exports = {
   async waitlist(ctx) {
     const body = ctx.request.body;
 
-    await strapi.services.mailchimp.template("waitlist-subscription", {
+    await strapi.services.mailchimp.template('waitlist-subscription', {
       to: [{ name: body.name, email: body.email }],
+      subject: 'You subscribed to the newsletter',
     });
 
-    await strapi.query("contact").create({
+    await strapi.query('contact').create({
       contact: body.email,
-      context: "waitlist",
+      context: 'waitlist',
       metadata: {
         name: body.name,
         email: body.email,

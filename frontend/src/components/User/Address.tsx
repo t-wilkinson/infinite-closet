@@ -44,13 +44,32 @@ const Address = ({
   }
 
   return (
-    <button
-      className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
+    <div className="relative">
+      <button
+        className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
     ${id === state.address ? 'border-black' : ''}
     `}
-      aria-label={`Choose address with name of {firstName} {lastName} in {address} {town} {postcode}`}
-      onClick={() => dispatch({ type: 'choose-address', payload: id })}
-    >
+        aria-label={`Choose address with name of {firstName} {lastName} in {address} {town} {postcode}`}
+        onClick={() => dispatch({ type: 'choose-address', payload: id })}
+      >
+        <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
+          <div
+            className={`w-3 h-3 rounded-full
+          ${id === state.address ? 'bg-pri' : ''}
+  `}
+          />
+        </div>
+
+        <div className="items-start">
+          <span>
+            {firstName} {lastName}
+          </span>
+          <span>{address}</span>
+          <span>{town}</span>
+          <span>{postcode}</span>
+        </div>
+      </button>
+
       <button
         className="absolute top-0 right-0 p-2"
         type="button"
@@ -58,24 +77,7 @@ const Address = ({
       >
         <Icon name="close" size={16} />
       </button>
-
-      <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
-        <div
-          className={`w-3 h-3 rounded-full
-          ${id === state.address ? 'bg-pri' : ''}
-  `}
-        />
-      </div>
-
-      <div className="items-start">
-        <span>
-          {firstName} {lastName}
-        </span>
-        <span>{address}</span>
-        <span>{town}</span>
-        <span>{postcode}</span>
-      </div>
-    </button>
+    </div>
   )
 }
 

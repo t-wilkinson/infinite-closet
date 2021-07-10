@@ -1,12 +1,12 @@
-"use strict";
+'use strict';
 
-const stripe = require("stripe")(process.env.STRIPE_KEY);
-const dayjs = require("dayjs");
+const stripe = require('stripe')(process.env.STRIPE_KEY);
+const dayjs = require('dayjs');
 
 module.exports = {
   async totalPrice(ctx) {
     const body = ctx.request.body;
-    const total = strapi.plugins["orders"].services.price.totalPrice({
+    const total = strapi.plugins['orders'].services.price.totalPrice({
       cart: body.cart,
       insurance: body.insurance,
     });
@@ -16,28 +16,28 @@ module.exports = {
   async getCart(ctx) {
     const user = ctx.state.user;
 
-    let cart = await strapi.query("order", "orders").find(
+    let cart = await strapi.query('order', 'orders').find(
       {
         user: user.id,
-        status: "cart",
+        status: 'cart',
       },
-      ["product", "product.designer", "product.images"]
+      ['product', 'product.designer', 'product.images']
     );
 
     const numAvailable = await strapi.plugins[
-      "orders"
+      'orders'
     ].services.order.numAvailable(cart);
 
     // add price and available quantity to each order
     cart = cart.map((order) => {
-      const key = strapi.plugins["orders"].services.order.toKey(order);
-      const dateValid = strapi.plugins["orders"].services.date.valid(
+      const key = strapi.plugins['orders'].services.order.toKey(order);
+      const dateValid = strapi.plugins['orders'].services.date.valid(
         order.startDate
       );
 
       return {
         ...order,
-        price: strapi.plugins["orders"].services.price.price(order),
+        price: strapi.plugins['orders'].services.price.price(order),
         available: numAvailable[key],
         valid: dateValid,
         dateValid,
@@ -53,8 +53,8 @@ module.exports = {
   async removeCartItem(ctx) {
     const { id } = ctx.params;
     const order = await strapi
-      .query("order", "orders")
-      .update({ id }, { status: "dropped" });
+      .query('order', 'orders')
+      .update({ id }, { status: 'dropped' });
     ctx.send({
       order,
     });
@@ -64,20 +64,20 @@ module.exports = {
     const user = ctx.state.user;
     const body = ctx.request.body;
     const numAvailable = await strapi.plugins[
-      "orders"
+      'orders'
     ].services.order.numAvailable(body.cart);
 
     const updates = body.cart.map((order) => {
-      const key = strapi.plugins["orders"].services.order.toKey(order);
-      if (!strapi.plugins["orders"].services.date.valid(order.startDate)) {
+      const key = strapi.plugins['orders'].services.order.toKey(order);
+      if (!strapi.plugins['orders'].services.date.valid(order.startDate)) {
         return Promise.reject(`${dayjs(order.startDate)} is not valid date`);
       } else if (numAvailable[key] >= 1) {
-        return strapi.query("order", "orders").update(
+        return strapi.query('order', 'orders').update(
           { id: order.id },
           {
             address: body.address,
             paymentMethod: body.paymentMethod,
-            status: "planning",
+            status: 'planning',
             insurance: body.insurance[order.id] || false,
           }
         );
@@ -90,13 +90,13 @@ module.exports = {
 
     const result = await Promise.allSettled(updates);
     const cart = result.reduce((acc, settled) => {
-      if (settled.status === "fulfilled") {
+      if (settled.status === 'fulfilled') {
         acc.push(settled.value);
       }
       return acc;
     }, []);
 
-    const amount = strapi.plugins["orders"].services.price.totalAmount({
+    const amount = strapi.plugins['orders'].services.price.totalAmount({
       cart,
       insurance: body.insurance,
     });
@@ -104,7 +104,7 @@ module.exports = {
     stripe.paymentIntents
       .create({
         amount: amount.total,
-        currency: "gbp",
+        currency: 'gbp',
         customer: user.customer,
         payment_method: body.paymentMethod,
         off_session: false,
@@ -115,27 +115,45 @@ module.exports = {
         Promise.allSettled(
           cart.map((order) =>
             strapi
-              .query("order", "orders")
+              .query('order', 'orders')
               .update({ id: order.id }, { paymentIntent: paymentIntent.id })
           )
         )
       )
 
       .then((settled) =>
-        settled.filter((settle) => settle.status == "fulfilled")
+        settled
+          .filter((settle) => settle.status == 'fulfilled')
+          .map((settle) => settle.value)
       )
 
-      .then(() =>
-        strapi.services.mailchimp.template("checkout-cart", {
-          to: user.email,
-          global_merge_vars: [
-            {
-              name: "total_price",
-              content: strapi.plugins["orders"].services.price.toPrice(
-                amount.total
-              ),
+      .then((orders) =>
+        Promise.all(
+          orders.map(async (order) => ({
+            ...order,
+            product: {
+              ...order.product,
+              designer: await strapi
+                .query('designer')
+                .findOne({ id: order.product.designer }),
             },
-          ],
+            range: strapi.plugins['orders'].services.date.range(order),
+            price: strapi.plugins['orders'].services.price.price(order),
+          }))
+        )
+      )
+
+      .then((orders) =>
+        strapi.services.mailchimp.template('checkout', {
+          to: user.email,
+          subject: 'Thank you for your order',
+          global_merge_vars: {
+            firstName: user.firstName,
+            orders,
+            totalPrice: strapi.plugins['orders'].services.price.toPrice(
+              amount.total
+            ),
+          },
         })
       )
 

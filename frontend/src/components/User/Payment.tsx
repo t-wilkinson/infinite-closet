@@ -45,15 +45,7 @@ const PaymentMethod = ({
   }
 
   return (
-    <button
-      className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
-      ${id === state.paymentMethod ? 'border-black' : ''}
-      `}
-      aria-label={`Choose ${toTitleCase(brand)}
-      card ending in ${last4} which expires on ${exp_month}/${exp_year}
-      `}
-      onClick={() => dispatch({ type: 'choose-payment-method', payload: id })}
-    >
+    <div className="relative">
       <button
         className="absolute top-0 right-0 p-2"
         type="button"
@@ -61,22 +53,32 @@ const PaymentMethod = ({
       >
         <Icon name="close" size={16} />
       </button>
-      <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
-        <div
-          className={`w-3 h-3 rounded-full
+      <button
+        className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
+      ${id === state.paymentMethod ? 'border-black' : ''}
+      `}
+        aria-label={`Choose ${toTitleCase(brand)}
+      card ending in ${last4} which expires on ${exp_month}/${exp_year}
+      `}
+        onClick={() => dispatch({ type: 'choose-payment-method', payload: id })}
+      >
+        <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
+          <div
+            className={`w-3 h-3 rounded-full
           ${id === state.paymentMethod ? 'bg-pri' : ''}
           `}
-        />
-      </div>
-      <div className="items-start justify-between">
-        <span>
-          {toTitleCase(brand)} ending in {last4}
-        </span>
-        <span>
-          Expires {exp_month}/{exp_year}
-        </span>
-      </div>
-    </button>
+          />
+        </div>
+        <div className="items-start justify-between">
+          <span>
+            {toTitleCase(brand)} ending in {last4}
+          </span>
+          <span>
+            Expires {exp_month}/{exp_year}
+          </span>
+        </div>
+      </button>
+    </div>
   )
 }
 

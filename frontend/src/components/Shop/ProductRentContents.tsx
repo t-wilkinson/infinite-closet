@@ -82,17 +82,17 @@ export const productRentContents = {
         })
     }
 
-    React.useEffect(() => {
-      var settings = {
-        integration_code: 'SC-A8B4CC5D',
-        retailer_token: 'EfrpfcDJyCWwju2rrf6fqz2t',
-      }
-      var s = document.createElement('script')
-      s.src = 'https://widget.mysz.io/v1/assets/js/mysize-connect.js'
-      s.async = true
-      window.MYSIZE = Object.assign(window.MYSIZE || {}, settings)
-      document.body.appendChild(s)
-    }, [])
+    //     React.useEffect(() => {
+    //       var settings = {
+    //         integration_code: 'SC-A8B4CC5D',
+    //         retailer_token: 'EfrpfcDJyCWwju2rrf6fqz2t',
+    //       }
+    //       var s = document.createElement('script')
+    //       s.src = 'https://widget.mysz.io/v1/assets/js/mysize-connect.js'
+    //       s.async = true
+    //       window.MYSIZE = Object.assign(window.MYSIZE || {}, settings)
+    //       document.body.appendChild(s)
+    //     }, [])
 
     return (
       <>
