@@ -46,7 +46,7 @@ module.exports = {
       status: body.status,
       product: body.product,
       startDate: body.date,
-      rentalLength: body.rentalLength.toLowerCase(),
+      rentalLength: body.rentalLength,
       user: user.id,
       size: body.size,
     };

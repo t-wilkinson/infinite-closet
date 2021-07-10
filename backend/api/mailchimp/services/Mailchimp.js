@@ -83,9 +83,9 @@ module.exports = {
     });
   },
 
+  // TODO: use email service plugin instead
   async template(template_name, message) {
     let msg = unnormalizeMessage(message);
-    console.log(msg);
     msg.html = await emailTemplates(template_name, msg.global_merge_vars);
     msg.global_merge_vars = [];
     return await mailchimp.messages.send({

@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
-const dayjs = require("dayjs");
-const isBetween = require("dayjs/plugin/isBetween");
-const utc = require("dayjs/plugin/utc");
-const timezone = require("dayjs/plugin/timezone");
-const isSameOrAfter = require("dayjs/plugin/isSameOrAfter");
+const dayjs = require('dayjs');
+const isBetween = require('dayjs/plugin/isBetween');
+const utc = require('dayjs/plugin/utc');
+const timezone = require('dayjs/plugin/timezone');
+const isSameOrAfter = require('dayjs/plugin/isSameOrAfter');
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isBetween);
@@ -28,10 +28,10 @@ function arrival(sent) {
   let arrives;
   if (sent.hour() > HIVED_CUTOFF) {
     arrives = sent
-      .add(HOURS_SEND_CLIENT + HOURS_IN_DAY, "hours") // will take an extra day to arrive
+      .add(HOURS_SEND_CLIENT + HOURS_IN_DAY, 'hours') // will take an extra day to arrive
       .hour(HIVED_CUTOFF);
   } else {
-    arrives = sent.add(HOURS_SEND_CLIENT, "hours").hour(HIVED_CUTOFF);
+    arrives = sent.add(HOURS_SEND_CLIENT, 'hours').hour(HIVED_CUTOFF);
   }
   return arrives;
 }
@@ -40,26 +40,26 @@ function range({ startDate, shippingDate, rentalLength }) {
   rentalLength = rentalLengths[rentalLength];
 
   const shipped = shippingDate
-    ? dayjs(shippingDate).tz("Europe/London")
-    : dayjs(startDate).tz("Europe/London").subtract(HOURS_SEND_CLIENT, "hours");
+    ? dayjs(shippingDate).tz('Europe/London')
+    : dayjs(startDate).tz('Europe/London').subtract(HOURS_SEND_CLIENT, 'hours');
 
   const start = arrival(shipped);
-  const end = start.add(rentalLength, "hours");
-  const cleaned = end.add(HOURS_SEND_CLEANERS, "hours"); // at this point the order arrives at the cleaner
+  const end = start.add(rentalLength, 'hours');
+  const cleaning = end.add(HOURS_SEND_CLEANERS, 'hours'); // at this point the order arrives at the cleaner
 
   // oxwash doesn't operate on saturday/sunday
   // check if arrival date is on sunday, friday, or saturday
   let CLEANING_DELAY = 0;
-  if (cleaned.date() === 0) {
+  if (cleaning.date() === 0) {
     CLEANING_DELAY += 24;
-  } else if (cleaned.date() === 5) {
+  } else if (cleaning.date() === 5) {
     CLEANING_DELAY += 48;
-  } else if (cleaned.date() === 6) {
+  } else if (cleaning.date() === 6) {
     CLEANING_DELAY += 72;
   }
-  const completed = cleaned.add(HOURS_TO_CLEAN + CLEANING_DELAY, "hours");
+  const completed = cleaning.add(HOURS_TO_CLEAN + CLEANING_DELAY, 'hours');
 
-  return { shipped, start, end, cleaned, completed };
+  return { shipped, start, end, cleaning, completed };
 }
 
 function rangesOverlap(range1, range2) {
@@ -70,11 +70,11 @@ function rangesOverlap(range1, range2) {
 }
 
 function valid(date) {
-  date = dayjs(date).tz("Europe/London");
-  const today = dayjs().tz("Europe/London");
+  date = dayjs(date).tz('Europe/London');
+  const today = dayjs().tz('Europe/London');
 
   const arrives = arrival(today);
-  const enoughShippingTime = date.isSameOrAfter(arrives, "day");
+  const enoughShippingTime = date.isSameOrAfter(arrives, 'day');
 
   return enoughShippingTime;
 }

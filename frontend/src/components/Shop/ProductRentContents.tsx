@@ -65,7 +65,7 @@ export const productRentContents = {
             status: 'cart',
             size: unNormalizeSize(size.size),
             date: state.selectedDate.toJSON(),
-            rentalLength: state.oneTime,
+            rentalLength: state.oneTime.toLowerCase(),
             product: product.id,
           },
           { withCredentials: true },
