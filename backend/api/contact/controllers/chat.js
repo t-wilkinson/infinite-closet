@@ -1,14 +1,15 @@
 'use strict';
 
-// const _ = require('lodash');
-
 module.exports = {
   async contact(ctx) {
     const body = ctx.request.body;
 
     await strapi.plugins['email'].services.email.send({
       template: 'contact-us',
-      to: 'info@infinitecloset.co.uk',
+      to: {
+        name: `${body.firstName} ${body.lastName}`,
+        email: 'info@infinitecloset.co.uk',
+      },
       subject: `[Contact] ${body.firstName} ${body.lastName}`,
       data: body,
     });
@@ -23,6 +24,8 @@ module.exports = {
         phoneNumber: body.phoneNumber,
       },
     });
+
+    ctx.send();
   },
 };
 

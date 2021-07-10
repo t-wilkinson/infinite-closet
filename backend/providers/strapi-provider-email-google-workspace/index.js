@@ -4,10 +4,6 @@ const { google } = require('googleapis');
 const _ = require('lodash');
 const emailTemplates = require('email-templates');
 
-/**
- * Module dependencies
- */
-
 function makeBody(to, from, subject, message) {
   var str = [
     'Content-Type: text/html; charset="UTF-8"\n',
@@ -54,13 +50,13 @@ const gmail = {
         const raw = makeBody(to, from, subject, html);
         const gmail = google.gmail({ version: 'v1', auth: this.auth });
 
-        gmail.users.messages
+        return gmail.users.messages
           .send({
             auth: this.auth,
             userId: 'me',
             resource: { raw },
           })
-          .catch(() => {});
+          .catch((err) => console.error(err));
       },
     };
   },
@@ -83,7 +79,7 @@ function normalizeAddress(addr) {
     return addr;
   } else {
     if (addr.email && addr.name) {
-      return `<${addr.name}> ${addr.email}`;
+      return `${addr.name} <${addr.email}>`;
     } else {
       return addr.email;
     }
@@ -98,7 +94,7 @@ async function templateEmail(client, settings, options) {
     html: await emailTemplates(options.template, options.data || {}),
   };
 
-  return client.send(emailOptions);
+  return await client.send(emailOptions);
 }
 
 async function sendEmail(client, settings, options) {
@@ -108,7 +104,7 @@ async function sendEmail(client, settings, options) {
     replyTo: options.replyTo || settings.replyTo,
     html: options.html || options.text,
   };
-  return client.send(emailOptions);
+  return await client.send(emailOptions);
 }
 
 module.exports = {
