@@ -44,10 +44,11 @@ module.exports = {
       const response = generateResponse(intent);
 
       if (response.success) {
-        await strapi.services.mailchimp.template('join-launch-party', {
+        await strapi.plugins['email'].services.email.send({
+          template: 'join-launch-party',
           to: { name: body.name, email: body.email },
           subject: 'Joined Launch Party',
-          global_merge_vars: {
+          data: {
             TICKET_PRICE,
             total: ticketPrice,
             firstName: body.firstName,

@@ -358,10 +358,11 @@ module.exports = {
 
     try {
       // Send an email to the user.
-      await strapi.services.mailchimp.template('forgot-password', {
+      await strapi.plugins['email'].services.email.send({
+        template: 'forgot-password',
         to: user.email,
         subject: 'Reset password',
-        global_merge_vars: {
+        data: {
           url: `${advanced.email_reset_password}?code=${resetPasswordToken}`,
           token: resetPasswordToken,
         },

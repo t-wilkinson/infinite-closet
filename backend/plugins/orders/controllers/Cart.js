@@ -144,10 +144,11 @@ module.exports = {
       )
 
       .then((orders) =>
-        strapi.services.mailchimp.template('checkout', {
+        strapi.plugins['email'].services.email.send({
+          template: 'checkout',
           to: user.email,
           subject: 'Thank you for your order',
-          global_merge_vars: {
+          data: {
             firstName: user.firstName,
             orders,
             totalPrice: strapi.plugins['orders'].services.price.toPrice(

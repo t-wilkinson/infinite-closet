@@ -24,30 +24,34 @@ module.exports = {
   inProgress,
 
   async notifyArrival(orders) {
-    for (const order of orders) {
-      const user = order.user;
-      const range = strapi.plugins['orders'].services.date.range(order);
-      const date = dayjs(range.start).tz('Europe/London');
-      const today = dayjs().tz('Europe/London');
+    await Promise.allSettled(
+      orders.map(async (order) => {
+        const user = order.user;
+        const range = strapi.plugins['orders'].services.date.range(order);
+        const date = dayjs(range.start).tz('Europe/London');
+        const today = dayjs().tz('Europe/London');
 
-      if (!date.isSame(today, 'day')) continue;
-      const complete = await strapi.plugins[
-        'orders'
-      ].services.hived.api.shipment.complete(order.shipment);
-      if (!complete) continue;
+        if (!date.isSame(today, 'day')) return;
+        const complete = await strapi.plugins[
+          'orders'
+        ].services.hived.api.shipment.complete(order.shipment);
+        if (!complete) return;
 
-      strapi.log.info('order arriving order %o', order.id);
-      strapi.services.mailchimp.template('order-arriving', {
-        to: user.email,
-        subject: `Your order of ${order.product.name} by ${order.product.designer.name} has arrived`,
-        global_merge_vars: {
-          ...order,
-          firstName: user.firstName,
-          range,
-          price: strapi.plugin['orders'].services.price(order),
-        },
-      });
-    }
+        strapi.log.info('order arriving order %o', order.id);
+
+        await strapi.plugins['email'].services.email.send({
+          template: 'order-arriving',
+          to: user.email,
+          subject: `Your order of ${order.product.name} by ${order.product.designer.name} has arrived`,
+          data: {
+            ...order,
+            firstName: user.firstName,
+            range,
+            price: strapi.plugin['orders'].services.price(order),
+          },
+        });
+      })
+    );
   },
 
   async sendToCleaners(orders) {

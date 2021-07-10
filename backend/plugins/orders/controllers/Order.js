@@ -112,19 +112,21 @@ module.exports = {
       await strapi
         .query('order', 'orders')
         .update({ id: order.id }, { status: 'error', message: err });
-      await strapi.services.mailchimp.template('order-shipping-failure', {
+      await strapi.plugins['email'].services.email.send({
+        template: 'order-shipping-failure',
         to: 'info@infinitecloset.co.uk',
         subject: 'Failed to ship order',
-        global_merge_vars: { order, err },
+        data: { order, err },
       });
       strapi.log.error(err);
     };
 
     //     const sendShippingEmail = (to) =>
-    //       strapi.services.mailchimp.template("order-shipped", {
+    //       await strapi.plugins['email'].services.email.send({
+    //         template: 'order-shipped',
     //         to,
     //         subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
-    //         global_merge_vars: {
+    //         data: {
     //           firstName: user.firstName,
     //           image: order.product.image.url,
     //           shippingDate: dayjs(order.startDate).format("ddd, MMM DD"),

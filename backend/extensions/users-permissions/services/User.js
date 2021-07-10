@@ -158,10 +158,11 @@ module.exports = {
     });
 
     // Send an email to the user.
-    await strapi.services.mailchimp.template('confirm-email-address', {
+    await strapi.plugins['email'].services.email.send({
+      template: 'confirm-email-address',
       to: user.email,
       subject: 'Account confirmation',
-      global_merge_vars: {
+      data: {
         url: `${getAbsoluteServerUrl(
           strapi.config
         )}/auth/email-confirmation?confirmation=${confirmationToken}`,

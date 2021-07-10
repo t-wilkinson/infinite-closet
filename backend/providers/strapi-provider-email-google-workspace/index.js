@@ -1,8 +1,8 @@
-"use strict";
-const path = require("path");
-const fs = require("fs");
-const { google } = require("googleapis");
-const _ = require("lodash");
+'use strict';
+const path = require('path');
+const { google } = require('googleapis');
+const _ = require('lodash');
+const emailTemplates = require('email-templates');
 
 /**
  * Module dependencies
@@ -11,24 +11,24 @@ const _ = require("lodash");
 function makeBody(to, from, subject, message) {
   var str = [
     'Content-Type: text/html; charset="UTF-8"\n',
-    "MIME-Version: 1.0\n",
-    "Content-Transfer-Encoding: 7bit\n",
-    "to: ",
+    'MIME-Version: 1.0\n',
+    'Content-Transfer-Encoding: 7bit\n',
+    'to: ',
     to,
-    "\n",
-    "from: ",
+    '\n',
+    'from: ',
     from,
-    "\n",
-    "subject: ",
+    '\n',
+    'subject: ',
     subject,
-    "\n\n",
+    '\n\n',
     message,
-  ].join("");
+  ].join('');
 
   var encodedMail = Buffer.from(str)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
 
   return encodedMail;
 }
@@ -37,12 +37,12 @@ const gmail = {
   init(options) {
     const JWT = google.auth.JWT;
     const authClient = new JWT({
-      keyFile: path.resolve(__dirname, "credentials.json"),
+      keyFile: path.resolve(__dirname, 'credentials.json'),
       scopes: [
-        "https://mail.google.com",
-        "https://www.googleapis.com/auth/gmail.compose",
-        "https://www.googleapis.com/auth/gmail.modify",
-        "https://www.googleapis.com/auth/gmail.readonly",
+        'https://mail.google.com',
+        'https://www.googleapis.com/auth/gmail.compose',
+        'https://www.googleapis.com/auth/gmail.modify',
+        'https://www.googleapis.com/auth/gmail.readonly',
       ],
       subject: options.subject,
     });
@@ -52,12 +52,12 @@ const gmail = {
       auth: authClient,
       send({ to, from, subject, html }) {
         const raw = makeBody(to, from, subject, html);
-        const gmail = google.gmail({ version: "v1", auth: this.auth });
+        const gmail = google.gmail({ version: 'v1', auth: this.auth });
 
         gmail.users.messages
           .send({
             auth: this.auth,
-            userId: "me",
+            userId: 'me',
             resource: { raw },
           })
           .catch(() => {});
@@ -67,42 +67,63 @@ const gmail = {
 };
 
 const emailFields = [
-  "from",
-  "replyTo",
-  "to",
-  "cc",
-  "bcc",
-  "subject",
-  "text",
-  "html",
-  "attachments",
+  'from',
+  'replyTo',
+  'to',
+  'cc',
+  'bcc',
+  'subject',
+  'text',
+  'html',
+  'attachments',
 ];
 
+function normalizeAddress(addr) {
+  if (typeof addr === 'string') {
+    return addr;
+  } else {
+    if (addr.email && addr.name) {
+      return `<${addr.name}> ${addr.email}`;
+    } else {
+      return addr.email;
+    }
+  }
+}
+
+async function templateEmail(client, settings, options) {
+  const emailOptions = {
+    to: normalizeAddress(options.to),
+    from: normalizeAddress(options.from || settings.from),
+    subject: options.subject || settings.subject,
+    html: await emailTemplates(options.template, options.data || {}),
+  };
+
+  return client.send(emailOptions);
+}
+
+async function sendEmail(client, settings, options) {
+  const emailOptions = {
+    ..._.pick(options, emailFields),
+    from: options.from || settings.from,
+    replyTo: options.replyTo || settings.replyTo,
+    html: options.html || options.text,
+  };
+  return client.send(emailOptions);
+}
+
 module.exports = {
-  provider: "google-workspace",
-  name: "Google Workspace",
+  provider: 'google-workspace',
+  name: 'Google Workspace',
   init: (providerOptions = {}, settings = {}) => {
     const client = gmail.init(providerOptions);
 
     return {
-      template(options = {}, { subject, filename } = {}, data = {}) {
-        subject = _.template(subject, data);
-        let html = fs.readFileSync(path.resolve(__dirname, filename), "utf8");
-        html = _.template(html, data);
-        return this.send({ ...options, subject, html });
-      },
-
       send(options) {
-        const emailOptions = {
-          ..._.pick(options, emailFields),
-          from: options.from || settings.defaultFrom,
-          replyTo: options.replyTo || settings.defaultReplyTo,
-          html: options.html || options.text,
-        };
-
-        const {from, subject, replyTo} = emailOptions
-        strapi.log.info("email:send -> %o", {from, subject, replyTo,});
-        return client.send(emailOptions);
+        if (options.template) {
+          templateEmail(client, settings, options);
+        } else {
+          sendEmail(client, settings, options);
+        }
       },
     };
   },

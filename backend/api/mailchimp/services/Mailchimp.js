@@ -43,35 +43,12 @@ const normalizeVars = (merge_vars) => {
   }
 };
 
-const unnormalizeVars = (merge_vars) => {
-  if (Array.isArray(merge_vars)) {
-    return Object.values(merge_vars).reduce((acc, { name, content }) => {
-      acc[name] = content;
-      return acc;
-    }, {});
-  } else {
-    return merge_vars;
-  }
-};
-
 const normalizeMessage = (message) => {
   let msg = { ...default_message, ...message };
 
   msg.to = normalizeTo(message.to);
   if ('global_merge_vars' in message) {
     msg.global_merge_vars = normalizeVars(message.global_merge_vars);
-  }
-  return msg;
-};
-
-const unnormalizeMessage = (message) => {
-  let msg = { ...default_message, ...message };
-
-  msg.to = normalizeTo(message.to);
-  if ('global_merge_vars' in message) {
-    msg.global_merge_vars = unnormalizeVars(message.global_merge_vars);
-  } else {
-    msg.global_merge_vars = {};
   }
   return msg;
 };
@@ -83,20 +60,11 @@ module.exports = {
     });
   },
 
-  // TODO: use email service plugin instead
   async template(template_name, message) {
-    let msg = unnormalizeMessage(message);
-    msg.html = await emailTemplates(template_name, msg.global_merge_vars);
-    msg.global_merge_vars = [];
-    return await mailchimp.messages.send({
-      message: msg,
+    return await mailchimp.messages.sendTemplate({
+      template_name,
+      template_content: [],
+      message: normalizeMessage(message),
     });
   },
-
-  // async template(template_name, message) {
-  //   return await mailchimp.messages.sendTemplate({
-  //     template_name,
-  //     template_content: [],
-  //     message: unnormalizeMessage(message),
-  //   });
 };

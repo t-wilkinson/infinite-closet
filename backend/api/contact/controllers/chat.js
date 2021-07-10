@@ -6,16 +6,11 @@ module.exports = {
   async contact(ctx) {
     const body = ctx.request.body;
 
-    await strapi.services.mailchimp.template('contact-us', {
+    await strapi.plugins['email'].services.email.send({
+      template: 'contact-us',
       to: 'info@infinitecloset.co.uk',
       subject: `[Contact] ${body.firstName} ${body.lastName}`,
-      global_merge_vars: {
-        firstName: body.firstName,
-        lastName: body.lastName,
-        emailAddress: body.emailAddress,
-        phoneNumber: body.phoneNumber,
-        message: body.message,
-      },
+      data: body,
     });
 
     await strapi.query('contact').create({
