@@ -40,8 +40,13 @@ export const ResetPassword = () => {
         router.push('/')
       })
       .catch((err) => {
-        console.error(err.response.data.data[0].messages)
-        setWarnings(err.response.data.data[0].messages.map((v) => v.message))
+        if (err.response.data.data) {
+          console.error(err.response.data.data[0].messages)
+          setWarnings(err.response.data.data[0].messages.map((v) => v.message))
+        } else {
+          console.error(err)
+          setWarnings(['Could not change password'])
+        }
       })
   }
 

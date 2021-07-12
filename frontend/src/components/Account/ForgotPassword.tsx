@@ -1,7 +1,6 @@
 import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 import useAnalytics from '@/utils/useAnalytics'
 import { Input, Submit, Warnings, FormHeader, OR } from '@/Form'
@@ -33,14 +32,12 @@ export const ForgotPassword = () => {
   })
   const [warnings, setWarnings] = React.useState<string[]>([])
   const [status, setStatus] = React.useState<Status>('in-fields')
-  const router = useRouter()
   const analytics = useAnalytics()
 
   const onSubmit = () => {
     requestChangePassword(fields, analytics)
       .then(() => {
         setStatus('success')
-        router.push('/')
       })
       .catch((err) => {
         setStatus('server-error')
@@ -71,6 +68,11 @@ export const ForgotPassword = () => {
           </span>
         </a>
       </Link>
+      {status === 'success' && (
+        <div className="z-10 absolute inset-0 justify-center items-center bg-white border-gray border rounded-md">
+          <span className="text-lg">Please check your email</span>
+        </div>
+      )}
     </>
   )
 }

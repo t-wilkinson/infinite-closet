@@ -172,7 +172,7 @@ module.exports = {
         id: user.id,
       });
 
-      setCookieSession(ctx.cookies, jwt);
+      extensions.setCookieSession(ctx.cookies, jwt);
       return ctx.send({
         user: sanitizeEntity(user.toJSON ? user.toJSON() : user, {
           model: strapi.query('user', 'users-permissions').model,
@@ -218,7 +218,7 @@ module.exports = {
       const jwt = strapi.plugins['users-permissions'].services.jwt.issue({
         id: user.id,
       });
-      setCookieSession(ctx.cookies, jwt);
+      extensions.setCookieSession(ctx.cookies, jwt);
       ctx.send({
         user: sanitizeEntity(user.toJSON ? user.toJSON() : user, {
           model: strapi.query('user', 'users-permissions').model,
