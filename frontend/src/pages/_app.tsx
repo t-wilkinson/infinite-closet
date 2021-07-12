@@ -65,12 +65,15 @@ const allowedPages = [
   '/blogs',
   '/blogs/[slug]',
   '/contact-us',
-  '/faqs',
-  '/privacy',
   '/designers/[slug]',
+  '/faqs',
+  '/launch-party',
+  '/privacy',
   '/products/[...slug]',
   '/shop/[designer]/[item]',
   '/terms-and-conditions',
+  '/user/checkout',
+  '/user/orders',
   '/user/profile',
 ]
 
