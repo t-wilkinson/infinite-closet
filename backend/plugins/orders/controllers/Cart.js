@@ -13,12 +13,10 @@ function orderValid(order, numAvailable, dateValid) {
 module.exports = {
   async count(ctx) {
     const user = ctx.params.userid;
-    console.log(user);
 
     const count = await strapi
       .query('order', 'orders')
       .count({ user: user, status: 'cart' });
-    console.log(count);
     ctx.send({ count });
   },
 
@@ -45,7 +43,7 @@ module.exports = {
         user: user.id,
         status: 'cart',
       },
-      ['product', 'product.designer', 'product.images']
+      ['product', 'product.sizes', 'product.designer', 'product.images']
     );
 
     const numAvailable = await strapi.plugins[
@@ -55,6 +53,7 @@ module.exports = {
     // add price and available quantity to each order
     cart = cart.map((order) => {
       const key = strapi.plugins['orders'].services.order.toKey(order);
+      // console.log(order.product.sizes);
       const dateValid = strapi.plugins['orders'].services.date.valid(
         order.startDate,
         strapi.plugins['orders'].services.order.quantity(order)

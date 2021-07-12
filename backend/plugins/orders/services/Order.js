@@ -25,8 +25,8 @@ module.exports = {
 
   // !TODO
   quantity(order) {
-    if (!order.products || !order.products.sizes) {
-      strapi.log.error('quantity: order.products.sizes does not exist');
+    if (!order.product || !order.product.sizes) {
+      strapi.log.error('quantity: order.product.sizes does not exist');
       return -1;
     }
     const size = order.product.sizes.find((size) =>

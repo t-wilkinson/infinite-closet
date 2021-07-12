@@ -74,7 +74,7 @@ const api = {
   },
   postcode: {
     verify: (postcode) =>
-      fetchHived(hivedApi.postcodes, 'GET', { Recipient_Postcode: postcode }),
+      fetchHived(hivedApi.postcodes, 'POST', { Recipient_Postcode: postcode }),
   },
 };
 
@@ -82,8 +82,8 @@ async function verify(postcode) {
   let valid;
 
   try {
-    const res = api.postcode.verify(postcode);
-    valid = res.fields.Address_in_delivery_Area === 'Valid';
+    const res = await api.postcode.verify(postcode);
+    valid = res.fields.Address_in_Delivery_Area === 'Valid';
   } catch (e) {
     valid = false;
   }
