@@ -95,7 +95,7 @@ const Days = ({ size, days, state, dispatch, rentalLength }) => {
     axios
       .post('/orders/dates/valid', {
         dates: days,
-        quantity: size.quantity,
+        quantity: size.quantity || 1,
       })
       .then((res) => setValid(res.data.valid))
       .catch((err) => console.error(err))

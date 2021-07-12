@@ -142,20 +142,22 @@ export const productRentContents = {
                 dispatch={dispatch}
               />
             </div>
-            <button
-              className="flex flex-grow border border-gray py-2 px-2 rounded-sm rounded-sm flex-row flex-grow justify-between items-center"
-              onClick={() => dispatch(shopActions.showDate())}
-            >
-              <span>
-                {state.selectedDate &&
-                  state.selectedDate.format('ddd M/D') +
-                    ' - ' +
-                    state.selectedDate
-                      .add(rentalLengths[state.oneTime], 'day')
-                      .format('ddd M/D')}
-              </span>
-              <Icon className="text-gray" name="date" size={24} />
-            </button>
+            {state.size !== undefined && (
+              <button
+                className="flex flex-grow border border-gray py-2 px-2 rounded-sm rounded-sm flex-row flex-grow justify-between items-center"
+                onClick={() => dispatch(shopActions.showDate())}
+              >
+                <span>
+                  {state.selectedDate &&
+                    state.selectedDate.format('ddd M/D') +
+                      ' - ' +
+                      state.selectedDate
+                        .add(rentalLengths[state.oneTime], 'day')
+                        .format('ddd M/D')}
+                </span>
+                <Icon className="text-gray" name="date" size={24} />
+              </button>
+            )}
           </div>
         </SelectorItem>
 
