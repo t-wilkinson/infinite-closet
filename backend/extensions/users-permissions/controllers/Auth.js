@@ -363,7 +363,7 @@ module.exports = {
         to: user.email,
         subject: 'Reset password',
         data: {
-          url: `${advanced.email_reset_password}?code=${resetPasswordToken}`,
+          url: `https://${process.env.FRONTEND_DOMAIN}/account/reset-password?code=${resetPasswordToken}`,
           token: resetPasswordToken,
         },
       });
