@@ -31,9 +31,9 @@ export const Sort = ({ sortBy }: { sortBy: SortBy }) => {
           <div className="w-1" />
           <span>Sort By</span>
           <div
-            className={`absolute left-0 bottom-0 -mb-px z-20 h-px w-full ${
-              hover ? 'bg-white' : 'bg-transparent'
-            }`}
+            className={`absolute left-0 bottom-0 -mb-px z-20 h-px w-full
+              ${hover ? 'bg-white' : 'bg-transparent'}
+            `}
           />
         </div>
       </button>
@@ -54,7 +54,7 @@ const DropDown = ({ hover, sortBy }) => {
     if (panel.open) {
       dispatch(productsActions.setPanelSortBy(field as SortBy))
     } else {
-      if (field === 'Newest') delete query.sort
+      if (field === 'Alphabetical') delete query.sort
       else query.sort = field
 
       router.push({

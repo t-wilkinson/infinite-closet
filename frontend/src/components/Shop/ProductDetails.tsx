@@ -17,6 +17,7 @@ export const ProductDetails = ({
   product,
 }) => {
   const dispatch = useDispatch()
+  const ref = React.useRef()
 
   const Details =
     details[item.value] ||
@@ -36,12 +37,16 @@ export const ProductDetails = ({
       <Divider visible={index !== 0} />
       <details
         onClick={(e) => {
-          e.preventDefault()
           dispatch(shopActions.toggleDetails(item.value))
         }}
         open={selected}
       >
-        <summary className="list-none cursor-pointer appearance-none">
+        <summary
+          className="list-none cursor-pointer appearance-none"
+          onClick={(e) => {
+            e.preventDefault()
+          }}
+        >
           <div className="px-2 py-4 flex-row justify-between items-center">
             <span className={`${selected ? 'font-bold' : ''}`}>
               {item.label}
@@ -49,7 +54,9 @@ export const ProductDetails = ({
             <Icon size={12} name={selected ? 'down' : 'up'} />
           </div>
         </summary>
-        <Details state={state} selected={selected} product={product} />
+        <div ref={ref}>
+          <Details state={state} selected={selected} product={product} />
+        </div>
       </details>
     </>
   )
@@ -67,11 +74,11 @@ const details = {
           url={createProductURL(product)}
           description={product.description}
         />,
-        // <Share.Pinterest
-        //   url={createProductURL(product)}
-        //   description={product.description}
-        //   imageURL={product.images[0].url}
-        // />,
+        <Share.Pinterest
+          url={createProductURL(product)}
+          description={product.description}
+          imageURL={product.images[0].url}
+        />,
       ].map((share, i) => (
         <div key={i} className="w-16 h-8 relative cursor-pointer">
           {share}

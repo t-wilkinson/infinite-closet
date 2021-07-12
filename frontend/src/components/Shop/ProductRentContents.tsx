@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from '@/utils/store'
 import { Icon } from '@/components'
 import { Submit } from '@/Form'
 import { toTitleCase } from '@/utils/helpers'
-import { unNormalizeSize } from '@/Products/helpers'
+import { normalizeSize, unNormalizeSize } from '@/Products/helpers'
 
 import { shopActions } from './slice'
 import { OneTime } from './types'
@@ -251,7 +251,7 @@ const SizeChart = ({ product, sizeEnum, chart, close, measurements }) => {
       <table className="table-fixed border border-gray-light">
         <thead className="border border-gray-light">
           <tr className="border-b border-gray-light">
-            <th colSpan={chart.length + 1}>Womens Clothing</th>
+            <th colSpan={chart.length + 1}>Womens Clotuuhing</th>
           </tr>
           <tr className="border-b border-gray-light">
             <th scope="col" />
@@ -278,40 +278,50 @@ const SizeChart = ({ product, sizeEnum, chart, close, measurements }) => {
         </tbody>
       </table>
 
-      <table className="table-fixed border border-gray-light">
-        <thead className="border border-gray-light">
-          <tr className="border-b border-gray-light">
-            <th className="text-center" colSpan={chart.length + 1}>
-              {product.name} Measurements (cm)
-            </th>
-          </tr>
-          <tr className="border-b border-gray-light">
-            <th scope="col" />
-            {measurements.map((measurement) => (
-              <th key={measurement} className="text-center">
-                {toTitleCase(measurement)}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="p-2">
-          {product.sizes.map((size) => (
-            <tr key={size.id} className="border-t border-gray-light">
-              <th scope="row" className="p-1">
-                {size.sizeRange ? `${size.size}/${size.sizeRange}` : size.size}
-              </th>
-              {measurements.map((measurement) => (
-                <td key={measurement} className="text-center">
-                  {size[measurement] || '-'}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <SizeMeasurements
+        chart={chart}
+        measurements={measurements}
+        product={product}
+      />
     </div>
   )
 }
+
+const SizeMeasurements = ({ chart, measurements, product }) => (
+  <table className="table-fixed border border-gray-light">
+    <thead className="border border-gray-light">
+      <tr className="border-b border-gray-light">
+        <th className="text-center" colSpan={chart.length + 1}>
+          {product.name} Measurements (cm)
+        </th>
+      </tr>
+      <tr className="border-b border-gray-light">
+        <th scope="col" />
+        {measurements.map((measurement) => (
+          <th key={measurement} className="text-center">
+            {toTitleCase(measurement)}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody className="p-2">
+      {product.sizes.map((size) => (
+        <tr key={size.id} className="border-t border-gray-light">
+          <th scope="row" className="p-1">
+            {size.sizeRange
+              ? `${normalizeSize(size.size)}/${normalizeSize(size.sizeRange)}`
+              : size.size}
+          </th>
+          {measurements.map((measurement) => (
+            <td key={measurement} className="text-center">
+              {size[measurement] || '-'}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+)
 
 const SelectorItem = ({ label, children, ...props }) => (
   <div {...props}>

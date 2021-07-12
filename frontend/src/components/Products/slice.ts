@@ -24,7 +24,7 @@ const initialState: State = {
   loading: false,
   panel: {
     open: false,
-    sortBy: 'Newest',
+    sortBy: 'Alphabetical',
     filters: {
       colors: [],
       designers: [],
@@ -36,7 +36,7 @@ const initialState: State = {
       sizes: [],
     },
   },
-  sortBy: 'Newest',
+  sortBy: 'Alphabetical',
   filters: {},
 }
 

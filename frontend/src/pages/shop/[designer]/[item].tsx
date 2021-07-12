@@ -39,6 +39,13 @@ const OpenGraph = (product: StrapiProduct) => {
     (acc, { quantity }) => acc + quantity,
     0,
   )
+  const image = images[0]
+    ? []
+    : [
+        { property: 'og:image', content: images[0].url },
+        { property: 'og:image:width', content: images[0].width },
+        { property: 'og:image:height', content: images[0].height },
+      ]
 
   // open graph meta information
   const og = [
@@ -46,19 +53,19 @@ const OpenGraph = (product: StrapiProduct) => {
     { property: 'og:type', content: 'og:product' },
     { property: 'og:title', content: `${name} by ${designer.name}` },
     { property: 'og:description', content: description },
-    images[0] && { property: 'og:image', content: images[0].url },
-    { property: 'product:price:amount', content: String(retailPrice) },
+    { property: 'product:price:amount', content: retailPrice },
     { property: 'product:price:currency', content: 'GBP' },
     {
       property: 'og:availability',
       content: quantity > 0 ? 'instock' : 'out of stock',
     },
+    ...image,
   ]
 
   return (
     <Head>
       {og.map(({ property, content }) => (
-        <meta key={property} property={property} content={content} />
+        <meta key={property} property={property} content={String(content)} />
       ))}
     </Head>
   )

@@ -15,8 +15,9 @@ export const Filter = [
 export type Filter = typeof Filter[number]
 export type Filters = { [filter in Filter]: string[] }
 
+// TODO: should get these from `sortData`
 export const SortBy = [
-  // 'Recommended',
+  'Alphabetical',
   'Newest',
   'PriceLowHigh',
   'PriceHighLow',

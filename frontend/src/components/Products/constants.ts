@@ -17,7 +17,10 @@ export const filterData: FilterData = {
 export const sortData: {
   [sortBy in SortBy]: { name: string; value: string }
 } = {
-  // Recommended: { name: 'Recommended', value: 'created_by' },
+  Alphabetical: {
+    name: 'Alphabetical',
+    value: 'name:ASC',
+  },
   Newest: { name: 'Newest', value: 'created_by' },
   PriceLowHigh: {
     name: 'Price (Low to High)',

@@ -1,5 +1,6 @@
 import React from 'react'
 import debounce from 'lodash/debounce'
+import Image from 'next/image'
 
 import { Icon } from '@/components'
 import { useSelector } from '@/utils/store'
@@ -122,6 +123,8 @@ export const FilterItems: FilterItems = {
                           rgba(251,7,217,1) 90%,
                           rgba(255,0,0,1) 100%
                         )`
+                        : v.slug === 'floral-print'
+                        ? 'center / contain url(/media/products/floral-print.jpg)'
                         : v.value || v.slug.replace('-', ''),
                     borderWidth:
                       v.slug === 'white' || v.value === '#ffffff' ? 1 : 0,

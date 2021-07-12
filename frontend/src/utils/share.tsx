@@ -22,6 +22,7 @@ export default {
   Facebook: ({ url, description }: ShareFacebookConfig) => (
     <a
       target="_blank"
+      rel="noreferrer"
       href={
         'https://www.facebook.com/sharer/sharer.php?' +
         qs.stringify({
@@ -46,12 +47,13 @@ export default {
   Pinterest: ({ url, description, imageURL }: SharePinterestConfig) => (
     <a
       target="_blank"
+      rel="noreferrer"
       href={
         'http://pinterest.com/pin/create/button/?' +
         qs.stringify({
           url,
           description,
-          media: process.env.NEXT_PUBLIC_FRONTEND + imageURL,
+          media: process.env.NEXT_PUBLIC_BACKEND + imageURL,
         })
       }
     >
