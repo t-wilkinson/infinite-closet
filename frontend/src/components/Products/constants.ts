@@ -21,7 +21,7 @@ export const sortData: {
     name: 'Alphabetical',
     value: 'name:ASC',
   },
-  Newest: { name: 'Newest', value: 'created_by' },
+  Newest: { name: 'Newest', value: 'created_by:ASC' },
   PriceLowHigh: {
     name: 'Price (Low to High)',
     value: 'shortRentalPrice:ASC',

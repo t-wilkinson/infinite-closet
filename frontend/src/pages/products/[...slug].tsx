@@ -58,7 +58,7 @@ export async function getServerSideProps({ params, query }) {
   }
 
   const page = query.page > 0 ? query.page : 1
-  const sort = sortData[query.sort]?.value ?? 'created_by:ASC'
+  const sort = sortData[query.sort]?.value ?? sortData.Alphabetical.value
 
   const _paging = str({
     sort,
