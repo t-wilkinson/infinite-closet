@@ -11,5 +11,5 @@ db_users[dev]=test
 db_users[prod]=infinite-closet
 
 docker exec -i ${1}_db_1 psql -d ${db_names[$1]} -U ${db_users[$1]} <<EOF
-select setval('${2}_id_seq', max + 1) from (select MAX(id) from $2) as max;
+select setval('${2}_id_seq', max + 1) from (select MAX(id) from "$2") as max;
 EOF
