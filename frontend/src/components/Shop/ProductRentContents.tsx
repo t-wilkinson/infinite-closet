@@ -163,16 +163,13 @@ export const productRentContents = {
           onSubmit={addToCart}
           className="my-2 self-center rounded-sm w-full"
           disabled={
-            process.env.NODE_ENV === 'production' ||
             !state.selectedDate ||
             !user ||
             state.size === undefined ||
             status === 'adding'
           }
         >
-          {process.env.NODE_ENV === 'production'
-            ? 'Coming Soon'
-            : !user
+          {!user
             ? 'Please sign in'
             : status === 'adding'
             ? 'Adding...'
