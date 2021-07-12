@@ -23,6 +23,7 @@ module.exports = {
   toKey,
   inProgress,
 
+  // !TODO
   quantity(order) {
     if (!order.products || !order.products.sizes) {
       strapi.log.error('quantity: order.products.sizes does not exist');

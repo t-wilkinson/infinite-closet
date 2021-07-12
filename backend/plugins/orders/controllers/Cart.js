@@ -11,6 +11,17 @@ function orderValid(order, numAvailable, dateValid) {
 }
 
 module.exports = {
+  async count(ctx) {
+    const user = ctx.params.userid;
+    console.log(user);
+
+    const count = await strapi
+      .query('order', 'orders')
+      .count({ user: user, status: 'cart' });
+    console.log(count);
+    ctx.send({ count });
+  },
+
   async totalPrice(ctx) {
     const body = ctx.request.body;
     const numAvailable = await strapi.plugins[

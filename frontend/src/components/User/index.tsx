@@ -15,10 +15,11 @@ export const signin = async (dispatch) => {
         // loggedIn tracks if the user has logged into the web site
         window.localStorage.setItem('logged-in', 'true')
         dispatch(userActions.signin(res.data.user))
+        return res.data.user
       } else {
         dispatch(userActions.signout())
+        throw new Error('User not found')
       }
-      return res.data.user
     })
 }
 

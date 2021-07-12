@@ -12,7 +12,7 @@ import { Divider } from '@/components'
 import { Size } from '@/Products/constants'
 import { useDispatch, useSelector } from '@/utils/store'
 
-import { userActions } from './slice'
+import { signin } from './'
 import { AddAddress } from './Address'
 
 export const Profile = () => {
@@ -21,17 +21,10 @@ export const Profile = () => {
   const dispatch = useDispatch()
 
   React.useEffect(() => {
-    axios
-      .post('/account/signin', {}, { withCredentials: true })
-      .then((res) => {
-        if (res.data.user) {
-          dispatch(userActions.signin(res.data.user))
-        }
-      })
-      .catch((err) => {
-        setStatus('error')
-        console.error(err)
-      })
+    signin(dispatch).catch((err) => {
+      setStatus('error')
+      console.error(err)
+    })
     document.getElementById('_app').scrollTo({ top: 0 })
   }, [status])
 

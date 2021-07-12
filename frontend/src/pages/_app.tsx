@@ -18,6 +18,7 @@ import Banner from '@/Layout/Banner'
 import { signin } from '@/User'
 const FourOFour = dynamic(() => import('@/pages/404'))
 import { browser } from '@/utils/helpers'
+import { userActions } from '@/User/slice'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -124,23 +125,18 @@ const Wrapper = ({ router, children }) => {
     }
 
     dispatch(layoutActions.loadAnalytics(firebase.analytics()))
-    axios
-      .post('/account/signin', {}, { withCredentials: true })
-      .then(() => signin(dispatch))
-      .then((user) => {
-        if (!user) {
-          const loggedIn = JSON.parse(window.localStorage.getItem('logged-in'))
-          const joinedWaitlist = JSON.parse(
-            window.localStorage.getItem('joined-waitlist'),
-          )
-          if (!loggedIn && !joinedWaitlist) {
-            document
-              .getElementById('_app')
-              .addEventListener('scroll', showPopup)
-          }
+    signin(dispatch)
+      .then((user) => axios.get(`/orders/cart/count/${user.id}`))
+      .then((res) => dispatch(userActions.countCart(res.data.count)))
+      .catch(() => {
+        const loggedIn = JSON.parse(window.localStorage.getItem('logged-in'))
+        const joinedWaitlist = JSON.parse(
+          window.localStorage.getItem('joined-waitlist'),
+        )
+        if (!loggedIn && !joinedWaitlist) {
+          document.getElementById('_app').addEventListener('scroll', showPopup)
         }
       })
-      .catch(() => {})
   }, [])
 
   if (

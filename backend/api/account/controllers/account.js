@@ -1,7 +1,7 @@
-"use strict";
-const _ = require("lodash");
-const { sanitizeEntity } = require("strapi-utils");
-const Auth = require("../../../extensions/users-permissions/extensions").Auth;
+'use strict';
+const _ = require('lodash');
+const { sanitizeEntity } = require('strapi-utils');
+const Auth = require('../../../extensions/users-permissions/extensions').Auth;
 
 module.exports = {
   async signin(ctx) {
@@ -9,23 +9,23 @@ module.exports = {
       return ctx.send({
         status: 200,
         user: sanitizeEntity(ctx.state.user, {
-          model: strapi.query("user", "users-permissions").model,
+          model: strapi.query('user', 'users-permissions').model,
         }),
       });
     }
 
     const hasHeader = ctx.request && ctx.request.header;
     if (hasHeader && !ctx.request.header.authorization) {
-      const token = ctx.cookies.get("token");
+      const token = ctx.cookies.get('token');
       if (token) {
-        ctx.request.header.authorization = "Bearer " + token;
+        ctx.request.header.authorization = 'Bearer ' + token;
       }
     }
 
     if (hasHeader && ctx.request.header.authorization) {
       try {
         const { id } = await strapi.plugins[
-          "users-permissions"
+          'users-permissions'
         ].services.jwt.getToken(ctx);
 
         if (id === undefined) {
@@ -34,7 +34,7 @@ module.exports = {
 
         // fetch authenticated user
         ctx.state.user = await strapi.plugins[
-          "users-permissions"
+          'users-permissions'
         ].services.user.fetchAuthenticatedUser(id);
       } catch (err) {
         return ctx.send({ status: 401 });
@@ -46,7 +46,7 @@ module.exports = {
 
       return ctx.send({
         user: sanitizeEntity(ctx.state.user, {
-          model: strapi.query("user", "users-permissions").model,
+          model: strapi.query('user', 'users-permissions').model,
         }),
         status: 200,
       });
@@ -60,7 +60,7 @@ module.exports = {
 
     ctx.send({
       authorized: true,
-      message: "Successfully ended session",
+      message: 'Successfully ended session',
     });
   },
 
@@ -68,7 +68,7 @@ module.exports = {
     let user = ctx.state.user;
     const body = ctx.request.body;
 
-    const address = await strapi.query("address").create({
+    const address = await strapi.query('address').create({
       ...body,
     });
     const addresses = [
@@ -76,7 +76,7 @@ module.exports = {
       address.id,
     ];
     user = await strapi
-      .query("user", "users-permissions")
+      .query('user', 'users-permissions')
       .update({ id: user.id }, { addresses });
 
     return ctx.send({

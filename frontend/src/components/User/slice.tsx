@@ -4,6 +4,7 @@ import { StrapiUser } from '@/utils/models'
 
 interface State {
   data?: null | StrapiUser
+  cartCount?: number
 }
 
 const initialState: State = {}
@@ -12,6 +13,9 @@ export const userSlice = createSlice({
   name: 'USER',
   initialState,
   reducers: {
+    countCart(state, { payload }: PayloadAction<number>) {
+      state.cartCount = payload
+    },
     noUser(state) {
       state.data = null
     },
