@@ -100,6 +100,7 @@ export const productRentContents = {
           state={state}
           rentalLength={rentalLengths[state.oneTime]}
           dispatch={dispatch}
+          size={product.sizes[state.size]}
         />
 
         <SelectorItem label="Size" className="my-2 z-10 w-full">

@@ -12,7 +12,10 @@ module.exports = {
 
     let validDates = {};
     for (const date of body.dates) {
-      validDates[date] = strapi.plugins['orders'].services.date.valid(date);
+      validDates[date] = strapi.plugins['orders'].services.date.valid(
+        date,
+        body.quantity
+      );
     }
 
     ctx.send({ valid: validDates });

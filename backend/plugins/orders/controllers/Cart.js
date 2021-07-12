@@ -45,7 +45,8 @@ module.exports = {
     cart = cart.map((order) => {
       const key = strapi.plugins['orders'].services.order.toKey(order);
       const dateValid = strapi.plugins['orders'].services.date.valid(
-        order.startDate
+        order.startDate,
+        strapi.plugins['orders'].services.order.quantity(order)
       );
 
       return {
@@ -84,7 +85,12 @@ module.exports = {
 
     const updates = body.cart.map((order) => {
       const key = strapi.plugins['orders'].services.order.toKey(order);
-      if (!strapi.plugins['orders'].services.date.valid(order.startDate)) {
+      if (
+        !strapi.plugins['orders'].services.date.valid(
+          order.startDate,
+          strapi.plugins['orders'].services.order.quantity(order)
+        )
+      ) {
         return Promise.reject(`${dayjs(order.startDate)} is not valid date`);
       } else if (numAvailable[key] >= 1) {
         return strapi.query('order', 'orders').update(

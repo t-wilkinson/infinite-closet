@@ -14,7 +14,7 @@ dayjs.extend(timezone);
 const HOURS_IN_DAY = 24;
 const HOURS_SEND_CLEANERS = 2 * HOURS_IN_DAY; // 2 day shipping
 const HOURS_TO_CLEAN = 1 * HOURS_IN_DAY; // oxwash takes 24 hours to clean
-const HIVED_CUTOFF = 12; // this needs to be precise; watch minutes/seconds offsets
+const HIVED_CUTOFF = 13; // this needs to be precise; watch minutes/seconds offsets
 const shippingClasses = {
   one: 1 * HOURS_IN_DAY,
   two: 2 * HOURS_IN_DAY,
@@ -92,11 +92,14 @@ function rangesOverlap(range1, range2) {
   );
 }
 
-function valid(date) {
+function valid(date, quantity = undefined) {
   date = day(date);
   const today = day();
 
-  const arrives = arrival(today);
+  let arrives = arrival(today);
+  if (quantity === 0) {
+    arrives = arrives.add(10, 'day');
+  }
   const enoughShippingTime = date.isSameOrAfter(arrives, 'day');
 
   return enoughShippingTime;

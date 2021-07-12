@@ -6,6 +6,11 @@ const hivedApi = {
   postcodes: 'https://api.airtable.com/v0/app5ZWdAtj21xnZrh/Postcodes',
   key: 'keyzCmMhMH9fvKBPV',
   shippingClass: '2-Day', // Same-Day Next-Day 2-Day
+  shippingClasses: {
+    zero: 'Same-Day',
+    one: 'Next-Day',
+    two: '2-Day',
+  },
 };
 
 const addresses = {
@@ -116,7 +121,12 @@ async function ship(order) {
       hivedBody,
       toAddress(addresses.infinitecloset, 'Collection'),
       toAddress(orderAddress, 'Recipient'),
-      { Shipping_Class: '2-Day' }
+      {
+        Shipping_Class:
+          hivedApi.shippingClasses[
+            strapi.plugins['orders'].services.date.shippingClass(order)
+          ] || 'one',
+      }
     );
   } else if (order.status === 'cleaning') {
     Object.assign(

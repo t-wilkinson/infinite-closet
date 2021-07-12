@@ -23,6 +23,19 @@ module.exports = {
   toKey,
   inProgress,
 
+  quantity(order) {
+    if (!order.products || !order.products.sizes) {
+      strapi.log.error('quantity: order.products.sizes does not exist');
+      return -1;
+    }
+    const size = order.product.sizes.find((size) =>
+      strapi.plugins['orders'].services.size.contains(order, size.size)
+    );
+    if (size) {
+      return size.quantity;
+    }
+  },
+
   async notifyArrival(orders) {
     await Promise.allSettled(
       orders.map(async (order) => {
