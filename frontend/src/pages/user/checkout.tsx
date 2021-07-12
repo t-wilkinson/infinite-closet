@@ -1,18 +1,11 @@
 import React from 'react'
 
-import { useSelector } from '@/utils/store'
 import Checkout from '@/User/Checkout'
 import Layout from '@/Layout'
+import { useProtected } from '@/User/Protected'
 
 const Page = ({ data }) => {
-  const user = useSelector((state) => state.user.data)
-
-  React.useEffect(() => {
-    if (user === null) {
-      window.location.pathname = '/'
-      return null
-    }
-  }, [])
+  const user = useProtected()
 
   if (user === undefined) {
     return null

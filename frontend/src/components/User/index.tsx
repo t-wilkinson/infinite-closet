@@ -5,7 +5,7 @@ import axios from 'axios'
 
 import { useDispatch } from '@/utils/store'
 import { userActions } from '@/User/slice'
-import { useSelector } from '@/utils/store'
+import { useProtected } from '@/User/Protected'
 
 export const signin = async (dispatch) => {
   return axios
@@ -23,15 +23,9 @@ export const signin = async (dispatch) => {
 }
 
 export const User = ({ children }) => {
-  const user = useSelector((state) => state.user.data)
+  const user = useProtected()
 
-  React.useEffect(() => {
-    if (user === null) {
-      window.location.pathname = '/'
-    }
-  }, [])
-
-  if (!user) {
+  if (user === undefined) {
     return null
   }
 
