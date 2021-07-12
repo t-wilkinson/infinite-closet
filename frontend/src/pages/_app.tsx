@@ -158,7 +158,7 @@ const Wrapper = ({ router, children }) => {
       >
         <SkipLink />
         <Popup popup={popup} />
-        <div className="min-h-screen h-full">
+        <div className="">
           <Banner />
           {children}
         </div>

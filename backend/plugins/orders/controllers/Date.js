@@ -20,11 +20,4 @@ module.exports = {
 
     ctx.send({ valid: validDates });
   },
-
-  async dateValid(ctx) {
-    const params = ctx.request.params;
-    const isValid = strapi.plugins['orders'].services.date.valid(params.date);
-
-    ctx.send({ valid: isValid });
-  },
 };

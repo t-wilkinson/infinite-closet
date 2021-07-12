@@ -20,7 +20,6 @@ export const Shop = ({ data }) => {
     </div>
   )
 }
-export default Shop
 
 const Product = ({ data }) => {
   const { product } = data
@@ -85,3 +84,5 @@ const Rating = ({ rating }: any) => (
     {/* <FontAwesome name="star-o" size={18} color="black" /> */}
   </div>
 )
+
+export default Shop

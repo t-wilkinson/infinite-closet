@@ -80,7 +80,12 @@ function range(order) {
   } else if (cleaning.date() === 6) {
     CLEANING_DELAY += 72;
   }
-  const completed = cleaning.add(HOURS_TO_CLEAN + CLEANING_DELAY, 'hours');
+
+  const BUFFER = 1 * HOURS_IN_DAY; // buffer incase anything goes wrong
+  const completed = cleaning.add(
+    BUFFER + HOURS_TO_CLEAN + CLEANING_DELAY,
+    'hours'
+  );
 
   return { shipped, start, end, cleaning, completed };
 }
