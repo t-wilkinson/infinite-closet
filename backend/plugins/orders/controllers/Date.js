@@ -1,23 +1,55 @@
-'use strict';
+'use strict'
 
 module.exports = {
   async range(ctx) {
-    const body = ctx.request.body;
-    const range = strapi.plugins['orders'].services.date.range(body);
-    ctx.send({ range });
+    const body = ctx.request.body
+    const range = strapi.plugins['orders'].services.date.range(body)
+    ctx.send({ range })
   },
 
   async datesValid(ctx) {
-    const body = ctx.request.body;
+    const body = ctx.request.body
+    const product = body.product
+    const quantity = body.size.quantity || 1
+    const size = body.size.size
+    const rentalLength = body.rentalLength
 
-    let validDates = {};
-    for (const date of body.dates) {
-      validDates[date] = strapi.plugins['orders'].services.date.valid(
-        date,
-        body.quantity
-      );
+    let orders = await strapi
+      .query('order', 'orders')
+      .find({ product: product.id, size }, [])
+    orders = await Promise.all(
+      orders.map(async (order) => {
+        order.range = strapi.plugins['orders'].services.date.range(order)
+        order.product = await strapi
+          .query('product')
+          .findOne({ id: order.product }, ['sizes'])
+        return order
+      })
+    )
+
+    if (orders.length === 0) {
+      ctx.send({ valid: {} })
     }
 
-    ctx.send({ valid: validDates });
+    let validDates = {}
+    for (const date of body.dates) {
+      const key = strapi.plugins['orders'].services.order.toKey(orders[0]) // all orders have the same key
+      const dates = {
+        [key]: [
+          strapi.plugins['orders'].services.date.dateRange(date, rentalLength),
+        ],
+      }
+      const numAvailable = strapi.plugins['orders'].services.order.numAvailable(
+        orders,
+        dates
+      )
+      const dateValid = strapi.plugins['orders'].services.date.valid(
+        date,
+        quantity
+      )
+      validDates[date] = dateValid && numAvailable[key] > 0
+    }
+
+    ctx.send({ valid: validDates })
   },
-};
+}

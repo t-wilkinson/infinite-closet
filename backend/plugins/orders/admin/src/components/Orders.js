@@ -1,7 +1,7 @@
-import React from "react";
-import Order from "./Order";
-import OrderDetails from "./OrderDetails";
-import styled from "styled-components";
+import React from 'react';
+import Order from './Order';
+import OrderDetails from './OrderDetails';
+import styled from 'styled-components';
 
 const Orders = ({ plugin, className }) => {
   const [orders, setOrders] = React.useState([]);
@@ -10,8 +10,8 @@ const Orders = ({ plugin, className }) => {
   const getOrders = () => {
     // fetch orders
     // also fetch respective product designer because it is not included
-    fetch(strapi.backendURL + "/orders?status_in=planning&status_in=cleaning", {
-      method: "GET",
+    fetch(strapi.backendURL + '/orders?status_in=planning&status_in=cleaning', {
+      method: 'GET',
     })
       .then((res) => res.json())
       .then((res) =>
@@ -20,7 +20,7 @@ const Orders = ({ plugin, className }) => {
             fetch(
               strapi.backendURL + `/designers?id=${item.product.designer}`,
               {
-                method: "GET",
+                method: 'GET',
               }
             )
               .then((res) => res.json())
@@ -40,7 +40,7 @@ const Orders = ({ plugin, className }) => {
 
   React.useEffect(() => {
     getOrders();
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === 'production') {
       const timer = window.setInterval(getOrders, 60 * 1000);
       return () => window.clearInterval(timer);
     }

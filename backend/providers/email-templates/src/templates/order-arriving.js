@@ -16,7 +16,7 @@ export default ({ data }) => {
   return (
     <Layout title="Order Arriving">
       <h3 style={{ margin: 0 }}>Hello {data.firstName},</h3>
-      <span>Your order has arrived!</span>
+      <span>Your order is arriving today!</span>
       <Order {...data} />
       <span>
         Please expect the order to be picked up on{" "}

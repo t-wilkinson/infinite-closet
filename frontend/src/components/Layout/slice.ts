@@ -16,6 +16,7 @@ import { CookieConsent } from './types'
 
 export interface State {
   data: {
+    product: StrapiProduct
     products: StrapiProduct[]
     colors: StrapiColor[]
     occasions: StrapiOccasion[]
@@ -33,6 +34,7 @@ export interface State {
 
 const initialState: State = {
   data: {
+    product: undefined,
     categories: [],
     products: [],
     designers: [],

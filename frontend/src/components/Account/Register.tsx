@@ -29,7 +29,7 @@ export const Register = () => {
         '/auth/local/register',
         {
           firstName: cleaned.firstName,
-          lastName: cleaned.firstName,
+          lastName: cleaned.lastName,
           email: cleaned.email,
           password: cleaned.password,
         },

@@ -8,9 +8,9 @@ import { Icon } from '@/components'
 import { Submit } from '@/Form'
 import { toTitleCase } from '@/utils/helpers'
 import { normalizeSize, unNormalizeSize } from '@/Products/helpers'
+import { rentalLengths } from '@/utils/constants'
 
 import { shopActions } from './slice'
-import { OneTime } from './types'
 import DatePicker from './DatePicker'
 
 export const ProductRentContents = ({ data, product, state }) => {
@@ -33,11 +33,6 @@ export const ProductRentContents = ({ data, product, state }) => {
   )
 }
 export default ProductRentContents
-
-const rentalLengths: { [key in OneTime]: number } = {
-  Short: 4,
-  Long: 8,
-}
 
 interface Size {
   id: number
@@ -65,7 +60,7 @@ export const productRentContents = {
             status: 'cart',
             size: unNormalizeSize(size.size),
             date: state.selectedDate.toJSON(),
-            rentalLength: state.oneTime.toLowerCase(),
+            rentalLength: state.oneTime,
             product: product.id,
           },
           { withCredentials: true },
@@ -98,9 +93,8 @@ export const productRentContents = {
       <>
         <DatePicker
           state={state}
-          rentalLength={rentalLengths[state.oneTime]}
+          rentalLength={rentalLengths[state.oneTime] + 1}
           dispatch={dispatch}
-          size={product.sizes[state.size]}
         />
 
         <SelectorItem label="Size" className="my-2 z-10 w-full">
@@ -132,13 +126,13 @@ export const productRentContents = {
           <div className="flex-row justify-between w-full flex-wrap">
             <div className="mr-6">
               <OneTimeRadioButton
-                selected={state.oneTime === 'Short'}
-                oneTime="Short"
+                selected={state.oneTime === 'short'}
+                oneTime="short"
                 dispatch={dispatch}
               />
               <OneTimeRadioButton
-                selected={state.oneTime === 'Long'}
-                oneTime="Long"
+                selected={state.oneTime === 'long'}
+                oneTime="long"
                 dispatch={dispatch}
               />
             </div>
@@ -152,7 +146,7 @@ export const productRentContents = {
                     state.selectedDate.format('ddd M/D') +
                       ' - ' +
                       state.selectedDate
-                        .add(rentalLengths[state.oneTime], 'day')
+                        .add(rentalLengths[state.oneTime] + 1, 'day')
                         .format('ddd M/D')}
                 </span>
                 <Icon className="text-gray" name="date" size={24} />
@@ -345,6 +339,6 @@ const OneTimeRadioButton = ({ selected, oneTime, dispatch }) => (
       />
     </div>
     {/* TODO: dynamic from server */}
-    <span>{{ Short: 4, Long: 8 }[oneTime]}-day rental</span>
+    <span>{{ short: 4, long: 8 }[oneTime]}-day rental</span>
   </button>
 )

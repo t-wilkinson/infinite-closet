@@ -17,7 +17,7 @@ interface State {
 
 const initialState: State = {
   rentType: 'OneTime',
-  oneTime: 'Short',
+  oneTime: 'short',
   membership: 'Short',
   dateVisible: false,
 }

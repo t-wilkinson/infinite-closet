@@ -8,6 +8,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
 import { Icon } from '@/components'
 import useDays from '@/utils/useDays'
+import { useSelector } from '@/utils/store'
 
 import { shopActions } from './slice'
 
@@ -18,7 +19,7 @@ dayjs.extend(timezone)
 dayjs.tz.guess()
 dayjs.tz.setDefault('Europe/London')
 
-export const DatePicker = ({ size, state, dispatch, rentalLength }) => {
+export const DatePicker = ({ state, dispatch, rentalLength }) => {
   if (!state.dateVisible) {
     return null
   }
@@ -30,12 +31,7 @@ export const DatePicker = ({ size, state, dispatch, rentalLength }) => {
             <Icon name="close" size={16} />
           </button>
         </div>
-        <Date
-          state={state}
-          size={size}
-          dispatch={dispatch}
-          rentalLength={rentalLength}
-        />
+        <Date state={state} dispatch={dispatch} rentalLength={rentalLength} />
       </div>
     </div>
   )
@@ -43,12 +39,13 @@ export const DatePicker = ({ size, state, dispatch, rentalLength }) => {
 
 export default DatePicker
 
-const Date = ({ size, state, rentalLength, dispatch }) => {
+const Date = ({ state, rentalLength, dispatch }) => {
   const { date, setDate, days } = useDays(state.selectedDate)
   const ref = React.useRef()
 
   React.useEffect(() => {
     if (ref.current) {
+      // @ts-ignore
       ref.current.focus()
     }
   }, [])
@@ -77,7 +74,6 @@ const Date = ({ size, state, rentalLength, dispatch }) => {
         ))}
       </div>
       <Days
-        size={size}
         days={days}
         state={state}
         dispatch={dispatch}
@@ -87,15 +83,18 @@ const Date = ({ size, state, rentalLength, dispatch }) => {
   )
 }
 
-const Days = ({ size, days, state, dispatch, rentalLength }) => {
+const Days = ({ days, state, dispatch, rentalLength }) => {
   const [hover, setHover] = React.useState<Dayjs>()
   const [valid, setValid] = React.useState({})
+  const product = useSelector((state) => state.layout.data.product)
 
   React.useEffect(() => {
     axios
       .post('/orders/dates/valid', {
         dates: days,
-        quantity: size.quantity || 1,
+        product,
+        size: product.sizes[state.size],
+        rentalLength: state.oneTime,
       })
       .then((res) => setValid(res.data.valid))
       .catch((err) => console.error(err))

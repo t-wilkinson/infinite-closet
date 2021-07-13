@@ -35,7 +35,7 @@ const mockProduct = {
 
 const mockState = {
   rentType: 'OneTime',
-  oneTime: 'Short',
+  oneTime: 'short',
   membership: 'Short',
   dateVisible: false,
 }

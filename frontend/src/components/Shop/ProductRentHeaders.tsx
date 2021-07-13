@@ -39,7 +39,7 @@ const productRentHeaders = {
       <span className="text-sm font-bold text-center">One-time rental</span>
       <span className="font-bold">
         £
-        {(state.oneTime === 'Short'
+        {(state.oneTime === 'short'
           ? product.shortRentalPrice
           : product.longRentalPrice) || '-'}
       </span>

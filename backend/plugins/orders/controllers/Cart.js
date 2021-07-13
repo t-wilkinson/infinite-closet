@@ -24,7 +24,7 @@ module.exports = {
     const body = ctx.request.body;
     const numAvailable = await strapi.plugins[
       'orders'
-    ].services.order.numAvailable(body.cart);
+    ].services.order.numAvailableCart(body.cart);
 
     const total = strapi.plugins['orders'].services.price.totalPrice({
       cart: body.cart.filter((order) =>
@@ -48,7 +48,7 @@ module.exports = {
 
     const numAvailable = await strapi.plugins[
       'orders'
-    ].services.order.numAvailable(cart);
+    ].services.order.numAvailableCart(cart);
 
     // add price and available quantity to each order
     cart = cart.map((order) => {
@@ -91,7 +91,7 @@ module.exports = {
     const body = ctx.request.body;
     const numAvailable = await strapi.plugins[
       'orders'
-    ].services.order.numAvailable(body.cart);
+    ].services.order.numAvailableCart(body.cart);
 
     const updates = body.cart.map((order) => {
       const key = strapi.plugins['orders'].services.order.toKey(order);

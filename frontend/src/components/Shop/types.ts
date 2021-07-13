@@ -1,5 +1,5 @@
 export type RentType = 'OneTime' | 'Membership' | 'Purchase'
-export type OneTime = 'Short' | 'Long'
+export type OneTime = 'short' | 'long'
 export type Membership = 'Short' | 'Medium' | 'Large'
 export interface State {
   moreInfo?: String
