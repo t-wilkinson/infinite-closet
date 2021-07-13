@@ -78,7 +78,7 @@ const reducer = (state, action) => {
 export const Checkout = ({ user, data }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const fetchCart = () =>
-    fetchAPI(`/orders/cart/${user.id}`)
+    fetchAPI(`/orders/cart/user/${user.id}`)
       .then((data) => dispatch({ type: 'fill-cart', payload: data.cart }))
       .catch((err) => console.error(err))
 

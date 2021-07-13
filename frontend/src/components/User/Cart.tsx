@@ -43,7 +43,7 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
 
   const removeItem = () => {
     axios
-      .delete(`/orders/cart/${order.id}`, { withCredentials: true })
+      .delete(`/orders/cart/id/${order.id}`, { withCredentials: true })
       .then(() => dispatch({ type: 'remove-cart-item', payload: order.id }))
       .catch((err) => console.error(err))
   }

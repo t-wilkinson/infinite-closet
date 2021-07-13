@@ -43,7 +43,7 @@
     },
     {
       "method": "GET",
-      "path": "/cart/:user_id",
+      "path": "/cart/user/:user_id",
       "handler": "Cart.getCart",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
@@ -51,7 +51,7 @@
     },
     {
       "method": "DELETE",
-      "path": "/cart/:id",
+      "path": "/cart/id/:id",
       "handler": "Cart.removeCartItem",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
@@ -62,14 +62,6 @@
       "method": "POST",
       "path": "/",
       "handler": "Order.create",
-      "config": {
-        "policies": ["plugins::users-permissions.permissions"]
-      }
-    },
-    {
-      "method": "PUT",
-      "path": "/:id",
-      "handler": "Order.update",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
