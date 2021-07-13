@@ -22,6 +22,7 @@ export const Page = ({ data }) => {
 
   React.useEffect(() => {
     if (SortBy.includes(query.sort as any)) {
+      console.log(query.sort)
       dispatch(productsActions.setPanelSortBy(query.sort as any))
     }
   }, [loading, data])

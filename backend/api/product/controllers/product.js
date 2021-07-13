@@ -84,7 +84,9 @@ const toRaw = (_where) => {
 
 async function queryProducts(knex, _where, _paging) {
   // TODO: handle paging in SQL
-  const sort = `products.${_paging.sort.replace(':', ' ')}`;
+  let sort = _paging.sort.split(':');
+  sort[0] = `products."${sort[0]}"`;
+  sort = sort.join(' ');
   const results = await knex
     .select('products.id as id')
     .from('products')

@@ -29,7 +29,7 @@ export default Products
 const ProductItemsWrapper = ({ data, loading }) => {
   const router = useRouter()
   const totalPages = Math.ceil(data.productsCount / QUERY_LIMIT) || 1
-  const sortBy = useSelector((state) => state.products.sortBy)
+  const sortBy = useSelector((state) => state.products.panel.sortBy)
 
   return (
     <div className="w-full flex-shrink">
