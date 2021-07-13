@@ -1,8 +1,8 @@
-'use strict';
+'use strict'
 
 module.exports = {
   async contact(ctx) {
-    const body = ctx.request.body;
+    const body = ctx.request.body
 
     await strapi.plugins['email'].services.email.send({
       template: 'contact-us',
@@ -12,7 +12,7 @@ module.exports = {
       },
       subject: `[Contact] ${body.firstName} ${body.lastName}`,
       data: body,
-    });
+    })
 
     await strapi.query('contact').create({
       contact: body.email,
@@ -23,11 +23,11 @@ module.exports = {
         email: body.emailAddress,
         phoneNumber: body.phoneNumber,
       },
-    });
+    })
 
-    ctx.send();
+    ctx.send()
   },
-};
+}
 
 // const fetch = require("node-fetch");
 // const WebSocket = require("ws");

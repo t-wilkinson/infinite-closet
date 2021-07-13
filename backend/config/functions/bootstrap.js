@@ -1,17 +1,17 @@
-"use strict";
+'use strict'
 
-const fs = require("fs");
-const models = require("../../data/data.js").models;
+const fs = require('fs')
+const models = require('../../data/data.js').models
 
-const { categories } = require("../../data/data");
+const { categories } = require('../../data/data')
 
 const setDefaultPermissions = async () => {
   const permissions_applications = await strapi
-    .query("permission", "users-permissions")
-    .find({});
+    .query('permission', 'users-permissions')
+    .find({})
   await Promise.all(
     permissions_applications.map((p) =>
-      strapi.query("permission", "users-permissions").update(
+      strapi.query('permission', 'users-permissions').update(
         {
           id: p.id,
         },
@@ -20,44 +20,44 @@ const setDefaultPermissions = async () => {
         }
       )
     )
-  );
-};
+  )
+}
 
 const populatePrivateFields = () => {
-  const today = new Date().toJSON();
+  const today = new Date().toJSON()
   return strapi
-    .query("product")
+    .query('product')
     .find(
       {},
       Object.keys(models).map((filter) => `${filter}`)
     )
     .then((products) =>
       products.map((product) => {
-        let data = { id: product.id };
-        if (process.env.NODE_ENV !== "production") {
-          data.published_at = today;
+        let data = { id: product.id }
+        if (process.env.NODE_ENV !== 'production') {
+          data.published_at = today
         }
         for (const filter of Object.keys(models)) {
-          let slugs;
-          if (filter === "sizes") {
-            slugs = product[filter].map((v) => v.innerSize || v.size).join(",");
+          let slugs
+          if (filter === 'sizes') {
+            slugs = product[filter].map((v) => v.innerSize || v.size).join(',')
           } else {
-            slugs = product[filter].map((v) => v.slug).join(",");
+            slugs = product[filter].map((v) => v.slug).join(',')
           }
-          data[`${filter}_`] = slugs;
+          data[`${filter}_`] = slugs
         }
-        strapi.query("product").update({ id: product.id }, data);
+        strapi.query('product').update({ id: product.id }, data)
       })
-    );
-};
+    )
+}
 
 module.exports = async () => {
-  await populatePrivateFields();
+  await populatePrivateFields()
 
-  if (process.env.NODE_ENV !== "production") {
-    await setDefaultPermissions();
+  if (process.env.NODE_ENV !== 'production') {
+    await setDefaultPermissions()
   }
-};
+}
 
 // const isFirstRun = async () => {
 //   const pluginStore = strapi.store({

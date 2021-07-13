@@ -1,7 +1,7 @@
-"use strict";
+'use strict'
 
-const _ = require("lodash");
-const models = require("../../../data/data.js").models;
+const _ = require('lodash')
+const models = require('../../../data/data.js').models
 
 module.exports = {
   lifecycles: {
@@ -10,39 +10,39 @@ module.exports = {
       _.omit(
         data,
         Object.keys(models).map((v) => `${v}_`)
-      );
+      )
 
       for (const [filter, model] of Object.entries(models)) {
         if (!(filter in data)) {
-          continue;
+          continue
         }
 
-        if (filter === "sizes") {
+        if (filter === 'sizes') {
           const sizes = await strapi
-            .query("custom.sizes")
-            .find({ id_in: data[filter].map((v) => v.id).filter((id) => id) });
-          let slugs = new Set();
+            .query('custom.sizes')
+            .find({ id_in: data[filter].map((v) => v.id).filter((id) => id) })
+          let slugs = new Set()
 
           for (const size of sizes) {
             if (size.sizeRange) {
               for (const value of strapi.services.size.range(size)) {
-                slugs.add(value);
+                slugs.add(value)
               }
             } else {
-              slugs.add(size.size);
+              slugs.add(size.size)
             }
           }
 
-          slugs = Array.from(slugs).join(",");
-          data[`${filter}_`] = slugs;
+          slugs = Array.from(slugs).join(',')
+          data[`${filter}_`] = slugs
         } else if (filter in data) {
           const values = await strapi
             .query(model)
-            .find({ id_in: data[filter].filter((id) => id) });
-          const slugs = values.map((v) => v.slug).join(",");
-          data[`${filter}_`] = slugs;
+            .find({ id_in: data[filter].filter((id) => id) })
+          const slugs = values.map((v) => v.slug).join(',')
+          data[`${filter}_`] = slugs
         }
       }
     },
   },
-};
+}

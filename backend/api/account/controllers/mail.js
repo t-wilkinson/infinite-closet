@@ -1,14 +1,14 @@
-'use strict';
+'use strict'
 
 module.exports = {
   async newsletter(ctx) {
-    const body = ctx.request.body;
+    const body = ctx.request.body
 
     await strapi.plugins['email'].services.email.send({
       template: 'newsletter-subscription',
       to: body.email,
       subject: 'You Made The List!',
-    });
+    })
 
     await strapi.query('contact').create({
       contact: body.email,
@@ -16,19 +16,19 @@ module.exports = {
       metadata: {
         email: body.email,
       },
-    });
+    })
 
-    ctx.send({ ok: true });
+    ctx.send({ ok: true })
   },
 
   async waitlist(ctx) {
-    const body = ctx.request.body;
+    const body = ctx.request.body
 
     await strapi.plugins['email'].services.email.send({
       template: 'waitlist-subscription',
       to: { name: body.name, email: body.email },
       subject: 'You subscribed to the newsletter',
-    });
+    })
 
     await strapi.query('contact').create({
       contact: body.email,
@@ -40,8 +40,8 @@ module.exports = {
         subscribe: body.subscribe,
         marketing: body.marketing,
       },
-    });
+    })
 
-    ctx.send({ ok: true });
+    ctx.send({ ok: true })
   },
-};
+}

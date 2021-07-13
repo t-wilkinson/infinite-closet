@@ -1,11 +1,11 @@
-'use strict';
+'use strict'
 
 const mailchimp = require('@mailchimp/mailchimp_transactional')(
   process.env.MAILCHIMP_TOKEN
-);
-const emailTemplates = require('email-templates');
+)
+const emailTemplates = require('email-templates')
 
-module.exports = mailchimp;
+module.exports = mailchimp
 
 const default_message = {
   merge_language: 'handlebars',
@@ -13,51 +13,51 @@ const default_message = {
   from_name: 'Infinite Closet',
   subject: 'Infinite Closet',
   inline_css: true,
-};
+}
 
 // message.to expects [{email, name, type}], not [email]
 const normalizeTo = (to) => {
-  const res = [];
+  const res = []
   if (typeof to === 'string') {
-    res.push({ email: to });
+    res.push({ email: to })
   } else {
     for (const email in to) {
       if (typeof email === 'string') {
-        res.push({ email });
+        res.push({ email })
       } else {
-        res.push(email);
+        res.push(email)
       }
     }
   }
-  return res;
-};
+  return res
+}
 
 const normalizeVars = (merge_vars) => {
   if (Array.isArray(merge_vars)) {
-    return merge_vars;
+    return merge_vars
   } else {
     return Object.entries(merge_vars).map(([k, v]) => ({
       name: k,
       content: v,
-    }));
+    }))
   }
-};
+}
 
 const normalizeMessage = (message) => {
-  let msg = { ...default_message, ...message };
+  let msg = { ...default_message, ...message }
 
-  msg.to = normalizeTo(message.to);
+  msg.to = normalizeTo(message.to)
   if ('global_merge_vars' in message) {
-    msg.global_merge_vars = normalizeVars(message.global_merge_vars);
+    msg.global_merge_vars = normalizeVars(message.global_merge_vars)
   }
-  return msg;
-};
+  return msg
+}
 
 module.exports = {
   async send(message) {
     return await mailchimp.messages.send({
       message: normalizeMessage(message),
-    });
+    })
   },
 
   async template(template_name, message) {
@@ -65,6 +65,6 @@ module.exports = {
       template_name,
       template_content: [],
       message: normalizeMessage(message),
-    });
+    })
   },
-};
+}
