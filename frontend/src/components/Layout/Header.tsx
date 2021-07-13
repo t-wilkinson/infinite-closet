@@ -83,12 +83,11 @@ const Account = ({ user }) => {
         <>
           <IconLink href="/user/profile" size={18} name="user" />
           {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
-          <div className="relative">
-            <IconLink href="/user/checkout" size={18} name="shopping-bag" />
+          <IconLink href="/user/checkout" size={18} name="shopping-bag">
             <span className="absolute right-0 bottom-0 text-xs bg-sec-light rounded-full px-1">
               {count}
             </span>
-          </div>
+          </IconLink>
         </>
       ) : (
         <>
@@ -105,10 +104,11 @@ const Account = ({ user }) => {
   )
 }
 
-const IconLink = ({ size, name, href }) => (
+const IconLink = ({ size, name, href, children = null }) => (
   <Link href={href}>
-    <a className="p-2">
+    <a className="p-2 relative">
       <Icon size={size} name={name} />
+      {children}
     </a>
   </Link>
 )
