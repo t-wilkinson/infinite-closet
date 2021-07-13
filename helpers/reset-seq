@@ -1,15 +1,18 @@
 #!/usr/bin/bash
 
-declare -A db_names
-db_names[local]=infinite-closet-dev
-db_names[dev]=infinite-closet-dev
-db_names[prod]=infinite-closet
-
-declare -A db_users
-db_users[local]=test
-db_users[dev]=test
-db_users[prod]=infinite-closet
-
-docker exec -i ${1}_db_1 psql -d ${db_names[$1]} -U ${db_users[$1]} <<EOF
+reset_seq() {
+    ./exec-psql $1 <<EOF
 select setval('${2}_id_seq', max + 1) from (select MAX(id) from "$2") as max;
 EOF
+}
+
+if [[ -z $2 ]]; then
+    sequences=$(echo 'copy (select sequence_name from information_schema.sequences) to STDOUT with CSV;' | ./exec-psql $1 | sed 's/_id_seq//g')
+    for sequence in $sequences; do
+        reset_seq $1 $sequence &
+    done
+    wait
+else
+    reset_seq $@
+fi
+

@@ -1,42 +1,42 @@
-'use strict';
+'use strict'
 
-const stripe = require('stripe')(process.env.STRIPE_KEY);
-const dayjs = require('dayjs');
+const stripe = require('stripe')(process.env.STRIPE_KEY)
+const dayjs = require('dayjs')
 
 function orderValid(order, numAvailable, dateValid) {
   return (
     dateValid &&
     numAvailable[strapi.plugins['orders'].services.order.toKey(order)] > 1
-  );
+  )
 }
 
 module.exports = {
   async count(ctx) {
-    const user = ctx.params.userid;
+    const user = ctx.params.userid
 
     const count = await strapi
       .query('order', 'orders')
-      .count({ user: user, status: 'cart' });
-    ctx.send({ count });
+      .count({ user: user, status: 'cart' })
+    ctx.send({ count })
   },
 
   async totalPrice(ctx) {
-    const body = ctx.request.body;
+    const body = ctx.request.body
     const numAvailable = await strapi.plugins[
       'orders'
-    ].services.order.numAvailableCart(body.cart);
+    ].services.order.numAvailableCart(body.cart)
 
     const total = strapi.plugins['orders'].services.price.totalPrice({
       cart: body.cart.filter((order) =>
         orderValid(order, numAvailable, order.dateValid)
       ),
       insurance: body.insurance,
-    });
-    ctx.send(total);
+    })
+    ctx.send(total)
   },
 
   async getCart(ctx) {
-    const user = ctx.state.user;
+    const user = ctx.state.user
 
     let cart = await strapi.query('order', 'orders').find(
       {
@@ -44,20 +44,20 @@ module.exports = {
         status: 'cart',
       },
       ['product', 'product.sizes', 'product.designer', 'product.images']
-    );
+    )
 
     const numAvailable = await strapi.plugins[
       'orders'
-    ].services.order.numAvailableCart(cart);
+    ].services.order.numAvailableCart(cart)
 
     // add price and available quantity to each order
     cart = cart.map((order) => {
-      const key = strapi.plugins['orders'].services.order.toKey(order);
+      const key = strapi.plugins['orders'].services.order.toKey(order)
       // console.log(order.product.sizes);
       const dateValid = strapi.plugins['orders'].services.date.valid(
         order.startDate,
         strapi.plugins['orders'].services.order.quantity(order)
-      );
+      )
 
       return {
         ...order,
@@ -67,41 +67,41 @@ module.exports = {
         dateValid,
         shippingClass:
           strapi.plugins['orders'].services.date.shippingClass(order),
-      };
-    });
+      }
+    })
 
     ctx.send({
       cart,
-    });
+    })
   },
 
   // TODO: remove this, use PUT instead
   async removeCartItem(ctx) {
-    const { id } = ctx.params;
+    const { id } = ctx.params
     const order = await strapi
       .query('order', 'orders')
-      .update({ id }, { status: 'dropped' });
+      .update({ id }, { status: 'dropped' })
     ctx.send({
       order,
-    });
+    })
   },
 
   async checkout(ctx) {
-    const user = ctx.state.user;
-    const body = ctx.request.body;
+    const user = ctx.state.user
+    const body = ctx.request.body
     const numAvailable = await strapi.plugins[
       'orders'
-    ].services.order.numAvailableCart(body.cart);
+    ].services.order.numAvailableCart(body.cart)
 
     const updates = body.cart.map((order) => {
-      const key = strapi.plugins['orders'].services.order.toKey(order);
+      const key = strapi.plugins['orders'].services.order.toKey(order)
       if (
         !strapi.plugins['orders'].services.date.valid(
           order.startDate,
           strapi.plugins['orders'].services.order.quantity(order)
         )
       ) {
-        return Promise.reject(`${dayjs(order.startDate)} is not valid date`);
+        return Promise.reject(`${dayjs(order.startDate)} is not valid date`)
       } else if (numAvailable[key] >= 1) {
         return strapi.query('order', 'orders').update(
           { id: order.id },
@@ -111,26 +111,26 @@ module.exports = {
             status: 'planning',
             insurance: body.insurance[order.id] || false,
           }
-        );
+        )
       } else {
         return Promise.reject(
           `Not enough quantity available for order ${order.id}`
-        );
+        )
       }
-    });
+    })
 
-    const result = await Promise.allSettled(updates);
+    const result = await Promise.allSettled(updates)
     const cart = result.reduce((acc, settled) => {
       if (settled.status === 'fulfilled') {
-        acc.push(settled.value);
+        acc.push(settled.value)
       }
-      return acc;
-    }, []);
+      return acc
+    }, [])
 
     const amount = strapi.plugins['orders'].services.price.totalAmount({
       cart,
       insurance: body.insurance,
-    });
+    })
 
     stripe.paymentIntents
       .create({
@@ -189,11 +189,11 @@ module.exports = {
         })
       )
 
-      .catch((err) => strapi.log.error(err));
+      .catch((err) => strapi.log.error(err))
 
-    ctx.send({ status: 200, result });
+    ctx.send({ status: 200, result })
   },
-};
+}
 
 /* Incase we want to charge user during shipment(not checkout)
 stripe.paymentIntents
