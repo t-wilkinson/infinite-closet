@@ -27,13 +27,14 @@ module.exports = {
       })
     )
 
-    if (orders.length === 0) {
-      ctx.send({ valid: {} })
-    }
-
     let validDates = {}
     // prettier-ignore
     for (const date of body.dates) {
+      if (orders.length === 0) {
+        validDates[date] = strapi.plugins['orders'].services.date.valid(date, quantity)
+        continue
+      }
+
       const key = strapi.plugins['orders'].services.order.toKey(orders[0]) // all orders have the same key
       const dates = { [key]: [strapi.plugins['orders'].services.date.dateRange(date, rentalLength)] }
       const numAvailable = strapi.plugins['orders'].services.order.numAvailable(orders, dates)[key]
