@@ -128,7 +128,7 @@ function valid(date, quantity = undefined) {
   const today = day()
 
   let arrives = arrival(today)
-  if (quantity === 0) {
+  if (quantity <= 0) {
     arrives = arrives.add(10, 'day')
   }
   const enoughShippingTime = date.isSameOrAfter(arrives, 'day')

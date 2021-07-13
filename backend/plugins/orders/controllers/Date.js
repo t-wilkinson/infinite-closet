@@ -32,22 +32,12 @@ module.exports = {
     }
 
     let validDates = {}
+    // prettier-ignore
     for (const date of body.dates) {
       const key = strapi.plugins['orders'].services.order.toKey(orders[0]) // all orders have the same key
-      const dates = {
-        [key]: [
-          strapi.plugins['orders'].services.date.dateRange(date, rentalLength),
-        ],
-      }
-      const numAvailable = strapi.plugins['orders'].services.order.numAvailable(
-        orders,
-        dates
-      )
-      const dateValid = strapi.plugins['orders'].services.date.valid(
-        date,
-        quantity
-      )
-      validDates[date] = dateValid && numAvailable[key] > 0
+      const dates = { [key]: [strapi.plugins['orders'].services.date.dateRange(date, rentalLength)] }
+      const numAvailable = strapi.plugins['orders'].services.order.numAvailable(orders, dates)[key]
+      validDates[date] = strapi.plugins['orders'].services.date.valid(date, numAvailable)
     }
 
     ctx.send({ valid: validDates })
