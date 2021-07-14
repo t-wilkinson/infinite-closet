@@ -200,7 +200,7 @@ export const Checkout = ({ user, data }) => {
               disabled={
                 !(state.paymentMethod && state.address) ||
                 ['checking-out'].includes(state.status) ||
-                state.cart.every(isOrderValid)
+                state.cart.every(isOrderInvalid)
               }
             >
               {state.status === 'checking-out'
@@ -209,9 +209,9 @@ export const Checkout = ({ user, data }) => {
                 ? 'Unable to Checkout'
                 : state.status === 'success'
                 ? 'Successfully Checked Out'
-                : state.cart.every(isOrderValid)
+                : state.cart.every(isOrderInvalid)
                 ? 'No Available Items'
-                : state.cart.some(isOrderValid)
+                : state.cart.some(isOrderInvalid)
                 ? 'Checkout Available Items'
                 : 'Checkout'}
             </Submit>
@@ -222,7 +222,7 @@ export const Checkout = ({ user, data }) => {
   )
 }
 
-const isOrderValid = (order) => order.available <= 0 || !order.dateValid
+const isOrderInvalid = (order) => !order.valid
 
 const SideItem = ({ label, children }) => (
   <div className="space-y-2 bg-white p-3 rounded-sm ">

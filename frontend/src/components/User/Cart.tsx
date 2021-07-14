@@ -52,7 +52,7 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
     <div
       className={`flex-row items-center border p-4 rounded-sm relative bg-white
         ${
-          order.available <= 0 || !order.dateValid
+          order.available <= 0 || !order.valid
             ? 'border-warning'
             : 'border-gray'
         }
@@ -88,10 +88,10 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
             </Link>
           </span>
           <div className="flex flex-row items-center">
-            <span className={` ${order.dateValid ? '' : 'text-warning'} `}>
+            <span className={`${order.valid ? '' : 'text-warning'}`}>
               {startDate} - {endDate}
             </span>
-            {!order.dateValid && (
+            {!order.valid && (
               <Hover>This rental date is no longer valid.</Hover>
             )}
           </div>

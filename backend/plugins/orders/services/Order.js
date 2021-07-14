@@ -36,21 +36,22 @@ function numAvailable(orders, dates) {
     // reduce available product quantity by number of overlaps
     const orderRange =
       order.range || strapi.plugins['orders'].services.date.range(order)
-    const overlaps = !dates[key]
-      ? false
-      : dates[key].reduce((acc, date) => {
+
+    if (dates[key]) {
+      const overlaps = dates[key].reduce((acc, date) => {
         if (acc) {
           return acc
         }
         const overlaps =
-            date &&
-            strapi.plugins['orders'].services.date.overlap(date, orderRange) &&
-            inProgress(order.status)
+          date &&
+          strapi.plugins['orders'].services.date.overlap(date, orderRange) &&
+          inProgress(order.status)
         return overlaps
       }, 0)
 
-    if (overlaps) {
-      counter[key] -= 1
+      if (overlaps) {
+        counter[key] -= 1
+      }
     }
 
     return counter

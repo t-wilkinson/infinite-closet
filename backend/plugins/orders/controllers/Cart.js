@@ -15,10 +15,6 @@ module.exports = {
 
   async totalPrice(ctx) {
     const body = ctx.request.body
-    // const numAvailable = await strapi.plugins[
-    //   'orders'
-    // ].services.order.numAvailableCart(body.cart)
-
     const total = strapi.plugins['orders'].services.price.totalPrice({
       cart: body.cart.filter((order) => order.valid),
       insurance: body.insurance,
@@ -44,8 +40,7 @@ module.exports = {
     // add price and available quantity to each order
     cart = cart.map((order) => {
       const key = strapi.plugins['orders'].services.order.toKey(order)
-      // console.log(order.product.sizes);
-      const dateValid = strapi.plugins['orders'].services.date.valid(
+      const valid = strapi.plugins['orders'].services.date.valid(
         order.startDate,
         numAvailable[key]
       )
@@ -54,8 +49,7 @@ module.exports = {
         ...order,
         price: strapi.plugins['orders'].services.price.price(order),
         available: numAvailable[key],
-        valid: dateValid,
-        dateValid,
+        valid,
         shippingClass:
           strapi.plugins['orders'].services.date.shippingClass(order),
       }
