@@ -78,7 +78,7 @@ const reducer = (state, action) => {
 export const Checkout = ({ user, data }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const fetchCart = () =>
-    fetchAPI(`/orders/cart/user/${user.id}`)
+    fetchAPI(`/orders/cart/${user.id}`)
       .then((data) => dispatch({ type: 'fill-cart', payload: data.cart }))
       .catch((err) => console.error(err))
 
@@ -143,10 +143,14 @@ export const Checkout = ({ user, data }) => {
 
   React.useEffect(() => {
     axios
-      .post('/orders/cart/price', {
-        insurance: state.insurance,
-        cart: state.cart,
-      })
+      .post(
+        '/orders/cart/price',
+        {
+          insurance: state.insurance,
+          cart: state.cart,
+        },
+        { withCredentials: true },
+      )
       .then((res) => dispatch({ type: 'cart-total', payload: res.data }))
       .catch((err) => console.error(err))
   }, [state.cart, state.insurance])

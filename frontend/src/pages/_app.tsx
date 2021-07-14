@@ -126,7 +126,7 @@ const Wrapper = ({ router, children }) => {
 
     dispatch(layoutActions.loadAnalytics(firebase.analytics()))
     signin(dispatch)
-      .then((user) => axios.get(`/orders/cart/count/${user.id}`))
+      .then(() => axios.get(`/orders/cart/count`, { withCredentials: true }))
       .then((res) => dispatch(userActions.countCart(res.data.count)))
       .catch(() => {
         const loggedIn = JSON.parse(window.localStorage.getItem('logged-in'))

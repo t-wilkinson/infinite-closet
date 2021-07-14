@@ -27,7 +27,7 @@
     },
     {
       "method": "GET",
-      "path": "/cart/count/:userid",
+      "path": "/cart/count",
       "handler": "Cart.count",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
@@ -43,7 +43,7 @@
     },
     {
       "method": "GET",
-      "path": "/cart/user/:user_id",
+      "path": "/cart/:user_id",
       "handler": "Cart.getCart",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
@@ -51,7 +51,7 @@
     },
     {
       "method": "DELETE",
-      "path": "/cart/id/:id",
+      "path": "/cart/:id",
       "handler": "Cart.removeCartItem",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]

@@ -12,11 +12,11 @@ function orderValid(order, numAvailable, dateValid) {
 
 module.exports = {
   async count(ctx) {
-    const user = ctx.params.userid
+    const user = ctx.state.user
 
     const count = await strapi
       .query('order', 'orders')
-      .count({ user: user, status: 'cart' })
+      .count({ user: user.id, status: 'cart' })
     ctx.send({ count })
   },
 
