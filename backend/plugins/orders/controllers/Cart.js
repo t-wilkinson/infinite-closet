@@ -3,13 +3,6 @@
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 const dayjs = require('dayjs')
 
-function orderValid(order, numAvailable, dateValid) {
-  return (
-    dateValid &&
-    numAvailable[strapi.plugins['orders'].services.order.toKey(order)] > 1
-  )
-}
-
 module.exports = {
   async count(ctx) {
     const user = ctx.state.user
@@ -22,14 +15,12 @@ module.exports = {
 
   async totalPrice(ctx) {
     const body = ctx.request.body
-    const numAvailable = await strapi.plugins[
-      'orders'
-    ].services.order.numAvailableCart(body.cart)
+    // const numAvailable = await strapi.plugins[
+    //   'orders'
+    // ].services.order.numAvailableCart(body.cart)
 
     const total = strapi.plugins['orders'].services.price.totalPrice({
-      cart: body.cart.filter((order) =>
-        orderValid(order, numAvailable, order.dateValid)
-      ),
+      cart: body.cart.filter((order) => order.valid),
       insurance: body.insurance,
     })
     ctx.send(total)
@@ -56,14 +47,14 @@ module.exports = {
       // console.log(order.product.sizes);
       const dateValid = strapi.plugins['orders'].services.date.valid(
         order.startDate,
-        strapi.plugins['orders'].services.order.quantity(order)
+        numAvailable[key]
       )
 
       return {
         ...order,
         price: strapi.plugins['orders'].services.price.price(order),
         available: numAvailable[key],
-        valid: orderValid(order, numAvailable, dateValid),
+        valid: dateValid,
         dateValid,
         shippingClass:
           strapi.plugins['orders'].services.date.shippingClass(order),

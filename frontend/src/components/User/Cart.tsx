@@ -52,7 +52,7 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
     <div
       className={`flex-row items-center border p-4 rounded-sm relative bg-white
         ${
-          order.available <= 0 || order.dateValid
+          order.available <= 0 || !order.dateValid
             ? 'border-warning'
             : 'border-gray'
         }

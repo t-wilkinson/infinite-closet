@@ -37,7 +37,7 @@ function numAvailable(orders, dates) {
     const orderRange =
       order.range || strapi.plugins['orders'].services.date.range(order)
     const overlaps = !dates[key]
-      ? true
+      ? false
       : dates[key].reduce((acc, date) => {
         if (acc) {
           return acc
