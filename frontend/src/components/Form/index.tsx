@@ -242,9 +242,9 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
         }}
       >
         <Input
-          {...props}
+          {...(props as any)}
           onChange={onChange}
-          value={(values[value] && values[value].label) || ''}
+          value={values.find((v) => v.key === value)?.label || ''}
           after={<Icon name="down" size={16} className="mt-1" />}
           className="cursor-pointer"
         />
@@ -257,14 +257,14 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
         `}
         style={{ bottom: 9 }}
       >
-        {values.map((value, index: number) => (
+        {values.map((value) => (
           <button
             key={value.key}
             tabIndex={0}
             aria-label="Dropdown sizes"
             onClick={(e) => {
               setDropdown(false)
-              onChange(index)
+              onChange(value.key)
             }}
             className="flex cursor-pointer bg-white px-2"
           >

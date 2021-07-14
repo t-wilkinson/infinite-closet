@@ -10,6 +10,7 @@ import useFields, {
 } from '@/Form/useFields'
 import { Divider } from '@/components'
 import { Size } from '@/Products/constants'
+import { unNormalizeSize } from '@/Products/helpers'
 import { useDispatch, useSelector } from '@/utils/store'
 
 import { signin } from './'
@@ -42,7 +43,7 @@ export const Profile = () => {
       <span className="font-subheader text-2xl">Profile</span>
       <AccountDetails user={user} setStatus={setStatus} />
       <FitsAndPreferences user={user} setStatus={setStatus} />
-      <Addresses user={user} setStatus={setStatus} />
+      {/* <Addresses user={user} setStatus={setStatus} /> */}
       {/* <ResetPassword /> */}
     </div>
   )
@@ -127,7 +128,10 @@ const FitsAndPreferences = ({ user, setStatus }) => {
       <Dropdown {...fields.waistSize} values={toSizes(70, 140)} />
       <Dropdown
         {...fields.dressSize}
-        values={Size.map((size) => ({ label: size, key: size }))}
+        values={Size.map((size) => ({
+          label: size,
+          key: unNormalizeSize(size),
+        }))}
       />
       <SubmitFields
         onSubmit={() => updateUser(user, fields, setStatus)}

@@ -37,6 +37,21 @@ export const filtersByRoute: { readonly [key in ProductRoutes]: Filter[] } = {
   clothing: ['designers', 'colors', 'occasions', 'weather', 'sizes'],
 }
 
+export const _Size = [
+  'XXS',
+  'XS',
+  'S',
+  'M',
+  'L',
+  'XL',
+  '_2XL',
+  '_3XL',
+  '_4XL',
+  '_5XL',
+  '_6XL',
+] as const
+export type _Size = typeof _Size[number]
+
 export const Size = [
   'XXS',
   'XS',

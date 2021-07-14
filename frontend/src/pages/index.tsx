@@ -195,6 +195,12 @@ const whyRent = [
     content:
       'We’ll introduce you to new brands we know you’ll love - and promise to only partner with brands who share our vision of a more sustainable and ethical tomorrow.',
   },
+  {
+    icon: 'free-delivery.svg',
+    label: 'Free Delivery',
+    content:
+      'Free 2-day delivery and return is always included in our prices. The best part? Our zero emissions delivery partner cares about the environment just as much as we do!',
+  },
 ]
 
 const ProductItems = ({ products }) => {

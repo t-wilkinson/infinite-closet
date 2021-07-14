@@ -126,7 +126,7 @@ module.exports = {
       if (!acc[key]) {
         acc[key] = []
       }
-      acc[key].append(strapi.plugins['orders'].services.date.range(order))
+      acc[key].push(strapi.plugins['orders'].services.date.range(order))
       return acc
     }, {})
 

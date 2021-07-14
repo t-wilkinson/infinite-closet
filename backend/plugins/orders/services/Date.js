@@ -132,8 +132,9 @@ function valid(date, quantity = undefined) {
     arrives = arrives.add(10, 'day')
   }
   const enoughShippingTime = date.isSameOrAfter(arrives, 'day')
+  const notTooFarInFuture = date.isBefore(today.add(4 * 30, 'day'))
 
-  return enoughShippingTime
+  return enoughShippingTime && notTooFarInFuture
 }
 
 module.exports = { day, shippingClass, valid, dateRange, range, overlap }
