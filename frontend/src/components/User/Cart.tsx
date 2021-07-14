@@ -111,7 +111,7 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
               ? `There is 1 item left.`
               : // ? `There is 1 item left. Order now before it's gone!`
               order.available <= 0
-              ? `There are not enough available items`
+              ? `There are no available items`
               : `There are ${order.available} items left`}
           </span>
 

@@ -43,25 +43,27 @@ module.exports = {
     }
 
     const orderBody = {
-      status: body.status,
+      status: 'cart',
       product: body.product,
       startDate: body.date,
       rentalLength: body.rentalLength,
       user: user.id,
       size: body.size,
     }
-    const matchingOrder = await strapi
-      .query('order', 'orders')
-      .findOne({ product: body.product, status: body.status })
+
+    // const matchingOrder = await strapi
+    //   .query('order', 'orders')
+    //   .findOne({ product: body.product, status: body.status })
 
     let order
-    if (matchingOrder) {
-      order = await strapi
-        .query('order', 'orders')
-        .update({ id: matchingOrder.id }, orderBody)
-    } else {
-      order = await strapi.query('order', 'orders').create(orderBody)
-    }
+    // if (matchingOrder) {
+    //   order = await strapi
+    //     .query('order', 'orders')
+    //     .update({ id: matchingOrder.id }, orderBody)
+    // } else {
+    //   order = await strapi.query('order', 'orders').create(orderBody)
+    // }
+    order = await strapi.query('order', 'orders').create(orderBody)
 
     ctx.send({
       status: 200,

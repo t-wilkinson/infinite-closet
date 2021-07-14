@@ -59,7 +59,6 @@ export const productRentContents = {
         .post(
           '/orders',
           {
-            status: 'cart',
             size: unNormalizeSize(size.size),
             date: state.selectedDate.toJSON(),
             rentalLength: state.oneTime,
