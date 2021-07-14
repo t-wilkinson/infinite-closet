@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { StrapiSize } from '@/utils/models'
+import { StrapiSizeChart, StrapiSize } from '@/utils/models'
 import { Icon } from '@/components'
 import { toTitleCase } from '@/utils/helpers'
 import { normalizeSize } from '@/Products/helpers'
@@ -11,62 +11,52 @@ export const SizeSelector = ({ product, state, dispatch }) => {
   const [sizeState, setSizeState] = React.useState(false)
 
   return (
-    <div>
+    <div className="w-40 relative">
       <button
         tabIndex={0}
         aria-label="Dropdown product sizes"
-        className="flex p-2 border border-gray relative cursor-pointer w-32 justify-between flex-row"
+        className="flex p-2 border border-gray relative cursor-pointer justify-between flex-row"
         onClick={() => setSizeState((state) => !state)}
+        disabled={product.sizes.length === 0}
       >
-        {(state.size !== undefined &&
-          product.sizes[state.size] !== undefined &&
-          product.sizes[state.size].size) ||
-          'Select Size'}
+        {product.sizes.length === 0
+          ? 'No available sizes'
+          : (state.size !== undefined &&
+              product.sizes[state.size] !== undefined &&
+              product.sizes[state.size].size) ||
+            'Select Size'}
         <Icon name="down" size={16} className="mt-1" />
       </button>
-      <div
-        className={`
-        w-32 absolute bottom-0 bg-white divide-y transform translate-y-full border border-gray z-10
+      {product.sizes.length > 0 && (
+        <div
+          className={`
+        w-full absolute bottom-0 bg-white divide-y transform translate-y-full border border-gray z-10
         ${sizeState ? '' : 'hidden'}
         `}
-      >
-        {product.sizes.map((size: StrapiSize, index: number) => (
-          <button
-            key={size.id}
-            tabIndex={0}
-            aria-label="Dropdown sizes"
-            onClick={() => {
-              dispatch(shopActions.changeSize(index))
-              setSizeState(false)
-            }}
-            className="flex justify-center cursor-pointer bg-white"
-          >
-            {size.size}
-          </button>
-        ))}
-      </div>
+        >
+          {product.sizes.map((size: StrapiSize, index: number) => (
+            <button
+              key={size.id}
+              tabIndex={0}
+              aria-label="Dropdown sizes"
+              onClick={() => {
+                dispatch(shopActions.changeSize(index))
+                setSizeState(false)
+              }}
+              className="flex justify-center cursor-pointer bg-white"
+            >
+              {size.size}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
 
-export const SizeChart = ({
-  product,
-  sizeEnum,
-  chart,
-  close,
-  measurements,
-}) => {
+export const SizeChart = ({ sizeEnum, chart }) => {
   return (
-    <div
-      className="absolute bg-white border-gray border p-4 z-10 pt-8 space-y-4 overflow-y-scroll"
-      style={{ maxHeight: 600 }}
-    >
-      <button onClick={close} className="absolute top-0 right-0">
-        <div className="p-4">
-          <Icon name="close" size={16} />
-        </div>
-      </button>
-
+    <>
       <table className="table-fixed border border-gray-light">
         <thead className="border border-gray-light">
           <tr className="border-b border-gray-light">
@@ -74,20 +64,21 @@ export const SizeChart = ({
           </tr>
           <tr className="border-b border-gray-light">
             <th scope="col" />
-            {chart.map((item) => (
+            {chart.map((item: StrapiSizeChart) => (
               <th key={item.name} scope="col" className="w-12">
                 {item.name}
               </th>
             ))}
           </tr>
         </thead>
+
         <tbody className="p-2">
           {sizeEnum.map((size) => (
             <tr key={size} className="border-t border-gray-light">
               <th scope="row" className="p-1">
                 {size}
               </th>
-              {chart.map((item) => (
+              {chart.map((item: StrapiSizeChart) => (
                 <td key={item.name} className="text-center">
                   {item[size] || '-'}
                 </td>
@@ -96,17 +87,11 @@ export const SizeChart = ({
           ))}
         </tbody>
       </table>
-
-      <SizeMeasurements
-        chart={chart}
-        measurements={measurements}
-        product={product}
-      />
-    </div>
+    </>
   )
 }
 
-const SizeMeasurements = ({ chart, measurements, product }) => (
+export const SizeMeasurements = ({ chart, measurements, product }) => (
   <table className="table-fixed border border-gray-light">
     <thead className="border border-gray-light">
       <tr className="border-b border-gray-light">
@@ -116,7 +101,7 @@ const SizeMeasurements = ({ chart, measurements, product }) => (
       </tr>
       <tr className="border-b border-gray-light">
         <th scope="col" />
-        {measurements.map((measurement) => (
+        {measurements.map((measurement: string) => (
           <th key={measurement} className="text-center">
             {toTitleCase(measurement)}
           </th>
@@ -124,14 +109,14 @@ const SizeMeasurements = ({ chart, measurements, product }) => (
       </tr>
     </thead>
     <tbody className="p-2">
-      {product.sizes.map((size) => (
+      {product.sizes.map((size: StrapiSize) => (
         <tr key={size.id} className="border-t border-gray-light">
           <th scope="row" className="p-1">
             {size.sizeRange
               ? `${normalizeSize(size.size)}/${normalizeSize(size.sizeRange)}`
               : size.size}
           </th>
-          {measurements.map((measurement) => (
+          {measurements.map((measurement: string) => (
             <td key={measurement} className="text-center">
               {size[measurement] || '-'}
             </td>
@@ -141,3 +126,27 @@ const SizeMeasurements = ({ chart, measurements, product }) => (
     </tbody>
   </table>
 )
+
+export const SizeChartPopup = ({
+  state = false,
+  setState,
+  sizeChart,
+  product = undefined,
+}) =>
+  !(sizeChart && state) ? null : (
+    <div
+      className="bottom-0 absolute bg-white border-gray border p-4 z-10 pt-8 space-y-4 overflow-y-auto"
+      style={{ maxHeight: 600 }}
+    >
+      <button
+        onClick={() => setState(false)}
+        className="absolute top-0 right-0"
+      >
+        <div className="p-4">
+          <Icon name="close" size={16} />
+        </div>
+      </button>
+      <SizeChart {...sizeChart} />
+      {product && <SizeMeasurements {...sizeChart} product={product} />}
+    </div>
+  )

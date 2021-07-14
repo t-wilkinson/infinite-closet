@@ -23,6 +23,7 @@ export const PaymentMethods = ({ user, state, dispatch }) => {
           key={paymentMethod.id}
           state={state}
           dispatch={dispatch}
+          userId={user.id}
           {...paymentMethod}
         />
       ))}
@@ -35,24 +36,21 @@ const PaymentMethod = ({
   dispatch,
   state,
   card: { brand, exp_month, exp_year, last4 },
+  userId,
 }) => {
   const rootDispatch = useDispatch()
+
   const removePaymentMethod = () => {
     axios
-      .delete(`/account/payment-methods/${id}`, { withCredentials: true })
+      .delete(`/account/${userId}/payment-methods/${id}`, {
+        withCredentials: true,
+      })
       .then(() => signin(rootDispatch))
       .catch((err) => console.error(err))
   }
 
   return (
     <div className="relative">
-      <button
-        className="absolute top-0 right-0 p-2"
-        type="button"
-        onClick={removePaymentMethod}
-      >
-        <Icon name="close" size={16} />
-      </button>
       <button
         className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
       ${id === state.paymentMethod ? 'border-black' : ''}
@@ -77,6 +75,13 @@ const PaymentMethod = ({
             Expires {exp_month}/{exp_year}
           </span>
         </div>
+      </button>
+      <button
+        className="absolute top-0 right-0 p-2"
+        type="button"
+        onClick={removePaymentMethod}
+      >
+        <Icon name="close" size={16} />
       </button>
     </div>
   )

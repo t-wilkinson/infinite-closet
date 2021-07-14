@@ -1,12 +1,12 @@
 import React from 'react'
 import debounce from 'lodash/debounce'
-import Image from 'next/image'
 
 import { Icon } from '@/components'
 import { useSelector } from '@/utils/store'
 import useFields from '@/Form/useFields'
 import { Input, Checkbox } from '@/Form'
 
+import Color from './Color'
 import { sortSizes } from './helpers'
 import { Filter } from './types'
 
@@ -17,7 +17,7 @@ type FilterItems = {
   }) => any
 }
 
-const toTitleCase = (value) =>
+const toTitleCase = (value: string) =>
   value
     .split(' ')
     .map((v) => v.slice(0, 1).toUpperCase() + v.slice(1).toLowerCase())
@@ -97,55 +97,8 @@ export const FilterItems: FilterItems = {
     return (
       <>
         <div className="flex-row flex-wrap">
-          {colors.map((v) => (
-            <div className="m-1" key={v.slug}>
-              <button
-                onClick={() => {
-                  panel.toggle(v.slug)
-                }}
-              >
-                <div
-                  className="rounded-full w-8 h-8 items-center justify-center border-gray"
-                  style={{
-                    background:
-                      v.slug === 'multicolor'
-                        ? `linear-gradient(
-                          45deg,
-                          rgba(255,0,0,1) 0%,
-                          rgba(255,154,0,1) 10%,
-                          rgba(208,222,33,1) 20%,
-                          rgba(79,220,74,1) 30%,
-                          rgba(63,218,216,1) 40%,
-                          rgba(47,201,226,1) 50%,
-                          rgba(28,127,238,1) 60%,
-                          rgba(95,21,242,1) 70%,
-                          rgba(186,12,248,1) 80%,
-                          rgba(251,7,217,1) 90%,
-                          rgba(255,0,0,1) 100%
-                        )`
-                        : v.slug === 'floral-print'
-                        ? 'center / contain url(/media/products/floral-print.jpg)'
-                        : v.value || v.slug.replace('-', ''),
-                    borderWidth:
-                      v.slug === 'white' || v.value === '#ffffff' ? 1 : 0,
-                  }}
-                >
-                  {panel.values.includes(v.slug) && (
-                    <Icon
-                      name="check"
-                      className="w-5 h-5"
-                      style={{
-                        color: pickFgColorFromBgColor(
-                          v.value || v.slug.replace('-', ''),
-                          '#ffffff',
-                          '#000000',
-                        ),
-                      }}
-                    />
-                  )}
-                </div>
-              </button>
-            </div>
+          {colors.map((color) => (
+            <Color key={color.slug} panel={panel} color={color} />
           ))}
         </div>
       </>
@@ -214,7 +167,6 @@ export const FilterItems: FilterItems = {
     )
   },
 }
-export default FilterItems
 
 /*
  * iterate through each keyword, removing keyword if exists.
@@ -245,19 +197,6 @@ async function fuzzySearch(search: string, values: string[]) {
   return matches || []
 }
 
-const pickFgColorFromBgColor = (
-  bgColor: string,
-  lightColor: string,
-  darkColor: string,
-) => {
-  /* https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color */
-  let color = bgColor.charAt(0) === '#' ? bgColor.substring(1, 7) : bgColor
-  let r = parseInt(color.substring(0, 2), 16) // hexToR
-  let g = parseInt(color.substring(2, 4), 16) // hexToG
-  let b = parseInt(color.substring(4, 6), 16) // hexToB
-  return r * 0.299 + g * 0.587 + b * 0.114 > 186 ? darkColor : lightColor
-}
-
 const FilterCheckboxes = ({ panel, data, sort = true }) => {
   data = sort
     ? data?.sort((v1, v2) =>
@@ -275,3 +214,5 @@ const FilterCheckboxes = ({ panel, data, sort = true }) => {
     </div>
   ))
 }
+
+export default FilterItems

@@ -12,6 +12,7 @@ import { Divider } from '@/components'
 import { Size } from '@/Products/constants'
 import { unNormalizeSize } from '@/Products/helpers'
 import { useDispatch, useSelector } from '@/utils/store'
+import { SizeChartPopup } from '@/Shop/Size'
 
 import { signin } from './'
 import { AddAddress } from './Address'
@@ -20,6 +21,15 @@ export const Profile = () => {
   const user = useSelector((state) => state.user.data)
   const [status, setStatus] = React.useState(null)
   const dispatch = useDispatch()
+  const [sizeChart, setSizeChart] = React.useState()
+
+  React.useEffect(() => {
+    axios
+      .get('/products/size-chart')
+      .then((res) => res.data)
+      .then(setSizeChart)
+      .catch((err) => console.error(err))
+  }, [])
 
   React.useEffect(() => {
     signin(dispatch).catch((err) => {
@@ -42,7 +52,11 @@ export const Profile = () => {
       ) : null}
       <span className="font-subheader text-2xl">Profile</span>
       <AccountDetails user={user} setStatus={setStatus} />
-      <FitsAndPreferences user={user} setStatus={setStatus} />
+      <FitsAndPreferences
+        user={user}
+        setStatus={setStatus}
+        sizeChart={sizeChart}
+      />
       {/* <Addresses user={user} setStatus={setStatus} /> */}
       {/* <ResetPassword /> */}
     </div>
@@ -109,23 +123,24 @@ const heights = [4, 5, 6]
   .flat()
   .slice(5, -6)
 
-const FitsAndPreferences = ({ user, setStatus }) => {
+const FitsAndPreferences = ({ sizeChart, user, setStatus }) => {
+  const [chartOpen, setChartOpen] = React.useState(false)
   const fields = useFields({
     height: { default: user.height },
     weight: { default: user.weight, label: 'Weight (kgs.)' },
-    chestSize: { default: user.chestSize },
-    waistSize: { default: user.waistSize },
-    hipsSize: { default: user.hipsSize },
-    dressSize: { default: user.dressSize },
+    chestSize: { default: user.chestSize, label: 'Chest Size (cm)' },
+    waistSize: { default: user.waistSize, label: 'Waist Size (cm)' },
+    hipsSize: { default: user.hipsSize, label: 'Hips Size (cm)' },
+    dressSize: { default: user.dressSize, label: 'Dress Size (cm)' },
   })
 
   return (
     <Fieldset name="Fits & Preferences">
       <Dropdown {...fields.height} values={heights} />
       <Field {...fields.weight} />
-      <Dropdown {...fields.chestSize} values={toSizes(85, 165)} />
-      <Dropdown {...fields.hipsSize} values={toSizes(85, 155)} />
-      <Dropdown {...fields.waistSize} values={toSizes(70, 140)} />
+      <Dropdown {...fields.chestSize} values={toSizes(75, 125)} />
+      <Dropdown {...fields.hipsSize} values={toSizes(80, 125)} />
+      <Dropdown {...fields.waistSize} values={toSizes(60, 95)} />
       <Dropdown
         {...fields.dressSize}
         values={Size.map((size) => ({
@@ -133,6 +148,18 @@ const FitsAndPreferences = ({ user, setStatus }) => {
           key: unNormalizeSize(size),
         }))}
       />
+
+      <div className="relative">
+        <button onClick={() => setChartOpen((state) => true)}>
+          <span className="underline">Size Chart</span>
+        </button>
+        <SizeChartPopup
+          state={chartOpen}
+          setState={setChartOpen}
+          sizeChart={sizeChart}
+        />
+      </div>
+
       <SubmitFields
         onSubmit={() => updateUser(user, fields, setStatus)}
         disabled={fieldsChanged(fields).length === 0}

@@ -9,6 +9,7 @@ import timezone from 'dayjs/plugin/timezone'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+import { userActions } from '@/User/slice'
 import { fmtPrice } from '@/utils/money'
 import { getURL } from '@/utils/api'
 import { Checkbox } from '@/Form/'
@@ -45,6 +46,8 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
     axios
       .delete(`/orders/cart/${order.id}`, { withCredentials: true })
       .then(() => dispatch({ type: 'remove-cart-item', payload: order.id }))
+      .then(() => axios.get(`/orders/cart/count`, { withCredentials: true }))
+      .then((res) => dispatch(userActions.countCart(res.data.count)))
       .catch((err) => console.error(err))
   }
 

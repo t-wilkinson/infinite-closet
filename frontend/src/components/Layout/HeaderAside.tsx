@@ -62,7 +62,12 @@ export default HeaderAside
 const Header = ({ dispatch }) => (
   <div className="w-full flex-row items-center justify-between">
     <Link href="/">
-      <a className="p-4">
+      <a
+        className="p-4"
+        onClick={() => {
+          dispatch(layoutActions.closeHeader())
+        }}
+      >
         <span className="font-header text-xl">INFINITE CLOSET</span>
       </a>
     </Link>
@@ -81,26 +86,51 @@ const Routes = ({ serverRoutes, dispatch, setFocused, focused }) => (
     {routes.map((section, i) => (
       <div key={section.value + '' + i}>
         <RouteHeader
-          key={section.value + '' + i}
           dispatch={dispatch}
           setFocused={setFocused}
           focused={focused}
           section={section}
         />
-        {section.data[0] &&
-          toRows(section.data[0], serverRoutes).map((v: any, i: number) => (
-            <RouteContents
-              key={v.name + v.slug + v.href}
-              dispatch={dispatch}
-              focused={focused}
-              section={section}
-              item={v}
-            />
-          ))}
+        <RouteColumn
+          section={section}
+          dispatch={dispatch}
+          focused={focused}
+          serverRoutes={serverRoutes}
+        />
       </div>
     ))}
   </>
 )
+
+const RouteColumn = ({ dispatch, focused, section, serverRoutes }) =>
+  section.data.map((column) => (
+    <React.Fragment key={section.value + column.value}>
+      {column.href && (
+        <span className="font-bold">
+          <RouteContents
+            dispatch={dispatch}
+            focused={focused}
+            section={section}
+            item={{ name: column.label, href: column.href }}
+          />
+        </span>
+      )}
+      {toRows(column, serverRoutes)
+        .slice(0, 15)
+        .map(
+          (v: any, i: number) =>
+            (section.value !== 'clothing' || v.href) && (
+              <RouteContents
+                key={v.name + v.slug + v.href}
+                dispatch={dispatch}
+                focused={focused}
+                section={section}
+                item={v}
+              />
+            ),
+        )}
+    </React.Fragment>
+  ))
 
 const AsideLink = ({ href, label }) => {
   const router = useRouter()

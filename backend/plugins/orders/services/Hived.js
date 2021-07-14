@@ -1,5 +1,5 @@
-const fetch = require('node-fetch');
-const crypto = require('crypto');
+const fetch = require('node-fetch')
+const crypto = require('crypto')
 
 const hivedApi = {
   parcels: 'https://api.airtable.com/v0/appDFURl2nEJd1XEF/Parcels',
@@ -11,7 +11,7 @@ const hivedApi = {
     one: 'Next-Day',
     two: '2-Day',
   },
-};
+}
 
 const addresses = {
   infinitecloset: {
@@ -30,21 +30,21 @@ const addresses = {
     Postcode: 'SW8 4AS',
     Email_Address: 'battersea@oxwash.com',
   },
-};
+}
 
 const toAddress = (addr, role) => {
-  const res = {};
+  const res = {}
 
   for (const [k, v] of Object.entries(addr)) {
     if (k === 'Name') {
-      res[`${role}`] = v;
+      res[`${role}`] = v
     } else {
-      res[`${role}_${k}`] = v;
+      res[`${role}_${k}`] = v
     }
   }
 
-  return res;
-};
+  return res
+}
 
 async function fetchHived(url, method, body = {}) {
   return fetch(url, {
@@ -59,7 +59,7 @@ async function fetchHived(url, method, body = {}) {
         : JSON.stringify({
           fields: body,
         }),
-  }).then((res) => res.json());
+  }).then((res) => res.json())
 }
 
 const api = {
@@ -76,25 +76,25 @@ const api = {
     verify: (postcode) =>
       fetchHived(hivedApi.postcodes, 'POST', { Recipient_Postcode: postcode }),
   },
-};
+}
 
 async function verify(postcode) {
-  let valid;
+  let valid
 
   try {
-    const res = await api.postcode.verify(postcode);
-    valid = res.fields.Address_in_Delivery_Area === 'Valid';
+    const res = await api.postcode.verify(postcode)
+    valid = res.fields.Address_in_Delivery_Area === 'Valid'
   } catch (e) {
-    valid = false;
+    valid = false
   }
 
-  return valid;
+  return valid
 }
 
 async function ship(order) {
-  const price = strapi.plugins['orders'].services.price.price(order);
-  const { address } = order;
-  const user = order.user;
+  const price = strapi.plugins['orders'].services.price.price(order)
+  const { address } = order
+  const user = order.user
 
   const orderAddress = {
     Name: address.firstName + ' ' + address.lastName,
@@ -103,7 +103,7 @@ async function ship(order) {
     Postcode: address.postcode,
     Email_Address: user.email,
     Phone_Number: user.phoneNumber,
-  };
+  }
 
   let hivedBody = {
     Shipping_Class: hivedApi.shippingClass,
@@ -114,7 +114,7 @@ async function ship(order) {
     Value_GBP: price,
     // Sender_Chosen_Collection_Date: MM/DD/YYYY
     // Sender_Chosen_Delivery_Date: MM/DD/YYYY
-  };
+  }
 
   if (order.status === 'shipping') {
     Object.assign(
@@ -127,21 +127,21 @@ async function ship(order) {
             strapi.plugins['orders'].services.date.shippingClass(order)
           ] || 'one',
       }
-    );
+    )
   } else if (order.status === 'cleaning') {
     Object.assign(
       hivedBody,
       toAddress(orderAddress, 'Collection'),
       toAddress(addresses.oxwash, 'Recipient'),
       { Shipping_Class: '2-Day' }
-    );
+    )
   }
 
   if (process.env.NODE_ENV === 'production') {
-    return await api.shipment.ship(hivedBody);
+    return await api.shipment.ship(hivedBody)
   } else {
-    return { id: crypto.randomBytes(16).toString('base64') };
+    return { id: crypto.randomBytes(16).toString('base64') }
   }
 }
 
-module.exports = { fetchHived, api, verify, ship };
+module.exports = { fetchHived, api, verify, ship }

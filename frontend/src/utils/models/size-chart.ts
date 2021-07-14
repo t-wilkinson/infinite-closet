@@ -1,7 +1,7 @@
 /**
  * Model definition for Size Chart
  */
-export interface StrapiSize Chart {
+export interface StrapiSizeChart {
   id: string;
   name?: string;
   XXS?: string;

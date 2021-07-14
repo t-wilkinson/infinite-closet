@@ -10,6 +10,8 @@ export const rentalLengths = {
   long: 8 - 1,
 }
 
+// TODO: instead of `type`, look at key in data objects
+// TODO: more dynamic href
 const routes = [
   {
     label: 'How It Works',
@@ -39,12 +41,12 @@ const routes = [
     img: 'clothing-menu-image.jpg',
     data: [
       {
-        label: 'Category',
+        label: 'All Clothing',
         href: '/products/clothing',
         value: 'clothing',
         type: 'slug',
         data: [
-          { name: 'Dresses', slug: 'dresses' }, // TODO: more dynamic href
+          { name: 'Dresses', slug: 'dresses' },
           { name: 'Jumpsuits', slug: 'jumpsuits' },
           { name: 'Gowns', slug: 'gowns' },
           { name: 'Tops', slug: 'tops' },
@@ -55,7 +57,7 @@ const routes = [
         ],
       },
       {
-        label: 'Occasions',
+        label: 'All Occasions',
         value: 'occasions',
         href: '/products/clothing',
         type: 'query',
@@ -71,7 +73,7 @@ const routes = [
     type: null,
     data: [
       {
-        label: 'Category',
+        label: 'All Accessories',
         href: null,
         data: [
           { name: 'Bags', slug: null },

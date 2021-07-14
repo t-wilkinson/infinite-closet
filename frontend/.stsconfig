@@ -6,7 +6,7 @@
 console.log(__dirname)
 const titleCase = (value) =>
   value
-    .split('_')
+    .split(/[_ ]/)
     .map((v) => v.charAt(0).toUpperCase() + v.slice(1))
     .join('')
 

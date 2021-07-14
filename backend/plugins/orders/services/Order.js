@@ -11,7 +11,9 @@ const inProgress = (status) =>
 
 function toKey(order) {
   let productID
-  if (order.product.id !== undefined) {
+  if (order.product === undefined) {
+    productID = undefined
+  } else if (order.product.id !== undefined) {
     productID = order.product.id
   } else {
     productID = order.product
@@ -26,32 +28,34 @@ function numAvailable(orders, dates) {
     const { product } = order
 
     // get product size that matches order.size
-    const defaultSize = { quantity: 0 }
-    const productSize =
-      product.sizes.find(({ size }) => size === order.size) || defaultSize
     if (!(key in counter)) {
+      const defaultSize = { quantity: 0 }
+      const productSize =
+        product.sizes.find(({ size }) => size === order.size) || defaultSize
       counter[key] = productSize.quantity
     }
 
-    // reduce available product quantity by number of overlaps
+    if (!(key in dates)) {
+      return counter
+    }
+
     const orderRange =
       order.range || strapi.plugins['orders'].services.date.range(order)
 
-    if (dates[key]) {
-      const overlaps = dates[key].reduce((acc, date) => {
-        if (acc) {
-          return acc
-        }
-        const overlaps =
-          date &&
-          strapi.plugins['orders'].services.date.overlap(date, orderRange) &&
-          inProgress(order.status)
-        return overlaps
-      }, 0)
-
-      if (overlaps) {
-        counter[key] -= 1
+    // reduce available product quantity if dates overlap
+    const overlaps = dates[key].reduce((acc, date) => {
+      if (acc) {
+        return acc
       }
+      const overlaps =
+        date &&
+        strapi.plugins['orders'].services.date.overlap(date, orderRange) &&
+        inProgress(order.status)
+      return overlaps
+    }, false)
+
+    if (overlaps) {
+      counter[key] -= 1
     }
 
     return counter

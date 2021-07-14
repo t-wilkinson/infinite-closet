@@ -1,6 +1,5 @@
 'use strict'
-const _ = require('lodash')
-const { sanitizeEntity } = require('strapi-utils')
+// const { sanitizeEntity } = require('strapi-utils')
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 module.exports = {

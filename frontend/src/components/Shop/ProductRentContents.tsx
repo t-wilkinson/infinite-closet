@@ -8,8 +8,9 @@ import { Icon } from '@/components'
 import { Submit } from '@/Form'
 import { sizeIndex, unNormalizeSize } from '@/Products/helpers'
 import { rentalLengths } from '@/utils/constants'
+import { userActions } from '@/User/slice'
 
-import { SizeChart, SizeSelector } from './Size'
+import { SizeChartPopup, SizeSelector } from './Size'
 import { shopActions } from './slice'
 import DatePicker from './DatePicker'
 
@@ -72,6 +73,8 @@ export const productRentContents = {
             user: user.email,
           })
         })
+        .then(() => axios.get(`/orders/cart/count`, { withCredentials: true }))
+        .then((res) => dispatch(userActions.countCart(res.data.count)))
         .catch((err) => {
           console.error(err)
           setStatus('error')
@@ -99,22 +102,19 @@ export const productRentContents = {
         />
 
         <SelectorItem label="Size" className="my-2 z-10 w-full">
-          {chartOpen && (
-            <SizeChart
-              measurements={data.sizeChart.measurements}
-              product={product}
-              chart={data.sizeChart.chart}
-              sizeEnum={data.sizeChart.sizeEnum}
-              close={() => setChartOpen(false)}
-            />
-          )}
+          <SizeChartPopup
+            sizeChart={data.sizeChart}
+            product={product}
+            state={chartOpen}
+            setState={setChartOpen}
+          />
           <div className="relative flex-row justify-start space-x-4 items-center w-full">
             {/* select elements are too difficult to style
                 divs don't act like buttons
                 buttons can't use aria-role
             */}
             <SizeSelector dispatch={dispatch} product={product} state={state} />
-            <button onClick={() => setChartOpen((state) => !state)}>
+            <button onClick={() => setChartOpen((state) => true)}>
               <span className="underline">Size Chart</span>
             </button>
           </div>
