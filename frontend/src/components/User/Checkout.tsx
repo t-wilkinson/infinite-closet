@@ -203,7 +203,11 @@ export const Checkout = ({ user, data }) => {
                 state.cart.every(isOrderInvalid)
               }
             >
-              {state.status === 'checking-out'
+              {!state.address
+                ? 'Please Select an Address'
+                : !state.paymentMethod
+                ? 'Please Select a Payment Method'
+                : state.status === 'checking-out'
                 ? 'Checkout Out...'
                 : state.status === 'error'
                 ? 'Unable to Checkout'

@@ -106,8 +106,10 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
               : order.valid && order.available === 1
               ? `There is 1 item left.`
               : !order.valid
-              ? `There are no available items`
-              : `There are ${order.available} items left`}
+              ? `Please select a different date`
+              : order.available > 1
+              ? `There are ${order.available} items left`
+              : ``}
           </span>
 
           <div className="relative flex-row items-center">
