@@ -54,11 +54,7 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
   return (
     <div
       className={`flex-row items-center border p-4 rounded-sm relative bg-white
-        ${
-          order.available <= 0 || !order.valid
-            ? 'border-warning'
-            : 'border-gray'
-        }
+        ${!order.valid ? 'border-warning' : 'border-gray'}
         `}
     >
       <button
@@ -107,10 +103,9 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
           <span>
             {order.available === undefined
               ? ``
-              : order.available === 1
+              : order.valid && order.available === 1
               ? `There is 1 item left.`
-              : // ? `There is 1 item left. Order now before it's gone!`
-              order.available <= 0
+              : !order.valid
               ? `There are no available items`
               : `There are ${order.available} items left`}
           </span>
