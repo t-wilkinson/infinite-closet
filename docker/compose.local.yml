@@ -12,7 +12,7 @@ services:
   backend:
     image: node:14
     ports:
-      - 8000:8000
+      - "127.0.0.1:8000:8000"
     environment:
       FRONTEND_DOMAIN: infinitecloset.treywilkinson.com
       BACKEND_DOMAIN: api.infinitecloset.treywilkinson.com

@@ -10,4 +10,4 @@ db_users[local]=test
 db_users[dev]=test
 db_users[prod]=infinite-closet
 
-docker exec -i ${1}_db_1 psql -d ${db_names[$1]} -U ${db_users[$1]}
+docker exec -i ${@:2} ${1}_db_1 psql -d ${db_names[$1]} -U ${db_users[$1]}

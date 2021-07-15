@@ -8,7 +8,7 @@ services:
       args:
         NODE_ENV: development
     ports:
-      - 3001:3000
+      - "127.0.0.1:3001:3000"
     environment:
       NEXT_PUBLIC_FRONTEND: 'https://dev.infinitecloset.co.uk'
       NEXT_PUBLIC_BACKEND: 'https://api.dev.infinitecloset.co.uk'
@@ -24,7 +24,7 @@ services:
       args:
         NODE_ENV: development
     ports:
-      - 1338:1337
+      - "127.0.0.1:1338:1337"
     command: yarn run develop
     working_dir: /app
     environment:
@@ -48,7 +48,7 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     ports:
-      - 5433:5432
+      - "127.0.0.1:5433:5432"
 
 volumes:
   postgres:

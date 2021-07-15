@@ -2,6 +2,12 @@ module.exports = ({ env }) => ({
   cron: {
     enabled: true,
   },
+  gzip: {
+    enabled: true,
+    options: {
+      br: false,
+    },
+  },
   host: env('HOST', '0.0.0.0'),
   port: env.int('PORT', 1337),
   proxy: true,

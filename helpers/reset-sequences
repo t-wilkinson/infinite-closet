@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-reset_seq() {
+reset_sequences() {
     ./exec-psql $1 <<EOF
 select setval('${2}_id_seq', max + 1) from (select MAX(id) from "$2") as max;
 EOF
@@ -9,10 +9,10 @@ EOF
 if [[ -z $2 ]]; then
     sequences=$(echo 'copy (select sequence_name from information_schema.sequences) to STDOUT with CSV;' | ./exec-psql $1 | sed 's/_id_seq//g')
     for sequence in $sequences; do
-        reset_seq $1 $sequence &
+        reset_sequences $1 $sequence &
     done
     wait
 else
-    reset_seq $@
+    reset_sequences $@
 fi
 

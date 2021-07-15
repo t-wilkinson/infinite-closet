@@ -1,8 +1,8 @@
+.cache
 .dockerignore
 .git
 .gitignore
 Dockerfile
+build
 node_modules
 uploads
-build
-.cache

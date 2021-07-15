@@ -8,7 +8,6 @@
     "develop:admin": "strapi develop --watch-admin --browser false",
     "start": "strapi start",
     "build": "strapi build",
-    "strapi": "strapi",
     "test": "jest --forceExit --detectOpenHandles"
   },
   "dependencies": {
