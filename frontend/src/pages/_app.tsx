@@ -7,6 +7,7 @@ import firebase from 'firebase/app'
 import 'firebase/analytics'
 import '@/styles/index.css'
 
+import { layoutSelectors } from '@/Layout/slice'
 import useAnalytics from '@/utils/useAnalytics'
 import store, { useDispatch, useSelector } from '@/utils/store'
 import CookieConsent from '@/Layout/CookieConsent'
@@ -84,10 +85,22 @@ const Wrapper = ({ router, children }) => {
   const headerOpen = useSelector((state) => state.layout.headerOpen)
   const popup = useSelector((state) => state.account.popup)
   const analytics = useAnalytics()
+  const consent = useSelector(layoutSelectors.consent)
 
-  // TODO: remove this
-  // decided to change naming scheme
   React.useEffect(() => {
+    analytics.setCurrentScreen(router.asPath)
+    if (!document.title) {
+      document.title = 'Infinite Closet'
+    }
+  }, [consent.statistics, router.pathname])
+
+  React.useEffect(() => {
+    if (window.fbq) {
+      window.fbq('consent', 'revoke')
+    }
+
+    // TODO: remove this
+    // decided to change naming scheme
     for (const item of [
       'launch-party',
       'joined-waitlist',
@@ -103,16 +116,7 @@ const Wrapper = ({ router, children }) => {
         window.localStorage.setItem(item, JSON.stringify(value))
       }
     }
-  }, [])
 
-  React.useEffect(() => {
-    analytics?.setCurrentScreen(router.asPath)
-    if (!document.title) {
-      document.title = 'Infinite Closet'
-    }
-  }, [router.pathname])
-
-  React.useEffect(() => {
     if (firebase.apps.length === 0) {
       firebase.initializeApp(
         JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG.toString()),
@@ -124,7 +128,7 @@ const Wrapper = ({ router, children }) => {
       document.getElementById('_app').removeEventListener('scroll', showPopup)
     }
 
-    dispatch(layoutActions.loadAnalytics(firebase.analytics()))
+    dispatch(layoutActions.loadFirebase(firebase.analytics()))
     signin(dispatch)
       .then(() => axios.get(`/orders/cart/count`, { withCredentials: true }))
       .then((res) => dispatch(userActions.countCart(res.data.count)))
@@ -138,6 +142,12 @@ const Wrapper = ({ router, children }) => {
         }
       })
   }, [])
+
+  React.useEffect(() => {
+    if (consent.statistics) {
+      window.fbq('consent', 'grant')
+    }
+  }, [consent.statistics])
 
   if (
     !allowedPages.includes(router.pathname) &&

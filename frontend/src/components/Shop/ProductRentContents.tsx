@@ -68,7 +68,7 @@ export const productRentContents = {
         )
         .then(() => {
           router.push('/user/checkout')
-          analytics?.logEvent('add_to_cart', {
+          analytics.logEvent('add_to_cart', {
             user: user.email,
           })
         })

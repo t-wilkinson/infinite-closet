@@ -252,9 +252,9 @@ const ProductItems = ({ products }) => {
 const WhyRent = ({}) => (
   <div className="my-8 w-full items-center" id="why-rent">
     <Heading>Why Rent?</Heading>
-    <div className="flex-row justify-between flex-wrap w-full my-12">
+    <div className="flex-row justify-center flex-wrap w-full my-12 px-4 lg:px-0">
       {whyRent.map((item) => (
-        <div key={item.label} className="flex-grow items-center my-4 md:my-8">
+        <div key={item.label} className="items-center my-4 md:my-8 mx-4">
           <div className="w-96 items-center flex-row">
             <div className="w-24 h-24 relative">
               <Image

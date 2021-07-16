@@ -51,7 +51,7 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
       .then(() => axios.get(`/orders/cart/count`, { withCredentials: true }))
       .then((res) => dispatch(userActions.countCart(res.data.count)))
       .then(() =>
-        analytics?.logEvent('remove_from_cart', {
+        analytics.logEvent('remove_from_cart', {
           user: order.user?.email,
         }),
       )

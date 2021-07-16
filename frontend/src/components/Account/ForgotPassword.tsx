@@ -19,7 +19,7 @@ export const requestChangePassword = async (fields, analytics) => {
       { withCredentials: true },
     )
     .then((res) =>
-      analytics?.logEvent('form_submit', {
+      analytics.logEvent('form_submit', {
         type: 'account.forgot-password',
         user: cleaned.email,
       }),

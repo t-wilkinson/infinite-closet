@@ -75,7 +75,7 @@ const WaitlistForm = ({ status, setStatus }) => {
       })
       .then(() => {
         setStatus('Submitting')
-        analytics?.logEvent('form_submit', {
+        analytics.logEvent('form_submit', {
           type: 'waitlist',
           user: cleaned.email,
         })

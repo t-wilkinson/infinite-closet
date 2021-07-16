@@ -37,7 +37,7 @@ export const Register = () => {
       )
       .then((res) => {
         dispatch(userActions.signin(res.data.user))
-        analytics?.logEvent('form_submit', {
+        analytics.logEvent('form_submit', {
           type: 'account.register',
           user: cleaned.email,
         })

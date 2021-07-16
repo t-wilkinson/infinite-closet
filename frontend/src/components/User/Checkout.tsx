@@ -101,7 +101,7 @@ export const Checkout = ({ user, data }) => {
       .then((res) => {
         dispatch({ type: 'status-success' })
         dispatch({ type: 'clear-insurance' })
-        analytics?.logEvent('purchase', {
+        analytics.logEvent('purchase', {
           user: user.email,
           type: 'checkout',
         })
@@ -114,7 +114,7 @@ export const Checkout = ({ user, data }) => {
   }
 
   React.useEffect(() => {
-    analytics?.logEvent('view_cart', {
+    analytics.logEvent('view_cart', {
       user: user.email,
     })
   }, [])

@@ -33,7 +33,7 @@ export const Signin = () => {
       )
       .then((res) => {
         dispatch(userActions.signin(res.data.user))
-        analytics?.logEvent('form_submit', {
+        analytics.logEvent('form_submit', {
           type: 'account.signin',
           user: cleaned.email,
         })

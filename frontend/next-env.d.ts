@@ -5,7 +5,11 @@
 declare global {
   interface Window {
     firebase?: any
+    fbq?: any
   }
 }
 
 declare var firebase: any
+
+// make typescript realize this is module
+export {}

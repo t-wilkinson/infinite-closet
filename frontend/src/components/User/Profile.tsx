@@ -73,7 +73,7 @@ const updateUser = (user, fields, setStatus, analytics) => {
     })
     .then((res) => setStatus('changed'))
     .then(() =>
-      analytics?.logEvent('update_details', {
+      analytics.logEvent('update_details', {
         user: user.email,
         fields: cleaned,
       }),

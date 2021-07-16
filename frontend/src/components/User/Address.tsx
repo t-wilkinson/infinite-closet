@@ -135,7 +135,7 @@ export const AddAddress = ({ user, dispatch }) => {
         { withCredentials: true },
       )
       .then((res) => {
-        analytics?.logEvent('add_shipping_info', {
+        analytics.logEvent('add_shipping_info', {
           user: user.email,
         })
         dispatch({ type: 'close-popup' })

@@ -27,7 +27,7 @@ export default {
         target="_blank"
         rel="noreferrer"
         onClick={() =>
-          analytics?.logEvent('share', {
+          analytics.logEvent('share', {
             type: 'facebook',
           })
         }
@@ -60,7 +60,7 @@ export default {
         target="_blank"
         rel="noreferrer"
         onClick={() =>
-          analytics?.logEvent('share', {
+          analytics.logEvent('share', {
             type: 'pinterest',
           })
         }

@@ -178,7 +178,7 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
             type: 'set-payment-methods',
             payload: res.paymentMethods,
           }),
-            analytics?.logEvent('add_payment_info', {
+            analytics.logEvent('add_payment_info', {
               user: user.email,
             })
         })

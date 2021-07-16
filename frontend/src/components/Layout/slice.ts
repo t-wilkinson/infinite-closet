@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit'
 
 import { RootState } from '@/utils/store'
 import {
@@ -29,7 +29,7 @@ export interface State {
   loading: boolean
   headerOpen: boolean
   cookieConsent: CookieConsent
-  analytics?: any
+  firebase?: any
 }
 
 const initialState: State = {
@@ -80,14 +80,15 @@ export const layoutSlice = createSlice({
     clearConsent(state) {
       state.cookieConsent = { ...initialState.cookieConsent, given: false }
     },
-    giveConsent(
-      state,
-      { payload }: PayloadAction<Omit<CookieConsent, 'given'>>,
-    ) {
-      state.cookieConsent = { given: true, ...payload }
+    giveConsent(state, { payload }: PayloadAction<Partial<CookieConsent>>) {
+      if (payload.given === null) {
+        Object.assign(state.cookieConsent, payload, { given: false })
+      } else {
+        Object.assign(state.cookieConsent, { given: true }, payload)
+      }
     },
-    loadAnalytics(state, { payload }) {
-      state.analytics = payload
+    loadFirebase(state, { payload }) {
+      state.firebase = payload
     },
   },
 })
@@ -95,6 +96,7 @@ export const layoutSlice = createSlice({
 const layoutSelector = (state: RootState) => state.layout
 const layoutSelectors = {
   layoutSelector,
+  consent: createSelector([layoutSelector], (layout) => layout.cookieConsent),
 }
 
 export { layoutSelectors }

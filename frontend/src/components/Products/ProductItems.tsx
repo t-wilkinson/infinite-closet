@@ -79,7 +79,7 @@ export const Product = ({ product }: any) => {
               <a
                 className="absolute inset-0 w-full h-full"
                 onClick={() =>
-                  analytics?.logEvent('select_item', {
+                  analytics.logEvent('select_item', {
                     type: 'products.select-item',
                   })
                 }
