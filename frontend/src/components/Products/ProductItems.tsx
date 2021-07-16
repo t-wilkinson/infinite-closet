@@ -3,14 +3,15 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
+import useAnalytics from '@/utils/useAnalytics'
 import { CallToAction } from '@/components'
 import { getURL } from '@/utils/api'
 import { StrapiProduct, StrapiFile } from '@/utils/models'
 
 import { sortSizes, sizeRange } from './helpers'
-import { QUERY_LIMIT } from './constants'
+// import { QUERY_LIMIT } from './constants'
 
-export const ProductItems = ({ data, loading }) => {
+export const ProductItems = ({ data }) => {
   const router = useRouter()
 
   if (data.productsCount === 0) {
@@ -33,22 +34,22 @@ export const ProductItems = ({ data, loading }) => {
     )
     // TODO: we have so few product it doesn't make sense to display this
     // } else if (loading || !data.products) {
-  } else if (false) {
-    return (
-      <div className="flex-row flex-wrap">
-        {Array(QUERY_LIMIT)
-          .fill(0)
-          .map((_, i) => (
-            <div key={i} className="w-1/2 lg:w-1/3">
-              <div className="relative h-0 w-full overflow-hidden aspect-w-2 aspect-h-3">
-                <div className="absolute top-0 left-0 w-full h-full b-gray p-2">
-                  <div className="relative h-full bg-gray-light" />
-                </div>
-              </div>
-            </div>
-          ))}
-      </div>
-    )
+    // } else if (false) {
+    // return (
+    //   <div className="flex-row flex-wrap">
+    //     {Array(QUERY_LIMIT)
+    //       .fill(0)
+    //       .map((_, i) => (
+    //         <div key={i} className="w-1/2 lg:w-1/3">
+    //           <div className="relative h-0 w-full overflow-hidden aspect-w-2 aspect-h-3">
+    //             <div className="absolute top-0 left-0 w-full h-full b-gray p-2">
+    //               <div className="relative h-full bg-gray-light" />
+    //             </div>
+    //           </div>
+    //         </div>
+    //       ))}
+    //   </div>
+    // )
   } else {
     return (
       <div className="w-full flex-row flex-wrap">
@@ -63,6 +64,7 @@ export const ProductItems = ({ data, loading }) => {
 export default ProductItems
 
 export const Product = ({ product }: any) => {
+  const analytics = useAnalytics()
   return (
     <div className="w-1/2 lg:w-1/3 flex-shrink">
       <div className="m-2 lg:m-4 w-full">
@@ -74,7 +76,14 @@ export const Product = ({ product }: any) => {
             }}
           >
             <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
-              <a className="absolute inset-0 w-full h-full">
+              <a
+                className="absolute inset-0 w-full h-full"
+                onClick={() =>
+                  analytics?.logEvent('select_item', {
+                    type: 'products.select-item',
+                  })
+                }
+              >
                 <ProductImages product={product} />
               </a>
             </Link>

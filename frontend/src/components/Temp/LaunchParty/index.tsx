@@ -289,7 +289,7 @@ const Join = ({ dispatch, state, fields }) => {
     dispatch({ type: 'payment-processing' })
     const cleaned = cleanFields(fields)
 
-    analytics?.logEvent('form-submit', {
+    analytics?.logEvent('form_submit', {
       type: 'launch-party.join',
       user: cleaned.email,
     })

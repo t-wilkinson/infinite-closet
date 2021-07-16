@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
+import useAnalytics from '@/utils/useAnalytics'
 import { fmtPrice } from '@/utils/money'
 import { fetchAPI } from '@/utils/api'
 import { Submit } from '@/Form'
@@ -81,6 +82,7 @@ export const Checkout = ({ user, data }) => {
     fetchAPI(`/orders/cart/${user.id}`)
       .then((data) => dispatch({ type: 'fill-cart', payload: data.cart }))
       .catch((err) => console.error(err))
+  const analytics = useAnalytics()
 
   const checkout = () => {
     dispatch({ type: 'payment-succeeded' })
@@ -99,6 +101,10 @@ export const Checkout = ({ user, data }) => {
       .then((res) => {
         dispatch({ type: 'status-success' })
         dispatch({ type: 'clear-insurance' })
+        analytics?.logEvent('purchase', {
+          user: user.email,
+          type: 'checkout',
+        })
         fetchCart()
       })
       .catch((err) => {
@@ -106,6 +112,12 @@ export const Checkout = ({ user, data }) => {
         dispatch({ type: 'status-error' })
       })
   }
+
+  React.useEffect(() => {
+    analytics?.logEvent('view_cart', {
+      user: user.email,
+    })
+  }, [])
 
   React.useEffect(() => {
     dispatch({

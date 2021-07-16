@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 
+import useAnalytics from '@/utils/useAnalytics'
 import { Input, Submit, Password, Dropdown } from '@/Form'
 import { Field as FieldType } from '@/Form/types'
 import useFields, {
@@ -63,7 +64,7 @@ export const Profile = () => {
   )
 }
 
-const updateUser = (user, fields, setStatus) => {
+const updateUser = (user, fields, setStatus, analytics) => {
   const changed = changedFields(fields)
   const cleaned = cleanFields(changed)
   axios
@@ -71,6 +72,12 @@ const updateUser = (user, fields, setStatus) => {
       withCredentials: true,
     })
     .then((res) => setStatus('changed'))
+    .then(() =>
+      analytics?.logEvent('update_details', {
+        user: user.email,
+        fields: cleaned,
+      }),
+    )
     .catch((err) => {
       setStatus('error')
       console.error(err)
@@ -78,6 +85,7 @@ const updateUser = (user, fields, setStatus) => {
 }
 
 const AccountDetails = ({ setStatus, user }) => {
+  const analytics = useAnalytics()
   const fields = useFields({
     firstName: { default: user.firstName || '' },
     lastName: { default: user.lastName || '' },
@@ -97,7 +105,7 @@ const AccountDetails = ({ setStatus, user }) => {
       <Field {...fields.phoneNumber} />
       <Field {...fields.dateOfBirth} />
       <SubmitFields
-        onSubmit={() => updateUser(user, fields, setStatus)}
+        onSubmit={() => updateUser(user, fields, setStatus, analytics)}
         disabled={fieldsChanged(fields).length === 0}
       />
     </Fieldset>
@@ -124,6 +132,7 @@ const heights = [4, 5, 6]
   .slice(5, -6)
 
 const FitsAndPreferences = ({ sizeChart, user, setStatus }) => {
+  const analytics = useAnalytics()
   const [chartOpen, setChartOpen] = React.useState(false)
   const fields = useFields({
     height: { default: user.height },
@@ -161,7 +170,7 @@ const FitsAndPreferences = ({ sizeChart, user, setStatus }) => {
       </div>
 
       <SubmitFields
-        onSubmit={() => updateUser(user, fields, setStatus)}
+        onSubmit={() => updateUser(user, fields, setStatus, analytics)}
         disabled={fieldsChanged(fields).length === 0}
       />
     </Fieldset>

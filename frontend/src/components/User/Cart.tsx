@@ -9,6 +9,7 @@ import timezone from 'dayjs/plugin/timezone'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+import useAnalytics from '@/utils/useAnalytics'
 import { userActions } from '@/User/slice'
 import { fmtPrice } from '@/utils/money'
 import { getURL } from '@/utils/api'
@@ -41,6 +42,7 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
     .add(rentalLengths[order.rentalLength], 'day')
     .format('ddd, MMM D')
   const Bold = (props: object) => <span className="font-bold" {...props} />
+  const analytics = useAnalytics()
 
   const removeItem = () => {
     axios
@@ -48,6 +50,11 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
       .then(() => dispatch({ type: 'remove-cart-item', payload: order.id }))
       .then(() => axios.get(`/orders/cart/count`, { withCredentials: true }))
       .then((res) => dispatch(userActions.countCart(res.data.count)))
+      .then(() =>
+        analytics?.logEvent('remove_from_cart', {
+          user: order.user?.email,
+        }),
+      )
       .catch((err) => console.error(err))
   }
 

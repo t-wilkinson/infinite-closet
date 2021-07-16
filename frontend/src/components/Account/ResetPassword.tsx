@@ -33,7 +33,7 @@ export const ResetPassword = () => {
       )
       .then((res) => {
         dispatch(userActions.signin(res.data.user))
-        analytics?.logEvent('form-submit', {
+        analytics?.logEvent('form_submit', {
           type: 'account.reset-password',
           user: cleaned.email,
         })

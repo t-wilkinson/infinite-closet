@@ -5,6 +5,8 @@ import { Icon } from '@/components'
 import { Input, Submit } from '@/Form'
 import { useFields, cleanFields } from '@/Form/useFields'
 import { useDispatch } from '@/utils/store'
+import useAnalytics from '@/utils/useAnalytics'
+
 import { signin } from './'
 
 export const Addresses = ({ userId, addresses, state, dispatch }) => {
@@ -120,6 +122,7 @@ export const AddAddress = ({ user, dispatch }) => {
     mobileNumber: { constraints: 'required', default: user.phoneNumber },
   })
   const rootDispatch = useDispatch()
+  const analytics = useAnalytics()
 
   const onSubmit = () => {
     const cleaned = cleanFields(fields)
@@ -132,6 +135,9 @@ export const AddAddress = ({ user, dispatch }) => {
         { withCredentials: true },
       )
       .then((res) => {
+        analytics?.logEvent('add_shipping_info', {
+          user: user.email,
+        })
         dispatch({ type: 'close-popup' })
         signin(rootDispatch)
       })

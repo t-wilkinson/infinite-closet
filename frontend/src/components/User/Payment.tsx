@@ -9,6 +9,7 @@ import { Submit } from '@/Form'
 import { PaymentWrapper } from '@/Form/Payments'
 import { useDispatch } from '@/utils/store'
 import { signin } from '@/User'
+import useAnalytics from '@/utils/useAnalytics'
 
 import './CheckoutForm.module.css'
 
@@ -126,6 +127,7 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
   const [authorised, setAuthorisation] = React.useState(false)
   const stripe = useStripe()
   const elements = useElements()
+  const analytics = useAnalytics()
 
   React.useEffect(() => {
     if (user) {
@@ -171,12 +173,15 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
 
       // TODO: be nicer with clients data limits
       fetchAPI('/account/payment-methods')
-        .then((res) =>
+        .then((res) => {
           dispatch({
             type: 'set-payment-methods',
             payload: res.paymentMethods,
           }),
-        )
+            analytics?.logEvent('add_payment_info', {
+              user: user.email,
+            })
+        })
         .catch((err) => console.error(err))
     }
   }
