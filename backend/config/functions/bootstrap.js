@@ -51,8 +51,23 @@ const populatePrivateFields = () => {
     )
 }
 
+function registerRoles() {
+  const actions = [
+    {
+      section: 'plugins',
+      displayName: 'Manage',
+      uid: 'manage',
+      pluginName: 'orders',
+    },
+  ]
+
+  const { actionProvider } = strapi.admin.services.permission
+  actionProvider.register(actions)
+}
+
 module.exports = async () => {
   await populatePrivateFields()
+  await registerRoles()
 
   if (process.env.NODE_ENV !== 'production') {
     await setDefaultPermissions()
