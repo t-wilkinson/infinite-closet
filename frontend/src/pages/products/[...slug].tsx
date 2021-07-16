@@ -42,7 +42,7 @@ export const Page = ({ data }) => {
 
   return (
     <>
-      <Layout title="Rent Products | Infinite Closet">
+      <Layout title="Rent Products">
         <Products data={data} loading={loading} />
       </Layout>
     </>

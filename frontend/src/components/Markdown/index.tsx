@@ -4,11 +4,9 @@ import axios from 'axios'
 import gfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import dayjs from 'dayjs'
-import Head from 'next/head'
 import Link from 'next/link'
 
-import Header from '@/Layout/Header'
-import Footer from '@/Layout/Footer'
+import Layout from '@/Layout'
 import { ScrollUp, Divider } from '@/components'
 
 const headingToID = (heading: string): string =>
@@ -83,12 +81,8 @@ export const MarkdownWrapper = ({
   updated_at = dayjs(updated_at).format('MM/DD/YY')
 
   return (
-    <>
-      <Head>
-        <title>{name}</title>
-      </Head>
-      <Header />
-      <main className="flex flex-col w-full items-center my-10">
+    <Layout title={name}>
+      <div className="my-10">
         <div className="items-center mb-10">
           <h1 className="font-subheader text-center text-4xl">{name}</h1>
           <span className="text-gray-dark text-sm">
@@ -97,15 +91,14 @@ export const MarkdownWrapper = ({
         </div>
         <div className="flex-row">
           <TableOfContents />
-          <div>
+          <div className="w-full items-center">
             <Markdown content={content} />
             {children}
           </div>
         </div>
-      </main>
-      <Footer />
+      </div>
       <ScrollUp />
-    </>
+    </Layout>
   )
 }
 

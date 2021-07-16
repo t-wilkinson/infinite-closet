@@ -1,20 +1,14 @@
 import React from 'react'
-import Head from 'next/head'
 
 import { Icon } from '@/components'
 import { PaymentWrapper } from '@/Form/Payments'
 import JoinLaunchParty from '@/Temp/LaunchParty'
-import Header from '@/Layout/Header'
-import Footer from '@/Layout/Footer'
+import Layout from '@/Layout'
 
 const Page = () => {
   return (
-    <>
-      <Head>
-        <title>Launch Party</title>
-      </Head>
-      <Header />
-      <main className="w-full h-full items-center pb-8 bg-gray-light">
+    <Layout title="Launch Party">
+      <div className="w-full bg-gray-light items-center flex-grow">
         <div className="w-full max-w-screen-lg items-center">
           <h1 className="font-bold text-4xl my-4">Join our Launch Party</h1>
           <div className="text-lg mb-4 space-y-2 max-w-screen-md">
@@ -42,9 +36,8 @@ const Page = () => {
             </div>
           </div>
         </div>
-      </main>
-      <Footer />
-    </>
+      </div>
+    </Layout>
   )
 }
 
@@ -59,7 +52,6 @@ const SideBar = () => (
         </div>
       </div>
       <span className="flex flex-row items-center">
-        {/* TODO */}
         <Icon name="pin" size={20} className="text-gray mr-6" />
         44 Great Cumberland Pl, London W1H 7BS
       </span>

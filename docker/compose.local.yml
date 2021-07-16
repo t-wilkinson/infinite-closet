@@ -6,6 +6,7 @@ services:
     environment:
       NEXT_PUBLIC_FRONTEND: 'https://infinitecloset.treywilkinson.com'
       NEXT_PUBLIC_BACKEND: 'https://api.infinitecloset.treywilkinson.com'
+    command: yarn run develop
     volumes:
       - ../frontend:/app
 

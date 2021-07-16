@@ -168,7 +168,7 @@ export const Checkout = ({ user, data }) => {
   }, [state.cart, state.insurance])
 
   return (
-    <div className="w-full items-center bg-gray-light px-4">
+    <div className="w-full flex-grow items-center bg-gray-light px-4">
       <div className="w-full justify-center max-w-screen-xl flex-row space-x-4 my-4 h-full">
         <div className="w-2/5 space-y-4">
           <SideItem label="Addresses">

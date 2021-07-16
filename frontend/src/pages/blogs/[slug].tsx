@@ -2,13 +2,11 @@ import ReactMarkdown from 'react-markdown'
 import gfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import dayjs from 'dayjs'
-import Head from 'next/head'
 import Image from 'next/image'
 import axios from 'axios'
 
 import { getURL } from '@/utils/api'
-import Header from '@/Layout/Header'
-import Footer from '@/Layout/Footer'
+import Layout from '@/Layout'
 import { ScrollUp } from '@/components'
 import { readingTime } from '@/Markdown'
 import { components as _components } from '@/Markdown'
@@ -67,12 +65,8 @@ const Blog = ({ published_at, updated_at, name, content, subtitle, image }) => {
   const [minutes] = readingTime(content)
 
   return (
-    <>
-      <Head>
-        <title>{name}</title>
-      </Head>
-      <Header />
-      <main className="w-full items-center my-10">
+    <Layout title={name}>
+      <div className="my-10">
         <div className="w-full max-w-screen-md">
           <div className="items-left mb-10">
             <h1 className="font-bold text-left text-4xl">{name}</h1>
@@ -100,10 +94,9 @@ const Blog = ({ published_at, updated_at, name, content, subtitle, image }) => {
             />
           </div>
         </div>
-      </main>
-      <Footer />
+      </div>
       <ScrollUp />
-    </>
+    </Layout>
   )
 }
 

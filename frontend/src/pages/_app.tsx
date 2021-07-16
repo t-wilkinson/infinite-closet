@@ -152,15 +152,13 @@ const Wrapper = ({ router, children }) => {
       <div
         id="_app"
         className={`h-screen
-        ${headerOpen ? 'overflow-hidden' : 'overflow-y-scroll'}
+        ${headerOpen ? 'overflow-hidden' : 'overflow-y-auto'}
       `}
       >
         <SkipLink />
         <Popup popup={popup} />
-        <div className="">
-          <Banner />
-          {children}
-        </div>
+        <Banner />
+        {children}
       </div>
     </>
   )

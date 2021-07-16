@@ -3,28 +3,23 @@ import { useRouter } from 'next/router'
 import axios from 'axios'
 
 import Shop from '@/Shop'
-import Header from '@/Layout/Header'
-import Footer from '@/Layout/Footer'
+import Layout from '@/Layout'
 import useData from '@/Layout/useData'
 import { StrapiProduct } from '@/utils/models'
 import { normalizeSize } from '@/Products/helpers'
 
 export const Page = ({ data }) => {
   const loading = useData(data)
+  const title = loading
+    ? undefined
+    : `${data.product.name} by ${data.product.designer.name}`
 
   return (
     <>
-      <Head>
-        {!loading && (
-          <title>
-            {data.product.name} by {data.product.designer.name}
-          </title>
-        )}
-      </Head>
       <OpenGraph {...data.product} />
-      <Header />
-      <Shop data={data} />
-      <Footer />
+      <Layout title={title}>
+        <Shop data={data} />
+      </Layout>
     </>
   )
 }

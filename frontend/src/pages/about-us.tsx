@@ -23,7 +23,7 @@ const values = [
 ]
 
 export const AboutUs = () => (
-  <div className="items-center w-full pb-6">
+  <>
     <h1 className="items-center text-center my-4 text-3xl font-bold">
       Discover. Rent. Love.
     </h1>
@@ -56,7 +56,7 @@ export const AboutUs = () => (
         ))}
       </div>
     </AboutItem>
-  </div>
+  </>
 )
 
 const AboutItem = ({ header, children }) => (
@@ -75,7 +75,7 @@ const ValueItem = ({ header, text }) => (
 
 export const Page = () => {
   return (
-    <Layout title="About Infinite Closet">
+    <Layout title="About Us" className="pb-8">
       <AboutUs />
     </Layout>
   )

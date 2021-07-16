@@ -18,7 +18,7 @@ export const Home = () => {
   }, [])
 
   return (
-    <div className="w-full items-center">
+    <>
       {process.env.NODE_ENV !== 'development' && <FacebookMessenger />}
       <div className="items-center w-full max-w-screen-xl">
         <div className="relative w-full max-w-screen-xl h-128 mb-8">
@@ -46,7 +46,7 @@ export const Home = () => {
         <ProductItems products={products} />
         <WhyRent />
       </div>
-    </div>
+    </>
   )
 }
 
@@ -252,10 +252,10 @@ const ProductItems = ({ products }) => {
 const WhyRent = ({}) => (
   <div className="my-8 w-full items-center" id="why-rent">
     <Heading>Why Rent?</Heading>
-    <div className="flex-row justify-between flex-wrap w-full">
+    <div className="flex-row justify-between flex-wrap w-full my-12">
       {whyRent.map((item) => (
-        <div key={item.label} className="flex-grow items-center my-4 md:my-20">
-          <div className="w-64 items-center">
+        <div key={item.label} className="flex-grow items-center my-4 md:my-8">
+          <div className="w-96 items-center flex-row">
             <div className="w-24 h-24 relative">
               <Image
                 alt={item.label}
@@ -264,10 +264,10 @@ const WhyRent = ({}) => (
                 objectFit="contain"
               />
             </div>
-            <span className="text-center font-bold text-lg my-2">
-              {item.label}
-            </span>
-            <span className="text-center">{item.content}</span>
+            <div className="w-full ml-6">
+              <span className="text-left font-bold text-lg">{item.label}</span>
+              <span className="text-left text-gray">{item.content}</span>
+            </div>
           </div>
         </div>
       ))}

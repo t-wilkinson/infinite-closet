@@ -11,7 +11,7 @@ export const Page = ({ data }) => {
   const designer = data.designer
 
   return (
-    <Layout title={`${designer.name} | Infinite Closet`}>
+    <Layout title={designer.name}>
       <div className="w-full h-full items-center">
         <div className="max-w-screen-md w-full">
           <h1 className="text-4xl font-subheader text-center">
