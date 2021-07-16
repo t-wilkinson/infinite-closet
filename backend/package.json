@@ -7,6 +7,7 @@
     "develop": "strapi develop",
     "develop:admin": "strapi develop --watch-admin --browser false",
     "start": "strapi start",
+    "strapi": "strapi",
     "build": "strapi build",
     "test": "jest --forceExit --detectOpenHandles"
   },

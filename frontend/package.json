@@ -5,7 +5,7 @@
   "scripts": {
     "develop": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "yarn run sts && next start",
     "sts": "sts -c .stsconfig",
     "test": "jest"
   },
