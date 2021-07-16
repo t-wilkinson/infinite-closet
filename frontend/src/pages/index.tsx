@@ -232,7 +232,7 @@ const whyRent = [
     icon: 'free-delivery.svg',
     label: 'Free Delivery',
     content:
-      'Free 2-day delivery and return is always included in our prices. The best part? Our zero emissions delivery partner cares about the environment just as much as we do!',
+      'Free 2-day delivery and return is always included in our prices with our zero-emissions delivery partner.',
   },
   {
     icon: 'instant-booking.svg',
@@ -261,7 +261,7 @@ const WhyRent = ({}) => (
     <div className="flex-row justify-around flex-wrap w-full my-12 px-4 lg:px-0">
       {whyRent.map((item) => (
         <div key={item.label} className="items-center my-4 md:my-8 mx-4">
-          <div className="w-96 items-center flex-row">
+          <div className="w-96 items-start flex-row">
             <div className="w-24 h-24 relative">
               <Image
                 alt={item.label}
