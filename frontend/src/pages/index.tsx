@@ -205,34 +205,40 @@ const HowItWorksContent = ({ selected, header }) =>
 
 const whyRent = [
   {
-    icon: 'flexibility.svg',
+    icon: 'complete-flexibility.svg',
     label: 'Complete Flexibility',
     content:
       'Ever changing styles, sizes, and brands. We’ve got you covered for every occasion, delivered right to your door.',
   },
   {
-    icon: 'reduce-footprint.svg',
+    icon: 'reduce-carbon-footprint.svg',
     label: 'Reduce Your Carbon Footprint',
     content:
-      'Experiment with your style, not the planet (or your wallet)! Join the sharing economy and rent instead.',
+      'Experiment with your style, not the planet (or your wallet)! Save money by joining the sharing economy and rent instead.',
   },
   {
-    icon: 'reclaim-time.svg',
+    icon: 'reclaim-your-time.svg',
     label: 'Reclaim Your Time',
     content:
-      'The only laundry that cleans itself -- simply rent, wear, and return. We’ll take care of the rest.',
+      'The only laundry that cleans itself - simply rent, wear, return, repeat. We’ll take care of the rest.',
   },
   {
-    icon: 'support-small-businesses.svg',
-    label: '#SupportSmallBusinesses',
+    icon: 'independent-designers.svg',
+    label: 'Independent Designers',
     content:
-      'We’ll introduce you to new brands we know you’ll love - and promise to only partner with brands who share our vision of a more sustainable and ethical tomorrow.',
+      'We’ll introduce you to new brands we know you’ll love - #SupportSmallBusinesses never looked so good.',
   },
   {
     icon: 'free-delivery.svg',
     label: 'Free Delivery',
     content:
       'Free 2-day delivery and return is always included in our prices. The best part? Our zero emissions delivery partner cares about the environment just as much as we do!',
+  },
+  {
+    icon: 'instant-booking.svg',
+    label: 'Instant Booking',
+    content:
+      'Whether you’ve got a last minute party or an event 3 months from now - instantly book your look with confidence.',
   },
 ]
 
@@ -252,7 +258,7 @@ const ProductItems = ({ products }) => {
 const WhyRent = ({}) => (
   <div className="my-8 w-full items-center" id="why-rent">
     <Heading>Why Rent?</Heading>
-    <div className="flex-row justify-center flex-wrap w-full my-12 px-4 lg:px-0">
+    <div className="flex-row justify-around flex-wrap w-full my-12 px-4 lg:px-0">
       {whyRent.map((item) => (
         <div key={item.label} className="items-center my-4 md:my-8 mx-4">
           <div className="w-96 items-center flex-row">
