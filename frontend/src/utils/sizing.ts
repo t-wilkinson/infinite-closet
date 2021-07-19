@@ -29,9 +29,5 @@ export const rangeOf = ({ size, sizeRange }: StrapiSize) => {
 
 export const range = (sizes: StrapiSize[]) =>
   Array.from(
-    new Set(
-      sizes.reduce((acc, size) => {
-        return acc.concat(rangeOf(size))
-      }, []),
-    ),
+    new Set(sizes.reduce((acc, size) => acc.concat(rangeOf(size)), [])),
   ).sort(sort)

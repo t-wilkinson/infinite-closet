@@ -39,6 +39,7 @@ module.exports = {
       const key = strapi.plugins['orders'].services.order.toKey(orders[0]) // all orders have the same key
       const dates = { [key]: [strapi.plugins['orders'].services.date.dateRange(date, rentalLength)] }
       const numAvailable = strapi.plugins['orders'].services.order.numAvailable(orders, dates)[key]
+
       validDates[date] = strapi.plugins['orders'].services.date.valid(date, numAvailable, quantity)
     }
 

@@ -134,9 +134,16 @@ function valid(date, available = undefined, quantity = undefined) {
     !isNaN(available) &&
     !isNaN(quantity) &&
     available <= 0 &&
-    quantity <= 1
+    quantity <= 0
   ) {
     arrives = arrives.add(10, 'day')
+  } else if (
+    !isNaN(available) &&
+    !isNaN(available) &&
+    available <= 0 &&
+    quantity > 0
+  ) {
+    return false
   }
   const enoughShippingTime = date.isSameOrAfter(arrives, 'day')
   const notTooFarInFuture = date.isBefore(today.add(4 * 30, 'day'))
