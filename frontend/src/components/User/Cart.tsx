@@ -26,7 +26,7 @@ export const Cart = ({ dispatch, cart, insurance }) => {
           <CartItem
             key={item.id}
             dispatch={dispatch}
-            insurance_={insurance[item.id]}
+            itemInsurance={insurance[item.id]}
             {...item}
           />
         )
@@ -35,7 +35,7 @@ export const Cart = ({ dispatch, cart, insurance }) => {
   )
 }
 
-export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
+export const CartItem = ({ dispatch, product, itemInsurance, ...order }) => {
   const date = dayjs(order.startDate).tz('Europe/London') // order.startDate is utc
   const startDate = date.format('ddd, MMM D')
   const endDate = date
@@ -124,7 +124,7 @@ export const CartItem = ({ dispatch, product, insurance_, ...order }) => {
               onChange={() =>
                 dispatch({ type: 'toggle-insurance', payload: order.id })
               }
-              value={insurance_}
+              value={itemInsurance}
               label="Include insurance"
             />
             <Hover position="right-0">

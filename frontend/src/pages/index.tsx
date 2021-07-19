@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import Layout from '@/Layout'
 import { Product } from '@/Products/ProductItems'
@@ -34,12 +35,16 @@ export const Home = () => {
             />
           </div>
           <div className="absolute left-0 md:max-w-2xl lg:max-w-4xl w-full h-128">
-            <Image
-              src="/media/home/discover-rent-love-gold.svg"
-              alt="Discover, Rent, Love"
-              layout="fill"
-              objectFit="contain"
-            />
+            <Link href="/products/clothing">
+              <a>
+                <Image
+                  src="/media/home/discover-rent-love-gold.svg"
+                  alt="Discover, Rent, Love"
+                  layout="fill"
+                  objectFit="contain"
+                />
+              </a>
+            </Link>
           </div>
         </div>
         <HowItWorks />

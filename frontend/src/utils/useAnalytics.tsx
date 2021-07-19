@@ -7,17 +7,17 @@ export const useAnalytics = () => {
 
   let analytics = {
     logEvent(event: string, props: object) {
-      if (consent.statistics) {
+      if (consent.statistics && process.env.NODE_ENV === 'production') {
         firebase?.logEvent(event, props)
         window?.fbq('trackCustom', event, props)
       }
     },
     setCurrentScreen(path: string) {
-      if (consent.statistics) {
+      if (consent.statistics && process.env.NODE_ENV === 'production') {
         firebase?.setCurrentScreen(path)
-        window?.fbq('trackCustom', 'set_current_screen', {
-          path,
-        })
+        // window?.fbq('trackCustom', 'set_current_screen', {
+        //   path,
+        // })
       }
     },
   }

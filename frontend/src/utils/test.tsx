@@ -23,5 +23,13 @@ function render(
   return component
 }
 
+export const api = 'http://localhost'
+export const Url = (url: string) => {
+  url = url.replace(/:number/, '\\d+')
+  url = url.replace(/:id/, '\\d+')
+  url = url.replace(/:string/, '\\w+')
+  return new RegExp(url)
+}
+
 export * from '@testing-library/react'
 export { render }
