@@ -9,10 +9,11 @@ module.exports = {
 
   async datesValid(ctx) {
     const body = ctx.request.body
-    const product = body.product
-    const quantity = body.size.quantity
-    const size = body.size.size
-    const rentalLength = body.rentalLength
+    const {
+      product,
+      rentalLength,
+      size: { quantity, size },
+    } = body
 
     let orders = await strapi
       .query('order', 'orders')
@@ -35,8 +36,6 @@ module.exports = {
         continue
       }
 
-      // TODO: key should always be defined
-      // instead of orders[0], separate by each protduct and size
       const key = strapi.plugins['orders'].services.order.toKey(orders[0]) // all orders have the same key
       const dates = { [key]: [strapi.plugins['orders'].services.date.dateRange(date, rentalLength)] }
       const numAvailable = strapi.plugins['orders'].services.order.numAvailable(orders, dates)[key]

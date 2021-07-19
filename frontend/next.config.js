@@ -39,8 +39,15 @@ module.exports = withPWA({
   images: {
     domains: [
       'localhost',
-      process.env.NEXT_PUBLIC_FRONTEND.replace(/^\w+:\/\//, ''),
-      process.env.NEXT_PUBLIC_BACKEND.replace(/^\w+:\/\//, ''),
+      'infinitecloset.treywilkinson.com',
+      'api.infinitecloset.treywilkinson.com',
+      'localhost',
+      'api.dev.' + domain,
+      'dev.' + domain,
+      'api.' + domain,
+      domain,
+      // process.env.NEXT_PUBLIC_FRONTEND.replace(/^\w+:\/\//, ''),
+      // process.env.NEXT_PUBLIC_BACKEND.replace(/^\w+:\/\//, ''),
     ],
   },
 })
