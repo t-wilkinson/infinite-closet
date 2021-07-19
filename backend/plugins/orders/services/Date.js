@@ -123,12 +123,19 @@ function overlap(date1, date2, granularity = 'day') {
   }
 }
 
-function valid(date, quantity = undefined) {
+function valid(date, available = undefined, quantity = undefined) {
   date = day(date)
   const today = day()
 
   let arrives = arrival(today)
-  if (quantity <= 0) {
+  if (isNaN(quantity) && !isNaN(available) && available <= 0) {
+    arrives = arrives.add(10, 'day')
+  } else if (
+    !isNaN(available) &&
+    !isNaN(quantity) &&
+    available <= 0 &&
+    quantity <= 1
+  ) {
     arrives = arrives.add(10, 'day')
   }
   const enoughShippingTime = date.isSameOrAfter(arrives, 'day')

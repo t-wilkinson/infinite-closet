@@ -42,7 +42,8 @@ module.exports = {
       const key = strapi.plugins['orders'].services.order.toKey(order)
       const valid = strapi.plugins['orders'].services.date.valid(
         order.startDate,
-        numAvailable[key]
+        numAvailable[key],
+        strapi.plugins['orders'].services.order.quantity(order)
       )
 
       return {
@@ -83,6 +84,7 @@ module.exports = {
       if (
         !strapi.plugins['orders'].services.date.valid(
           order.startDate,
+          numAvailable[key],
           strapi.plugins['orders'].services.order.quantity(order)
         )
       ) {
