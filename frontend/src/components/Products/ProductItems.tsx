@@ -8,7 +8,7 @@ import { CallToAction } from '@/components'
 import { getURL } from '@/utils/api'
 import { StrapiProduct, StrapiFile } from '@/utils/models'
 
-import { sortSizes, sizeRange } from './helpers'
+import * as sizing from '@/utils/sizing'
 // import { QUERY_LIMIT } from './constants'
 
 export const ProductItems = ({ data }) => {
@@ -203,9 +203,7 @@ const ProductInfo = ({ product }) => (
           </a>
         </Link>
       </div>
-      <span className="text-sm">
-        {sizeRange(product.sizes).sort(sortSizes).join(', ')}
-      </span>
+      <span className="text-sm">{sizing.range(product.sizes).join(', ')}</span>
       <div className="flex-col md:flex-row">
         <span className="font-bold">
           {rentalPrice(product.shortRentalPrice, product.longRentalPrice)}

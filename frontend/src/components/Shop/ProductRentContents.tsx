@@ -6,7 +6,7 @@ import useAnalytics from '@/utils/useAnalytics'
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon } from '@/components'
 import { Submit } from '@/Form'
-import { sizeIndex, unNormalizeSize } from '@/Products/helpers'
+import * as sizing from '@/utils/sizing'
 import { rentalLengths } from '@/utils/constants'
 import { userActions } from '@/User/slice'
 
@@ -22,10 +22,7 @@ export const ProductRentContents = ({ data, product, state }) => {
 
   React.useEffect(() => {
     if (user?.dressSize) {
-      const index = sizeIndex(product.sizes, user.dressSize)
-      if (!isNaN(index) && index >= 0) {
-        dispatch(shopActions.changeSize(index))
-      }
+      user.dressSize && dispatch(shopActions.changeSize(user.dressSize))
     }
   }, [user])
 
@@ -50,7 +47,7 @@ export const productRentContents = {
 
     const addToCart = () => {
       setStatus('adding')
-      const size = product.sizes[state.size]
+      const size = sizing.get(product.sizes, state.size)
       if (!size) {
         setStatus('error')
       }
@@ -59,7 +56,7 @@ export const productRentContents = {
         .post(
           '/orders',
           {
-            size: unNormalizeSize(size.size),
+            size: sizing.unnormalize(size.size),
             date: state.selectedDate.toJSON(),
             rentalLength: state.oneTime,
             product: product.id,

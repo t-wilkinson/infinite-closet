@@ -6,7 +6,7 @@ import Shop from '@/Shop'
 import Layout from '@/Layout'
 import useData from '@/Layout/useData'
 import { StrapiProduct } from '@/utils/models'
-import { normalizeSize } from '@/Products/helpers'
+import * as sizing from '@/utils/sizing'
 
 export const Page = ({ data }) => {
   const loading = useData(data)
@@ -73,7 +73,7 @@ export async function getServerSideProps({ params }) {
   ])
 
   for (const [key, size] of Object.entries(product.sizes)) {
-    product.sizes[key].size = normalizeSize(size.size)
+    product.sizes[key].size = sizing.normalize(size.size)
   }
 
   return {

@@ -3,7 +3,8 @@ import React from 'react'
 import { StrapiSizeChart, StrapiSize } from '@/utils/models'
 import { Icon } from '@/components'
 import { toTitleCase } from '@/utils/helpers'
-import { normalizeSize } from '@/Products/helpers'
+import * as sizing from '@/utils/sizing'
+import { Size } from '@/Products/constants'
 
 import { shopActions } from './slice'
 
@@ -21,9 +22,8 @@ export const SizeSelector = ({ product, state, dispatch }) => {
       >
         {product.sizes.length === 0
           ? 'No available sizes'
-          : (state.size !== undefined &&
-              product.sizes[state.size] !== undefined &&
-              product.sizes[state.size].size) ||
+          : (sizing.index(product.sizes, state.size) !== undefined &&
+              state.size) ||
             'Select Size'}
         <Icon name="down" size={16} className="mt-1" />
       </button>
@@ -34,18 +34,18 @@ export const SizeSelector = ({ product, state, dispatch }) => {
         ${sizeState ? '' : 'hidden'}
         `}
         >
-          {product.sizes.map((size: StrapiSize, index: number) => (
+          {sizing.range(product.sizes).map((size: Size) => (
             <button
-              key={size.id}
+              key={size}
               tabIndex={0}
               aria-label="Dropdown sizes"
               onClick={() => {
-                dispatch(shopActions.changeSize(index))
+                dispatch(shopActions.changeSize(size))
                 setSizeState(false)
               }}
               className="flex justify-center cursor-pointer bg-white"
             >
-              {size.size}
+              {size}
             </button>
           ))}
         </div>
@@ -113,7 +113,9 @@ export const SizeMeasurements = ({ chart, measurements, product }) => (
         <tr key={size.id} className="border-t border-gray-light">
           <th scope="row" className="p-1">
             {size.sizeRange
-              ? `${normalizeSize(size.size)}/${normalizeSize(size.sizeRange)}`
+              ? `${sizing.normalize(size.size)}/${sizing.normalize(
+                  size.sizeRange,
+                )}`
               : size.size}
           </th>
           {measurements.map((measurement: string) => (

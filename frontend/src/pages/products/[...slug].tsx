@@ -11,7 +11,7 @@ import { sortData } from '@/Products/constants'
 import { productsActions } from '@/Products/slice'
 import { QUERY_LIMIT } from '@/Products/constants'
 import Layout from '@/Layout'
-import { normalizeSize } from '@/Products/helpers'
+import * as sizing from '@/utils/sizing'
 import { StrapiSize } from '@/utils/models'
 
 export const Page = ({ data }) => {
@@ -78,8 +78,8 @@ export async function getServerSideProps({ params, query }) {
 
   for (const product of products) {
     for (const [key, size] of Object.entries(product.sizes as StrapiSize[])) {
-      product.sizes[key].size = normalizeSize(size.size || '')
-      product.sizes[key].sizeRange = normalizeSize(size.sizeRange || '')
+      product.sizes[key].size = sizing.normalize(size.size || '')
+      product.sizes[key].sizeRange = sizing.normalize(size.sizeRange || '')
     }
   }
 

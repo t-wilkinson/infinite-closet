@@ -38,6 +38,8 @@
     "@types/react": "^17.0.3",
     "@types/react-test-renderer": "^17.0.1",
     "babel-jest": "^27.0.2",
+    "eslint": "^7.31.0",
+    "eslint-webpack-plugin": "^2.5.4",
     "jest": "^27.0.4",
     "jest-css-modules-transform": "^4.3.0",
     "nock": "^13.1.1",
@@ -45,6 +47,7 @@
     "postcss-preset-env": "^6.7.0",
     "react-test-renderer": "^17.0.2",
     "strapi-to-typescript": "^2.0.9",
+    "stylelint-webpack-plugin": "^2.2.2",
     "tailwindcss": "^1.9.5",
     "ts-node": "^10.0.0",
     "typescript": "^4.2.4"

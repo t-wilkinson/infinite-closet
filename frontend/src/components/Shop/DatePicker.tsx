@@ -9,6 +9,7 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 import { Icon } from '@/components'
 import useDays from '@/utils/useDays'
 import { useSelector } from '@/utils/store'
+import * as sizing from '@/utils/sizing'
 
 import { shopActions } from './slice'
 
@@ -93,7 +94,7 @@ const Days = ({ days, state, dispatch, rentalLength }) => {
       .post('/orders/dates/valid', {
         dates: days,
         product,
-        size: product.sizes[state.size],
+        size: sizing.get(product.sizes, state.size),
         rentalLength: state.oneTime,
       })
       .then((res) => setValid(res.data.valid))

@@ -11,7 +11,7 @@ import useFields, {
 } from '@/Form/useFields'
 import { Divider } from '@/components'
 import { Size } from '@/Products/constants'
-import { unNormalizeSize } from '@/Products/helpers'
+import * as sizing from '@/utils/sizing'
 import { useDispatch, useSelector } from '@/utils/store'
 import { SizeChartPopup } from '@/Shop/Size'
 
@@ -154,7 +154,7 @@ const FitsAndPreferences = ({ sizeChart, user, setStatus }) => {
         {...fields.dressSize}
         values={Size.map((size) => ({
           label: size,
-          key: unNormalizeSize(size),
+          key: sizing.unnormalize(size),
         }))}
       />
 

@@ -24,7 +24,7 @@ export const Home = () => {
       <div className="items-center w-full max-w-screen-xl">
         <div className="relative w-full max-w-screen-xl h-128 mb-8">
           <div
-            className="relative w-full h-full"
+            className="relative w-full flex-grow justify-center"
             style={{ transform: 'scaleX(-1)' }}
           >
             <Image

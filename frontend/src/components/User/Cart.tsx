@@ -16,7 +16,7 @@ import { getURL } from '@/utils/api'
 import { Checkbox } from '@/Form/'
 import { Icon, Hover } from '@/components'
 import { rentalLengths } from '@/utils/constants'
-import { normalizeSize } from '@/Products/helpers'
+import * as sizing from '@/utils/sizing'
 
 export const Cart = ({ dispatch, cart, insurance }) => {
   return (
@@ -101,7 +101,7 @@ export const CartItem = ({ dispatch, product, itemInsurance, ...order }) => {
               <Hover>This rental date is no longer valid.</Hover>
             )}
           </div>
-          <span>{normalizeSize(order.size)}</span>
+          <span>{sizing.normalize(order.size)}</span>
           <span>
             <Bold>{fmtPrice(order.price)}</Bold>
           </span>

@@ -3,6 +3,7 @@ import { Dayjs } from 'dayjs' // TODO: hopefully this tree shakes
 
 import { RootState } from '@/utils/store'
 
+import { Size } from '@/Products/constants'
 import { RentType, OneTime, Membership } from './types'
 
 interface State {
@@ -12,7 +13,7 @@ interface State {
   dateVisible: boolean
   selectedDate?: Dayjs
   details?: string
-  size?: number
+  size?: Size
 }
 
 const initialState: State = {
@@ -36,7 +37,7 @@ export const shopSlice = createSlice({
       state.oneTime = payload
     },
 
-    changeSize(state, { payload }: PayloadAction<number>) {
+    changeSize(state, { payload }: PayloadAction<Size>) {
       state.size = payload
     },
 

@@ -84,11 +84,11 @@ const Account = ({ user }) => {
           <IconLink href="/user/profile" size={18} name="user" />
           {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
           <IconLink href="/user/checkout" size={18} name="shopping-bag">
-            {count > 0 && (
-              <span className="absolute right-0 bottom-0 text-xs bg-sec-light rounded-full px-1">
-                {count}
-              </span>
-            )}
+            {/* {count > 0 && ( */}
+            {/*   <span className="absolute right-0 bottom-0 text-xs bg-sec-light rounded-full px-1"> */}
+            {/*     {count} */}
+            {/*   </span> */}
+            {/* )} */}
           </IconLink>
         </>
       ) : (

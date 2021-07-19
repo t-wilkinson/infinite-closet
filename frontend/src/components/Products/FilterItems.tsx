@@ -7,7 +7,7 @@ import useFields from '@/Form/useFields'
 import { Input, Checkbox } from '@/Form'
 
 import Color from './Color'
-import { sortSizes } from './helpers'
+import * as sizing from '@/utils/sizing'
 import { Filter } from './types'
 
 type FilterItems = {
@@ -132,7 +132,7 @@ export const FilterItems: FilterItems = {
   sizes: ({ panel }) => {
     const sizes = useSelector((state) =>
       Object.values(state.layout.data.sizes)
-        .sort(sortSizes)
+        .sort(sizing.sort)
         .map((size) => ({ name: size, slug: size })),
     )
 
