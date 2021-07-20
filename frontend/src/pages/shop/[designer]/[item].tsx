@@ -28,7 +28,7 @@ const OpenGraph = (product: StrapiProduct) => {
   const { name, designer, shortRentalPrice, images, sizes, retailPrice } =
     product
   const router = useRouter()
-  const url = router.asPath.split('?')[0]
+  const url = process.env.NEXT_PUBLIC_FRONTEND + router.asPath.split('?')[0]
   const description = `Rent ${name} by ${designer.name} for only £${shortRentalPrice} only at Infinite Closet.`
   const quantity = Object.values(sizes as { quantity: number }[]).reduce(
     (acc, { quantity }) => acc + quantity,
@@ -44,19 +44,17 @@ const OpenGraph = (product: StrapiProduct) => {
       ]
 
   // open graph meta information
+  // prettier-ignore
   const og = [
-    // {property: 'og_
-    { property: 'og:id', content: product.id },
+    {property: 'google_product_category', content: product.categories.map(c => c.name).join(',')},
+    { property: 'id', content: product.id },
     { property: 'og:url', content: url },
     { property: 'og:type', content: 'og:product' },
     { property: 'og:title', content: `${name} by ${designer.name}` },
     { property: 'og:description', content: description },
     { property: 'product:price:amount', content: retailPrice },
     { property: 'product:price:currency', content: 'GBP' },
-    {
-      property: 'og:availability',
-      content: quantity > 0 ? 'instock' : 'out of stock',
-    },
+    { property: 'og:availability', content: quantity > 0 ? 'instock' : 'out of stock' },
     ...image,
   ]
 
