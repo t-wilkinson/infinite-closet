@@ -1,38 +1,38 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _react = require("react");
+var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Grid = require("../layout/Grid");
+var _Grid = require('../layout/Grid');
 
 var _Grid2 = _interopRequireDefault(_Grid);
 
-var _Img = require("../elements/Img");
+var _Img = require('../elements/Img');
 
 var _Img2 = _interopRequireDefault(_Img);
 
-var _Between = require("../elements/Between");
+var _Between = require('../elements/Between');
 
 var _Between2 = _interopRequireDefault(_Between);
 
-var _dayjs = require("dayjs");
+var _dayjs = require('dayjs');
 
 var _dayjs2 = _interopRequireDefault(_dayjs);
 
-var _utc = require("dayjs/plugin/utc");
+var _utc = require('dayjs/plugin/utc');
 
 var _utc2 = _interopRequireDefault(_utc);
 
-var _timezone = require("dayjs/plugin/timezone");
+var _timezone = require('dayjs/plugin/timezone');
 
 var _timezone2 = _interopRequireDefault(_timezone);
 
-var _api = require("../api");
+var _api = require('../api');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -46,15 +46,15 @@ var Order = function Order(_ref) {
       range = _ref.range;
 
   var formatDate = function formatDate(date) {
-    return (0, _dayjs2.default)(date).tz("Europe/London").format("dddd, MMM D");
+    return (0, _dayjs2.default)(date).tz('Europe/London').format('dddd, MMM D');
   };
 
   return _react2.default.createElement(
-    "div",
+    'div',
     {
       style: {
         padding: 8,
-        backgroundColor: "#efefef",
+        backgroundColor: '#efefef',
         marginTop: 8,
         marginBottom: 8
       }
@@ -65,14 +65,20 @@ var Order = function Order(_ref) {
           width: 104
         }
       },
-      left: _react2.default.createElement(_Img2.default, {
-        style: { width: 96, height: 96 },
-        src: (0, _api.getURL)(product.images[0].url),
-        alt: product.images[0].alternativeText
-      }),
+      left: _react2.default.createElement(
+        'a',
+        {
+          href: (0, _api.getFrontendURL)('/shop/' + product.slug + '/' + product.designer.slug)
+        },
+        _react2.default.createElement(_Img2.default, {
+          style: { width: 96, height: 96 },
+          src: (0, _api.getBackendURL)(product.images[0].url),
+          alt: product.images[0].alternativeText
+        })
+      ),
       right: _react2.default.createElement(
         _Grid2.default,
-        { style: { width: "100%" } },
+        { style: { width: '100%' } },
         _react2.default.createElement(
           _Grid2.default.Row,
           null,
@@ -82,12 +88,12 @@ var Order = function Order(_ref) {
               null,
               _react2.default.createElement(
                 _Grid2.default.Row,
-                { style: { color: "#5f6368" } },
-                "Rental Start:"
+                { style: { color: '#5f6368' } },
+                'Rental Start:'
               ),
               _react2.default.createElement(
                 _Grid2.default.Row,
-                { style: { color: "#39603d", fontWeight: 700 } },
+                { style: { color: '#39603d', fontWeight: 700 } },
                 formatDate(range.start)
               )
             ),
@@ -96,12 +102,12 @@ var Order = function Order(_ref) {
               null,
               _react2.default.createElement(
                 _Grid2.default.Row,
-                { style: { color: "#5f6368" } },
-                "Rental End:"
+                { style: { color: '#5f6368' } },
+                'Rental End:'
               ),
               _react2.default.createElement(
                 _Grid2.default.Row,
-                { style: { color: "#39603d", fontWeight: 700 } },
+                { style: { color: '#39603d', fontWeight: 700 } },
                 formatDate(range.end)
               )
             )
@@ -112,27 +118,27 @@ var Order = function Order(_ref) {
           null,
           _react2.default.createElement(_Between2.default, {
             left: _react2.default.createElement(
-              "span",
-              { className: "" },
+              'span',
+              null,
               _react2.default.createElement(
-                "span",
+                'span',
                 { style: { fontWeight: 700 } },
                 size
               ),
-              " ",
+              ' ',
               product.name,
-              " by",
-              " ",
+              ' by',
+              ' ',
               _react2.default.createElement(
-                "span",
+                'span',
                 { style: { fontWeight: 700 } },
                 product.designer.name
               )
             ),
             right: _react2.default.createElement(
-              "div",
+              'div',
               { style: { fontWeight: 700 } },
-              "\xA3",
+              '\xA3',
               price
             )
           })

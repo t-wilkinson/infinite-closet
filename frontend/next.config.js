@@ -1,7 +1,7 @@
 // const domain = 'infinitecloset.co.uk'
 const withPWA = require('next-pwa')
 // const StylelintPlugin = require('stylelint-webpack-plugin')
-const ESLintPlugin = require('eslint-webpack-plugin')
+// const ESLintPlugin = require('eslint-webpack-plugin')
 
 module.exports = withPWA({
   webpack: (config, {}) => {
@@ -9,7 +9,7 @@ module.exports = withPWA({
       type: 'filesystem',
     }
 
-    config.plugins.push(new ESLintPlugin({ cache: true }))
+    // config.plugins.push(new ESLintPlugin({ cache: true }))
     // config.plugins.push(new StylelintPlugin({ files: '**/*.css', cache: true }))
     config.module.rules.push({
       test: /\.jsx?$/,

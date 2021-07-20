@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _react = require("react");
+var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -12,11 +12,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var imgStyle = {
   img: {
-    objectFit: "contain",
-    outline: "none",
-    textDecoration: "none",
-    border: "none",
-    display: "block"
+    objectFit: 'contain',
+    outline: 'none',
+    textDecoration: 'none',
+    border: 'none',
+    display: 'block'
   }
 };
 
@@ -27,7 +27,7 @@ function Img(_ref) {
       _ref$style = _ref.style,
       style = _ref$style === undefined ? {} : _ref$style;
 
-  return _react2.default.createElement("img", {
+  return _react2.default.createElement('img', {
     src: src,
     alt: alt,
     style: Object.assign({}, imgStyle.img, style),

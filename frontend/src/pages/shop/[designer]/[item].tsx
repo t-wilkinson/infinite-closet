@@ -5,7 +5,7 @@ import axios from 'axios'
 import Shop from '@/Shop'
 import Layout from '@/Layout'
 import useData from '@/Layout/useData'
-import { StrapiProduct } from '@/utils/models'
+import { StrapiSizeChart, StrapiProduct } from '@/utils/models'
 import * as sizing from '@/utils/sizing'
 
 export const Page = ({ data }) => {
@@ -29,14 +29,15 @@ const OpenGraph = (product: StrapiProduct) => {
     product
   const router = useRouter()
   const url = router.asPath.split('?')[0]
-  const description = `Rent ${name} by ${designer.name} for only ${shortRentalPrice} only at Infinite Closet.`
+  const description = `Rent ${name} by ${designer.name} for only £${shortRentalPrice} only at Infinite Closet.`
   const quantity = Object.values(sizes as { quantity: number }[]).reduce(
     (acc, { quantity }) => acc + quantity,
     0,
   )
-  const image = images[0]
+  const image = !images[0]
     ? []
     : [
+        { property: 'og:image_link', content: images[0].url },
         { property: 'og:image', content: images[0].url },
         { property: 'og:image:width', content: images[0].width },
         { property: 'og:image:height', content: images[0].height },
@@ -44,6 +45,8 @@ const OpenGraph = (product: StrapiProduct) => {
 
   // open graph meta information
   const og = [
+    // {property: 'og_
+    { property: 'og:id', content: product.id },
     { property: 'og:url', content: url },
     { property: 'og:type', content: 'og:product' },
     { property: 'og:title', content: `${name} by ${designer.name}` },
@@ -67,10 +70,11 @@ const OpenGraph = (product: StrapiProduct) => {
 }
 
 export async function getServerSideProps({ params }) {
-  const [sizeChart, product] = await Promise.all([
-    axios.get('/products/size-chart').then((res) => res.data),
-    axios.get(`/products/shop/${params.item}`).then((res) => res.data),
-  ])
+  const [sizeChart, product]: [StrapiSizeChart, StrapiProduct] =
+    await Promise.all([
+      axios.get('/products/size-chart').then((res) => res.data),
+      axios.get(`/products/shop/${params.item}`).then((res) => res.data),
+    ])
 
   for (const [key, size] of Object.entries(product.sizes)) {
     product.sizes[key].size = sizing.normalize(size.size)

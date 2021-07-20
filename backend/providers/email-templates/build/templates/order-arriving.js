@@ -53,7 +53,7 @@ exports.default = function (_ref) {
     _react2.default.createElement(
       "span",
       null,
-      "Your order has arrived!"
+      "Your order is arriving today!"
     ),
     _react2.default.createElement(_Order2.default, data),
     _react2.default.createElement(
