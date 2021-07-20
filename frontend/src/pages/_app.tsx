@@ -33,13 +33,13 @@ const App = ({ router, Component, pageProps }) => {
       sheet.insertRule(
         `div, main {
 					min-height: auto;
-				}`,
+				}`
       )
     } else if (browser('safari')) {
       sheet.insertRule(
         `div, main {
 					min-height: min-content;
-				}`,
+				}`
       )
     }
   }, [])
@@ -98,29 +98,10 @@ const Wrapper = ({ router, children }) => {
     if (window.fbq) {
       window.fbq('consent', 'revoke')
     }
-    console.log(process.env)
-
-    //     // TODO: remove this
-    //     // decided to change naming scheme
-    //     for (const item of [
-    //       'launch-party',
-    //       'joined-waitlist',
-    //       'logged-in',
-    //       'cookie-consent',
-    //     ]) {
-    //       const key = item
-    //         .split('-')
-    //         .map((v, i) => (i ? v[0].toUpperCase() + v.slice(1) : v))
-    //         .join('')
-    //       const value = JSON.parse(window.localStorage.getItem(key))
-    //       if (value) {
-    //         window.localStorage.setItem(item, JSON.stringify(value))
-    //       }
-    //     }
 
     if (firebase.apps.length === 0) {
       firebase.initializeApp(
-        JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG.toString()),
+        JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG.toString())
       )
     }
 
@@ -136,7 +117,7 @@ const Wrapper = ({ router, children }) => {
       .catch(() => {
         const loggedIn = JSON.parse(window.localStorage.getItem('logged-in'))
         const joinedWaitlist = JSON.parse(
-          window.localStorage.getItem('joined-waitlist'),
+          window.localStorage.getItem('joined-waitlist')
         )
         if (!loggedIn && !joinedWaitlist) {
           document.getElementById('_app').addEventListener('scroll', showPopup)
