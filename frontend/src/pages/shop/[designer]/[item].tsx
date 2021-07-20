@@ -32,7 +32,7 @@ const OpenGraph = (product: StrapiProduct) => {
   const description = `Rent ${name} by ${designer.name} for only £${shortRentalPrice} only at Infinite Closet`
   const quantity = Object.values(sizes as { quantity: number }[]).reduce(
     (acc, { quantity }) => acc + quantity,
-    0,
+    0
   )
   const image = !images[0]
     ? []
@@ -47,10 +47,8 @@ const OpenGraph = (product: StrapiProduct) => {
   // open graph meta information
   // prettier-ignore
   const og = [
-    {property: 'og:google_product_category', content: product.categories.map(c => c.name).join(',')},
-    {property: 'google_product_category', content: product.categories.map(c => c.name).join(',')},
-    { property: 'og:id', content: product.id },
-    { property: 'id', content: product.id },
+    {property: 'product:category', content: product.categories.map(c => c.name).join(' > ')},
+    { property: 'product:retailer_item_id', content: product.id },
     { property: 'og:url', content: url },
     { property: 'og:type', content: 'og:product' },
     { property: 'og:title', content: `${name} by ${designer.name}` },
