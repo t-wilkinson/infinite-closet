@@ -29,7 +29,7 @@ const OpenGraph = (product: StrapiProduct) => {
     product
   const router = useRouter()
   const url = process.env.NEXT_PUBLIC_FRONTEND + router.asPath.split('?')[0]
-  const description = `Rent ${name} by ${designer.name} for only £${shortRentalPrice} only at Infinite Closet.`
+  const description = `Rent ${name} by ${designer.name} for only £${shortRentalPrice} only at Infinite Closet`
   const quantity = Object.values(sizes as { quantity: number }[]).reduce(
     (acc, { quantity }) => acc + quantity,
     0,
@@ -43,10 +43,13 @@ const OpenGraph = (product: StrapiProduct) => {
         { property: 'og:image:height', content: images[0].height },
       ]
 
+  // TODO: use object instead
   // open graph meta information
   // prettier-ignore
   const og = [
+    {property: 'og:google_product_category', content: product.categories.map(c => c.name).join(',')},
     {property: 'google_product_category', content: product.categories.map(c => c.name).join(',')},
+    { property: 'og:id', content: product.id },
     { property: 'id', content: product.id },
     { property: 'og:url', content: url },
     { property: 'og:type', content: 'og:product' },

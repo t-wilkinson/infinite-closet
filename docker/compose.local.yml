@@ -4,13 +4,12 @@ services:
   frontend:
     image: node:14
     environment:
+      FRONTEND_DOMAIN: infinitecloset.treywilkinson.com
       NEXT_PUBLIC_FRONTEND: 'https://infinitecloset.treywilkinson.com'
       NEXT_PUBLIC_BACKEND: 'https://api.infinitecloset.treywilkinson.com'
     command: yarn run develop
     volumes:
       - ../frontend:/app
-    environment:
-        DOMAIN: infinitecloset.treywilkinson.com
 
   backend:
     image: node:14

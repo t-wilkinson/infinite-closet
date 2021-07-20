@@ -98,24 +98,25 @@ const Wrapper = ({ router, children }) => {
     if (window.fbq) {
       window.fbq('consent', 'revoke')
     }
+    console.log(process.env)
 
-    // TODO: remove this
-    // decided to change naming scheme
-    for (const item of [
-      'launch-party',
-      'joined-waitlist',
-      'logged-in',
-      'cookie-consent',
-    ]) {
-      const key = item
-        .split('-')
-        .map((v, i) => (i ? v[0].toUpperCase() + v.slice(1) : v))
-        .join('')
-      const value = JSON.parse(window.localStorage.getItem(key))
-      if (value) {
-        window.localStorage.setItem(item, JSON.stringify(value))
-      }
-    }
+    //     // TODO: remove this
+    //     // decided to change naming scheme
+    //     for (const item of [
+    //       'launch-party',
+    //       'joined-waitlist',
+    //       'logged-in',
+    //       'cookie-consent',
+    //     ]) {
+    //       const key = item
+    //         .split('-')
+    //         .map((v, i) => (i ? v[0].toUpperCase() + v.slice(1) : v))
+    //         .join('')
+    //       const value = JSON.parse(window.localStorage.getItem(key))
+    //       if (value) {
+    //         window.localStorage.setItem(item, JSON.stringify(value))
+    //       }
+    //     }
 
     if (firebase.apps.length === 0) {
       firebase.initializeApp(

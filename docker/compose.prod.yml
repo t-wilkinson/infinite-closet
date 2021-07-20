@@ -15,7 +15,7 @@ services:
         NEXT_PUBLIC_STRIPE_KEY: pk_live_51Ikb9lDnNgAk4A84Zq3oNRb9NcwzLLfEMBoThNAMRWldaJEBHEITMcQgeS36V4uWxmmQ03pBjaezlbTIXm82hydp003lgQxup6
     command: yarn start
     environment:
-        DOMAIN: infinitecloset.co.uk
+        FRONTEND_DOMAIN: infinitecloset.co.uk
 
   backend:
     depends_on:

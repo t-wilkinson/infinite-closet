@@ -1,5 +1,6 @@
 // const domain = 'infinitecloset.co.uk'
 const withPWA = require('next-pwa')
+
 // const StylelintPlugin = require('stylelint-webpack-plugin')
 const ESLintPlugin = require('eslint-webpack-plugin')
 
@@ -47,8 +48,8 @@ module.exports = withPWA({
       // 'dev.' + domain,
       // 'api.' + domain,
       'localhost',
-      process.env.DOMAIN.replace(/^\w+:\/\//, ''),
-      process.env.DOMAIN.replace(/^\w+:\/\//, ''),
+      process.env.FRONTEND_DOMAIN,
+      process.env.FRONTEND_DOMAIN,
     ],
   },
 })
