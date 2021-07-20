@@ -10,8 +10,10 @@ const orderData = {
   range: { start: "8/24/2020", end: "8/28/2020" },
   product: {
     name: "Product",
+    slug: "product",
     designer: {
       name: "Designer",
+      slug: "designer",
     },
     images: [
       {

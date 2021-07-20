@@ -1,14 +1,14 @@
-import React from "react";
+import React from 'react'
 
 const imgStyle = {
   img: {
-    objectFit: "contain",
-    outline: "none",
-    textDecoration: "none",
-    border: "none",
-    display: "block",
+    objectFit: 'contain',
+    outline: 'none',
+    textDecoration: 'none',
+    border: 'none',
+    display: 'block',
   },
-};
+}
 
 function Img({ src, alt, className, style = {} }) {
   return (
@@ -18,7 +18,7 @@ function Img({ src, alt, className, style = {} }) {
       style={{ ...imgStyle.img, ...style }}
       className={className}
     />
-  );
+  )
 }
 
-export default Img;
+export default Img

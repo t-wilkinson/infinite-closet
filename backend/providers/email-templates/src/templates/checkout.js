@@ -1,7 +1,8 @@
-import React from "react";
-import Grid from "../layout/Grid";
-import Layout from "../layout";
-import Order from "../elements/Order";
+import React from 'react'
+import Grid from '../layout/Grid'
+import Layout from '../layout'
+import Order from '../elements/Order'
+import Between from '../elements/Between'
 
 export default ({ data }) => {
   return (
@@ -15,7 +16,13 @@ export default ({ data }) => {
         ))}
       </Grid>
 
+      <Between
+        left={<span style={{ fontWeight: 700 }}>Total</span>}
+        right={
+          <span style={{ fontWeight: 700 }}>£{data.totalPrice.toFixed(2)}</span>
+        }
+      />
       <span>We hope to see you again soon.</span>
     </Layout>
-  );
-};
+  )
+}

@@ -46,7 +46,7 @@ module.exports = withPWA({
       // 'api.dev.' + domain,
       // 'dev.' + domain,
       // 'api.' + domain,
-      domain,
+      'localhost',
       process.env.NEXT_PUBLIC_FRONTEND.replace(/^\w+:\/\//, ''),
       process.env.NEXT_PUBLIC_BACKEND.replace(/^\w+:\/\//, ''),
     ],
