@@ -23,10 +23,14 @@ export const isValid = (fields: Fields, include?: string[]): boolean => {
     .every((v) => v.length === 0)
 }
 
+export const cleanField = (field: Field): Field['value'] => {
+  if (typeof field.value === 'string') return field.value.trim()
+  else return field.value
+}
+
 export const cleanFields = (fields: Fields): { [field: string]: any } => {
-  return Object.entries(fields).reduce((acc, [k, v]) => {
-    if (typeof v.value === 'string') acc[k] = v.value.trim()
-    else acc[k] = v.value
+  return Object.entries(fields).reduce((acc, [k, field]) => {
+    acc[k] = cleanField(field)
     return acc
   }, {})
 }

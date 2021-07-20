@@ -1,4 +1,5 @@
 // TODO: better types
+import { StrapiCoupon } from '@/utils/models'
 export type Field = {
   field: string
   label: string
@@ -26,3 +27,9 @@ export type FieldsConfig = {
 }
 
 export type Valid = true | string
+
+export type Coupon = {
+  valid: boolean
+  coupon: StrapiCoupon
+  price: number
+}

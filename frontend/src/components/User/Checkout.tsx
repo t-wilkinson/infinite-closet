@@ -7,7 +7,9 @@ dayjs.extend(utc)
 import useAnalytics from '@/utils/useAnalytics'
 import { fmtPrice } from '@/utils/money'
 import { fetchAPI } from '@/utils/api'
-import { Submit } from '@/Form'
+import { Coupon } from '@/Form/types'
+import { Submit, CouponCode } from '@/Form'
+import useFields, { cleanFields } from '@/Form/useFields'
 import { BlueLink, Icon } from '@/components'
 
 import { PaymentMethods, AddPaymentMethod } from './Payment'
@@ -28,16 +30,21 @@ const initialState = {
   cart: [],
   insurance: {},
   total: undefined,
+  coupon: undefined as Coupon,
 }
 
 const reducer = (state, action) => {
+  const def = (key) => ({ ...state, [key]: action.payload })
   // prettier-ignore
   switch (action.type) {
+    case 'correct-coupon': return def('coupon')
+    case 'clear-coupon': return {...state, coupon: undefined,}
+
     case 'clear-insurance': return {...state, insurance: {}}
     case 'toggle-insurance': return {...state, insurance: {...state.insurance,  [action.payload]: !state.insurance[action.payload]}}
 
-    case 'cart-total': return {...state, total: action.payload}
-    case 'fill-cart': return { ...state, cart: action.payload }
+    case 'cart-total': return def('total')
+    case 'fill-cart': return def('cart')
     case 'remove-cart-item': return { ...state, cart: state.cart.filter((order) => order.id !== action.payload), }
 
     case 'status-checkout': return {...state, status: 'checking-out'}
@@ -48,8 +55,8 @@ const reducer = (state, action) => {
     case 'edit-address': return { ...state, popup: 'address' }
     case 'close-popup': return { ...state, popup: 'none' }
 
-    case 'choose-address': return { ...state, address: action.payload }
-    case 'set-addresses': return { ...state, addresses: action.payload }
+    case 'choose-address': return def('address')
+    case 'set-addresses': return def('addresses')
 
     case 'choose-payment-method': return { ...state, paymentMethod: action.payload }
     case 'add-payment-method': return { ...state, paymentMethods: [...state.paymentMethods, action.payload], }
@@ -83,10 +90,15 @@ export const Checkout = ({ user, data }) => {
       .then((data) => dispatch({ type: 'fill-cart', payload: data.cart }))
       .catch((err) => console.error(err))
   const analytics = useAnalytics()
+  const fields = useFields({
+    couponCode: {},
+  })
 
   const checkout = () => {
     dispatch({ type: 'payment-succeeded' })
     dispatch({ type: 'status-checkout' })
+    dispatch({ type: 'clear-coupon' })
+    const cleaned = cleanFields(fields)
     axios
       .post(
         '/orders/checkout',
@@ -95,10 +107,11 @@ export const Checkout = ({ user, data }) => {
           paymentMethod: state.paymentMethod,
           cart: state.cart,
           insurance: state.insurance,
+          couponCode: cleaned.couponCode,
         },
         { withCredentials: true },
       )
-      .then((res) => {
+      .then(() => {
         dispatch({ type: 'status-success' })
         dispatch({ type: 'clear-insurance' })
         analytics.logEvent('purchase', {
@@ -178,7 +191,11 @@ export const Checkout = ({ user, data }) => {
             <Payment state={state} dispatch={dispatch} user={user} />
           </SideItem>
           <SideItem label="Summary">
-            <Summary state={state} />
+            <Summary
+              couponCode={fields.couponCode}
+              state={state}
+              dispatch={dispatch}
+            />
           </SideItem>
         </div>
         {state.status === 'success' ? (
@@ -301,18 +318,31 @@ const Payment = ({ state, user, dispatch }) => (
   </>
 )
 
-const Summary = ({ state: { total } }) => {
+const Summary = ({ couponCode, dispatch, state }) => {
+  const { total } = state
   if (!total) {
     return <div />
   }
 
   return (
     <div>
+      <CouponCode
+        price={total.total}
+        situation="checkout"
+        setCoupon={(coupon) =>
+          dispatch({ type: 'correct-coupon', payload: coupon })
+        }
+        field={couponCode}
+      />
       <Price label="Subtotal" price={total.subtotal} />
       <Price label="Insurance" price={total.insurance} />
       <Price label="Shipping" price={total.shipping} />
       <div className="h-px bg-pri my-1" />
-      <Price label="Total" price={total.total} className="font-bold" />
+      <Price
+        label="Total"
+        price={state.coupon?.price || total.total}
+        className="font-bold"
+      />
     </div>
   )
 }

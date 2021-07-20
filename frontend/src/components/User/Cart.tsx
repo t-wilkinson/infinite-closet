@@ -73,12 +73,16 @@ export const CartItem = ({ dispatch, product, itemInsurance, ...order }) => {
         </div>
       </button>
       <div className="h-32 w-32 relative mr-4">
-        <Image
-          src={getURL(product.images[0].url)}
-          alt={product.images[0].alternativeText}
-          layout="fill"
-          objectFit="contain"
-        />
+        <Link href={`/shop/${product.designer.slug}/${product.slug}`}>
+          <a>
+            <Image
+              src={getURL(product.images[0].url)}
+              alt={product.images[0].alternativeText}
+              layout="fill"
+              objectFit="contain"
+            />
+          </a>
+        </Link>
       </div>
 
       <div className="lg:flex-row w-full items-start lg:items-center lg:justify-between">

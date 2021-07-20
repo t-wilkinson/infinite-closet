@@ -1,8 +1,11 @@
 import React from 'react'
+import axios from 'axios'
 
 import { Icon } from '@/components'
+import { StrapiCoupon } from '@/utils/models'
 
-import { validate } from './useFields'
+import { Coupon, Field } from './types'
+import { validate, cleanField } from './useFields'
 
 export const Checkbox = ({
   value = false,
@@ -274,6 +277,85 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
       </div>
     </div>
   )
+}
+
+type CouponStatus = undefined | 'success' | 'failure'
+
+export const CouponCode = ({
+  situation,
+  price,
+  setCoupon,
+  field,
+}: {
+  situation: StrapiCoupon['situation']
+  price: number
+  setCoupon: (coupon: Coupon) => void
+  field: Field
+}) => {
+  const [status, setStatus] = React.useState<CouponStatus>()
+  const checkPromo = async () => {
+    const code = cleanField(field)
+    return axios
+      .post(`/coupons/discount`, {
+        code,
+        situation,
+        price,
+      })
+      .then((res) => res.data)
+      .then((data) => {
+        if (data.valid) {
+          setCoupon(data)
+          setStatus('success')
+        } else {
+          setStatus('failure')
+        }
+      })
+      .catch((err) => {
+        if (err.valid === false) {
+          setStatus('failure')
+        }
+      })
+  }
+
+  if (status === undefined) {
+    return (
+      <Input
+        onKeyDown={(e) => {
+          if (e.keyCode === 13) {
+            e.preventDefault()
+            checkPromo()
+          }
+        }}
+        {...field}
+        after={
+          <button
+            className="flex px-4 py-3 border-l border-gray"
+            onClick={checkPromo}
+            type="button"
+          >
+            Apply
+          </button>
+        }
+      />
+    )
+  } else if (status === 'success') {
+    return <span className="w-full p-2">Successfully applied promo code!</span>
+  } else {
+    return (
+      <span className="text-warning w-full p-2">
+        Unable to find promo code matching {field.value}.{' '}
+        <button
+          className="underline text-black"
+          onClick={() => {
+            field.onChange('')
+            setStatus(undefined)
+          }}
+        >
+          Try Again?
+        </button>
+      </span>
+    )
+  }
 }
 
 export default Form

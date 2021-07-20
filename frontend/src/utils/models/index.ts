@@ -3,6 +3,7 @@ export * from './blog';
 export * from './category';
 export * from './color';
 export * from './contact';
+export * from './coupon';
 export * from './custom/sizes';
 export * from './designer';
 export * from './document';

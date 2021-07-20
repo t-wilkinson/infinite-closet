@@ -13,6 +13,8 @@ module.exports = {
     ctx.send({ count })
   },
 
+  // TODO: should this calculate the coupon amount as well?
+  // if so, must rate limit this endpoint
   async totalPrice(ctx) {
     const body = ctx.request.body
     const total = strapi.plugins['orders'].services.price.totalPrice({
@@ -114,14 +116,22 @@ module.exports = {
       return acc
     }, [])
 
-    const amount = strapi.plugins['orders'].services.price.totalAmount({
+    const price = strapi.plugins['orders'].services.price.totalPrice({
       cart,
       insurance: body.insurance,
     })
+    const coupon = await strapi.services.coupon.discount({
+      code: body.couponCode,
+      situation: 'checkout',
+      price: price.total,
+    })
+    const total = strapi.plugins['orders'].services.price.toAmount(
+      coupon.valid ? coupon.price : price.total
+    )
 
     stripe.paymentIntents
       .create({
-        amount: amount.total,
+        amount: total,
         currency: 'gbp',
         customer: user.customer,
         payment_method: body.paymentMethod,
@@ -169,9 +179,7 @@ module.exports = {
           data: {
             firstName: user.firstName,
             orders,
-            totalPrice: strapi.plugins['orders'].services.price.toPrice(
-              amount.total
-            ),
+            totalPrice: strapi.plugins['orders'].services.price.toPrice(total),
           },
         })
       )

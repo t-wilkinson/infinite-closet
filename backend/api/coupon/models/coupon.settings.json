@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "coupons",
+  "info": {
+    "name": "Coupon",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "percent_off",
+        "amount_ff"
+      ],
+      "required": true
+    },
+    "amount": {
+      "type": "decimal",
+      "required": true
+    },
+    "code": {
+      "type": "string",
+      "required": true,
+      "private": true
+    },
+    "situation": {
+      "type": "enumeration",
+      "enum": [
+        "checkout"
+      ]
+    }
+  }
+}

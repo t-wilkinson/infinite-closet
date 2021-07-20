@@ -25,7 +25,7 @@ const Page = () => {
             </span>
             <span>Tickets are first come, first serve.</span>
           </div>
-          <div className="w-full flex-col-reverse items-center lg:items-start px-4 lg:px-0 lg:flex-row lg:space-x-8">
+          <div className="w-full flex-col-reverse items-center lg:items-start px-4 lg:px-0 lg:flex-row lg:space-x-8 mb-16">
             <PaymentWrapper>
               <div className="bg-white w-full p-4 rounded-md">
                 <JoinLaunchParty />
