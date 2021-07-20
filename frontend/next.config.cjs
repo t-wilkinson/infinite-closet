@@ -1,7 +1,7 @@
-const domain = 'infinitecloset.co.uk'
+// const domain = 'infinitecloset.co.uk'
 const withPWA = require('next-pwa')
 // const StylelintPlugin = require('stylelint-webpack-plugin')
-// const ESLintPlugin = require('eslint-webpack-plugin')
+const ESLintPlugin = require('eslint-webpack-plugin')
 
 module.exports = withPWA({
   webpack: (config, {}) => {
@@ -9,8 +9,8 @@ module.exports = withPWA({
       type: 'filesystem',
     }
 
-    // config.plugins.push(new ESLintPlugin({ cache: true }))
     // config.plugins.push(new StylelintPlugin({ files: '**/*.css', cache: true }))
+    config.plugins.push(new ESLintPlugin({ cache: true }))
     config.module.rules.push({
       test: /\.jsx?$/,
       exclude: /node_modules/,
@@ -39,16 +39,16 @@ module.exports = withPWA({
   },
   images: {
     domains: [
+      // 'localhost',
+      // 'infinitecloset.treywilkinson.com',
+      // 'api.infinitecloset.treywilkinson.com',
+      // 'localhost',
+      // 'api.dev.' + domain,
+      // 'dev.' + domain,
+      // 'api.' + domain,
       'localhost',
-      'infinitecloset.treywilkinson.com',
-      'api.infinitecloset.treywilkinson.com',
-      'localhost',
-      'api.dev.' + domain,
-      'dev.' + domain,
-      'api.' + domain,
-      'localhost',
-      // process.env.NEXT_PUBLIC_FRONTEND.replace(/^\w+:\/\//, ''),
-      // process.env.NEXT_PUBLIC_BACKEND.replace(/^\w+:\/\//, ''),
+      process.env.DOMAIN.replace(/^\w+:\/\//, ''),
+      process.env.DOMAIN.replace(/^\w+:\/\//, ''),
     ],
   },
 })

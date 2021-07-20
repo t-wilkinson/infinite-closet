@@ -9,6 +9,8 @@ services:
     command: yarn run develop
     volumes:
       - ../frontend:/app
+    environment:
+        DOMAIN: infinitecloset.treywilkinson.com
 
   backend:
     image: node:14

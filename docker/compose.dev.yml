@@ -16,6 +16,8 @@ services:
       NEXT_PUBLIC_STRIPE_KEY: pk_test_51Ikb9lDnNgAk4A84M2EKzMFOlpQG65VHqqw8ZKlY8KwfgGHLEadvakIIJM7dA6HzVewnWZvJ2BPR9ZGq9SwfKBFJ00PTz0SIz5
     command: yarn run develop
     working_dir: /app
+    environment:
+        DOMAIN: dev.infinitecloset.co.uk
 
   backend:
     build:
