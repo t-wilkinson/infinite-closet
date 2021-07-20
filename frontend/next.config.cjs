@@ -49,7 +49,7 @@ module.exports = withPWA({
       // 'api.' + domain,
       'localhost',
       process.env.FRONTEND_DOMAIN,
-      process.env.FRONTEND_DOMAIN,
+      'api.' + process.env.FRONTEND_DOMAIN,
     ],
   },
 })
