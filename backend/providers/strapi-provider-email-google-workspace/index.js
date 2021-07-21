@@ -1,8 +1,8 @@
-'use strict';
-const path = require('path');
-const { google } = require('googleapis');
-const _ = require('lodash');
-const emailTemplates = require('email-templates');
+'use strict'
+const path = require('path')
+const { google } = require('googleapis')
+const _ = require('lodash')
+const emailTemplates = require('email-templates')
 
 function makeBody(to, from, subject, message) {
   var str = [
@@ -19,19 +19,19 @@ function makeBody(to, from, subject, message) {
     subject,
     '\n\n',
     message,
-  ].join('');
+  ].join('')
 
   var encodedMail = Buffer.from(str)
     .toString('base64')
     .replace(/\+/g, '-')
-    .replace(/\//g, '_');
+    .replace(/\//g, '_')
 
-  return encodedMail;
+  return encodedMail
 }
 
 const gmail = {
   init(options) {
-    const JWT = google.auth.JWT;
+    const JWT = google.auth.JWT
     const authClient = new JWT({
       keyFile: path.resolve(__dirname, 'credentials.json'),
       scopes: [
@@ -41,14 +41,14 @@ const gmail = {
         'https://www.googleapis.com/auth/gmail.readonly',
       ],
       subject: options.subject,
-    });
-    authClient.authorize();
+    })
+    authClient.authorize()
 
     return {
       auth: authClient,
       send({ to, from, subject, html }) {
-        const raw = makeBody(to, from, subject, html);
-        const gmail = google.gmail({ version: 'v1', auth: this.auth });
+        const raw = makeBody(to, from, subject, html)
+        const gmail = google.gmail({ version: 'v1', auth: this.auth })
 
         return gmail.users.messages
           .send({
@@ -56,11 +56,11 @@ const gmail = {
             userId: 'me',
             resource: { raw },
           })
-          .catch((err) => console.error(err));
+          .catch((err) => console.error(err))
       },
-    };
+    }
   },
-};
+}
 
 const emailFields = [
   'from',
@@ -72,16 +72,16 @@ const emailFields = [
   'text',
   'html',
   'attachments',
-];
+]
 
 function normalizeAddress(addr) {
   if (typeof addr === 'string') {
-    return addr;
+    return addr
   } else {
     if (addr.email && addr.name) {
-      return `${addr.name} <${addr.email}>`;
+      return `${addr.name} <${addr.email}>`
     } else {
-      return addr.email;
+      return addr.email
     }
   }
 }
@@ -92,9 +92,9 @@ async function templateEmail(client, settings, options) {
     from: normalizeAddress(options.from || settings.from),
     subject: options.subject || settings.subject,
     html: await emailTemplates(options.template, options.data || {}),
-  };
+  }
 
-  return await client.send(emailOptions);
+  return await client.send(emailOptions)
 }
 
 async function sendEmail(client, settings, options) {
@@ -103,24 +103,24 @@ async function sendEmail(client, settings, options) {
     from: options.from || settings.from,
     replyTo: options.replyTo || settings.replyTo,
     html: options.html || options.text,
-  };
-  return await client.send(emailOptions);
+  }
+  return await client.send(emailOptions)
 }
 
 module.exports = {
   provider: 'google-workspace',
   name: 'Google Workspace',
   init: (providerOptions = {}, settings = {}) => {
-    const client = gmail.init(providerOptions);
+    const client = gmail.init(providerOptions)
 
     return {
       send(options) {
         if (options.template) {
-          templateEmail(client, settings, options);
+          templateEmail(client, settings, options)
         } else {
-          sendEmail(client, settings, options);
+          sendEmail(client, settings, options)
         }
       },
-    };
+    }
   },
-};
+}
