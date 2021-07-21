@@ -1,10 +1,8 @@
-// const domain = 'infinitecloset.co.uk'
+const domain = 'infinitecloset.co.uk'
 const withPWA = require('next-pwa')
 
 // const StylelintPlugin = require('stylelint-webpack-plugin')
 // const ESLintPlugin = require('eslint-webpack-plugin')
-
-console.log(process.env.FRONTEND_DOMAIN)
 
 module.exports = withPWA({
   webpack: (config, {}) => {
@@ -42,16 +40,13 @@ module.exports = withPWA({
   },
   images: {
     domains: [
-      // 'localhost',
-      // 'infinitecloset.treywilkinson.com',
-      // 'api.infinitecloset.treywilkinson.com',
-      // 'localhost',
-      // 'api.dev.' + domain,
-      // 'dev.' + domain,
-      // 'api.' + domain,
       'localhost',
-      process.env.FRONTEND_DOMAIN,
-      'api.' + process.env.FRONTEND_DOMAIN,
+      'infinitecloset.treywilkinson.com',
+      'api.infinitecloset.treywilkinson.com',
+      'localhost',
+      'api.dev.' + domain,
+      'dev.' + domain,
+      'api.' + domain,
     ],
   },
 })
