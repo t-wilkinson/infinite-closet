@@ -79,6 +79,10 @@ const allowedPages = [
   '/user/profile',
 ]
 
+const getStorage = (key: string) => JSON.parse(window.localStorage.getItem(key))
+const setStorage = (key: string, value: any) =>
+  window.localStorage.setItem(key, JSON.stringify(value))
+
 const Wrapper = ({ router, children }) => {
   // useSaveScrollPos()
   const dispatch = useDispatch()
@@ -106,7 +110,10 @@ const Wrapper = ({ router, children }) => {
     }
 
     const showPopup = () => {
-      window.setTimeout(() => dispatch(accountActions.showPopup('email')), 5000)
+      window.setTimeout(() => {
+        dispatch(accountActions.showPopup('email'))
+        setStorage('popup-form', true)
+      }, 5000)
       document.getElementById('_app').removeEventListener('scroll', showPopup)
     }
 
@@ -115,11 +122,13 @@ const Wrapper = ({ router, children }) => {
       .then(() => axios.get(`/orders/cart/count`, { withCredentials: true }))
       .then((res) => dispatch(userActions.countCart(res.data.count)))
       .catch(() => {
-        const loggedIn = JSON.parse(window.localStorage.getItem('logged-in'))
-        const joinedWaitlist = JSON.parse(
-          window.localStorage.getItem('joined-waitlist')
-        )
-        if (!loggedIn && !joinedWaitlist) {
+        const loggedIn = getStorage('logged-in')
+        const joinedWaitlist = getStorage('joined-waitlist')
+        if (joinedWaitlist) {
+          setStorage('popup-form', joinedWaitlist)
+        }
+        const popupForm = getStorage('popup-form')
+        if (!loggedIn && !popupForm) {
           document.getElementById('_app').addEventListener('scroll', showPopup)
         }
       })

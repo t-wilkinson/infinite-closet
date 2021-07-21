@@ -9,10 +9,12 @@ import { Icon } from '@/components'
 const PopupRegister = dynamic(() => import('./Register'))
 const PopupSignin = dynamic(() => import('./Signin'))
 const PopupJoinWaitlist = dynamic(() => import('./JoinWaitlist'))
+const PopupEmail = dynamic(() => import('./Email'))
 
 const popups = {
   hidden: () => null,
-  email: PopupJoinWaitlist,
+  waitlist: PopupJoinWaitlist,
+  email: PopupEmail,
   register: PopupRegister,
   signin: PopupSignin,
 }
@@ -24,14 +26,16 @@ export const Popup = ({ popup }) => {
   return (
     <div
       className={`
-      fixed inset-0 z-40 bg-black bg-opacity-70 h-full pt-20
+      fixed inset-0 z-40 bg-black bg-opacity-70 pt-20
       ${popup === 'hidden' ? 'hidden' : ''}
     `}
+      onClick={() => dispatch(accountActions.hidePopup())}
     >
-      <Form>
+      <Form onClick={(e) => e.stopPropagation()}>
         <button
           className="absolute top-0 right-0 m-4 z-20"
           onClick={() => dispatch(accountActions.hidePopup())}
+          type="button"
         >
           <Icon name="close" size={20} />
         </button>

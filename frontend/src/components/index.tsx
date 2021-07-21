@@ -52,7 +52,7 @@ export const CallToAction = ({
     aria-label="Activate call to action"
   >
     <div
-      className={`items-center content-center p-3 bg-pri
+      className={`items-center content-center p-3 bg-pri transition duration-200
         ${className}
         ${disabled ? 'bg-pri-light' : 'hover:bg-sec bg-pri'}
       `}
@@ -267,6 +267,7 @@ const icons = {
       />
     </svg>
   ),
+  // TODO: use one icon
   left: (
     <svg viewBox="0 0 492.002 492.002" className="-rotate-90 transform">
       <path

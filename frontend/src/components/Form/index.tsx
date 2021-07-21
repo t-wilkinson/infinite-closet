@@ -140,6 +140,7 @@ export const Form = ({
   onSubmit = (..._: any[]) => {},
   className = '',
   children,
+  ...props
 }) => (
   <div className={`items-center ${className}`}>
     <form
@@ -148,6 +149,7 @@ export const Form = ({
         onSubmit(e)
         e.preventDefault()
       }}
+      {...props}
     >
       <div className="w-full p-6 bg-white rounded-lg">{children}</div>
     </form>
@@ -174,7 +176,7 @@ export const Submit = ({
 }) => (
   <button
     aria-label="Submit form"
-    className={`p-3 text-white mt-2 rounded-sm border
+    className={`p-3 text-white mt-2 rounded-sm border transition duration-200
       ${
         disabled
           ? 'border-pri-light bg-pri-light'

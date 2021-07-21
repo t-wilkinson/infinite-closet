@@ -9,11 +9,15 @@ import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { userActions } from '@/User/slice'
 
-export const Register = () => {
+export const Register = ({ email }: { email?: string }) => {
   const fields = useFields({
     firstName: { constraints: 'required' },
     lastName: { constraints: '', label: 'Last Name' },
-    email: { constraints: 'required email', label: 'Email Address' },
+    email: {
+      default: email,
+      constraints: 'required email',
+      label: 'Email Address',
+    },
     password: { constraints: 'required password' },
   })
   const router = useRouter()
@@ -33,7 +37,7 @@ export const Register = () => {
           email: cleaned.email,
           password: cleaned.password,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       )
       .then((res) => {
         dispatch(userActions.signin(res.data.user))
@@ -55,7 +59,7 @@ export const Register = () => {
 
   return (
     <>
-      <FormHeader label="Join Us For Free" />
+      <FormHeader label="Join Us for Free" />
       <Warnings warnings={warnings} />
       <div className="flex-row space-x-2">
         <Input {...fields.firstName} />

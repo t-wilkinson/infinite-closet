@@ -1,8 +1,6 @@
 import React from 'react'
 import axios from 'axios'
 
-// import { useDispatch } from '@/utils/store'
-// import { accountActions } from '@/Account/slice'
 import useAnalytics from '@/utils/useAnalytics'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { FormHeader, Input, Checkbox, Submit } from '@/Form'
@@ -33,7 +31,6 @@ const messages = {
 }
 
 const JoinWaitlist = () => {
-  // const dispatch = useDispatch()
   const [status, setStatus] = React.useState<Status>('None')
 
   return (
@@ -64,7 +61,7 @@ const WaitlistForm = ({ status, setStatus }) => {
 
     const cleaned = cleanFields(fields)
     const marketing = howDidYouFindUs.find(
-      (v) => v.value == cleaned.checkbox,
+      (v) => v.value == cleaned.checkbox
     )?.label
 
     axios

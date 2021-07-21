@@ -5,6 +5,7 @@ export const useProtected = () => {
 
   if (user === null) {
     window.location.pathname = '/account/signin'
+    return
   }
 
   return user
