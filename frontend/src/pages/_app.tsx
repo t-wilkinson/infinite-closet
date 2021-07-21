@@ -123,10 +123,13 @@ const Wrapper = ({ router, children }) => {
       .then((res) => dispatch(userActions.countCart(res.data.count)))
       .catch(() => {
         const loggedIn = getStorage('logged-in')
+
+        // TODO: temporary
         const joinedWaitlist = getStorage('joined-waitlist')
         if (joinedWaitlist) {
           setStorage('popup-form', joinedWaitlist)
         }
+
         const popupForm = getStorage('popup-form')
         if (!loggedIn && !popupForm) {
           document.getElementById('_app').addEventListener('scroll', showPopup)

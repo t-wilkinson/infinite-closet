@@ -14,14 +14,16 @@ export default ({ data }) => {
     dayjs(date).tz('Europe/London').format('dddd, MMM D')
 
   return (
-    <Layout title="Order Arriving">
+    <Layout title="Order Shipped">
       <h3 style={{ margin: 0 }}>Hello {data.firstName},</h3>
-      <span>Your order is arriving today!</span>
-      <Order {...data} />
+      <span>Your order just shipped!</span>
       <span>
-        Please expect the order to be picked up on{' '}
-        <span style={{ color: '#39603d' }}>{formatDate(data.range.end)}</span>.
+        Please expect it to arrive midday on{' '}
+        <span style={{ color: '#39603d' }}>{formatDate(data.range.start)}</span>
+        .
       </span>
+      <Order {...data} />
+      <span>We hope to see you again soon.</span>
     </Layout>
   )
 }

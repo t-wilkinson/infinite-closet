@@ -1,8 +1,8 @@
-import React from "react";
-import Layout from "../layout";
-import Grid from "../layout/Grid";
-import Icon from "../elements/Icon";
-import Between from "../elements/Between";
+import React from 'react'
+import Layout from '../layout'
+import Grid from '../layout/Grid'
+import Icon from '../elements/Icon'
+import Between from '../elements/Between'
 
 const Summary = ({ TICKET_PRICE, discount, donation, total }) => {
   return (
@@ -12,7 +12,7 @@ const Summary = ({ TICKET_PRICE, discount, donation, total }) => {
         style={{
           height: 2,
           marginBottom: 16,
-          backgroundColor: "#5f6368",
+          backgroundColor: '#5f6368',
         }}
       />
 
@@ -25,8 +25,8 @@ const Summary = ({ TICKET_PRICE, discount, donation, total }) => {
         right={`£${total.toFixed(2)}`}
       />
     </Grid>
-  );
-};
+  )
+}
 
 const Details = () => (
   <React.Fragment>
@@ -35,11 +35,11 @@ const Details = () => (
       style={{
         height: 2,
         marginBottom: 16,
-        backgroundColor: "#5f6368",
+        backgroundColor: '#5f6368',
       }}
     />
 
-    <div style={{ backgroundColor: "#efefef", padding: 16 }}>
+    <div style={{ backgroundColor: '#efefef', padding: 16 }}>
       <Grid>
         <Grid.Row>
           <Icon name="clock" size={20} className="text-gray mr-6 mt-2" />
@@ -56,12 +56,12 @@ const Details = () => (
       </Grid>
     </div>
   </React.Fragment>
-);
+)
 
 export default ({ data }) => {
   return (
     <Layout title="Launch Party">
-      <h3 style={{ margin: 0 }}>Hello {data.name},</h3>
+      <h3 style={{ margin: 0 }}>Hello {data.firstName},</h3>
       <span>You joined our launch party!</span>
       <Details />
       <Summary {...data} />
@@ -71,7 +71,7 @@ export default ({ data }) => {
           height: 2,
           marginTop: 8,
           marginBottom: 16,
-          backgroundColor: "#5f6368",
+          backgroundColor: '#5f6368',
         }}
       />
 
@@ -79,13 +79,13 @@ export default ({ data }) => {
         We are excited to meet you
         {data.donation && (
           <span className="mb-2">
-            {" "}
-            and thank you for your kind donation of{" "}
+            {' '}
+            and thank you for your kind donation of{' '}
             <span className="font-bold">£{data.donation}</span>
           </span>
         )}
         !
       </span>
     </Layout>
-  );
-};
+  )
+}

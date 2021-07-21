@@ -94,8 +94,6 @@ module.exports = {
 
   async ship(ctx) {
     let { order } = ctx.request.body
-    // const user = order.user;
-
     if (order.status === 'shipping') {
       ctx.send({ message: 'Already shipping' })
     }
@@ -110,6 +108,7 @@ module.exports = {
     order = await strapi
       .query('order', 'orders')
       .findOne({ id: order.id }, ['product', 'user'])
+    const user = order.user
 
     const onError = async (err) => {
       await strapi
@@ -124,17 +123,17 @@ module.exports = {
       strapi.log.error(err)
     }
 
-    //     const sendShippingEmail = (to) =>
-    //       await strapi.plugins["email"].services.email.send({
-    //         template: "order-shipped",
-    //         to,
-    //         subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
-    //         data: {
-    //           firstName: user.firstName,
-    //           image: order.product.image.url,
-    //           shippingDate: dayjs(order.startDate).format("ddd, MMM DD"),
-    //         },
-    //       });
+    const sendShippingEmail = (to) =>
+      strapi.plugins['email'].services.email.send({
+        template: 'order-shipped',
+        to,
+        subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
+        data: {
+          firstName: user.firstName,
+          range: strapi.plugins['orders'].services.date.range(order),
+          price: strapi.plugins['orders'].services.price(order),
+        },
+      })
 
     if (process.NODE_ENV === 'production') {
       strapi.plugins['orders'].services.hived
@@ -144,7 +143,7 @@ module.exports = {
             .query('order', 'orders')
             .update({ id: order.id }, { shipment: res.id })
         )
-        // .then(sendShippingEmail)
+        .then(sendShippingEmail)
         .catch(onError)
     } else {
       strapi
@@ -153,7 +152,7 @@ module.exports = {
           { id: order.id },
           { shipment: crypto.randomBytes(16).toString('base64') }
         )
-        // .then(sendShippingEmail)
+        .then(sendShippingEmail)
         .catch(onError)
     }
 

@@ -14,11 +14,8 @@ require("./styles.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var orderData = {
-  firstName: "First Name",
-  price: 30.13,
+var order = {
   size: "MD",
-  range: { start: "8/24/2020", end: "8/28/2020" },
   product: {
     name: "Product",
     slug: "product",
@@ -32,6 +29,12 @@ var orderData = {
     }]
   }
 };
+
+var orderData = Object.assign({}, order, {
+  firstName: "First Name",
+  price: 30.13,
+  range: { start: "8/24/2020", end: "8/28/2020" }
+});
 
 var data = {
   "contact-us": {
@@ -62,11 +65,9 @@ var data = {
     discount: 5,
     total: 45
   },
-  "confirm-email-address": {
-    url: "URL"
-  },
   "order-arriving": orderData,
-  "order-leaving": orderData
+  "order-leaving": orderData,
+  "order-shipped": orderData
 };
 
 var Emails = function Emails() {
@@ -75,17 +76,15 @@ var Emails = function Emails() {
       Email = _React$useState2[0],
       setEmail = _React$useState2[1];
 
-  var _React$useState3 = _react2.default.useState(Object.keys(data).slice(-1)[0]),
-      _React$useState4 = _slicedToArray(_React$useState3, 2),
-      selected = _React$useState4[0],
-      setSelected = _React$useState4[1];
+  var defaultEmail = Object.keys(data).slice(-1)[0];
+  var path = window.location.pathname.split("/")[1];
 
   _react2.default.useEffect(function () {
     var Email = _react2.default.lazy(function () {
-      return import("./templates/" + selected);
+      return import("./templates/" + (path || defaultEmail));
     });
     setEmail(Email);
-  }, [selected]);
+  }, []);
 
   return _react2.default.createElement(
     "div",
@@ -93,24 +92,17 @@ var Emails = function Emails() {
     _react2.default.createElement(
       "nav",
       { className: "flex-row justify-start space-x-2 border-b border-gray p-2" },
-      Object.keys(data).map(function (k) {
+      Object.keys(data).sort().map(function (k) {
         return _react2.default.createElement(
-          "button",
+          "a",
           {
             key: k,
-            onClick: function onClick() {
-              setSelected(k);
-              setEmail(undefined);
-            }
+            href: "/" + k,
+            style: { margin: 4, color: "black", textDecoration: "none" }
           },
           k
         );
       })
-    ),
-    _react2.default.createElement(
-      "span",
-      { style: { fontWeight: 900 } },
-      selected
     ),
     _react2.default.createElement(
       "div",
@@ -118,7 +110,7 @@ var Emails = function Emails() {
       Email && _react2.default.createElement(
         _react2.default.Suspense,
         { fallback: _react2.default.createElement("div", null) },
-        _react2.default.createElement(Email, { data: data[selected] })
+        _react2.default.createElement(Email, { data: data[path || defaultEmail] })
       )
     )
   );

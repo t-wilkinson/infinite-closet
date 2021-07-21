@@ -105,7 +105,7 @@ module.exports = {
           ...order,
           firstName: user.firstName,
           range,
-          price: strapi.plugin['orders'].services.price(order),
+          price: strapi.plugins['orders'].services.price.price(order),
         },
       })
     }
@@ -113,6 +113,7 @@ module.exports = {
 
   async sendToCleaners(orders) {
     for (const order of orders) {
+      const user = order.user
       const range = strapi.plugins['orders'].services.date.range(order)
       const date = strapi.plugins['orders'].services.date.day(range.end)
       const today = strapi.plugins['orders'].services.date.day()
@@ -123,6 +124,20 @@ module.exports = {
         .query('order', 'orders')
         .update({ id: order.id }, { status: 'cleaning' })
         .then(() => strapi.plugins['orders'].services.hived.ship(order))
+        .then(() =>
+          strapi.plugins['email'].services.email.send({
+            template: 'order-leaving',
+            to: user.email,
+            cc: 'battersea@oxwash.com',
+            subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
+            data: {
+              ...order,
+              firstName: user.firstName,
+              range,
+              price: strapi.plugins['orders'].services.price.price(order),
+            },
+          })
+        )
     }
   },
 

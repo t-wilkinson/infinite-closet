@@ -3,11 +3,8 @@ import ReactDOM from "react-dom";
 
 import "./styles.css";
 
-const orderData = {
-  firstName: "First Name",
-  price: 30.13,
+const order = {
   size: "MD",
-  range: { start: "8/24/2020", end: "8/28/2020" },
   product: {
     name: "Product",
     slug: "product",
@@ -22,6 +19,13 @@ const orderData = {
       },
     ],
   },
+};
+
+const orderData = {
+  ...order,
+  firstName: "First Name",
+  price: 30.13,
+  range: { start: "8/24/2020", end: "8/28/2020" },
 };
 
 const data = {
@@ -53,44 +57,42 @@ const data = {
     discount: 5,
     total: 45,
   },
-  "confirm-email-address": {
-    url: "URL",
-  },
   "order-arriving": orderData,
   "order-leaving": orderData,
+  "order-shipped": orderData,
 };
 
 const Emails = () => {
   const [Email, setEmail] = React.useState();
-  const [selected, setSelected] = React.useState(
-    Object.keys(data).slice(-1)[0]
-  );
+  const defaultEmail = Object.keys(data).slice(-1)[0];
+  const path = window.location.pathname.split("/")[1];
 
   React.useEffect(() => {
-    const Email = React.lazy(() => import(`./templates/${selected}`));
+    const Email = React.lazy(() =>
+      import(`./templates/${path || defaultEmail}`)
+    );
     setEmail(Email);
-  }, [selected]);
+  }, []);
 
   return (
     <div>
       <nav className="flex-row justify-start space-x-2 border-b border-gray p-2">
-        {Object.keys(data).map((k) => (
-          <button
-            key={k}
-            onClick={() => {
-              setSelected(k);
-              setEmail(undefined);
-            }}
-          >
-            {k}
-          </button>
-        ))}
+        {Object.keys(data)
+          .sort()
+          .map((k) => (
+            <a
+              key={k}
+              href={`/${k}`}
+              style={{ margin: 4, color: "black", textDecoration: "none" }}
+            >
+              {k}
+            </a>
+          ))}
       </nav>
-      <span style={{ fontWeight: 900 }}>{selected}</span>
       <div>
         {Email && (
           <React.Suspense fallback={<div />}>
-            <Email data={data[selected]} />
+            <Email data={data[path || defaultEmail]} />
           </React.Suspense>
         )}
       </div>
