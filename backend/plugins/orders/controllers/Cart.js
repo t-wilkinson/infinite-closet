@@ -81,7 +81,7 @@ module.exports = {
       'orders'
     ].services.order.numAvailableCart(body.cart)
 
-    const updates = body.cart.map((order) => {
+    const updatedCart = body.cart.map((order) => {
       const key = strapi.plugins['orders'].services.order.toKey(order)
       if (
         !strapi.plugins['orders'].services.date.valid(
@@ -108,7 +108,7 @@ module.exports = {
       }
     })
 
-    const result = await Promise.allSettled(updates)
+    const result = await Promise.allSettled(updatedCart)
     const cart = result.reduce((acc, settled) => {
       if (settled.status === 'fulfilled') {
         acc.push(settled.value)
@@ -176,6 +176,7 @@ module.exports = {
           template: 'checkout',
           to: user.email,
           subject: 'Thank you for your order',
+          bcc: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
           data: {
             firstName: user.firstName,
             orders,

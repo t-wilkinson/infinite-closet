@@ -4,21 +4,21 @@ const { google } = require('googleapis')
 const _ = require('lodash')
 const emailTemplates = require('email-templates')
 
-function makeBody(to, from, subject, message) {
+const kebabize = (str) => {
+  str = str.replace(/([A-Z])/g, '$1')
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+function makeBody(options) {
+  const field = (f) => (options[f] ? `${kebabize(f)}: ${options[f]}\n` : '')
+
   var str = [
     'Content-Type: text/html; charset="UTF-8"\n',
     'MIME-Version: 1.0\n',
     'Content-Transfer-Encoding: 7bit\n',
-    'to: ',
-    to,
+    ...['to', 'from', 'replyTo', 'cc', 'bcc', 'subject'].map(field),
     '\n',
-    'from: ',
-    from,
-    '\n',
-    'subject: ',
-    subject,
-    '\n\n',
-    message,
+    options.html,
   ].join('')
 
   var encodedMail = Buffer.from(str)
@@ -46,8 +46,8 @@ const gmail = {
 
     return {
       auth: authClient,
-      send({ to, from, subject, html }) {
-        const raw = makeBody(to, from, subject, html)
+      send(options) {
+        const raw = makeBody(options)
         const gmail = google.gmail({ version: 'v1', auth: this.auth })
 
         return gmail.users.messages
@@ -88,6 +88,7 @@ function normalizeAddress(addr) {
 
 async function templateEmail(client, settings, options) {
   const emailOptions = {
+    ..._.pick(options, emailFields),
     to: normalizeAddress(options.to),
     from: normalizeAddress(options.from || settings.from),
     subject: options.subject || settings.subject,
