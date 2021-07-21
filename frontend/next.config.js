@@ -4,6 +4,8 @@ const withPWA = require('next-pwa')
 // const StylelintPlugin = require('stylelint-webpack-plugin')
 // const ESLintPlugin = require('eslint-webpack-plugin')
 
+console.log(process.env.FRONTEND_DOMAIN)
+
 module.exports = withPWA({
   webpack: (config, {}) => {
     config.cache = {

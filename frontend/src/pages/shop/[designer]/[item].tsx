@@ -35,33 +35,31 @@ const OpenGraph = (product: StrapiProduct) => {
     0
   )
   const image = !images[0]
-    ? []
-    : [
-        { property: 'og:image_link', content: images[0].url },
-        { property: 'og:image', content: images[0].url },
-        { property: 'og:image:width', content: images[0].width },
-        { property: 'og:image:height', content: images[0].height },
-      ]
+    ? {}
+    : {
+        'og:image_link': images[0].url,
+        'og:image': images[0].url,
+        'og:image:width': images[0].width,
+        'og:image:height': images[0].height,
+      }
 
-  // TODO: use object instead
   // open graph meta information
-  // prettier-ignore
-  const og = [
-    {property: 'product:category', content: product.categories.map(c => c.name).join(' > ')},
-    { property: 'product:retailer_item_id', content: product.id },
-    { property: 'og:url', content: url },
-    { property: 'og:type', content: 'og:product' },
-    { property: 'og:title', content: `${name} by ${designer.name}` },
-    { property: 'og:description', content: description },
-    { property: 'product:price:amount', content: retailPrice },
-    { property: 'product:price:currency', content: 'GBP' },
-    { property: 'og:availability', content: quantity > 0 ? 'instock' : 'out of stock' },
+  const og = {
+    'product:category': product.categories.map((c) => c.name).join(' > '),
+    'product:retailer_item_id': product.id,
+    'og:url': url,
+    'og:type': 'og:product',
+    'og:title': `${name} by ${designer.name}`,
+    'og:description': description,
+    'product:price:amount': retailPrice,
+    'product:price:currency': 'GBP',
+    'og:availability': quantity > 0 ? 'instock' : 'out of stock',
     ...image,
-  ]
+  }
 
   return (
     <Head>
-      {og.map(({ property, content }) => (
+      {Object.entries(og).map(([property, content]) => (
         <meta key={property} property={property} content={String(content)} />
       ))}
     </Head>

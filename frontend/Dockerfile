@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
 ARG NODE_ENV=development
+ARG FRONTEND_DOMAIN
 
 FROM node:14-alpine AS deps
 RUN apk add --no-cache libc6-compat
