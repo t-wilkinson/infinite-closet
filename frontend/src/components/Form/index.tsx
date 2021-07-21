@@ -231,18 +231,19 @@ export const PasswordVisible = ({ passwordVisible, setPasswordVisible }) => (
   </button>
 )
 
-// TODO: dropdown always scrolls to bottom
-// TODO: hide on blur
+// TODO: Dropdown always scrolls to bottom. Looks like firefox bug.
 export const Dropdown = ({ value, onChange, values, ...props }) => {
   const [dropdown, setDropdown] = React.useState(false)
 
   return (
-    <div className="relative w-full">
+    <div
+      className="relative w-full"
+      tabIndex={0}
+      onBlur={() => setDropdown(false)}
+    >
       <div
         className="relative"
-        onClick={(e) => {
-          //TODO: when dropdown is open, `focus` input
-          //this is difficult partially because otherwise we cant have a cursor-pointer
+        onClick={() => {
           setDropdown((state) => !state)
         }}
       >
@@ -257,10 +258,10 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
       </div>
       <div
         className={`
-        w-full absolute bg-white divide-y transform translate-y-full border border-gray z-20 h-64 overflow-y-auto
+        w-full absolute bg-white divide-y transform translate-y-full border border-gray z-20 overflow-y-auto
         ${dropdown ? '' : 'hidden'}
         `}
-        style={{ bottom: 9 }}
+        style={{ bottom: 9, maxHeight: 256 }}
       >
         {values.map((value) => (
           <button

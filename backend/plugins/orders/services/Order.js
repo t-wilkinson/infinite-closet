@@ -9,6 +9,7 @@ dayjs.extend(timezone)
 const inProgress = (status) =>
   ['planning', 'shipping', 'cleaning'].includes(status)
 
+// identifies order with size and product id
 function toKey(order) {
   let productID
   if (order.product === undefined) {
@@ -21,13 +22,14 @@ function toKey(order) {
   return `${order.size}_${productID}`
 }
 
+// calculate available product quantities by date based on overlapping orders
+// dates: {order key: date range[]}
 function numAvailable(orders, dates) {
-  // calculate available product quantities by removing existing order quantities
   const numAvailable = orders.reduce((counter, order) => {
     const key = toKey(order)
     const { product } = order
 
-    // get product size that matches order.size
+    // set default available product quantity
     if (!(key in counter)) {
       const defaultSize = { quantity: 0 }
       const productSize =
@@ -35,21 +37,22 @@ function numAvailable(orders, dates) {
       counter[key] = productSize.quantity
     }
 
+    // no dates will overlap
     if (!(key in dates)) {
       return counter
     }
 
-    const orderRange =
+    const orderDateRange =
       order.range || strapi.plugins['orders'].services.date.range(order)
 
-    // reduce available product quantity if dates overlap
+    // if date ranges overlap, reduce available product quantity
     const overlaps = dates[key].reduce((acc, date) => {
       if (acc) {
         return acc
       }
       const overlaps =
         date &&
-        strapi.plugins['orders'].services.date.overlap(date, orderRange) &&
+        strapi.plugins['orders'].services.date.overlap(date, orderDateRange) &&
         inProgress(order.status)
       return overlaps
     }, false)

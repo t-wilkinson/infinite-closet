@@ -29,7 +29,7 @@ export const Signin = () => {
           identifier: cleaned.email,
           password: cleaned.password,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       )
       .then((res) => {
         dispatch(userActions.signin(res.data.user))
@@ -42,7 +42,8 @@ export const Signin = () => {
       .catch((err) => {
         try {
           console.error(err.response.data.data[0].messages)
-          setWarnings(err.response.data.data[0].messages.map((v) => v.message))
+          // setWarnings(err.response.data.data[0].messages.map((v) => v.message))
+          setWarnings(['Email or password invalid.'])
         } catch {
           console.error('Unknown error: ' + err)
           setWarnings(['Somethings not right... Try again?'])
