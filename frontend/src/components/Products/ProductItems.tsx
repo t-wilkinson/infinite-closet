@@ -77,7 +77,7 @@ export const Product = ({ product }: any) => {
           >
             <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
               <a
-                className="absolute inset-0 w-full h-full"
+                className="absolute inset-0"
                 onClick={() =>
                   analytics.logEvent('select_item', {
                     type: 'products.select-item',
@@ -88,7 +88,7 @@ export const Product = ({ product }: any) => {
               </a>
             </Link>
           </div>
-          <div className="w-full h-full flex-grow flex-shrink-0">
+          <div className="w-full flex-grow flex-shrink-0">
             <ProductInfo product={product} />
           </div>
         </div>

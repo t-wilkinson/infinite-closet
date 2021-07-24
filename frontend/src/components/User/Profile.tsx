@@ -76,7 +76,7 @@ const updateUser = (user, fields, setStatus, analytics) => {
       analytics.logEvent('update_details', {
         user: user.email,
         fields: cleaned,
-      }),
+      })
     )
     .catch((err) => {
       setStatus('error')
@@ -126,7 +126,7 @@ const heights = [4, 5, 6]
       .map((inches) => ({
         label: `${feet}' ${inches}"`,
         key: `${feet}-${inches}`,
-      })),
+      }))
   )
   .flat()
   .slice(5, -6)
@@ -202,7 +202,7 @@ const ResetPassword = ({ user, setStatus }) => {
 const Addresses = ({ user, setStatus }) => {
   return (
     <>
-      <AddAddress user={user} dispatch={() => {}} />
+      <AddAddress user={user} onSubmit={() => {}} />
     </>
   )
 }

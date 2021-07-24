@@ -12,7 +12,7 @@ export const Home = () => {
   React.useEffect(() => {
     axios
       .get(
-        '/products?slug_in=camilla-dress&slug_in=etude-wrap&slug_in=shelley-jumpsuit&slug_in=monique-plunged-cross-back-maxi-dress',
+        '/products?slug_in=camilla-dress&slug_in=etude-wrap&slug_in=shelley-jumpsuit&slug_in=monique-plunged-cross-back-maxi-dress'
       )
       .then((res) => setProducts(res.data))
       .catch((err) => console.error(err))
@@ -137,7 +137,7 @@ const howItWorks = {
 
 const HowItWorks = () => {
   const [selected, setSelected] = React.useState<'book' | 'work' | 'return'>(
-    'book',
+    'book'
   )
 
   return (

@@ -109,7 +109,7 @@ export const Checkout = ({ user, data }) => {
           insurance: state.insurance,
           couponCode: cleaned.couponCode,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       )
       .then(() => {
         dispatch({ type: 'status-success' })
@@ -174,7 +174,7 @@ export const Checkout = ({ user, data }) => {
           insurance: state.insurance,
           cart: state.cart,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       )
       .then((res) => dispatch({ type: 'cart-total', payload: res.data }))
       .catch((err) => console.error(err))
@@ -273,7 +273,7 @@ const Address = ({ state, user, dispatch }) => (
       userId={user.id}
       addresses={user.addresses}
       state={state}
-      dispatch={dispatch}
+      select={(id) => dispatch({ type: 'choose-address', payload: id })}
     />
     {state.popup === 'address' && (
       <div className="fixed inset-0 z-30 bg-black bg-opacity-50 items-center justify-center">
@@ -291,7 +291,10 @@ const Address = ({ state, user, dispatch }) => (
           >
             <Icon name="close" size={20} />
           </button>
-          <AddAddress user={user} dispatch={dispatch} />
+          <AddAddress
+            user={user}
+            onSubmit={() => dispatch({ type: 'close-popup' })}
+          />
         </div>
       </div>
     )}

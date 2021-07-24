@@ -32,7 +32,7 @@ export const PaymentMethods = ({ user, state, dispatch }) => {
   )
 }
 
-const PaymentMethod = ({
+export const PaymentMethod = ({
   id,
   dispatch,
   state,
@@ -114,11 +114,78 @@ type AddPaymentMethod = {
 
 export const AddPaymentMethod = ({ user, state, dispatch }) => (
   <PaymentWrapper>
-    <AddPaymentMethodForm user={user} state={state} dispatch={dispatch} />
+    <AddPaymentMethodFormWrapper
+      user={user}
+      state={state}
+      dispatch={dispatch}
+    />
   </PaymentWrapper>
 )
 
-export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
+export const AddPaymentMethodFormWrapper = ({ user, state, dispatch }) => {
+  const onSubmit = (setupIntent: any) => {
+    dispatch({ type: 'close-popup' })
+    dispatch({
+      type: 'choose-payment-method',
+      payload: setupIntent.payment_method,
+    })
+
+    fetchAPI('/account/payment-methods')
+      .then((res) => {
+        dispatch({
+          type: 'set-payment-methods',
+          payload: res.paymentMethods,
+        })
+      })
+      .catch((err) => console.error(err))
+  }
+
+  const onClose = () => {
+    dispatch({ type: 'close-popup' })
+  }
+
+  if (state.popup !== 'payment') {
+    return <div />
+  }
+
+  return (
+    <AddPaymentMethodForm user={user} onSubmit={onSubmit} onClose={onClose} />
+  )
+}
+
+const AddPaymentMethodHeader = ({ onClose }) => (
+  <>
+    <div className="w-full items-center">
+      <span className="font-bold text-3xl mt-2">Add Payment Method</span>
+    </div>
+
+    <div className="w-full h-px bg-pri mb-6 mt-1 rounded-full" />
+
+    <button className="absolute top-0 right-0 m-3" onClick={onClose}>
+      <Icon name="close" size={20} />
+    </button>
+  </>
+)
+
+const Authorise = ({ setAuthorisation, authorised }) => (
+  <button
+    onClick={() => setAuthorisation(!authorised)}
+    aria-label="Authorize Infinite Closet to handle card details"
+  >
+    <div className="flex-row items-center">
+      <div className="items-center justify-center w-5 h-5 bg-white border border-black rounded-sm mr-4">
+        {authorised && <Icon name="check" className="w-3 h-3" />}
+      </div>
+      <span className="w-full text-left">
+        I authorise Infinite Closet to send instructions to the financial
+        institution that issued my card to take payments from my card account in
+        accordance with the terms of my agreement with you.
+      </span>
+    </div>
+  </button>
+)
+
+export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
   const [succeeded, setSucceeded] = React.useState(false)
   const [error, setError] = React.useState(null)
   const [processing, setProcessing] = React.useState(false)
@@ -143,8 +210,8 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
     setError(event.error ? event.error.message : '')
   }
 
-  const onSubmit = async (ev) => {
-    ev.preventDefault()
+  const addPaymentMethod = async (e) => {
+    e.preventDefault()
     setProcessing(true)
     const payload = await stripe.confirmCardSetup(clientSecret, {
       payment_method: {
@@ -165,29 +232,11 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
       setError(null)
       setProcessing(false)
       setSucceeded(true)
-      dispatch({ type: 'close-popup' })
-      dispatch({
-        type: 'choose-payment-method',
-        payload: payload.setupIntent.payment_method,
+      analytics.logEvent('add_payment_info', {
+        user: user.email,
       })
-
-      // TODO: be nicer with clients data limits
-      fetchAPI('/account/payment-methods')
-        .then((res) => {
-          dispatch({
-            type: 'set-payment-methods',
-            payload: res.paymentMethods,
-          }),
-            analytics.logEvent('add_payment_info', {
-              user: user.email,
-            })
-        })
-        .catch((err) => console.error(err))
+      onSubmit(payload.setupIntent)
     }
-  }
-
-  if (state.popup !== 'payment') {
-    return <div />
   }
 
   return (
@@ -197,7 +246,7 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
         className="w-full max-w-sm w-full p-6 bg-white rounded-lg relative"
         onSubmit={(e) => e.preventDefault()}
       >
-        <AddPaymentMethodHeader dispatch={dispatch} />
+        <AddPaymentMethodHeader onClose={onClose} />
 
         <div className="my-8 border border-gray rounded-sm p-4">
           <CardElement
@@ -216,7 +265,7 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
           <Submit
             className="w-full"
             disabled={processing || disabled || succeeded || !authorised}
-            onSubmit={onSubmit}
+            onSubmit={addPaymentMethod}
           >
             {processing ? (
               <div className="spinner w-full" id="spinner">
@@ -238,38 +287,3 @@ export const AddPaymentMethodForm = ({ user, state, dispatch }) => {
     </div>
   )
 }
-
-const AddPaymentMethodHeader = ({ dispatch }) => (
-  <>
-    <div className="w-full items-center">
-      <span className="font-bold text-3xl mt-2">Add Payment Method</span>
-    </div>
-
-    <div className="w-full h-px bg-pri mb-6 mt-1 rounded-full" />
-
-    <button
-      className="absolute top-0 right-0 m-3"
-      onClick={() => dispatch({ type: 'close-popup' })}
-    >
-      <Icon name="close" size={20} />
-    </button>
-  </>
-)
-
-const Authorise = ({ setAuthorisation, authorised }) => (
-  <button
-    onClick={() => setAuthorisation(!authorised)}
-    aria-label="Authorize Infinite Closet to handle card details"
-  >
-    <div className="flex-row items-center">
-      <div className="items-center justify-center w-5 h-5 bg-white border border-black rounded-sm mr-4">
-        {authorised && <Icon name="check" className="w-3 h-3" />}
-      </div>
-      <span className="w-full text-left">
-        I authorise Infinite Closet to send instructions to the financial
-        institution that issued my card to take payments from my card account in
-        accordance with the terms of my agreement with you.
-      </span>
-    </div>
-  </button>
-)

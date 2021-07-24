@@ -9,14 +9,14 @@ import useAnalytics from '@/utils/useAnalytics'
 
 import { signin } from './'
 
-export const Addresses = ({ userId, addresses, state, dispatch }) => {
+export const Addresses = ({ userId, addresses, state, select }) => {
   return (
     <div className="space-y-4">
       {addresses.map((address) => (
         <Address
           key={address.id}
-          state={state}
-          dispatch={dispatch}
+          selected={state.address}
+          select={select}
           userId={userId}
           {...address}
         />
@@ -25,10 +25,10 @@ export const Addresses = ({ userId, addresses, state, dispatch }) => {
   )
 }
 
-const Address = ({
+export const Address = ({
   id,
-  dispatch,
-  state,
+  select,
+  selected,
   address,
   town,
   postcode,
@@ -49,15 +49,15 @@ const Address = ({
     <div className="relative">
       <button
         className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
-    ${id === state.address ? 'border-black' : ''}
+    ${id === selected ? 'border-black' : ''}
     `}
-        aria-label={`Choose address with name of {firstName} {lastName} in {address} {town} {postcode}`}
-        onClick={() => dispatch({ type: 'choose-address', payload: id })}
+        aria-label={`Choose address with name of ${firstName} ${lastName} in ${address} ${town} ${postcode}`}
+        onClick={() => select(id)}
       >
         <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
           <div
             className={`w-3 h-3 rounded-full
-          ${id === state.address ? 'bg-pri' : ''}
+          ${id === selected ? 'bg-pri' : ''}
   `}
           />
         </div>
@@ -74,6 +74,7 @@ const Address = ({
 
       <button
         className="absolute top-0 right-0 p-2"
+        aria-label="Remove address"
         type="button"
         onClick={removeAddress}
       >
@@ -101,10 +102,10 @@ export const UpdateAddress = ({ user, dispatch, address }) => {
         {
           ...cleaned,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       )
       .then((res) =>
-        dispatch({ type: 'set-addresses', payload: res.data.addresses }),
+        dispatch({ type: 'set-addresses', payload: res.data.addresses })
       )
       .catch((err) => console.error(err))
   }
@@ -112,7 +113,7 @@ export const UpdateAddress = ({ user, dispatch, address }) => {
   return <EditAddress onSubmit={onSubmit} fields={fields} />
 }
 
-export const AddAddress = ({ user, dispatch }) => {
+export const AddAddress = ({ user, onSubmit }) => {
   const fields = useFields({
     firstName: { constraints: 'required', default: user.firstName },
     lastName: { constraints: 'required', default: user.lastName },
@@ -124,7 +125,7 @@ export const AddAddress = ({ user, dispatch }) => {
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
 
-  const onSubmit = () => {
+  const createAddress = () => {
     const cleaned = cleanFields(fields)
     axios
       .post(
@@ -132,26 +133,26 @@ export const AddAddress = ({ user, dispatch }) => {
         {
           ...cleaned,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       )
-      .then((res) => {
+      .then(() => {
         analytics.logEvent('add_shipping_info', {
           user: user.email,
         })
-        dispatch({ type: 'close-popup' })
+        onSubmit()
         signin(rootDispatch)
       })
       .catch((err) => console.error(err))
   }
 
-  return <EditAddress onSubmit={onSubmit} fields={fields} />
+  return <EditAddress onSubmit={createAddress} fields={fields} />
 }
 
 const EditAddress = ({ onSubmit, fields }) => {
   const [valid, setValid] = React.useState(true)
 
   const validatePostcode = () => {
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV !== 'development') {
       axios
         .get(`/addresses/verify/${fields.postcode.value}`)
         .then((res) => {
@@ -160,7 +161,10 @@ const EditAddress = ({ onSubmit, fields }) => {
             onSubmit()
           }
         })
-        .catch((err) => setValid(false))
+        .catch((err) => {
+          console.error(err)
+          setValid(false)
+        })
     } else {
       onSubmit()
     }

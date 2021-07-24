@@ -22,8 +22,6 @@ div,
 main {
   display: flex;
   flex-direction: column;
-  /* min-height: min-content; */
-  /* min-height: auto; */
 }
 
 .font-subheader {
