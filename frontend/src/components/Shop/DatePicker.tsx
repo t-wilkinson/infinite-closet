@@ -6,9 +6,10 @@ import timezone from 'dayjs/plugin/timezone'
 import isBetween from 'dayjs/plugin/isBetween'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
+import { rentalLengths } from '@/utils/constants'
 import { Icon } from '@/components'
 import useDays from '@/utils/useDays'
-import { useSelector } from '@/utils/store'
+import { useDispatch, useSelector } from '@/utils/store'
 import * as sizing from '@/utils/sizing'
 
 import { shopActions } from './slice'
@@ -20,7 +21,11 @@ dayjs.extend(timezone)
 dayjs.tz.guess()
 dayjs.tz.setDefault('Europe/London')
 
-export const DatePicker = ({ state, dispatch, rentalLength }) => {
+export const DatePicker = () => {
+  const state = useSelector((state) => state.shop)
+  const dispatch = useDispatch()
+  const rentalLength = rentalLengths[state.oneTime] + 1
+
   if (!state.dateVisible) {
     return null
   }
@@ -130,7 +135,7 @@ const Days = ({ days, state, dispatch, rentalLength }) => {
                       state.selectedDate,
                       state.selectedDate.add(rentalLength, 'day'),
                       'day',
-                      '[)',
+                      '[)'
                     )
                   }
                   hover={
@@ -139,7 +144,7 @@ const Days = ({ days, state, dispatch, rentalLength }) => {
                       hover,
                       hover!.add(rentalLength, 'day'),
                       'day',
-                      '[)',
+                      '[)'
                     )
                   }
                 />

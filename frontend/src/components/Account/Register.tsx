@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
 import axios from 'axios'
-import { useRouter } from 'next/router'
 
 import { Input, Submit, Warnings, Password, FormHeader } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
@@ -9,7 +8,13 @@ import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { userActions } from '@/User/slice'
 
-export const Register = ({ email }: { email?: string }) => {
+export const Register = ({
+  email,
+  onSubmit = () => {},
+}: {
+  email?: string
+  onSubmit?: () => void
+}) => {
   const fields = useFields({
     firstName: { constraints: 'required' },
     lastName: { constraints: '', label: 'Last Name' },
@@ -20,12 +25,11 @@ export const Register = ({ email }: { email?: string }) => {
     },
     password: { constraints: 'required password' },
   })
-  const router = useRouter()
   const dispatch = useDispatch()
   const analytics = useAnalytics()
   const [warnings, setWarnings] = React.useState<string[]>([])
 
-  const onSubmit = () => {
+  const registerUser = () => {
     const cleaned = cleanFields(fields)
 
     axios
@@ -45,7 +49,7 @@ export const Register = ({ email }: { email?: string }) => {
           type: 'account.register',
           user: cleaned.email,
         })
-        router.push('/')
+        onSubmit()
       })
       .catch((err) => {
         try {
@@ -67,7 +71,7 @@ export const Register = ({ email }: { email?: string }) => {
       </div>
       <Input {...fields.email} />
       <Password {...fields.password} />
-      <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
+      <Submit onSubmit={registerUser} disabled={!isValid(fields)}>
         Register
       </Submit>
     </>

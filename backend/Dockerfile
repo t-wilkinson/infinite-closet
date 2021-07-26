@@ -9,15 +9,17 @@ COPY package.json yarn.lock ./
 COPY ./providers ./providers
 RUN yarn install --frozen-lockfile
 
-FROM node:14-buster-slim as test
+FROM node:14-buster-slim as base
 WORKDIR /app
 COPY . ./
 COPY --from=deps /app/node_modules ./node_modules
+
+FROM base as test-build
 RUN yarn run test --passWithNoTests
 
-FROM test as development-build
+FROM base as development-build
 
-FROM test as production-build
+FROM base as production-build
 RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
 
 FROM ${NODE_ENV}-build as final

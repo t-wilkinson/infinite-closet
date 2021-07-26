@@ -9,40 +9,42 @@ import { Submit } from '@/Form'
 import * as sizing from '@/utils/sizing'
 import { rentalLengths } from '@/utils/constants'
 import { userActions } from '@/User/slice'
+import { Size } from '@/Products/constants'
 
 import { SizeChartPopup, SizeSelector } from './Size'
 import { shopActions } from './slice'
 import DatePicker from './DatePicker'
 
-export const ProductRentContents = ({ data, product, state }) => {
+export const ProductRentContents = ({ sizeChart, product }) => {
   const router = useRouter()
-  const Contents = productRentContents[state.rentType]
+  const rentType = useSelector((state) => state.shop.rentType)
   const user = useSelector((state) => state.user.data)
+
+  const Contents = productRentContents[rentType]
   const dispatch = useDispatch()
 
   React.useEffect(() => {
     if (user?.dressSize) {
-      user.dressSize && dispatch(shopActions.changeSize(user.dressSize))
+      user.dressSize && dispatch(shopActions.changeSize(user.dressSize as Size))
     }
   }, [user])
 
   return (
     <Contents
-      data={data}
+      sizeChart={sizeChart}
       router={router}
       user={user}
       product={product}
-      state={state}
       dispatch={dispatch}
     />
   )
 }
-export default ProductRentContents
 
 export const productRentContents = {
-  OneTime: ({ data, user, dispatch, product, state, router }) => {
+  OneTime: ({ sizeChart, user, dispatch, product, router }) => {
     const [status, setStatus] = React.useState<null | string>(null)
     const [chartOpen, setChartOpen] = React.useState(false)
+    const state = useSelector((state) => state.shop)
     const analytics = useAnalytics()
 
     const addToCart = () => {
@@ -61,7 +63,7 @@ export const productRentContents = {
             rentalLength: state.oneTime,
             product: product.id,
           },
-          { withCredentials: true },
+          { withCredentials: true }
         )
         .then(() => {
           router.push('/user/checkout')
@@ -91,15 +93,11 @@ export const productRentContents = {
 
     return (
       <>
-        <DatePicker
-          state={state}
-          rentalLength={rentalLengths[state.oneTime] + 1}
-          dispatch={dispatch}
-        />
+        <DatePicker />
 
         <SelectorItem label="Size" className="my-2 z-10 w-full">
           <SizeChartPopup
-            sizeChart={data.sizeChart}
+            sizeChart={sizeChart}
             product={product}
             state={chartOpen}
             setState={setChartOpen}
@@ -109,7 +107,11 @@ export const productRentContents = {
                 divs don't act like buttons
                 buttons can't use aria-role
             */}
-            <SizeSelector dispatch={dispatch} product={product} state={state} />
+            <SizeSelector
+              onChange={(size) => dispatch(shopActions.changeSize(size))}
+              product={product}
+              size={state.size}
+            />
             <button onClick={() => setChartOpen((state) => true)}>
               <span className="underline">Size Chart</span>
             </button>
@@ -210,3 +212,5 @@ const OneTimeRadioButton = ({ selected, oneTime, dispatch }) => (
     <span>{{ short: 4, long: 8 }[oneTime]}-day rental</span>
   </button>
 )
+
+export default ProductRentContents

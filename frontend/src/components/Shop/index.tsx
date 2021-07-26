@@ -20,7 +20,7 @@ export const Shop = ({ data }) => {
 }
 
 const Product = ({ data }) => {
-  const { product } = data
+  const { product, sizeChart } = data
   const state = useSelector((state) => state.shop)
 
   return (
@@ -44,7 +44,7 @@ const Product = ({ data }) => {
       )}
       <Divider className="mb-4" />
       <ProductRentHeaders product={product} state={state} />
-      <ProductRentContents data={data} product={product} state={state} />
+      <ProductRentContents sizeChart={sizeChart} product={product} />
       <div className="mb-4" />
       {details.map((item, index) => (
         <React.Fragment key={item.label}>

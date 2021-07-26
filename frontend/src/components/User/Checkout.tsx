@@ -83,7 +83,7 @@ const reducer = (state, action) => {
   }
 }
 
-export const Checkout = ({ user, data }) => {
+export const Checkout = ({ user }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const fetchCart = () =>
     fetchAPI(`/orders/cart/${user.id}`)

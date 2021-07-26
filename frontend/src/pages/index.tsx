@@ -20,7 +20,7 @@ export const Home = () => {
 
   return (
     <>
-      {process.env.NODE_ENV !== 'development' && <FacebookMessenger />}
+      {process.env.NODE_ENV === 'production' && <FacebookMessenger />}
       <div className="items-center w-full max-w-screen-xl">
         <div className="relative w-full max-w-screen-xl h-128 mb-8">
           <div

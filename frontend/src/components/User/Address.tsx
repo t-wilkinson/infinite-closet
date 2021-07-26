@@ -152,7 +152,10 @@ const EditAddress = ({ onSubmit, fields }) => {
   const [valid, setValid] = React.useState(true)
 
   const validatePostcode = () => {
-    if (process.env.NODE_ENV !== 'development') {
+    if (
+      process.env.NODE_ENV === 'test' ||
+      process.env.NODE_ENV === 'production'
+    ) {
       axios
         .get(`/addresses/verify/${fields.postcode.value}`)
         .then((res) => {

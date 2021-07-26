@@ -13,7 +13,7 @@ import Sort from './Sort'
 
 export const Products = ({ data, loading }) => {
   return (
-    <div className="items-center">
+    <div className="items-center w-full">
       <div className="flex-row w-full max-w-screen-xl h-full px-1 px-4 xl:px-0">
         <Filters />
         <div className="w-2" />

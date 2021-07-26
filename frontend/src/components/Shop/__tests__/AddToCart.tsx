@@ -1,76 +1,61 @@
 import React from 'react'
-// import ProductRentContents from '../ProductRentContents'
-// import { render, fireEvent, RenderResult, within } from '@/utils/test'
+import nock from 'nock'
+import ProductRentContents from '../ProductRentContents'
+import * as t from '@/utils/test'
+import { mockProduct } from '@/Products/__mocks__/product'
 
-// const mockProduct = {
-//   id: 'string',
-//   name: 'string',
-//   slug: 'string',
-//   designer: { name: 'Designer' },
-//   shortRentalPrice: 10.0,
-//   longRentalPrice: 10.0,
-//   retailPrice: 10.0,
-//   purchasePrice: 10.0,
-//   images: [],
-//   sizes: [{ id: '1', quantity: 1, size: 'MD' }],
-//   details: 'string',
-//   stylistNotes: 'string',
-//   sizingNotes: 'string',
-//   categories: [],
-//   colors: [],
-//   fits: [],
-//   occasions: [],
-//   styles: [],
-//   weather: [],
-//   categories_: 'string',
-//   colors_: 'string',
-//   fits_: 'string',
-//   occasions_: 'string',
-//   styles_: 'string',
-//   weather_: 'string',
-//   created_by: 'string',
-//   updated_at: 'string',
-//   published_at: 'string',
-// }
+const mockState = {
+  rentType: 'OneTime',
+  oneTime: 'short',
+  membership: 'Short',
+  dateVisible: false,
+}
 
-// const mockState = {
-//   rentType: 'OneTime',
-//   oneTime: 'short',
-//   membership: 'Short',
-//   dateVisible: false,
-// }
+const sizeChart = {
+  id: '20',
+  name: 'FR',
+  XXS: '20',
+  XS: '20',
+  S: '20',
+  M: '20',
+  L: '20',
+  XL: '20',
+  _2XL: '20',
+  _3XL: '20',
+  _4XL: '20',
+  _5XL: '20',
+  _6XL: '20',
+  created_by: null,
+  updated_at: null,
+  published_at: null,
+}
 
 describe('Shop product', () => {
-  // let component: RenderResult
+  // it('renders correctly', () => {
+  //   expect(component.asFragment()).toMatchSnapshot()
+  // })
 
-  beforeEach(() => {
-    // component = render(
-    //   <ProductRentContents product={mockProduct} state={mockState} />,
-    // )
-  })
-
-  it('works', () => {})
-
-  /*
-  it('renders correctly', () => {
-    expect(component.asFragment()).toMatchSnapshot()
-  })
+  it('can be added to cart', () => {})
 
   it('can add size', () => {
-    const Size = component.getByText('Size').nextElementSibling as HTMLElement
-    const SizeDropDown = within(Size).getByLabelText('Dropdown product sizes')
-    fireEvent.click(SizeDropDown, {})
-    const sizeMD = within(Size).getByText(/md/i)
-    fireEvent.click(sizeMD)
-    expect(component.store.dispatch).toHaveBeenCalled()
-    // expect(component.asFragment()).toMatchSnapshot()
+    t.render(
+      <ProductRentContents product={mockProduct} sizeChart={sizeChart} />,
+      { initialState: { shop: mockState } }
+    )
+
+    const Size = t.screen.getByText('Size').nextElementSibling as HTMLElement
+    const SizeDropDown = t.within(Size).getByLabelText('Dropdown product sizes')
+    t.fireEvent.click(SizeDropDown, {})
+    const sizeMD = t.within(Size).getByText(/md/i)
+    t.fireEvent.click(sizeMD)
+    // expect(t.screen.store.dispatch).toHaveBeenCalled()
+    // expect(t.screen.asFragment()).toMatchSnapshot()
   })
 
-  it('is clicked', () => {
-    renderer.act(() => {
-      component.root.findByType('button').props.onClick()
-    })
-    expect(store.dispatch).toHaveBeenCalled()
-  })
-   */
+  // it('is clicked', () => {
+  //   renderer.act(() => {
+  //     t.screen.root.findByType('button').props.onClick()
+  //   })
+  //   expect(store.dispatch).toHaveBeenCalled()
+  // })
 })

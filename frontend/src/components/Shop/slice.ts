@@ -6,7 +6,7 @@ import { RootState } from '@/utils/store'
 import { Size } from '@/Products/constants'
 import { RentType, OneTime, Membership } from './types'
 
-interface State {
+export interface State {
   rentType: RentType
   oneTime: OneTime
   membership: Membership

@@ -1,14 +1,18 @@
 import React from 'react'
 
-import { StrapiSizeChart, StrapiSize } from '@/utils/models'
+import { StrapiProduct, StrapiSizeChart, StrapiSize } from '@/utils/models'
 import { Icon } from '@/components'
 import { toTitleCase } from '@/utils/helpers'
 import * as sizing from '@/utils/sizing'
 import { Size } from '@/Products/constants'
 
-import { shopActions } from './slice'
+interface SizeSelector {
+  product: StrapiProduct
+  size: Size
+  onChange: (size: Size) => void
+}
 
-export const SizeSelector = ({ product, state, dispatch }) => {
+export const SizeSelector = ({ product, size, onChange }: SizeSelector) => {
   const [sizeState, setSizeState] = React.useState(false)
 
   return (
@@ -22,8 +26,7 @@ export const SizeSelector = ({ product, state, dispatch }) => {
       >
         {product.sizes.length === 0
           ? 'No available sizes'
-          : (sizing.index(product.sizes, state.size) !== undefined &&
-              state.size) ||
+          : (sizing.index(product.sizes, size) !== undefined && size) ||
             'Select Size'}
         <Icon name="down" size={16} className="mt-1" />
       </button>
@@ -40,7 +43,7 @@ export const SizeSelector = ({ product, state, dispatch }) => {
               tabIndex={0}
               aria-label="Dropdown sizes"
               onClick={() => {
-                dispatch(shopActions.changeSize(size))
+                onChange(size)
                 setSizeState(false)
               }}
               className="flex justify-center cursor-pointer bg-white"
@@ -114,7 +117,7 @@ export const SizeMeasurements = ({ chart, measurements, product }) => (
           <th scope="row" className="p-1">
             {size.sizeRange
               ? `${sizing.normalize(size.size)}/${sizing.normalize(
-                  size.sizeRange,
+                  size.sizeRange
                 )}`
               : size.size}
           </th>

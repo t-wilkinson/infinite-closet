@@ -1,7 +1,6 @@
 import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
@@ -10,17 +9,16 @@ import { Input, Submit, OR, Warnings, Password, FormHeader } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { userActions } from '@/User/slice'
 
-export const Signin = () => {
+export const Signin = ({ onSubmit = () => {} }) => {
   const fields = useFields({
     email: { constraints: 'required email', label: 'Email Address' },
     password: { constraints: 'required', label: 'Password' },
   })
-  const router = useRouter()
   const dispatch = useDispatch()
   const analytics = useAnalytics()
   const [warnings, setWarnings] = React.useState<string[]>([])
 
-  const onSubmit = () => {
+  const signinUser = () => {
     const cleaned = cleanFields(fields)
     axios
       .post(
@@ -37,7 +35,7 @@ export const Signin = () => {
           type: 'account.signin',
           user: cleaned.email,
         })
-        router.push('/')
+        onSubmit()
       })
       .catch((err) => {
         try {
@@ -57,7 +55,7 @@ export const Signin = () => {
       <Warnings warnings={warnings} />
       <Input {...fields.email} />
       <Password {...fields.password} />
-      <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
+      <Submit onSubmit={signinUser} disabled={!isValid(fields)}>
         Sign In
       </Submit>
 

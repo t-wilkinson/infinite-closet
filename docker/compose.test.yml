@@ -1,0 +1,30 @@
+version: '3.3'
+
+services:
+  frontend:
+    # command: yarn run test
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: test
+    ports:
+      - "127.0.0.1:3002:3000"
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: test
+    ports:
+      - "127.0.0.1:1339:1337"
+    # command: yarn run test
+
+  db:
+    ports:
+      - "127.0.0.1:5434:5432"
+
+volumes:
+  postgres:
+

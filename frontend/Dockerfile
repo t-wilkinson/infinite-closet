@@ -8,15 +8,17 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
-FROM node:14-alpine AS test
+FROM node:14-alpine AS base
 WORKDIR /app
 COPY . ./
 COPY --from=deps /app/node_modules ./node_modules
+
+FROM base AS development-runner
+
+FROM base AS test-runner
 RUN yarn run test --passWithNoTests
 
-FROM test AS development-runner
-
-FROM test AS production-builder
+FROM base AS production-builder
 ARG NEXT_PUBLIC_FRONTEND
 ARG NEXT_PUBLIC_BACKEND
 ARG NEXT_PUBLIC_FIREBASE_CONFIG

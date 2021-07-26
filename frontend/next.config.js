@@ -28,7 +28,7 @@ module.exports = withPWA({
     ignoreBuildErrors: true,
   },
   pwa: {
-    disable: process.env.NODE_ENV === 'development',
+    disable: process.env.NODE_ENV !== 'production',
     // dest: 'public',
     mode: 'production',
     register: true,
