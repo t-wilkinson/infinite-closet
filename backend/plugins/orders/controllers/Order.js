@@ -137,7 +137,10 @@ module.exports = {
     const sendShippingEmail = () =>
       strapi.plugins["email"].services.email.send({
         template: "order-shipped",
-        to: { name: `${user.firstName} ${user.lastName}`, email: user.email },
+        to: {
+          name: `${user.firstName} ${user.lastName}`,
+          email: "info+shanna@infinitecloset.co.uk",
+        },
         subject: `Your order of ${order.product.name} by ${order.product.designer.name} has shipped!`,
         data: {
           ...order,
