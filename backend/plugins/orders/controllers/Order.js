@@ -127,12 +127,18 @@ module.exports = {
       });
       strapi.log.error(err);
     };
+    console.log({
+      ...order,
+      firstName: user.firstName,
+      range: strapi.plugins["orders"].services.date.range(order),
+      price: strapi.plugins["orders"].services.price.price(order),
+    });
 
     const sendShippingEmail = () =>
       strapi.plugins["email"].services.email.send({
         template: "order-shipped",
         to: { name: `${user.firstName} ${user.lastName}`, email: user.email },
-        subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
+        subject: `Your order of ${order.product.name} by ${order.product.designer.name} has shipped!`,
         data: {
           ...order,
           firstName: user.firstName,
@@ -142,7 +148,7 @@ module.exports = {
       });
 
     await sendShippingEmail();
-    ctx.send({});
+    return ctx.send({});
 
     if (process.NODE_ENV === "production") {
       strapi.plugins["orders"].services.hived
