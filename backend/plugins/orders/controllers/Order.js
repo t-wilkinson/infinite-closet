@@ -136,20 +136,19 @@ module.exports = {
         },
       });
 
+    await sendShippingEmail();
+    ctx.send({});
+
     if (process.NODE_ENV === "production") {
-      if (order.shippingDate) {
-        await sendShippingEmail();
-      } else {
-        strapi.plugins["orders"].services.hived
-          .ship(order)
-          .then((res) =>
-            strapi
-              .query("order", "orders")
-              .update({ id: order.id }, { shipment: res.id })
-          )
-          .then(sendShippingEmail)
-          .catch(onError);
-      }
+      strapi.plugins["orders"].services.hived
+        .ship(order)
+        .then((res) =>
+          strapi
+            .query("order", "orders")
+            .update({ id: order.id }, { shipment: res.id })
+        )
+        .then(sendShippingEmail)
+        .catch(onError);
     } else {
       strapi
         .query("order", "orders")
