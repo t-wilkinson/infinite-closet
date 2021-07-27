@@ -123,12 +123,13 @@ module.exports = {
       strapi.log.error(err);
     };
 
-    const sendShippingEmail = (to) =>
+    const sendShippingEmail = () =>
       strapi.plugins["email"].services.email.send({
         template: "order-shipped",
-        to,
+        to: { name: `${user.firstName} ${user.lastName}`, email: user.email },
         subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
         data: {
+          ...order,
           firstName: user.firstName,
           range: strapi.plugins["orders"].services.date.range(order),
           price: strapi.plugins["orders"].services.price.price(order),
@@ -136,15 +137,19 @@ module.exports = {
       });
 
     if (process.NODE_ENV === "production") {
-      strapi.plugins["orders"].services.hived
-        .ship(order)
-        .then((res) =>
-          strapi
-            .query("order", "orders")
-            .update({ id: order.id }, { shipment: res.id })
-        )
-        .then(sendShippingEmail)
-        .catch(onError);
+      if (order.shippingDate) {
+        await sendShippingEmail();
+      } else {
+        strapi.plugins["orders"].services.hived
+          .ship(order)
+          .then((res) =>
+            strapi
+              .query("order", "orders")
+              .update({ id: order.id }, { shipment: res.id })
+          )
+          .then(sendShippingEmail)
+          .catch(onError);
+      }
     } else {
       strapi
         .query("order", "orders")
