@@ -107,7 +107,12 @@ module.exports = {
     );
     order = await strapi
       .query("order", "orders")
-      .findOne({ id: order.id }, ["product", "user"]);
+      .findOne({ id: order.id }, [
+        "product",
+        "user",
+        "product.designer",
+        "product.images",
+      ]);
     const user = order.user;
 
     const onError = async (err) => {
