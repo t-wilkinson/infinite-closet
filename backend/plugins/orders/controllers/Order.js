@@ -127,12 +127,6 @@ module.exports = {
       });
       strapi.log.error(err);
     };
-    console.log({
-      ...order,
-      firstName: user.firstName,
-      range: strapi.plugins["orders"].services.date.range(order),
-      price: strapi.plugins["orders"].services.price.price(order),
-    });
 
     const sendShippingEmail = () =>
       strapi.plugins["email"].services.email.send({
@@ -149,9 +143,6 @@ module.exports = {
           price: strapi.plugins["orders"].services.price.price(order),
         },
       });
-
-    await sendShippingEmail();
-    return ctx.send({});
 
     if (process.NODE_ENV === "production") {
       strapi.plugins["orders"].services.hived
