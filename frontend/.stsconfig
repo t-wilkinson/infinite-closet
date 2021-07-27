@@ -15,6 +15,7 @@ module.exports = {
   input: [
     'api',
     'node_modules/strapi-plugin-users-permissions/models/',
+    'plugins/orders/',
     'node_modules/strapi-plugin-upload/models/',
     'extensions/users-permissions/models/',
   ].map((v) => '../backend/' + v),

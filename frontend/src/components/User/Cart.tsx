@@ -17,15 +17,25 @@ import { Checkbox } from '@/Form/'
 import { Icon, Hover } from '@/components'
 import { rentalLengths } from '@/utils/constants'
 import * as sizing from '@/utils/sizing'
+import { useDispatch } from '@/utils/store'
+import { StrapiOrder } from '@/utils/models'
 
-export const Cart = ({ dispatch, cart, insurance }) => {
+type Cart = {
+  toggleInsurance: (id: string) => void
+  remove: (id: string) => void
+  cart: StrapiCartItem[]
+  insurance: { [key: string]: boolean }
+}
+
+export const Cart = ({ toggleInsurance, remove, cart, insurance }: Cart) => {
   return (
     <div className="w-full space-y-2">
       {cart.map((item) => {
         return (
           <CartItem
             key={item.id}
-            dispatch={dispatch}
+            remove={remove}
+            toggleInsurance={toggleInsurance}
             itemInsurance={insurance[item.id]}
             {...item}
           />
@@ -35,7 +45,28 @@ export const Cart = ({ dispatch, cart, insurance }) => {
   )
 }
 
-export const CartItem = ({ dispatch, product, itemInsurance, ...order }) => {
+export type StrapiCartItem = {
+  itemInsurance: boolean
+  valid: boolean
+  price: number
+  available: number
+} & StrapiOrder
+
+export type CartItem = StrapiCartItem & {
+  toggleInsurance: (id: string) => void
+  remove: (id: string) => void
+}
+
+export const CartItem = ({
+  toggleInsurance,
+  remove,
+  itemInsurance,
+  valid,
+  price,
+  available,
+  ...order
+}: CartItem) => {
+  const { product } = order
   const date = dayjs(order.startDate).tz('Europe/London') // order.startDate is utc
   const startDate = date.format('ddd, MMM D')
   const endDate = date
@@ -43,17 +74,18 @@ export const CartItem = ({ dispatch, product, itemInsurance, ...order }) => {
     .format('ddd, MMM D')
   const Bold = (props: object) => <span className="font-bold" {...props} />
   const analytics = useAnalytics()
+  const dispatch = useDispatch()
 
   const removeItem = () => {
     axios
       .delete(`/orders/cart/${order.id}`, { withCredentials: true })
-      .then(() => dispatch({ type: 'remove-cart-item', payload: order.id }))
+      .then(() => remove(order.id))
       .then(() => axios.get(`/orders/cart/count`, { withCredentials: true }))
       .then((res) => dispatch(userActions.countCart(res.data.count)))
       .then(() =>
         analytics.logEvent('remove_from_cart', {
           user: order.user?.email,
-        }),
+        })
       )
       .catch((err) => console.error(err))
   }
@@ -61,11 +93,12 @@ export const CartItem = ({ dispatch, product, itemInsurance, ...order }) => {
   return (
     <div
       className={`flex-row items-center border p-4 rounded-sm relative bg-white
-        ${!order.valid ? 'border-warning' : 'border-gray'}
+        ${!valid ? 'border-warning' : 'border-gray'}
         `}
     >
       <button
         onClick={removeItem}
+        aria-label="Remove checkout item"
         className="absolute top-0 right-0 m-2 cursor-pointer"
       >
         <div className="p-1">
@@ -98,36 +131,32 @@ export const CartItem = ({ dispatch, product, itemInsurance, ...order }) => {
             </Link>
           </span>
           <div className="flex flex-row items-center">
-            <span className={`${order.valid ? '' : 'text-warning'}`}>
+            <span className={`${valid ? '' : 'text-warning'}`}>
               {startDate} - {endDate}
             </span>
-            {!order.valid && (
-              <Hover>This rental date is no longer valid.</Hover>
-            )}
+            {!valid && <Hover>This rental date is no longer valid.</Hover>}
           </div>
           <span>{sizing.normalize(order.size)}</span>
           <span>
-            <Bold>{fmtPrice(order.price)}</Bold>
+            <Bold>{fmtPrice(price)}</Bold>
           </span>
         </div>
         <div className="items-start lg:items-end">
           <span>
-            {order.available === undefined
+            {available === undefined
               ? ``
-              : order.valid && order.available === 1
+              : valid && available === 1
               ? `There is 1 item left.`
-              : !order.valid
+              : !valid
               ? `Please select a different date`
-              : order.available > 1
-              ? `There are ${order.available} items left`
+              : available > 1
+              ? `There are ${available} items left`
               : ``}
           </span>
 
           <div className="relative flex-row items-center">
             <Checkbox
-              onChange={() =>
-                dispatch({ type: 'toggle-insurance', payload: order.id })
-              }
+              onChange={() => toggleInsurance(order.id)}
               value={itemInsurance}
               label="Include insurance"
             />

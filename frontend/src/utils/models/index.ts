@@ -10,6 +10,7 @@ export * from './document';
 export * from './file';
 export * from './fit';
 export * from './occasion';
+export * from './order';
 export * from './permission';
 export * from './product';
 export * from './role';

@@ -140,7 +140,7 @@ export const SizeChartPopup = ({
 }) =>
   !(sizeChart && state) ? null : (
     <div
-      className="bottom-0 absolute bg-white border-gray border p-4 z-10 pt-8 space-y-4 overflow-y-auto"
+      className="bottom-0 absolute bg-white border-gray border p-4 z-20 pt-8 space-y-4 overflow-y-auto"
       style={{ maxHeight: 600 }}
     >
       <button

@@ -9,6 +9,7 @@ const OrderStatus = {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           order,
         }),
@@ -39,6 +40,7 @@ const OrderStatus = {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           order,
         }),

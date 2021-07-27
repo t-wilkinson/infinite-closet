@@ -220,7 +220,12 @@ export const Checkout = ({ user }) => {
           <div className="w-full">
             <Cart
               cart={state.cart}
-              dispatch={dispatch}
+              remove={(id) =>
+                dispatch({ type: 'remove-cart-item', payload: id })
+              }
+              toggleInsurance={(id) =>
+                dispatch({ type: 'toggle-insurance', payload: id })
+              }
               insurance={state.insurance}
             />
             <Submit
