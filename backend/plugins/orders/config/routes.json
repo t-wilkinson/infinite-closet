@@ -87,7 +87,7 @@
       "path": "/",
       "handler": "Order.find",
       "config": {
-        "policies": []
+        "policies": [["admin::hasPermissions", ["plugins::orders.manage"]]]
       }
     },
     {
@@ -95,7 +95,7 @@
       "path": "/ship/:id",
       "handler": "Order.ship",
       "config": {
-        "policies": []
+        "policies": [["admin::hasPermissions", ["plugins::orders.manage"]]]
       }
     },
     {
@@ -103,7 +103,7 @@
       "path": "/complete/:id",
       "handler": "Order.complete",
       "config": {
-        "plugins": []
+        "plugins": [["admin::hasPermissions", ["plugins::orders.manage"]]]
       }
     }
   ]

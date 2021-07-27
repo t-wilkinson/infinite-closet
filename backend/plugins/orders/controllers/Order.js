@@ -107,7 +107,12 @@ module.exports = {
     );
     order = await strapi
       .query("order", "orders")
-      .findOne({ id: order.id }, ["product", "user"]);
+      .findOne({ id: order.id }, [
+        "product",
+        "user",
+        "product.designer",
+        "product.images",
+      ]);
     const user = order.user;
 
     const onError = async (err) => {
@@ -123,12 +128,16 @@ module.exports = {
       strapi.log.error(err);
     };
 
-    const sendShippingEmail = (to) =>
+    const sendShippingEmail = () =>
       strapi.plugins["email"].services.email.send({
         template: "order-shipped",
-        to,
-        subject: `Your order of ${order.product.name} by ${order.product.designer.name} has just shipped`,
+        to: {
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email,
+        },
+        subject: `Your order of ${order.product.name} by ${order.product.designer.name} has shipped!`,
         data: {
+          ...order,
           firstName: user.firstName,
           range: strapi.plugins["orders"].services.date.range(order),
           price: strapi.plugins["orders"].services.price.price(order),
