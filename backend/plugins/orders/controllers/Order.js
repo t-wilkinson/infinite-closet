@@ -133,7 +133,7 @@ module.exports = {
         template: "order-shipped",
         to: {
           name: `${user.firstName} ${user.lastName}`,
-          email: "info+shanna@infinitecloset.co.uk",
+          email: user.email,
         },
         subject: `Your order of ${order.product.name} by ${order.product.designer.name} has shipped!`,
         data: {
@@ -143,9 +143,6 @@ module.exports = {
           price: strapi.plugins["orders"].services.price.price(order),
         },
       });
-
-    await sendShippingEmail();
-    return ctx.send({});
 
     if (process.NODE_ENV === "production") {
       strapi.plugins["orders"].services.hived
