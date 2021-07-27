@@ -144,6 +144,9 @@ module.exports = {
         },
       });
 
+    await sendShippingEmail();
+    return ctx.send({});
+
     if (process.NODE_ENV === "production") {
       strapi.plugins["orders"].services.hived
         .ship(order)
