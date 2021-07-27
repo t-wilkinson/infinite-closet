@@ -5,45 +5,99 @@ const hivedApi = {
   parcels: 'https://api.airtable.com/v0/appDFURl2nEJd1XEF/Parcels',
   postcodes: 'https://api.airtable.com/v0/app5ZWdAtj21xnZrh/Postcodes',
   key: 'keyzCmMhMH9fvKBPV',
-  shippingClass: '2-Day', // Same-Day Next-Day 2-Day
   shippingClasses: {
     zero: 'Same-Day',
     one: 'Next-Day',
-    two: '2-Day',
+    two: '2-Days',
   },
 }
 
 const addresses = {
   infinitecloset: {
-    Name: 'Infinite Closet',
-    Address_Line_1: '22 Horder Rd',
-    Town: 'London',
-    Postcode: 'SW6 5EE',
-    Email_Address: 'sarah.korich@infinitecloset.co.uk',
+    name: 'Infinite Closet',
+    address: ['22 Horder Rd'],
+    town: 'London',
+    postcode: 'SW6 5EE',
+    email: 'sarah.korich@infinitecloset.co.uk',
   },
   oxwash: {
-    Name: 'Oxwash',
-    Address_Line_1: 'Avro House',
-    Address_Line_2: 'Unit AH003',
-    Address_Line_3: 'Havelock Terrace',
-    Town: 'London',
-    Postcode: 'SW8 4AS',
-    Email_Address: 'battersea@oxwash.com',
+    name: 'Oxwash',
+    address: ['Avro House', 'Unit AH003', 'Havelock Terrace'],
+    town: 'London',
+    postcode: 'SW8 4AS',
+    email: 'battersea@oxwash.com',
   },
 }
 
-const toAddress = (addr, role) => {
-  const res = {}
-
-  for (const [k, v] of Object.entries(addr)) {
-    if (k === 'Name') {
-      res[`${role}`] = v
-    } else {
-      res[`${role}_${k}`] = v
+function toSender(addr) {
+  let res = {}
+  function set(key, value) {
+    if (value) {
+      res[key] = value
     }
   }
 
+  set('Sender', addr.name)
+  set('Sender_Address_Line_1', addr.address[0])
+  set('Sender_Address_Line_2', addr.address[1])
+  set('Sender_Address_Line_3', addr.address[2])
+  set('Sender_Town', addr.town)
+  set('Sender_Postcode', addr.postcode)
+
   return res
+}
+
+function toCollection(addr) {
+  let res = {}
+  function set(key, value) {
+    if (value) {
+      res[key] = value
+    }
+  }
+
+  set('Collection_Contact_Name', addr.name)
+  set('Collection_Address_Line_1', addr.address[0])
+  set('Collection_Address_Line_2', addr.address[1])
+  set('Collection_Address_Line_3', addr.address[2])
+  set('Collection_Town', addr.town)
+  set('Collection_Postcode', addr.postcode)
+  set('Collection_Instructions', addr.instructions)
+  set('Collection_Phone_Number', addr.phone)
+  set('Collection_Email_Address', addr.email)
+
+  return res
+}
+
+function toRecipient(addr) {
+  let res = {}
+  function set(key, value) {
+    if (value) {
+      res[key] = value
+    }
+  }
+  set('Recipient', addr.name)
+  set('Recipient_Address_Line_1', addr.address[0])
+  set('Recipient_Address_Line_2', addr.address[1])
+  set('Recipient_Address_Line_3', addr.address[2])
+  set('Recipient_Town', addr.town)
+  set('Recipient_Postcode', addr.postcode)
+  set('Recipient_Email_Address', addr.email)
+  set('Recipient_Phone_Number', addr.phone)
+  set('Delivery_Instructions', addr.instructions)
+
+  return res
+}
+
+function toAddress(order) {
+  const { address, user } = order
+  return {
+    name: address.firstName + ' ' + address.lastName,
+    address: [address.address],
+    town: address.town,
+    postcode: address.postcode,
+    email: user.email,
+    phone: user.phoneNumber,
+  }
 }
 
 async function fetchHived(url, method, body = {}) {
@@ -93,52 +147,43 @@ async function verify(postcode) {
 
 async function ship(order) {
   const price = strapi.plugins['orders'].services.price.price(order)
-  const { address } = order
-  const user = order.user
-
-  const orderAddress = {
-    Name: address.firstName + ' ' + address.lastName,
-    Address_Line_1: address.address,
-    Town: address.town,
-    Postcode: address.postcode,
-    Email_Address: user.email,
-    Phone_Number: user.phoneNumber,
-  }
+  const orderAddress = toAddress(order)
 
   let hivedBody = {
-    Shipping_Class: hivedApi.shippingClass,
-    Sender:
-      process.env.NODE_ENV === 'production'
-        ? 'Infinite Closet'
-        : 'Infinite Closet Testing',
+    Shipping_Class: hivedApi.shippingClasses.two,
+    Sender: 'Infinite Closet',
     Value_GBP: price,
+    ...toSender(addresses.infinitecloset),
     // Sender_Chosen_Collection_Date: MM/DD/YYYY
     // Sender_Chosen_Delivery_Date: MM/DD/YYYY
   }
 
+  // TODO: move this logic to callers
   if (order.status === 'shipping') {
     Object.assign(
       hivedBody,
-      toAddress(addresses.infinitecloset, 'Collection'),
-      toAddress(orderAddress, 'Recipient'),
+      toCollection(addresses.infinitecloset),
+      toRecipient(orderAddress),
       {
         Shipping_Class:
           hivedApi.shippingClasses[
-            strapi.plugins['orders'].services.date.shippingClass(order)
-          ] || 'one',
+            strapi.plugins['orders'].services.date.shippingClass(order) || 'one'
+          ],
       }
     )
   } else if (order.status === 'cleaning') {
     Object.assign(
       hivedBody,
-      toAddress(orderAddress, 'Collection'),
-      toAddress(addresses.oxwash, 'Recipient'),
-      { Shipping_Class: '2-Day' }
+      toCollection(orderAddress),
+      toRecipient(addresses.oxwash),
+      { Shipping_Class: hivedApi.shippingClasses.two }
     )
   }
 
   if (process.env.NODE_ENV === 'production') {
-    return await api.shipment.ship(hivedBody)
+    const res = await api.shipment.ship(hivedBody)
+    strapi.log.info('hived:ship %o', res)
+    return res
   } else {
     return { id: crypto.randomBytes(16).toString('base64') }
   }
