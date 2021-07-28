@@ -3,10 +3,10 @@ import { StrapiCartItem } from '../Cart'
 import { product } from '@/Products/__mocks__/product'
 
 export const order: StrapiOrder = {
-  id: '',
+  id: '10',
   status: 'cart',
   message: {},
-  size: '',
+  size: 'M',
   startDate: new Date('2020-06-01'),
   shippingDate: '',
   rentalLength: 'short',

@@ -19,6 +19,7 @@ export const Checkbox = ({
     onClick={() => onChange(!value)}
     aria-label={`Toggle ${label} checkbox`}
   >
+    <input className="hidden" type="checkbox" checked={value} readOnly={true} />
     <div className={`flex-row items-center ${className}`}>
       <div className="items-center flex-shrink-0 justify-center w-5 h-5 bg-white border border-black rounded-sm">
         {value && <Icon name="check" className="w-3 h-3" style={{ color }} />}

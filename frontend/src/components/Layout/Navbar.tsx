@@ -9,6 +9,9 @@ import { routes } from '@/utils/constants'
 // TODO: use nextjs caching
 const myLoader = ({ src, width, quality }) => {
   return `${src}?w=${width}&q=${quality || 75}`
+  // return `https://infinitecloset.treywilkinson.com/_next/image?url=${encodeURIComponent(
+  //   src,
+  // )}&w=${width}&q=${quality || 75}`
 }
 
 export const NavBar = () => {
