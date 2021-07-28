@@ -39,7 +39,7 @@ export const cleanFields = (fields: Fields): { [field: string]: any } => {
 export const validate = (
   field: string,
   value: string,
-  constraints: string,
+  constraints: string
 ): Valid[] => {
   const isValid = (value: string, constraint: string): Valid => {
     constraint = constraint.replace(/<space>/g, ' ')
@@ -64,7 +64,7 @@ export const validate = (
 
   constraints = constraints.replace(
     'password',
-    'min-width:8 max-width:30 contains:~!@#$%^*-_=+[{]}/;,.?',
+    'min-width:8 max-width:30 contains:~!@#$%^*-_=+[{]}/;,.?'
   )
   return constraints
     .split(' ')
@@ -72,40 +72,75 @@ export const validate = (
     .filter((v) => v !== true)
 }
 
-export const useFields: (config: FieldsConfig) => Fields = (config) => {
-  const initialState = Object.keys(config).reduce(
-    (acc, k) => ((acc[k] = config[k].default ?? ''), acc),
-    {},
-  )
-  const reducer = (state, { type, payload }) => ({ ...state, [type]: payload })
-  const [state, dispatch] = React.useReducer(reducer, initialState)
+type UseField = (field: string, config: FieldsConfig['number']) => Field
+export const useField: UseField = (field, config) => {
+  const [state, setState] = React.useState(config.default ?? '')
 
-  const fields = Object.entries(config).reduce((acc, [field, v]) => {
-    v = Object.assign(
-      {
-        label: toTitleCase(field),
-        type: 'text',
-        constraints: '',
-        onChange: () => {},
-        default: '',
-        placeholder: '',
-      },
-      v,
-    )
-    acc[field] = {
-      field,
-      label: v.label,
-      type: v.type,
-      value: state[field],
-      default: v.default,
-      constraints: v.constraints,
-      placeholder: v.placeholder,
-      onChange: (value: string) => {
-        dispatch({ type: field, payload: value })
-        v.onChange(value)
-      },
-    }
+  config = Object.assign(
+    {
+      label: toTitleCase(field),
+      type: 'text',
+      constraints: '',
+      onChange: () => {},
+      default: '',
+      placeholder: '',
+    },
+    config
+  )
+
+  return {
+    field,
+    label: config.label,
+    type: config.type,
+    value: state,
+    default: config.default,
+    constraints: config.constraints,
+    placeholder: config.placeholder,
+    onChange: (value: string) => {
+      setState(value)
+      config.onChange(value)
+    },
+  }
+}
+
+type UseFields = (config: FieldsConfig) => Fields
+export const useFields: UseFields = (config) => {
+  //   const initialState = Object.keys(config).reduce(
+  //     (acc, k) => ((acc[k] = config[k].default ?? ''), acc),
+  //     {}
+  //   )
+  //   const reducer = (state, { type, payload }) => ({ ...state, [type]: payload })
+  //   const [state, dispatch] = React.useReducer(reducer, initialState)
+
+  const fields = Object.entries(config).reduce((acc, [field, fieldConfig]) => {
+    acc[field] = useField(field, fieldConfig)
     return acc
+
+    // fieldConfig = Object.assign(
+    //   {
+    //     label: toTitleCase(field),
+    //     type: 'text',
+    //     constraints: '',
+    //     onChange: () => {},
+    //     default: '',
+    //     placeholder: '',
+    //   },
+    //   fieldConfig
+    // )
+    // acc[field] = {
+    //   field,
+    //   label: fieldConfig.label,
+    //   type: fieldConfig.type,
+    //   value: state[field],
+    //   default: fieldConfig.default,
+    //   constraints: fieldConfig.constraints,
+    //   placeholder: fieldConfig.placeholder,
+    //   onChange: (value: string) => {
+    //     dispatch({ type: field, payload: value })
+    //     fieldConfig.onChange(value)
+    //   },
+    // }
+    // return acc
   }, {})
 
   return fields

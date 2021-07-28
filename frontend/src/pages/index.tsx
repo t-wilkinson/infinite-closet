@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import Layout from '@/Layout'
+import NewHome from '@/Temp/Home'
 import { Product } from '@/Products/ProductItems'
 
 export const Home = () => {
@@ -17,6 +18,10 @@ export const Home = () => {
       .then((res) => setProducts(res.data))
       .catch((err) => console.error(err))
   }, [])
+
+  if (process.env.NODE_ENV === 'development') {
+    return <NewHome products={products} />
+  }
 
   return (
     <>

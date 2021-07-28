@@ -33,12 +33,12 @@ export const Checkbox = ({
 )
 
 export const Input = ({
-  field,
   label,
   onChange,
-  constraints,
   value,
-  type,
+  field = label,
+  constraints = '',
+  type = 'text',
   before = null,
   after = null,
   children = null,

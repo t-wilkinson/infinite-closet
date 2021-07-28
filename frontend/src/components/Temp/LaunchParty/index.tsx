@@ -3,7 +3,7 @@ import axios from 'axios'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
 import useAnalytics from '@/utils/useAnalytics'
-import { CallToAction, Hover } from '@/components'
+import { Icon, Divider, Hover } from '@/components'
 import { useSelector } from '@/utils/store'
 import { Input, Submit } from '@/Form'
 import useFields, { cleanFields, isValid } from '@/Form/useFields'
@@ -21,6 +21,7 @@ import { reducer, initialState } from './reducer'
 export const JoinLaunchParty = () => {
   const user = useSelector((state) => state.user.data)
   const [state, dispatch] = React.useReducer(reducer, initialState)
+  const [guests, setGuests] = React.useState<string[]>([])
   const fields = useFields({
     firstName: {
       constraints: 'required',
@@ -57,70 +58,135 @@ export const JoinLaunchParty = () => {
           <div className="w-full h-64 justify-center items-center">
             <span className="font-bold text-xl">Thank You!</span>
           </div>
-        ) : state.edit === 'info' ? (
-          <UserInfo dispatch={dispatch} fields={fields} />
         ) : (
-          <Pay fields={fields} dispatch={dispatch} state={state} />
+          <div className="space-y-8">
+            <Section title="How can we contact you?">
+              <UserInfo dispatch={dispatch} fields={fields} />
+            </Section>
+            <Section
+              title="Bringing any guests?"
+              subtitle={
+                <button
+                  onClick={() => setGuests((guests) => [...guests, ''])}
+                  type="button"
+                  className="ml-2 underline flex items-center"
+                >
+                  Add a Guest
+                </button>
+              }
+            >
+              <GuestInfo
+                dispatch={dispatch}
+                fields={fields}
+                guests={guests}
+                setGuests={setGuests}
+              />
+            </Section>
+            <Section title="Donations & Discounts">
+              <Misc fields={fields} dispatch={dispatch} state={state} />
+            </Section>
+            <Section title="Summary">
+              <Pay
+                fields={fields}
+                guests={guests}
+                dispatch={dispatch}
+                state={state}
+              />
+            </Section>
+          </div>
         )}
       </form>
     </div>
   )
 }
 
-const UserInfo = ({ fields, dispatch }) => {
-  const disabled = !isValid(fields, [
-    'firstName',
-    'lastName',
-    'email',
-    'phoneNumber',
-  ])
+const Section = ({ title, subtitle = null, children }) => (
+  <div>
+    <div className="flex-row items-center mb-4">
+      <strong className="text-lg">{title}</strong>
+      {subtitle}
+    </div>
+    {children}
+  </div>
+)
+
+const GuestInfo = ({ fields, dispatch, guests, setGuests }) => {
+  const editGuest = (i, value) =>
+    setGuests((guests) => {
+      const newGuests = [...guests]
+      newGuests[i] = value
+      return newGuests
+    })
+  const removeGuest = (i) =>
+    setGuests((guests) => [...guests.slice(0, i), ...guests.slice(i + 1)])
 
   return (
-    <>
+    <div className="space-y-4">
+      {guests.map((guest, i) => (
+        <Input
+          key={i}
+          label={`Guest Name`}
+          value={guest}
+          onChange={(value) => editGuest(i, value)}
+          after={
+            <button
+              type="button"
+              className="text-warning p-2"
+              aria-label={`Remove guest ${i}`}
+              onClick={() => removeGuest(i)}
+            >
+              <Icon name="close" size={16} />
+            </button>
+          }
+        />
+      ))}
+    </div>
+  )
+}
+
+const UserInfo = ({ fields, dispatch }) => {
+  // const disabled = !isValid(fields, [
+  //   'firstName',
+  //   'lastName',
+  //   'email',
+  //   'phoneNumber',
+  // ])
+
+  return (
+    <div className="space-y-4">
       <div className="flex-row space-x-4 -mb-2">
         <Input {...fields.firstName} />
         <Input {...fields.lastName} />
       </div>
       <Input {...fields.email} />
       <Input {...fields.phoneNumber} />
-      <div className="w-full">
-        <CallToAction
-          onClick={() => dispatch({ type: 'edit-payment' })}
-          disabled={disabled}
-          className={`mt-2
-          `}
-          type="button"
-        >
-          Continue
-        </CallToAction>
-      </div>
-    </>
+      {/* <div className="w-full"> */}
+      {/*   <CallToAction */}
+      {/*     onClick={() => dispatch({ type: 'edit-payment' })} */}
+      {/*     disabled={disabled} */}
+      {/*     className={`mt-2 */}
+      {/*     `} */}
+      {/*     type="button" */}
+      {/*   > */}
+      {/*     Continue */}
+      {/*   </CallToAction> */}
+      {/* </div> */}
+    </div>
   )
 }
 
-const Pay = ({ fields, dispatch, state }) => {
-  const handleChange = async (event) => {
-    if (event.error) {
-      dispatch({ type: 'payment-error', payload: event.error?.message })
-    } else {
-      dispatch({ type: 'payment-progress' })
-    }
-  }
+const Price = ({ label, price, minus = false }) => (
+  <div className="mb-2 w-full flex-row justify-between items-center">
+    <span>{label}</span>
+    <span>
+      {minus ? '-' : ''}£{price.toFixed(2)}
+    </span>
+  </div>
+)
 
-  const discount =
-    fields.promoCode.value === 'GIVEYOURBEST'
-      ? GIVEYOURBEST_DISCOUNT
-      : state.promoValid
-      ? PROMO_DISCOUNT
-      : 0
-
-  return (
-    <>
-      <div className="mb-2 w-full flex-row justify-between items-center">
-        <span>Ticket Price</span>
-        <span className="">£{TICKET_PRICE.toFixed(2)}</span>
-      </div>
-
+const Misc = ({ fields, dispatch, state }) => (
+  <div className="space-y-4">
+    <div>
       <div className="flex-row mb-2">
         <div className="w-80">
           <PromoCode state={state} dispatch={dispatch} fields={fields} />
@@ -139,48 +205,72 @@ const Pay = ({ fields, dispatch, state }) => {
             . Use promo code GIVEYOURBEST.
           </q>
           <small>
-            *At this time we can only accept women’s clothing donations.*
+            *At this time we can only accept women’s clothing donations.
           </small>
         </div>
       </div>
+    </div>
 
-      <div className="mb-2 w-full flex-row justify-between items-center">
-        <span>Promo Discount</span>
-        <span className="">-£{discount.toFixed(2)}</span>
-      </div>
+    <div className="flex-row">
+      <Donation donation={fields.donation} state={state} dispatch={dispatch} />
+    </div>
+  </div>
+)
 
-      <div className="flex-row mb-2">
-        <Donation
-          donation={fields.donation}
+const Pay = ({ fields, dispatch, state, guests }) => {
+  const handleChange = async (event) => {
+    if (event.error) {
+      dispatch({ type: 'payment-error', payload: event.error?.message })
+    } else {
+      dispatch({ type: 'payment-progress' })
+    }
+  }
+
+  const discount =
+    fields.promoCode.value === 'GIVEYOURBEST'
+      ? GIVEYOURBEST_DISCOUNT
+      : state.promoValid
+      ? PROMO_DISCOUNT
+      : 0
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Price label="Ticket Price" price={TICKET_PRICE} />
+        <Price label="Promo Discount" price={discount} minus />
+        <Price label="Guest Tickets" price={guests.length * TICKET_PRICE} />
+
+        <div className="mb-4 w-full flex-row justify-between items-center font-bold">
+          <span className="">Total</span>
+          <span className="">
+            £
+            {(
+              parseFloat(fields.donation.value) +
+              TICKET_PRICE +
+              TICKET_PRICE * guests.length -
+              discount
+            ).toFixed(2)}
+          </span>
+        </div>
+
+        <PaymentCard handleChange={handleChange} />
+
+        <div className="w-full items-center">
+          {state.error && (
+            <div className="text-warning card-error" role="alert">
+              {state.error}
+            </div>
+          )}
+        </div>
+
+        <Join
+          guests={guests}
+          fields={fields}
           state={state}
           dispatch={dispatch}
         />
       </div>
-
-      <div className="mb-4 w-full flex-row justify-between items-center font-bold">
-        <span className="">Total</span>
-        <span className="">
-          £
-          {(
-            parseFloat(fields.donation.value) +
-            TICKET_PRICE -
-            discount
-          ).toFixed(2)}
-        </span>
-      </div>
-
-      <PaymentCard handleChange={handleChange} />
-
-      <div className="w-full items-center">
-        {state.error && (
-          <div className="text-warning card-error" role="alert">
-            {state.error}
-          </div>
-        )}
-      </div>
-
-      <Join fields={fields} state={state} dispatch={dispatch} />
-    </>
+    </div>
   )
 }
 
@@ -191,7 +281,7 @@ const PromoCode = ({ state, fields, dispatch }) => {
       .then((res) =>
         res.data
           ? dispatch({ type: 'promo-valid' })
-          : dispatch({ type: 'promo-invalid' }),
+          : dispatch({ type: 'promo-invalid' })
       )
       .catch(() => dispatch({ type: 'promo-invalid' }))
 
@@ -238,7 +328,7 @@ const PromoCode = ({ state, fields, dispatch }) => {
 
 const Donation = ({ dispatch, state, donation }) => {
   return (
-    <div className="mb-4">
+    <div className="">
       <div className="flex-row items-center">
         Additional Donation
         <Hover>
@@ -279,7 +369,7 @@ const DonationAddition = ({ dispatch, amount, selected }) => (
   </button>
 )
 
-const Join = ({ dispatch, state, fields }) => {
+const Join = ({ dispatch, state, fields, guests }) => {
   const elements = useElements()
   const stripe = useStripe()
   const analytics = useAnalytics()
@@ -310,6 +400,7 @@ const Join = ({ dispatch, state, fields }) => {
           throw res.error
         } else {
           return axios.post('/launch/party/join', {
+            guests,
             name: `${cleaned.firstName} ${cleaned.lastName}`,
             firstName: cleaned.firstName,
             lastName: cleaned.lastName,
@@ -325,7 +416,7 @@ const Join = ({ dispatch, state, fields }) => {
       .then((res) => handleServerResponse(res.data, stripe, dispatch))
 
       .then(() =>
-        window.localStorage.setItem('launch-party', JSON.stringify(true)),
+        window.localStorage.setItem('launch-party', JSON.stringify(true))
       )
 
       .catch((err) => {
@@ -339,20 +430,20 @@ const Join = ({ dispatch, state, fields }) => {
 
   return (
     <div className="w-full flex-row items-center">
-      <button
-        className="flex w-32 mt-3 items-center flex-col border border-gray rounded-sm p-3 mr-4"
-        type="button"
-        onClick={() => dispatch({ type: 'edit-info' })}
-      >
-        Back
-      </button>
-      <div className="w-full">
+      {/* <button */}
+      {/*   className="flex w-32 mt-3 items-center flex-col border border-gray rounded-sm p-3 mr-4" */}
+      {/*   type="button" */}
+      {/*   onClick={() => dispatch({ type: 'edit-info' })} */}
+      {/* > */}
+      {/*   Back */}
+      {/* </button> */}
+      <div className="w-full mt-4">
         <Submit
           onSubmit={onSubmit}
           disabled={
             !isValid(fields) ||
             ['disabled', 'processing', 'succeeded'].includes(
-              state.paymentStatus,
+              state.paymentStatus
             )
           }
         >
@@ -364,7 +455,7 @@ const Join = ({ dispatch, state, fields }) => {
             ) : state.paymentStatus === 'succeeded' ? (
               <span>Thank You</span>
             ) : (
-              'Pay now'
+              'Join the party'
             )}
           </span>
         </Submit>

@@ -49,6 +49,7 @@ module.exports = {
           to: { name: body.name, email: body.email },
           subject: 'Joined Launch Party',
           data: {
+            guests: body.guests,
             TICKET_PRICE,
             total: ticketPrice,
             firstName: body.firstName,
@@ -62,6 +63,7 @@ module.exports = {
           context: 'launch_party',
           metadata: {
             paymentIntent: intent.id,
+            guests: body.guests,
             donation: `£${body.donation}`,
             promo: body.promoCode,
             email: body.email,

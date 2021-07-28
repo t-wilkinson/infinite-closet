@@ -4,7 +4,7 @@ import Grid from '../layout/Grid'
 import Icon from '../elements/Icon'
 import Between from '../elements/Between'
 
-const Summary = ({ TICKET_PRICE, discount, donation, total }) => {
+const Summary = ({ guests, TICKET_PRICE, discount, donation, total }) => {
   return (
     <Grid>
       <h3 style={{ margin: 0, marginTop: 16 }}>Order Summary</h3>
@@ -17,6 +17,10 @@ const Summary = ({ TICKET_PRICE, discount, donation, total }) => {
       />
 
       <Between left="Ticket Price" right={`£${TICKET_PRICE.toFixed(2)}`} />
+      <Between
+        left="Guest Tickets"
+        right={`£${(guests.length * TICKET_PRICE).toFixed(2)}`}
+      />
       <Between left="Promo Discount" right={`-£${discount.toFixed(2)}`} />
       <Between left="Donation" right={`£${donation.toFixed(2)}`} />
       <Between

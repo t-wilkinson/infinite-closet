@@ -53,12 +53,16 @@ const LargeHeader = ({ user, router }) => (
         <div className="absolute right-0 mt-0 mr-4 xl:m-0 xl:static">
           <Account user={user} />
         </div>
-        <div className="h-px bg-pri w-full xl:hidden" />
       </div>
     </div>
     <div
-      className={`h-px bg-pri w-full hidden xl:flex
-    ${router.pathname === '/' ? 'mt-4' : 'mt-4'}
+      className={`-pri w-full mt-4 xl:hidden
+    ${router.pathname === '/' ? '' : 'h-px bg-pri'}
+    `}
+    />
+    <div
+      className={`w-full hidden xl:flex
+        ${router.pathname === '/' ? 'mt-4 xl:mt-0' : 'h-px bg-pri mt-4'}
     `}
     />
   </>
@@ -128,10 +132,14 @@ export const Header = () => {
 
   return (
     <header>
-      <div className="p-4 border-b border-gray-light mb-6 flex md:hidden items-center">
+      <div className="p-4 border-b border-gray-light flex md:hidden items-center">
         <SmallHeader router={router} />
       </div>
-      <div className="z-30 items-center hidden w-full pt-4 md:flex select-none relative mb-4">
+      <div
+        className={`z-30 items-center hidden w-full md:flex select-none relative
+          ${router.pathname === '/' ? 'mt-4 xl:mt-0' : 'mt-4'}
+        `}
+      >
         <LargeHeader user={user} router={router} />
       </div>
     </header>

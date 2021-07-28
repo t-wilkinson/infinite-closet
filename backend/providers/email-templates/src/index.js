@@ -56,6 +56,7 @@ const data = {
     donation: 25.0,
     discount: 5,
     total: 45,
+    guests: ["Bob", "Joe"],
   },
   "order-arriving": orderData,
   "order-leaving": orderData,

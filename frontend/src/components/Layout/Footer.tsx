@@ -9,7 +9,7 @@ import { socialMediaLinks } from '@/utils/constants'
 
 export const Footer = () => (
   <>
-    <Divider />
+    {/* <Divider /> */}
     <div className="items-center w-full px-2">
       <footer className="flex flex-col items-center justify-between w-full pb-2 my-4 md:flex-row max-w-screen-xl">
         <div className="items-center">
