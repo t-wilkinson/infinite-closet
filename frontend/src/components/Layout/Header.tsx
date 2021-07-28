@@ -39,27 +39,29 @@ const SmallHeader = ({ router }) => {
 }
 
 const LargeHeader = ({ user, router }) => (
-  <div
-    className={`max-w-screen-xl w-full justify-center
-      ${router.pathname === '/' ? 'lg:h-32' : 'lg:h-16'}
+  <>
+    <div
+      className={`max-w-screen-xl w-full justify-center
+      ${router.pathname === '/' ? 'xl:h-32' : 'xl:h-16'}
     `}
-  >
-    <div className="lg:flex-row w-full relative justify-between items-center px-2">
-      <LargeHeaderLogo router={router} />
-      <div className="w-full mt-2 lg:mt-0 lg:w-auto flex-grow mx-8">
-        <Navbar />
+    >
+      <div className="xl:flex-row w-full relative justify-between items-center px-2">
+        <LargeHeaderLogo router={router} />
+        <div className="w-full mt-2 xl:mt-0 xl:w-auto flex-grow mx-8">
+          <Navbar />
+        </div>
+        <div className="absolute right-0 mt-0 mr-4 xl:m-0 xl:static">
+          <Account user={user} />
+        </div>
+        <div className="h-px bg-pri w-full xl:hidden" />
       </div>
-      <div className="absolute right-0 mt-4 mr-4 lg:m-0 lg:static">
-        <Account user={user} />
-      </div>
-      <div className="h-px bg-pri w-full lg:hidden" />
     </div>
     <div
-      className={`h-px bg-pri w-full hidden lg:flex
-    ${router.pathname === '/' ? 'mt-8' : 'mt-2'}
+      className={`h-px bg-pri w-full hidden xl:flex
+    ${router.pathname === '/' ? 'mt-4' : 'mt-4'}
     `}
     />
-  </div>
+  </>
 )
 
 export const LargeHeaderLogo = ({ router }) => (
@@ -77,33 +79,38 @@ export const LargeHeaderLogo = ({ router }) => (
 const Account = ({ user }) => {
   const count = useSelector((state) => state.user.cartCount)
 
-  return (
-    <div className="flex-row items-center">
-      {user ? (
-        <>
-          <IconLink href="/user/profile" size={18} name="user" />
-          {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
-          <IconLink href="/user/checkout" size={18} name="shopping-bag">
-            {/* {count > 0 && ( */}
-            {/*   <span className="absolute right-0 bottom-0 text-xs bg-sec-light rounded-full px-1"> */}
-            {/*     {count} */}
-            {/*   </span> */}
-            {/* )} */}
-          </IconLink>
-        </>
-      ) : (
-        <>
-          <Link href="/account/signin">
-            <a>
-              <span className="">Sign in</span>
-            </a>
-          </Link>
-          {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
-          {/* <IconLink href="/user/checkout" size={18} name="shopping-bag" /> */}
-        </>
-      )}
-    </div>
-  )
+  if (user) {
+    return (
+      <div className="flex-row items-center">
+        <IconLink href="/user/profile" size={18} name="user" />
+        {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
+        <IconLink href="/user/checkout" size={18} name="shopping-bag">
+          {count > 0 && (
+            <span className="absolute right-0 bottom-0 text-xs bg-sec-light rounded-full px-1">
+              {count}
+            </span>
+          )}
+        </IconLink>
+      </div>
+    )
+  } else {
+    return (
+      <div className="flex-row items-center space-x-3">
+        <Link href="/account/signin">
+          <a>
+            <span className="">Sign in</span>
+          </a>
+        </Link>
+        <Link href="/account/register">
+          <a className="border border-black p-3">
+            <span>Get Started</span>
+          </a>
+        </Link>
+        {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
+        {/* <IconLink href="/user/checkout" size={18} name="shopping-bag" /> */}
+      </div>
+    )
+  }
 }
 
 const IconLink = ({ size, name, href, children = null }) => (

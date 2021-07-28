@@ -1,3 +1,4 @@
+// TODO: refactor
 /* Components that are used everywhere */
 import React from 'react'
 import Link from 'next/link'
@@ -37,6 +38,25 @@ export const Divider = ({
   className = '',
   border = 'border-gray-light',
 }) => visible && <div className={`${border} border-b-2 w-full ${className}`} />
+
+// export const Button = ({
+//   onClick = () => {},
+//   children,
+//   className = '',
+//   disabled = false,
+//   label = '',
+//   ...props
+// }) => (
+//   <button
+//     className="items-center"
+//     onClick={onClick}
+//     disabled={disabled}
+//     aria-label={label}
+//     {...props}
+//   >
+//     {children}
+//   </button>
+// )
 
 export const CallToAction = ({
   onClick = () => {},

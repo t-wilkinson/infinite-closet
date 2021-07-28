@@ -43,7 +43,7 @@ export default NavBar
 
 const Sections = ({ visible, setVisible, serverRoutes }) => (
   <div className="items-center justify-center max-w-screen-xl w-full">
-    <nav className="flex flex-row w-full justify-around relative">
+    <nav className="flex flex-row justify-center space-x-8 relative w-full">
       {routes.map((route, i) => (
         <div key={route.value + i}>
           <SectionsRoute
