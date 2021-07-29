@@ -200,6 +200,7 @@ const OneTimeRadioButton = ({ selected, oneTime, dispatch }) => (
   <button
     className="flex-row flex items-center"
     onClick={() => dispatch(shopActions.changeOneTime(oneTime))}
+    aria-label={`Select ${oneTime} rental length`}
   >
     <div className="w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
       <div

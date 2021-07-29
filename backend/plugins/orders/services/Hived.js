@@ -12,6 +12,38 @@ const hivedApi = {
   },
 }
 
+async function fetchHived(url, method, body = {}) {
+  return fetch(url, {
+    method,
+    headers: {
+      Authorization: 'Bearer ' + hivedApi.key,
+      'Content-Type': 'application/json',
+    },
+    body:
+      method === 'GET'
+        ? undefined
+        : JSON.stringify({
+          fields: body,
+        }),
+  }).then((res) => res.json())
+}
+
+const api = {
+  shipment: {
+    ship: (shipment) => fetchHived(hivedApi.parcels, 'POST', shipment),
+    retrieve: (shipment) =>
+      fetchHived(`${hivedApi.parcels}/${shipment}`, 'GET'),
+    complete: (shipment) =>
+      fetchHived(`${hivedApi.parcels}/${shipment}`, 'GET').then(
+        (res) => res.Tracking_ID_Complete === 'COMPLETE'
+      ),
+  },
+  postcode: {
+    verify: (postcode) =>
+      fetchHived(hivedApi.postcodes, 'POST', { Recipient_Postcode: postcode }),
+  },
+}
+
 const addresses = {
   infinitecloset: {
     name: 'Infinite Closet',
@@ -98,38 +130,6 @@ function toAddress(order) {
     email: user.email,
     phone: user.phoneNumber,
   }
-}
-
-async function fetchHived(url, method, body = {}) {
-  return fetch(url, {
-    method,
-    headers: {
-      Authorization: 'Bearer ' + hivedApi.key,
-      'Content-Type': 'application/json',
-    },
-    body:
-      method === 'GET'
-        ? undefined
-        : JSON.stringify({
-          fields: body,
-        }),
-  }).then((res) => res.json())
-}
-
-const api = {
-  shipment: {
-    ship: (shipment) => fetchHived(hivedApi.parcels, 'POST', shipment),
-    retrieve: (shipment) =>
-      fetchHived(`${hivedApi.parcels}/${shipment}`, 'GET'),
-    complete: (shipment) =>
-      fetchHived(`${hivedApi.parcels}/${shipment}`, 'GET').then(
-        (res) => res.Tracking_ID_Complete === 'COMPLETE'
-      ),
-  },
-  postcode: {
-    verify: (postcode) =>
-      fetchHived(hivedApi.postcodes, 'POST', { Recipient_Postcode: postcode }),
-  },
 }
 
 async function verify(postcode) {

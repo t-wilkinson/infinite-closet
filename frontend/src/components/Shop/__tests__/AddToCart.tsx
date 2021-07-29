@@ -30,32 +30,58 @@ const sizeChart = {
   published_at: null,
 }
 
-describe('Shop product', () => {
-  // it('renders correctly', () => {
-  //   expect(component.asFragment()).toMatchSnapshot()
-  // })
+const renderShopContents = (initialState: object) => {
+  t.render(
+    <ProductRentContents product={mockProduct} sizeChart={sizeChart} />,
+    { initialState }
+  )
+}
 
-  it('can be added to cart', () => {})
-
-  it('can add size', () => {
-    t.render(
-      <ProductRentContents product={mockProduct} sizeChart={sizeChart} />,
-      { initialState: { shop: mockState } }
-    )
+// prettier-ignore
+describe('<Shop /> size selector', () => {
+  it('is populated with users size', () => {
+    renderShopContents({ shop: mockState, user: { data: { size: 'MD' } } })
 
     const Size = t.screen.getByText('Size').nextElementSibling as HTMLElement
-    const SizeDropDown = t.within(Size).getByLabelText('Dropdown product sizes')
-    t.fireEvent.click(SizeDropDown, {})
-    const sizeMD = t.within(Size).getByText(/md/i)
-    t.fireEvent.click(sizeMD)
-    // expect(t.screen.store.dispatch).toHaveBeenCalled()
-    // expect(t.screen.asFragment()).toMatchSnapshot()
+    expect(t.within(Size).getByText(/md/i)).toBeInTheDocument()
   })
 
-  // it('is clicked', () => {
-  //   renderer.act(() => {
-  //     t.screen.root.findByType('button').props.onClick()
-  //   })
-  //   expect(store.dispatch).toHaveBeenCalled()
-  // })
+  it('is populated with text', () => {
+    renderShopContents({ shop: mockState })
+
+    const SizeSelector = t.screen.getByText('Size').nextElementSibling as HTMLElement
+    expect(t.within(SizeSelector).getByText(/select size/i)).toBeInTheDocument()
+  })
+
+  it('can select size', () => {
+    renderShopContents({ shop: mockState })
+
+    const SizeSelector = t.screen.getByText('Size').nextElementSibling as HTMLElement
+    const SizeDropDown = t.within(SizeSelector).getByLabelText('Dropdown product sizes')
+
+    t.fireEvent.click(SizeDropDown, {})
+    const sizeMD = t.within(SizeSelector).getByText(/md/i)
+
+    t.fireEvent.click(sizeMD)
+    expect(t.within(SizeSelector).getByText(/md/i)).toBeInTheDocument()
+  })
+})
+
+// prettier-ignore
+describe('<Shop /> rental time', () => {
+  it('renders', () => {
+    renderShopContents({ shop: mockState })
+  })
+
+  // TODO
+  it('can select rental length', () => {
+    renderShopContents({ shop: mockState })
+     t.screen.getByText('Rental time').nextElementSibling as HTMLElement
+  })
+
+  // TODO
+  it('can select date', () => {
+    renderShopContents({ shop: mockState })
+     t.screen.getByText('Rental time').nextElementSibling as HTMLElement
+  })
 })
