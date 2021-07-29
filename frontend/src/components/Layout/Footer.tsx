@@ -2,6 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { Input, Submit } from '@/Form'
@@ -9,17 +10,20 @@ import { Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 
 export const Footer = () => {
+  const router = useRouter()
+
   return (
     <>
-      {/* <Divider /> */}
-      <div className="items-center w-full px-2 py-12">
-        <div className="items-center rounded-sm">
-          <strong>Newsletter</strong>
-          <div>
-            <Newsletter />
+      {router.asPath === '/' && (
+        <div className="items-center w-full px-2 py-12">
+          <div className="items-center rounded-sm">
+            <strong>Newsletter</strong>
+            <div>
+              <Newsletter />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="items-center w-full px-2 bg-sec text-white">
         <footer className="flex flex-col w-full p-16 max-w-screen-md">
@@ -87,7 +91,7 @@ const WebApp = () => {
     const addBtn = document.querySelector('.add-button')
     addBtn.style.display = 'none'
 
-    window.addEventListener('beforeinstallprompt', (e) => {
+    const beforeInstallPrompt = (e) => {
       // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault()
       // Stash the event so it can be triggered later.
@@ -110,7 +114,11 @@ const WebApp = () => {
           deferredPrompt = null
         })
       })
-    })
+    }
+
+    window.addEventListener('beforeinstallprompt', beforeInstallPrompt)
+    return () =>
+      window.removeEventListener('beforeinstallprompt', beforeInstallPrompt)
   }, [])
 
   return (

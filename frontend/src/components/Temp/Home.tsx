@@ -1,21 +1,21 @@
 import React from 'react'
 import axios from 'axios'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { CallToAction } from '@/components'
 import { Product } from '@/Products/ProductItems'
 
-let homeColor
-let homeVariant
-let homeAccent
+// let homeColor
+// let homeVariant
+// let homeAccent
 
 const Home = ({}) => {
   const [products, setProducts] = React.useState([])
   const router = useRouter()
-  homeColor = (router.query.color as string) || 'sec-light'
-  homeVariant = (router.query.variant as string) || 'bold'
-  homeAccent = (router.query.accent as string) || 'block'
+  // homeColor = (router.query.color as string) || 'pri-light'
+  // homeVariant = (router.query.variant as string) || 'bold'
+  // homeAccent = (router.query.accent as string) || 'block'
 
   // TODO: use preRender
   React.useEffect(() => {
@@ -74,10 +74,18 @@ const Options = ({ type, options, router }) => (
   </div>
 )
 
-const linearGradient = 'linear-gradient(90deg, #D9C6BC 0%, #D7CDC7 100%)'
+const Heading = ({
+  block = true,
+  left = false,
+  right = false,
+  children,
+  text = '',
+}) => {
+  return (
+    <div className="w-full font-subheader text-5xl text-center">{children}</div>
+  )
 
-const Heading = ({ left = false, right = false, children, text = '' }) => {
-  return <div className="w-full">{children}</div>
+  /*
   return (
     <div
       className={`${
@@ -91,24 +99,24 @@ const Heading = ({ left = false, right = false, children, text = '' }) => {
       )}
 
       {homeVariant === 'bold' && (
-        <span className="font-subheader text-normal -mb-3">{children}</span>
+        <span className="font-subheader text-2xl -mb-3">{children}</span>
       )}
       <h2
         className={`relative ${
           homeVariant === 'bold'
-            ? 'font-bold text-4xl'
+            ? 'font-bold text-4xl md:text-5xl'
             : 'font-subheader text-5xl'
         } text-center w-full md:w-auto`}
       >
-        {homeAccent === 'block' && (
+        {homeAccent === 'block' && block && (
           <div
             className={`absolute left-0 bottom-0 right-0 ${
-              homeVariant === 'bold' ? 'h-6' : 'h-8'
+              homeVariant === 'bold' ? 'h-8' : 'h-8'
             } bg-${homeColor}`}
             style={{
               transform:
                 homeVariant === 'bold'
-                  ? `translate(14px, -18px)`
+                  ? `translate(18px, -32px)`
                   : `translate(24px, -24px)`,
             }}
           />
@@ -127,6 +135,7 @@ const Heading = ({ left = false, right = false, children, text = '' }) => {
       )}
     </div>
   )
+     */
 }
 
 const Introduction = () => (
@@ -148,25 +157,30 @@ const Introduction = () => (
         }}
         className="max-w-3xs sm:max-w-none"
       >
-        <span className="font-subheader">CHANGE THE WAY YOU GET DRESSED</span>
+        {/* <span className="font-subheader">CHANGE THE WAY YOU GET DRESSED</span> */}
         <span
-          className="font-bold text-4xl md:text-5xl mb-8"
+          className="font-bold text-4xl md:text-5xl mb-6"
           style={{
             lineHeight: '1',
           }}
         >
-          Create your dream wardrobe without the guilt.
+          Change The Way You Get Dressed
         </span>
         <span className="mb-12">
-          Discover and rent independent and sustainable brands
+          Discover and create your dream wardrobe by renting independent and
+          sustainable brands, without breaking the bank.
         </span>
-        <CallToAction className="font-bold">Find Your Look</CallToAction>
+        <Link href="/products/clothing">
+          <a className="bg-sec hover:bg-pri p-3 font-bold text-white w-full text-center">
+            Find Your Look
+          </a>
+        </Link>
       </div>
     </div>
 
     <div
       className="relative w-full flex-grow justify-center"
-      style={{ transform: 'scaleX(-1)' }}
+      // style={{ transform: 'scaleX(-1)' }}
     >
       <div
         className="absolute inset-0"
@@ -230,8 +244,10 @@ const WhyRent = ({}) => (
   <div className="w-full items-center" id="why-rent">
     <div className="flex-row w-full">
       <div
-        className="relative w-full flex-grow justify-center max-w-screen-md hidden sm:flex"
-        style={{}}
+        className="relative w-1/2 flex-grow justify-center max-w-screen-md hidden sm:flex"
+        style={{
+          maxHeight: '80vh',
+        }}
       >
         <div
           className="absolute inset-0"
@@ -255,12 +271,14 @@ const WhyRent = ({}) => (
       </div>
 
       <div
-        className="items-center flex-col sm:items-start sm:flex-row flex-wrap w-full px-3 sm:pl-12
-        space-y-8 py-10 md:py-12 lg:py-40 lg:justify-center max-w-screen-xl"
+        className="items-center flex-col sm:items-start sm:flex-row flex-wrap w-full px-3 sm:pl-12 lg:pl-8
+        space-y-8 py-10 md:py-12 lg:pt-40 lg:pt-16 lg:justify-center max-w-screen-xl"
       >
-        <Heading left right text="It's Awesome">
-          Why Rent?
-        </Heading>
+        <div className="lg:w-full sm:ml-24 lg:ml-16 xl:ml-0">
+          <Heading left right text="It's Awesome">
+            Why Rent?
+          </Heading>
+        </div>
         {whyRent.map((item) => (
           <div key={item.label} className="items-center my-4 md:my-4">
             <div className="w-full sm:w-96 items-start flex-row">
@@ -331,7 +349,7 @@ const HowItWorks = () => (
     }}
   >
     <div className="my-8 w-full">
-      <Heading left right text="Fast & Easy">
+      <Heading left right block={false} text="Fast & Easy">
         How It Works
       </Heading>
     </div>
@@ -370,7 +388,7 @@ const ProductItems = ({ products }) => {
   return (
     <div className="my-16 w-full items-center max-w-screen-xl" id="our-pick">
       <Heading left right text="Find Your Look">
-        Our Pick
+        Just Dropped
       </Heading>
       <div className="px-4 my-8 w-full flex-wrap max-w-screen-sm lg:max-w-none lg:flex-no-wrap flex-row">
         {products.map((product) => (

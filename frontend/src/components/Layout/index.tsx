@@ -8,6 +8,7 @@ export const Layout = ({
   append = true,
   className = '',
   children,
+  spacing = undefined,
 }) => (
   <>
     <Head>
@@ -17,7 +18,7 @@ export const Layout = ({
           : title}
       </title>
     </Head>
-    <Header />
+    <Header spacing={spacing} />
     <main tabIndex={0} className={`items-center flex-grow ${className}`}>
       {children}
     </main>

@@ -303,7 +303,7 @@ const Heading = ({ children }) => (
 
 export const Page = () => {
   return (
-    <Layout>
+    <Layout spacing={false}>
       <Home />
     </Layout>
   )

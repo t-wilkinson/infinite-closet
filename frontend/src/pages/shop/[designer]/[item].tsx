@@ -29,7 +29,7 @@ const OpenGraph = (product: StrapiProduct) => {
     product
   const router = useRouter()
   const url = process.env.NEXT_PUBLIC_FRONTEND + router.asPath.split('?')[0]
-  const description = `Rent ${name} by ${designer.name} for only £${shortRentalPrice} only at Infinite Closet`
+  const description = `Rent ${name} by ${designer.name} for only £${shortRentalPrice} at Infinite Closet`
   const quantity = Object.values(sizes as { quantity: number }[]).reduce(
     (acc, { quantity }) => acc + quantity,
     0

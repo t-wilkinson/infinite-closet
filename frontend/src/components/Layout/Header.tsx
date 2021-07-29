@@ -126,7 +126,7 @@ const IconLink = ({ size, name, href, children = null }) => (
   </Link>
 )
 
-export const Header = () => {
+export const Header = ({ spacing = true }) => {
   const user = useSelector((state) => state.user.data)
   const router = useRouter()
 
@@ -137,6 +137,7 @@ export const Header = () => {
       </div>
       <div
         className={`z-30 items-center hidden w-full md:flex select-none relative
+          ${spacing ? 'mb-4' : ''}
           ${router.pathname === '/' ? 'mt-4 xl:mt-0' : 'mt-4'}
         `}
       >
