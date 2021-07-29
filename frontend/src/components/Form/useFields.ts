@@ -48,7 +48,7 @@ export const validate = (
     // prettier-ignore
     switch (type) {
       case 'email': return /^.+@.+\..+$/.test(value)            || `Please enter a valid ${field.toLowerCase()}`
-      case 'required': return Boolean(value)                    || `Please include your ${field.toLowerCase()}`
+      case 'required': return Boolean(value)                    || `Missing ${field.toLowerCase()}`
       case 'decimal': return /^\d*\.?\d{0,2}$/.test(value)      || `${field} must be a number`
       case 'integer': return /^\d*$/.test(value)                || `${field} must be a number`
       case 'number': return /^\d*\.?\d*$/.test(value)           || `${field} must be a number`

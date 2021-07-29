@@ -18,10 +18,6 @@ export const NavBar = () => {
   const [visible, setVisible] = React.useState<string>()
   const [serverRoutes, setServerRoutes] = React.useState([])
 
-  //   React.useEffect(() => {
-  //     Promise.all(routes.map((route) => fetch(`/media/header/${route.img}`)))
-  //   }, [])
-
   React.useEffect(() => {
     axios
       .get('/products/routes')

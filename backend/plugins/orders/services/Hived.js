@@ -50,6 +50,7 @@ const addresses = {
     address: ['22 Horder Rd'],
     town: 'London',
     postcode: 'SW6 5EE',
+    phone: '07539 433208',
     email: 'sarah.korich@infinitecloset.co.uk',
   },
   oxwash: {
@@ -61,6 +62,7 @@ const addresses = {
   },
 }
 
+// TODO: use a helper function which takes an object and removes falsey values
 function toSender(addr) {
   let res = {}
   function set(key, value) {

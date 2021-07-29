@@ -20,6 +20,13 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      maxWidtth: {
+        '2xs': '16rem',
+        '3xs': '12rem',
+        '4xs': '8rem',
+        '5xs': '4rem',
+        '6xs': '2rem',
+      },
       opacity: {
         10: '0.10',
         20: '0.20',
@@ -39,6 +46,7 @@ module.exports = {
         128: '32rem',
         192: '48rem',
         256: '64rem',
+        512: '128rem',
       },
       colors: {
         ...palette,

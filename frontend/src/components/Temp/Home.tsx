@@ -6,16 +6,16 @@ import { useRouter } from 'next/router'
 import { CallToAction } from '@/components'
 import { Product } from '@/Products/ProductItems'
 
-let homeColor = 'pri'
-let homeVariant = 'original'
-let homeAccent = 'none'
+let homeColor
+let homeVariant
+let homeAccent
 
 const Home = ({}) => {
   const [products, setProducts] = React.useState([])
   const router = useRouter()
-  homeColor = router.query.color as string
-  homeVariant = router.query.variant as string
-  homeAccent = router.query.accent as string
+  homeColor = (router.query.color as string) || 'sec-light'
+  homeVariant = (router.query.variant as string) || 'bold'
+  homeAccent = (router.query.accent as string) || 'block'
 
   // TODO: use preRender
   React.useEffect(() => {
@@ -34,23 +34,23 @@ const Home = ({}) => {
       <div className="h-8" />
       <ProductItems products={products} />
       <HowItWorks />
-      <div className="fixed bottom-0 left-0 bg-white border shadow-lg mb-2 ml-2">
-        <Options
-          type="variant"
-          options={['original', 'bold']}
-          router={router}
-        />
-        <Options
-          type="accent"
-          options={['original', 'line', 'block', 'none']}
-          router={router}
-        />
-        <Options
-          type="color"
-          options={['pri', 'pri-light', 'sec', 'sec-light']}
-          router={router}
-        />
-      </div>
+      {/* <div className="fixed bottom-0 left-0 bg-white border shadow-lg mb-2 ml-2"> */}
+      {/*   <Options */}
+      {/*     type="variant" */}
+      {/*     options={['original', 'bold']} */}
+      {/*     router={router} */}
+      {/*   /> */}
+      {/*   <Options */}
+      {/*     type="accent" */}
+      {/*     options={['original', 'line', 'block', 'none']} */}
+      {/*     router={router} */}
+      {/*   /> */}
+      {/*   <Options */}
+      {/*     type="color" */}
+      {/*     options={['pri', 'pri-light', 'sec', 'sec-light']} */}
+      {/*     router={router} */}
+      {/*   /> */}
+      {/* </div> */}
     </div>
   )
 }
@@ -74,9 +74,10 @@ const Options = ({ type, options, router }) => (
   </div>
 )
 
-const linearGradient = `linear-gradient(90deg, #E1CAC0 0%, #DBC4BA 100%)`
+const linearGradient = 'linear-gradient(90deg, #D9C6BC 0%, #D7CDC7 100%)'
 
 const Heading = ({ left = false, right = false, children, text = '' }) => {
+  return <div className="w-full">{children}</div>
   return (
     <div
       className={`${
@@ -90,24 +91,24 @@ const Heading = ({ left = false, right = false, children, text = '' }) => {
       )}
 
       {homeVariant === 'bold' && (
-        <span className="font-subheader text-sm -mb-3">{children}</span>
+        <span className="font-subheader text-normal -mb-3">{children}</span>
       )}
       <h2
         className={`relative ${
           homeVariant === 'bold'
-            ? 'font-bold text-6xl'
+            ? 'font-bold text-4xl'
             : 'font-subheader text-5xl'
         } text-center w-full md:w-auto`}
       >
         {homeAccent === 'block' && (
           <div
             className={`absolute left-0 bottom-0 right-0 ${
-              homeVariant === 'bold' ? 'h-12' : 'h-8'
+              homeVariant === 'bold' ? 'h-6' : 'h-8'
             } bg-${homeColor}`}
             style={{
               transform:
                 homeVariant === 'bold'
-                  ? `translate(32px, -32px)`
+                  ? `translate(14px, -18px)`
                   : `translate(24px, -24px)`,
             }}
           />
@@ -129,29 +130,37 @@ const Heading = ({ left = false, right = false, children, text = '' }) => {
 }
 
 const Introduction = () => (
-  <div className="w-full flex-row">
+  <div
+    className="items-center sm:items-stretch w-full flex-row"
+    style={{
+      background: '#D9C6BC',
+    }}
+  >
     <div
       style={{
-        background: linearGradient,
         width: 'calc(25% + 300px)',
       }}
-      className="p-16 md:p-24 items-end"
+      className="pl-8 py-8 sm:p-16 md:p-24 items-end max-w-3xs sm:max-w-none"
     >
       <div
         style={{
           width: '300px',
         }}
+        className="max-w-3xs sm:max-w-none"
       >
-        <span className="font-subheader -mb-2">
-          CHANGE THE WAY YOU GET DRESSED
-        </span>
-        <span className="font-bold text-5xl mb-8 leading-tight">
+        <span className="font-subheader">CHANGE THE WAY YOU GET DRESSED</span>
+        <span
+          className="font-bold text-4xl md:text-5xl mb-8"
+          style={{
+            lineHeight: '1',
+          }}
+        >
           Create your dream wardrobe without the guilt.
         </span>
         <span className="mb-12">
           Discover and rent independent and sustainable brands
         </span>
-        <CallToAction className="font-subheader">Find Your Look</CallToAction>
+        <CallToAction className="font-bold">Find Your Look</CallToAction>
       </div>
     </div>
 
@@ -162,7 +171,7 @@ const Introduction = () => (
       <div
         className="absolute inset-0"
         style={{
-          background: linearGradient,
+          background: '#D9C6BC',
         }}
       />
       <div className="hidden sm:block">
@@ -227,7 +236,7 @@ const WhyRent = ({}) => (
         <div
           className="absolute inset-0"
           style={{
-            background: linearGradient,
+            background: '#D9C6BC',
           }}
         />
         <Image
@@ -237,15 +246,24 @@ const WhyRent = ({}) => (
           objectFit="cover"
           objectPosition="right top"
         />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(180deg, #D9C6BC 0%, #D9C6BC00 5%)',
+          }}
+        />
       </div>
 
-      <div className="items-center flex-col sm:items-start sm:flex-row flex-wrap w-full pl-12 pr-4 space-y-8 py-10 md:py-12 lg:py-40 lg:justify-center max-w-screen-xl">
+      <div
+        className="items-center flex-col sm:items-start sm:flex-row flex-wrap w-full px-3 sm:pl-12
+        space-y-8 py-10 md:py-12 lg:py-40 lg:justify-center max-w-screen-xl"
+      >
         <Heading left right text="It's Awesome">
           Why Rent?
         </Heading>
         {whyRent.map((item) => (
           <div key={item.label} className="items-center my-4 md:my-4">
-            <div className="w-96 items-start flex-row">
+            <div className="w-full sm:w-96 items-start flex-row">
               <div className="w-24 h-24 relative">
                 <Image
                   alt={item.label}
@@ -254,7 +272,7 @@ const WhyRent = ({}) => (
                   objectFit="contain"
                 />
               </div>
-              <div className="w-full ml-6">
+              <div className="w-full ml-3 sm:ml-6">
                 <span className="text-left font-bold text-lg">
                   {item.label}
                 </span>
@@ -307,6 +325,7 @@ const howItWorksGradient =
 const HowItWorks = () => (
   <div
     className="p-4 pb-24 sm:p-16 lg:p-8 xl:p-16 w-full items-center"
+    id="how-it-works"
     style={{
       background: howItWorksGradient,
     }}

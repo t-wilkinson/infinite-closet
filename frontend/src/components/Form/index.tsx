@@ -178,7 +178,7 @@ export const Submit = ({
 }) => (
   <button
     aria-label="Submit form"
-    className={`p-3 text-white mt-2 rounded-sm border transition duration-200
+    className={`p-3 text-white mt-2 rounded-sm border transition duration-200 font-bold
       ${
         disabled
           ? 'border-pri-light bg-pri-light'
