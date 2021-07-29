@@ -20,7 +20,7 @@ export const Home = () => {
   }, [])
 
   if (process.env.NODE_ENV === 'development') {
-    return <NewHome products={products} />
+    return <NewHome />
   }
 
   return (

@@ -1,13 +1,129 @@
 import React from 'react'
+import axios from 'axios'
+import Image from 'next/image'
+import { useRouter } from 'next/router'
 
 import { CallToAction } from '@/components'
-import Image from 'next/image'
+import { Product } from '@/Products/ProductItems'
 
-const Home = ({ products }) => {
+let homeColor = 'pri'
+let homeVariant = 'original'
+let homeAccent = 'none'
+
+const Home = ({}) => {
+  const [products, setProducts] = React.useState([])
+  const router = useRouter()
+  homeColor = router.query.color as string
+  homeVariant = router.query.variant as string
+  homeAccent = router.query.accent as string
+
+  // TODO: use preRender
+  React.useEffect(() => {
+    axios
+      .get(
+        '/products?slug_in=camilla-dress&slug_in=etude-wrap&slug_in=shelley-jumpsuit&slug_in=monique-plunged-cross-back-maxi-dress'
+      )
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.error(err))
+  }, [])
+
   return (
     <div className="w-full items-center w-full">
       <Introduction />
       <WhyRent />
+      <div className="h-8" />
+      <ProductItems products={products} />
+      <HowItWorks />
+      <div className="fixed bottom-0 left-0 bg-white border shadow-lg mb-2 ml-2">
+        <Options
+          type="variant"
+          options={['original', 'bold']}
+          router={router}
+        />
+        <Options
+          type="accent"
+          options={['original', 'line', 'block', 'none']}
+          router={router}
+        />
+        <Options
+          type="color"
+          options={['pri', 'pri-light', 'sec', 'sec-light']}
+          router={router}
+        />
+      </div>
+    </div>
+  )
+}
+
+const Options = ({ type, options, router }) => (
+  <div className="flex-row">
+    {options.map((option) => (
+      <button
+        key={option}
+        className="p-1 hover:underline"
+        style={{
+          fontWeight: router.query[type] === option ? 800 : 500,
+        }}
+        onClick={() => {
+          router.push({ query: { ...router.query, [type]: option } })
+        }}
+      >
+        {option}
+      </button>
+    ))}
+  </div>
+)
+
+const linearGradient = `linear-gradient(90deg, #E1CAC0 0%, #DBC4BA 100%)`
+
+const Heading = ({ left = false, right = false, children, text = '' }) => {
+  return (
+    <div
+      className={`${
+        homeVariant === 'bold' ? 'flex-col' : 'flex-row'
+      } w-full items-center relative`}
+    >
+      {homeAccent === 'original' && left ? (
+        <div className="hidden md:flex h-px bg-pri rounded-full flex-grow mr-8" />
+      ) : (
+        <div className="flex-grow" />
+      )}
+
+      {homeVariant === 'bold' && (
+        <span className="font-subheader text-sm -mb-3">{children}</span>
+      )}
+      <h2
+        className={`relative ${
+          homeVariant === 'bold'
+            ? 'font-bold text-6xl'
+            : 'font-subheader text-5xl'
+        } text-center w-full md:w-auto`}
+      >
+        {homeAccent === 'block' && (
+          <div
+            className={`absolute left-0 bottom-0 right-0 ${
+              homeVariant === 'bold' ? 'h-12' : 'h-8'
+            } bg-${homeColor}`}
+            style={{
+              transform:
+                homeVariant === 'bold'
+                  ? `translate(32px, -32px)`
+                  : `translate(24px, -24px)`,
+            }}
+          />
+        )}
+        <span className="relative z-10">
+          {homeVariant === 'bold' ? text : children}
+        </span>
+        {homeAccent === 'line' && (
+          <div className={`h-1 -mt-2 bg-${homeColor} w-full`} />
+        )}
+      </h2>
+      {homeAccent === 'original' && right ? (
+        <div className="hidden md:flex h-px bg-pri rounded-full flex-grow ml-8" />
+      ) : (
+        <div className="flex-grow" />
+      )}
     </div>
   )
 }
@@ -16,24 +132,24 @@ const Introduction = () => (
   <div className="w-full flex-row">
     <div
       style={{
-        background: `linear-gradient(90deg, #E1CAC0 0%, #DBC4BA 100%)`,
+        background: linearGradient,
         width: 'calc(25% + 300px)',
       }}
-      className="p-24 items-end"
+      className="p-16 md:p-24 items-end"
     >
       <div
         style={{
           width: '300px',
         }}
       >
-        <span className="font-subheader">Rent items you</span>
-        <span className="font-bold text-5xl mb-4 leading-tight">
-          Love, <br />
-          Guilt Free
+        <span className="font-subheader -mb-2">
+          CHANGE THE WAY YOU GET DRESSED
+        </span>
+        <span className="font-bold text-5xl mb-8 leading-tight">
+          Create your dream wardrobe without the guilt.
         </span>
         <span className="mb-12">
-          Support sustainable fashion without breaking the bank by renting with
-          us.
+          Discover and rent independent and sustainable brands
         </span>
         <CallToAction className="font-subheader">Find Your Look</CallToAction>
       </div>
@@ -43,13 +159,21 @@ const Introduction = () => (
       className="relative w-full flex-grow justify-center"
       style={{ transform: 'scaleX(-1)' }}
     >
-      <Image
-        priority={true}
-        src="/media/home/banner.jpg"
-        alt=""
-        layout="fill"
-        objectFit="cover"
+      <div
+        className="absolute inset-0"
+        style={{
+          background: linearGradient,
+        }}
       />
+      <div className="hidden sm:block">
+        <Image
+          priority={true}
+          src="/media/home/banner.jpg"
+          alt=""
+          layout="fill"
+          objectFit="cover"
+        />
+      </div>
     </div>
   </div>
 )
@@ -97,19 +221,28 @@ const WhyRent = ({}) => (
   <div className="w-full items-center" id="why-rent">
     <div className="flex-row w-full">
       <div
-        className="relative w-full flex-grow justify-center"
-        style={{ transform: 'scaleX(-1)' }}
+        className="relative w-full flex-grow justify-center max-w-screen-md hidden sm:flex"
+        style={{}}
       >
+        <div
+          className="absolute inset-0"
+          style={{
+            background: linearGradient,
+          }}
+        />
         <Image
           src="/media/header/clothing-menu-image.jpg"
           alt=""
           layout="fill"
           objectFit="cover"
+          objectPosition="right top"
         />
       </div>
 
-      <div className="items-start flex-wrap w-full pl-12 space-y-8 pt-8 pb-4">
-        <Heading right>Why Rent?</Heading>
+      <div className="items-center flex-col sm:items-start sm:flex-row flex-wrap w-full pl-12 pr-4 space-y-8 py-10 md:py-12 lg:py-40 lg:justify-center max-w-screen-xl">
+        <Heading left right text="It's Awesome">
+          Why Rent?
+        </Heading>
         {whyRent.map((item) => (
           <div key={item.label} className="items-center my-4 md:my-4">
             <div className="w-96 items-start flex-row">
@@ -137,18 +270,96 @@ const WhyRent = ({}) => (
   </div>
 )
 
-const Heading = ({ left = false, right = false, children }) => (
-  <div className="flex-row w-full max-w-screen-xl items-center">
-    {left && (
-      <div className="hidden md:flex h-px bg-pri rounded-full flex-grow mr-8" />
-    )}
-    <h2 className="font-subheader text-4xl text-center w-full md:w-auto">
-      {children}
-    </h2>
-    {right && (
-      <div className="hidden md:flex h-px bg-pri rounded-full flex-grow ml-8" />
-    )}
+const howItWorks = [
+  {
+    title: 'Discover',
+    img: 'discover',
+    text: `
+        Our platform allows you to rent our closet with a 4- or 8-day rental
+        period. You can filter by color, style, occasion, and more. We know
+        we’ll have a dress that fits any occasion!
+    `,
+  },
+  {
+    title: 'Rent',
+    img: 'rent',
+    text: `
+        You’ve found a dress you love -- amazing! Now check out our calendar for
+        your delivery date options. Remember, we recommend choosing a rental
+        beginning two days before your event. Select your dates and size and
+        check out! It’s no different than your regular online shopping
+        experience.
+      `,
+  },
+  {
+    title: 'Love',
+    img: 'love',
+    text: `
+          Look great, feel great. Not only do you look amazing, but you’ve
+          supported a small business owner, and reduced your carbon footprint by
+          renting! Now that's what we call a win-win-win.
+      `,
+  },
+] as const
+
+const howItWorksGradient =
+  'linear-gradient(58.39deg, #DAC7C0 0%, #E7DDCB 99.37%)'
+const HowItWorks = () => (
+  <div
+    className="p-4 pb-24 sm:p-16 lg:p-8 xl:p-16 w-full items-center"
+    style={{
+      background: howItWorksGradient,
+    }}
+  >
+    <div className="my-8 w-full">
+      <Heading left right text="Fast & Easy">
+        How It Works
+      </Heading>
+    </div>
+    <div className="w-full lg:flex-row items-center lg:items-stretch sm:p-16 space-y-4 sm:space-y-16 lg:space-y-0 lg:space-x-8 xl:space-x-16 max-w-screen-xl">
+      {howItWorks.map((props) => (
+        <HowItWorksCard key={props.title} {...props} />
+      ))}
+    </div>
   </div>
 )
+
+const HowItWorksCard = ({ title, img, text }) => (
+  <div className="bg-white rounded-lg space-y-8 items-center w-full p-4 sm:p-12 md:p-12 lg:p-8 sm:w-96 lg:w-1/3 relative shadow-lg">
+    {/* <span className="absolute top-0 left-0 font-header text-3xl transform ml-8 -translate-y-1/2"> */}
+    {/*   {title} */}
+    {/* </span> */}
+    <div
+      className="p-3 rounded-md"
+      style={{
+        background: howItWorksGradient,
+      }}
+    >
+      <div className="w-24 h-24 relative">
+        <Image
+          src={`/media/home/${img}.svg`}
+          layout="fill"
+          objectFit="contain"
+        />
+      </div>
+    </div>
+    <span>{text}</span>
+  </div>
+)
+
+const ProductItems = ({ products }) => {
+  return (
+    <div className="my-16 w-full items-center max-w-screen-xl" id="our-pick">
+      <Heading left right text="Find Your Look">
+        Our Pick
+      </Heading>
+      <div className="px-4 my-8 w-full flex-wrap max-w-screen-sm lg:max-w-none lg:flex-no-wrap flex-row">
+        {products.map((product) => (
+          <Product key={product.id} product={product} />
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default Home

@@ -18,6 +18,10 @@ export const NavBar = () => {
   const [visible, setVisible] = React.useState<string>()
   const [serverRoutes, setServerRoutes] = React.useState([])
 
+  //   React.useEffect(() => {
+  //     Promise.all(routes.map((route) => fetch(`/media/header/${route.img}`)))
+  //   }, [])
+
   React.useEffect(() => {
     axios
       .get('/products/routes')
@@ -85,12 +89,12 @@ const SectionsRoute = ({ route, visible, setVisible }) => (
 const SectionsContent = ({ route, visible, serverRoutes }) => {
   const selected = route.value === visible && route.value !== 'blogs'
 
-  if (!selected) {
-    return null
-  }
-
   return (
-    <div className="absolute top-0 left-0 w-full transform bg-white mt-6 flex-row p-4 shadow-xl">
+    <div
+      className={`absolute top-0 left-0 w-full transform bg-white mt-6 flex-row p-4 shadow-xl
+      ${selected ? 'visible' : 'invisible'}
+      `}
+    >
       <Image
         loader={myLoader}
         alt={`${route.label} page`}
