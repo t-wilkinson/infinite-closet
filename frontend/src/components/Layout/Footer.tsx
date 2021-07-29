@@ -34,7 +34,8 @@ export const Footer = () => {
                 { href: '/#how-it-works', label: 'How it Works' },
                 { href: '/faqs', label: 'FAQs' },
                 { href: '/contact-us', label: 'Contact Us' },
-                { href: '/size-charts', label: 'Size Charts' },
+                // TODO
+                // { href: '/size-charts', label: 'Size Charts' },
               ]}
             />
             <Section

@@ -99,6 +99,12 @@ const Wrapper = ({ router, children }) => {
   }, [consent.statistics, router.pathname])
 
   React.useEffect(() => {
+    document
+      .getElementById('_app')
+      .scrollTo({ left: 0, top: 0, behavior: 'smooth' })
+  }, [router.pathname])
+
+  React.useEffect(() => {
     if (window.fbq) {
       window.fbq('consent', 'revoke')
     }
