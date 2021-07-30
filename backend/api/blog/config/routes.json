@@ -2,6 +2,11 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/blogs/test",
+      "handler": "blog.test"
+    },
+    {
+      "method": "GET",
       "path": "/blogs",
       "handler": "blog.find"
     },

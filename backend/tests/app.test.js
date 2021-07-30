@@ -1,27 +1,42 @@
-const fs = require("fs");
-const { setupStrapi } = require("./helpers/strapi");
+const fs = require('fs')
+const { setupStrapi } = require('./helpers/strapi')
+
+jest.setTimeout(30000)
+
+const sleep = (milliseconds) => {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds))
+}
 
 /** this code is called once before any test is called */
 beforeAll(async () => {
-  await setupStrapi(); // singleton so it can be called many times
-});
+  await setupStrapi() // singleton so it can be called many times
+})
 
 /** this code is called once before all the tested are finished */
 afterAll(async () => {
-  const dbSettings = strapi.config.get("database.connections.default.settings");
+  await strapi.server.close()
+  await sleep(1000) // clear database connection
 
-  //close server to release the db-file
-  await strapi.destroy();
+  const dbSettings = strapi.config.get('database.connections.default.settings')
 
   //delete test database after all tests
   if (dbSettings && dbSettings.filename) {
-    const tmpDbFile = `${__dirname}/../${dbSettings.filename}`;
+    const tmpDbFile = `${__dirname}/../${dbSettings.filename}`
     if (fs.existsSync(tmpDbFile)) {
-      fs.unlinkSync(tmpDbFile);
+      fs.unlinkSync(tmpDbFile)
     }
   }
-});
+  console.log('about to exit')
+  await new Promise((resolve) => setTimeout(() => resolve(), 500)) // avoid jest open handle error
+})
 
-it("strapi is defined", () => {
-  expect(strapi).toBeDefined();
-});
+describe('Strapi in general', () => {
+  it('strapi is defined', async () => {
+    await expect(strapi).toBeDefined()
+  })
+})
+
+require('./tmp')
+// require("./hello");
+// require("./user");
+// require("./password");
