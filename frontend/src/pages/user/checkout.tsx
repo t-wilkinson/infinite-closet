@@ -12,15 +12,16 @@ const Page = ({ data }) => {
   }
 
   return (
-    <Layout>
+    <Layout spacing={false}>
       <Checkout user={user} data={data} />
     </Layout>
   )
 }
-export default Page
 
 export const getServerSideProps = async ({ params, query }) => {
   return {
     props: {},
   }
 }
+
+export default Page

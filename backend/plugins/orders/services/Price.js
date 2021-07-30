@@ -9,6 +9,8 @@
 
 const SMALLEST_CURRENCY_UNIT = 100
 const INSURANCE_PRICE = 5
+const WAITLIST_DISCOUNT_PRICE = 5
+const NEW_USER_DISCOUNT_PERCENT = 10
 
 const rentalPrice = {
   short: 'shortRentalPrice',
@@ -35,7 +37,31 @@ function totalAmount(props) {
   return amount
 }
 
-function totalPrice({ insurance, cart }) {
+async function userDiscount(user) {
+  const isOnWaitingList = await strapi.query('contact').findOne({
+    context: 'waitlist',
+    contact: user.email,
+  })
+  const waitlistDiscountPrice = isOnWaitingList ? WAITLIST_DISCOUNT_PRICE : 0
+
+  const hasOrderedBefore = await strapi.query('order', 'orders').findOne(
+    {
+      user: user.id,
+      status_in: ['planning', 'shipping', 'cleaning', 'completed'],
+    },
+    []
+  )
+  const newUserDiscountPercent = hasOrderedBefore
+    ? 0
+    : NEW_USER_DISCOUNT_PERCENT
+
+  return {
+    price: waitlistDiscountPrice,
+    percent: newUserDiscountPercent,
+  }
+}
+
+async function totalPrice({ insurance, cart, user }) {
   const insurancePrice =
     Object.entries(insurance).filter(
       ([k, v]) =>
@@ -49,12 +75,18 @@ function totalPrice({ insurance, cart }) {
     }
     return acc
   }, 0)
-  const total = subtotal + insurancePrice + shippingPrice
+
+  const preDiscountTotal = subtotal + insurancePrice + shippingPrice
+  const discount = await userDiscount(user)
+  const discountPrice =
+    preDiscountTotal * (discount.percent / 100) + discount.price
+  const total = preDiscountTotal - discountPrice
 
   return {
     subtotal,
     shipping: shippingPrice,
     insurance: insurancePrice,
+    discount: discountPrice,
     total,
   }
 }

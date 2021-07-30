@@ -17,9 +17,12 @@ module.exports = {
   // if so, must rate limit this endpoint
   async totalPrice(ctx) {
     const body = ctx.request.body
-    const total = strapi.plugins['orders'].services.price.totalPrice({
+    const user = ctx.state.user
+
+    const total = await strapi.plugins['orders'].services.price.totalPrice({
       cart: body.cart.filter((order) => order.valid),
       insurance: body.insurance,
+      user,
     })
     ctx.send(total)
   },
@@ -116,9 +119,10 @@ module.exports = {
       return acc
     }, [])
 
-    const price = strapi.plugins['orders'].services.price.totalPrice({
+    const price = await strapi.plugins['orders'].services.price.totalPrice({
       cart,
       insurance: body.insurance,
+      user,
     })
     const coupon = await strapi.services.coupon.discount({
       code: body.couponCode,

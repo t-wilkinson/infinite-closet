@@ -83,48 +83,13 @@ const reducer = (state, action) => {
   }
 }
 
-export const Checkout = ({ user }) => {
+export const CheckoutWrapper = ({ user }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const fetchCart = () =>
     fetchAPI(`/orders/cart/${user.id}`)
       .then((data) => dispatch({ type: 'fill-cart', payload: data.cart }))
       .catch((err) => console.error(err))
   const analytics = useAnalytics()
-  const fields = useFields({
-    couponCode: {},
-  })
-
-  const checkout = () => {
-    dispatch({ type: 'payment-succeeded' })
-    dispatch({ type: 'status-checkout' })
-    dispatch({ type: 'clear-coupon' })
-    const cleaned = cleanFields(fields)
-    axios
-      .post(
-        '/orders/checkout',
-        {
-          address: state.address,
-          paymentMethod: state.paymentMethod,
-          cart: state.cart,
-          insurance: state.insurance,
-          couponCode: cleaned.couponCode,
-        },
-        { withCredentials: true }
-      )
-      .then(() => {
-        dispatch({ type: 'status-success' })
-        dispatch({ type: 'clear-insurance' })
-        analytics.logEvent('purchase', {
-          user: user.email,
-          type: 'checkout',
-        })
-        fetchCart()
-      })
-      .catch((err) => {
-        console.error(err)
-        dispatch({ type: 'status-error' })
-      })
-  }
 
   React.useEffect(() => {
     analytics.logEvent('view_cart', {
@@ -181,81 +146,127 @@ export const Checkout = ({ user }) => {
   }, [state.cart, state.insurance])
 
   return (
-    <div className="w-full flex-grow items-center bg-gray-light px-4">
-      <div className="w-full justify-center max-w-screen-xl flex-row space-x-4 my-4 h-full">
-        <div className="w-2/5 space-y-4">
-          <SideItem label="Addresses">
-            <Address state={state} dispatch={dispatch} user={user} />
-          </SideItem>
-          <SideItem label="Payment Methods">
-            <Payment state={state} dispatch={dispatch} user={user} />
-          </SideItem>
-          <SideItem label="Summary">
-            <Summary
-              couponCode={fields.couponCode}
-              state={state}
-              dispatch={dispatch}
-            />
-          </SideItem>
-        </div>
-        {state.status === 'success' ? (
-          <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
-            <span className="font-bold text-xl flex flex-col items-center">
-              Thank you for your purchase!
-            </span>
-          </div>
-        ) : state.cart.length === 0 ? (
-          <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
-            <span className="font-bold text-xl flex flex-col items-center">
-              <div>Hmm... Your cart looks empty. </div>
-              <div>
-                <BlueLink
-                  href="/products/clothing"
-                  label="Would you like to browse our collection?"
-                />
-              </div>
-            </span>
-          </div>
-        ) : (
-          <div className="w-full">
-            <Cart
-              cart={state.cart}
-              remove={(id) =>
-                dispatch({ type: 'remove-cart-item', payload: id })
-              }
-              toggleInsurance={(id) =>
-                dispatch({ type: 'toggle-insurance', payload: id })
-              }
-              insurance={state.insurance}
-            />
-            <Submit
-              onSubmit={checkout}
-              className=""
-              disabled={
-                !(state.paymentMethod && state.address) ||
-                ['checking-out'].includes(state.status) ||
-                state.cart.every(isOrderInvalid)
-              }
-            >
-              {!state.address
-                ? 'Please Select an Address'
-                : !state.paymentMethod
-                ? 'Please Select a Payment Method'
-                : state.status === 'checking-out'
-                ? 'Checkout Out...'
-                : state.status === 'error'
-                ? 'Unable to Checkout'
-                : state.status === 'success'
-                ? 'Successfully Checked Out'
-                : state.cart.every(isOrderInvalid)
-                ? 'No Available Items'
-                : state.cart.some(isOrderInvalid)
-                ? 'Checkout Available Items'
-                : 'Checkout'}
-            </Submit>
-          </div>
-        )}
+    <div className="w-full flex-grow items-center bg-gray-light px-4 pt-4">
+      <Checkout
+        fetchCart={fetchCart}
+        analytics={analytics}
+        dispatch={dispatch}
+        state={state}
+        user={user}
+      />
+    </div>
+  )
+}
+
+const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
+  const fields = useFields({
+    couponCode: {},
+  })
+
+  const checkout = () => {
+    dispatch({ type: 'payment-succeeded' })
+    dispatch({ type: 'status-checkout' })
+    dispatch({ type: 'clear-coupon' })
+    const cleaned = cleanFields(fields)
+    axios
+      .post(
+        '/orders/checkout',
+        {
+          address: state.address,
+          paymentMethod: state.paymentMethod,
+          cart: state.cart,
+          insurance: state.insurance,
+          couponCode: cleaned.couponCode,
+        },
+        { withCredentials: true }
+      )
+      .then(() => {
+        dispatch({ type: 'status-success' })
+        dispatch({ type: 'clear-insurance' })
+        analytics.logEvent('purchase', {
+          user: user.email,
+          type: 'checkout',
+        })
+        fetchCart()
+      })
+      .catch((err) => {
+        console.error(err)
+        dispatch({ type: 'status-error' })
+      })
+  }
+
+  return (
+    <div className="w-full justify-center max-w-screen-xl flex-row space-x-4 my-4 h-full">
+      <div className="w-2/5 space-y-4">
+        <SideItem label="Addresses">
+          <Address state={state} dispatch={dispatch} user={user} />
+        </SideItem>
+        <SideItem label="Payment Methods">
+          <Payment state={state} dispatch={dispatch} user={user} />
+        </SideItem>
+        <SideItem label="Summary">
+          <Summary
+            couponCode={fields.couponCode}
+            state={state}
+            dispatch={dispatch}
+          />
+        </SideItem>
       </div>
+      {state.status === 'success' ? (
+        <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
+          <span className="font-bold text-xl flex flex-col items-center">
+            Thank you for your purchase!
+          </span>
+        </div>
+      ) : state.cart.length === 0 ? (
+        <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
+          <span className="font-bold text-xl flex flex-col items-center">
+            <div>Hmm... Your cart looks empty. </div>
+            <div>
+              <BlueLink
+                href="/products/clothing"
+                label="Would you like to browse our collection?"
+              />
+            </div>
+          </span>
+        </div>
+      ) : (
+        <div className="w-full">
+          <Cart
+            cart={state.cart}
+            remove={(id) => dispatch({ type: 'remove-cart-item', payload: id })}
+            toggleInsurance={(id) =>
+              dispatch({ type: 'toggle-insurance', payload: id })
+            }
+            insurance={state.insurance}
+          />
+          <Submit
+            onSubmit={checkout}
+            className=""
+            disabled={
+              !(state.paymentMethod && state.address) ||
+              ['checking-out'].includes(state.status) ||
+              state.cart.every(isOrderInvalid)
+            }
+          >
+            {!state.address
+              ? 'Please Select an Address'
+              : !state.paymentMethod
+              ? 'Please Select a Payment Method'
+              : state.status === 'checking-out'
+              ? 'Checkout Out...'
+              : state.status === 'error'
+              ? 'Unable to Checkout'
+              : state.status === 'success'
+              ? 'Successfully Checked Out'
+              : state.cart.every(isOrderInvalid)
+              ? 'No Available Items'
+              : state.cart.some(isOrderInvalid)
+              ? 'Checkout Available Items'
+              : 'Checkout'}
+          </Submit>
+        </div>
+      )}
     </div>
   )
 }
@@ -345,6 +356,7 @@ const Summary = ({ couponCode, dispatch, state }) => {
       <Price label="Subtotal" price={total.subtotal} />
       <Price label="Insurance" price={total.insurance} />
       <Price label="Shipping" price={total.shipping} />
+      <Price negative label="Discount" price={total.discount} />
       <div className="h-px bg-pri my-1" />
       <Price
         label="Total"
@@ -355,11 +367,13 @@ const Summary = ({ couponCode, dispatch, state }) => {
   )
 }
 
-const Price = ({ label, price, className = '' }) => (
+const Price = ({ negative = false, label, price, className = '' }) => (
   <div className={`flex-row justify-between ${className}`}>
     <span>{label}</span>
-    <span>{fmtPrice(price)}</span>
+    <span>
+      {negative && '-'} {fmtPrice(price)}
+    </span>
   </div>
 )
 
-export default Checkout
+export default CheckoutWrapper
