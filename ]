@@ -82,19 +82,10 @@ const Heading = ({
   text = '',
 }) => {
   return (
-    <div className="w-full items-center">
-      <h2 className="relative font-subheader text-5xl text-center">
-        {block && (
-          <div
-            className="absolute w-full bottom-0 h-10 bg-pri-light"
-            style={{
-              transform: 'translate(0.4em, -0.5em)',
-            }}
-          />
-        )}
-        <span className="relative">{children}</span>
-      </h2>
-    </div>
+    <h2 className="relative w-full font-subheader text-5xl text-center">
+      {children}
+      <div className="absolute left-0 right-0 bottom-0 h-8 bg-pri-light" />
+    </h2>
   )
 
   /*
