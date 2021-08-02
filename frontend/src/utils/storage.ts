@@ -1,6 +1,7 @@
 type WindowStorage = 'localStorage' | 'sessionStorage'
-export const getStorage = (storage: WindowStorage) => (key: string) =>
-  JSON.parse(window[storage].getItem(key))
+export const getStorage = (storage: WindowStorage) => (key: string) => {
+  return JSON.parse(window[storage].getItem(key))
+}
 export const setStorage =
   (storage: WindowStorage) => (key: string, value: any) =>
     window[storage].setItem(key, JSON.stringify(value))

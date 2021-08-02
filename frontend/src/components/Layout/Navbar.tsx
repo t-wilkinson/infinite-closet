@@ -83,7 +83,8 @@ const SectionsRoute = ({ route, visible, setVisible }) => (
 )
 
 const SectionsContent = ({ route, visible, serverRoutes }) => {
-  const selected = route.value === visible && route.value !== 'blogs'
+  const selected =
+    route.value === visible && !['blogs', 'designers'].includes(route.value)
 
   return (
     <div
@@ -91,14 +92,16 @@ const SectionsContent = ({ route, visible, serverRoutes }) => {
       ${selected ? 'visible' : 'invisible'}
       `}
     >
-      <Image
-        loader={myLoader}
-        alt={`${route.label} page`}
-        src={`/media/header/${route.img}`}
-        height={350}
-        width={350}
-        objectFit="contain"
-      />
+      {route.img && (
+        <Image
+          loader={myLoader}
+          alt={`${route.label} page`}
+          src={`/media/header/${route.img}`}
+          height={350}
+          width={350}
+          objectFit="contain"
+        />
+      )}
 
       <div key={route.value}>
         <PageRoutes route={route} serverRoutes={serverRoutes} />

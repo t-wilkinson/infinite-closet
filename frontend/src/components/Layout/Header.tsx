@@ -85,7 +85,7 @@ const Account = ({ user }) => {
   const [count, setCount] = React.useState(0)
   React.useEffect(() => {
     setCount(CartUtils.count())
-  }, [count])
+  }, [])
 
   if (user) {
     return (

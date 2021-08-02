@@ -127,7 +127,7 @@ const RouteColumn = ({ dispatch, focused, section, serverRoutes }) =>
                 section={section}
                 item={v}
               />
-            ),
+            )
         )}
     </React.Fragment>
   ))
@@ -150,7 +150,7 @@ const AsideLink = ({ href, label }) => {
 }
 
 const RouteHeader = ({ setFocused, focused, section, dispatch }) => {
-  if (section.value === 'blogs') {
+  if (['blogs', 'designers'].includes(section.value)) {
     return (
       <Link href={section.href}>
         <a

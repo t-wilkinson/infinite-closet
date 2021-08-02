@@ -102,6 +102,13 @@ const routes = [
     ],
   },
   {
+    label: 'Designers',
+    value: 'designers',
+    href: '/designers',
+    img: null, // '/media/brand/facebook-banner.png',
+    data: [],
+  },
+  {
     label: 'Blogs',
     value: 'blogs',
     href: '/blogs',

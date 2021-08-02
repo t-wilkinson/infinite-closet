@@ -69,11 +69,13 @@ const allowedPages = [
   '/blogs',
   '/blogs/[slug]',
   '/contact-us',
+  '/designers',
   '/designers/[slug]',
   '/faqs',
   '/launch-party',
   '/privacy',
   '/products/[...slug]',
+  '/size-charts',
   '/shop/[designer]/[item]',
   '/terms-and-conditions',
   '/user/checkout',
@@ -96,14 +98,14 @@ const Wrapper = ({ router, children }) => {
     }
   }, [consent.statistics, router.pathname])
 
-  //   React.useEffect(() => {
-  //     document
-  //       .getElementById('_app')
-  //       .scrollTo({ left: 0, top: 0, behavior: 'smooth' })
-  //   }, [router.pathname])
+  React.useEffect(() => {
+    document
+      .getElementById('_app')
+      .scrollTo({ left: 0, top: 0, behavior: 'smooth' })
+  }, [router.pathname])
 
   React.useEffect(() => {
-    if (!CartUtils.get()) {
+    if (storage.get('cart-used') === null) {
       CartUtils.init()
     }
 
@@ -129,27 +131,7 @@ const Wrapper = ({ router, children }) => {
 
     dispatch(layoutActions.loadFirebase(firebase.analytics()))
     signin(dispatch)
-      .then((user) => {
-        const cartAttachedUser = CartUtils.get().map((order) => {
-          if (!order.user) {
-            order.user = user.id
-          }
-          return order
-        })
-        CartUtils.set(cartAttachedUser)
-        return user
-      })
-      .then((user) =>
-        axios.get(`/orders/cart/${user.id}`, { withCredentials: true })
-      )
-      .then((res) => res.data.cart)
-      .then((cart) => {
-        if (!CartUtils.isUsed()) {
-          CartUtils.set(
-            cart.map((order) => ({ ...order, product: order.product.id }))
-          )
-        }
-      })
+      .then((user) => setupUserCart(user))
       .catch(() => {
         const loggedIn = storage.get('logged-in')
 
@@ -197,25 +179,45 @@ const Wrapper = ({ router, children }) => {
   )
 }
 
-const useSaveScrollPos = () => {
-  const scrollState = React.useRef({}).current
-  const router = useRouter()
+const setupUserCart = (user) => {
+  axios
+    .get(`/orders/cart/${user.id}`, { withCredentials: true })
+    .then((res) => res.data.cart)
+    .then((cart) => {
+      if (!CartUtils.isUsed()) {
+        CartUtils.set(
+          cart.map((order) => ({ ...order, product: order.product.id }))
+        )
+      }
+    })
+    .then(() => {
+      // attach any guest cart items to user
+      const guestCart = CartUtils.get().filter((order) => !order.user)
+      const userCart = guestCart.map((order) => ({ ...order, user: user.id }))
 
-  const startLoading = () => {
-    if (scrollState) scrollState[router.pathname] = window.scrollY
-  }
-
-  const completeLoading = () => {
-    if (scrollState[router.pathname])
-      window.scrollTo(0, scrollState[router.pathname])
-  }
-
-  React.useEffect(() => {
-    router.events.on('routeChangeStart', startLoading)
-    router.events.on('routeChangeComplete', completeLoading)
-    return () => {
-      router.events.off('routeChangeStart', startLoading)
-      router.events.off('routeChangeComplete', completeLoading)
-    }
-  }, [])
+      CartUtils.append(userCart)
+    })
 }
+
+// const useSaveScrollPos = () => {
+//   const scrollState = React.useRef({}).current
+//   const router = useRouter()
+
+//   const startLoading = () => {
+//     if (scrollState) scrollState[router.pathname] = window.scrollY
+//   }
+
+//   const completeLoading = () => {
+//     if (scrollState[router.pathname])
+//       window.scrollTo(0, scrollState[router.pathname])
+//   }
+
+//   React.useEffect(() => {
+//     router.events.on('routeChangeStart', startLoading)
+//     router.events.on('routeChangeComplete', completeLoading)
+//     return () => {
+//       router.events.off('routeChangeStart', startLoading)
+//       router.events.off('routeChangeComplete', completeLoading)
+//     }
+//   }, [])
+// }

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 
-import useFields, { isValid, cleanFields } from '@/Form/useFields'
+import useFields, { cleanFields } from '@/Form/useFields'
 import { Input, Submit } from '@/Form'
 import { Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
@@ -13,8 +13,8 @@ export const Footer = () => {
   const router = useRouter()
 
   return (
-    <>
-      {router.asPath === '/' && (
+    <div>
+      {router.pathname === '/' && (
         <div className="items-center w-full px-2 py-12">
           <div className="items-center rounded-sm">
             <strong>Newsletter</strong>
@@ -34,7 +34,6 @@ export const Footer = () => {
                 { href: '/#how-it-works', label: 'How it Works' },
                 { href: '/faqs', label: 'FAQs' },
                 { href: '/contact-us', label: 'Contact Us' },
-                // TODO
                 // { href: '/size-charts', label: 'Size Charts' },
               ]}
             />
@@ -68,10 +67,9 @@ export const Footer = () => {
           <small>© 2021 Infinite Closet. All Rights Reserved.</small>
         </div>
       </div>
-    </>
+    </div>
   )
 }
-export default Footer
 
 const Section = ({ title, links = [], children = null }) => (
   <div className="mx-4 my-4 items-start">
@@ -231,3 +229,5 @@ export const SocialMediaIcon = ({ name }) => (
     </a>
   </Link>
 )
+
+export default Footer

@@ -4,7 +4,7 @@ type Order = any
 type Cart = Order[]
 
 export const get = (): Cart => {
-  return storage.get('cart')
+  return storage.get('cart') || []
 }
 
 export const getByUser = (id: string): Cart => {
@@ -32,12 +32,19 @@ export const toKey = (order: Order) => {
   return `${order.size}_${productID}`
 }
 
-export const count = (): number => get().length
+export const count = (): number => {
+  return get().length
+}
 
 export const push = (order: Order) => {
   let cart = get()
   cart.push(order)
   set(cart)
+}
+
+export const append = (orders: Order[]) => {
+  let cart = get()
+  set(cart.concat(orders))
 }
 
 export const pop = (order: Order) => {
@@ -50,8 +57,8 @@ export const popEach = (orders: Order[]) => {
 }
 
 export const init = () => {
-  storage.set('cart-used', false)
   set([])
+  storage.set('cart-used', false) // this is the correct order
 }
 
 export const isUsed = () => {
