@@ -10,6 +10,7 @@ import * as sizing from '@/utils/sizing'
 import { rentalLengths } from '@/utils/constants'
 import { userActions } from '@/User/slice'
 import { Size } from '@/Products/constants'
+import * as CartUtils from '@/utils/cart'
 
 import { SizeChartPopup, SizeSelector } from './Size'
 import { shopActions } from './slice'
@@ -54,29 +55,36 @@ export const productRentContents = {
         setStatus('error')
       }
 
-      axios
-        .post(
-          '/orders',
-          {
-            size: sizing.unnormalize(size.size),
-            date: state.selectedDate.toJSON(),
-            rentalLength: state.oneTime,
-            product: product.id,
-          },
-          { withCredentials: true }
-        )
-        .then(() => {
-          router.push('/user/checkout')
-          analytics.logEvent('add_to_cart', {
-            user: user.email,
-          })
-        })
-        .then(() => axios.get(`/orders/cart/count`, { withCredentials: true }))
-        .then((res) => dispatch(userActions.countCart(res.data.count)))
-        .catch((err) => {
-          console.error(err)
-          setStatus('error')
-        })
+      const order = {
+        user: user ? user.id : null,
+        status: 'cart',
+        size: sizing.unnormalize(size.size),
+        product: product.id,
+        startDate: state.selectedDate.toJSON(),
+        rentalLength: state.oneTime,
+      }
+
+      CartUtils.push(order)
+      dispatch(userActions.countCart(CartUtils.count()))
+
+      analytics.logEvent('add_to_cart', {
+        user: user ? user.email : 'guest',
+        items: [order],
+      })
+
+      if (user) {
+        axios
+          .put(
+            `/orders/cart/${user.id}`,
+            {
+              cart: CartUtils.getByUser(user.id),
+            },
+            { withCredentials: true }
+          )
+          .catch((err) => console.error(err))
+      }
+
+      router.push('/user/checkout')
     }
 
     //     React.useEffect(() => {
@@ -159,14 +167,11 @@ export const productRentContents = {
           className="my-2 self-center rounded-sm w-full"
           disabled={
             !state.selectedDate ||
-            !user ||
             state.size === undefined ||
             status === 'adding'
           }
         >
-          {!user
-            ? 'Please sign in'
-            : status === 'adding'
+          {status === 'adding'
             ? 'Adding...'
             : status === 'error'
             ? 'Unable to add to cart'

@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
@@ -74,15 +75,22 @@ export const Signin = ({ onSubmit = () => {} }) => {
   )
 }
 
-export const CreateAnAccount = () => (
-  <span>
-    New to Infinite Closet?{' '}
-    <Link href="/account/register">
-      <a>
-        <span className="cursor-pointer text-blue-500">Create an account</span>
-      </a>
-    </Link>
-  </span>
-)
+export const CreateAnAccount = () => {
+  const router = useRouter()
+  const redir = router.query.redir
+
+  return (
+    <span>
+      New to Infinite Closet?{' '}
+      <Link href={`/account/register${redir ? `?redir=${redir}` : ''}`}>
+        <a>
+          <span className="cursor-pointer text-blue-500">
+            Create an account
+          </span>
+        </a>
+      </Link>
+    </span>
+  )
+}
 
 export default Signin

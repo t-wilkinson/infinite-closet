@@ -31,4 +31,6 @@ export const cartItem: StrapiCartItem = {
   available: 1,
 }
 
+export const mockCart: StrapiCartItem[] = [cartItem]
+
 export default order

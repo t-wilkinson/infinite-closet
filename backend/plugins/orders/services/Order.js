@@ -72,17 +72,25 @@ module.exports = {
   inProgress,
   numAvailable,
 
-  // !TODO
-  quantity(order) {
-    if (!order.product || !order.product.sizes) {
-      strapi.log.error('quantity: order.product.sizes does not exist')
-      return -1
+  async quantity(order) {
+    if (!order.product.sizes) {
+      order.product = await strapi.query('product').findOne(
+        {
+          id:
+            typeof order.product === 'number'
+              ? order.product
+              : order.product.id,
+        },
+        ['sizes']
+      )
     }
     const size = order.product.sizes.find((size) =>
-      strapi.plugins['orders'].services.size.contains(order, size.size)
+      strapi.services.size.contains(order, size.size)
     )
     if (size) {
       return size.quantity
+    } else {
+      return 0
     }
   },
 

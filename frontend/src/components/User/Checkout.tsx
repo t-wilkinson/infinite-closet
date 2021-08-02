@@ -11,6 +11,7 @@ import { Coupon } from '@/Form/types'
 import { Submit, CouponCode } from '@/Form'
 import useFields, { cleanFields } from '@/Form/useFields'
 import { BlueLink, Icon } from '@/components'
+import * as CartUtils from '@/utils/cart'
 
 import { PaymentMethods, AddPaymentMethod } from './Payment'
 import { Addresses, AddAddress } from './Address'
@@ -45,7 +46,6 @@ const reducer = (state, action) => {
 
     case 'cart-total': return def('total')
     case 'fill-cart': return def('cart')
-    case 'remove-cart-item': return { ...state, cart: state.cart.filter((order) => order.id !== action.payload), }
 
     case 'status-checkout': return {...state, status: 'checking-out'}
     case 'status-error': return {...state, status: 'error'}
@@ -85,11 +85,15 @@ const reducer = (state, action) => {
 
 export const CheckoutWrapper = ({ user }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
-  const fetchCart = () =>
-    fetchAPI(`/orders/cart/${user.id}`)
-      .then((data) => dispatch({ type: 'fill-cart', payload: data.cart }))
-      .catch((err) => console.error(err))
   const analytics = useAnalytics()
+  const fetchCart = async () => {
+    await axios
+      .post(`/orders/cart/create`, {
+        cart: user ? CartUtils.getByUser(user.id) : CartUtils.get(),
+      })
+      .then((res) => dispatch({ type: 'fill-cart', payload: res.data.cart }))
+      .catch((err) => console.error(err))
+  }
 
   React.useEffect(() => {
     analytics.logEvent('view_cart', {
@@ -180,7 +184,8 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
         },
         { withCredentials: true }
       )
-      .then(() => {
+      .then((res) => {
+        CartUtils.popEach(res.data.checkedOut)
         dispatch({ type: 'status-success' })
         dispatch({ type: 'clear-insurance' })
         analytics.logEvent('purchase', {
@@ -234,7 +239,7 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
         <div className="w-full">
           <Cart
             cart={state.cart}
-            remove={(id) => dispatch({ type: 'remove-cart-item', payload: id })}
+            remove={() => fetchCart()}
             toggleInsurance={(id) =>
               dispatch({ type: 'toggle-insurance', payload: id })
             }
@@ -256,7 +261,7 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
               : state.status === 'checking-out'
               ? 'Checkout Out...'
               : state.status === 'error'
-              ? 'Unable to Checkout'
+              ? 'Oops... We ran into an issue'
               : state.status === 'success'
               ? 'Successfully Checked Out'
               : state.cart.every(isOrderInvalid)

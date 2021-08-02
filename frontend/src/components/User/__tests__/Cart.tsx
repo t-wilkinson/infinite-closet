@@ -5,6 +5,7 @@ import * as t from '@/utils/test'
 import { cartItem } from '../__mocks__/order'
 jest.mock('next/image')
 
+jest.mock('@/utils/storage')
 const mockCartItem = (props: object): CartItem => {
   return {
     ...cartItem,
@@ -23,6 +24,8 @@ const renderCartItem = (props: object = {}) => {
 }
 
 describe('<Cart />', () => {
+  beforeEach(() => {})
+
   it('renders', () => {
     renderCartItem()
   })

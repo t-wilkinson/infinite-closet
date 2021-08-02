@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 
 import { Icon } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
+import * as CartUtils from '@/utils/cart'
 
 import { layoutActions } from './slice'
 import Navbar from './Navbar'
@@ -81,7 +82,10 @@ export const LargeHeaderLogo = ({ router }) => (
 )
 
 const Account = ({ user }) => {
-  const count = useSelector((state) => state.user.cartCount)
+  const [count, setCount] = React.useState(0)
+  React.useEffect(() => {
+    setCount(CartUtils.count())
+  }, [count])
 
   if (user) {
     return (
@@ -100,6 +104,13 @@ const Account = ({ user }) => {
   } else {
     return (
       <div className="flex-row items-center space-x-3">
+        <IconLink href="/user/checkout" size={18} name="shopping-bag">
+          {count > 0 && (
+            <span className="absolute right-0 bottom-0 text-xs bg-sec-light rounded-full px-1">
+              {count}
+            </span>
+          )}
+        </IconLink>
         <Link href="/account/signin">
           <a>
             <span className="">Sign in</span>

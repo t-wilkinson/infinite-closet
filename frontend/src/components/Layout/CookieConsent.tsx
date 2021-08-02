@@ -4,6 +4,7 @@ import React from 'react'
 // import useFields from '@/Form/useFields'
 import { useDispatch, useSelector } from '@/utils/store'
 import { BlueLink } from '@/components'
+import * as storage from '@/utils/storage'
 
 import { layoutActions } from './slice'
 import { CookieConsent as Consent } from './types'
@@ -18,12 +19,12 @@ export const CookieConsent = () => {
 
   React.useEffect(() => {
     if (consent.given !== null) {
-      localStorage.setItem('cookie-consent', JSON.stringify(consent))
+      storage.set('cookie-consent', consent)
     }
   }, [consent])
 
   React.useEffect(() => {
-    const consent = JSON.parse(localStorage.getItem('cookie-consent'))
+    const consent = storage.get('cookie-consent')
     if (consent) {
       dispatch(layoutActions.giveConsent(consent))
     } else {

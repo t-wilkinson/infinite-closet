@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import React from 'react'
 import Link from 'next/link'
-import axios from 'axios'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
@@ -19,10 +18,11 @@ import { rentalLengths } from '@/utils/constants'
 import * as sizing from '@/utils/sizing'
 import { useDispatch } from '@/utils/store'
 import { StrapiOrder } from '@/utils/models'
+import * as CartUtils from '@/utils/cart'
 
 type Cart = {
   toggleInsurance: (id: string) => void
-  remove: (id: string) => void
+  remove: (order: any) => void
   cart: StrapiCartItem[]
   insurance: { [key: string]: boolean }
 }
@@ -33,7 +33,7 @@ export const Cart = ({ toggleInsurance, remove, cart, insurance }: Cart) => {
       {cart.map((item) => {
         return (
           <CartItem
-            key={item.id}
+            key={CartUtils.toKey(item)}
             remove={remove}
             toggleInsurance={toggleInsurance}
             itemInsurance={insurance[item.id]}
@@ -54,7 +54,7 @@ export type StrapiCartItem = {
 
 export type CartItem = StrapiCartItem & {
   toggleInsurance: (id: string) => void
-  remove: (id: string) => void
+  remove: (order: any) => void
 }
 
 export const CartItem = ({
@@ -77,19 +77,13 @@ export const CartItem = ({
   const dispatch = useDispatch()
 
   const removeItem = () => {
-    axios
-      .delete(`/orders/cart/${order.id}`, { withCredentials: true })
-      .then(() => remove(order.id))
-      .then(() => axios.get(`/orders/cart/count`, { withCredentials: true }))
-      .then((res) => dispatch(userActions.countCart(res.data.count)))
-      .then(() =>
-        analytics.logEvent('remove_from_cart', {
-          user: order.user?.email,
-        })
-      )
-      .catch((err) => console.error(err))
+    CartUtils.pop(order)
+    remove(order)
+    dispatch(userActions.countCart(CartUtils.count()))
+    analytics.logEvent('remove_from_cart', {
+      user: order.user?.email || '',
+    })
   }
-
   return (
     <div
       className={`flex-row items-center border p-4 rounded-sm relative bg-white
@@ -109,7 +103,10 @@ export const CartItem = ({
         <Link href={`/shop/${product.designer.slug}/${product.slug}`}>
           <a>
             <Image
-              src={getURL(product.images[0].url)}
+              src={getURL(
+                product.images[0].formats.thumbnail?.url ||
+                  product.images[0].url
+              )}
               alt={product.images[0].alternativeText}
               layout="fill"
               objectFit="contain"

@@ -26,7 +26,6 @@ afterAll(async () => {
       fs.unlinkSync(tmpDbFile)
     }
   }
-  console.log('about to exit')
   await new Promise((resolve) => setTimeout(() => resolve(), 500)) // avoid jest open handle error
 })
 

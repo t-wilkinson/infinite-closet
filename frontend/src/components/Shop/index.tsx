@@ -2,8 +2,10 @@ import React from 'react'
 import Link from 'next/link'
 
 import { Divider } from '@/components'
-import { useSelector } from '@/utils/store'
+import { useDispatch, useSelector } from '@/utils/store'
+import * as sizing from '@/utils/sizing'
 
+import { shopActions } from './slice'
 import ProductImages from './ProductImages'
 import ProductDetails from './ProductDetails'
 import ProductRentHeaders from './ProductRentHeaders'
@@ -22,6 +24,11 @@ export const Shop = ({ data }) => {
 const Product = ({ data }) => {
   const { product, sizeChart } = data
   const state = useSelector((state) => state.shop)
+  const dispatch = useDispatch()
+
+  if (!sizing.get(product.sizes, state.size)) {
+    dispatch(shopActions.changeSize(product.sizes[0].size))
+  }
 
   return (
     <div className="w-full sm:w-1/2 sm:max-w-md">

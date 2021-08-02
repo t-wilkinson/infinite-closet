@@ -1,7 +1,38 @@
 'use strict'
 
+const _ = require('lodash')
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 const dayjs = require('dayjs')
+
+async function createCart(orders) {
+  const numAvailable = await strapi.plugins[
+    'orders'
+  ].services.order.numAvailableCart(orders)
+
+  // add price and available quantity to each order
+  return await Promise.all(
+    orders.map(async (order) => {
+      const key = strapi.plugins['orders'].services.order.toKey(order)
+      const quantity = await strapi.plugins['orders'].services.order.quantity(
+        order
+      )
+      const valid = strapi.plugins['orders'].services.date.valid(
+        order.startDate,
+        numAvailable[key],
+        quantity
+      )
+
+      return {
+        ...order,
+        price: strapi.plugins['orders'].services.price.price(order),
+        available: numAvailable[key],
+        valid,
+        shippingClass:
+          strapi.plugins['orders'].services.date.shippingClass(order),
+      }
+    })
+  )
+}
 
 module.exports = {
   async count(ctx) {
@@ -27,10 +58,20 @@ module.exports = {
     ctx.send(total)
   },
 
-  async getCart(ctx) {
-    const user = ctx.state.user
+  // !TODO
+  async setCart(ctx) {
+    // const body = ctx.request.body
+    // const user = ctx.state.user
+    //     strapi.query('user', 'users-permissions').update({id: user.id}, {
+    //       orders: body.orders
+    //     })
 
-    let cart = await strapi.query('order', 'orders').find(
+    ctx.send()
+  },
+
+  async getUserCart(ctx) {
+    const user = ctx.state.user
+    const orders = await strapi.query('order', 'orders').find(
       {
         user: user.id,
         status: 'cart',
@@ -38,29 +79,31 @@ module.exports = {
       ['product', 'product.sizes', 'product.designer', 'product.images']
     )
 
-    const numAvailable = await strapi.plugins[
-      'orders'
-    ].services.order.numAvailableCart(cart)
-
-    // add price and available quantity to each order
-    cart = cart.map((order) => {
-      const key = strapi.plugins['orders'].services.order.toKey(order)
-      const valid = strapi.plugins['orders'].services.date.valid(
-        order.startDate,
-        numAvailable[key],
-        strapi.plugins['orders'].services.order.quantity(order)
-      )
-
-      return {
-        ...order,
-        price: strapi.plugins['orders'].services.price.price(order),
-        available: numAvailable[key],
-        valid,
-        shippingClass:
-          strapi.plugins['orders'].services.date.shippingClass(order),
-      }
+    const cart = await createCart(orders)
+    ctx.send({
+      cart,
     })
+  },
 
+  async create(ctx) {
+    const body = ctx.request.body
+    const orders = await Promise.all(
+      body.cart.map(async (order) => {
+        if (typeof order.product === 'number') {
+          const product = await strapi.query('product').findOne(
+            {
+              id: order.product,
+            },
+            ['sizes', 'designer', 'images']
+          )
+          return { ...order, product }
+        } else {
+          return order
+        }
+      })
+    )
+
+    const cart = await createCart(orders)
     ctx.send({
       cart,
     })
@@ -84,41 +127,37 @@ module.exports = {
       'orders'
     ].services.order.numAvailableCart(body.cart)
 
-    const updatedCart = body.cart.map((order) => {
-      const key = strapi.plugins['orders'].services.order.toKey(order)
-      if (
-        !strapi.plugins['orders'].services.date.valid(
+    let cart = await Promise.allSettled(
+      body.cart.map(async (order) => {
+        const key = strapi.plugins['orders'].services.order.toKey(order)
+        const quantity = await strapi.plugins['orders'].services.order.quantity(
+          order
+        )
+        const valid = strapi.plugins['orders'].services.date.valid(
           order.startDate,
           numAvailable[key],
-          strapi.plugins['orders'].services.order.quantity(order)
+          quantity
         )
-      ) {
-        return Promise.reject(`${dayjs(order.startDate)} is not valid date`)
-      } else if (numAvailable[key] >= 1) {
-        return strapi.query('order', 'orders').update(
-          { id: order.id },
-          {
+
+        if (valid) {
+          return strapi.query('order', 'orders').create({
+            ..._.omit(order, ['id']),
             address: body.address,
             paymentMethod: body.paymentMethod,
             status: 'planning',
             insurance: body.insurance[order.id] || false,
-          }
-        )
-      } else {
-        return Promise.reject(
-          `Not enough quantity available for order ${order.id}`
-        )
-      }
-    })
+          })
+        } else {
+          return Promise.reject(
+            `${dayjs(order.startDate)} is not is available for this item`
+          )
+        }
+      })
+    )
 
-    const result = await Promise.allSettled(updatedCart)
-    const cart = result.reduce((acc, settled) => {
-      if (settled.status === 'fulfilled') {
-        acc.push(settled.value)
-      }
-      return acc
-    }, [])
-
+    cart = cart
+      .filter((v) => v.status === 'fulfilled')
+      .map((value) => value.value)
     const price = await strapi.plugins['orders'].services.price.totalPrice({
       cart,
       insurance: body.insurance,
@@ -191,7 +230,9 @@ module.exports = {
 
       .catch((err) => strapi.log.error(err))
 
-    ctx.send({ status: 200, result })
+    ctx.send({
+      checkedOut: cart,
+    })
   },
 }
 

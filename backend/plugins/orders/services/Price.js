@@ -38,22 +38,27 @@ function totalAmount(props) {
 }
 
 async function userDiscount(user) {
-  const isOnWaitingList = await strapi.query('contact').findOne({
-    context: 'waitlist',
-    contact: user.email,
-  })
-  const waitlistDiscountPrice = isOnWaitingList ? WAITLIST_DISCOUNT_PRICE : 0
-
   const hasOrderedBefore = await strapi.query('order', 'orders').findOne(
     {
       user: user.id,
       status_in: ['planning', 'shipping', 'cleaning', 'completed'],
+      shippingDate_gt: strapi.plugins['orders'].services.date
+        .day('2021-07-30')
+        .toJSON(),
     },
     []
   )
+
   const newUserDiscountPercent = hasOrderedBefore
     ? 0
     : NEW_USER_DISCOUNT_PERCENT
+
+  const isOnWaitingList = await strapi.query('contact').findOne({
+    context: 'waitlist',
+    contact: user.email,
+  })
+  const waitlistDiscountPrice =
+    !hasOrderedBefore && isOnWaitingList ? WAITLIST_DISCOUNT_PRICE : 0
 
   return {
     price: waitlistDiscountPrice,
@@ -80,7 +85,7 @@ async function totalPrice({ insurance, cart, user }) {
   const discount = await userDiscount(user)
   const discountPrice =
     preDiscountTotal * (discount.percent / 100) + discount.price
-  const total = preDiscountTotal - discountPrice
+  const total = Math.max(0, preDiscountTotal - discountPrice)
 
   return {
     subtotal,

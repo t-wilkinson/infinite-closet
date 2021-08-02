@@ -1,6 +1,5 @@
 'use strict'
 
-const crypto = require('crypto')
 const { generateAPI } = require('../../../api/utils')
 const dayjs = require('dayjs')
 const duration = require('dayjs/plugin/duration')
@@ -43,12 +42,12 @@ module.exports = {
     }
 
     const orderBody = {
+      user: user.id,
       status: 'cart',
+      size: body.size,
       product: body.product,
       startDate: body.date,
       rentalLength: body.rentalLength,
-      user: user.id,
-      size: body.size,
     }
 
     // const matchingOrder = await strapi
@@ -66,7 +65,6 @@ module.exports = {
     order = await strapi.query('order', 'orders').create(orderBody)
 
     ctx.send({
-      status: 200,
       order,
     })
   },

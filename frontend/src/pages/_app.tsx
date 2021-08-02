@@ -20,6 +20,8 @@ import { signin } from '@/User'
 const FourOFour = dynamic(() => import('@/pages/404'))
 import { browser } from '@/utils/helpers'
 import { userActions } from '@/User/slice'
+import * as storage from '@/utils/storage'
+import * as CartUtils from '@/utils/cart'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -79,10 +81,6 @@ const allowedPages = [
   '/user/profile',
 ]
 
-const getStorage = (key: string) => JSON.parse(window.localStorage.getItem(key))
-const setStorage = (key: string, value: any) =>
-  window.localStorage.setItem(key, JSON.stringify(value))
-
 const Wrapper = ({ router, children }) => {
   // useSaveScrollPos()
   const dispatch = useDispatch()
@@ -98,13 +96,19 @@ const Wrapper = ({ router, children }) => {
     }
   }, [consent.statistics, router.pathname])
 
-  React.useEffect(() => {
-    document
-      .getElementById('_app')
-      .scrollTo({ left: 0, top: 0, behavior: 'smooth' })
-  }, [router.pathname])
+  //   React.useEffect(() => {
+  //     document
+  //       .getElementById('_app')
+  //       .scrollTo({ left: 0, top: 0, behavior: 'smooth' })
+  //   }, [router.pathname])
 
   React.useEffect(() => {
+    if (!CartUtils.get()) {
+      CartUtils.init()
+    }
+
+    dispatch(userActions.countCart(CartUtils.count()))
+
     if (window.fbq) {
       window.fbq('consent', 'revoke')
     }
@@ -118,25 +122,44 @@ const Wrapper = ({ router, children }) => {
     const showPopup = () => {
       window.setTimeout(() => {
         dispatch(accountActions.showPopup('email'))
-        setStorage('popup-form', true)
+        storage.session.set('popup-form', true)
       }, 5000)
       document.getElementById('_app').removeEventListener('scroll', showPopup)
     }
 
     dispatch(layoutActions.loadFirebase(firebase.analytics()))
     signin(dispatch)
-      .then(() => axios.get(`/orders/cart/count`, { withCredentials: true }))
-      .then((res) => dispatch(userActions.countCart(res.data.count)))
+      .then((user) => {
+        const cartAttachedUser = CartUtils.get().map((order) => {
+          if (!order.user) {
+            order.user = user.id
+          }
+          return order
+        })
+        CartUtils.set(cartAttachedUser)
+        return user
+      })
+      .then((user) =>
+        axios.get(`/orders/cart/${user.id}`, { withCredentials: true })
+      )
+      .then((res) => res.data.cart)
+      .then((cart) => {
+        if (!CartUtils.isUsed()) {
+          CartUtils.set(
+            cart.map((order) => ({ ...order, product: order.product.id }))
+          )
+        }
+      })
       .catch(() => {
-        const loggedIn = getStorage('logged-in')
+        const loggedIn = storage.get('logged-in')
 
         // TODO: temporary
-        const joinedWaitlist = getStorage('joined-waitlist')
+        const joinedWaitlist = storage.get('joined-waitlist')
         if (joinedWaitlist) {
-          setStorage('popup-form', joinedWaitlist)
+          storage.session.set('popup-form', joinedWaitlist)
         }
 
-        const popupForm = getStorage('popup-form')
+        const popupForm = storage.session.get('popup-form')
         if (!loggedIn && !popupForm) {
           document.getElementById('_app').addEventListener('scroll', showPopup)
         }

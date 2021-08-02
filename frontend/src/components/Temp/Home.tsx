@@ -19,10 +19,14 @@ const Home = ({}) => {
 
   // TODO: use preRender
   React.useEffect(() => {
+    const products = [
+      'elora',
+      'juliette-dress',
+      'june-gown',
+      'shelley-jumpsuit',
+    ]
     axios
-      .get(
-        '/products?slug_in=camilla-dress&slug_in=etude-wrap&slug_in=shelley-jumpsuit&slug_in=monique-plunged-cross-back-maxi-dress'
-      )
+      .get(`/products?slug_in=${products.join('&slug_in=')}`)
       .then((res) => setProducts(res.data))
       .catch((err) => console.error(err))
   }, [])

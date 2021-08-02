@@ -16,7 +16,7 @@ describe('Hello methods', () => {
       .get('/blogs/test')
       .expect(200) // Expect response http code 200
       .then((data) => {
-        console.log(data.text)
+        // data.text
         // expect(data.text).toBe('Hello World!') // expect the response text
       })
     // done()

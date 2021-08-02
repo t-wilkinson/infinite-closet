@@ -123,26 +123,19 @@ function overlap(date1, date2, granularity = 'day') {
   }
 }
 
+// TODO: give reason for failure: not enough items, already order date for this item
 function valid(date, available = undefined, quantity = undefined) {
   date = day(date)
   const today = day()
 
   let arrives = arrival(today)
-  if (isNaN(quantity) && !isNaN(available) && available <= 0) {
+  const qNum = !isNaN(quantity)
+  const aNum = !isNaN(available)
+  if (!qNum && aNum && available <= 0) {
     arrives = arrives.add(10, 'day')
-  } else if (
-    !isNaN(available) &&
-    !isNaN(quantity) &&
-    available <= 0 &&
-    quantity <= 0
-  ) {
+  } else if (aNum && qNum && available <= 0 && quantity <= 0) {
     arrives = arrives.add(10, 'day')
-  } else if (
-    !isNaN(available) &&
-    !isNaN(available) &&
-    available <= 0 &&
-    quantity > 0
-  ) {
+  } else if (aNum && qNum && available <= 0 && quantity > 0) {
     return false
   }
   const enoughShippingTime = date.isSameOrAfter(arrives, 'day')

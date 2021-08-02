@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 
 import { Input, Submit, Warnings, Password, FormHeader } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
@@ -79,10 +80,13 @@ export const Register = ({
 }
 
 export const AlreadyHaveAccount = () => {
+  const router = useRouter()
+  const redir = router.query.redir
+
   return (
     <span>
       Already have an account?{' '}
-      <Link href="/account/signin">
+      <Link href={`/account/signin${redir ? `?redir=${redir}` : ''}`}>
         <a>
           <span className="cursor-pointer text-blue-500">Sign In</span>
         </a>
