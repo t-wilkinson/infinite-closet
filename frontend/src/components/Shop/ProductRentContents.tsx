@@ -109,7 +109,6 @@ export const productRentContents = {
 
         <SelectorItem label="Size" className="my-2 z-10 w-full">
           <SizeChartPopup
-            sizeChart={sizeChart}
             product={product}
             state={chartOpen}
             setState={setChartOpen}
@@ -124,7 +123,7 @@ export const productRentContents = {
               product={product}
               size={state.size}
             />
-            <button onClick={() => setChartOpen((state) => true)}>
+            <button onClick={() => setChartOpen((state) => !state)}>
               <span className="underline">Size Chart</span>
             </button>
           </div>

@@ -5,6 +5,7 @@ import { Icon } from '@/components'
 import { useSelector } from '@/utils/store'
 import useFields from '@/Form/useFields'
 import { Input, Checkbox } from '@/Form'
+import { SizeChartPopup } from '@/Shop/Size'
 
 import Color from './Color'
 import * as sizing from '@/utils/sizing'
@@ -26,7 +27,7 @@ const toTitleCase = (value: string) =>
 export const FilterItems: FilterItems = {
   designers: ({ panel }) => {
     const designers = useSelector((state) =>
-      Object.values(state.layout.data.designers),
+      Object.values(state.layout.data.designers)
     )
     const [matches, setMatches] = React.useState<number[]>([])
     const debounceMatches = React.useCallback(
@@ -34,12 +35,12 @@ export const FilterItems: FilterItems = {
         (search: string, designers: { slug: string; name: string }[]) => {
           fuzzySearch(
             search,
-            designers.map((designer) => designer.slug),
+            designers.map((designer) => designer.slug)
           ).then((matches) => setMatches(matches))
         },
-        300,
+        300
       ),
-      [],
+      []
     )
 
     const form = useFields({
@@ -91,7 +92,7 @@ export const FilterItems: FilterItems = {
 
   colors: ({ panel }) => {
     const colors = useSelector((state) =>
-      Object.values(state.layout.data.colors),
+      Object.values(state.layout.data.colors)
     )
 
     return (
@@ -113,7 +114,7 @@ export const FilterItems: FilterItems = {
 
   occasions: ({ panel }) => {
     const occasions = useSelector((state) =>
-      Object.values(state.layout.data.occasions),
+      Object.values(state.layout.data.occasions)
     )
 
     return (
@@ -133,11 +134,23 @@ export const FilterItems: FilterItems = {
     const sizes = useSelector((state) =>
       Object.values(state.layout.data.sizes)
         .sort(sizing.sort)
-        .map((size) => ({ name: size, slug: size })),
+        .map((size) => ({ name: size, slug: size }))
     )
+    const [state, setState] = React.useState(false)
 
     return (
       <>
+        <div className="flex-row">
+          <a
+            onClick={() => setState(!state)}
+            className="underline cursor-pointer mb-4"
+          >
+            Size chart
+          </a>
+          <div className="relative ml-4">
+            <SizeChartPopup state={state} setState={setState} />
+          </div>
+        </div>
         <FilterCheckboxes panel={panel} data={sizes} sort={false} />
       </>
     )
@@ -145,7 +158,7 @@ export const FilterItems: FilterItems = {
 
   weather: ({ panel }) => {
     const weather = useSelector((state) =>
-      Object.values(state.layout.data.weather),
+      Object.values(state.layout.data.weather)
     )
 
     return (
@@ -157,7 +170,7 @@ export const FilterItems: FilterItems = {
 
   styles: ({ panel }) => {
     const styles = useSelector((state) =>
-      Object.values(state.layout.data.styles),
+      Object.values(state.layout.data.styles)
     )
 
     return (
@@ -200,7 +213,7 @@ async function fuzzySearch(search: string, values: string[]) {
 const FilterCheckboxes = ({ panel, data, sort = true }) => {
   data = sort
     ? data?.sort((v1, v2) =>
-        v1.slug === v2.slug ? 0 : v1.slug > v2.slug ? 1 : -1,
+        v1.slug === v2.slug ? 0 : v1.slug > v2.slug ? 1 : -1
       )
     : data
 

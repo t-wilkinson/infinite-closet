@@ -208,7 +208,7 @@ const ColumnHeader = ({ href, children }) => (
       <a>
         <span
           className={`p-1 font-bold
-          ${href ? 'hover:underline' : 'cursor-default text-gray-700'}
+          ${href ? 'hover:underline' : 'cursor-default text-gray-500'}
           `}
         >
           {children}
@@ -227,7 +227,7 @@ const ColumnItem = ({ href, children }) => (
         </a>
       </Link>
     ) : (
-      <span className="p-1 text-sm cursor-default text-gray-700">
+      <span className="p-1 text-sm cursor-default text-gray-500">
         {children}
       </span>
     )}

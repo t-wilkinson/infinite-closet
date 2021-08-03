@@ -7,8 +7,8 @@ import Layout from '@/Layout'
 
 const Page = () => {
   return (
-    <Layout title="Launch Party">
-      <div className="w-full bg-pri-light items-center flex-grow">
+    <Layout title="Launch Party" className="bg-pri-light">
+      <div className="w-full items-center flex-grow">
         <div className="w-full max-w-screen-lg items-center mb-8">
           <h1 className="font-bold text-5xl mt-8">Join our Launch Party</h1>
           <div className="text-lg mb-12 space-y-2 max-w-screen-md px-4 md:px-0">
@@ -59,19 +59,30 @@ const SideBar = () => (
     </Details>
 
     <Details>
-      <span>
-        <span className="font-bold">Sarah Korich</span>, Founder at Infinite
-        Closet
-      </span>
-      <span>
-        <span className="font-bold">Sol Escobar</span>, Founder & Director at
-        Give Your Best
-      </span>
-      <span>
-        <span className="font-bold">Kemi Ogulana</span>, volunteer and refugee
-      </span>
+      <DetailItem label="Sarah Korich" text="Founder at Infinite Closet" />
+      <DetailItem
+        label="Sol Escobar"
+        text="Founder & Director at Give Your Best"
+      />
+      <DetailItem label="Kemi Ogulana" text="volunteer and refugee" />
+    </Details>
+
+    <Details>
+      <span className="font-bold text-lg mb-1">Order soon</span>
+      <DetailItem
+        label="Early Bird Tickets (ends 18/08)"
+        text="£25, includes a glass of champagne upon arrival"
+      />
+      <DetailItem label="Regular Tickets (ends 11/09)" text="£30" />
+      <DetailItem label="Final Release (ends 15/09 or sold out)" text="£35" />
     </Details>
   </>
+)
+
+const DetailItem = ({ label, text }) => (
+  <span>
+    <span className="font-bold">{label}</span>, {text}
+  </span>
 )
 
 const PartyInfo = () => (

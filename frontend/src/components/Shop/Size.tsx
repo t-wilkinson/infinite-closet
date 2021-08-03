@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 
 import { StrapiProduct, StrapiSizeChart, StrapiSize } from '@/utils/models'
 import { Icon } from '@/components'
@@ -135,23 +136,37 @@ export const SizeMeasurements = ({ chart, measurements, product }) => (
 export const SizeChartPopup = ({
   state = false,
   setState,
-  sizeChart,
   product = undefined,
-}) =>
-  !(sizeChart && state) ? null : (
-    <div
-      className="bottom-0 absolute bg-white border-gray border p-4 z-20 pt-8 space-y-4 overflow-y-auto"
-      style={{ maxHeight: 600 }}
-    >
-      <button
-        onClick={() => setState(false)}
-        className="absolute top-0 right-0"
+}) => {
+  const [sizeChart, setSizeChart] = React.useState()
+
+  React.useEffect(() => {
+    axios
+      .get('/products/size-chart')
+      .then((res) => res.data)
+      .then(setSizeChart)
+      .catch((err) => console.error(err))
+  }, [])
+
+  if (!sizeChart || !state) {
+    return null
+  } else {
+    return (
+      <div
+        className="bottom-0 absolute bg-white border-gray border p-4 z-30 pt-8 space-y-4 overflow-y-auto w-96"
+        style={{ maxHeight: 600 }}
       >
-        <div className="p-4">
-          <Icon name="close" size={16} />
-        </div>
-      </button>
-      <SizeChart {...sizeChart} />
-      {product && <SizeMeasurements {...sizeChart} product={product} />}
-    </div>
-  )
+        <button
+          onClick={() => setState(false)}
+          className="absolute top-0 right-0"
+        >
+          <div className="p-4">
+            <Icon name="close" size={16} />
+          </div>
+        </button>
+        <SizeChart {...sizeChart} />
+        {product && <SizeMeasurements {...sizeChart} product={product} />}
+      </div>
+    )
+  }
+}

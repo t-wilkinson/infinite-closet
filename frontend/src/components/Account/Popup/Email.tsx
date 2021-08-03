@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 
 import { FormHeader, Input, Submit, OR } from '@/Form'
 import { useDispatch } from '@/utils/store'
@@ -10,6 +11,7 @@ export const Email = () => {
   const fields = useFields({
     email: {},
   })
+  const router = useRouter()
 
   return (
     <>
@@ -19,6 +21,17 @@ export const Email = () => {
         their carbon footprint and making it affordable for the average
         consumer.
       </span>
+      <button
+        className="bg-sec hover:bg-pri p-3 text-white font-bold mb-2 mt-4 transition-all duration-200"
+        type="button"
+        onClick={() => {
+          dispatch(accountActions.hidePopup())
+          router.push('/launch-party')
+        }}
+      >
+        Join the Launch Party
+      </button>
+      <OR />
       <Input {...fields.email} />
       <Submit
         onSubmit={(e) => {

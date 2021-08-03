@@ -207,10 +207,11 @@ const Introduction = () => (
       <div className="hidden sm:block">
         <Image
           priority={true}
-          src="/media/home/banner.jpg"
+          src="/media/wine-toast.jpg"
           alt=""
           layout="fill"
           objectFit="cover"
+          objectPosition="top center"
         />
       </div>
     </div>

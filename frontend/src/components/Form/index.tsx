@@ -175,14 +175,17 @@ export const Submit = ({
   disabled = false,
   className = '',
   onSubmit = (..._: any) => {},
+  type = 'primary',
 }) => (
   <button
     aria-label="Submit form"
-    className={`p-3 text-white mt-2 rounded-sm border transition duration-200 font-bold
+    className={`p-3 mt-2 rounded-sm border transition duration-200 font-bold
       ${
         disabled
-          ? 'border-pri-light bg-pri-light'
-          : 'border-pri bg-pri hover:border-sec hover:bg-sec'
+          ? 'border-pri-light bg-pri-light text-white'
+          : type === 'primary'
+          ? 'border-pri bg-pri hover:border-sec hover:bg-sec text-white'
+          : 'text-black'
       }
       ${className}
     `}

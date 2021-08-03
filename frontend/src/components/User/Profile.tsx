@@ -22,15 +22,6 @@ export const Profile = () => {
   const user = useSelector((state) => state.user.data)
   const [status, setStatus] = React.useState(null)
   const dispatch = useDispatch()
-  const [sizeChart, setSizeChart] = React.useState()
-
-  React.useEffect(() => {
-    axios
-      .get('/products/size-chart')
-      .then((res) => res.data)
-      .then(setSizeChart)
-      .catch((err) => console.error(err))
-  }, [])
 
   React.useEffect(() => {
     signin(dispatch).catch((err) => {
@@ -53,11 +44,7 @@ export const Profile = () => {
       ) : null}
       <span className="font-subheader text-2xl">Profile</span>
       <AccountDetails user={user} setStatus={setStatus} />
-      <FitsAndPreferences
-        user={user}
-        setStatus={setStatus}
-        sizeChart={sizeChart}
-      />
+      <FitsAndPreferences user={user} setStatus={setStatus} />
       {/* <Addresses user={user} setStatus={setStatus} /> */}
       {/* <ResetPassword /> */}
     </div>
@@ -131,7 +118,7 @@ const heights = [4, 5, 6]
   .flat()
   .slice(5, -6)
 
-const FitsAndPreferences = ({ sizeChart, user, setStatus }) => {
+const FitsAndPreferences = ({ user, setStatus }) => {
   const analytics = useAnalytics()
   const [chartOpen, setChartOpen] = React.useState(false)
   const fields = useFields({
@@ -162,11 +149,7 @@ const FitsAndPreferences = ({ sizeChart, user, setStatus }) => {
         <button onClick={() => setChartOpen((state) => true)}>
           <span className="underline">Size Chart</span>
         </button>
-        <SizeChartPopup
-          state={chartOpen}
-          setState={setChartOpen}
-          sizeChart={sizeChart}
-        />
+        <SizeChartPopup state={chartOpen} setState={setChartOpen} />
       </div>
 
       <SubmitFields
