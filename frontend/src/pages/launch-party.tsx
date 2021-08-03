@@ -48,7 +48,7 @@ const SideBar = () => (
       <div className="flex-row">
         <Icon name="clock" size={20} className="text-gray mr-6 mt-2" />
         <div className="">
-          <span>Saturday, August 7, 2021</span>
+          <span>Saturday, September 18, 2021</span>
           <span>8pm to 12am (BST)</span>
         </div>
       </div>
@@ -83,8 +83,8 @@ const PartyInfo = () => (
       in the fashion industry.
     </span>
     <span>
-      Join us on 7 August to learn more about Give Your Best and browse clothes
-      from Infinite Closet’s latest designers.
+      Join us on 18 September to learn more about Give Your Best and browse
+      clothes from Infinite Closet’s latest designers.
     </span>
   </>
 )

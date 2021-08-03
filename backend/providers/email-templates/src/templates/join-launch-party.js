@@ -48,7 +48,7 @@ const Details = () => (
         <Grid.Row>
           <Icon name="clock" size={20} className="text-gray mr-6 mt-2" />
           <div className="">
-            <span>Saturday, August 7, 2021</span>
+            <span>Saturday, September 18, 2021</span>
             <span>8pm to 12am (BST)</span>
           </div>
         </Grid.Row>
