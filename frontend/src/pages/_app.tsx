@@ -90,6 +90,7 @@ const Wrapper = ({ router, children }) => {
   const popup = useSelector((state) => state.account.popup)
   const analytics = useAnalytics()
   const consent = useSelector(layoutSelectors.consent)
+  const user = useSelector((state) => state.user.data)
 
   React.useEffect(() => {
     analytics.setCurrentScreen(router.asPath)
@@ -105,11 +106,26 @@ const Wrapper = ({ router, children }) => {
   }, [router.pathname])
 
   React.useEffect(() => {
+    dispatch(userActions.countCart(CartUtils.count(user?.id)))
+  }, [user])
+
+  React.useEffect(() => {
+    const cart = CartUtils.get()
+    switch (Object.prototype.toString.call(cart)) {
+      case '[object Array]':
+        CartUtils.init()
+        CartUtils.insertAll(cart)
+        break
+      case '[object Object]':
+        break
+      default:
+        CartUtils.init()
+        break
+    }
+
     if (storage.get('cart-used') === null) {
       CartUtils.init()
     }
-
-    dispatch(userActions.countCart(CartUtils.count()))
 
     if (window.fbq) {
       window.fbq('consent', 'revoke')
@@ -185,18 +201,17 @@ const setupUserCart = (user) => {
     .then((res) => res.data.cart)
     .then((cart) => {
       if (!CartUtils.isUsed()) {
-        CartUtils.set(
+        CartUtils.insertAll(
           cart.map((order) => ({ ...order, product: order.product.id }))
         )
       }
     })
     .then(() => {
-      // TODO: create modify
       // attach any guest cart items to user
-      const guestCart = CartUtils.get().filter((order) => !order.user)
-      const userCart = guestCart.map((order) => ({ ...order, user: user.id }))
-      CartUtils.append(userCart)
-      CartUtils.popEach(guestCart)
+      const guestCart = CartUtils.getList().filter((order) => !order.user)
+      guestCart.forEach((order) => {
+        CartUtils.insert({ ...order, user: user.id })
+      })
     })
 }
 

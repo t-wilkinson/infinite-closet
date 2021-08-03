@@ -90,7 +90,7 @@ export const CheckoutWrapper = ({ user }) => {
   const fetchCart = async () => {
     await axios
       .post(`/orders/cart/create`, {
-        cart: user ? CartUtils.getByUser(user.id) : CartUtils.get(),
+        cart: CartUtils.getByUser(user?.id),
       })
       .then((res) => dispatch({ type: 'fill-cart', payload: res.data.cart }))
       .catch((err) => console.error(err))
@@ -191,7 +191,7 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
         { withCredentials: true }
       )
       .then((res) => {
-        CartUtils.popEach(res.data.checkedOut)
+        CartUtils.removeAll(res.data.checkedOut)
         dispatch({ type: 'status-success' })
         dispatch({ type: 'clear-insurance' })
         analytics.logEvent('purchase', {

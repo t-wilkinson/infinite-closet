@@ -84,8 +84,8 @@ export const LargeHeaderLogo = ({ router }) => (
 const Account = ({ user }) => {
   const [count, setCount] = React.useState(0)
   React.useEffect(() => {
-    setCount(CartUtils.count())
-  }, [])
+    setCount(CartUtils.count(user?.id))
+  }, [user])
 
   if (user) {
     return (

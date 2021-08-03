@@ -16,7 +16,7 @@ import { Checkbox } from '@/Form/'
 import { Icon, Hover } from '@/components'
 import { rentalLengths } from '@/utils/constants'
 import * as sizing from '@/utils/sizing'
-import { useDispatch } from '@/utils/store'
+import { useSelector, useDispatch } from '@/utils/store'
 import { StrapiOrder } from '@/utils/models'
 import * as CartUtils from '@/utils/cart'
 
@@ -75,11 +75,12 @@ export const CartItem = ({
   const Bold = (props: object) => <span className="font-bold" {...props} />
   const analytics = useAnalytics()
   const dispatch = useDispatch()
+  const user = useSelector((state) => state.user.data)
 
   const removeItem = () => {
-    CartUtils.pop(order)
+    CartUtils.remove(order)
     remove(order)
-    dispatch(userActions.countCart(CartUtils.count()))
+    dispatch(userActions.countCart(CartUtils.count(user?.id)))
     analytics.logEvent('remove_from_cart', {
       user: order.user?.email || '',
     })

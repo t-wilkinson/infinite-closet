@@ -1,14 +1,20 @@
 import * as storage from '@/utils/storage'
 
 type Order = any
-type Cart = Order[]
+type Cart = { [key: string]: Order }
 
 export const get = (): Cart => {
-  return storage.get('cart') || []
+  return storage.get('cart') || {}
 }
 
-export const getByUser = (id: string): Cart => {
-  return get().filter((order) => order.user === id)
+export const getList = (): Cart => Object.values(get())
+
+export const getByUser = (id: string = undefined): Cart => {
+  if (!id) {
+    return getList().filter((order) => !order.user)
+  } else {
+    return getList().filter((order) => order.user === id)
+  }
 }
 
 export const set = (cart: Cart) => {
@@ -32,32 +38,34 @@ export const toKey = (order: Order) => {
   return `${order.size}_${productID}`
 }
 
-export const count = (): number => {
-  return get().length
+export const count = (id: string): number => {
+  return getByUser(id).length
 }
 
-export const push = (order: Order) => {
+// this is essentially an upsert
+export const insert = (order: Order) => {
   let cart = get()
-  cart.push(order)
+  cart[toKey(order)] = order
   set(cart)
 }
 
-export const append = (orders: Order[]) => {
-  let cart = get()
-  set(cart.concat(orders))
+export const insertAll = (orders: Order[]) => {
+  orders.forEach((order) => {
+    insert(order)
+  })
 }
 
-export const pop = (order: Order) => {
+export const remove = (order: Order) => {
   let cart = get()
-  set(cart.filter((v) => toKey(v) !== toKey(order)))
+  delete cart[toKey(order)]
 }
 
-export const popEach = (orders: Order[]) => {
-  orders.forEach((order) => pop(order))
+export const removeAll = (orders: Order[]) => {
+  orders.forEach((order) => remove(order))
 }
 
 export const init = () => {
-  set([])
+  set({})
   storage.set('cart-used', false) // this is the correct order
 }
 

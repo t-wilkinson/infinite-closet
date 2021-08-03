@@ -64,8 +64,8 @@ export const productRentContents = {
         rentalLength: state.oneTime,
       }
 
-      CartUtils.push(order)
-      dispatch(userActions.countCart(CartUtils.count()))
+      CartUtils.insert(order)
+      dispatch(userActions.countCart(CartUtils.count(user?.id)))
 
       analytics.logEvent('add_to_cart', {
         user: user ? user.email : 'guest',
