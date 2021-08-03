@@ -84,7 +84,11 @@ export const productRentContents = {
           .catch((err) => console.error(err))
       }
 
-      router.push('/user/checkout')
+      if (user) {
+        router.push('/user/checkout')
+      } else {
+        router.push('/account/signin?redir=/user/checkout')
+      }
     }
 
     //     React.useEffect(() => {

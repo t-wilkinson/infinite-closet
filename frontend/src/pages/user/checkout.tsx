@@ -13,11 +13,6 @@ const Page = () => {
     return null
   }
 
-  if (user === null) {
-    router.push('/account/signin?redir=/user/checkout')
-    return null
-  }
-
   return (
     <Layout spacing={false}>
       <Checkout user={user} />

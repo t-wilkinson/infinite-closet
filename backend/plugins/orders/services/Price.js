@@ -66,13 +66,21 @@ async function userDiscount(user) {
   }
 }
 
+async function getDiscountPrice(price, user) {
+  if (user) {
+    const discount = await userDiscount(user)
+    return price * (discount.percent / 100) + discount.price
+  } else {
+    return 0
+  }
+}
+
 async function totalPrice({ insurance, cart, user }) {
   const insurancePrice =
     Object.entries(insurance).filter(
       ([k, v]) =>
         v && (cart.find((item) => item.id == k) || { valid: true }).valid // add insurance only if cart item is valid
     ).length * INSURANCE_PRICE
-  const subtotal = cartPrice(cart)
 
   const shippingPrice = cart.reduce((acc, order) => {
     if (order.shippingClass) {
@@ -81,10 +89,9 @@ async function totalPrice({ insurance, cart, user }) {
     return acc
   }, 0)
 
+  const subtotal = cartPrice(cart)
   const preDiscountTotal = subtotal + insurancePrice + shippingPrice
-  const discount = await userDiscount(user)
-  const discountPrice =
-    preDiscountTotal * (discount.percent / 100) + discount.price
+  const discountPrice = await getDiscountPrice(preDiscountTotal, user)
   const total = Math.max(0, preDiscountTotal - discountPrice)
 
   return {

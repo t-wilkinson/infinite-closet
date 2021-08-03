@@ -191,11 +191,12 @@ const setupUserCart = (user) => {
       }
     })
     .then(() => {
+      // TODO: create modify
       // attach any guest cart items to user
       const guestCart = CartUtils.get().filter((order) => !order.user)
       const userCart = guestCart.map((order) => ({ ...order, user: user.id }))
-
       CartUtils.append(userCart)
+      CartUtils.popEach(guestCart)
     })
 }
 

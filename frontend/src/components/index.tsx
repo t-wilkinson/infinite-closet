@@ -39,25 +39,6 @@ export const Divider = ({
   border = 'border-gray-light',
 }) => visible && <div className={`${border} border-b-2 w-full ${className}`} />
 
-// export const Button = ({
-//   onClick = () => {},
-//   children,
-//   className = '',
-//   disabled = false,
-//   label = '',
-//   ...props
-// }) => (
-//   <button
-//     className="items-center"
-//     onClick={onClick}
-//     disabled={disabled}
-//     aria-label={label}
-//     {...props}
-//   >
-//     {children}
-//   </button>
-// )
-
 interface Icon {
   name: keyof typeof icons
   className?: string

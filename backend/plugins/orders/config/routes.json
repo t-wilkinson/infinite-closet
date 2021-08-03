@@ -35,10 +35,18 @@
     },
     {
       "method": "POST",
+      "path": "/cart/price/:id",
+      "handler": "Cart.totalUserPrice",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "POST",
       "path": "/cart/price",
       "handler": "Cart.totalPrice",
       "config": {
-        "policies": ["plugins::users-permissions.permissions"]
+        "policies": []
       }
     },
     {

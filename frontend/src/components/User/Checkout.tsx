@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import { useRouter } from 'next/router'
 dayjs.extend(utc)
 
 import useAnalytics from '@/utils/useAnalytics'
@@ -97,11 +98,15 @@ export const CheckoutWrapper = ({ user }) => {
 
   React.useEffect(() => {
     analytics.logEvent('view_cart', {
-      user: user.email,
+      user: user ? user.email : 'guest',
     })
   }, [])
 
   React.useEffect(() => {
+    if (!user) {
+      fetchCart()
+      return
+    }
     dispatch({
       type: 'set-addresses',
       payload: user.addresses,
@@ -138,7 +143,7 @@ export const CheckoutWrapper = ({ user }) => {
   React.useEffect(() => {
     axios
       .post(
-        '/orders/cart/price',
+        user ? `/orders/cart/price/${user.id}` : '/orders/cart/price',
         {
           insurance: state.insurance,
           cart: state.cart,
@@ -163,6 +168,7 @@ export const CheckoutWrapper = ({ user }) => {
 }
 
 const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
+  const router = useRouter()
   const fields = useFields({
     couponCode: {},
   })
@@ -189,7 +195,7 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
         dispatch({ type: 'status-success' })
         dispatch({ type: 'clear-insurance' })
         analytics.logEvent('purchase', {
-          user: user.email,
+          user: user ? user.email : 'guest',
           type: 'checkout',
         })
         fetchCart()
@@ -203,13 +209,13 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
   return (
     <div className="w-full justify-center max-w-screen-xl flex-row space-x-4 my-4 h-full">
       <div className="w-2/5 space-y-4">
-        <SideItem label="Addresses">
+        <SideItem label="Addresses" user={user} protect>
           <Address state={state} dispatch={dispatch} user={user} />
         </SideItem>
-        <SideItem label="Payment Methods">
+        <SideItem label="Payment Methods" user={user} protect>
           <Payment state={state} dispatch={dispatch} user={user} />
         </SideItem>
-        <SideItem label="Summary">
+        <SideItem label="Summary" user={user}>
           <Summary
             couponCode={fields.couponCode}
             state={state}
@@ -237,6 +243,16 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
         </div>
       ) : (
         <div className="w-full">
+          {!user && (
+            <button
+              className="bg-sec hover:bg-pri transition-all duration-200 p-3 font-bold text-white mb-2"
+              onClick={() => {
+                router.push('/account/signin')
+              }}
+            >
+              Please Sign In to Checkout
+            </button>
+          )}
           <Cart
             cart={state.cart}
             remove={() => fetchCart()}
@@ -254,7 +270,9 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
               state.cart.every(isOrderInvalid)
             }
           >
-            {!state.address
+            {!user
+              ? 'Please Sign In to Checkout'
+              : !state.address
               ? 'Please Select an Address'
               : !state.paymentMethod
               ? 'Please Select a Payment Method'
@@ -278,15 +296,33 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
 
 const isOrderInvalid = (order) => !order.valid
 
-const SideItem = ({ label, children }) => (
-  <div className="space-y-2 bg-white p-3 rounded-sm ">
-    <span className="font-subheader text-xl lg:text-2xl my-2">
-      {label}
-      <div className="w-full h-px bg-pri mt-2 -mb-2" />
-    </span>
-    {children}
-  </div>
-)
+const SideItem = ({ label, children, user, protect = false }) =>
+  protect && !user ? null : (
+    <div className="space-y-2 bg-white p-3 rounded-sm relative">
+      <span className="font-subheader text-xl lg:text-2xl my-2">
+        {label}
+        <div className="w-full h-px bg-pri mt-2 -mb-2" />
+      </span>
+      {children}
+      {/* {protect && user ? ( */}
+      {/*   children */}
+      {/* ) : protect ? ( */}
+      {/*   <PleaseSignIn label={label} /> */}
+      {/* ) : ( */}
+      {/*   children */}
+      {/* )} */}
+    </div>
+  )
+
+// const PleaseSignIn = ({ label }) => (
+//   <div className="relative w-full h-32">
+//     <div className="absolute inset-0 bg-white border-gray justify-end">
+//       {/* <button className="bg-sec text-white font-bold p-3 hover:bg-pri transition-all duration-200"> */}
+//       {/*   Please Sign In */}
+//       {/* </button> */}
+//     </div>
+//   </div>
+// )
 
 const Address = ({ state, user, dispatch }) => (
   <>

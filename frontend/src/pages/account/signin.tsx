@@ -9,7 +9,9 @@ import { useSelector } from '@/utils/store'
 export const Page = () => {
   const user = useSelector((state) => state.user.data)
   const router = useRouter()
-  const redir = router.query.redir
+  const redir = Array.isArray(router.query.redir)
+    ? router.query.redir[0]
+    : router.query.redir
 
   if (user) {
     router.push('/')
@@ -20,7 +22,7 @@ export const Page = () => {
       <Form>
         <Signin
           onSubmit={() => {
-            router.push(redir || '/')
+            redir ? router.push(redir) : router.back()
           }}
         />
       </Form>
