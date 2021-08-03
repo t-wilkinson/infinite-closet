@@ -18,6 +18,11 @@ details summary::-webkit-details-marker {
   display: none;
 }
 
+* {
+  font-family: inherit;
+  font-weight: inherit;
+}
+
 div,
 main {
   display: flex;
@@ -27,9 +32,10 @@ main {
 .font-subheader {
   font-family: 'Barlow', sans-serif;
   text-transform: uppercase;
+  font-weight: 200;
 }
 
 .font-subheader-light {
   font-family: 'Barlow', sans-serif;
-  font-weight: 200;
+  font-weight: 100;
 }

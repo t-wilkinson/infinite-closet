@@ -46,23 +46,23 @@ const LargeHeader = ({ user, router }) => (
       ${router.pathname === '/' ? 'xl:h-32' : 'xl:h-16'}
     `}
     >
-      <div className="xl:flex-row w-full relative justify-between items-center px-2">
+      <div className="w-full relative justify-between items-center px-2">
         <LargeHeaderLogo router={router} />
-        <div className="w-full mt-2 xl:mt-0 xl:w-auto flex-grow mx-8">
+        <div className="w-full mt-2 flex-grow mx-8">
           <Navbar />
         </div>
-        <div className="absolute right-0 mt-0 mr-4 xl:m-0 xl:static">
+        <div className="absolute right-0 mt-0 mr-4 ">
           <Account user={user} />
         </div>
       </div>
     </div>
     <div
-      className={`-pri w-full mt-4 xl:hidden
+      className={`w-full mt-4
     ${router.pathname === '/' ? '' : 'h-px bg-pri'}
     `}
     />
     <div
-      className={`w-full hidden xl:flex
+      className={`w-full hidden
         ${router.pathname === '/' ? 'mt-4 xl:mt-0' : 'h-px bg-pri mt-4'}
     `}
     />
