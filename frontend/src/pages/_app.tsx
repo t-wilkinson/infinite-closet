@@ -128,7 +128,7 @@ const Wrapper = ({ router, children }) => {
     }
 
     if (window.fbq) {
-      window.fbq('consent', 'revoke')
+      analytics.revoke()
     }
 
     if (firebase.apps.length === 0) {
@@ -166,7 +166,7 @@ const Wrapper = ({ router, children }) => {
 
   React.useEffect(() => {
     if (consent.statistics) {
-      window.fbq('consent', 'grant')
+      analytics.grant()
     }
   }, [consent.statistics])
 

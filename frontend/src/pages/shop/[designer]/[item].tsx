@@ -7,12 +7,15 @@ import Layout from '@/Layout'
 import useData from '@/Layout/useData'
 import { StrapiSizeChart, StrapiProduct } from '@/utils/models'
 import * as sizing from '@/utils/sizing'
+import useAnalytics from '@/utils/useAnalytics'
 
 export const Page = ({ data }) => {
   const loading = useData(data)
   const title = loading
     ? undefined
     : `${data.product.name} by ${data.product.designer.name}`
+  const analytics = useAnalytics()
+  analytics.viewContent()
 
   return (
     <>
