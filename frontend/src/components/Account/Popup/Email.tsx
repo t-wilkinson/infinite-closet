@@ -21,17 +21,17 @@ export const Email = () => {
         their carbon footprint and making it affordable for the average
         consumer.
       </span>
-      <button
-        className="bg-sec hover:bg-pri p-3 text-white font-bold mb-2 mt-4 transition-all duration-200"
-        type="button"
-        onClick={() => {
-          dispatch(accountActions.hidePopup())
-          router.push('/launch-party')
-        }}
-      >
-        Join the Launch Party
-      </button>
-      <OR />
+      {/* <button */}
+      {/*   className="bg-sec hover:bg-pri p-3 text-white font-bold mb-2 mt-4 transition-all duration-200" */}
+      {/*   type="button" */}
+      {/*   onClick={() => { */}
+      {/*     dispatch(accountActions.hidePopup()) */}
+      {/*     router.push('/launch-party') */}
+      {/*   }} */}
+      {/* > */}
+      {/*   Join the Launch Party */}
+      {/* </button> */}
+      {/* <OR /> */}
       <Input {...fields.email} />
       <Submit
         onSubmit={(e) => {

@@ -45,7 +45,7 @@ const OpenGraph = (product: StrapiProduct) => {
 
   // open graph meta information
   const og = {
-    'product:category': product.categories.map((c) => c.name).join(' > '),
+    'product:category': 'Clothing & Accessories > Clothing > Dresses',
     'product:retailer_item_id': product.id,
     'og:url': url,
     'og:type': 'og:product',
