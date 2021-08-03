@@ -1,8 +1,8 @@
 import React from 'react'
 import axios from 'axios'
 
-import { Icon } from '@/components'
-import { Input, Submit } from '@/Form'
+import { Button, Icon } from '@/components'
+import { Input } from '@/Form'
 import { useFields, cleanFields } from '@/Form/useFields'
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
@@ -191,9 +191,9 @@ const EditAddress = ({ onSubmit, fields }) => {
         </span>
       )}
       <div className="w-full items-center">
-        <Submit disabled={!valid} className="w-full">
+        <Button disabled={!valid} className="w-full">
           Submit
-        </Submit>
+        </Button>
       </div>
     </form>
   )

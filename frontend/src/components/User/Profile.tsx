@@ -2,15 +2,15 @@ import React from 'react'
 import axios from 'axios'
 
 import useAnalytics from '@/utils/useAnalytics'
-import { Input, Submit, Password, Dropdown } from '@/Form'
+import { Input, Password, Dropdown } from '@/Form'
 import { Field as FieldType } from '@/Form/types'
 import useFields, {
   cleanFields,
   changedFields,
   fieldsChanged,
 } from '@/Form/useFields'
-import { Divider } from '@/components'
-import { Size } from '@/Products/constants'
+import { Button, Divider } from '@/components'
+import { Size } from '@/Products/types'
 import * as sizing from '@/utils/sizing'
 import { useDispatch, useSelector } from '@/utils/store'
 import { SizeChartPopup } from '@/Shop/Size'
@@ -195,9 +195,9 @@ const SubmitFields = ({ onSubmit, disabled }) => (
     {/* <div className="w-full col-span-full" /> */}
 
     <div className="w-full col-start-1">
-      <Submit disabled={disabled} onSubmit={onSubmit}>
+      <Button disabled={disabled} onClick={onSubmit}>
         Save Changes
-      </Submit>
+      </Button>
     </div>
   </>
 )

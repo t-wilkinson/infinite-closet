@@ -3,8 +3,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
+import { Button } from '@/components'
 import useAnalytics from '@/utils/useAnalytics'
-import { Submit } from '@/Form'
 import { getURL } from '@/utils/api'
 import { StrapiProduct, StrapiFile } from '@/utils/models'
 
@@ -20,8 +20,8 @@ export const ProductItems = ({ data }) => {
         <span className="py-8 text-xl font-bold">
           Sorry, we couldn't find any matches.
         </span>
-        <Submit
-          onSubmit={() => {
+        <Button
+          onClick={() => {
             router.push({
               pathname: router.pathname,
               query: { slug: router.query.slug },
@@ -29,7 +29,7 @@ export const ProductItems = ({ data }) => {
           }}
         >
           Browse All
-        </Submit>
+        </Button>
       </div>
     )
     // TODO: we have so few product it doesn't make sense to display this

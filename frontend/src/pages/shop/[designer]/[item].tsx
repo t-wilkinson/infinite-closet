@@ -5,8 +5,7 @@ import axios from 'axios'
 import Shop from '@/Shop'
 import Layout from '@/Layout'
 import useData from '@/Layout/useData'
-import { StrapiSizeChart, StrapiProduct } from '@/utils/models'
-import * as sizing from '@/utils/sizing'
+import { StrapiProduct } from '@/utils/models'
 import useAnalytics from '@/utils/useAnalytics'
 
 export const Page = ({ data }) => {
@@ -70,19 +69,13 @@ const OpenGraph = (product: StrapiProduct) => {
 }
 
 export async function getServerSideProps({ params }) {
-  const [sizeChart, product]: [StrapiSizeChart, StrapiProduct] =
-    await Promise.all([
-      axios.get('/products/size-chart').then((res) => res.data),
-      axios.get(`/products/shop/${params.item}`).then((res) => res.data),
-    ])
-
-  for (const [key, size] of Object.entries(product.sizes)) {
-    product.sizes[key].size = sizing.normalize(size.size)
-  }
+  const product: StrapiProduct = await axios
+    .get(`/products/shop/${params.item}`)
+    .then((res) => res.data)
 
   return {
     props: {
-      data: { sizeChart, product },
+      data: { product },
     },
   }
 }

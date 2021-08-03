@@ -3,7 +3,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 
-import { Icon } from '@/components'
+import { Button, Icon } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
 import * as CartUtils from '@/utils/cart'
 
@@ -43,7 +43,7 @@ const LargeHeader = ({ user, router }) => (
   <>
     <div
       className={`max-w-screen-xl w-full justify-center
-      ${router.pathname === '/' ? 'xl:h-32' : 'xl:h-16'}
+      ${router.pathname === '/' ? 'xl:h-32' : 'xl:h-16 mt-1'}
     `}
     >
       <div className="w-full relative justify-between items-center px-2">
@@ -117,8 +117,8 @@ const Account = ({ user }) => {
           </a>
         </Link>
         <Link href="/account/register">
-          <a className="border border-black p-3">
-            <span>Get Started</span>
+          <a>
+            <Button role="secondary">Get Started</Button>
           </a>
         </Link>
         {/* <IconLink href="/user/saved" size={18} name="heart" /> */}

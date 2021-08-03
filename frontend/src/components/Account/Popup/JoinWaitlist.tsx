@@ -3,8 +3,8 @@ import axios from 'axios'
 
 import useAnalytics from '@/utils/useAnalytics'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
-import { FormHeader, Input, Checkbox, Submit } from '@/Form'
-import { BlueLink } from '@/components'
+import { FormHeader, Input, Checkbox } from '@/Form'
+import { Button, BlueLink } from '@/components'
 
 const howDidYouFindUs = [
   { label: 'Social Media', value: 'social-media' },
@@ -110,9 +110,9 @@ const WaitlistForm = ({ status, setStatus }) => {
       <BlueLink href="/privacy" label="View terms" />
 
       <div className="my-2 w-full">
-        <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
+        <Button onClick={onSubmit} disabled={!isValid(fields)}>
           <span>Join</span>
-        </Submit>
+        </Button>
       </div>
 
       {status === 'ServerError' && (

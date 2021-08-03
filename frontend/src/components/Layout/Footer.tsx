@@ -5,8 +5,8 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 
 import useFields, { cleanFields } from '@/Form/useFields'
-import { Input, Submit } from '@/Form'
-import { Icon } from '@/components'
+import { Input } from '@/Form'
+import { Button, Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 
 export const Footer = () => {
@@ -16,12 +16,7 @@ export const Footer = () => {
     <div>
       {router.pathname === '/' && (
         <div className="items-center w-full px-2 py-12">
-          <div className="items-center rounded-sm">
-            <strong>Newsletter</strong>
-            <div>
-              <Newsletter />
-            </div>
-          </div>
+          <Newsletter />
         </div>
       )}
 
@@ -149,7 +144,10 @@ type Status = 'None' | 'Error' | 'Submitted' | 'Submitting'
 const Newsletter = () => {
   const [status, setStatus] = React.useState<Status>('None')
   const fields = useFields({
-    newsletterEmail: {
+    name: {
+      constraints: 'required',
+    },
+    email: {
       constraints: 'required email',
       label: 'Email Address',
     },
@@ -160,7 +158,7 @@ const Newsletter = () => {
     const cleaned = cleanFields(fields)
     axios
       .post('/account/newsletter', {
-        email: cleaned.newsletterEmail,
+        email: cleaned.email,
       })
       .then(() => setStatus('Submitted'))
       .catch(() => {
@@ -182,29 +180,31 @@ const Newsletter = () => {
   }
 
   return (
-    <form
-      className="flex flex-row items-center relative m-2 pt-0"
-      onSubmit={onSubmit}
-    >
-      {status === 'Submitting' || status === 'Submitted' ? (
-        <div className="absolute inset-0 bg-white z-20 items-center justify-center font-bold rounded-sm border border-gray">
-          {messages[status]}
-        </div>
-      ) : status === 'Error' ? (
-        <div className="text-warning">
-          Couldn't send you an email. Try again?
-        </div>
-      ) : null}
-      <Input
-        {...fields.newsletterEmail}
-        after={<Icon name="email" size={20} />}
-      ></Input>
-      <div className="w-8" />
-      <Submit className="my-2">
-        {/* disabled={!isValid(fields)}> */}
-        Submit
-      </Submit>
-    </form>
+    <div className="items-center my-4">
+      <h3 className="font-bold text-2xl mb-1">Get 10% off your first rental</h3>
+      <span className="mb-6">
+        Join our mailing list for exclusive offers, first dibs on new items,
+        birthday rewards and style inspiration.
+      </span>
+      <form
+        className="flex flex-col items-stretch relative m-2 pt-0"
+        onSubmit={onSubmit}
+      >
+        {status === 'Submitting' || status === 'Submitted' ? (
+          <div className="absolute inset-0 bg-white z-20 items-center justify-center font-bold rounded-sm border border-gray">
+            {messages[status]}
+          </div>
+        ) : status === 'Error' ? (
+          <div className="text-warning">
+            Couldn't send you an email. Try again?
+          </div>
+        ) : null}
+        <Input {...fields.name} />
+        <Input {...fields.email} after={<Icon name="email" size={20} />} />
+        <div className="w-8" />
+        <Button className="my-2">Submit</Button>
+      </form>
+    </div>
   )
 }
 

@@ -3,7 +3,8 @@ import axios from 'axios'
 
 import { MarkdownWrapper, fetchMarkdown } from '@/Markdown'
 import useFields, { cleanFields, isValid } from '@/Form/useFields'
-import { Submit, Input } from '@/Form'
+import { Button } from '@/components'
+import { Input } from '@/Form'
 
 type Status = 'progress' | 'processing' | 'success' | 'error'
 
@@ -29,7 +30,7 @@ export const Page = ({ data }) => {
   return (
     <MarkdownWrapper {...data}>
       <form className="w-full relative" onSubmit={(e) => e.preventDefault()}>
-        <div className="w-full relative">
+        <div className="w-full relative items-stretch">
           {status === 'success' ? (
             <div className="absolute inset-0 bg-white border border-gray z-20 justify-center items-center">
               <span className="text-lg font-bold">
@@ -40,13 +41,9 @@ export const Page = ({ data }) => {
           {Object.values(fields).map((field) => (
             <Input key={field.field} {...field} />
           ))}
-          <Submit
-            className="w-full"
-            disabled={!isValid(fields)}
-            onSubmit={sendMessage}
-          >
+          <Button disabled={!isValid(fields)} onClick={sendMessage}>
             Contact Us
-          </Submit>
+          </Button>
         </div>
       </form>
     </MarkdownWrapper>

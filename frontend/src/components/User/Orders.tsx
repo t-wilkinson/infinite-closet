@@ -8,7 +8,7 @@ import timezone from 'dayjs/plugin/timezone'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-import { fmtPrice } from '@/utils/money'
+import { fmtPrice } from '@/utils/helpers'
 import { getURL } from '@/utils/api'
 import { useSelector } from '@/utils/store'
 import { rentalLengths } from '@/utils/constants'

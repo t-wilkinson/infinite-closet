@@ -4,19 +4,18 @@ import { useRouter } from 'next/router'
 
 import useAnalytics from '@/utils/useAnalytics'
 import { useDispatch, useSelector } from '@/utils/store'
-import { Icon } from '@/components'
-import { Submit } from '@/Form'
+import { Button, Icon } from '@/components'
 import * as sizing from '@/utils/sizing'
 import { rentalLengths } from '@/utils/constants'
 import { userActions } from '@/User/slice'
-import { Size } from '@/Products/constants'
+import { Size } from '@/Products/types'
 import * as CartUtils from '@/utils/cart'
 
 import { SizeChartPopup, SizeSelector } from './Size'
 import { shopActions } from './slice'
 import DatePicker from './DatePicker'
 
-export const ProductRentContents = ({ sizeChart, product }) => {
+export const ProductRentContents = ({ product }) => {
   const router = useRouter()
   const rentType = useSelector((state) => state.shop.rentType)
   const user = useSelector((state) => state.user.data)
@@ -32,7 +31,6 @@ export const ProductRentContents = ({ sizeChart, product }) => {
 
   return (
     <Contents
-      sizeChart={sizeChart}
       router={router}
       user={user}
       product={product}
@@ -42,7 +40,7 @@ export const ProductRentContents = ({ sizeChart, product }) => {
 }
 
 export const productRentContents = {
-  OneTime: ({ sizeChart, user, dispatch, product, router }) => {
+  OneTime: ({ user, dispatch, product, router }) => {
     const [status, setStatus] = React.useState<null | string>(null)
     const [chartOpen, setChartOpen] = React.useState(false)
     const state = useSelector((state) => state.shop)
@@ -165,8 +163,8 @@ export const productRentContents = {
           </div>
         </SelectorItem>
 
-        <Submit
-          onSubmit={addToCart}
+        <Button
+          onClick={addToCart}
           className="my-2 self-center rounded-sm w-full"
           disabled={
             !state.selectedDate ||
@@ -179,7 +177,7 @@ export const productRentContents = {
             : status === 'error'
             ? 'Unable to add to cart'
             : 'Add to Cart'}
-        </Submit>
+        </Button>
       </>
     )
   },

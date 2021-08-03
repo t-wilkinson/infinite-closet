@@ -11,9 +11,9 @@ export const getList = (): Cart => Object.values(get())
 
 export const getByUser = (id: string = undefined): Cart => {
   if (!id) {
-    return getList().filter((order) => !order.user)
+    return getList().filter((order: Order) => !order.user)
   } else {
-    return getList().filter((order) => order.user === id)
+    return getList().filter((order: Order) => order.user === id)
   }
 }
 

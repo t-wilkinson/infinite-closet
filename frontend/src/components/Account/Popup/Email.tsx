@@ -1,10 +1,11 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 
-import { FormHeader, Input, Submit, OR } from '@/Form'
+import { FormHeader, Input, OR } from '@/Form'
 import { useDispatch } from '@/utils/store'
 import { accountActions } from '@/Account/slice'
 import useFields from '@/Form/useFields'
+import { Button } from '@/components'
 
 export const Email = () => {
   const dispatch = useDispatch()
@@ -33,15 +34,15 @@ export const Email = () => {
       {/* </button> */}
       {/* <OR /> */}
       <Input {...fields.email} />
-      <Submit
-        onSubmit={(e) => {
+      <Button
+        onClick={(e) => {
           e.preventDefault()
           dispatch(accountActions.setEmail(fields.email.value))
           dispatch(accountActions.showPopup('register'))
         }}
       >
         Register Now
-      </Submit>
+      </Button>
       <OR />
       <span>
         Already a member?{' '}

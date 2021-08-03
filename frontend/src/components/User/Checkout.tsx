@@ -6,12 +6,12 @@ import { useRouter } from 'next/router'
 dayjs.extend(utc)
 
 import useAnalytics from '@/utils/useAnalytics'
-import { fmtPrice } from '@/utils/money'
+import { fmtPrice } from '@/utils/helpers'
 import { fetchAPI } from '@/utils/api'
 import { Coupon } from '@/Form/types'
-import { Submit, CouponCode } from '@/Form'
+import { CouponCode } from '@/Form'
 import useFields, { cleanFields } from '@/Form/useFields'
-import { BlueLink, Icon } from '@/components'
+import { Button, BlueLink, Icon } from '@/components'
 import * as CartUtils from '@/utils/cart'
 
 import { PaymentMethods, AddPaymentMethod } from './Payment'
@@ -261,9 +261,8 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
             }
             insurance={state.insurance}
           />
-          <Submit
-            onSubmit={checkout}
-            className=""
+          <Button
+            onClick={checkout}
             disabled={
               !(state.paymentMethod && state.address) ||
               ['checking-out'].includes(state.status) ||
@@ -287,7 +286,7 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
               : state.cart.some(isOrderInvalid)
               ? 'Checkout Available Items'
               : 'Checkout'}
-          </Submit>
+          </Button>
         </div>
       )}
     </div>

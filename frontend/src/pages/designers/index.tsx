@@ -68,6 +68,7 @@ export const Page = () => {
         <div className="flex-row flex-wrap">
           {designers.map(({ firstLetter }) => (
             <button
+              key={firstLetter}
               onClick={() =>
                 document.querySelector(`#${firstLetter}`).scrollIntoView()
               }

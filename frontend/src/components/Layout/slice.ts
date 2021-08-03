@@ -10,7 +10,7 @@ import {
   StrapiStyle,
   StrapiCategory,
 } from '@/utils/models'
-import { Size } from '@/Products/constants'
+import { Size } from '@/Products/types'
 
 import { CookieConsent } from './types'
 

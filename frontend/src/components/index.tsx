@@ -11,6 +11,34 @@ export const BlueLink = ({ href, label }) => (
   </Link>
 )
 
+export const Button = ({
+  onClick = (..._: any[]): void => {},
+  children,
+  role = 'primary' as 'primary' | 'secondary' | 'cta',
+  className = '',
+  ...props
+}) => (
+  <button
+    onClick={onClick}
+    className={`
+      p-3 transition duration-200
+      ${className}
+      ${
+        role === 'primary'
+          ? 'text-white bg-pri hover:bg-sec rounded-sm font-bold'
+          : role === 'secondary'
+          ? 'text-black bg-white border border-black hover:bg-sec-light'
+          : role === 'cta'
+          ? 'text-white bg-sec hover:bg-pri rounded-sm font-bold'
+          : ''
+      }
+      `}
+    {...props}
+  >
+    {children}
+  </button>
+)
+
 export const CheckBox = ({
   state = false,
   setState,

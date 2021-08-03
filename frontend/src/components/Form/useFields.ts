@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { toTitleCase } from '@/utils/helpers'
+
 import { FieldsConfig, Field, Fields, Valid } from './types'
 
 export const fieldChanged = (field: Field) => field.default !== field.value
@@ -75,7 +77,6 @@ export const validate = (
 type UseField = (field: string, config: FieldsConfig['number']) => Field
 export const useField: UseField = (field, config) => {
   const [state, setState] = React.useState(config.default ?? '')
-
   config = Object.assign(
     {
       label: toTitleCase(field),
@@ -105,50 +106,12 @@ export const useField: UseField = (field, config) => {
 
 type UseFields = (config: FieldsConfig) => Fields
 export const useFields: UseFields = (config) => {
-  //   const initialState = Object.keys(config).reduce(
-  //     (acc, k) => ((acc[k] = config[k].default ?? ''), acc),
-  //     {}
-  //   )
-  //   const reducer = (state, { type, payload }) => ({ ...state, [type]: payload })
-  //   const [state, dispatch] = React.useReducer(reducer, initialState)
-
   const fields = Object.entries(config).reduce((acc, [field, fieldConfig]) => {
     acc[field] = useField(field, fieldConfig)
     return acc
-
-    // fieldConfig = Object.assign(
-    //   {
-    //     label: toTitleCase(field),
-    //     type: 'text',
-    //     constraints: '',
-    //     onChange: () => {},
-    //     default: '',
-    //     placeholder: '',
-    //   },
-    //   fieldConfig
-    // )
-    // acc[field] = {
-    //   field,
-    //   label: fieldConfig.label,
-    //   type: fieldConfig.type,
-    //   value: state[field],
-    //   default: fieldConfig.default,
-    //   constraints: fieldConfig.constraints,
-    //   placeholder: fieldConfig.placeholder,
-    //   onChange: (value: string) => {
-    //     dispatch({ type: field, payload: value })
-    //     fieldConfig.onChange(value)
-    //   },
-    // }
-    // return acc
   }, {})
 
   return fields
 }
-export default useFields
 
-const toTitleCase = (value: string) => {
-  let titlecase = value.replace(/([A-Z])/g, ' $1')
-  titlecase = titlecase.charAt(0).toUpperCase() + titlecase.slice(1)
-  return titlecase
-}
+export default useFields

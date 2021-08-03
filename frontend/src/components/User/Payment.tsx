@@ -4,7 +4,7 @@ import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
 import { StrapiUser } from '@/utils/models'
 import { fetchAPI } from '@/utils/api'
-import { Icon } from '@/components'
+import { Button, Icon } from '@/components'
 import { Submit } from '@/Form'
 import { PaymentWrapper } from '@/Form/Payments'
 import { useDispatch } from '@/utils/store'
@@ -262,10 +262,10 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
         />
 
         <div className="w-full items-center">
-          <Submit
+          <Button
             className="w-full"
             disabled={processing || disabled || succeeded || !authorised}
-            onSubmit={addPaymentMethod}
+            onClick={addPaymentMethod}
           >
             {processing ? (
               <div className="spinner w-full" id="spinner">
@@ -274,7 +274,7 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
             ) : (
               'Submit'
             )}
-          </Submit>
+          </Button>
         </div>
 
         {/* Show any error that happens when processing the payment */}

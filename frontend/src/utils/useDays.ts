@@ -1,5 +1,3 @@
-/* This is meant to be displayed to the user so we don't use utc
- */
 import React from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
@@ -10,7 +8,7 @@ dayjs.tz.setDefault('Europe/London')
 // Given curDay, find all days that would appear on a 7x6 calendar for curDay.Month
 export const useDays = (curDay: Dayjs) => {
   const [date, setDate] = React.useState(
-    curDay ?? dayjs().millisecond(0).second(0).minute(0).hour(0),
+    curDay ?? dayjs().millisecond(0).second(0).minute(0).hour(0)
   )
 
   const prevMonth: Dayjs[] = []

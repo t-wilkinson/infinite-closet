@@ -5,7 +5,8 @@ import { useRouter } from 'next/router'
 
 import useAnalytics from '@/utils/useAnalytics'
 import { useDispatch } from '@/utils/store'
-import { Submit, Warnings, Password, FormHeader, OR } from '@/Form'
+import { Warnings, Password, FormHeader, OR } from '@/Form'
+import { Button } from '@/components'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { userActions } from '@/User/slice'
 
@@ -29,7 +30,7 @@ export const ResetPassword = () => {
           password: cleaned.password,
           passwordConfirmation: cleaned.password,
         },
-        { withCredentials: true },
+        { withCredentials: true }
       )
       .then((res) => {
         dispatch(userActions.signin(res.data.user))
@@ -55,9 +56,9 @@ export const ResetPassword = () => {
       <FormHeader label="Reset password" />
       <Warnings warnings={warnings} />
       <Password {...fields.password} />
-      <Submit onSubmit={onSubmit} disabled={!isValid(fields)}>
+      <Button onClick={onSubmit} disabled={!isValid(fields)}>
         Password Reset
-      </Submit>
+      </Button>
 
       <OR />
 

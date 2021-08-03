@@ -1,6 +1,5 @@
 import { StrapiSize } from '@/utils/models'
-
-import { _Size, Size } from '@/Products/constants'
+import { _Size, Size } from '@/Products/types'
 
 export const normalize = (size: string) => size?.replace('_', '')
 export const unnormalize = (size: string) => size.replace(/^(\d)/, '_$1')
@@ -29,5 +28,5 @@ export const rangeOf = ({ size, sizeRange }: StrapiSize) => {
 
 export const range = (sizes: StrapiSize[]) =>
   Array.from(
-    new Set(sizes.reduce((acc, size) => acc.concat(rangeOf(size)), [])),
+    new Set(sizes.reduce((acc, size) => acc.concat(rangeOf(size)), []))
   ).sort(sort)

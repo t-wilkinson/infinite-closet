@@ -18,7 +18,7 @@ import SkipLink from '@/Layout/SkipLink'
 import Banner from '@/Layout/Banner'
 import { signin } from '@/User'
 const FourOFour = dynamic(() => import('@/pages/404'))
-import { browser } from '@/utils/helpers'
+import { browserIs } from '@/utils/helpers'
 import { userActions } from '@/User/slice'
 import * as storage from '@/utils/storage'
 import * as CartUtils from '@/utils/cart'
@@ -31,13 +31,13 @@ const App = ({ router, Component, pageProps }) => {
   React.useEffect(() => {
     const sheet = document.styleSheets[1]
 
-    if (browser('chrome')) {
+    if (browserIs('chrome')) {
       sheet.insertRule(
         `div, main {
 					min-height: auto;
 				}`
       )
-    } else if (browser('safari')) {
+    } else if (browserIs('safari')) {
       sheet.insertRule(
         `div, main {
 					min-height: min-content;

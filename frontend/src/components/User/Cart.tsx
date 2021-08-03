@@ -10,7 +10,7 @@ dayjs.extend(timezone)
 
 import useAnalytics from '@/utils/useAnalytics'
 import { userActions } from '@/User/slice'
-import { fmtPrice } from '@/utils/money'
+import { fmtPrice } from '@/utils/helpers'
 import { getURL } from '@/utils/api'
 import { Checkbox } from '@/Form/'
 import { Icon, Hover } from '@/components'

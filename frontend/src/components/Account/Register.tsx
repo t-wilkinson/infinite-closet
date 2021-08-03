@@ -3,7 +3,8 @@ import Link from 'next/link'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 
-import { Input, Submit, Warnings, Password, FormHeader } from '@/Form'
+import { Input, Warnings, Password, FormHeader } from '@/Form'
+import { Button } from '@/components'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
@@ -72,9 +73,9 @@ export const Register = ({
       </div>
       <Input {...fields.email} />
       <Password {...fields.password} />
-      <Submit onSubmit={registerUser} disabled={!isValid(fields)}>
+      <Button onClick={registerUser} disabled={!isValid(fields)}>
         Register
-      </Submit>
+      </Button>
     </>
   )
 }

@@ -3,8 +3,9 @@ import axios from 'axios'
 import Link from 'next/link'
 
 import useAnalytics from '@/utils/useAnalytics'
-import { Input, Submit, Warnings, FormHeader, OR } from '@/Form'
+import { Input, Warnings, FormHeader, OR } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
+import { Button } from '@/components'
 
 type Status = 'success' | 'in-fields' | 'server-error'
 
@@ -16,13 +17,13 @@ export const requestChangePassword = async (fields, analytics) => {
       {
         email: cleaned.email,
       },
-      { withCredentials: true },
+      { withCredentials: true }
     )
     .then((res) =>
       analytics.logEvent('form_submit', {
         type: 'account.forgot-password',
         user: cleaned.email,
-      }),
+      })
     )
 }
 
@@ -52,12 +53,12 @@ export const ForgotPassword = () => {
 
       {status === 'server-error' && <Warnings warnings={warnings} />}
       <Input {...fields.email} />
-      <Submit
+      <Button
         disabled={!isValid(fields) || status === 'success'}
-        onSubmit={onSubmit}
+        onClick={onSubmit}
       >
         Request Password Reset
-      </Submit>
+      </Button>
 
       <OR />
 

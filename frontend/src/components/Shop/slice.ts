@@ -3,7 +3,7 @@ import { Dayjs } from 'dayjs' // TODO: hopefully this tree shakes
 
 import { RootState } from '@/utils/store'
 
-import { Size } from '@/Products/constants'
+import { Size } from '@/Products/types'
 import { RentType, OneTime, Membership } from './types'
 
 export interface State {

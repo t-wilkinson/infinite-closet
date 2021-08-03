@@ -5,7 +5,7 @@ import { StrapiProduct, StrapiSizeChart, StrapiSize } from '@/utils/models'
 import { Icon } from '@/components'
 import { toTitleCase } from '@/utils/helpers'
 import * as sizing from '@/utils/sizing'
-import { Size } from '@/Products/constants'
+import { Size } from '@/Products/types'
 
 interface SizeSelector {
   product: StrapiProduct
@@ -64,12 +64,17 @@ export const SizeChart = ({ sizeEnum, chart }) => {
       <table className="table-fixed border border-gray-light">
         <thead className="border border-gray-light">
           <tr className="border-b border-gray-light">
-            <th colSpan={chart.length + 1}>Womens Clothing</th>
+            <th
+              className="text-center font-bold text-lg py-2"
+              colSpan={chart.length + 1}
+            >
+              Womens Clothing
+            </th>
           </tr>
           <tr className="border-b border-gray-light">
             <th scope="col" />
             {chart.map((item: StrapiSizeChart) => (
-              <th key={item.name} scope="col" className="w-12">
+              <th key={item.name} scope="col" className="w-12 font-bold">
                 {item.name}
               </th>
             ))}
@@ -79,7 +84,7 @@ export const SizeChart = ({ sizeEnum, chart }) => {
         <tbody className="p-2">
           {sizeEnum.map((size) => (
             <tr key={size} className="border-t border-gray-light">
-              <th scope="row" className="p-1">
+              <th scope="row" className="p-1 font-bold">
                 {size}
               </th>
               {chart.map((item: StrapiSizeChart) => (
@@ -99,14 +104,17 @@ export const SizeMeasurements = ({ chart, measurements, product }) => (
   <table className="table-fixed border border-gray-light">
     <thead className="border border-gray-light">
       <tr className="border-b border-gray-light">
-        <th className="text-center" colSpan={chart.length + 1}>
+        <th
+          className="text-center text-lg font-bold py-2"
+          colSpan={chart.length + 1}
+        >
           {product.name} Measurements (cm)
         </th>
       </tr>
       <tr className="border-b border-gray-light">
         <th scope="col" />
         {measurements.map((measurement: string) => (
-          <th key={measurement} className="text-center">
+          <th key={measurement} className="text-center font-bold">
             {toTitleCase(measurement)}
           </th>
         ))}
@@ -115,7 +123,7 @@ export const SizeMeasurements = ({ chart, measurements, product }) => (
     <tbody className="p-2">
       {product.sizes.map((size: StrapiSize) => (
         <tr key={size.id} className="border-t border-gray-light">
-          <th scope="row" className="p-1">
+          <th scope="row" className="p-1 font-bold">
             {size.sizeRange
               ? `${sizing.normalize(size.size)}/${sizing.normalize(
                   size.sizeRange
@@ -153,19 +161,22 @@ export const SizeChartPopup = ({
   } else {
     return (
       <div
-        className="bottom-0 absolute bg-white border-gray border p-4 z-30 pt-8 space-y-4 overflow-y-auto w-96"
+        className="bottom-0 absolute bg-gray-light border-gray border z-30 w-96"
         style={{ maxHeight: 600 }}
       >
-        <button
-          onClick={() => setState(false)}
-          className="absolute top-0 right-0"
-        >
+        <button onClick={() => setState(false)} className="ml-auto">
           <div className="p-4">
             <Icon name="close" size={16} />
           </div>
         </button>
-        <SizeChart {...sizeChart} />
-        {product && <SizeMeasurements {...sizeChart} product={product} />}
+        <div className="overflow-y-auto space-y-8 pb-8 px-4">
+          <div className="bg-white rounded-md">
+            <SizeChart {...sizeChart} />
+          </div>
+          <div className="bg-white rounded-md">
+            {product && <SizeMeasurements {...sizeChart} product={product} />}
+          </div>
+        </div>
       </div>
     )
   }
