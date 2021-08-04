@@ -3,11 +3,12 @@ import { RootState } from '@/utils/store'
 
 interface State {
   email?: string
+  name?: string
   popup: 'hidden' | 'signin' | 'register' | 'email'
 }
 
 const initialState: State = {
-  popup: 'hidden',
+  popup: 'email',
 }
 
 export const accountSlice = createSlice({
@@ -17,6 +18,9 @@ export const accountSlice = createSlice({
     resetEmail(state) {
       state.email = ''
     },
+    setName(state, { payload }: PayloadAction<string>) {
+      state.name = payload
+    },
     setEmail(state, { payload }: PayloadAction<string>) {
       state.email = payload
     },
@@ -24,9 +28,6 @@ export const accountSlice = createSlice({
       state.email = ''
       state.popup = 'hidden'
     },
-    // togglePopup(state, { payload }: PayloadAction<State['popup']>) {
-    //   state.popup = state.popup === 'hidden' ? payload : 'hidden'
-    // },
     showPopup(state, { payload }: PayloadAction<State['popup']>) {
       state.popup = payload
     },

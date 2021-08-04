@@ -37,9 +37,12 @@ const Page = () => {
         <div className="w-full max-w-screen-lg items-center mb-8">
           <h1 className="font-bold text-5xl mt-8">Join our Launch Party</h1>
           <div className="text-lg mb-12 space-y-2 max-w-screen-md px-4 md:px-0">
-            <h2 className="whitespace-pre-line">
-              Join us to celebrate the power of fashion to change lives.
-            </h2>
+            <span className="whitespace-pre-line">
+              In conjunction with London Fashion Week, Infinite Closet and Give
+              Your Best Launch present the Infinite Closet x Give Your Best
+              Launch Party Join us to celebrate the power of fashion to change
+              lives.
+            </span>
             <div className="lg:hidden">
               <PartyInfo />
             </div>

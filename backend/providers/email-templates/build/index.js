@@ -58,12 +58,14 @@ var data = {
   },
   "newsletter-subscription": {},
   "waitlist-subscription": {},
+  "mailinglist-subscription": {},
   "join-launch-party": {
     firstName: "First Name",
     TICKET_PRICE: 25,
     donation: 25.0,
     discount: 5,
-    total: 45
+    total: 45,
+    guests: ["Bob", "Joe"]
   },
   "order-arriving": orderData,
   "order-leaving": orderData,

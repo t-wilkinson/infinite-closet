@@ -33,3 +33,5 @@ export type Coupon = {
   coupon: StrapiCoupon
   price: number
 }
+
+export type DateOfBirthField = { day: Field; month: Field; year: Field }

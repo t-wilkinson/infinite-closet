@@ -20,7 +20,10 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
-      maxWidtth: {
+      height: {
+        '80vh': '80vh',
+      },
+      maxWidth: {
         '2xs': '16rem',
         '3xs': '12rem',
         '4xs': '8rem',

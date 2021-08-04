@@ -10,7 +10,6 @@ export const Page = () => {
   return (
     <>
       <Signin />
-      <div className="h-4" />
       <span>
         New to Infinite Closet?{' '}
         <button onClick={() => dispatch(accountActions.showPopup('register'))}>

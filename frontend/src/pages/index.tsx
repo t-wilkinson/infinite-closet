@@ -91,23 +91,18 @@ const Heading = ({ block = true, children }) => {
 
 const Introduction = () => (
   <div
-    className="items-center sm:items-stretch w-full flex-row"
+    className="items-center sm:items-stretch w-full flex-row py-16 sm:py-0 sm:h-80vh"
     style={{
       background: '#D9C6BC',
     }}
   >
     <div
       style={{
-        width: 'calc(25% + 300px)',
+        width: 'calc(25% + 18rem)',
       }}
-      className="pl-8 py-8 sm:p-16 md:p-24 items-end max-w-3xs sm:max-w-none"
+      className="py-8 sm:p-16 md:p-24 ml-8 sm:ml-16 md:ml-0 items-end sm:max-w-none justify-center"
     >
-      <div
-        style={{
-          width: '300px',
-        }}
-        className="max-w-3xs sm:max-w-none"
-      >
+      <div style={{}} className="w-72">
         <span
           className="font-bold text-4xl md:text-5xl mb-6"
           style={{

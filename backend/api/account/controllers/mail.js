@@ -44,4 +44,26 @@ module.exports = {
 
     ctx.send({ ok: true })
   },
+
+  async mailinglist(ctx) {
+    const body = ctx.request.body
+
+    //     await strapi.plugins['email'].services.email.send({
+    //       template: 'mailinglist-subscription',
+    //       to: { name: body.name, email: body.email },
+    //       subject: 'You subscribed to the mailinglist',
+    //     })
+
+    await strapi.query('contact').create({
+      contact: body.email,
+      context: 'mailinglist',
+      metadata: {
+        name: body.name,
+        email: body.email,
+        dateOfBirth: body.dateOfBirth,
+      },
+    })
+
+    ctx.send({ ok: true })
+  },
 }

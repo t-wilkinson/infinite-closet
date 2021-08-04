@@ -27,7 +27,7 @@ export const Button = ({
         role === 'primary'
           ? 'text-white bg-pri hover:bg-sec rounded-sm font-bold'
           : role === 'secondary'
-          ? 'text-black bg-white border border-black hover:bg-sec-light'
+          ? 'text-black bg-white border border-black'
           : role === 'cta'
           ? 'text-white bg-sec hover:bg-pri rounded-sm font-bold'
           : ''

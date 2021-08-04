@@ -4,8 +4,19 @@ import axios from 'axios'
 import { Icon } from '@/components'
 import { StrapiCoupon } from '@/utils/models'
 
-import { Coupon, Field } from './types'
+import { DateOfBirthField, Coupon, Field } from './types'
 import { validate, cleanField } from './useFields'
+
+export const DateOfBirth = ({ day, month, year }: DateOfBirthField) => (
+  <fieldset className="mt-2">
+    <legend>Date Of Birth</legend>
+    <div className="flex flex-row space-x-4">
+      <Input {...day} />
+      <Input {...month} />
+      <Input {...year} />
+    </div>
+  </fieldset>
+)
 
 export const Checkbox = ({
   value = false,

@@ -50,6 +50,7 @@ const data = {
   },
   "newsletter-subscription": {},
   "waitlist-subscription": {},
+  "mailinglist-subscription": {},
   "join-launch-party": {
     firstName: "First Name",
     TICKET_PRICE: 25,

@@ -27,7 +27,8 @@ var _Between2 = _interopRequireDefault(_Between);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Summary = function Summary(_ref) {
-  var TICKET_PRICE = _ref.TICKET_PRICE,
+  var guests = _ref.guests,
+      TICKET_PRICE = _ref.TICKET_PRICE,
       discount = _ref.discount,
       donation = _ref.donation,
       total = _ref.total;
@@ -48,6 +49,10 @@ var Summary = function Summary(_ref) {
       }
     }),
     _react2.default.createElement(_Between2.default, { left: 'Ticket Price', right: '\xA3' + TICKET_PRICE.toFixed(2) }),
+    _react2.default.createElement(_Between2.default, {
+      left: 'Guest Tickets',
+      right: '\xA3' + (guests.length * TICKET_PRICE).toFixed(2)
+    }),
     _react2.default.createElement(_Between2.default, { left: 'Promo Discount', right: '-\xA3' + discount.toFixed(2) }),
     _react2.default.createElement(_Between2.default, { left: 'Donation', right: '\xA3' + donation.toFixed(2) }),
     _react2.default.createElement(_Between2.default, {
@@ -90,7 +95,7 @@ var Details = function Details() {
             _react2.default.createElement(
               'span',
               null,
-              'Saturday, August 7, 2021'
+              'Saturday, September 18, 2021'
             ),
             _react2.default.createElement(
               'span',

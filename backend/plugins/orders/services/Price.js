@@ -54,7 +54,7 @@ async function userDiscount(user) {
     : NEW_USER_DISCOUNT_PERCENT
 
   const isOnWaitingList = await strapi.query('contact').findOne({
-    context: 'waitlist',
+    context_in: ['waitlist', 'newsletter'],
     contact: user.email,
   })
   const waitlistDiscountPrice =

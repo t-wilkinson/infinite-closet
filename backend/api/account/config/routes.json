@@ -25,6 +25,7 @@
         "policies": []
       }
     },
+
     {
       "method": "POST",
       "path": "/account/waitlist",
@@ -37,6 +38,14 @@
       "method": "POST",
       "path": "/account/newsletter",
       "handler": "mail.newsletter",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/account/mailinglist",
+      "handler": "mail.mailinglist",
       "config": {
         "policies": []
       }

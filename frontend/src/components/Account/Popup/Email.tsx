@@ -1,49 +1,76 @@
 import React from 'react'
-import { useRouter } from 'next/router'
+import axios from 'axios'
 
-import { FormHeader, Input, OR } from '@/Form'
+import { FormHeader, DateOfBirth, Input, OR } from '@/Form'
+import useFields, {
+  useDateOfBirth,
+  toDate,
+  cleanFields,
+} from '@/Form/useFields'
 import { useDispatch } from '@/utils/store'
 import { accountActions } from '@/Account/slice'
-import useFields from '@/Form/useFields'
 import { Button } from '@/components'
 
 export const Email = () => {
   const dispatch = useDispatch()
   const fields = useFields({
-    email: {},
+    name: { constraints: 'required' },
+    email: { constraints: 'required' },
   })
-  const router = useRouter()
+  const dateOfBirth = useDateOfBirth()
+  const [status, setStatus] = React.useState(null)
+  const joinMailingList = () => {
+    const cleaned = cleanFields(fields)
+    axios
+      .post('/account/mailinglist', {
+        name: cleaned.name,
+        email: cleaned.email,
+        dateOfBirth: toDate(dateOfBirth).toJSON(),
+      })
+      .catch((err) => console.error(err))
+  }
 
   return (
     <>
-      <FormHeader label="Join Us" />
-      <span className="text-center mb-2">
-        Our platform allows customers to hire independent brands while cutting
-        their carbon footprint and making it affordable for the average
-        consumer.
-      </span>
-      {/* <button */}
-      {/*   className="bg-sec hover:bg-pri p-3 text-white font-bold mb-2 mt-4 transition-all duration-200" */}
-      {/*   type="button" */}
-      {/*   onClick={() => { */}
-      {/*     dispatch(accountActions.hidePopup()) */}
-      {/*     router.push('/launch-party') */}
-      {/*   }} */}
-      {/* > */}
-      {/*   Join the Launch Party */}
-      {/* </button> */}
-      {/* <OR /> */}
-      <Input {...fields.email} />
       <Button
-        onClick={(e) => {
-          e.preventDefault()
-          dispatch(accountActions.setEmail(fields.email.value))
-          dispatch(accountActions.showPopup('register'))
-        }}
+        onClick={() =>
+          status === null ? setStatus('submitted') : setStatus(null)
+        }
       >
-        Register Now
+        toggle
       </Button>
+      <div className="relative">
+        <FormHeader label="GET 10% OFF YOUR FIRST RENTAL" />
+        <span className="text-center">
+          Join our mailing list for exclusive offers, first dibs on new items,
+          birthday rewards and style inspiration.
+        </span>
+        <div className="mt-4" />
+        <Input {...fields.name} />
+        <Input {...fields.email} />
+        <DateOfBirth {...dateOfBirth} />
+        <Button
+          disabled={status === 'submitted'}
+          className="mt-2"
+          onClick={(e) => {
+            e.preventDefault()
+            setStatus('submitted')
+            joinMailingList()
+          }}
+        >
+          Join the Mailing List
+        </Button>
+        {status === 'submitted' && (
+          <Submitted dispatch={dispatch} fields={fields} />
+        )}
+      </div>
       <OR />
+      <span>
+        New to Infinite closet?{' '}
+        <button onClick={(e) => dispatch(accountActions.showPopup('register'))}>
+          <span className="cursor-pointer text-blue-500">Make an account</span>
+        </button>
+      </span>
       <span>
         Already a member?{' '}
         <button onClick={(e) => dispatch(accountActions.showPopup('signin'))}>
@@ -53,4 +80,34 @@ export const Email = () => {
     </>
   )
 }
+
+const Submitted = ({ dispatch, fields }) => (
+  <div className="z-20 absolute inset-0 bg-white items-center justify-center">
+    <strong className="text-2xl">Thanks for signing up!</strong>
+    <span className="text-center">
+      Would you also like to create an account?
+    </span>
+    <span className="text-center mb-8">It's easy!</span>
+    <div className="flex-row w-full space-x-4">
+      <Button
+        className="w-full"
+        onClick={() => {
+          dispatch(accountActions.setEmail(fields.email.value))
+          dispatch(accountActions.setName(fields.name.value))
+          dispatch(accountActions.showPopup('register'))
+        }}
+      >
+        Sure thing
+      </Button>
+      <Button
+        className="w-full"
+        role="secondary"
+        onClick={() => dispatch(accountActions.hidePopup())}
+      >
+        Not today
+      </Button>
+    </div>
+  </div>
+)
+
 export default Email

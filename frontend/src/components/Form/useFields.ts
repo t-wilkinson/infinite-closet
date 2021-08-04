@@ -2,7 +2,12 @@ import React from 'react'
 
 import { toTitleCase } from '@/utils/helpers'
 
-import { FieldsConfig, Field, Fields, Valid } from './types'
+import { FieldsConfig, Field, Fields, Valid, DateOfBirthField } from './types'
+
+export const toDate = ({ day, month, year }: DateOfBirthField) => {
+  const norm = (field) => field.value.trim()
+  return new Date(`${norm(year)}-${norm(month)}-${norm(day)}`)
+}
 
 export const fieldChanged = (field: Field) => field.default !== field.value
 export const fieldsChanged = (fields: Fields) =>
@@ -113,5 +118,12 @@ export const useFields: UseFields = (config) => {
 
   return fields
 }
+
+export const useDateOfBirth = () =>
+  useFields({
+    day: { label: 'DD', constraints: 'integer' },
+    month: { label: 'MM', constraints: 'integer' },
+    year: { label: 'YYYY', constraints: 'integer' },
+  }) as DateOfBirthField
 
 export default useFields

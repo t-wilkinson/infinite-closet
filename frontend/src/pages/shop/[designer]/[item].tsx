@@ -1,3 +1,4 @@
+import React from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import axios from 'axios'
@@ -14,7 +15,9 @@ export const Page = ({ data }) => {
     ? undefined
     : `${data.product.name} by ${data.product.designer.name}`
   const analytics = useAnalytics()
-  analytics.viewContent()
+  React.useEffect(() => {
+    analytics.viewContent()
+  }, [])
 
   return (
     <>

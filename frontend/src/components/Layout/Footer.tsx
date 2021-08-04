@@ -4,8 +4,12 @@ import Image from 'next/image'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 
-import useFields, { cleanFields } from '@/Form/useFields'
-import { Input } from '@/Form'
+import useFields, {
+  toDate,
+  cleanFields,
+  useDateOfBirth,
+} from '@/Form/useFields'
+import { DateOfBirth, Input } from '@/Form'
 import { Button, Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 
@@ -143,6 +147,7 @@ type Status = 'None' | 'Error' | 'Submitted' | 'Submitting'
 
 const Newsletter = () => {
   const [status, setStatus] = React.useState<Status>('None')
+  const dateOfBirth = useDateOfBirth()
   const fields = useFields({
     name: {
       constraints: 'required',
@@ -157,8 +162,10 @@ const Newsletter = () => {
     e.preventDefault()
     const cleaned = cleanFields(fields)
     axios
-      .post('/account/newsletter', {
+      .post('/account/mailinglist', {
+        name: cleaned.name,
         email: cleaned.email,
+        dateOfBirth: toDate(dateOfBirth).toJSON(),
       })
       .then(() => setStatus('Submitted'))
       .catch(() => {
@@ -180,9 +187,9 @@ const Newsletter = () => {
   }
 
   return (
-    <div className="items-center my-4">
+    <div className="items-center my-4 max-w-sm">
       <h3 className="font-bold text-2xl mb-1">Get 10% off your first rental</h3>
-      <span className="mb-6">
+      <span className="mb-4 text-center">
         Join our mailing list for exclusive offers, first dibs on new items,
         birthday rewards and style inspiration.
       </span>
@@ -201,8 +208,9 @@ const Newsletter = () => {
         ) : null}
         <Input {...fields.name} />
         <Input {...fields.email} after={<Icon name="email" size={20} />} />
+        <DateOfBirth {...dateOfBirth} />
         <div className="w-8" />
-        <Button className="my-2">Submit</Button>
+        <Button className="my-2">Join the Mailing List</Button>
       </form>
     </div>
   )
