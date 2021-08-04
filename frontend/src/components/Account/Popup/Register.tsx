@@ -14,7 +14,14 @@ export const PopupRegister = () => {
 
   return (
     <>
-      <Register email={email} firstName={firstName} lastName={lastName} />
+      <Register
+        email={email}
+        firstName={firstName}
+        lastName={lastName}
+        onSubmit={() => {
+          dispatch(accountActions.hidePopup())
+        }}
+      />
       <OR />
       <span>
         Already have an account?{' '}
