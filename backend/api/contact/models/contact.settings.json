@@ -16,7 +16,7 @@
     },
     "context": {
       "type": "enumeration",
-      "enum": ["waitlist", "launch_party", "newsletter"]
+      "enum": ["mailinglist", "waitlist", "launch_party", "newsletter"]
     },
     "contact": {
       "type": "string"

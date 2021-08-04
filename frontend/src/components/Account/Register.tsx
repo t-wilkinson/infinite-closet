@@ -38,7 +38,6 @@ export const Register = ({
 
   const registerUser = () => {
     const cleaned = cleanFields(fields)
-    console.log(cleaned)
 
     axios
       .post(

@@ -9,7 +9,11 @@ export const Page = () => {
 
   return (
     <>
-      <Signin />
+      <Signin
+        onSubmit={() => {
+          dispatch(accountActions.hidePopup())
+        }}
+      />
       <span>
         New to Infinite Closet?{' '}
         <button onClick={() => dispatch(accountActions.showPopup('register'))}>

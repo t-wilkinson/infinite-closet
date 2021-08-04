@@ -32,13 +32,6 @@ export const Email = () => {
 
   return (
     <>
-      <Button
-        onClick={() =>
-          status === null ? setStatus('submitted') : setStatus(null)
-        }
-      >
-        toggle
-      </Button>
       <div className="relative">
         <FormHeader label="GET 10% OFF YOUR FIRST RENTAL" />
         <span className="text-center">
