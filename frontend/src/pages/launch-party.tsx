@@ -51,7 +51,7 @@ const Page = () => {
           <div className="w-full flex-col-reverse items-center lg:items-start px-4 lg:px-0 lg:flex-row lg:space-x-8 flex-grow">
             <PaymentWrapper>
               <div className="bg-white w-full p-4 rounded-md shadow-md">
-                {TICKET_PRICE !== 'past-release' ? (
+                {TICKET_PRICE === 'past-release' ? (
                   <div className="p-16 text-2xl">
                     Release party starts 8pm on Saturday, September 18!
                   </div>

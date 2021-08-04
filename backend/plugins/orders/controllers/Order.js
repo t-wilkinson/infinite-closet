@@ -33,36 +33,23 @@ module.exports = {
     })
   },
 
+  // TODO: should check if product.sizes includes order.size
   async create(ctx) {
     const body = ctx.request.body
     const user = ctx.state.user
 
-    if (strapi.plugins['orders'].services.order.inProgress(body.status)) {
+    if (!['cart', 'list'].includes(body.status)) {
       return
     }
 
-    const orderBody = {
+    const order = await strapi.plugins['orders'].services.order.create({
       user: user.id,
-      status: 'cart',
+      status: body.status,
       size: body.size,
       product: body.product,
       startDate: body.date,
       rentalLength: body.rentalLength,
-    }
-
-    // const matchingOrder = await strapi
-    //   .query('order', 'orders')
-    //   .findOne({ product: body.product, status: body.status })
-
-    let order
-    // if (matchingOrder) {
-    //   order = await strapi
-    //     .query('order', 'orders')
-    //     .update({ id: matchingOrder.id }, orderBody)
-    // } else {
-    //   order = await strapi.query('order', 'orders').create(orderBody)
-    // }
-    order = await strapi.query('order', 'orders').create(orderBody)
+    })
 
     ctx.send({
       order,

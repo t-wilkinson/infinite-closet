@@ -10,6 +10,7 @@ module.exports = {
   async datesValid(ctx) {
     const body = ctx.request.body
     const {
+      dates,
       product,
       rentalLength,
       size: { quantity, size },
@@ -30,7 +31,7 @@ module.exports = {
 
     let validDates = {}
     // prettier-ignore
-    for (const date of body.dates) {
+    for (const date of dates) {
       if (orders.length === 0) {
         validDates[date] = strapi.plugins['orders'].services.date.valid(date, quantity)
         continue

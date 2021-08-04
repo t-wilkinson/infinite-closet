@@ -35,7 +35,4 @@ describe('Strapi in general', () => {
   })
 })
 
-require('./tmp')
-// require("./hello");
-// require("./user");
-// require("./password");
+require('./orders')
