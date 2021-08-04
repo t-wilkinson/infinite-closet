@@ -195,7 +195,7 @@ const RouteContents = ({ dispatch, focused, item, section }) => (
       <a
         onClick={() => dispatch(layoutActions.closeHeader())}
         className={`px-4 my-1 py-1 block w-full
-          ${item.href ? 'hover:underline' : 'cursor-default text-gray-700'}
+          ${item.href ? 'hover:underline' : 'cursor-default text-gray-500'}
         `}
       >
         <span>{item.name}</span>
