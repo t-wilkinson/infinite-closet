@@ -1,9 +1,16 @@
 'use strict'
 
 const stripe = require('stripe')(process.env.STRIPE_KEY)
+const dayjs = require('dayjs')
+const utc = require('dayjs/plugin/utc')
+const timezone = require('dayjs/plugin/timezone')
+const isSameOrBefore = require('dayjs/plugin/isSameOrBefore')
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(isSameOrBefore)
 
 const SMALLEST_CURRENCY_UNIT = 100
-const TICKET_PRICE = 25
 const PROMO_DISCOUNT = 25
 const PROMO_CODE = 'ICGYBGUEST'
 
@@ -16,6 +23,19 @@ module.exports = {
 
   async join(ctx) {
     const body = ctx.request.body
+    const today = dayjs().tz('Europe/London')
+    const TICKET_PRICE = today.isSameOrBefore('2021-08-18', 'day')
+      ? 25
+      : today.isSameOrBefore('2021-09-11')
+        ? 30
+        : today.isSameOrBefore('2021-09-15')
+          ? 35
+          : 'past-release'
+
+    if (TICKET_PRICE === 'past-release') {
+      return ctx.send()
+    }
+
     const discount =
       body.promoCode === 'GIVEYOURBEST'
         ? 5

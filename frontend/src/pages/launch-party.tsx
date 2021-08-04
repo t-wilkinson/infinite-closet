@@ -1,6 +1,14 @@
 import React from 'react'
 import axios from 'axios'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(isSameOrBefore)
 
 import useAnalytics from '@/utils/useAnalytics'
 import { useSelector } from '@/utils/store'
@@ -11,6 +19,17 @@ import { Button, Hover, Icon } from '@/components'
 import { PaymentCard, PaymentWrapper } from '@/Form/Payments'
 import Layout from '@/Layout'
 
+const today = dayjs().tz('Europe/London')
+const TICKET_PRICE = today.isSameOrBefore('2021-08-18', 'day')
+  ? 25
+  : today.isSameOrBefore('2021-09-11')
+  ? 30
+  : today.isSameOrBefore('2021-09-15')
+  ? 35
+  : 'past-release'
+const GIVEYOURBEST_DISCOUNT = 5
+const PROMO_DISCOUNT = 25
+
 const Page = () => {
   return (
     <Layout title="Launch Party" className="bg-pri-light">
@@ -18,9 +37,9 @@ const Page = () => {
         <div className="w-full max-w-screen-lg items-center mb-8">
           <h1 className="font-bold text-5xl mt-8">Join our Launch Party</h1>
           <div className="text-lg mb-12 space-y-2 max-w-screen-md px-4 md:px-0">
-            <span className="whitespace-pre-line">
+            <h2 className="whitespace-pre-line">
               Join us to celebrate the power of fashion to change lives.
-            </span>
+            </h2>
             <div className="lg:hidden">
               <PartyInfo />
             </div>
@@ -29,7 +48,13 @@ const Page = () => {
           <div className="w-full flex-col-reverse items-center lg:items-start px-4 lg:px-0 lg:flex-row lg:space-x-8 flex-grow">
             <PaymentWrapper>
               <div className="bg-white w-full p-4 rounded-md shadow-md">
-                <JoinLaunchParty />
+                {TICKET_PRICE !== 'past-release' ? (
+                  <div className="p-16 text-2xl">
+                    Release party starts 8pm on Saturday, September 18!
+                  </div>
+                ) : (
+                  <JoinLaunchParty />
+                )}
               </div>
             </PaymentWrapper>
             <div className="w-full justify-evenly lg:max-w-xs flex-row flex-wrap">
@@ -160,10 +185,6 @@ const reducer = (
     default: return state
   }
 }
-
-const TICKET_PRICE = 25
-const GIVEYOURBEST_DISCOUNT = 5
-const PROMO_DISCOUNT = 25
 
 function handleServerResponse(response, stripe, dispatch) {
   if (response.error) {
