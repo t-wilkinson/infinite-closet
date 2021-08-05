@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import axios from 'axios'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import dayjs from 'dayjs'
@@ -34,21 +35,31 @@ const Page = () => {
   return (
     <Layout title="Launch Party" className="bg-pri-light">
       <div className="w-full items-center flex-grow">
-        <div className="w-full max-w-screen-lg items-center mb-8">
-          <h1 className="font-bold text-5xl mt-8">Join our Launch Party</h1>
-          <div className="text-lg mb-12 space-y-2 max-w-screen-md px-4 md:px-0">
-            <span className="whitespace-pre-line">
-              In conjunction with London Fashion Week, Infinite Closet and Give
-              Your Best Launch present the Infinite Closet x Give Your Best
-              Launch Party Join us to celebrate the power of fashion to change
-              lives.
-            </span>
-            <div className="lg:hidden">
-              <PartyInfo />
+        <div className="w-full max-w-screen-lg items-center px-4 mb-20">
+          <div className="relative mt-4 mb-8 w-full items-center">
+            <div className="relative text-lg text-white md:h-96 w-full rounded-md overflow-hidden">
+              <Image
+                src="/media/launch-party/toast.jpg"
+                priority={true}
+                alt=""
+                layout="fill"
+                objectFit="cover"
+              />
             </div>
-            <span>Tickets are first come, first serve.</span>
+            <div className="space-y-2 max-w-screen-md mt-8 mb-4 px-4 md:px-0 relative md:items-center">
+              <h1 className="font-bold text-5xl">Join our Launch Party</h1>
+              <span className="md:text-center text-xl">
+                In conjunction with London Fashion Week, Infinite Closet and
+                Give Your Best Launch present the Infinite Closet x Give Your
+                Best Launch Party
+              </span>
+              <div className="lg:hidden">
+                <PartyInfo />
+              </div>
+              <small>Tickets are first come, first serve.</small>
+            </div>
           </div>
-          <div className="w-full flex-col-reverse items-center lg:items-start px-4 lg:px-0 lg:flex-row lg:space-x-8 flex-grow">
+          <div className="w-full flex-col-reverse items-center lg:items-start lg:flex-row lg:space-x-8 flex-grow">
             <PaymentWrapper>
               <div className="bg-white w-full p-4 rounded-md shadow-md">
                 {TICKET_PRICE === 'past-release' ? (

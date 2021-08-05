@@ -91,7 +91,7 @@ const Heading = ({ block = true, children }) => {
 
 const Introduction = () => (
   <div
-    className="items-center sm:items-stretch w-full flex-row py-16 sm:py-0 sm:h-80vh"
+    className="items-center sm:items-stretch w-full flex-row py-16 sm:py-0"
     style={{
       background: '#D9C6BC',
     }}
@@ -135,11 +135,11 @@ const Introduction = () => (
       <div className="hidden sm:block">
         <Image
           priority={true}
-          src="/media/wine-toast.jpg"
+          src="/media/home/banner.jpg"
           alt=""
           layout="fill"
           objectFit="cover"
-          objectPosition="top center"
+          objectPosition="top right"
         />
       </div>
     </div>
