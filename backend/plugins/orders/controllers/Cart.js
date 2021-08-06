@@ -16,10 +16,19 @@ async function createCart(orders) {
       const quantity = await strapi.plugins['orders'].services.order.quantity(
         order
       )
+
+      const existingOrders = await strapi
+        .query('order', 'orders')
+        .count({
+          product: order.product.id || order.product,
+          size: order.size,
+        })
+
       const valid = strapi.plugins['orders'].services.date.valid(
         order.startDate,
         numAvailable[key],
-        quantity
+        quantity,
+        existingOrders
       )
 
       return {
@@ -143,10 +152,15 @@ module.exports = {
         const quantity = await strapi.plugins['orders'].services.order.quantity(
           order
         )
+        const existingOrders = await strapi
+          .query('order', 'orders')
+          .count({ product: order.product.id, size: order.size })
+
         const valid = strapi.plugins['orders'].services.date.valid(
           order.startDate,
           numAvailable[key],
-          quantity
+          quantity,
+          existingOrders
         )
 
         if (valid) {

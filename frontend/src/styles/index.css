@@ -24,6 +24,8 @@ details summary::-webkit-details-marker {
 }
 
 div,
+section,
+aside,
 main {
   display: flex;
   flex-direction: column;

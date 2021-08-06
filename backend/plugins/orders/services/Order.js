@@ -28,6 +28,9 @@ function numAvailable(orders, dates) {
   const numAvailable = orders.reduce((counter, order) => {
     const key = toKey(order)
     const { product } = order
+    if (!order.range) {
+      order.range = strapi.plugins['orders'].services.date.range(order)
+    }
 
     // set default available product quantity
     if (!(key in counter)) {
@@ -42,9 +45,6 @@ function numAvailable(orders, dates) {
       return counter
     }
 
-    const orderDateRange =
-      order.range || strapi.plugins['orders'].services.date.range(order)
-
     // if date ranges overlap, reduce available product quantity
     const overlaps = dates[key].reduce((acc, date) => {
       if (acc) {
@@ -52,8 +52,8 @@ function numAvailable(orders, dates) {
       }
       const overlaps =
         date &&
-        strapi.plugins['orders'].services.date.overlap(date, orderDateRange) &&
-        inProgress(order.status)
+        inProgress(order.status) &&
+        strapi.plugins['orders'].services.date.overlap(date, order.range)
       return overlaps
     }, false)
 

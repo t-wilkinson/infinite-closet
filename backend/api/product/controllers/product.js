@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const models = require('../../../data/data.js').models
 
+// Assigns default value to new keys
 class DefaultDict {
   constructor(defaultInit) {
     return new Proxy(
@@ -42,9 +43,11 @@ const productFilters = [
   'sizes',
 ]
 
+// Some product filters contain a private hash of values to speed up searching
 const toPrivate = (key) => key + '_'
 
-const toRaw = (_where) => {
+// Convert _where query params to raw SQL query
+const toRawSQL = (_where) => {
   const filterSlugs = _.pick(_where, productFilters)
   let values = []
   let query = []
@@ -71,6 +74,8 @@ const toRaw = (_where) => {
         addSlug(filter, slug)
         q.push('?? like ?')
       }
+
+      // The `categories` filter should be ANDed together, all other filters are OR
       if (filter === 'categories') {
         query.push(q.join(' AND '))
       } else {
@@ -87,37 +92,35 @@ async function queryProducts(knex, _where, _paging) {
   let sort = _paging.sort.split(':')
   sort[0] = `products."${sort[0]}"`
   sort = sort.join(' ')
-  const results = await knex
+  const productIds = await knex
     .select('products.id as id')
     .from('products')
     .join('designers', 'products.designer', 'designers.id')
     .orderByRaw(sort)
     .whereNotNull('products.published_at')
-    .whereRaw(...toRaw(_where))
+    .whereRaw(...toRawSQL(_where))
 
   const products = await Promise.all(
-    results.map(({ id }) =>
+    productIds.map(({ id }) =>
       strapi.query('product').findOne({ id }, ['designer', 'images', 'sizes'])
     )
   )
   return products
 }
 
-async function queryFilters(knex, _where) {
-  // here we find all filters in products under only the category filter
-  const results = await knex
-    .select('products.*')
-    .from('products')
-    .whereNotNull('products.published_at')
-    .whereRaw(...toRaw({ categories: _where.categories }))
-
+/**
+ * Extracts unique slugs from each product filter
+ * to show user only options that will actually affect search results.
+ * @param {Object[]} products
+ */
+function productSlugs(products) {
   /* TODO: don't show filters that would result in 0 products showing up
    * for each filter, show slugs that would match at least one product, given all the other filters
    * product holds the key information to solve this
    * how do we structure filter relations to ensure this?
    */
   let filterSlugs = new DefaultDict(Set)
-  for (const product of results) {
+  for (const product of products) {
     for (const filter of productFilters) {
       if (filter in models) {
         const slugs = product[toPrivate(filter)]
@@ -134,35 +137,49 @@ async function queryFilters(knex, _where) {
       }
     }
   }
+  return filterSlugs
+}
+
+async function availableSizes(knex, slugs) {
+  // prettier-ignore
+  const sizes = await knex
+    .select('components_custom_sizes.* as sizes')
+    .from('components_custom_sizes')
+    .distinctOn('components_custom_sizes.size')
+    .whereRaw(
+      Array(slugs.size).fill('components_custom_sizes.size = ?').join(' OR '),
+      Array.from(slugs)
+    )
+
+  const sizeRanges = sizes.reduce((acc, size) => {
+    if (size.sizeRange) {
+      for (const value of strapi.services.size.range(size)) {
+        acc.add(value)
+      }
+    } else {
+      acc.add(size.size)
+    }
+    return acc
+  }, new Set())
+
+  return Array.from(sizeRanges).map(strapi.services.size.normalize)
+}
+
+async function queryFilters(knex, _where) {
+  // here we find all filters in products under only the category filter
+  const products = await knex
+    .select('products.*')
+    .from('products')
+    .whereNotNull('products.published_at')
+    .whereRaw(...toRawSQL({ categories: _where.categories }))
 
   // slugs contain only filters that match product categories
   // get all filters that match these slugs
   let filters = new DefaultDict({})
-  for (const [filter, slugs] of Object.entries(filterSlugs)) {
+  for (const [filter, slugs] of Object.entries(productSlugs(products))) {
     if (filter in models) {
       if (filter === 'sizes') {
-        // prettier-ignore
-        let sizes = await knex
-          .select('components_custom_sizes.* as sizes')
-          .from('components_custom_sizes')
-          .distinctOn('components_custom_sizes.size')
-          .whereRaw(
-            Array(slugs.size).fill('components_custom_sizes.size = ?').join(' OR '),
-            Array.from(slugs)
-          )
-
-        sizes = sizes.reduce((acc, size) => {
-          if (size.sizeRange) {
-            for (const value of strapi.services.size.range(size)) {
-              acc.add(value)
-            }
-          } else {
-            acc.add(size.size)
-          }
-          return acc
-        }, new Set())
-        sizes = Array.from(sizes).map(strapi.services.size.normalize)
-        filters[filter] = sizes
+        filters[filter] = await availableSizes(knex, slugs)
       } else {
         filters[filter] = await knex
           .select(`${filter}.*`)

@@ -9,39 +9,36 @@ module.exports = {
 
   async datesValid(ctx) {
     const body = ctx.request.body
-    const {
-      dates,
-      product,
-      rentalLength,
-      size: { quantity, size },
-    } = body
+    const { dates, product, rentalLength, size } = body
 
-    let orders = await strapi
+    const orderProduct = await strapi
+      .query('product')
+      .findOne({ id: product }, ['sizes'])
+    const quantity = orderProduct.sizes.find((s) => s.size === size).quantity
+
+    const matchingOrders = await strapi
       .query('order', 'orders')
-      .find({ product: product.id, size }, [])
-    orders = await Promise.all(
-      orders.map(async (order) => {
-        order.range = strapi.plugins['orders'].services.date.range(order)
-        order.product = await strapi
-          .query('product')
-          .findOne({ id: order.product }, ['sizes'])
-        return order
-      })
-    )
+      .find({ product, size }, []) // TODO: why can't we attach products.sizes
+
+    // Attach product to orders
+    const orders = matchingOrders.map((order) => {
+      order.product = orderProduct
+      return order
+    })
 
     let validDates = {}
     // prettier-ignore
     for (const date of dates) {
       if (orders.length === 0) {
-        validDates[date] = strapi.plugins['orders'].services.date.valid(date, quantity)
+        validDates[date] = strapi.plugins['orders'].services.date.valid(date, quantity, quantity)
         continue
+      } else {
+        const key = strapi.plugins['orders'].services.order.toKey(orders[0]) // all orders have the same key
+        const dates = { [key]: [strapi.plugins['orders'].services.date.dateRange(date, rentalLength)] }
+        const numAvailable = strapi.plugins['orders'].services.order.numAvailable(orders, dates)[key]
+
+        validDates[date] = strapi.plugins['orders'].services.date.valid(date, numAvailable, quantity, orders.length)
       }
-
-      const key = strapi.plugins['orders'].services.order.toKey(orders[0]) // all orders have the same key
-      const dates = { [key]: [strapi.plugins['orders'].services.date.dateRange(date, rentalLength)] }
-      const numAvailable = strapi.plugins['orders'].services.order.numAvailable(orders, dates)[key]
-
-      validDates[date] = strapi.plugins['orders'].services.date.valid(date, numAvailable, quantity)
     }
 
     ctx.send({ valid: validDates })

@@ -14,53 +14,61 @@ import { Button, Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 
 export const Footer = () => {
+  return (
+    <FooterWrapper>
+      <nav className="w-full flex flex-wrap flex-row items-start justify-start">
+        <Section
+          title="Get Help"
+          links={[
+            { href: '/#how-it-works', label: 'How it Works' },
+            { href: '/faqs', label: 'FAQs' },
+            { href: '/contact-us', label: 'Contact Us' },
+            // { href: '/size-charts', label: 'Size Charts' },
+          ]}
+        />
+        <Section
+          title="Company"
+          links={[{ href: '/about-us', label: 'About Us' }]}
+        />
+
+        <Section
+          title="Legal"
+          links={[
+            {
+              href: '/terms-and-conditions',
+              label: 'Terms & Conditions',
+            },
+            { href: '/privacy', label: 'Privacy & Cookie Policy' },
+          ]}
+        />
+
+        <div className="space-y-4">
+          <Section title="Rent On The Go">
+            <DownloadPWA />
+          </Section>
+          <Section title="Follow Us">
+            <FollowUs />
+          </Section>
+        </div>
+      </nav>
+    </FooterWrapper>
+  )
+}
+
+const FooterWrapper = ({ children }) => {
   const router = useRouter()
 
   return (
     <div>
       {router.pathname === '/' && (
         <div className="items-center w-full px-2 py-12">
-          <Newsletter />
+          <Waitlist />
         </div>
       )}
 
       <div className="items-center w-full px-2 bg-sec text-white">
         <footer className="flex flex-col w-full p-16 max-w-screen-md">
-          <nav className="w-full flex flex-wrap flex-row items-start justify-start">
-            <Section
-              title="Get Help"
-              links={[
-                { href: '/#how-it-works', label: 'How it Works' },
-                { href: '/faqs', label: 'FAQs' },
-                { href: '/contact-us', label: 'Contact Us' },
-                // { href: '/size-charts', label: 'Size Charts' },
-              ]}
-            />
-            <Section
-              title="Company"
-              links={[{ href: '/about-us', label: 'About Us' }]}
-            />
-
-            <Section
-              title="Legal"
-              links={[
-                {
-                  href: '/terms-and-conditions',
-                  label: 'Terms & Conditions',
-                },
-                { href: '/privacy', label: 'Privacy & Cookie Policy' },
-              ]}
-            />
-
-            <div className="space-y-4">
-              <Section title="Rent On The Go">
-                <WebApp />
-              </Section>
-              <Section title="Follow Us">
-                <FollowUs />
-              </Section>
-            </div>
-          </nav>
+          {children}
         </footer>
         <div className="mb-8">
           <small>© 2021 Infinite Closet. All Rights Reserved.</small>
@@ -82,7 +90,7 @@ const Section = ({ title, links = [], children = null }) => (
   </div>
 )
 
-const WebApp = () => {
+const DownloadPWA = () => {
   // Setup pwa download button
   React.useEffect(() => {
     let deferredPrompt
@@ -121,14 +129,7 @@ const WebApp = () => {
 
   return (
     <div className="flex-row items-start">
-      {/* <div */}
-      {/*   style={{ */}
-      {/*     transform: 'rotate(30deg)', */}
-      {/*   }} */}
-      {/* > */}
       <Image src="/icons/phone.svg" height={48} width={32} />
-      {/* </div> */}
-      {/* <Icon name="phone" style={{ width: 32 }} /> */}
       <div className="w-2" />
       <button className="underline inline text-sm add-button">Download</button>
     </div>
@@ -145,7 +146,7 @@ const FooterLink = ({ href, label }) => (
 
 type Status = 'None' | 'Error' | 'Submitted' | 'Submitting'
 
-const Newsletter = () => {
+const Waitlist = () => {
   const [status, setStatus] = React.useState<Status>('None')
   const dateOfBirth = useDateOfBirth()
   const fields = useFields({

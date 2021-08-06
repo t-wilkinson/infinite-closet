@@ -104,8 +104,8 @@ const Days = ({ days, state, dispatch, rentalLength }) => {
     axios
       .post('/orders/dates/valid', {
         dates: days,
-        product,
-        size: sizing.get(product.sizes, state.size),
+        product: product.id,
+        size: sizing.get(product.sizes, state.size).size,
         rentalLength: state.oneTime,
       })
       .then((res) => setValid(res.data.valid))

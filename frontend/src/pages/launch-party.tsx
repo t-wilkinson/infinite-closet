@@ -27,7 +27,7 @@ const TICKET_PRICE = today.isSameOrBefore('2021-08-18', 'day')
   ? 30
   : today.isSameOrBefore('2021-09-15')
   ? 35
-  : 'past-release'
+  : -1
 const GIVEYOURBEST_DISCOUNT = 5
 const PROMO_DISCOUNT = 25
 
@@ -36,50 +36,66 @@ const Page = () => {
     <Layout title="Launch Party" className="bg-pri-light">
       <div className="w-full items-center flex-grow">
         <div className="w-full max-w-screen-lg items-center px-4 mb-20">
-          <div className="relative mt-4 mb-8 w-full items-center">
-            <div className="relative text-lg text-white md:h-96 w-full rounded-md overflow-hidden">
-              <Image
-                src="/media/launch-party/toast.jpg"
-                priority={true}
-                alt=""
-                layout="fill"
-                objectFit="cover"
-              />
-            </div>
-            <div className="space-y-2 max-w-screen-md mt-8 mb-4 px-4 md:px-0 relative md:items-center">
-              <h1 className="font-bold text-5xl">Join our Launch Party</h1>
-              <span className="md:text-center text-xl">
-                In conjunction with London Fashion Week, Infinite Closet and
-                Give Your Best Launch present the Infinite Closet x Give Your
-                Best Launch Party
-              </span>
-              <div className="lg:hidden">
-                <PartyInfo />
-              </div>
-              <small>Tickets are first come, first serve.</small>
-            </div>
-          </div>
+          <Introduction />
           <div className="w-full flex-col-reverse items-center lg:items-start lg:flex-row lg:space-x-8 flex-grow">
-            <PaymentWrapper>
-              <div className="bg-white w-full p-4 rounded-md shadow-md">
-                {TICKET_PRICE === 'past-release' ? (
-                  <div className="p-16 text-2xl">
-                    Release party starts 8pm on Saturday, September 18!
-                  </div>
-                ) : (
-                  <JoinLaunchParty />
-                )}
-              </div>
-            </PaymentWrapper>
-            <div className="w-full justify-evenly lg:max-w-xs flex-row flex-wrap">
-              <SideBar />
+            <div className="bg-white w-full p-4 rounded-md shadow-md">
+              {TICKET_PRICE === -1 ? (
+                <div className="p-16 text-2xl text-center">
+                  Release party starts 8pm on Saturday, September 18!
+                </div>
+              ) : (
+                <LaunchPartyFormWrapper />
+              )}
             </div>
+            <aside className="w-full justify-evenly lg:max-w-xs flex-row flex-wrap">
+              <SideBar />
+            </aside>
           </div>
         </div>
       </div>
     </Layout>
   )
 }
+
+const Introduction = () => (
+  <section className="relative mt-4 mb-8 w-full items-center">
+    <div className="relative text-lg text-white md:h-96 w-full rounded-md overflow-hidden">
+      <Image
+        src="/media/launch-party/toast.jpg"
+        priority={true}
+        alt=""
+        layout="fill"
+        objectFit="cover"
+      />
+    </div>
+    <div className="space-y-2 max-w-screen-md mt-8 mb-4 px-4 md:px-0 relative lg:items-center">
+      <h1 className="font-bold text-5xl">Join our Launch Party</h1>
+      <span className="lg:text-center text-xl">
+        In conjunction with London Fashion Week, Infinite Closet and Give Your
+        Best Launch present the Infinite Closet x Give Your Best Launch Party
+      </span>
+      <div className="lg:hidden">
+        <PartyInfo />
+      </div>
+      <small>Tickets are first come, first serve.</small>
+    </div>
+  </section>
+)
+
+const PartyInfo = () => (
+  <>
+    <span className="mt-4 lg:mt-0">
+      Infinite Closet, London's premier independent designer rental platform,
+      and Give Your Best, a non-profit where refugee women can ‘shop’ donated
+      clothes for free, are partnering to empower women and improve circularity
+      in the fashion industry.
+    </span>
+    <span>
+      Join us on 18 September to learn more about Give Your Best and browse
+      clothes from Infinite Closet’s latest designers.
+    </span>
+  </>
+)
 
 const SideBar = () => (
   <>
@@ -124,31 +140,16 @@ const SideBar = () => (
   </>
 )
 
+const Details = ({ children }) => (
+  <div className="rounded-md lg:flex-col px-6 py-4 w-full mb-4 max-w-xs h-36 bg-white space-y-2 shadow-md">
+    {children}
+  </div>
+)
+
 const DetailItem = ({ label, text }) => (
   <span>
     <span className="font-bold">{label}</span>, {text}
   </span>
-)
-
-const PartyInfo = () => (
-  <>
-    <span>
-      Infinite Closet, London's premier independent designer rental platform,
-      and Give Your Best, a non-profit where refugee women can ‘shop’ donated
-      clothes for free, are partnering to empower women and improve circularity
-      in the fashion industry.
-    </span>
-    <span>
-      Join us on 18 September to learn more about Give Your Best and browse
-      clothes from Infinite Closet’s latest designers.
-    </span>
-  </>
-)
-
-const Details = ({ children }) => (
-  <div className="rounded-md lg:flex-col px-6 py-4 w-full mb-8 lg:mb-8 max-w-xs h-36 bg-white space-y-2 shadow-md">
-    {children}
-  </div>
 )
 
 type Status = null | 'checking-out' | 'error' | 'success'
@@ -200,35 +201,10 @@ const reducer = (
   }
 }
 
-function handleServerResponse(response, stripe, dispatch) {
-  if (response.error) {
-    // Show error from server on payment form
-    dispatch({ type: 'payment-failed', payload: 'Unable to process payment' })
-  } else if (response.requires_action) {
-    // Use Stripe.js to handle required card action
-    stripe
-      .handleCardAction(response.payment_intent_client_secret)
-      .then((res) => handleStripeJsResult(res, stripe, dispatch))
-  } else {
-    dispatch({ type: 'payment-succeeded' })
-  }
-}
+const StateContext = React.createContext(null)
+const DispatchContext = React.createContext(null)
 
-function handleStripeJsResult(result, stripe, dispatch) {
-  if (result.error) {
-    dispatch({ type: 'payment-failed', payload: result.error })
-  } else {
-    // The card action has been handled
-    // The PaymentIntent can be confirmed again on the server
-    axios
-      .post('/launch/party/join', {
-        paymentIntent: result.paymentIntent.id,
-      })
-      .then((res) => handleServerResponse(res.data, stripe, dispatch))
-  }
-}
-
-const JoinLaunchParty = () => {
+const LaunchPartyFormWrapper = () => {
   const user = useSelector((state) => state.user.data)
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const [guests, setGuests] = React.useState<string[]>([])
@@ -262,6 +238,24 @@ const JoinLaunchParty = () => {
   }, [state.donation])
 
   return (
+    <PaymentWrapper>
+      <StateContext.Provider value={state}>
+        <DispatchContext.Provider value={dispatch}>
+          <LaunchPartyForm
+            setGuests={setGuests}
+            guests={guests}
+            fields={fields}
+          />
+        </DispatchContext.Provider>
+      </StateContext.Provider>
+    </PaymentWrapper>
+  )
+}
+
+const LaunchPartyForm = ({ setGuests, guests, fields }) => {
+  const state = React.useContext(StateContext)
+
+  return (
     <div className="w-full">
       <form id="payment-form">
         {state.paymentStatus === 'succeeded' ? (
@@ -271,7 +265,7 @@ const JoinLaunchParty = () => {
         ) : (
           <div className="space-y-8">
             <Section title="How can we contact you?">
-              <UserInfo fields={fields} />
+              <AttendeeInfo fields={fields} />
             </Section>
             <Section
               title="Bringing any guests?"
@@ -288,15 +282,11 @@ const JoinLaunchParty = () => {
               <GuestInfo guests={guests} setGuests={setGuests} />
             </Section>
             <Section title="Donations & Discounts">
-              <Misc fields={fields} dispatch={dispatch} state={state} />
+              <Discounts fields={fields} />
             </Section>
             <Section title="Summary">
-              <Pay
-                fields={fields}
-                guests={guests}
-                dispatch={dispatch}
-                state={state}
-              />
+              <Summary fields={fields} guests={guests} />
+              <Pay fields={fields} guests={guests} />
             </Section>
           </div>
         )}
@@ -306,13 +296,13 @@ const JoinLaunchParty = () => {
 }
 
 const Section = ({ title, subtitle = null, children }) => (
-  <div>
+  <fieldset className="flex flex-col">
     <div className="flex-row items-center mb-4">
-      <strong className="text-lg">{title}</strong>
+      <legend className="font-bold text-lg">{title}</legend>
       {subtitle}
     </div>
     {children}
-  </div>
+  </fieldset>
 )
 
 const GuestInfo = ({
@@ -358,137 +348,37 @@ const GuestInfo = ({
   )
 }
 
-const UserInfo = ({ fields }) => {
-  // const disabled = !isValid(fields, [
-  //   'firstName',
-  //   'lastName',
-  //   'email',
-  //   'phoneNumber',
-  // ])
-
-  return (
-    <div className="space-y-4">
-      <div className="flex-row space-x-4 -mb-2">
-        <Input {...fields.firstName} />
-        <Input {...fields.lastName} />
-      </div>
-      <Input {...fields.email} />
-      <Input {...fields.phoneNumber} />
-      {/* <div className="w-full"> */}
-      {/*   <CallToAction */}
-      {/*     onClick={() => dispatch({ type: 'edit-payment' })} */}
-      {/*     disabled={disabled} */}
-      {/*     className={`mt-2 */}
-      {/*     `} */}
-      {/*     type="button" */}
-      {/*   > */}
-      {/*     Continue */}
-      {/*   </CallToAction> */}
-      {/* </div> */}
+const AttendeeInfo = ({ fields }) => (
+  <div className="space-y-4">
+    <div className="flex-row space-x-4 -mb-2">
+      <Input {...fields.firstName} />
+      <Input {...fields.lastName} />
     </div>
-  )
-}
-
-const Price = ({ label, price, minus = false }) => (
-  <div className="mb-2 w-full flex-row justify-between items-center">
-    <span>{label}</span>
-    <span>
-      {minus ? '-' : ''}£{price.toFixed(2)}
-    </span>
+    <Input {...fields.email} />
+    <Input {...fields.phoneNumber} />
   </div>
 )
 
-const Misc = ({ fields, dispatch, state }) => (
+const Discounts = ({ fields }) => (
   <div className="space-y-4">
     <div>
       <div className="flex-row mb-2">
         <div className="w-80">
-          <PromoCode state={state} dispatch={dispatch} fields={fields} />
+          <PromoCode fields={fields} />
         </div>
-        <div className="ml-8 w-full space-y-2">
-          <q className="">
-            Have some gently loved clothes to donate? Get £5 off your ticket
-            price with 2 clothing donations on the day of the event for{' '}
-            <a
-              href="https://www.giveyourbest.uk/"
-              target="_blank"
-              className="underline"
-            >
-              Give Your Best
-            </a>
-            . Use promo code GIVEYOURBEST.
-          </q>
-          <small>
-            *At this time we can only accept women’s clothing donations.
-          </small>
-        </div>
+        <DonateClothes />
       </div>
     </div>
-
     <div className="flex-row">
-      <Donation donation={fields.donation} state={state} dispatch={dispatch} />
+      <Donation donation={fields.donation} />
     </div>
   </div>
 )
 
-const Pay = ({ fields, dispatch, state, guests }) => {
-  const handleChange = async (event) => {
-    if (event.error) {
-      dispatch({ type: 'payment-error', payload: event.error?.message })
-    } else {
-      dispatch({ type: 'payment-progress' })
-    }
-  }
+const PromoCode = ({ fields }) => {
+  const state = React.useContext(StateContext)
+  const dispatch = React.useContext(DispatchContext)
 
-  const discount =
-    fields.promoCode.value === 'GIVEYOURBEST'
-      ? GIVEYOURBEST_DISCOUNT
-      : state.promoValid
-      ? PROMO_DISCOUNT
-      : 0
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <Price label="Ticket Price" price={TICKET_PRICE} />
-        <Price label="Promo Discount" price={discount} minus />
-        <Price label="Guest Tickets" price={guests.length * TICKET_PRICE} />
-
-        <div className="mb-4 w-full flex-row justify-between items-center font-bold">
-          <span className="">Total</span>
-          <span className="">
-            £
-            {(
-              parseFloat(fields.donation.value) +
-              TICKET_PRICE +
-              TICKET_PRICE * guests.length -
-              discount
-            ).toFixed(2)}
-          </span>
-        </div>
-
-        <PaymentCard handleChange={handleChange} />
-
-        <div className="w-full items-center">
-          {state.error && (
-            <div className="text-warning card-error" role="alert">
-              {state.error}
-            </div>
-          )}
-        </div>
-
-        <Join
-          guests={guests}
-          fields={fields}
-          state={state}
-          dispatch={dispatch}
-        />
-      </div>
-    </div>
-  )
-}
-
-const PromoCode = ({ state, fields, dispatch }) => {
   const checkPromo = () =>
     axios
       .get(`/launch/party/promo?code=${fields.promoCode.value}`)
@@ -498,26 +388,32 @@ const PromoCode = ({ state, fields, dispatch }) => {
           : dispatch({ type: 'promo-invalid' })
       )
       .catch(() => dispatch({ type: 'promo-invalid' }))
+  const ApplyPromoCode = () => (
+    <button
+      className="flex px-4 py-3 border-l border-gray"
+      onClick={checkPromo}
+      type="button"
+    >
+      Apply
+    </button>
+  )
+  const onKeyDown = (e) => {
+    if (e.keyCode === 13) {
+      e.preventDefault()
+      checkPromo()
+    }
+  }
+  const retryPromoCode = () => {
+    fields.promoCode.onChange('')
+    dispatch({ type: 'try-promo-again' })
+  }
 
   if (state.promoValid === undefined) {
     return (
       <Input
-        onKeyDown={(e) => {
-          if (e.keyCode === 13) {
-            e.preventDefault()
-            checkPromo()
-          }
-        }}
+        onKeyDown={onKeyDown}
         {...fields.promoCode}
-        after={
-          <button
-            className="flex px-4 py-3 border-l border-gray"
-            onClick={checkPromo}
-            type="button"
-          >
-            Apply
-          </button>
-        }
+        after={<ApplyPromoCode />}
       />
     )
   } else if (state.promoValid === true) {
@@ -526,13 +422,7 @@ const PromoCode = ({ state, fields, dispatch }) => {
     return (
       <span className="text-warning w-full p-2">
         Unable to find promo code matching {fields.promoCode.value}.{' '}
-        <button
-          className="underline text-black"
-          onClick={() => {
-            fields.promoCode.onChange('')
-            dispatch({ type: 'try-promo-again' })
-          }}
-        >
+        <button className="underline text-black" onClick={retryPromoCode}>
           Try Again?
         </button>
       </span>
@@ -540,7 +430,27 @@ const PromoCode = ({ state, fields, dispatch }) => {
   }
 }
 
-const Donation = ({ dispatch, state, donation }) => {
+const DonateClothes = () => (
+  <div className="ml-8 w-full space-y-2">
+    <q className="">
+      Have some gently loved clothes to donate? Get £5 off your ticket price
+      with 2 clothing donations on the day of the event for{' '}
+      <a
+        href="https://www.giveyourbest.uk/"
+        target="_blank"
+        className="underline"
+      >
+        Give Your Best
+      </a>
+      . Use promo code GIVEYOURBEST.
+    </q>
+    <small>*At this time we can only accept women’s clothing donations.</small>
+  </div>
+)
+
+const Donation = ({ donation }) => {
+  const state = React.useContext(StateContext)
+
   return (
     <div className="">
       <div className="flex-row items-center">
@@ -559,7 +469,6 @@ const Donation = ({ dispatch, state, donation }) => {
           {[1, 5, 10, 30].map((amount) => (
             <DonationAddition
               key={amount}
-              dispatch={dispatch}
               amount={amount}
               selected={state.donation === amount}
             />
@@ -570,20 +479,93 @@ const Donation = ({ dispatch, state, donation }) => {
   )
 }
 
-const DonationAddition = ({ dispatch, amount, selected }) => (
-  <button
-    aria-label="Change donation amount"
-    type="button"
-    onClick={() => dispatch({ type: 'donation-amount', payload: amount })}
-    className={`flex rounded-full h-10 w-10 p-1 items-center justify-center border border-gray
-    ${selected ? 'text-white bg-pri' : ''}
-    `}
-  >
-    <span>£{amount}</span>
-  </button>
+const Summary = ({ fields, guests }) => {
+  const state = React.useContext(StateContext)
+  const discount =
+    fields.promoCode.value === 'GIVEYOURBEST'
+      ? GIVEYOURBEST_DISCOUNT
+      : state.promoValid
+      ? PROMO_DISCOUNT
+      : 0
+
+  return (
+    <div>
+      <Price label="Ticket Price" price={TICKET_PRICE} />
+      <Price label="Promo Discount" price={discount} negative />
+      <Price label="Guest Tickets" price={guests.length * TICKET_PRICE} />
+
+      <div className="mb-4 w-full flex-row justify-between items-center font-bold">
+        <span className="">Total</span>
+        <span className="">
+          £
+          {(
+            parseFloat(fields.donation.value) +
+            TICKET_PRICE +
+            TICKET_PRICE * guests.length -
+            discount
+          ).toFixed(2)}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+const Pay = ({ fields, guests }) => {
+  const state = React.useContext(StateContext)
+  const dispatch = React.useContext(DispatchContext)
+  const handleChange = async (event) => {
+    if (event.error) {
+      dispatch({ type: 'payment-error', payload: event.error?.message })
+    } else {
+      dispatch({ type: 'payment-progress' })
+    }
+  }
+
+  return (
+    <div>
+      <PaymentCard handleChange={handleChange} />
+
+      <div className="w-full items-center">
+        {state.error && (
+          <div className="text-warning card-error" role="alert">
+            {state.error}
+          </div>
+        )}
+      </div>
+
+      <Join guests={guests} fields={fields} />
+    </div>
+  )
+}
+
+const Price = ({ label, price, negative = false }) => (
+  <div className="mb-2 w-full flex-row justify-between items-center">
+    <span>{label}</span>
+    <span>
+      {negative ? '-' : ''}£{price.toFixed(2)}
+    </span>
+  </div>
 )
 
-const Join = ({ dispatch, state, fields, guests }) => {
+const DonationAddition = ({ amount, selected }) => {
+  const dispatch = React.useContext(DispatchContext)
+  return (
+    <button
+      aria-label="Change donation amount"
+      type="button"
+      onClick={() => dispatch({ type: 'donation-amount', payload: amount })}
+      className={`flex rounded-full h-10 w-10 p-1 items-center justify-center border border-gray
+    ${selected ? 'text-white bg-pri' : ''}
+    `}
+    >
+      <span>£{amount}</span>
+    </button>
+  )
+}
+
+const Join = ({ fields, guests }) => {
+  const state = React.useContext(StateContext)
+  const dispatch = React.useContext(DispatchContext)
   const elements = useElements()
   const stripe = useStripe()
   const analytics = useAnalytics()
@@ -611,7 +593,7 @@ const Join = ({ dispatch, state, fields, guests }) => {
 
       .then((res) => {
         if (res.error) {
-          throw res.error
+          return Promise.reject(res.error)
         } else {
           return axios.post('/launch/party/join', {
             guests,
@@ -644,13 +626,6 @@ const Join = ({ dispatch, state, fields, guests }) => {
 
   return (
     <div className="w-full flex-row items-center">
-      {/* <button */}
-      {/*   className="flex w-32 mt-3 items-center flex-col border border-gray rounded-sm p-3 mr-4" */}
-      {/*   type="button" */}
-      {/*   onClick={() => dispatch({ type: 'edit-info' })} */}
-      {/* > */}
-      {/*   Back */}
-      {/* </button> */}
       <div className="w-full mt-4">
         <Button
           onClick={onSubmit}
@@ -676,6 +651,34 @@ const Join = ({ dispatch, state, fields, guests }) => {
       </div>
     </div>
   )
+}
+
+function handleServerResponse(response, stripe, dispatch) {
+  if (response.error) {
+    // Show error from server on payment form
+    dispatch({ type: 'payment-failed', payload: 'Unable to process payment' })
+  } else if (response.requires_action) {
+    // Use Stripe.js to handle required card action
+    stripe
+      .handleCardAction(response.payment_intent_client_secret)
+      .then((res) => handleStripeJsResult(res, stripe, dispatch))
+  } else {
+    dispatch({ type: 'payment-succeeded' })
+  }
+}
+
+function handleStripeJsResult(result, stripe, dispatch) {
+  if (result.error) {
+    dispatch({ type: 'payment-failed', payload: result.error })
+  } else {
+    // The card action has been handled
+    // The PaymentIntent can be confirmed again on the server
+    axios
+      .post('/launch/party/join', {
+        paymentIntent: result.paymentIntent.id,
+      })
+      .then((res) => handleServerResponse(res.data, stripe, dispatch))
+  }
 }
 
 export default Page

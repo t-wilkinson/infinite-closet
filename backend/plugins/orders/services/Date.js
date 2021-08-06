@@ -124,20 +124,34 @@ function overlap(date1, date2, granularity = 'day') {
 }
 
 // TODO: give reason for failure: not enough items, already order date for this item
-function valid(date, available = undefined, quantity = undefined) {
+// TODO: should quantity be 0 or `available` by default?
+/**
+ * @param {Date} date - Start date of order
+ * @param {number=} available - Number of product sizes that do not overlap with orders
+ * @param {number=} quantity - Total number of product sizes in stock
+ * @param {number=} existing - Total number of orders of specific product size
+ */
+function valid(date, available, quantity, existing) {
   date = day(date)
   const today = day()
-
   let arrives = arrival(today)
-  const qNum = !isNaN(quantity)
-  const aNum = !isNaN(available)
-  if (!qNum && aNum && available <= 0) {
-    arrives = arrives.add(10, 'day')
-  } else if (aNum && qNum && available <= 0 && quantity <= 0) {
-    arrives = arrives.add(10, 'day')
-  } else if (aNum && qNum && available <= 0 && quantity > 0) {
+
+  // Grace period is time to allow items not in stock to be procured
+  const gracePeriodInUse = existing > 0
+  const hasQuantity = quantity > 0
+
+  const shouldAddGracePeriod = !gracePeriodInUse && !hasQuantity
+  const hasNoAvailableItems =
+    (available < 0 && gracePeriodInUse) || (available <= 0 && hasQuantity)
+
+  if (hasNoAvailableItems) {
     return false
   }
+
+  if (shouldAddGracePeriod) {
+    arrives = arrives.add(10, 'day')
+  }
+
   const enoughShippingTime = date.isSameOrAfter(arrives, 'day')
   const notTooFarInFuture = date.isBefore(today.add(4 * 30, 'day'))
 

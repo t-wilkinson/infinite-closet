@@ -2,8 +2,6 @@ import Document, { Html, Head, Main, NextScript } from 'next/document'
 
 const DESCRIPTION = `London's premier independent designer rental platform, giving you access to sustainable and ethical luxury brands. IC's "unlimited" closet offers the latest trends, dry cleaning, and next day delivery. The fashion revolution is here.`
 
-const icons = [16, 32, 72, 128, 512] as const
-
 const Icons = ({ rel, sizes }) =>
   sizes.map((size) => (
     <link
@@ -14,6 +12,7 @@ const Icons = ({ rel, sizes }) =>
     />
   ))
 
+// Copied from frontend/tailwind.config.js
 const palette = {
   pri1: '#ad9253',
   pri2: '#e7ddcb',
@@ -64,7 +63,7 @@ class MyDocument extends Document {
           />
           <meta property="og:site_name" content="Infinite Closet" />
           <meta property="og:locale" content="en_GB" />
-          <Production />
+          {process.env.NODE_ENV === 'production' && <Production />}
         </Head>
         <body>
           <Main />
@@ -75,16 +74,19 @@ class MyDocument extends Document {
   }
 }
 
-const Production = () =>
-  process.env.NODE_ENV !== 'production' ? null : (
-    <>
-      <meta
-        name="facebook-domain-verification"
-        content="wuxo0tqtkgp3bqbxaevv93a31m490y"
-      />
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
+const Production = () => (
+  <>
+    <meta
+      name="facebook-domain-verification"
+      content="269etuycs1smrwxwh8odkse0wn00z6"
+    />
+    <meta
+      name="facebook-domain-verification"
+      content="wuxo0tqtkgp3bqbxaevv93a31m490y"
+    />
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `
         !function(f,b,e,v,n,t,s)
         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
           n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -96,17 +98,17 @@ const Production = () =>
                                             fbq('init', '2704480763130746');
                                           fbq('track', 'PageView');
                                           `,
-        }}
+      }}
+    />
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style={{ display: 'none' }}
+        src="https://www.facebook.com/tr?id=269477308272858&ev=PageView"
       />
-      <noscript>
-        <img
-          height="1"
-          width="1"
-          style={{ display: 'none' }}
-          src="https://www.facebook.com/tr?id=269477308272858&ev=PageView"
-        />
-      </noscript>
-    </>
-  )
+    </noscript>
+  </>
+)
 
 export default MyDocument
