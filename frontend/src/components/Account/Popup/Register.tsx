@@ -9,8 +9,8 @@ export const PopupRegister = () => {
   const dispatch = useDispatch()
   const email = useSelector((state) => state.account.email)
   const name = useSelector((state) => state.account.name)
-  const firstName = name.split(' ')[0] || ''
-  const lastName = name.split(' ')[1] || ''
+  const firstName = (name || '').split(' ')[0] || ''
+  const lastName = (name || '').split(' ')[1] || ''
 
   return (
     <>

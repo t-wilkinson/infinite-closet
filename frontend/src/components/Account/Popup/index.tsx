@@ -39,6 +39,7 @@ export const Popup = ({ popup }) => {
         >
           <Icon name="close" size={20} />
         </button>
+        <div className="h-3" />
         <PopupForm />
       </Form>
     </div>

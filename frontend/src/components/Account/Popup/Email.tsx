@@ -33,7 +33,9 @@ export const Email = () => {
   return (
     <>
       <div className="relative">
-        <FormHeader label="GET 10% OFF YOUR FIRST RENTAL" />
+        <span className="text-center font-bold text-2xl mb-1">
+          Get 10% Off Your First Rental
+        </span>
         <span className="text-center">
           Join our mailing list for exclusive offers, first dibs on new items,
           birthday rewards and style inspiration.
