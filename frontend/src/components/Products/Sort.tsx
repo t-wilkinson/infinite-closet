@@ -42,7 +42,6 @@ export const Sort = ({ sortBy }: { sortBy: SortBy }) => {
     </div>
   )
 }
-export default Sort
 
 const DropDown = ({ hover, sortBy }) => {
   const panel = useSelector((state) => productsSelectors.panelSelector(state))
@@ -93,3 +92,5 @@ const DropDown = ({ hover, sortBy }) => {
     )
   )
 }
+
+export default Sort

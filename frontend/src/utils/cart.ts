@@ -3,6 +3,23 @@ import * as storage from '@/utils/storage'
 type Order = any
 type Cart = { [key: string]: Order }
 
+export const toKey = (order: Order) => {
+  if (!order) {
+    return
+  }
+
+  // TODO: how is product stored in order?
+  let productID: number
+  if (order.product === undefined) {
+    productID = undefined
+  } else if (order.product.id !== undefined) {
+    productID = order.product.id
+  } else {
+    productID = order.product
+  }
+  return `${order.size}_${productID}`
+}
+
 export const get = (): Cart => {
   return storage.get('cart') || {}
 }
@@ -20,22 +37,6 @@ export const getByUser = (id: string = undefined): Cart => {
 export const set = (cart: Cart) => {
   storage.set('cart', cart)
   storage.set('cart-used', true)
-}
-
-export const toKey = (order: Order) => {
-  if (!order) {
-    return
-  }
-
-  let productID: number
-  if (order.product === undefined) {
-    productID = undefined
-  } else if (order.product.id !== undefined) {
-    productID = order.product.id
-  } else {
-    productID = order.product
-  }
-  return `${order.size}_${productID}`
 }
 
 export const count = (id: string): number => {
@@ -71,4 +72,18 @@ export const init = () => {
 
 export const isUsed = () => {
   return storage.get('cart-used')
+}
+
+export default {
+  get,
+  getList,
+  getByUser,
+  count,
+  set,
+  insert,
+  insertAll,
+  remove,
+  removeAll,
+  init,
+  isUsed,
 }

@@ -68,7 +68,7 @@ module.exports = {
       ])
 
     for (const order of orders) {
-      strapi.plugins['orders'].services.date.shippingClass(order)
+      strapi.services.timing.shippingClass(order.created_at, order.startDate)
       order.price = strapi.plugins['orders'].services.price.price(order)
     }
 
@@ -87,7 +87,7 @@ module.exports = {
       { id: order.id },
       {
         status: 'shipping',
-        shippingDate: strapi.plugins['orders'].services.date.day().toJSON(),
+        shippingDate: strapi.services.timing.day().toJSON(),
       }
     )
     order = await strapi
@@ -101,19 +101,7 @@ module.exports = {
         'product.sizes',
       ])
     const user = order.user
-
-    const onError = async (err) => {
-      await strapi
-        .query('order', 'orders')
-        .update({ id: order.id }, { status: 'error', message: err })
-      await strapi.plugins['email'].services.email.send({
-        template: 'order-shipping-failure',
-        to: 'info@infinitecloset.co.uk',
-        subject: 'Failed to ship order',
-        data: { order, error: err },
-      })
-      strapi.log.error(err)
-    }
+    const orderPrice = strapi.plugins['orders'].services.price.price(order)
 
     const sendShippingEmail = () =>
       strapi.plugins['email'].services.email.send({
@@ -126,20 +114,33 @@ module.exports = {
         data: {
           ...order,
           firstName: user.firstName,
-          range: strapi.plugins['orders'].services.date.range(order),
-          price: strapi.plugins['orders'].services.price.price(order),
+          range: strapi.services.timing.range(order),
+          price: orderPrice,
         },
       })
 
-    strapi.plugins['orders'].services.hived
-      .ship(order)
+    const shippingRequest = {
+      collection: 'infinitecloset',
+      recipient:
+        strapi.plugins['orders'].services.order.toShippingAddress(order),
+      shippingClass: strapi.services.timing.shippingClass(
+        order.created_at,
+        order.startDate
+      ),
+      shipmentPrice: orderPrice,
+    }
+
+    strapi.services.shipment
+      .ship(shippingRequest)
       .then((res) =>
         strapi
           .query('order', 'orders')
           .update({ id: order.id }, { shipment: res.id })
       )
       .then(sendShippingEmail)
-      .catch(onError)
+      .catch((err) =>
+        strapi.plugins['orders'].services.order.shippingFailure(order, err)
+      )
 
     ctx.send({})
   },

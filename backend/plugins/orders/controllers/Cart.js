@@ -17,14 +17,12 @@ async function createCart(orders) {
         order
       )
 
-      const existingOrders = await strapi
-        .query('order', 'orders')
-        .count({
-          product: order.product.id || order.product,
-          size: order.size,
-        })
+      const existingOrders = await strapi.query('order', 'orders').count({
+        product: order.product.id || order.product,
+        size: order.size,
+      })
 
-      const valid = strapi.plugins['orders'].services.date.valid(
+      const valid = strapi.services.timing.valid(
         order.startDate,
         numAvailable[key],
         quantity,
@@ -36,8 +34,10 @@ async function createCart(orders) {
         price: strapi.plugins['orders'].services.price.price(order),
         available: numAvailable[key],
         valid,
-        shippingClass:
-          strapi.plugins['orders'].services.date.shippingClass(order),
+        shippingClass: strapi.services.timing.shippingClass(
+          order.created_at,
+          order.startDate
+        ),
       }
     })
   )
@@ -156,7 +156,7 @@ module.exports = {
           .query('order', 'orders')
           .count({ product: order.product.id, size: order.size })
 
-        const valid = strapi.plugins['orders'].services.date.valid(
+        const valid = strapi.services.timing.valid(
           order.startDate,
           numAvailable[key],
           quantity,
@@ -232,7 +232,7 @@ module.exports = {
                 .query('designer')
                 .findOne({ id: order.product.designer }),
             },
-            range: strapi.plugins['orders'].services.date.range(order),
+            range: strapi.services.timing.range(order),
             price: strapi.plugins['orders'].services.price.price(order),
           }))
         )

@@ -11,7 +11,7 @@
     {
       "method": "POST",
       "path": "/dates/valid",
-      "handler": "Date.datesValid",
+      "handler": "Date.availableOrderDates",
       "config": {
         "policies": []
       }

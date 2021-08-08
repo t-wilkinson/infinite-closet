@@ -41,9 +41,10 @@ function arrival(sent, shippingClass = 'one') {
   return sent.add(hoursSendClient + offset, 'hours').hour(HIVED_CUTOFF)
 }
 
-function shippingClass(order) {
-  const orderedOn = day(order.created_at)
-  const startsOn = day(order.startDate)
+function shippingClass(orderedOn, startsOn) {
+  orderedOn = day(orderedOn)
+  startsOn = day(startsOn)
+
   if (!orderedOn) {
     return undefined
   }
@@ -56,25 +57,25 @@ function shippingClass(order) {
   }
 }
 
-function shippingClassHours(order) {
-  return shippingClasses[shippingClass(order)]
+function shippingClassHours(orderedOn, startsOn) {
+  return shippingClasses[shippingClass(orderedOn, startsOn)]
 }
 
-function range(order) {
-  const { startDate, shippingDate } = order
-  const rentalLength = rentalLengths[order.rentalLength]
-  const hoursSendClient = shippingClassHours(order) || shippingClasses.two
+function range({ startDate, shippingDate, rentalLength, created_at }) {
+  rentalLength = rentalLengths[rentalLength]
+  const hoursSendClient =
+    shippingClassHours(created_at, startDate) || shippingClasses.two
 
   const shipped = shippingDate
     ? day(shippingDate)
     : day(startDate).subtract(hoursSendClient, 'hours')
 
-  const start = day(startDate) // arrival(shipped);
+  const start = day(startDate)
   const end = start.add(rentalLength, 'hours')
   const cleaning = end.add(HOURS_SEND_CLEANERS, 'hours') // at this point the order arrives at the cleaner
 
-  // oxwash doesn't operate on saturday/sunday
-  // check if arrival date is on sunday, friday, or saturday
+  // Oxwash doesn't operate on saturday/sunday
+  // Check if arrival date is on sunday, friday, or saturday
   let CLEANING_DELAY = 0
   if (cleaning.date() === 0) {
     CLEANING_DELAY += 24
@@ -84,9 +85,9 @@ function range(order) {
     CLEANING_DELAY += 72
   }
 
-  const BUFFER = 1 * HOURS_IN_DAY // buffer incase anything goes wrong
+  const TIME_BUFFER = 1 * HOURS_IN_DAY // buffer some time in case anything goes wrong
   const completed = cleaning.add(
-    BUFFER + HOURS_TO_CLEAN + CLEANING_DELAY,
+    TIME_BUFFER + HOURS_TO_CLEAN + CLEANING_DELAY,
     'hours'
   )
 

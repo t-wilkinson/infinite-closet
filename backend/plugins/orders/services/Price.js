@@ -2,8 +2,8 @@
 
 /********************  IMPORTANT ********************
  *
- * PRICE: decimal units
- * AMOUNT: smallest unit of currency
+ * PRICE: decimal units ($10.50)
+ * AMOUNT: smallest unit of currency (1050¢)
  *
  ********************  IMPORTANT ********************/
 
@@ -42,9 +42,7 @@ async function userDiscount(user) {
     {
       user: user.id,
       status_in: ['planning', 'shipping', 'cleaning', 'completed'],
-      shippingDate_gt: strapi.plugins['orders'].services.date
-        .day('2021-07-30')
-        .toJSON(),
+      shippingDate_gt: strapi.services.timing.day('2021-07-30').toJSON(),
     },
     []
   )
@@ -104,8 +102,10 @@ async function totalPrice({ insurance, cart, user }) {
 }
 
 function price(order) {
-  const shippingClass =
-    strapi.plugins['orders'].services.date.shippingClass(order)
+  const shippingClass = strapi.services.timing.shippingClass(
+    order.created_at,
+    order.startDate
+  )
   const shippingPrice = shippingPrices[shippingClass]
 
   const productPrice = order.product[rentalPrice[order.rentalLength]]

@@ -29,7 +29,7 @@ function numAvailable(orders, dates) {
     const key = toKey(order)
     const { product } = order
     if (!order.range) {
-      order.range = strapi.plugins['orders'].services.date.range(order)
+      order.range = strapi.services.timing.range(order)
     }
 
     // set default available product quantity
@@ -53,7 +53,7 @@ function numAvailable(orders, dates) {
       const overlaps =
         date &&
         inProgress(order.status) &&
-        strapi.plugins['orders'].services.date.overlap(date, order.range)
+        strapi.services.timing.overlap(date, order.range)
       return overlaps
     }, false)
 
@@ -90,15 +90,13 @@ async function quantity(order) {
 async function notifyArrival(orders) {
   for (const order of orders) {
     const user = order.user
-    const range = strapi.plugins['orders'].services.date.range(order)
-    const date = strapi.plugins['orders'].services.date.day(range.start)
-    const today = strapi.plugins['orders'].services.date.day()
+    const range = strapi.services.timing.range(order)
+    const date = strapi.services.timing.day(range.start)
+    const today = strapi.services.timing.day()
 
     if (!date.isSame(today, 'day')) continue
-    // const complete = await strapi.plugins[
-    //   'orders'
-    // ].services.hived.api.shipment.complete(order.shipment);
-    // if (!complete) return;
+    // const complete = await strapi.services.shipment.complete(order.shipment)
+    // if (!complete) return
 
     strapi.log.info('order arriving %o', order.id)
     strapi.plugins['email'].services.email.send({
@@ -118,16 +116,24 @@ async function notifyArrival(orders) {
 async function sendToCleaners(orders) {
   for (const order of orders) {
     const user = order.user
-    const range = strapi.plugins['orders'].services.date.range(order)
-    const date = strapi.plugins['orders'].services.date.day(range.end)
-    const today = strapi.plugins['orders'].services.date.day()
+    const range = strapi.services.timing.range(order)
+    const date = strapi.services.timing.day(range.end)
+    const today = strapi.services.timing.day()
     if (!date.isSame(today, 'day')) continue
+
+    const shippingRequest = {
+      collection:
+        strapi.plugins['orders'].services.order.toShippingAddress(order),
+      recipient: 'oxwash',
+      shippingClass: 'two',
+      shipmentPrice: strapi.plugins['orders'].services.price.price(order),
+    }
 
     strapi.log.info('cleaning order %o', order.id)
     strapi
       .query('order', 'orders')
       .update({ id: order.id }, { status: 'cleaning' })
-      .then(() => strapi.plugins['orders'].services.hived.ship(order))
+      .then(() => strapi.services.shipment.ship(shippingRequest))
       .then(() =>
         strapi.plugins['email'].services.email.send({
           template: 'order-leaving',
@@ -142,7 +148,23 @@ async function sendToCleaners(orders) {
           },
         })
       )
+      .catch((err) =>
+        strapi.plugins['orders'].services.order.shippingFailure(order, err)
+      )
   }
+}
+
+async function shippingFailure(order, err) {
+  await strapi
+    .query('order', 'orders')
+    .update({ id: order.id }, { status: 'error', message: err })
+  await strapi.plugins['email'].services.email.send({
+    template: 'order-shipping-failure',
+    to: 'info@infinitecloset.co.uk',
+    subject: 'Failed to ship order',
+    data: { order, error: err },
+  })
+  strapi.log.error('failed to ship order to client %o', err)
 }
 
 // calculate number of available products for each cart item
@@ -152,7 +174,7 @@ async function numAvailableCart(cart = []) {
     if (!acc[key]) {
       acc[key] = []
     }
-    acc[key].push(strapi.plugins['orders'].services.date.range(order))
+    acc[key].push(strapi.services.timing.range(order))
     return acc
   }, {})
 
@@ -168,6 +190,18 @@ async function numAvailableCart(cart = []) {
   )
 
   return numAvailable(orders, reqRanges)
+}
+
+function toShippingAddress(order) {
+  const { address, user } = order
+  return {
+    name: address.firstName + ' ' + address.lastName,
+    address: [address.address],
+    town: address.town,
+    postcode: address.postcode,
+    email: user.email,
+    phone: user.phoneNumber,
+  }
 }
 
 async function create({
@@ -191,11 +225,16 @@ async function create({
 
 module.exports = {
   toKey,
-  inProgress,
-  numAvailable,
-  notifyArrival,
-  quantity,
-  sendToCleaners,
-  numAvailableCart,
   create,
+  quantity,
+
+  inProgress,
+  shippingFailure,
+  toShippingAddress,
+
+  numAvailable,
+  numAvailableCart,
+
+  notifyArrival,
+  sendToCleaners,
 }

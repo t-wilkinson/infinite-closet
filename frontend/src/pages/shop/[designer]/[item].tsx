@@ -12,7 +12,7 @@ import useAnalytics from '@/utils/useAnalytics'
 export const Page = ({ data }) => {
   const loading = useData(data)
   const title = loading
-    ? undefined
+    ? 'Products'
     : `${data.product.name} by ${data.product.designer.name}`
   const analytics = useAnalytics()
   React.useEffect(() => {
@@ -30,15 +30,16 @@ export const Page = ({ data }) => {
 }
 
 const OpenGraph = (product: StrapiProduct) => {
+  const router = useRouter()
   const { name, designer, shortRentalPrice, images, sizes, retailPrice } =
     product
-  const router = useRouter()
   const url = process.env.NEXT_PUBLIC_FRONTEND + router.asPath.split('?')[0]
   const description = `Rent ${name} by ${designer.name} for only £${shortRentalPrice} at Infinite Closet`
-  const quantity = Object.values(sizes as { quantity: number }[]).reduce(
+  const quantity = Object.values(sizes).reduce(
     (acc, { quantity }) => acc + quantity,
     0
   )
+
   const image = !images[0]
     ? {}
     : {

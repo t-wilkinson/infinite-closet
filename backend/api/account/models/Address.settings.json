@@ -30,6 +30,9 @@
     "lastName": {
       "type": "string",
       "required": true
+    },
+    "deliveryInstructions": {
+      "type": "string"
     }
   }
 }

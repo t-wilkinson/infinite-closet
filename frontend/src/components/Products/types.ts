@@ -1,4 +1,3 @@
-// TODO: dynamically get these
 export const ProductRoutes = ['clothing'] as const
 export type ProductRoutes = typeof ProductRoutes[number]
 
@@ -15,7 +14,6 @@ export const Filter = [
 export type Filter = typeof Filter[number]
 export type Filters = { [filter in Filter]: string[] }
 
-// TODO: should get these from `sortData`
 export const SortBy = [
   'Alphabetical',
   'Newest',

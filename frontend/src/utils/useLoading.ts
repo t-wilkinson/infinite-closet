@@ -1,7 +1,8 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 
-export const useLoading = () => {
+// Returns boolean representing if the currount route is loaading/loaded
+export const useLoading = (): boolean => {
   const router = useRouter()
 
   const [loading, setLoading] = React.useState(false)
