@@ -3,6 +3,19 @@ const mockProduct = require('../__mocks__/product')
 const defaultData = {
   status: 'cart',
   rentalLength: 'short',
+  startDate: new Date().toJSON(),
+  size: 'MD',
+  // address: {
+  //   address: '120, 234',
+  //   town: 'Town',
+  //   postcode: 'Postcode',
+  //   firstName: 'First Name',
+  //   lastName: 'Last Name',
+  // },
+  // user: {
+  //   firstName: 'First Name',
+  //   lastName: 'Last Name',
+  // },
 }
 
 /**
@@ -14,7 +27,6 @@ const defaultData = {
  */
 const mockOrderData = (options = {}) => {
   return {
-    product: mockProduct,
     ...defaultData,
     ...options,
   }
@@ -23,12 +35,12 @@ const mockOrderData = (options = {}) => {
 /**
  * Creates new user in strapi database
  * @param strapi, instance of strapi
- * @param {object} options that overwrites default options
+ * @param {object=} options that overwrites default options
  * @returns {object} object of new created user, fetched from database
  */
 const createOrder = async (strapi, data) => {
-  let options = {}
-  Object.assign(options, mockOrderData(), data)
+  let options = Object.assign(mockOrderData(), data)
+
   return await strapi.plugins['orders'].services.order.create({
     ...options,
   })

@@ -6,7 +6,7 @@ function formatAddress(format, addr) {
     return config.addresses[addr]
   } else {
     return Object.entries(addr).reduce((acc, [key, value]) => {
-      if (!value) {
+      if (!value || !format[key]) {
         return acc
       }
       if (key === 'address') {

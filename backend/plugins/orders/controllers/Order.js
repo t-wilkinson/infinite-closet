@@ -77,6 +77,7 @@ module.exports = {
     })
   },
 
+  // TODO: should only take order id
   async ship(ctx) {
     let { order } = ctx.request.body
     if (order.status === 'shipping') {
@@ -90,7 +91,7 @@ module.exports = {
         shippingDate: strapi.services.timing.day().toJSON(),
       }
     )
-    order = await strapi
+    order = await strapi // TODO: can we do this in the update statement?
       .query('order', 'orders')
       .findOne({ id: order.id }, [
         'address',
@@ -142,6 +143,6 @@ module.exports = {
         strapi.plugins['orders'].services.order.shippingFailure(order, err)
       )
 
-    ctx.send({})
+    ctx.send({ order })
   },
 }

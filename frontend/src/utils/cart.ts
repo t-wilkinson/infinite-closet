@@ -59,6 +59,7 @@ export const insertAll = (orders: Order[]) => {
 export const remove = (order: Order) => {
   let cart = get()
   delete cart[toKey(order)]
+  set(cart)
 }
 
 export const removeAll = (orders: Order[]) => {
