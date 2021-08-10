@@ -223,7 +223,7 @@ const WhyRent = ({}) => (
 
       <div
         className="items-center flex-col sm:items-start sm:flex-row flex-wrap w-full px-3 sm:pl-12 lg:pl-8
-        space-y-8 py-10 md:py-12 lg:pt-40 lg:pt-16 lg:justify-center max-w-screen-xl"
+        space-y-8 py-10 md:py-12 lg:pb-32 lg:pt-24 lg:justify-center max-w-screen-xl"
       >
         <div className="lg:w-full sm:ml-24 lg:ml-16 xl:ml-0">
           <Heading>Why Rent?</Heading>

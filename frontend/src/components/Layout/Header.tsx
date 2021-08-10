@@ -51,7 +51,7 @@ const LargeHeader = ({ user, router }) => (
         <div className="w-full mt-2 flex-grow mx-8">
           <Navbar />
         </div>
-        <div className="absolute right-0 mt-0 mr-4 ">
+        <div className="absolute lg:bottom-0 right-0 -mb-1 mt-0 mr-4 ">
           <Account user={user} />
         </div>
       </div>

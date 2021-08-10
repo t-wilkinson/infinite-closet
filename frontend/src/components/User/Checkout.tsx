@@ -5,6 +5,8 @@ import utc from 'dayjs/plugin/utc'
 import { useRouter } from 'next/router'
 dayjs.extend(utc)
 
+import { userActions } from '@/User/slice'
+import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { fmtPrice } from '@/utils/helpers'
 import { fetchAPI } from '@/utils/api'
@@ -86,7 +88,9 @@ const reducer = (state, action) => {
 
 export const CheckoutWrapper = ({ user }) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
+  const rootDispatch = useDispatch()
   const analytics = useAnalytics()
+
   const fetchCart = async () => {
     await axios
       .post(`/orders/cart/create`, {
@@ -94,6 +98,7 @@ export const CheckoutWrapper = ({ user }) => {
       })
       .then((res) => dispatch({ type: 'fill-cart', payload: res.data.cart }))
       .catch((err) => console.error(err))
+    rootDispatch(userActions.countCart(CartUtils.count(user?.id)))
   }
 
   React.useEffect(() => {
