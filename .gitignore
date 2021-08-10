@@ -57,6 +57,7 @@ $RECYCLE.BIN/
 ssl
 .idea
 nbproject
+Session.vim
 
 # Node.js
 lib-cov
