@@ -34,7 +34,7 @@ async function createCart(orders) {
         price: strapi.plugins['orders'].services.price.price(order),
         available: numAvailable[key],
         valid,
-        shippingClass: strapi.services.timing.shippingClass(
+        shippingClass: strapi.services.shipment.shippingClass(
           order.created_at,
           order.startDate
         ),
@@ -173,7 +173,9 @@ module.exports = {
           })
         } else {
           return Promise.reject(
-            `${dayjs(order.startDate)} is not is available for this item`
+            `${strapi.services.timing
+              .day(order.startDate)
+              .toJSON()} is not is available for this item`
           )
         }
       })

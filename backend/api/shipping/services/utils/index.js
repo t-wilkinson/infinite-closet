@@ -1,60 +1,22 @@
-const fetch = require('node-fetch')
+const dayjs = require('dayjs')
+const isBetween = require('dayjs/plugin/isBetween')
+const utc = require('dayjs/plugin/utc')
+const timezone = require('dayjs/plugin/timezone')
+const isSameOrAfter = require('dayjs/plugin/isSameOrAfter')
+
+dayjs.extend(isSameOrAfter)
+dayjs.extend(isBetween)
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 /**
- * @typedef {Object} ShippingAddress
- * @property {string} name
- * @property {string[]} address
- * @property {string} town
- * @property {string} postcode
- * @property {string} email
- * @property {string=} phone
+ * Use same timezone for all dates for more predictable and reliable behavior
+ * @param {DateLike} date - Returns dayjs object in Europe/London timezone
  */
-
-const config = {
-  parcels: 'https://api.airtable.com/v0/appDFURl2nEJd1XEF/Parcels',
-  postcodes: 'https://api.airtable.com/v0/app5ZWdAtj21xnZrh/Postcodes',
-  key: 'keyzCmMhMH9fvKBPV',
-  shippingClasses: {
-    zero: 'Same-Day',
-    one: 'Next-Day',
-    two: '2-Days',
-  },
-  addresses: {
-    infinitecloset: {
-      name: 'Infinite Closet',
-      address: ['22 Horder Rd'],
-      town: 'London',
-      postcode: 'SW6 5EE',
-      phone: '07539 433208',
-      email: 'sarah.korich@infinitecloset.co.uk',
-    },
-    oxwash: {
-      name: 'Oxwash',
-      address: ['Avro House', 'Unit AH003', 'Havelock Terrace'],
-      town: 'London',
-      postcode: 'SW8 4AS',
-      email: 'battersea@oxwash.com',
-    },
-  },
-}
-
-async function fetchHived(url, method, body = {}) {
-  return fetch(url, {
-    method,
-    headers: {
-      Authorization: 'Bearer ' + config.key,
-      'Content-Type': 'application/json',
-    },
-    body:
-      method === 'GET'
-        ? undefined
-        : JSON.stringify({
-          fields: body,
-        }),
-  }).then((res) => res.json())
+function day(date) {
+  return dayjs(date).tz('Europe/London')
 }
 
 module.exports = {
-  config,
-  fetchHived,
+  day,
 }

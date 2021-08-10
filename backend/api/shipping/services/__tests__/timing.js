@@ -1,1 +1,0 @@
-const timing = require('../timing')

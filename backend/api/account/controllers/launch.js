@@ -21,7 +21,7 @@ module.exports = {
 
   async join(ctx) {
     const body = ctx.request.body
-    const today = dayjs().tz('Europe/London')
+    const today = strapi.services.timing.day()
     const TICKET_PRICE = today.isSameOrBefore('2021-08-18', 'day')
       ? 20
       : today.isSameOrBefore('2021-09-11')

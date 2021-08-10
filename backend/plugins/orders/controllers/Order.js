@@ -68,7 +68,7 @@ module.exports = {
       ])
 
     for (const order of orders) {
-      strapi.services.timing.shippingClass(order.created_at, order.startDate)
+      strapi.services.shipment.shippingClass(order.created_at, order.startDate)
       order.price = strapi.plugins['orders'].services.price.price(order)
     }
 
@@ -124,7 +124,7 @@ module.exports = {
       collection: 'infinitecloset',
       recipient:
         strapi.plugins['orders'].services.order.toShippingAddress(order),
-      shippingClass: strapi.services.timing.shippingClass(
+      shippingClass: strapi.services.shipment.shippingClass(
         order.created_at,
         order.startDate
       ),

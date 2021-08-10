@@ -102,7 +102,7 @@ async function totalPrice({ insurance, cart, user }) {
 }
 
 function price(order) {
-  const shippingClass = strapi.services.timing.shippingClass(
+  const shippingClass = strapi.services.shipment.shippingClass(
     order.created_at,
     order.startDate
   )
