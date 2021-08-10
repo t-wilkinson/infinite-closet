@@ -84,6 +84,9 @@ module.exports = {
         subheader: 'Barlow, sans-serif',
         body: 'Lato, sans-serif',
       },
+      scale: {
+        '-100': '-1',
+      },
     },
   },
   variants: {

@@ -89,18 +89,23 @@ const Heading = ({ block = true, children }) => {
   )
 }
 
+const bgColor = '#90a5a3'
+
 const Introduction = () => (
   <div
-    className="items-center sm:items-stretch w-full flex-row py-16 sm:py-0"
+    className="relative items-stretch w-full flex-row py-16 sm:py-0"
     style={{
-      background: '#D9C6BC',
+      background: bgColor,
     }}
   >
     <div
       style={{
         width: 'calc(25% + 18rem)',
       }}
-      className="py-8 sm:p-16 md:p-24 ml-8 sm:ml-16 md:ml-0 items-end sm:max-w-none justify-center"
+      className="text-white z-10 relative py-8 ml-8 items-start justify-center
+      sm:text-black sm:p-16 sm:ml-16 sm:max-w-none sm:items-end
+      md:p-24 md:ml-0
+      "
     >
       <div style={{}} className="w-72">
         <span
@@ -125,22 +130,23 @@ const Introduction = () => (
       </div>
     </div>
 
-    <div className="relative w-full flex-grow justify-center">
+    <div className="absolute inset-0 sm:relative w-full flex-grow justify-center">
       <div
         className="absolute inset-0"
         style={{
-          background: '#D9C6BC',
+          background: bgColor,
         }}
       />
-      <div className="hidden sm:block">
+      <div className="">
         <Image
           priority={true}
-          src="/media/home/banner.jpg"
-          alt=""
+          src="/media/home/enjoy-life.png"
+          alt="5 women walking in stylish dresses"
           layout="fill"
           objectFit="cover"
-          objectPosition="top right"
+          objectPosition="top center"
         />
+        <div className="absolute inset-0 bg-black opacity-60 transform sm:hidden" />
       </div>
     </div>
   </div>
@@ -197,11 +203,11 @@ const WhyRent = ({}) => (
         <div
           className="absolute inset-0"
           style={{
-            background: '#D9C6BC',
+            background: bgColor,
           }}
         />
         <Image
-          src="/media/header/clothing-menu-image.jpg"
+          src="/media/home/feel-good.png"
           alt=""
           layout="fill"
           objectFit="cover"
@@ -210,7 +216,7 @@ const WhyRent = ({}) => (
         <div
           className="absolute inset-0"
           style={{
-            background: 'linear-gradient(180deg, #D9C6BC 0%, #D9C6BC00 5%)',
+            background: `linear-gradient(180deg, ${bgColor} 0%, ${bgColor}00 25%)`,
           }}
         />
       </div>
