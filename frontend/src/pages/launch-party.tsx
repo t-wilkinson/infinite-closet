@@ -22,14 +22,14 @@ import Layout from '@/Layout'
 
 const today = dayjs().tz('Europe/London')
 const TICKET_PRICE = today.isSameOrBefore('2021-08-18', 'day')
-  ? 25
+  ? 20
   : today.isSameOrBefore('2021-09-11')
   ? 30
   : today.isSameOrBefore('2021-09-15')
   ? 35
   : -1
 const GIVEYOURBEST_DISCOUNT = 5
-const PROMO_DISCOUNT = 25
+const PROMO_DISCOUNT = TICKET_PRICE
 
 const Page = () => {
   return (
@@ -132,7 +132,7 @@ const SideBar = () => (
       <span className="font-bold text-lg mb-1">Order soon</span>
       <DetailItem
         label="Early Bird Tickets (ends 18/08)"
-        text="£25, includes a glass of champagne upon arrival"
+        text="£20, includes a glass of champagne upon arrival"
       />
       <DetailItem label="Regular Tickets (ends 11/09)" text="£30" />
       <DetailItem label="Final Release (ends 15/09 or sold out)" text="£35" />

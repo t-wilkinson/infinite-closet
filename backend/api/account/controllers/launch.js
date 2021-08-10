@@ -11,26 +11,25 @@ dayjs.extend(timezone)
 dayjs.extend(isSameOrBefore)
 
 const SMALLEST_CURRENCY_UNIT = 100
-const PROMO_DISCOUNT = 25
-const PROMO_CODE = 'ICGYBGUEST'
 
 // https://stripe.com/docs/payments/accept-a-payment-synchronously
 module.exports = {
   async promo(ctx) {
     const code = ctx.query.code
-    ctx.send(code === PROMO_CODE || code === 'GIVEYOURBEST')
+    ctx.send(code === 'ICGYBGUEST' || code === 'GIVEYOURBEST')
   },
 
   async join(ctx) {
     const body = ctx.request.body
     const today = dayjs().tz('Europe/London')
     const TICKET_PRICE = today.isSameOrBefore('2021-08-18', 'day')
-      ? 25
+      ? 20
       : today.isSameOrBefore('2021-09-11')
         ? 30
         : today.isSameOrBefore('2021-09-15')
           ? 35
           : 'past-release'
+    const PROMO_DISCOUNT = TICKET_PRICE
 
     if (TICKET_PRICE === 'past-release') {
       return ctx.send()
@@ -39,7 +38,7 @@ module.exports = {
     const discount =
       body.promoCode === 'GIVEYOURBEST'
         ? 5
-        : body.promoCode === PROMO_CODE
+        : body.promoCode === 'ICGYBGUEST'
           ? PROMO_DISCOUNT
           : 0
     const ticketPrice = Number(
