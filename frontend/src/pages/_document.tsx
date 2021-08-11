@@ -76,6 +76,7 @@ class MyDocument extends Document {
 
 const Production = () => (
   <>
+    <script src="https://www.googleoptimize.com/optimize.js?id=OPT-WBR7X5S"></script>
     <meta
       name="facebook-domain-verification"
       content="269etuycs1smrwxwh8odkse0wn00z6"
