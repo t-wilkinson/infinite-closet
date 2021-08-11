@@ -18,7 +18,7 @@ export const Filters = ({}) => {
 
   return (
     <div
-      className={`h-full justify-start bg-white w-full sm:w-64
+      className={`h-full justify-start bg-white w-full sm:w-64 md:w-72
           ${isOpen ? 'fixed inset-0 sm:hidden z-20' : 'hidden w-full sm:flex'}
           `}
     >
@@ -65,10 +65,10 @@ const FilterWrapper = ({ selectFilter, filter }) => {
   const Filter = FilterItems[filter]
   const panel = usePanel(filter)
   const selected = useSelector((state) =>
-    productsSelectors.isFilterSelected(state, filter),
+    productsSelectors.isFilterSelected(state, filter)
   )
   const numToggled = useSelector((state) =>
-    productsSelectors.numToggledFilter(state, filter),
+    productsSelectors.numToggledFilter(state, filter)
   )
 
   return (
@@ -139,26 +139,41 @@ export const FiltersCount = (props: any) => {
   return <span {...props}>Filters{numToggled > 0 && ` (${numToggled})`}</span>
 }
 
+export const toggleFilter = ({ panel, filter, dispatch, router, slug }) => {
+  let values = new Set(panel.filters[filter])
+  values.has(slug) ? values.delete(slug) : values.add(slug)
+  dispatch(
+    productsActions.setPanelFilter({ filter, payload: Array.from(values) })
+  )
+  router.push({
+    pathname: router.pathname,
+    query: {
+      ...router.query,
+      [filter]: Array.from(values),
+    },
+  })
+}
+
+export const useToggleFilter = () => {
+  const router = useRouter()
+  const panel = useSelector((state) => productsSelectors.panelSelector(state))
+  const dispatch = useDispatch()
+  return (filter: Filter, slug: string) =>
+    toggleFilter({
+      slug,
+      router,
+      panel,
+      dispatch,
+      filter,
+    })
+}
+
 // passed to each filter which manages query params and filter values
 const usePanel = (filter: Filter) => {
   const router = useRouter()
   const panel = useSelector((state) => productsSelectors.panelSelector(state))
   const dispatch = useDispatch()
-
-  const toggle = (payload: string) => {
-    let values = new Set(panel.filters[filter])
-    values.has(payload) ? values.delete(payload) : values.add(payload)
-    dispatch(
-      productsActions.setPanelFilter({ filter, payload: Array.from(values) }),
-    )
-    router.push({
-      pathname: router.pathname,
-      query: {
-        ...router.query,
-        [filter]: Array.from(values),
-      },
-    })
-  }
+  const toggleFilter = useToggleFilter()
 
   const set = (payload: string[]) => {
     dispatch(productsActions.setPanelFilter({ filter, payload: payload }))
@@ -173,7 +188,7 @@ const usePanel = (filter: Filter) => {
 
   return {
     values: panel.filters[filter],
-    toggle,
+    toggle: (payload) => toggleFilter(filter, payload),
     set,
   }
 }

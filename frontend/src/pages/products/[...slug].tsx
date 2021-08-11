@@ -42,7 +42,7 @@ export const Page = ({ data }) => {
 
   return (
     <>
-      <Layout title="Rent Products">
+      <Layout title="Clothing">
         <Products data={data} loading={loading} />
       </Layout>
     </>

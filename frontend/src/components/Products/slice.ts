@@ -38,6 +38,7 @@ const initialState: State = {
   },
   sortBy: 'Alphabetical',
   filters: {},
+  focusedFilter: 'designers',
 }
 
 export const productsSlice = createSlice({
@@ -76,7 +77,7 @@ export const productsSlice = createSlice({
       state,
       {
         payload: { filter, payload },
-      }: PayloadAction<{ filter: Filter; payload: string[] }>,
+      }: PayloadAction<{ filter: Filter; payload: string[] }>
     ) {
       state.panel.filters[filter] = payload
     },
@@ -84,7 +85,7 @@ export const productsSlice = createSlice({
       state,
       {
         payload: { filter, field, payload },
-      }: PayloadAction<{ filter: Filter; field: string; payload: any }>,
+      }: PayloadAction<{ filter: Filter; field: string; payload: any }>
     ) {
       state[filter][field] = payload
     },
@@ -103,11 +104,11 @@ export const productsSlice = createSlice({
 const productsSelector = (state: RootState) => state.products
 const panelSelector = createSelector(
   productsSelector,
-  (products) => products.panel,
+  (products) => products.panel
 )
 const panelSize = (
   panel: typeof initialState['panel'],
-  filter: Filter,
+  filter: Filter
 ): number => {
   return panel.filters[filter].length
 }
@@ -116,20 +117,20 @@ const productsSelectors = {
   panelSelector,
   isFilterSelected: createSelector(
     [productsSelector, (_: any, filter: Filter) => filter],
-    (products, filter) => products.focusedFilter === filter,
+    (products, filter) => products.focusedFilter === filter
   ),
   panelFilter: createSelector(
     [panelSelector, (_: any, filter: Filter) => filter],
-    (panel, filter) => panel.filters[filter],
+    (panel, filter) => panel.filters[filter]
   ),
   numToggled: createSelector([panelSelector], (filters) =>
     Object.values(Filter).reduce((acc, filter) => {
       return acc + panelSize(filters, filter)
-    }, 0),
+    }, 0)
   ),
   numToggledFilter: createSelector(
     [panelSelector, (_: any, filter: Filter) => filter],
-    panelSize,
+    panelSize
   ),
 }
 

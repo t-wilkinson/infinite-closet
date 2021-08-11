@@ -6,7 +6,7 @@ import { Icon, Tooltip } from '@/components'
 const pickFgColorFromBgColor = (
   bgColor: string,
   lightColor: string,
-  darkColor: string,
+  darkColor: string
 ) => {
   /* https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color */
   let color = bgColor.charAt(0) === '#' ? bgColor.substring(1, 7) : bgColor
@@ -47,7 +47,7 @@ const ColorCheck = ({ color }) => (
       color: pickFgColorFromBgColor(
         color.value || color.slug.replace('-', ''),
         '#ffffff',
-        '#000000',
+        '#000000'
       ),
     }}
   />
@@ -55,19 +55,19 @@ const ColorCheck = ({ color }) => (
 
 export const Color = ({ panel, color }) => (
   <div className="m-1 relative" key={color.slug}>
-    <Tooltip
-      info={<span className="whitespace-no-wrap">{color.name}</span>}
-      position="left-0 bottom-0"
-    >
-      <button onClick={() => panel.toggle(color.slug)}>
+    <button onClick={() => panel.toggle(color.slug)}>
+      <Tooltip
+        info={<span className="whitespace-no-wrap">{color.name}</span>}
+        position="left-0 bottom-0"
+      >
         <div
           className="rounded-full w-8 h-8 items-center justify-center border-gray"
           style={colorStyle(color)}
         >
           {panel.values.includes(color.slug) && <ColorCheck color={color} />}
         </div>
-      </button>
-    </Tooltip>
+      </Tooltip>
+    </button>
   </div>
 )
 

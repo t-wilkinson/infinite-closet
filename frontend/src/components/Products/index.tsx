@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from '@/utils/store'
 import { Crumbs } from './BreadCrumbs'
 import { QUERY_LIMIT } from './constants'
 import { productsActions } from './slice'
-import Filters, { FiltersCount } from './Filters'
+import Filters, { FiltersCount, useToggleFilter } from './Filters'
 import ProductItems from './ProductItems'
 import Sort from './Sort'
 
@@ -27,37 +27,32 @@ export const Products = ({ data, loading }) => {
 export default Products
 
 const ProductItemsWrapper = ({ data, loading }) => {
-  const router = useRouter()
   const totalPages = Math.ceil(data.productsCount / QUERY_LIMIT) || 1
   const sortBy = useSelector((state) => state.products.panel.sortBy)
 
   return (
     <div className="w-full flex-shrink">
-      <Header
-        router={router}
-        data={data}
-        totalPages={totalPages}
-        sortBy={sortBy}
-      />
+      <Header data={data} totalPages={totalPages} sortBy={sortBy} />
       <ProductItems data={data} loading={loading} />
       <Footer totalPages={totalPages} />
     </div>
   )
 }
 
-const Header = ({ router, data, totalPages, sortBy }) => {
+const Header = ({ data, totalPages, sortBy }) => {
   const dispatch = useDispatch()
-  const slug = useRouter().query.slug as string[]
+  const router = useRouter()
+  const slug = router.query.slug as string[]
 
   return (
-    <div className="mb-4 border-b border-gray">
+    <div className="mb-4">
       <div className="sm:hidden">
         <Crumbs slug={slug} />
       </div>
 
       <div className="sm:flex-row items-end sm:items-center justify-between w-full">
         <span className="font-subheader text-xl self-start sm:self-center">
-          {router.query.slug[0]} ({data.productsCount})
+          {router.query.slug.slice(-1)[0]} ({data.productsCount})
         </span>
         <div className="flex-row space-x-1 items-center mb-1 md:mb-0">
           <div className="flex-row sm:hidden justify-end py-2">
@@ -83,6 +78,42 @@ const Header = ({ router, data, totalPages, sortBy }) => {
           <PageNavigation totalPages={totalPages} />
         </div>
       </div>
+      <div className="mt-4">
+        <QuickFilter data={data} />
+      </div>
+    </div>
+  )
+}
+
+const QuickFilter = ({ data }) => {
+  const panel = useSelector((state) => state.products.panel)
+  const toggleFilter = useToggleFilter()
+
+  return (
+    <div className="space-x-2 flex-row">
+      {Object.entries(panel.filters)
+        .map(([key, slugs]) =>
+          slugs.map((slug) => {
+            let filter
+            if (key === 'sizes') {
+              filter = data[key].find((filter) => filter === slug)
+            } else {
+              filter = data[key].find((filter) => filter.slug === slug)
+            }
+
+            return (
+              <button
+                key={slug}
+                className="bg-gray-light px-3 py-1 rounded-full flex flex-row items-center space-x-2 text-sm"
+                onClick={() => toggleFilter(key, slug)}
+              >
+                <span>{filter?.name || filter}</span>
+                <Icon name="close" size={8} className="mt-1" />
+              </button>
+            )
+          })
+        )
+        .flat()}
     </div>
   )
 }

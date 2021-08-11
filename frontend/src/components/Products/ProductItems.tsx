@@ -13,7 +13,6 @@ import * as sizing from '@/utils/sizing'
 
 export const ProductItems = ({ data, loading }) => {
   const router = useRouter()
-  console.log(loading)
 
   if (data.productsCount === 0) {
     return (
@@ -36,7 +35,6 @@ export const ProductItems = ({ data, loading }) => {
   } else if (loading) {
     return (
       <div className="flex-row flex-wrap">
-        {console.log('hi')}
         {Array(QUERY_LIMIT)
           .fill(0)
           .map((_, i) => (
