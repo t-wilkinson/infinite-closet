@@ -128,30 +128,33 @@ const PageNavigation = ({ totalPages, ...props }) => {
   const router = useRouter()
   const pageNumber = Number(router.query.page) || 1
 
-  React.useEffect(() => {
-    if (pageNumber > totalPages) {
+  const changePage = (page: number) => {
+    if (page !== pageNumber) {
       document.getElementById('_app').scrollTo({ top: 0 })
       router.push({
         pathname: router.pathname,
-        query: { ...router.query, page: 1 },
+        query: { ...router.query, page },
       })
+    }
+  }
+
+  React.useEffect(() => {
+    if (pageNumber > totalPages) {
+      changePage(1)
     }
   }, [pageNumber, totalPages])
 
+  const decreasePageNumber = () => {
+    changePage(pageNumber > 1 ? pageNumber - 1 : pageNumber)
+  }
+
+  const increasePageNumber = () => {
+    changePage(pageNumber < totalPages ? pageNumber + 1 : pageNumber)
+  }
+
   return (
     <div className="flex-row items-center justify-end" {...props}>
-      <button
-        onClick={() => {
-          const page = pageNumber > 1 ? pageNumber - 1 : pageNumber
-          if (page !== pageNumber) {
-            document.getElementById('_app').scrollTo({ top: 0 })
-            router.push({
-              pathname: router.pathname,
-              query: { ...router.query, page },
-            })
-          }
-        }}
-      >
+      <button onClick={decreasePageNumber}>
         <div className="hidden md:flex p-1 border border-gray-light rounded-sm">
           <Icon name="left" size={16} />
         </div>
@@ -162,18 +165,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
       <span className="mx-1 text-lg">
         {pageNumber} / {totalPages}
       </span>
-      <button
-        onClick={() => {
-          const page = pageNumber < totalPages ? pageNumber + 1 : pageNumber
-          if (page !== pageNumber) {
-            document.getElementById('_app').scrollTo({ top: 0 })
-            router.push({
-              pathname: router.pathname,
-              query: { ...router.query, page },
-            })
-          }
-        }}
-      >
+      <button onClick={increasePageNumber}>
         <div className="hidden md:flex p-1 border border-gray-light rounded-sm">
           <Icon name="right" size={16} />
         </div>

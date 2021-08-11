@@ -139,6 +139,20 @@ export const FiltersCount = (props: any) => {
   return <span {...props}>Filters{numToggled > 0 && ` (${numToggled})`}</span>
 }
 
+export const useToggleFilter = () => {
+  const router = useRouter()
+  const panel = useSelector((state) => productsSelectors.panelSelector(state))
+  const dispatch = useDispatch()
+  return (filter: Filter, slug: string) =>
+    toggleFilter({
+      slug,
+      router,
+      panel,
+      dispatch,
+      filter,
+    })
+}
+
 export const toggleFilter = ({ panel, filter, dispatch, router, slug }) => {
   let values = new Set(panel.filters[filter])
   values.has(slug) ? values.delete(slug) : values.add(slug)
@@ -152,20 +166,6 @@ export const toggleFilter = ({ panel, filter, dispatch, router, slug }) => {
       [filter]: Array.from(values),
     },
   })
-}
-
-export const useToggleFilter = () => {
-  const router = useRouter()
-  const panel = useSelector((state) => productsSelectors.panelSelector(state))
-  const dispatch = useDispatch()
-  return (filter: Filter, slug: string) =>
-    toggleFilter({
-      slug,
-      router,
-      panel,
-      dispatch,
-      filter,
-    })
 }
 
 // passed to each filter which manages query params and filter values
