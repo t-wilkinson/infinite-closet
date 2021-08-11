@@ -42,28 +42,23 @@ const SmallHeader = ({ router }) => {
 const LargeHeader = ({ user, router }) => (
   <>
     <div
-      className={`max-w-screen-xl w-full justify-center
-      ${router.pathname === '/' ? 'xl:h-32' : 'xl:h-16 mt-1'}
+      className={`w-full justify-center
+      ${router.pathname === '/' ? 'h-32' : 'xl:h-16 mt-1'}
     `}
     >
-      <div className="w-full relative justify-between items-center px-2">
+      <div className="relative justify-between items-center">
         <LargeHeaderLogo router={router} />
-        <div className="w-full mt-2 flex-grow mx-8">
-          <Navbar />
-        </div>
-        <div className="absolute lg:bottom-0 right-0 -mb-1 mt-0 mr-4 ">
+        <div className="absolute lg:bottom-0 right-0 -mb-1 mt-0 mr-4 z-20">
           <Account user={user} />
+        </div>
+        <div className="realtive w-full mt-2 relative z-10">
+          <Navbar />
         </div>
       </div>
     </div>
     <div
-      className={`w-full mt-4
-    ${router.pathname === '/' ? '' : 'h-px bg-pri'}
-    `}
-    />
-    <div
-      className={`w-full hidden
-        ${router.pathname === '/' ? 'mt-4 xl:mt-0' : 'h-px bg-pri mt-4'}
+      className={`w-full
+    ${router.pathname === '/' ? '' : 'mt-4 h-px bg-pri'}
     `}
     />
   </>
@@ -148,7 +143,7 @@ export const Header = ({}) => {
       </div>
       <div
         className={`z-30 items-center hidden w-full md:flex select-none relative
-          ${router.pathname === '/' ? 'mt-4 xl:mt-0' : 'mt-4'}
+          ${router.pathname === '/' ? '' : 'mt-4'}
         `}
       >
         <LargeHeader user={user} router={router} />

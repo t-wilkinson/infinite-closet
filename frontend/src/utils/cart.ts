@@ -66,7 +66,7 @@ export const removeAll = (orders: Order[]) => {
   orders.forEach((order) => remove(order))
 }
 
-export const init = () => {
+export const reset = () => {
   set({})
   storage.set('cart-used', false) // this is the correct order
 }
@@ -85,6 +85,6 @@ export default {
   insertAll,
   remove,
   removeAll,
-  init,
+  reset,
   isUsed,
 }

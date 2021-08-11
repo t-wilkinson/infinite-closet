@@ -112,18 +112,18 @@ const Wrapper = ({ router, children }) => {
     const cart = CartUtils.get()
     switch (Object.prototype.toString.call(cart)) {
       case '[object Array]':
-        CartUtils.init()
-        CartUtils.insertAll(cart)
+        CartUtils.reset()
+        CartUtils.insertAll(cart as object[])
         break
       case '[object Object]':
         break
       default:
-        CartUtils.init()
+        CartUtils.reset()
         break
     }
 
     if (storage.get('cart-used') === null) {
-      CartUtils.init()
+      CartUtils.reset()
     }
 
     if (window.fbq) {

@@ -35,14 +35,14 @@ export const NavBar = () => {
         setVisible={setVisible}
         serverRoutes={serverRoutes}
       />
-      {visible && <div className="h-px bg-pri-light w-full -mt-px z-10" />}
+      {/* {visible && <div className="h-px bg-pri-light w-full mt-2 z-10" />} */}
     </div>
   )
 }
 export default NavBar
 
 const Sections = ({ visible, setVisible, serverRoutes }) => (
-  <div className="items-center justify-center max-w-screen-xl w-full">
+  <div className="items-center justify-center w-full">
     <nav className="flex flex-row justify-center space-x-8 relative w-full">
       {routes.map((route, i) => (
         <div key={route.value + i}>
@@ -70,6 +70,9 @@ const SectionsRoute = ({ route, visible, setVisible }) => (
       ${visible === route.value ? 'bg-pri-light' : ''}
       `}
   >
+    {/* {visible === route.value && ( */}
+    {/*   <div className="absolute w-full bottom-0 h-1 bg-pri" /> */}
+    {/* )} */}
     {
       <Link href={route.href ?? '#'}>
         <a>
@@ -88,24 +91,47 @@ const SectionsContent = ({ route, visible, serverRoutes }) => {
 
   return (
     <div
-      className={`absolute top-0 left-0 w-full transform bg-white mt-6 flex-row p-4 shadow-xl
+      className={`absolute top-0 left-0 w-full transform bg-white mt-6 items-center p-8
       ${selected ? 'visible' : 'invisible'}
       `}
+      style={{
+        boxShadow: '0 20px 20px rgb(0 0 0 / 20%)',
+      }}
     >
-      {route.img && (
-        <Image
-          loader={myLoader}
-          alt={`${route.label} page`}
-          src={`/media/header/${route.img}`}
-          height={350}
-          width={350}
-          objectFit="contain"
+      {
+        <div
+          className="absolute left-0 h-px bg-pri w-full top-0 z-10"
+          style={{
+            marginTop: 0,
+          }}
         />
-      )}
+      }
 
-      <div key={route.value}>
-        <PageRoutes route={route} serverRoutes={serverRoutes} />
+      <div className="w-full max-w-screen-xl flex-row">
+        {route.img && (
+          <Image
+            loader={myLoader}
+            alt={`${route.label} page`}
+            src={`/media/header/${route.img}`}
+            height={350}
+            width={350}
+            objectFit="contain"
+          />
+        )}
+
+        <div key={route.value}>
+          <PageRoutes route={route} serverRoutes={serverRoutes} />
+        </div>
       </div>
+
+      {
+        <div
+          className="absolute left-0 h-px bg-pri right-0 bottom-0 z-10"
+          style={{
+            marginTop: 5,
+          }}
+        />
+      }
     </div>
   )
 }

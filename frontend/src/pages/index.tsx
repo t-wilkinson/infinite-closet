@@ -89,7 +89,7 @@ const Heading = ({ block = true, children }) => {
   )
 }
 
-const bgColor = '#90a5a3'
+const bgColor = '#859c9b'
 
 const Introduction = () => (
   <div
@@ -206,17 +206,26 @@ const WhyRent = ({}) => (
             background: bgColor,
           }}
         />
-        <Image
-          src="/media/home/feel-good.png"
-          alt=""
-          layout="fill"
-          objectFit="cover"
-          objectPosition="right top"
-        />
+        <div className="overflow-hidden absolute inset-0">
+          <div
+            className="absolute inset-0"
+            style={{
+              marginTop: '-20%',
+            }}
+          >
+            <Image
+              src="/media/home/feel-good.png"
+              alt=""
+              layout="fill"
+              objectFit="cover"
+              objectPosition="right top"
+            />
+          </div>
+        </div>
         <div
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(180deg, ${bgColor} 0%, ${bgColor}00 25%)`,
+            background: `linear-gradient(180deg, ${bgColor} 0%, ${bgColor}00 10%)`,
           }}
         />
       </div>
