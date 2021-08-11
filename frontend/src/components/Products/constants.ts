@@ -1,6 +1,6 @@
 import { Filter, SortBy, ProductRoutes } from './types'
 
-export const QUERY_LIMIT = 2 * 3 * 3 // 2 or 3 columns
+export const QUERY_LIMIT = 2 * 3 * 4 // 2 or 3 columns
 
 type FilterData = { [key in Filter]: { label: string } }
 export const filterData: FilterData = {

@@ -7,12 +7,13 @@ import { Button } from '@/components'
 import useAnalytics from '@/utils/useAnalytics'
 import { getURL } from '@/utils/api'
 import { StrapiProduct, StrapiFile } from '@/utils/models'
+import { QUERY_LIMIT } from './constants'
 
 import * as sizing from '@/utils/sizing'
-// import { QUERY_LIMIT } from './constants'
 
-export const ProductItems = ({ data }) => {
+export const ProductItems = ({ data, loading }) => {
   const router = useRouter()
+  console.log(loading)
 
   if (data.productsCount === 0) {
     return (
@@ -32,24 +33,24 @@ export const ProductItems = ({ data }) => {
         </Button>
       </div>
     )
-    // TODO: we have so few product it doesn't make sense to display this
-    // } else if (loading || !data.products) {
-    // } else if (false) {
-    // return (
-    //   <div className="flex-row flex-wrap">
-    //     {Array(QUERY_LIMIT)
-    //       .fill(0)
-    //       .map((_, i) => (
-    //         <div key={i} className="w-1/2 lg:w-1/3">
-    //           <div className="relative h-0 w-full overflow-hidden aspect-w-2 aspect-h-3">
-    //             <div className="absolute top-0 left-0 w-full h-full b-gray p-2">
-    //               <div className="relative h-full bg-gray-light" />
-    //             </div>
-    //           </div>
-    //         </div>
-    //       ))}
-    //   </div>
-    // )
+  } else if (loading) {
+    return (
+      <div className="flex-row flex-wrap">
+        {console.log('hi')}
+        {Array(QUERY_LIMIT)
+          .fill(0)
+          .map((_, i) => (
+            <ProductWrapper key={i}>
+              <div
+                className="relative w-full bg-gray-light"
+                style={{
+                  paddingTop: 'calc(135% + 96px)',
+                }}
+              />
+            </ProductWrapper>
+          ))}
+      </div>
+    )
   } else {
     return (
       <div className="w-full flex-row flex-wrap">
@@ -61,39 +62,43 @@ export const ProductItems = ({ data }) => {
   }
 }
 
-export default ProductItems
-
-export const Product = ({ product }: any) => {
-  const analytics = useAnalytics()
-  return (
-    <div className="w-1/2 lg:w-1/3 flex-shrink">
-      <div className="m-2 lg:m-4 w-full">
-        <div className="w-full h-full p-2 border-transparent border hover:border-gray">
-          <div
-            className="relative w-full md:h-0"
-            style={{
-              paddingTop: '100%',
-            }}
-          >
-            <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
-              <a
-                className="absolute inset-0"
-                onClick={() =>
-                  analytics.logEvent('select_item', {
-                    type: 'products.select-item',
-                  })
-                }
-              >
-                <ProductImages product={product} />
-              </a>
-            </Link>
-          </div>
-          <div className="w-full flex-grow flex-shrink-0">
-            <ProductInfo product={product} />
-          </div>
-        </div>
-      </div>
+export const ProductWrapper = ({ children = null }) => (
+  <div className="px-4 py-6 w-1/2 lg:w-1/3 ">
+    <div
+      className="w-full
+        border-transparent border hover:border-gray  "
+    >
+      <div className="w-full h-full p-2">{children}</div>
     </div>
+  </div>
+)
+
+export const Product = ({ product }: { product: StrapiProduct }) => {
+  const analytics = useAnalytics()
+
+  return (
+    <ProductWrapper>
+      <div
+        className="relative w-full"
+        style={{
+          paddingTop: '135%',
+        }}
+      >
+        <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
+          <a
+            className="absolute inset-0"
+            onClick={() =>
+              analytics.logEvent('select_item', {
+                type: 'products.select-item',
+              })
+            }
+          >
+            <ProductImages product={product} />
+          </a>
+        </Link>
+      </div>
+      <ProductInfo product={product} />
+    </ProductWrapper>
   )
 }
 
@@ -185,7 +190,7 @@ const rentalPrice = (low: number, high: number): string => {
 }
 
 const ProductInfo = ({ product }) => (
-  <div className="flex-row justify-between mt-4 relative flex-grow">
+  <div className="w-full flex-row justify-between mt-4 relative text-sm leading-snug">
     <div className="flex-grow">
       <div className="inline-block">
         <Link href={`/designers/${product.designer?.slug}`}>
@@ -196,6 +201,7 @@ const ProductInfo = ({ product }) => (
           </a>
         </Link>
       </div>
+
       <div className="inline-block">
         <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
           <a className="hover:underline">
@@ -203,14 +209,19 @@ const ProductInfo = ({ product }) => (
           </a>
         </Link>
       </div>
+
       <span className="text-sm">{sizing.range(product.sizes).join(', ')}</span>
+      <div className="h-2" />
+
       <div className="flex-col md:flex-row">
         <span className="font-bold">
           {rentalPrice(product.shortRentalPrice, product.longRentalPrice)}
         </span>
-        <span className="font-gray">
-          <span className="hidden md:inline">&nbsp;{'| '}</span> £
-          {product.retailPrice || '-'} retail
+        <span>
+          <span className="hidden md:inline">&nbsp;{'| '}</span>
+          <span className="text-gray line-through">
+            £{product.retailPrice || '-'} retail
+          </span>
         </span>
       </div>
     </div>
@@ -219,3 +230,5 @@ const ProductInfo = ({ product }) => (
     {/* </div> */}
   </div>
 )
+
+export default ProductItems

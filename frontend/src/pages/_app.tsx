@@ -91,6 +91,14 @@ const Wrapper = ({ router, children }) => {
   const consent = useSelector(layoutSelectors.consent)
   const user = useSelector((state) => state.user.data)
 
+  const showPopup = () => {
+    window.setTimeout(() => {
+      dispatch(accountActions.showPopup('email'))
+      storage.session.set('popup-form', true)
+    }, 5000)
+    document.getElementById('_app').removeEventListener('scroll', showPopup)
+  }
+
   React.useEffect(() => {
     analytics.setCurrentScreen(router.asPath)
     if (!document.title) {
@@ -106,6 +114,9 @@ const Wrapper = ({ router, children }) => {
 
   React.useEffect(() => {
     dispatch(userActions.countCart(CartUtils.count(user?.id)))
+    if (user) {
+      document.getElementById('_app').removeEventListener('scroll', showPopup)
+    }
   }, [user])
 
   React.useEffect(() => {
@@ -134,14 +145,6 @@ const Wrapper = ({ router, children }) => {
       firebase.initializeApp(
         JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG.toString())
       )
-    }
-
-    const showPopup = () => {
-      window.setTimeout(() => {
-        dispatch(accountActions.showPopup('email'))
-        storage.session.set('popup-form', true)
-      }, 5000)
-      document.getElementById('_app').removeEventListener('scroll', showPopup)
     }
 
     dispatch(layoutActions.loadFirebase(firebase.analytics()))

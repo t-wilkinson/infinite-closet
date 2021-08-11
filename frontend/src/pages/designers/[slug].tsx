@@ -13,7 +13,7 @@ export const Page = ({ data }) => {
   return (
     <Layout title={designer.name}>
       <div className="w-full h-full items-center">
-        <div className="max-w-screen-md w-full">
+        <div className="max-w-screen-lg w-full">
           <h1 className="text-4xl font-subheader text-center">
             {designer.name}
           </h1>
