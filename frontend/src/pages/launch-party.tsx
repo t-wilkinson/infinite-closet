@@ -360,16 +360,14 @@ const AttendeeInfo = ({ fields }) => (
 )
 
 const Discounts = ({ fields }) => (
-  <div className="space-y-4">
-    <div>
-      <div className="flex-row mb-2">
-        <div className="w-80">
-          <PromoCode fields={fields} />
-        </div>
-        <DonateClothes />
+  <div className="w-full space-y-4">
+    <div className="w-full sm:flex-row mb-2">
+      <div className="w-full sm:w-80">
+        <PromoCode fields={fields} />
       </div>
+      <DonateClothes />
     </div>
-    <div className="flex-row">
+    <div className="w-full flex-row">
       <Donation donation={fields.donation} />
     </div>
   </div>
@@ -431,7 +429,7 @@ const PromoCode = ({ fields }) => {
 }
 
 const DonateClothes = () => (
-  <div className="ml-8 w-full space-y-2">
+  <div className="sm:ml-8 w-full space-y-2">
     <q className="">
       Have some gently loved clothes to donate? Get £5 off your ticket price
       with 2 clothing donations on the day of the event for{' '}
@@ -452,8 +450,8 @@ const Donation = ({ donation }) => {
   const state = React.useContext(StateContext)
 
   return (
-    <div className="">
-      <div className="flex-row items-center">
+    <div className="w-full">
+      <div className="w-full flex-row flex-wrap items-center">
         Additional Donation
         <Hover>
           Give Your Best connects pre-loved clothes with those who don't just
@@ -465,7 +463,7 @@ const Donation = ({ donation }) => {
         <div className="w-24 mr-4">
           <Input {...donation} before={<span>£</span>}></Input>
         </div>
-        <div className="flex-row space-x-2 items-center">
+        <div className="flex-wrap space-y-2 xs:space-y-0 xs:flex-row xs:space-x-2 items-center">
           {[1, 5, 10, 30].map((amount) => (
             <DonationAddition
               key={amount}
