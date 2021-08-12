@@ -2,7 +2,6 @@
 
 const _ = require('lodash')
 const stripe = require('stripe')(process.env.STRIPE_KEY)
-const dayjs = require('dayjs')
 
 async function createCart(orders) {
   const numAvailable = await strapi.plugins[
@@ -139,6 +138,7 @@ module.exports = {
     })
   },
 
+  // TODO: This needs to be refactored
   async checkout(ctx) {
     const user = ctx.state.user
     const body = ctx.request.body
@@ -204,6 +204,55 @@ module.exports = {
       discount.valid ? discount.price : price.total
     )
 
+    const filterSettled = (settled) =>
+      settled
+        .filter((settle) => settle.status == 'fulfilled')
+        .map((settle) => settle.value)
+
+    const attachPaymentIntent = (paymentIntent) =>
+      Promise.allSettled(
+        cart.map((order) =>
+          strapi
+            .query('order', 'orders')
+            .update(
+              { id: order.id },
+              { paymentIntent: paymentIntent.id, coupon }
+            )
+        )
+      )
+
+    const fillOrderData = (orders) =>
+      Promise.allSettled(
+        orders.map(async (order) => ({
+          ...order,
+          product: {
+            ...order.product,
+            designer: await strapi
+              .query('designer')
+              .findOne({ id: order.product.designer }),
+          },
+          range: strapi.services.timing.range(order),
+          price: strapi.plugins['orders'].services.price.price(order),
+        }))
+      )
+
+    const successEmail = (orders) =>
+      strapi.plugins['email'].services.email.send({
+        template: 'checkout',
+        to: user.email,
+        cc:
+          process.env.NODE_ENV === 'production'
+            ? 'ukinfinitecloset@gmail.com'
+            : '',
+        bcc: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
+        subject: 'Thank you for your order',
+        data: {
+          firstName: user.firstName,
+          orders,
+          totalPrice: strapi.plugins['orders'].services.price.toPrice(total),
+        },
+      })
+
     stripe.paymentIntents
       .create({
         amount: total,
@@ -213,56 +262,11 @@ module.exports = {
         off_session: false,
         confirm: true,
       })
-
-      .then((paymentIntent) =>
-        Promise.allSettled(
-          cart.map((order) =>
-            strapi
-              .query('order', 'orders')
-              .update(
-                { id: order.id },
-                { paymentIntent: paymentIntent.id, coupon }
-              )
-          )
-        )
-      )
-
-      .then((settled) =>
-        settled
-          .filter((settle) => settle.status == 'fulfilled')
-          .map((settle) => settle.value)
-      )
-
-      .then((orders) =>
-        Promise.all(
-          orders.map(async (order) => ({
-            ...order,
-            product: {
-              ...order.product,
-              designer: await strapi
-                .query('designer')
-                .findOne({ id: order.product.designer }),
-            },
-            range: strapi.services.timing.range(order),
-            price: strapi.plugins['orders'].services.price.price(order),
-          }))
-        )
-      )
-
-      .then((orders) =>
-        strapi.plugins['email'].services.email.send({
-          template: 'checkout',
-          to: user.email,
-          subject: 'Thank you for your order',
-          bcc: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
-          data: {
-            firstName: user.firstName,
-            orders,
-            totalPrice: strapi.plugins['orders'].services.price.toPrice(total),
-          },
-        })
-      )
-
+      .then((paymentIntent) => attachPaymentIntent(cart, paymentIntent))
+      .then(filterSettled)
+      .then(fillOrderData)
+      .then(filterSettled)
+      .then(successEmail)
       .catch((err) => strapi.log.error(err))
 
     ctx.send({

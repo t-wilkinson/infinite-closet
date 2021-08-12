@@ -45,7 +45,11 @@ class MyDocument extends Document {
           <meta name="mobile-web-app-capable" content="yes" />
           <meta name="theme-color" content={palette.pri1} />
 
-          <link rel="manifest" href="/manifest.json" />
+          <link
+            rel="manifest"
+            href="/manifest.json"
+            crossOrigin="use-credentials"
+          />
           <link rel="shortcut icon" href="/favicon.ico" />
           <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link

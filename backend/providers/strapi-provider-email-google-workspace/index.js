@@ -10,13 +10,14 @@ const kebabize = (str) => {
 }
 
 function makeBody(options) {
-  const field = (f) => (options[f] ? `${kebabize(f)}: ${options[f]}\n` : '')
+  const toEmailField = (f) =>
+    options[f] ? `${kebabize(f)}: ${options[f]}\n` : ''
 
   var str = [
     'Content-Type: text/html; charset="UTF-8"\n',
     'MIME-Version: 1.0\n',
     'Content-Transfer-Encoding: 7bit\n',
-    ...['to', 'from', 'replyTo', 'cc', 'bcc', 'subject'].map(field),
+    ...['to', 'from', 'replyTo', 'cc', 'bcc', 'subject'].map(toEmailField),
     '\n',
     options.html,
   ].join('')
@@ -75,7 +76,9 @@ const emailFields = [
 ]
 
 function normalizeAddress(addr) {
-  if (typeof addr === 'string') {
+  if (!addr) {
+    return undefined
+  } else if (typeof addr === 'string') {
     return addr
   } else {
     if (addr.email && addr.name) {
@@ -90,6 +93,8 @@ async function templateEmail(client, settings, options) {
   const emailOptions = {
     ..._.pick(options, emailFields),
     to: normalizeAddress(options.to),
+    cc: normalizeAddress(options.cc),
+    bcc: normalizeAddress(options.bcc),
     from: normalizeAddress(options.from || settings.from),
     subject: options.subject || settings.subject,
     html: await emailTemplates(options.template, options.data || {}),
@@ -101,6 +106,9 @@ async function templateEmail(client, settings, options) {
 async function sendEmail(client, settings, options) {
   const emailOptions = {
     ..._.pick(options, emailFields),
+    to: normalizeAddress(options.to),
+    cc: normalizeAddress(options.cc),
+    bcc: normalizeAddress(options.bcc),
     from: options.from || settings.from,
     replyTo: options.replyTo || settings.replyTo,
     html: options.html || options.text,

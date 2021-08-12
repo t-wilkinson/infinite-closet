@@ -65,6 +65,5 @@ const templates = path.join(__dirname, 'build', 'templates')
 
 module.exports = async function (template, data) {
   template = await require(path.join(templates, template + '.js')).default
-  const email = await createEmail(template, data)
-  return email
+  return await createEmail(template, data)
 }
