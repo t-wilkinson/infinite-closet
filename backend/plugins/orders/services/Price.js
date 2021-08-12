@@ -108,7 +108,7 @@ function price(order) {
   )
   const shippingPrice = shippingPrices[shippingClass]
 
-  const productPrice = order.product[rentalPrice[order.rentalLength]]
+  const productPrice = order.product[rentalPrice[order.rentalLength]] // TODO: should move this to product.services
   const insurancePrice = order.insurance ? INSURANCE_PRICE : 0
 
   return productPrice + insurancePrice + shippingPrice
@@ -120,7 +120,59 @@ const cartPrice = (cart) =>
 const cartAmount = (cart) =>
   cart.reduce((total, item) => total + amount(item), 0)
 
+async function existingCoupons(user, code) {
+  return (
+    await strapi.query('order', 'orders').find({ user, 'coupon.code': code })
+  ).map((order) => order.coupon)
+}
+
+function discountedPrice(coupon, price) {
+  switch (coupon.type) {
+    case 'percent_off':
+      return price * (coupon.amount / 100)
+    case 'amount_off':
+      return coupon.amount
+    default:
+      return 0
+  }
+}
+
+// TODO: should we throw an error instead?
+// TODO: should this just calculate discount (not the price)? Should merge this with existing discount code
+/**
+ * Calculates the discount price given coupon
+ * @param {Object} obj
+ * @param {number} obj.price - The calculated price
+ * @param {string} obj.code - Supplied coupon
+ * @param {Coupon[]} obj.existingCoupons - List of existing coupons with same code that are related to current discount transaction. Ex. the coupons attached to orders of current user.
+ *
+ * @returns {Object} Containing the new price, discounted price, and a reference to the coupon used
+ */
+function discount({ price, coupon, existingCoupons }) {
+  if (!coupon) {
+    return { valid: false, reason: 'not-found' }
+  }
+
+  const existingCouponCount = existingCoupons.reduce(
+    (n, x) => n + (x.code === coupon.code),
+    0
+  )
+  const couponMaxedOut = coupon.maxUses <= existingCouponCount
+  if (couponMaxedOut) {
+    return { valid: false, reason: 'maxed-out' }
+  }
+
+  const discount = discountedPrice(coupon, price)
+
+  return {
+    valid: true,
+    discount,
+    price: price - discount,
+  }
+}
+
 module.exports = {
+  discount,
   totalAmount,
   totalPrice,
   price,
@@ -129,4 +181,5 @@ module.exports = {
   cartAmount,
   toPrice,
   toAmount,
+  existingCoupons,
 }

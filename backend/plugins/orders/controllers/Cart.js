@@ -189,13 +189,19 @@ module.exports = {
       insurance: body.insurance,
       user,
     })
-    const coupon = await strapi.services.coupon.discount({
-      code: body.couponCode,
-      situation: 'checkout',
+    const coupon = await strapi.services.coupon.availableCoupon(
+      'checkout',
+      body.couponCode
+    )
+    const discount = strapi.plugins['orders'].services.price.discount({
+      coupon,
       price: price.total,
+      existingCoupons: await strapi.plugins[
+        'orders'
+      ].services.price.existingCoupons(user.id, body.couponCode),
     })
     const total = strapi.plugins['orders'].services.price.toAmount(
-      coupon.valid ? coupon.price : price.total
+      discount.valid ? discount.price : price.total
     )
 
     stripe.paymentIntents
@@ -213,7 +219,10 @@ module.exports = {
           cart.map((order) =>
             strapi
               .query('order', 'orders')
-              .update({ id: order.id }, { paymentIntent: paymentIntent.id })
+              .update(
+                { id: order.id },
+                { paymentIntent: paymentIntent.id, coupon }
+              )
           )
         )
       )

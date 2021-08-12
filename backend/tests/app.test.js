@@ -1,11 +1,11 @@
-const fs = require('fs')
-const { setupStrapi } = require('./helpers/strapi')
+// const fs = require('fs')
+// const { setupStrapi } = require('./helpers/strapi')
 
 jest.setTimeout(30000)
 
-const sleep = (milliseconds) => {
-  return new Promise((resolve) => setTimeout(resolve, milliseconds))
-}
+// const sleep = (milliseconds) => {
+//   return new Promise((resolve) => setTimeout(resolve, milliseconds))
+// }
 
 /** this code is called once before any test is called */
 beforeAll(async () => {
@@ -27,12 +27,13 @@ afterAll(async () => {
   //await new Promise((resolve) => setTimeout(() => resolve(), 500)) // avoid jest open handle error
 })
 
-describe('Strapi in general', () => {
-  it('strapi is defined', async () => {
+describe('Strapi', () => {
+  it('is defined', async () => {
     // await expect(strapi).toBeDefined()
   })
 })
 
+require('./pricing')
 require('./shipping')
 // require('./orders')
 // require('./user')

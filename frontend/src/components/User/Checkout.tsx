@@ -96,9 +96,11 @@ export const CheckoutWrapper = ({ user }) => {
       .post(`/orders/cart/create`, {
         cart: CartUtils.getByUser(user?.id),
       })
-      .then((res) => dispatch({ type: 'fill-cart', payload: res.data.cart }))
+      .then((res) => {
+        dispatch({ type: 'fill-cart', payload: res.data.cart })
+        rootDispatch(userActions.countCart(res.data.cart.length))
+      })
       .catch((err) => console.error(err))
-    rootDispatch(userActions.countCart(CartUtils.count(user?.id)))
   }
 
   React.useEffect(() => {
@@ -222,6 +224,7 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
         </SideItem>
         <SideItem label="Summary" user={user}>
           <Summary
+            user={user}
             couponCode={fields.couponCode}
             state={state}
             dispatch={dispatch}
@@ -382,8 +385,8 @@ const Payment = ({ state, user, dispatch }) => (
   </>
 )
 
-const Summary = ({ couponCode, dispatch, state }) => {
-  const { total } = state
+const Summary = ({ user, couponCode, dispatch, state }) => {
+  const { total, coupon } = state
   if (!total) {
     return <div />
   }
@@ -392,7 +395,8 @@ const Summary = ({ couponCode, dispatch, state }) => {
     <div>
       <CouponCode
         price={total.total}
-        situation="checkout"
+        user={user.id}
+        context="checkout"
         setCoupon={(coupon) =>
           dispatch({ type: 'correct-coupon', payload: coupon })
         }
@@ -401,11 +405,15 @@ const Summary = ({ couponCode, dispatch, state }) => {
       <Price label="Subtotal" price={total.subtotal} />
       <Price label="Insurance" price={total.insurance} />
       <Price label="Shipping" price={total.shipping} />
-      <Price negative label="Discount" price={total.discount} />
+      <Price
+        negative
+        label="Discount"
+        price={total.discount + coupon?.discount || 0}
+      />
       <div className="h-px bg-pri my-1" />
       <Price
         label="Total"
-        price={state.coupon?.price || total.total}
+        price={coupon?.price || total.total}
         className="font-bold"
       />
     </div>

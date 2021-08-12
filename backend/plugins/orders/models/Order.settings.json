@@ -65,6 +65,9 @@
     "insurance": {
       "type": "boolean",
       "default": false
+    },
+    "coupon": {
+      "model": "coupon"
     }
   }
 }

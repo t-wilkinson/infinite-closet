@@ -300,37 +300,44 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
 type CouponStatus = undefined | 'success' | 'failure'
 
 export const CouponCode = ({
-  situation,
+  user,
+  context,
   price,
   setCoupon,
   field,
 }: {
-  situation: StrapiCoupon['situation']
+  user: string
+  context: StrapiCoupon['context']
   price: number
   setCoupon: (coupon: Coupon) => void
   field: Field
 }) => {
   const [status, setStatus] = React.useState<CouponStatus>()
+  const [message, setMessage] = React.useState()
+
   const checkPromo = async () => {
     const code = cleanField(field)
     return axios
       .post(`/coupons/discount`, {
+        user,
         code,
-        situation,
+        context,
         price,
       })
       .then((res) => res.data)
-      .then((data) => {
-        if (data.valid) {
-          setCoupon(data)
+      .then((coupon) => {
+        if (coupon.valid) {
+          setCoupon(coupon)
           setStatus('success')
         } else {
           setStatus('failure')
+          setMessage(coupon.reason)
         }
       })
       .catch((err) => {
         if (err.valid === false) {
           setStatus('failure')
+          setMessage(err.reason)
         }
       })
   }
@@ -361,7 +368,11 @@ export const CouponCode = ({
   } else {
     return (
       <span className="text-warning w-full p-2">
-        Unable to find promo code matching {field.value}.{' '}
+        {message === 'not-found'
+          ? `Unable to find promo code matching ${field.value}.`
+          : message === 'maxed-out'
+          ? 'You have already used this coupon.'
+          : `Unable to find promo code matching ${field.value}.`}{' '}
         <button
           className="underline text-black"
           onClick={() => {

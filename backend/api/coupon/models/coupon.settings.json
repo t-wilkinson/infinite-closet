@@ -13,10 +13,7 @@
   "attributes": {
     "type": {
       "type": "enumeration",
-      "enum": [
-        "percent_off",
-        "amount_ff"
-      ],
+      "enum": ["percent_off", "amount_off"],
       "required": true
     },
     "amount": {
@@ -28,11 +25,15 @@
       "required": true,
       "private": true
     },
-    "situation": {
+    "context": {
       "type": "enumeration",
-      "enum": [
-        "checkout"
-      ]
+      "enum": ["checkout"]
+    },
+    "maxUses": {
+      "type": "integer",
+      "default": 1,
+      "min": 0,
+      "required": true
     }
   }
 }
