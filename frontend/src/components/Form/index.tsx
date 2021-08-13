@@ -116,7 +116,7 @@ export const Input = ({
           }
           `}
       >
-        {before && <div className="ml-2">{before}</div>}
+        {before && <div>{before}</div>}
         <input
           {...props}
           disabled={disabled}
@@ -135,7 +135,7 @@ export const Input = ({
           onBlur={() => setFocus(false)}
         />
         {children}
-        {after && <div className="mr-2">{after}</div>}
+        {after && <div>{after}</div>}
       </div>
     </div>
   )

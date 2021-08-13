@@ -58,9 +58,9 @@ module.exports = {
       contact: body.email,
       context: 'mailinglist',
       metadata: {
-        name: body.name,
+        name: body.name || '',
         email: body.email,
-        dateOfBirth: body.dateOfBirth,
+        dateOfBirth: body.dateOfBirth || '',
       },
     })
 

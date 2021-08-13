@@ -11,7 +11,6 @@ import { StrapiProduct } from '@/utils/models'
 export const Home = () => {
   const [products, setProducts] = React.useState([])
 
-  // TODO: use preRender
   React.useEffect(() => {
     const products = [
       'elora',
@@ -74,7 +73,7 @@ const FacebookMessenger = () => (
 const Heading = ({ block = true, children }) => {
   return (
     <div className="w-full items-center">
-      <h2 className="relative font-subheader text-5xl text-center">
+      <span className="relative font-subheader text-5xl text-center">
         {block && (
           <div
             className="absolute w-full bottom-0 h-10 bg-pri-light"
@@ -83,72 +82,63 @@ const Heading = ({ block = true, children }) => {
             }}
           />
         )}
-        <span className="relative">{children}</span>
-      </h2>
+        <h2 className="relative">{children}</h2>
+      </span>
     </div>
   )
 }
 
-const bgColor = '#859c9b'
-
-const Introduction = () => (
-  <div
-    className="relative items-stretch w-full flex-row py-16 sm:py-0"
-    style={{
-      background: bgColor,
-    }}
-  >
+const Introduction = () => {
+  React.useEffect(() => {}, [])
+  return (
     <div
+      className="relative w-full"
       style={{
-        width: 'calc(25% + 18rem)',
+        height: 'calc(100vh - 152px)',
       }}
-      className="text-white z-10 relative py-8 ml-8 items-start justify-center
-      sm:text-black sm:p-16 sm:ml-16 sm:max-w-none sm:items-end
-      md:p-24 md:ml-0
-      "
     >
-      <div style={{}} className="w-72">
-        <span
-          className="font-bold text-4xl md:text-5xl mb-6"
-          style={{
-            lineHeight: '1',
-          }}
-        >
-          Change The Way You Get Dressed
-        </span>
-        <span className="mb-12">
-          Discover and create your dream wardrobe by renting independent and
-          sustainable brands, without breaking the bank.
-        </span>
-        <span>
-          <Link href="/products/clothing">
-            <a>
-              <Button role="cta">Find Your Look</Button>
-            </a>
-          </Link>
-        </span>
-      </div>
-    </div>
-
-    <div className="absolute inset-0 sm:relative w-full flex-grow justify-center">
-      <div
-        className="absolute inset-0"
-        style={{
-          background: bgColor,
-        }}
+      <Image
+        priority={true}
+        src="/media/home/enjoy-life.png"
+        alt="5 women walking in stylish dresses"
+        layout="fill"
+        objectFit="cover"
+        objectPosition="top center"
       />
-      <div className="">
-        <Image
-          priority={true}
-          src="/media/home/enjoy-life.png"
-          alt="5 women walking in stylish dresses"
-          layout="fill"
-          objectFit="cover"
-          objectPosition="top center"
-        />
-        <div className="absolute inset-0 bg-black opacity-60 transform sm:hidden" />
+      <div
+        className="absolute inset-0 xl:hidden"
+        style={{ backgroundColor: 'rgb(0 0 0 / 30%)' }}
+      />
+      <div className="justify-center sm:justify-start m-8 sm:m-16 relative max-w-md h-full">
+        <IntroductionText />
       </div>
     </div>
+  )
+}
+
+const IntroductionText = () => (
+  <div className="text-white">
+    <h1
+      className="font-bold text-5xl md:text-6xl mb-6"
+      style={{
+        lineHeight: '1',
+      }}
+    >
+      Change The Way You Get Dressed
+    </h1>
+    <span className="mb-12 text-xl leading-tight">
+      Discover and create your dream wardrobe by renting independent and
+      sustainable brands, without breaking the bank.
+    </span>
+    <span>
+      <Link href="/products/clothing">
+        <a>
+          <Button role="primary" className="p-4 text-lg md:text-xl">
+            Find Your Look
+          </Button>
+        </a>
+      </Link>
+    </span>
   </div>
 )
 
@@ -191,75 +181,56 @@ const whyRent = [
   },
 ]
 
-const WhyRent = ({}) => (
-  <div className="w-full items-center" id="why-rent">
-    <div className="flex-row w-full">
+const WhyRent = () => (
+  <div
+    className="relative items-center w-full md:flex-row mt-16 md:my-16"
+    id="why-rent"
+    style={{
+      minHeight: '40vh',
+    }}
+  >
+    <div className="h-96 w-96 sm:h-128 sm:w-128 md:w-96 md:h-full lg:w-1/3 relative">
+      <Image
+        src="/media/home/feel-good.png"
+        alt=""
+        layout="fill"
+        objectFit="cover"
+        objectPosition="right top"
+      />
+    </div>
+    <div
+      className="w-full py-8 items-start
+      md:w-2/3 lg:py-32 space-y-8
+      "
+    >
+      <Heading>Why Rent?</Heading>
       <div
-        className="relative w-1/2 flex-grow justify-center max-w-screen-md hidden sm:flex"
-        style={{
-          maxHeight: '80vh',
-        }}
+        className="w-full
+        flex gap-y-8
+        lg:grid grid-cols-2 px-8 gap-x-8 xl:gap-x-16 lg:gap-y-8 auto-cols-fr lg:max-w-screen-lg
+        "
       >
-        <div
-          className="absolute inset-0"
-          style={{
-            background: bgColor,
-          }}
-        />
-        <div className="overflow-hidden absolute inset-0">
-          <div
-            className="absolute inset-0"
-            style={{
-              marginTop: '-20%',
-            }}
-          >
-            <Image
-              src="/media/home/feel-good.png"
-              alt=""
-              layout="fill"
-              objectFit="cover"
-              objectPosition="right top"
-            />
-          </div>
-        </div>
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg, ${bgColor} 0%, ${bgColor}00 10%)`,
-          }}
-        />
-      </div>
-
-      <div
-        className="items-center flex-col sm:items-start sm:flex-row flex-wrap w-full px-3 sm:pl-12 lg:pl-8
-        space-y-8 py-10 md:py-12 lg:pb-32 lg:pt-24 lg:justify-center max-w-screen-xl"
-      >
-        <div className="lg:w-full sm:ml-24 lg:ml-16 xl:ml-0">
-          <Heading>Why Rent?</Heading>
-        </div>
         {whyRent.map((item) => (
-          <div key={item.label} className="items-center my-4 md:my-4">
-            <div className="w-full sm:w-96 items-start flex-row">
-              <div className="w-24 h-24 relative">
-                <Image
-                  alt={item.label}
-                  src={`/media/home/${item.icon}`}
-                  layout="fill"
-                  objectFit="contain"
-                />
-              </div>
-              <div className="w-full ml-3 sm:ml-6">
-                <span className="text-left font-bold text-lg">
-                  {item.label}
-                </span>
-                <span className="text-left text-gray leading-tight">
-                  {item.content}
-                </span>
-              </div>
-            </div>
-          </div>
+          <WhyRentItem key={item.label} item={item} />
         ))}
       </div>
+    </div>
+  </div>
+)
+
+const WhyRentItem = ({ item }) => (
+  <div className="w-full items-start flex-row">
+    <div className="w-20 h-20 lg:w-24 lg:h-24 relative">
+      <Image
+        alt={item.label}
+        src={`/media/home/${item.icon}`}
+        layout="fill"
+        objectFit="contain"
+      />
+    </div>
+    <div className="w-full ml-3 sm:ml-6">
+      <span className="text-left font-bold text-lg">{item.label}</span>
+      <span className="text-left text-gray leading-tight">{item.content}</span>
     </div>
   </div>
 )
@@ -319,9 +290,6 @@ const HowItWorks = () => (
 
 const HowItWorksCard = ({ img, text }) => (
   <div className="bg-white rounded-lg space-y-8 items-center w-full p-4 sm:p-12 md:p-12 lg:p-8 sm:w-96 lg:w-1/3 relative shadow-lg">
-    {/* <span className="absolute top-0 left-0 font-header text-3xl transform ml-8 -translate-y-1/2"> */}
-    {/*   {title} */}
-    {/* </span> */}
     <div
       className="p-3 rounded-md"
       style={{

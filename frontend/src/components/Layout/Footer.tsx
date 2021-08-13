@@ -9,14 +9,14 @@ import useFields, {
   cleanFields,
   useDateOfBirth,
 } from '@/Form/useFields'
-import { DateOfBirth, Input } from '@/Form'
+import { Input } from '@/Form'
 import { Button, Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 
 export const Footer = () => {
   return (
     <FooterWrapper>
-      <nav className="w-full flex flex-wrap flex-row items-start justify-start">
+      <nav className="flex flex-wrap flex-row items-start justify-center">
         <Section
           title="Get Help"
           links={[
@@ -43,10 +43,11 @@ export const Footer = () => {
         />
 
         <div className="space-y-4">
-          <Section title="Rent On The Go">
-            <DownloadPWA />
-          </Section>
-          <Section title="Follow Us">
+          {/* <Section title="Rent On The Go"> */}
+          {/*   <DownloadPWA /> */}
+          {/* </Section> */}
+          <Section title="Stay Connected">
+            <Waitlist />
             <FollowUs />
           </Section>
         </div>
@@ -60,14 +61,8 @@ const FooterWrapper = ({ children }) => {
 
   return (
     <div>
-      {router.pathname === '/' && (
-        <div className="items-center w-full px-2 py-12">
-          <Waitlist />
-        </div>
-      )}
-
       <div className="items-center w-full px-2 bg-sec text-white">
-        <footer className="flex flex-col w-full p-16 max-w-screen-md">
+        <footer className="flex flex-col w-full p-16 max-w-screen-lg">
           {children}
         </footer>
         <div className="mb-8">
@@ -148,13 +143,9 @@ type Status = 'None' | 'Error' | 'Submitted' | 'Submitting'
 
 const Waitlist = () => {
   const [status, setStatus] = React.useState<Status>('None')
-  const dateOfBirth = useDateOfBirth()
   const fields = useFields({
-    name: {
-      constraints: 'required',
-    },
     email: {
-      constraints: 'required email',
+      constraints: 'email',
       label: 'Email Address',
     },
   })
@@ -164,9 +155,7 @@ const Waitlist = () => {
     const cleaned = cleanFields(fields)
     axios
       .post('/account/mailinglist', {
-        name: cleaned.name,
         email: cleaned.email,
-        dateOfBirth: toDate(dateOfBirth).toJSON(),
       })
       .then(() => setStatus('Submitted'))
       .catch(() => {
@@ -188,44 +177,35 @@ const Waitlist = () => {
   }
 
   return (
-    <div className="items-center my-4 max-w-sm">
-      <h3 className="font-bold text-2xl mb-1">Get 10% off your first rental</h3>
-      <span className="mb-4 text-center">
-        Join our mailing list for exclusive offers, first dibs on new items,
-        birthday rewards and style inspiration.
-      </span>
-      <form
-        className="flex flex-col items-stretch relative m-2 pt-0"
-        onSubmit={onSubmit}
-      >
-        {status === 'Submitting' || status === 'Submitted' ? (
-          <div className="absolute inset-0 bg-white z-20 items-center justify-center font-bold rounded-sm border border-gray">
-            {messages[status]}
-          </div>
-        ) : status === 'Error' ? (
-          <div className="text-warning">
-            Couldn't send you an email. Try again?
-          </div>
-        ) : null}
-        <Input {...fields.name} />
-        <Input {...fields.email} after={<Icon name="email" size={20} />} />
-        <DateOfBirth {...dateOfBirth} />
-        <div className="w-8" />
-        <Button className="my-2">Join the Mailing List</Button>
-      </form>
-    </div>
+    <form
+      className="w-full flex flex-col items-stretch relative text-sm"
+      onSubmit={onSubmit}
+    >
+      {status === 'Submitting' || status === 'Submitted' ? (
+        <div className="absolute inset-0 bg-white z-20 items-center justify-center font-bold rounded-sm border border-gray">
+          {messages[status]}
+        </div>
+      ) : status === 'Error' ? (
+        <div className="text-warning">
+          Couldn't send you an email. Try again?
+        </div>
+      ) : null}
+      <div className="flex-row space-x-4 w-full">
+        <Input {...fields.email} after={<Button className="">Join</Button>} />
+      </div>
+      <h3 className="font-bold text-sm -mt-1 mb-5">
+        Get 10% off your first rental
+      </h3>
+    </form>
   )
 }
 
-export const FollowUs = ({ className = '' }) => (
-  <div className={`items-center ${className}`}>
-    {/* <span className="text-2xl font-subheader">Follow Us</span> */}
-    <div className="flex-row width-full max-w-20 content-evenly space-x-2">
-      <SocialMediaIcon name="facebook" />
-      <SocialMediaIcon name="instagram" />
-      <SocialMediaIcon name="twitter" />
-      <SocialMediaIcon name="tiktok" />
-    </div>
+export const FollowUs = () => (
+  <div className="flex-row width-full max-w-20 content-evenly space-x-3">
+    <SocialMediaIcon name="facebook" />
+    <SocialMediaIcon name="instagram" />
+    <SocialMediaIcon name="twitter" />
+    <SocialMediaIcon name="tiktok" />
   </div>
 )
 
