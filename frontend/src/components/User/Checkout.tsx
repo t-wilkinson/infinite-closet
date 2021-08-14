@@ -214,8 +214,12 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
   }
 
   return (
-    <div className="w-full justify-center max-w-screen-xl flex-row space-x-4 my-4 h-full">
-      <div className="w-2/5 space-y-4">
+    <div
+      className="w-full justify-center max-w-screen-xl my-4 h-full
+      md:flex-row space-y-4 md:space-y-0 md:space-x-4
+      "
+    >
+      <div className="md:w-2/5 space-y-4">
         <SideItem label="Addresses" user={user} protect>
           <Address state={state} dispatch={dispatch} user={user} />
         </SideItem>
@@ -250,7 +254,7 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
           </span>
         </div>
       ) : (
-        <div className="w-full">
+        <div className="w-full space-y-4">
           {!user && (
             <button
               className="bg-sec hover:bg-pri transition-all duration-200 p-3 font-bold text-white mb-2"
