@@ -88,33 +88,30 @@ const Heading = ({ block = true, children }) => {
   )
 }
 
-const Introduction = () => {
-  React.useEffect(() => {}, [])
-  return (
+const Introduction = () => (
+  <div
+    className="relative w-full"
+    style={{
+      height: 'calc(100vh - 152px)',
+    }}
+  >
+    <Image
+      priority={true}
+      src="/media/home/enjoy-life.png"
+      alt="Women enjoying stylish rental dresses"
+      layout="fill"
+      objectFit="cover"
+      objectPosition="top center"
+    />
     <div
-      className="relative w-full"
-      style={{
-        height: 'calc(100vh - 152px)',
-      }}
-    >
-      <Image
-        priority={true}
-        src="/media/home/enjoy-life.png"
-        alt="5 women walking in stylish dresses"
-        layout="fill"
-        objectFit="cover"
-        objectPosition="top center"
-      />
-      <div
-        className="absolute inset-0 xl:hidden"
-        style={{ backgroundColor: 'rgb(0 0 0 / 30%)' }}
-      />
-      <div className="justify-center sm:justify-start m-8 sm:m-16 relative max-w-md h-full">
-        <IntroductionText />
-      </div>
+      className="absolute inset-0 xl:hidden"
+      style={{ backgroundColor: 'rgb(0 0 0 / 30%)' }}
+    />
+    <div className="justify-center sm:justify-start m-8 sm:m-16 relative max-w-md h-full">
+      <IntroductionText />
     </div>
-  )
-}
+  </div>
+)
 
 const IntroductionText = () => (
   <div className="text-white">

@@ -2,13 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import axios from 'axios'
-import { useRouter } from 'next/router'
 
-import useFields, {
-  toDate,
-  cleanFields,
-  useDateOfBirth,
-} from '@/Form/useFields'
+import useFields, { cleanFields } from '@/Form/useFields'
 import { Input } from '@/Form'
 import { Button, Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
@@ -16,7 +11,7 @@ import { socialMediaLinks } from '@/utils/constants'
 export const Footer = () => {
   return (
     <FooterWrapper>
-      <nav className="flex flex-wrap flex-row items-start justify-center">
+      <nav className="flex flex-wrap flex-row items-start justify-start md:justify-center">
         <Section
           title="Get Help"
           links={[
@@ -56,22 +51,16 @@ export const Footer = () => {
   )
 }
 
-const FooterWrapper = ({ children }) => {
-  const router = useRouter()
-
-  return (
-    <div>
-      <div className="items-center w-full px-2 bg-sec text-white">
-        <footer className="flex flex-col w-full p-16 max-w-screen-lg">
-          {children}
-        </footer>
-        <div className="mb-8">
-          <small>© 2021 Infinite Closet. All Rights Reserved.</small>
-        </div>
-      </div>
+const FooterWrapper = ({ children }) => (
+  <div className="items-center w-full px-2 bg-sec text-white">
+    <footer className="flex flex-col w-full p-16 max-w-screen-lg">
+      {children}
+    </footer>
+    <div className="mb-8">
+      <small>© 2021 Infinite Closet. All Rights Reserved.</small>
     </div>
-  )
-}
+  </div>
+)
 
 const Section = ({ title, links = [], children = null }) => (
   <div className="mx-4 my-4 items-start">
