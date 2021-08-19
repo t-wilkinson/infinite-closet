@@ -74,51 +74,51 @@ const Section = ({ title, links = [], children = null }) => (
   </div>
 )
 
-const DownloadPWA = () => {
-  // Setup pwa download button
-  React.useEffect(() => {
-    let deferredPrompt
-    const addBtn = document.querySelector('.add-button')
-    addBtn.style.display = 'none'
+// const DownloadPWA = () => {
+//   // Setup pwa download button
+//   React.useEffect(() => {
+//     let deferredPrompt
+//     const addBtn = document.querySelector('.add-button')
+//     addBtn.style.display = 'none'
 
-    const beforeInstallPrompt = (e) => {
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
-      e.preventDefault()
-      // Stash the event so it can be triggered later.
-      deferredPrompt = e
-      // Update UI to notify the user they can add to home screen
-      addBtn.style.display = 'block'
+//     const beforeInstallPrompt = (e) => {
+//       // Prevent Chrome 67 and earlier from automatically showing the prompt
+//       e.preventDefault()
+//       // Stash the event so it can be triggered later.
+//       deferredPrompt = e
+//       // Update UI to notify the user they can add to home screen
+//       addBtn.style.display = 'block'
 
-      addBtn.addEventListener('click', (e) => {
-        // hide our user interface that shows our A2HS button
-        addBtn.style.display = 'none'
-        // Show the prompt
-        deferredPrompt.prompt()
-        // Wait for the user to respond to the prompt
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            // 'User accepted the A2HS prompt'
-          } else {
-            // 'User dismissed the A2HS prompt'
-          }
-          deferredPrompt = null
-        })
-      })
-    }
+//       addBtn.addEventListener('click', (e) => {
+//         // hide our user interface that shows our A2HS button
+//         addBtn.style.display = 'none'
+//         // Show the prompt
+//         deferredPrompt.prompt()
+//         // Wait for the user to respond to the prompt
+//         deferredPrompt.userChoice.then((choiceResult) => {
+//           if (choiceResult.outcome === 'accepted') {
+//             // 'User accepted the A2HS prompt'
+//           } else {
+//             // 'User dismissed the A2HS prompt'
+//           }
+//           deferredPrompt = null
+//         })
+//       })
+//     }
 
-    window.addEventListener('beforeinstallprompt', beforeInstallPrompt)
-    return () =>
-      window.removeEventListener('beforeinstallprompt', beforeInstallPrompt)
-  }, [])
+//     window.addEventListener('beforeinstallprompt', beforeInstallPrompt)
+//     return () =>
+//       window.removeEventListener('beforeinstallprompt', beforeInstallPrompt)
+//   }, [])
 
-  return (
-    <div className="flex-row items-start">
-      <Image src="/icons/phone.svg" height={48} width={32} />
-      <div className="w-2" />
-      <button className="underline inline text-sm add-button">Download</button>
-    </div>
-  )
-}
+//   return (
+//     <div className="flex-row items-start">
+//       <Image src="/icons/phone.svg" height={48} width={32} />
+//       <div className="w-2" />
+//       <button className="underline inline text-sm add-button">Download</button>
+//     </div>
+//   )
+// }
 
 const FooterLink = ({ href, label }) => (
   <Link href={href}>
@@ -167,7 +167,7 @@ const Waitlist = () => {
 
   return (
     <form
-      className="w-full flex flex-col items-stretch relative text-sm"
+      className="w-full flex flex-col items-stretch relative text-sm text-black mb-5"
       onSubmit={onSubmit}
     >
       {status === 'Submitting' || status === 'Submitted' ? (
@@ -182,7 +182,7 @@ const Waitlist = () => {
       <div className="flex-row space-x-4 w-full">
         <Input {...fields.email} after={<Button className="">Join</Button>} />
       </div>
-      <h3 className="font-bold text-sm -mt-1 mb-5">
+      <h3 className="font-bold text-sm -mt-1 text-white">
         Get 10% off your first rental
       </h3>
     </form>

@@ -113,6 +113,7 @@ async function sendEmail(client, settings, options) {
     replyTo: options.replyTo || settings.replyTo,
     html: options.html || options.text,
   }
+
   return await client.send(emailOptions)
 }
 
@@ -125,9 +126,9 @@ module.exports = {
     return {
       send(options) {
         if (options.template) {
-          templateEmail(client, settings, options)
+          return templateEmail(client, settings, options)
         } else {
-          sendEmail(client, settings, options)
+          return sendEmail(client, settings, options)
         }
       },
     }

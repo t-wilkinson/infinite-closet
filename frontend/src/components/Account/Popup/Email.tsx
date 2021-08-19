@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 
-import { FormHeader, DateOfBirth, Input, OR } from '@/Form'
+import { DateOfBirth, Input, OR } from '@/Form'
 import useFields, {
   useDateOfBirth,
   toDate,

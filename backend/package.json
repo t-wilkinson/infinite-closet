@@ -9,7 +9,9 @@
     "start": "strapi start",
     "strapi": "strapi",
     "build": "strapi build",
-    "test": "jest --forceExit --detectOpenHandles"
+    "test": "jest --forceExit --detectOpenHandles",
+    "email-templates": "yarn add file:providers/email-templates",
+    "google-workspace": "yarn add file:providers/strapi-provider-email-google-workspace"
   },
   "dependencies": {
     "@mailchimp/mailchimp_transactional": "^1.0.27",
