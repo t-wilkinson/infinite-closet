@@ -189,7 +189,7 @@ const WhyRent = () => (
     <div className="h-96 w-96 sm:h-128 sm:w-128 md:w-96 md:h-full lg:w-1/3 relative">
       <Image
         src="/media/home/feel-good.png"
-        alt=""
+        alt="Feel good"
         layout="fill"
         objectFit="cover"
         objectPosition="right top"
