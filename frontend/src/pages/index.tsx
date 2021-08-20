@@ -12,12 +12,7 @@ export const Home = () => {
   const [products, setProducts] = React.useState([])
 
   React.useEffect(() => {
-    const products = [
-      'elora',
-      'juliette-dress',
-      'june-gown',
-      'shelley-jumpsuit',
-    ]
+    const products = ['asher', 'etude-wrap', 'elora', 'juliette-dress']
     axios
       .get(`/products?slug_in=${products.join('&slug_in=')}`)
       .then((res) => setProducts(res.data))
@@ -75,7 +70,9 @@ const Heading = ({ block = true, children }) => {
     <div className="w-full items-center">
       <span className="relative font-bold uppercase text-5xl text-center">
         <h2 className="relative">{children}</h2>
-        {block && <div className="w-full bg-pri h-2 -mt-3" />}
+        {block && (
+          <div className="w-3/4 bg-pri h-2 -mt-3 absolute bottom-0 right-0" />
+        )}
       </span>
     </div>
   )
@@ -85,7 +82,7 @@ const Introduction = () => (
   <div
     className="relative w-full"
     style={{
-      height: 'calc(100vh - 152px)',
+      height: '70vh',
     }}
   >
     <Image
@@ -94,7 +91,7 @@ const Introduction = () => (
       alt="Women enjoying stylish rental dresses"
       layout="fill"
       objectFit="cover"
-      objectPosition="center"
+      objectPosition="center bottom"
     />
     <div
       className="absolute inset-0 xl:hidden"
@@ -192,8 +189,10 @@ const WhyRent = () => (
         objectFit="cover"
         objectPosition="center"
       />
-      <div className="absolute justify-center top-0 bottom-0 right-0 transform -translate-x-1/2 text-white">
-        <Heading>Why Rent</Heading>
+      <div className="absolute mt-8 mr-8 right-0 left-0 md:m-0 items-end md:justify-center md:items-center top-0 bottom-0 text-white">
+        <div className="md:transform md:translate-x-full">
+          <Heading>Why Rent</Heading>
+        </div>
       </div>
     </div>
     <div className="w-full py-16 items-center">
@@ -235,7 +234,7 @@ const productCategories = [
     text: 'The Formal Edit',
     src: '/media/home/formal-clothing.png',
     alt: 'Pink dress for formal occasions',
-    href: '/products/clothing?occasions=formal',
+    href: '/products/clothing/gowns',
     position: 'center 20%',
   },
   {
@@ -243,7 +242,7 @@ const productCategories = [
     text: 'Find Your Wedding Bliss',
     src: '/media/home/wedding-dresses.png',
     alt: 'White wedding dress for your wedding',
-    href: '/products/clothing?occasions=wedding',
+    href: '/products/clothing?occasions=bridal',
     position: 'center',
   },
 ]
@@ -315,13 +314,7 @@ const HowItWorks = () => (
     }}
   >
     <div className="my-8 w-full">
-      <Heading block={false}>
-        How{' '}
-        <div className="inline-block">
-          It Works
-          <div className="w-full bg-pri h-2 -mt-3" />
-        </div>
-      </Heading>
+      <Heading>How It Works</Heading>
     </div>
     <div className="w-full lg:flex-row items-center lg:items-stretch sm:p-16 space-y-4 sm:space-y-16 lg:space-y-0 lg:space-x-8 xl:space-x-16 max-w-screen-xl">
       {howItWorks.map((props) => (
