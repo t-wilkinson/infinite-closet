@@ -74,14 +74,6 @@ const Heading = ({ block = true, children }) => {
   return (
     <div className="w-full items-center">
       <span className="relative font-bold uppercase text-5xl text-center">
-        {/* {block && ( */}
-        {/*   <div */}
-        {/*     className="absolute w-full bottom-0 h-10 bg-pri-light" */}
-        {/*     style={{ */}
-        {/*       transform: 'translate(0.4em, -0.5em)', */}
-        {/*     }} */}
-        {/*   /> */}
-        {/* )} */}
         <h2 className="relative">{children}</h2>
         {block && <div className="w-full bg-pri h-2 -mt-3" />}
       </span>
@@ -180,7 +172,7 @@ const whyRent = [
 
 const WhyRent = () => (
   <div
-    className="relative items-center w-full mt-16 md:my-16"
+    className="relative items-center w-full"
     id="why-rent"
     style={{
       minHeight: '40vh',
@@ -204,7 +196,7 @@ const WhyRent = () => (
         <Heading>Why Rent</Heading>
       </div>
     </div>
-    <div className="w-full py-32 items-center">
+    <div className="w-full py-16 items-center">
       <div
         className="w-full
         flex max-w-md md:max-w-none
