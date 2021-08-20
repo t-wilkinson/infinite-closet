@@ -34,7 +34,7 @@ main {
 .font-subheader {
   font-family: 'Barlow', sans-serif;
   text-transform: uppercase;
-  font-weight: 200;
+  font-weight: 500;
 }
 
 .font-subheader-light {

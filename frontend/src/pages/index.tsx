@@ -29,9 +29,9 @@ export const Home = () => {
       {process.env.NODE_ENV === 'production' && <FacebookMessenger />}
       <div className="w-full items-center w-full">
         <Introduction />
-        <WhyRent />
-        <div className="h-8" />
         <ProductItems products={products} />
+        <WhyRent />
+        <ProductCategories />
         <HowItWorks />
       </div>
     </>
@@ -73,16 +73,17 @@ const FacebookMessenger = () => (
 const Heading = ({ block = true, children }) => {
   return (
     <div className="w-full items-center">
-      <span className="relative font-subheader text-5xl text-center">
-        {block && (
-          <div
-            className="absolute w-full bottom-0 h-10 bg-pri-light"
-            style={{
-              transform: 'translate(0.4em, -0.5em)',
-            }}
-          />
-        )}
+      <span className="relative font-bold uppercase text-5xl text-center">
+        {/* {block && ( */}
+        {/*   <div */}
+        {/*     className="absolute w-full bottom-0 h-10 bg-pri-light" */}
+        {/*     style={{ */}
+        {/*       transform: 'translate(0.4em, -0.5em)', */}
+        {/*     }} */}
+        {/*   /> */}
+        {/* )} */}
         <h2 className="relative">{children}</h2>
+        {block && <div className="w-full bg-pri h-2 -mt-3" />}
       </span>
     </div>
   )
@@ -97,17 +98,17 @@ const Introduction = () => (
   >
     <Image
       priority={true}
-      src="/media/home/enjoy-life.png"
+      src="/media/home/sustainable-fashion-rental.png"
       alt="Women enjoying stylish rental dresses"
       layout="fill"
       objectFit="cover"
-      objectPosition="top center"
+      objectPosition="center"
     />
     <div
       className="absolute inset-0 xl:hidden"
       style={{ backgroundColor: 'rgb(0 0 0 / 30%)' }}
     />
-    <div className="justify-center sm:justify-start m-8 sm:m-16 relative max-w-md h-full">
+    <div className="justify-start m-8 sm:m-16 relative max-w-md h-full">
       <IntroductionText />
     </div>
   </div>
@@ -116,21 +117,20 @@ const Introduction = () => (
 const IntroductionText = () => (
   <div className="text-white">
     <h1
-      className="font-bold text-5xl md:text-6xl mb-6"
+      className="font-bold uppercase text-5xl md:text-5xl mb-4"
       style={{
         lineHeight: '1',
       }}
     >
       Change The Way You Get Dressed
     </h1>
-    <span className="mb-12 text-xl leading-tight">
-      Discover and create your dream wardrobe by renting independent and
-      sustainable brands, without breaking the bank.
+    <span className="mb-8 text-xl leading-tight">
+      Support sustainable fashion without breaking the bank by renting with us.
     </span>
     <span>
       <Link href="/products/clothing">
         <a>
-          <Button role="primary" className="p-4 text-lg md:text-xl">
+          <Button role="cta" className="p-4 text-lg md:text-lg font-bold">
             Find Your Look
           </Button>
         </a>
@@ -180,31 +180,36 @@ const whyRent = [
 
 const WhyRent = () => (
   <div
-    className="relative items-center w-full md:flex-row mt-16 md:my-16"
+    className="relative items-center w-full mt-16 md:my-16"
     id="why-rent"
     style={{
       minHeight: '40vh',
     }}
   >
-    <div className="h-96 w-96 sm:h-128 sm:w-128 md:w-96 md:h-full lg:w-1/3 relative">
+    <div
+      className="relative w-full"
+      style={{
+        height: '50vh',
+        minHeight: '300px',
+      }}
+    >
       <Image
-        src="/media/home/feel-good.png"
+        src="/media/home/why-rent.png"
         alt="Feel good"
         layout="fill"
         objectFit="cover"
-        objectPosition="right top"
+        objectPosition="center"
       />
+      <div className="absolute justify-center top-0 bottom-0 right-0 transform -translate-x-1/2 text-white">
+        <Heading>Why Rent</Heading>
+      </div>
     </div>
-    <div
-      className="w-full py-8 items-start
-      md:w-2/3 lg:py-32 space-y-8
-      "
-    >
-      <Heading>Why Rent?</Heading>
+    <div className="w-full py-32 items-center">
       <div
         className="w-full
-        flex gap-y-8
-        lg:grid grid-cols-2 px-8 gap-x-8 xl:gap-x-16 lg:gap-y-8 auto-cols-fr lg:max-w-screen-lg
+        flex max-w-md md:max-w-none
+        md:grid gap-y-8 auto-cols-fr grid-cols-2 px-8
+        gap-x-8 xl:gap-x-16 lg:gap-y-8 lg:max-w-screen-lg
         "
       >
         {whyRent.map((item) => (
@@ -229,6 +234,49 @@ const WhyRentItem = ({ item }) => (
       <span className="text-left font-bold text-lg">{item.label}</span>
       <span className="text-left text-gray leading-tight">{item.content}</span>
     </div>
+  </div>
+)
+
+const productCategories = [
+  {
+    title: 'Oh My Gown',
+    text: 'The Formal Edit',
+    src: '/media/home/formal-clothing.png',
+    alt: 'Pink dress for formal occasions',
+    href: '/products/clothing?occasions=formal',
+    position: 'center 20%',
+  },
+  {
+    title: 'Say I (HEN) Do',
+    text: 'Find Your Wedding Bliss',
+    src: '/media/home/wedding-dresses.png',
+    alt: 'White wedding dress for your wedding',
+    href: '/products/clothing?occasions=wedding',
+    position: 'center',
+  },
+]
+
+const ProductCategories = () => (
+  <div className="w-full flex-row space-x-8 md:space-x-16 mb-8">
+    {productCategories.map((data) => (
+      <div key={data.title} className="w-full items-center">
+        <Link href={data.href}>
+          <a className="w-full h-96 md:h-128 relative">
+            <Image
+              alt={data.alt}
+              src={data.src}
+              layout="fill"
+              objectFit="cover"
+              objectPosition={data.position}
+            />
+          </a>
+        </Link>
+        <div className="w-full items-center my-4">
+          <span className="font-bold uppercase">{data.title}</span>
+          <span>{data.text}</span>
+        </div>
+      </div>
+    ))}
   </div>
 )
 
@@ -275,7 +323,13 @@ const HowItWorks = () => (
     }}
   >
     <div className="my-8 w-full">
-      <Heading block={false}>How It Works</Heading>
+      <Heading block={false}>
+        How{' '}
+        <div className="inline-block">
+          It Works
+          <div className="w-full bg-pri h-2 -mt-3" />
+        </div>
+      </Heading>
     </div>
     <div className="w-full lg:flex-row items-center lg:items-stretch sm:p-16 space-y-4 sm:space-y-16 lg:space-y-0 lg:space-x-8 xl:space-x-16 max-w-screen-xl">
       {howItWorks.map((props) => (
