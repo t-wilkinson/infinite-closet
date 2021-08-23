@@ -5,7 +5,7 @@ async function discount(ctx) {
   const existingCoupons = await strapi.plugins[
     'orders'
   ].services.price.existingCoupons(body.user, body.code)
-  const discount = strapi.plugins['orders'].services.price.discount({
+  const discount = strapi.services.coupon.discount({
     ...body,
     coupon: await strapi.services.coupon.availableCoupon(
       body.context,

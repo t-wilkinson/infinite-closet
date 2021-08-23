@@ -27,7 +27,7 @@
     },
     "context": {
       "type": "enumeration",
-      "enum": ["checkout"]
+      "enum": ["checkout", "launch-party"]
     },
     "maxUses": {
       "type": "integer",

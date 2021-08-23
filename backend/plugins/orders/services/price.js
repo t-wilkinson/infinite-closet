@@ -7,7 +7,6 @@
  *
  ********************  IMPORTANT ********************/
 
-const SMALLEST_CURRENCY_UNIT = 100
 const INSURANCE_PRICE = 5
 const WAITLIST_DISCOUNT_PRICE = 5
 const NEW_USER_DISCOUNT_PERCENT = 10
@@ -22,16 +21,12 @@ const shippingPrices = {
   two: 0,
 }
 
-// Services like stripe expect no decimal points, and to be in units of smallest currency
-const toAmount = (price) => Math.round(price * SMALLEST_CURRENCY_UNIT)
-const toPrice = (amount) => amount / SMALLEST_CURRENCY_UNIT
-
 function totalAmount(props) {
   const price = totalPrice(props)
 
   const amount = {}
   for (const key in price) {
-    amount[key] = toAmount(price[key])
+    amount[key] = strapi.services.price.toAmount(price[key])
   }
 
   return amount
@@ -117,7 +112,7 @@ function price(order) {
   return productPrice + insurancePrice + shippingPrice
 }
 
-const amount = (order) => toAmount(price(order))
+const amount = (order) => strapi.services.price.toAmount(price(order))
 const cartPrice = (cart) =>
   cart.reduce((total, item) => total + price(item), 0)
 const cartAmount = (cart) =>
@@ -129,60 +124,38 @@ async function existingCoupons(user, code) {
   ).map((order) => order.coupon)
 }
 
-function discountedPrice(coupon, price) {
-  switch (coupon.type) {
-    case 'percent_off':
-      return price * (coupon.amount / 100)
-    case 'amount_off':
-      return coupon.amount
-    default:
-      return 0
-  }
-}
-
-// TODO: should we throw an error instead?
-// TODO: should this just calculate discount (not the price)? Should merge this with existing discount code
-/**
- * Calculates the discount price given coupon
- * @param {Object} obj
- * @param {number} obj.price - The calculated price
- * @param {string} obj.code - Supplied coupon
- * @param {Coupon[]} obj.existingCoupons - List of existing coupons with same code that are related to current discount transaction. Ex. the coupons attached to orders of current user.
- *
- * @returns {Object} Containing the new price, discounted price, and a reference to the coupon used
- */
-function discount({ price, coupon, existingCoupons }) {
-  if (!coupon) {
-    return { valid: false, reason: 'not-found' }
-  }
-
-  const existingCouponCount = existingCoupons.reduce(
-    (n, x) => n + (x.code === coupon.code),
-    0
+async function checkoutTotal({ cart, insurance, user, couponCode }) {
+  const price = await totalPrice({
+    cart,
+    insurance: insurance,
+    user,
+  })
+  const coupon = await strapi.services.coupon.availableCoupon(
+    'checkout',
+    couponCode
   )
-  const couponMaxedOut = coupon.maxUses <= existingCouponCount
-  if (couponMaxedOut) {
-    return { valid: false, reason: 'maxed-out' }
-  }
-
-  const discount = discountedPrice(coupon, price)
+  const discount = strapi.services.coupon.discount({
+    coupon,
+    price: price.total,
+    existingCoupons: await existingCoupons(user.id, couponCode),
+  })
+  const total = strapi.services.price.toAmount(
+    discount.valid ? discount.price : price.total
+  )
 
   return {
-    valid: true,
-    discount,
-    price: price - discount,
+    total,
+    coupon,
   }
 }
 
 module.exports = {
-  discount,
   totalAmount,
   totalPrice,
   price,
   amount,
   cartPrice,
   cartAmount,
-  toPrice,
-  toAmount,
   existingCoupons,
+  checkoutTotal,
 }

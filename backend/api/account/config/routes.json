@@ -2,6 +2,14 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/launch/party/price",
+      "handler": "launch.ticketPrice",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/launch/party/promo",
       "handler": "launch.promo",
       "config": {

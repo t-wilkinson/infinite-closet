@@ -10,41 +10,57 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(isSameOrBefore)
 
-const SMALLEST_CURRENCY_UNIT = 100
+const getTicketPrice = () => {
+  const today = strapi.services.timing.day()
+  const ticketPrice = today.isSameOrBefore('2021-08-18', 'day')
+    ? 20
+    : today.isSameOrBefore('2021-09-11')
+      ? 30
+      : today.isSameOrBefore('2021-09-15')
+        ? 35
+        : -1
+  return ticketPrice
+}
 
 // https://stripe.com/docs/payments/accept-a-payment-synchronously
 module.exports = {
+  async ticketPrice(ctx) {
+    ctx.send(getTicketPrice())
+  },
+
   async promo(ctx) {
     const code = ctx.query.code
-    ctx.send(code === 'ICGYBGUEST' || code === 'GIVEYOURBEST')
+    const coupon = await strapi.services.coupon.availableCoupon(
+      'launch-party',
+      code
+    )
+    const discount = strapi.services.coupon.discount({
+      price: getTicketPrice(),
+      coupon,
+      existingCoupons: [],
+    })
+    ctx.send(discount)
   },
 
   async join(ctx) {
     const body = ctx.request.body
-    const today = strapi.services.timing.day()
-    const TICKET_PRICE = today.isSameOrBefore('2021-08-18', 'day')
-      ? 20
-      : today.isSameOrBefore('2021-09-11')
-        ? 30
-        : today.isSameOrBefore('2021-09-15')
-          ? 35
-          : 'past-release'
-    const PROMO_DISCOUNT = TICKET_PRICE
-
-    if (TICKET_PRICE === 'past-release') {
+    const ticketPrice = getTicketPrice()
+    if (ticketPrice === -1) {
       return ctx.send()
     }
 
-    const discount =
-      body.promoCode === 'GIVEYOURBEST'
-        ? 5
-        : body.promoCode === 'ICGYBGUEST'
-          ? PROMO_DISCOUNT
-          : 0
-    const ticketPrice = Number(
-      (body.donation + TICKET_PRICE - discount).toFixed(2)
+    const coupon = await strapi.services.coupon.availableCoupon(
+      'launch-party',
+      body.promoCode
     )
-    const ticketAmount = ticketPrice * SMALLEST_CURRENCY_UNIT
+    const total = strapi.services.coupon.discount({
+      price: ticketPrice,
+      coupon,
+      existingCoupons: [],
+    })
+    const ticketAmount = Math.round(
+      strapi.services.price.toAmount(body.donation + total.price)
+    )
 
     try {
       let intent
@@ -69,11 +85,11 @@ module.exports = {
           subject: 'Joined Launch Party',
           data: {
             guests: body.guests,
-            TICKET_PRICE,
-            total: ticketPrice,
+            ticketPrice,
             firstName: body.firstName,
             donation: body.donation,
-            discount,
+            total: total.price,
+            discount: total.discount,
           },
         })
 

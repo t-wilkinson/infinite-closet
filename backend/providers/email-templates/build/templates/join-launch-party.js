@@ -28,7 +28,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var Summary = function Summary(_ref) {
   var guests = _ref.guests,
-      TICKET_PRICE = _ref.TICKET_PRICE,
+      ticketPrice = _ref.ticketPrice,
       discount = _ref.discount,
       donation = _ref.donation,
       total = _ref.total;
@@ -48,10 +48,10 @@ var Summary = function Summary(_ref) {
         backgroundColor: '#5f6368'
       }
     }),
-    _react2.default.createElement(_Between2.default, { left: 'Ticket Price', right: '\xA3' + TICKET_PRICE.toFixed(2) }),
+    _react2.default.createElement(_Between2.default, { left: 'Ticket Price', right: '\xA3' + ticketPrice.toFixed(2) }),
     _react2.default.createElement(_Between2.default, {
       left: 'Guest Tickets',
-      right: '\xA3' + (guests.length * TICKET_PRICE).toFixed(2)
+      right: '\xA3' + (guests.length * ticketPrice).toFixed(2)
     }),
     _react2.default.createElement(_Between2.default, { left: 'Promo Discount', right: '-\xA3' + discount.toFixed(2) }),
     _react2.default.createElement(_Between2.default, { left: 'Donation', right: '\xA3' + donation.toFixed(2) }),

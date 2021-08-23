@@ -20,17 +20,6 @@ import { Button, Hover, Icon } from '@/components'
 import { PaymentCard, PaymentWrapper } from '@/Form/Payments'
 import Layout from '@/Layout'
 
-const today = dayjs().tz('Europe/London')
-const TICKET_PRICE = today.isSameOrBefore('2021-08-18', 'day')
-  ? 20
-  : today.isSameOrBefore('2021-09-11')
-  ? 30
-  : today.isSameOrBefore('2021-09-15')
-  ? 35
-  : -1
-const GIVEYOURBEST_DISCOUNT = 5
-const PROMO_DISCOUNT = TICKET_PRICE
-
 const Page = () => {
   return (
     <Layout title="Launch Party" className="bg-pri-light">
@@ -39,13 +28,7 @@ const Page = () => {
           <Introduction />
           <div className="w-full flex-col-reverse items-center lg:items-start lg:flex-row lg:space-x-8 flex-grow">
             <div className="bg-white w-full p-4 rounded-md shadow-md">
-              {TICKET_PRICE === -1 ? (
-                <div className="p-16 text-2xl text-center">
-                  Release party starts 8pm on Saturday, September 18!
-                </div>
-              ) : (
-                <LaunchPartyFormWrapper />
-              )}
+              <LaunchPartyFormWrapper />
             </div>
             <aside className="w-full justify-evenly lg:max-w-xs flex-row flex-wrap">
               <SideBar />
@@ -162,6 +145,8 @@ const initialState = {
   donation: 0,
   edit: 'info' as Info,
   promoValid: undefined,
+  promoDiscount: 0 as number,
+  ticketPrice: undefined as number,
 }
 
 const reducer = (
@@ -173,6 +158,8 @@ const reducer = (
     case 'try-promo-again': return {...state, promoValid: undefined}
     case 'promo-valid': return {...state, promoValid: true}
     case 'promo-invalid': return {...state, promoValid: false}
+    case 'ticket-price': return {...state, ticketPrice: action.payload}
+    case 'check-promo-code': return {...state, promoValid: action.payload.valid, promoDiscount: action.payload.discount}
 
     case 'edit-info': return {...state, edit: 'info'}
     case 'edit-payment': return {...state, edit: 'payment'}
@@ -236,6 +223,25 @@ const LaunchPartyFormWrapper = () => {
   React.useEffect(() => {
     fields.donation.onChange(state.donation)
   }, [state.donation])
+
+  React.useEffect(() => {
+    axios
+      .get('/launch/party/price')
+      .then((res) => res.data)
+      .then((price) => dispatch({ type: 'ticket-price', payload: price }))
+  }, [])
+
+  if ([state.ticketPrice].some((v) => v === undefined)) {
+    return null
+  }
+
+  if (state.ticketPrice === -1) {
+    return (
+      <div className="p-16 text-2xl text-center">
+        Release party starts 8pm on Saturday, September 18!
+      </div>
+    )
+  }
 
   return (
     <PaymentWrapper>
@@ -380,11 +386,7 @@ const PromoCode = ({ fields }) => {
   const checkPromo = () =>
     axios
       .get(`/launch/party/promo?code=${fields.promoCode.value}`)
-      .then((res) =>
-        res.data
-          ? dispatch({ type: 'promo-valid' })
-          : dispatch({ type: 'promo-invalid' })
-      )
+      .then((res) => dispatch({ type: 'check-promo-code', payload: res.data }))
       .catch(() => dispatch({ type: 'promo-invalid' }))
   const ApplyPromoCode = () => (
     <button
@@ -461,7 +463,7 @@ const Donation = ({ donation }) => {
 
       <div className="flex-row items-center">
         <div className="w-24 mr-4">
-          <Input {...donation} before={<span>£</span>}></Input>
+          <Input {...donation} before={<span className="ml-2">£</span>}></Input>
         </div>
         <div className="flex-wrap space-y-2 xs:space-y-0 xs:flex-row xs:space-x-2 items-center">
           {[1, 5, 10, 30].map((amount) => (
@@ -479,18 +481,12 @@ const Donation = ({ donation }) => {
 
 const Summary = ({ fields, guests }) => {
   const state = React.useContext(StateContext)
-  const discount =
-    fields.promoCode.value === 'GIVEYOURBEST'
-      ? GIVEYOURBEST_DISCOUNT
-      : state.promoValid
-      ? PROMO_DISCOUNT
-      : 0
 
   return (
     <div>
-      <Price label="Ticket Price" price={TICKET_PRICE} />
-      <Price label="Promo Discount" price={discount} negative />
-      <Price label="Guest Tickets" price={guests.length * TICKET_PRICE} />
+      <Price label="Ticket Price" price={state.ticketPrice} />
+      <Price label="Promo Discount" price={state.promoDiscount} negative />
+      <Price label="Guest Tickets" price={guests.length * state.ticketPrice} />
 
       <div className="mb-4 w-full flex-row justify-between items-center font-bold">
         <span className="">Total</span>
@@ -498,15 +494,24 @@ const Summary = ({ fields, guests }) => {
           £
           {(
             parseFloat(fields.donation.value) +
-            TICKET_PRICE +
-            TICKET_PRICE * guests.length -
-            discount
+            state.ticketPrice +
+            state.ticketPrice * guests.length -
+            state.promoDiscount
           ).toFixed(2)}
         </span>
       </div>
     </div>
   )
 }
+
+const Price = ({ label, price, negative = false }) => (
+  <div className="mb-2 w-full flex-row justify-between items-center">
+    <span>{label}</span>
+    <span>
+      {negative ? '-' : ''}£{price.toFixed(2)}
+    </span>
+  </div>
+)
 
 const AcceptPayment = ({ fields, guests }) => {
   const state = React.useContext(StateContext)
@@ -535,15 +540,6 @@ const AcceptPayment = ({ fields, guests }) => {
     </div>
   )
 }
-
-const Price = ({ label, price, negative = false }) => (
-  <div className="mb-2 w-full flex-row justify-between items-center">
-    <span>{label}</span>
-    <span>
-      {negative ? '-' : ''}£{price.toFixed(2)}
-    </span>
-  </div>
-)
 
 const DonationAddition = ({ amount, selected }) => {
   const dispatch = React.useContext(DispatchContext)

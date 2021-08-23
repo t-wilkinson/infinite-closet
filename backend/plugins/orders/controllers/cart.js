@@ -188,31 +188,20 @@ module.exports = {
     const user = ctx.state.user
     const body = ctx.request.body
 
-    let cart = createValidOrders({
+    let cart = await createValidOrders({
       cart: body.cart,
       address: body.address,
       paymentMethod: body.paymentMethod,
       insurance: body.insurance,
     })
-    const price = await strapi.plugins['orders'].services.price.totalPrice({
+    const { total, coupon } = await strapi.plugins[
+      'orders'
+    ].services.price.checkoutTotal({
       cart,
       insurance: body.insurance,
       user,
+      couponCode: body.couponCode,
     })
-    const coupon = await strapi.services.coupon.availableCoupon(
-      'checkout',
-      body.couponCode
-    )
-    const discount = strapi.plugins['orders'].services.price.discount({
-      coupon,
-      price: price.total,
-      existingCoupons: await strapi.plugins[
-        'orders'
-      ].services.price.existingCoupons(user.id, body.couponCode),
-    })
-    const total = strapi.plugins['orders'].services.price.toAmount(
-      discount.valid ? discount.price : price.total
-    )
 
     const filterSettled = (settled) =>
       settled
@@ -259,7 +248,7 @@ module.exports = {
         data: {
           firstName: user.firstName,
           orders,
-          totalPrice: strapi.plugins['orders'].services.price.toPrice(total),
+          totalPrice: strapi.services.price.toPrice(total),
         },
       })
 
