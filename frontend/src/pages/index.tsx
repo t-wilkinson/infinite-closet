@@ -86,7 +86,7 @@ const Heading = ({ block = true, children }) => {
 
 const Introduction = () => (
   <div
-    className="relative w-full"
+    className="relative w-full lg:items-center"
     style={{
       height: '70vh',
     }}
@@ -100,8 +100,8 @@ const Introduction = () => (
       objectPosition="center bottom"
     />
     <div
-      className="absolute inset-0 xl:hidden"
-      style={{ backgroundColor: 'rgb(0 0 0 / 30%)' }}
+      className="absolute inset-0"
+      style={{ backgroundColor: 'rgb(0 0 0 / 50%)' }}
     />
     <div className="justify-start m-8 sm:m-16 relative max-w-md h-full">
       <IntroductionText />
@@ -110,7 +110,7 @@ const Introduction = () => (
 )
 
 const IntroductionText = () => (
-  <div className="text-white">
+  <div className="text-white transform lg:-translate-x-40 lg:translate-y-8">
     <h1
       className="font-bold uppercase text-5xl md:text-5xl mb-4"
       style={{
@@ -120,7 +120,9 @@ const IntroductionText = () => (
       Change The Way You Get Dressed
     </h1>
     <span className="mb-8 text-xl leading-tight">
-      Support sustainable fashion without breaking the bank by renting with us.
+      Create your dream wardrobe without the guilt.
+      <br />
+      Discover and rent independent and sustainable brands.
     </span>
     <span>
       <Link href="/products/clothing">
@@ -178,13 +180,13 @@ const WhyRent = () => (
     className="relative items-center w-full"
     id="why-rent"
     style={{
-      minHeight: '40vh',
+      minHeight: '60vh',
     }}
   >
     <div
       className="relative w-full"
       style={{
-        height: '50vh',
+        height: '60vh',
         minHeight: '300px',
       }}
     >
@@ -269,8 +271,16 @@ const ProductCategories = () => (
           </a>
         </Link>
         <div className="w-full items-center my-4">
-          <span className="font-bold uppercase">{data.title}</span>
-          <span>{data.text}</span>
+          <Link href={data.href}>
+            <a>
+              <span className="font-bold uppercase">{data.title}</span>
+            </a>
+          </Link>
+          <Link href={data.href}>
+            <a>
+              <span>{data.text}</span>
+            </a>
+          </Link>
         </div>
       </div>
     ))}

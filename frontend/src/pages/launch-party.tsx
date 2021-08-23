@@ -286,7 +286,7 @@ const LaunchPartyForm = ({ setGuests, guests, fields }) => {
             </Section>
             <Section title="Summary">
               <Summary fields={fields} guests={guests} />
-              <Pay fields={fields} guests={guests} />
+              <AcceptPayment fields={fields} guests={guests} />
             </Section>
           </div>
         )}
@@ -508,7 +508,7 @@ const Summary = ({ fields, guests }) => {
   )
 }
 
-const Pay = ({ fields, guests }) => {
+const AcceptPayment = ({ fields, guests }) => {
   const state = React.useContext(StateContext)
   const dispatch = React.useContext(DispatchContext)
   const handleChange = async (event) => {
@@ -531,7 +531,7 @@ const Pay = ({ fields, guests }) => {
         )}
       </div>
 
-      <Join guests={guests} fields={fields} />
+      <Submit guests={guests} fields={fields} />
     </div>
   )
 }
@@ -561,7 +561,7 @@ const DonationAddition = ({ amount, selected }) => {
   )
 }
 
-const Join = ({ fields, guests }) => {
+const Submit = ({ fields, guests }) => {
   const state = React.useContext(StateContext)
   const dispatch = React.useContext(DispatchContext)
   const elements = useElements()
