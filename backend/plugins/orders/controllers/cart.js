@@ -42,6 +42,51 @@ async function createCart(orders) {
   )
 }
 
+async function createValidOrders({ cart, address, paymentMethod, insurance }) {
+  const numAvailable = await strapi.plugins[
+    'orders'
+  ].services.order.numAvailableCart(cart)
+
+  let settledOrders = await Promise.allSettled(
+    cart.map(async (order) => {
+      const key = strapi.plugins['orders'].services.order.toKey(order)
+      const quantity = await strapi.plugins['orders'].services.order.quantity(
+        order
+      )
+      const existingOrders = await strapi
+        .query('order', 'orders')
+        .count({ product: order.product.id, size: order.size })
+
+      const valid = strapi.services.timing.valid(
+        order.startDate,
+        numAvailable[key],
+        quantity,
+        existingOrders
+      )
+
+      if (valid) {
+        return strapi.query('order', 'orders').create({
+          ..._.omit(order, ['id']),
+          address: address,
+          paymentMethod: paymentMethod,
+          status: 'planning',
+          insurance: insurance[order.id] || false,
+        })
+      } else {
+        return Promise.reject(
+          `${strapi.services.timing
+            .day(order.startDate)
+            .toJSON()} is not is available for this item`
+        )
+      }
+    })
+  )
+
+  return settledOrders
+    .filter((v) => v.status === 'fulfilled')
+    .map((value) => value.value)
+}
+
 module.exports = {
   async count(ctx) {
     const user = ctx.state.user
@@ -142,48 +187,13 @@ module.exports = {
   async checkout(ctx) {
     const user = ctx.state.user
     const body = ctx.request.body
-    const numAvailable = await strapi.plugins[
-      'orders'
-    ].services.order.numAvailableCart(body.cart)
 
-    let cart = await Promise.allSettled(
-      body.cart.map(async (order) => {
-        const key = strapi.plugins['orders'].services.order.toKey(order)
-        const quantity = await strapi.plugins['orders'].services.order.quantity(
-          order
-        )
-        const existingOrders = await strapi
-          .query('order', 'orders')
-          .count({ product: order.product.id, size: order.size })
-
-        const valid = strapi.services.timing.valid(
-          order.startDate,
-          numAvailable[key],
-          quantity,
-          existingOrders
-        )
-
-        if (valid) {
-          return strapi.query('order', 'orders').create({
-            ..._.omit(order, ['id']),
-            address: body.address,
-            paymentMethod: body.paymentMethod,
-            status: 'planning',
-            insurance: body.insurance[order.id] || false,
-          })
-        } else {
-          return Promise.reject(
-            `${strapi.services.timing
-              .day(order.startDate)
-              .toJSON()} is not is available for this item`
-          )
-        }
-      })
-    )
-
-    cart = cart
-      .filter((v) => v.status === 'fulfilled')
-      .map((value) => value.value)
+    let cart = createValidOrders({
+      cart: body.cart,
+      address: body.address,
+      paymentMethod: body.paymentMethod,
+      insurance: body.insurance,
+    })
     const price = await strapi.plugins['orders'].services.price.totalPrice({
       cart,
       insurance: body.insurance,

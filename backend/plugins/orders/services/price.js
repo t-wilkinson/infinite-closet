@@ -73,6 +73,9 @@ async function getDiscountPrice(price, user) {
   }
 }
 
+/**
+ * Calculates total price including discounts, promo codes, etc.
+ */
 async function totalPrice({ insurance, cart, user }) {
   const insurancePrice =
     Object.entries(insurance).filter(

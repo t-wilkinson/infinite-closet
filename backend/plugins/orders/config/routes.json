@@ -3,7 +3,7 @@
     {
       "method": "POST",
       "path": "/dates/range",
-      "handler": "Date.range",
+      "handler": "date.range",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -11,7 +11,7 @@
     {
       "method": "POST",
       "path": "/dates/valid",
-      "handler": "Date.availableOrderDates",
+      "handler": "date.availableOrderDates",
       "config": {
         "policies": []
       }
@@ -20,7 +20,7 @@
     {
       "method": "POST",
       "path": "/checkout",
-      "handler": "Cart.checkout",
+      "handler": "cart.checkout",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -28,7 +28,7 @@
     {
       "method": "GET",
       "path": "/cart/count",
-      "handler": "Cart.count",
+      "handler": "cart.count",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -36,7 +36,7 @@
     {
       "method": "POST",
       "path": "/cart/price/:id",
-      "handler": "Cart.totalUserPrice",
+      "handler": "cart.totalUserPrice",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -44,7 +44,7 @@
     {
       "method": "POST",
       "path": "/cart/price",
-      "handler": "Cart.totalPrice",
+      "handler": "cart.totalPrice",
       "config": {
         "policies": []
       }
@@ -52,7 +52,7 @@
     {
       "method": "DELETE",
       "path": "/cart/:id",
-      "handler": "Cart.removeCartItem",
+      "handler": "cart.removeCartItem",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -60,7 +60,7 @@
     {
       "method": "POST",
       "path": "/cart/create",
-      "handler": "Cart.create",
+      "handler": "cart.create",
       "config": {
         "policies": []
       }
@@ -68,7 +68,7 @@
     {
       "method": "GET",
       "path": "/cart/:user_id",
-      "handler": "Cart.getUserCart",
+      "handler": "cart.getUserCart",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -76,7 +76,7 @@
     {
       "method": "PUT",
       "path": "/cart/:user_id",
-      "handler": "Cart.setCart",
+      "handler": "cart.setCart",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -85,7 +85,7 @@
     {
       "method": "POST",
       "path": "/",
-      "handler": "Order.create",
+      "handler": "order.create",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -93,7 +93,7 @@
     {
       "method": "GET",
       "path": "/status",
-      "handler": "Order.status",
+      "handler": "order.status",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -101,7 +101,7 @@
     {
       "method": "GET",
       "path": "/amount",
-      "handler": "Order.amount",
+      "handler": "order.amount",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -109,7 +109,7 @@
     {
       "method": "GET",
       "path": "/",
-      "handler": "Order.find",
+      "handler": "order.find",
       "config": {
         "policies": [["admin::hasPermissions", ["plugins::orders.manage"]]]
       }
@@ -117,7 +117,7 @@
     {
       "method": "POST",
       "path": "/ship/:id",
-      "handler": "Order.ship",
+      "handler": "order.ship",
       "config": {
         "policies": [["admin::hasPermissions", ["plugins::orders.manage"]]]
       }
@@ -125,7 +125,7 @@
     {
       "method": "POST",
       "path": "/complete/:id",
-      "handler": "Order.complete",
+      "handler": "order.complete",
       "config": {
         "plugins": [["admin::hasPermissions", ["plugins::orders.manage"]]]
       }
