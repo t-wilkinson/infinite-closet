@@ -2,6 +2,14 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/products/size-chart",
+      "handler": "sizing.sizeChart",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/size-charts",
       "handler": "size-chart.find",
       "config": {

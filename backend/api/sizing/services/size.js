@@ -1,5 +1,3 @@
-// TODO: convert to object<string, int>?
-
 const sizeEnum = () => strapi.query('custom.sizes').model.attributes.size.enum
 
 function range({ size: start, sizeRange: end }) {

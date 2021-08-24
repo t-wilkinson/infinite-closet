@@ -1,12 +1,5 @@
 'use strict'
 
-/********************  IMPORTANT ********************
- *
- * PRICE: decimal units ($10.50)
- * AMOUNT: smallest unit of currency (1050¢)
- *
- ********************  IMPORTANT ********************/
-
 const INSURANCE_PRICE = 5
 const WAITLIST_DISCOUNT_PRICE = 5
 const NEW_USER_DISCOUNT_PERCENT = 10
@@ -20,6 +13,25 @@ const shippingPrices = {
   one: 9.95,
   two: 0,
 }
+
+function price(order) {
+  const shippingClass = strapi.services.shipment.shippingClass(
+    order.created_at,
+    order.startDate
+  )
+  const shippingPrice = shippingPrices[shippingClass]
+
+  const productPrice = order.product[rentalPrice[order.rentalLength]] // TODO: should move this to product.services
+  const insurancePrice = order.insurance ? INSURANCE_PRICE : 0
+
+  return productPrice + insurancePrice + shippingPrice
+}
+
+const amount = (order) => strapi.services.price.toAmount(price(order))
+const cartPrice = (cart) =>
+  cart.reduce((total, item) => total + price(item), 0)
+const cartAmount = (cart) =>
+  cart.reduce((total, item) => total + amount(item), 0)
 
 function totalAmount(props) {
   const price = totalPrice(props)
@@ -99,25 +111,6 @@ async function totalPrice({ insurance, cart, user }) {
   }
 }
 
-function price(order) {
-  const shippingClass = strapi.services.shipment.shippingClass(
-    order.created_at,
-    order.startDate
-  )
-  const shippingPrice = shippingPrices[shippingClass]
-
-  const productPrice = order.product[rentalPrice[order.rentalLength]] // TODO: should move this to product.services
-  const insurancePrice = order.insurance ? INSURANCE_PRICE : 0
-
-  return productPrice + insurancePrice + shippingPrice
-}
-
-const amount = (order) => strapi.services.price.toAmount(price(order))
-const cartPrice = (cart) =>
-  cart.reduce((total, item) => total + price(item), 0)
-const cartAmount = (cart) =>
-  cart.reduce((total, item) => total + amount(item), 0)
-
 async function existingCoupons(user, code) {
   return (
     await strapi.query('order', 'orders').find({ user, 'coupon.code': code })
@@ -130,22 +123,17 @@ async function checkoutTotal({ cart, insurance, user, couponCode }) {
     insurance: insurance,
     user,
   })
-  const coupon = await strapi.services.coupon.availableCoupon(
-    'checkout',
-    couponCode
-  )
-  const discount = strapi.services.coupon.discount({
-    coupon,
+
+  const summary = await strapi.services.price.summary({
     price: price.total,
+    context: 'checkout',
+    code: couponCode,
     existingCoupons: await existingCoupons(user.id, couponCode),
   })
-  const total = strapi.services.price.toAmount(
-    discount.valid ? discount.price : price.total
-  )
 
   return {
-    total,
-    coupon,
+    total: strapi.services.price.toAmount(summary.total),
+    coupon: summary.coupon,
   }
 }
 

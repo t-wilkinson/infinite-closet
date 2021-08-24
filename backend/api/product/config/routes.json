@@ -19,14 +19,6 @@
     },
     {
       "method": "GET",
-      "path": "/products/size-chart",
-      "handler": "product.sizeChart",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
       "path": "/products/shop/:slug",
       "handler": "product.shopItem",
       "config": {

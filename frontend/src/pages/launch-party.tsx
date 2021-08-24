@@ -159,7 +159,8 @@ const reducer = (
     case 'promo-valid': return {...state, promoValid: true}
     case 'promo-invalid': return {...state, promoValid: false}
     case 'ticket-price': return {...state, ticketPrice: action.payload}
-    case 'check-promo-code': return {...state, promoValid: action.payload.valid, promoDiscount: action.payload.discount}
+    case 'check-promo-code':
+      return {...state, promoValid: action.payload.valid, promoDiscount: action.payload.discount || 0}
 
     case 'edit-info': return {...state, edit: 'info'}
     case 'edit-payment': return {...state, edit: 'payment'}
@@ -508,7 +509,7 @@ const Price = ({ label, price, negative = false }) => (
   <div className="mb-2 w-full flex-row justify-between items-center">
     <span>{label}</span>
     <span>
-      {negative ? '-' : ''}£{price.toFixed(2)}
+      {negative ? '-' : ''}£{(price || 0).toFixed(2)}
     </span>
   </div>
 )

@@ -313,7 +313,7 @@ export const CouponCode = ({
   field: Field
 }) => {
   const [status, setStatus] = React.useState<CouponStatus>()
-  const [message, setMessage] = React.useState()
+  const [message, setMessage] = React.useState<string>()
 
   const checkPromo = async () => {
     const code = cleanField(field)
@@ -331,7 +331,7 @@ export const CouponCode = ({
           setStatus('success')
         } else {
           setStatus('failure')
-          setMessage(coupon.reason)
+          setMessage('Could not find coupon code')
         }
       })
       .catch((err) => {

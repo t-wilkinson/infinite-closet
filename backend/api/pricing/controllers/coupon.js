@@ -1,21 +1,33 @@
 'use strict'
 
+// TODO: abstract some of this functionality
 async function discount(ctx) {
-  const body = ctx.request.body
+  const { code, user, context, price } = ctx.request.body
   const existingCoupons = await strapi.plugins[
     'orders'
-  ].services.price.existingCoupons(body.user, body.code)
-  const discount = strapi.services.coupon.discount({
-    ...body,
-    coupon: await strapi.services.coupon.availableCoupon(
-      body.context,
-      body.code
-    ),
+  ].services.price.existingCoupons(user, code)
+
+  const summary = await strapi.services.price.summary({
+    code,
+    price,
+    context,
     existingCoupons,
   })
-  return ctx.send(discount)
+
+  // TODO: clean this up
+  ctx.send({ ...summary, price: summary.price })
 }
+
+// async function valid(ctx) {
+//   const {code, user, context, existingCoupons} = ctx.request.body
+//   const coupon = await strapi.services.price.availableCoupon(context, code)
+//   const existingCouponsDefault = await strapi.plugins['orders'].services.price.existingCoupons(user, code)
+
+//   const valid = strapi.services.price.valid(coupon, existingCoupons ||existingCouponsDefault)
+//   ctx.send(valid)
+// }
 
 module.exports = {
   discount,
+  // valid,
 }

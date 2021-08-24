@@ -30,16 +30,15 @@ module.exports = {
 
   async promo(ctx) {
     const code = ctx.query.code
-    const coupon = await strapi.services.coupon.availableCoupon(
-      'launch-party',
-      code
-    )
-    const discount = strapi.services.coupon.discount({
+    const summary = await strapi.services.price.summary({
       price: getTicketPrice(),
-      coupon,
+      context: 'launch-party',
+      code,
       existingCoupons: [],
     })
-    ctx.send(discount)
+
+    // TODO: clean this
+    ctx.send({ ...summary, price: summary.total })
   },
 
   async join(ctx) {
@@ -49,17 +48,14 @@ module.exports = {
       return ctx.send()
     }
 
-    const coupon = await strapi.services.coupon.availableCoupon(
-      'launch-party',
-      body.promoCode
-    )
-    const total = strapi.services.coupon.discount({
+    const summary = await strapi.services.price.summary({
       price: ticketPrice,
-      coupon,
+      context: 'launch-party',
+      code: body.promoCode,
       existingCoupons: [],
     })
     const ticketAmount = Math.round(
-      strapi.services.price.toAmount(body.donation + total.price)
+      strapi.services.price.toAmount(body.donation + summary.total)
     )
 
     try {
@@ -88,8 +84,8 @@ module.exports = {
             ticketPrice,
             firstName: body.firstName,
             donation: body.donation,
-            total: total.price,
-            discount: total.discount,
+            total: summary.total,
+            discount: summary.discount,
           },
         })
 

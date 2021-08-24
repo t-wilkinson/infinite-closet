@@ -1,15 +1,6 @@
 {
   "routes": [
     {
-      "method": "POST",
-      "path": "/chat/contact",
-      "handler": "chat.contact",
-      "config": {
-        "policies": []
-      }
-    },
-
-    {
       "method": "GET",
       "path": "/contacts",
       "handler": "contact.find",

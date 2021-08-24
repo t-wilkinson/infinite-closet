@@ -238,7 +238,7 @@ module.exports = {
   async query(ctx) {
     const query = ctx.query
 
-    const [_paging, _where] = partitionObject(query, ([k, _]) =>
+    const [_paging, _where] = partitionObject(query, ([k]) =>
       ['start', 'limit', 'sort'].includes(k)
     )
 
@@ -289,25 +289,5 @@ module.exports = {
     }
 
     ctx.send(product)
-  },
-
-  async sizeChart(ctx) {
-    let sizeChart = await strapi.query('size-chart').find()
-    sizeChart = sizeChart.map((chart) =>
-      Object.entries(chart).reduce((acc, [k, v]) => {
-        acc[strapi.services.size.normalize(k)] = v
-        return acc
-      }, {})
-    )
-
-    const sizeEnum = strapi.services.size
-      .enum()
-      .map(strapi.services.size.normalize)
-
-    ctx.send({
-      chart: sizeChart,
-      sizeEnum,
-      measurements: ['hips', 'waist', 'bust'],
-    })
   },
 }
