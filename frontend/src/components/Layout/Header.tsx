@@ -41,14 +41,10 @@ const SmallHeader = ({ router }) => {
 
 const LargeHeader = ({ user, router }) => (
   <>
-    <div
-      className={`w-full justify-center
-      ${router.pathname === '/' ? 'h-32' : 'xl:h-16 mt-1'}
-    `}
-    >
+    <div className="w-full justify-center h-32">
       <div className="relative justify-between items-center">
         <LargeHeaderLogo router={router} />
-        <div className="absolute lg:bottom-0 right-0 -mb-1 mt-0 mr-4 z-20">
+        <div className="absolute xl:bottom-0 right-0 -mb-1 mt-0 mr-4 z-20">
           <Account user={user} />
         </div>
         <div className="realtive w-full mt-2 relative z-10">
