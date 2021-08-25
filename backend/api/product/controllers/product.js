@@ -249,9 +249,28 @@ module.exports = {
         .join(',')
     }
 
+    const columns = [
+      'id',
+      'item_group_ID',
+      'google_product_category',
+      'title',
+      'description',
+      'availability',
+      'condition',
+      'price',
+      'link',
+      'image_link',
+      'brand',
+      'additional_image_link',
+      'color',
+      'gender',
+      'size',
+      'age_group',
+    ]
+
     function toRow(product, size, quantity) {
       return {
-        id: product.id + size,
+        id: `${product.id}_${size}`,
         item_group_ID: product.id,
         google_product_category: 'Clothing & Accessories > Clothing > Dresses',
         title: product.name,
@@ -296,8 +315,7 @@ module.exports = {
       'Content-Type': 'text/csv; charset=utf-8',
     })
 
-    rows = [...rows]
-    rows.unshift(toCSVRow(Object.values(rows[0]))) // Put column names at top
+    rows = [toCSVRow(columns), ...rows]
     ctx.send(rows.join('\n'))
   },
 
