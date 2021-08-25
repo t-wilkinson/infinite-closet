@@ -234,6 +234,82 @@ const DEFAULT_PAGE = 0
 const DEFAULT_PAGE_SIZE = 20
 
 module.exports = {
+  async facebookCatalog(ctx) {
+    const columns = [
+      'id',
+      'title',
+      'description',
+      'availability',
+      'condition',
+      'price',
+      'link',
+      'image_link',
+      'brand',
+      'additional_image_link',
+      'color',
+      'gender',
+      'size',
+      'age_group',
+    ]
+
+    function toRow(product, size, quantity) {
+      return {
+        id: product.id,
+        title: product.name,
+        description: product.details,
+        availability: quantity > 0 ? 'in stock' : 'available for order',
+        condition: 'used',
+        price: product.shortRentalPrice + ' EUR',
+        link: `https://${process.env.FRONTEND_DOMAIN}/shop/${product.designer.slug}/${product.slug}`,
+        image_link: `https://${process.env.BACKEND_DOMAIN}${product.images[0].url}`,
+        brand: product.designer.name,
+        additional_image_link: product.images
+          .slice(1)
+          .map((image) => `https://${process.env.BACKEND_DOMAIN}${image.url}`)
+          .join(','),
+        color: product.colors[0] && product.colors[0].name,
+        gender: 'female',
+        size: size,
+        age_group: 'adult',
+      }
+    }
+
+    function toCSVRow(row) {
+      return Object.values(row)
+        .map((v) =>
+          v === undefined || v === null
+            ? '""'
+            : `"${v
+              .toString()
+              .trim()
+              .replace(/\n/g, '\t')
+              .replace(/"/g, '""')}"`
+        )
+        .join(',')
+    }
+
+    const products = await strapi.query('product').find()
+    let rows = new Set([toCSVRow(columns)])
+    for (const product of products) {
+      for (const size of product.sizes) {
+        for (const sizeItem of strapi.services.size.range(size)) {
+          const row = toRow(
+            product,
+            strapi.services.size.normalize(sizeItem),
+            size.quantity
+          )
+          rows.add(toCSVRow(row))
+        }
+      }
+    }
+
+    ctx.set({
+      'Content-Disposition': 'attachment; filename="facebook-catalog.csv"',
+      'Content-Type': 'text/csv; charset=utf-8',
+    })
+    ctx.send([...rows].join('\n'))
+  },
+
   // TODO: there are plenty of ways to speed this up *when* it bottlenecks
   async query(ctx) {
     const query = ctx.query

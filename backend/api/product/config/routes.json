@@ -2,6 +2,14 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/products/facebook-catalog",
+      "handler": "product.facebookCatalog",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/products/filters",
       "handler": "product.query",
       "config": {
