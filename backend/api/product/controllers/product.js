@@ -275,8 +275,9 @@ module.exports = {
         google_product_category: 'Clothing & Accessories > Clothing > Dresses',
         title: product.name,
         description:
-          product.details ||
-          `Rent ${product.name} by ${product.designer.name} for only £${product.shortRentalPrice} at Infinite Closet`,
+          product.details && product.details.length > 20
+            ? product.details
+            : `Rent ${product.name} by ${product.designer.name} for only £${product.shortRentalPrice} at Infinite Closet`,
         availability: quantity > 0 ? 'in stock' : 'available for order',
         condition: 'used',
         price: product.shortRentalPrice + ' EUR',
