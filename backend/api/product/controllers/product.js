@@ -235,28 +235,29 @@ const DEFAULT_PAGE_SIZE = 20
 
 module.exports = {
   async facebookCatalog(ctx) {
-    const columns = [
-      'id',
-      'title',
-      'description',
-      'availability',
-      'condition',
-      'price',
-      'link',
-      'image_link',
-      'brand',
-      'additional_image_link',
-      'color',
-      'gender',
-      'size',
-      'age_group',
-    ]
+    function toCSVRow(row) {
+      return Object.values(row)
+        .map((v) =>
+          v === undefined || v === null
+            ? '""'
+            : `"${v
+              .toString()
+              .trim()
+              .replace(/\n/g, '\t')
+              .replace(/"/g, '""')}"`
+        )
+        .join(',')
+    }
 
     function toRow(product, size, quantity) {
       return {
-        id: product.id,
+        id: product.id + size,
+        item_group_ID: product.id,
+        google_product_category: 'Clothing & Accessories > Clothing > Dresses',
         title: product.name,
-        description: product.details,
+        description:
+          product.details ||
+          `Rent ${product.name} by ${product.designer.name} for only £${product.shortRentalPrice} at Infinite Closet`,
         availability: quantity > 0 ? 'in stock' : 'available for order',
         condition: 'used',
         price: product.shortRentalPrice + ' EUR',
@@ -274,23 +275,10 @@ module.exports = {
       }
     }
 
-    function toCSVRow(row) {
-      return Object.values(row)
-        .map((v) =>
-          v === undefined || v === null
-            ? '""'
-            : `"${v
-              .toString()
-              .trim()
-              .replace(/\n/g, '\t')
-              .replace(/"/g, '""')}"`
-        )
-        .join(',')
-    }
-
     const products = await strapi.query('product').find()
-    let rows = new Set([toCSVRow(columns)])
+    let rows = new Set()
     for (const product of products) {
+      // Each product variant such as different size should be considered seperate
       for (const size of product.sizes) {
         for (const sizeItem of strapi.services.size.range(size)) {
           const row = toRow(
@@ -307,7 +295,10 @@ module.exports = {
       'Content-Disposition': 'attachment; filename="facebook-catalog.csv"',
       'Content-Type': 'text/csv; charset=utf-8',
     })
-    ctx.send([...rows].join('\n'))
+
+    rows = [...rows]
+    rows.unshift(toCSVRow(Object.values(rows[0]))) // Put column names at top
+    ctx.send(rows.join('\n'))
   },
 
   // TODO: there are plenty of ways to speed this up *when* it bottlenecks
