@@ -2,7 +2,7 @@
   "routes": [
     {
       "method": "GET",
-      "path": "/products/facebook-catalog.csv",
+      "path": "/products/facebook-catalog",
       "handler": "product.facebookCatalog",
       "config": {
         "policies": []
