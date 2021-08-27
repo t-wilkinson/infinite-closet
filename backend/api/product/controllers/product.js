@@ -370,7 +370,9 @@ module.exports = {
 
   async shopItem(ctx) {
     const slug = ctx.params.slug
-    const product = await strapi.query('product').findOne({ slug })
+    const product = await strapi
+      .query('product')
+      .findOne({ published_at_null: false, slug })
 
     for (const [key, size] of Object.entries(product.sizes)) {
       product.sizes[key].size = strapi.services.size.normalize(size.size)
