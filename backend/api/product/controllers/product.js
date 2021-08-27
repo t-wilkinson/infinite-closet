@@ -269,16 +269,16 @@ module.exports = {
     ]
 
     function toRow(product, size, quantity) {
-      console.log(product)
       return {
         id: `${product.id}_${size}`,
         item_group_ID: product.id,
         google_product_category: 'Clothing & Accessories > Clothing > Dresses',
         title: product.name,
-        description:
-          product.details && product.details.length > 20
-            ? product.details
-            : `Rent ${product.name} by ${product.designer.name} for only £${product.shortRentalPrice} at Infinite Closet`,
+        description: `${product.details ? product.details + '.\n' : ''}Rent ${
+          product.name
+        } by ${product.designer.name} for only £${
+          product.shortRentalPrice
+        } at Infinite Closet`,
         availability: quantity > 0 ? 'in stock' : 'available for order',
         condition: 'used',
         price: product.shortRentalPrice + ' GBP',
