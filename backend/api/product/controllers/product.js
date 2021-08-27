@@ -280,7 +280,7 @@ module.exports = {
             : `Rent ${product.name} by ${product.designer.name} for only £${product.shortRentalPrice} at Infinite Closet`,
         availability: quantity > 0 ? 'in stock' : 'available for order',
         condition: 'used',
-        price: product.shortRentalPrice + ' EUR',
+        price: product.shortRentalPrice + ' GBP',
         link: `https://${process.env.FRONTEND_DOMAIN}/shop/${product.designer.slug}/${product.slug}`,
         image_link: `https://${process.env.BACKEND_DOMAIN}${product.images[0].url}`,
         brand: product.designer.name,
@@ -295,7 +295,9 @@ module.exports = {
       }
     }
 
-    const products = await strapi.query('product').find()
+    const products = await strapi
+      .query('product')
+      .find({ published_at_null: false })
     let rows = new Set()
     for (const product of products) {
       // Each product variant such as different size should be considered seperate
