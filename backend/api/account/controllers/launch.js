@@ -22,6 +22,37 @@ const getTicketPrice = () => {
   return ticketPrice
 }
 
+async function joinLaunchParty({ ticketPrice, body, summary, intentId = '' }) {
+  await strapi.plugins['email'].services.email.send({
+    template: 'join-launch-party',
+    to: { name: body.name, email: body.email },
+    subject: 'Joined Launch Party',
+    data: {
+      guests: body.guests,
+      ticketPrice,
+      firstName: body.firstName,
+      donation: body.donation,
+      total: summary.total,
+      discount: summary.discount,
+    },
+  })
+
+  await strapi.query('contact').create({
+    contact: body.email,
+    context: 'launch_party',
+    metadata: {
+      paymentIntent: intentId,
+      guests: body.guests,
+      donation: `£${body.donation}`,
+      promo: body.promoCode,
+      email: body.email,
+      firstName: body.firstName,
+      lastName: body.lastName,
+      phone: body.phone,
+    },
+  })
+}
+
 // https://stripe.com/docs/payments/accept-a-payment-synchronously
 module.exports = {
   async ticketPrice(ctx) {
@@ -58,57 +89,46 @@ module.exports = {
       strapi.services.price.toAmount(body.donation + summary.total)
     )
 
-    try {
-      let intent
-      if (body.paymentMethod) {
-        intent = await stripe.paymentIntents.create({
-          payment_method: body.paymentMethod,
-          amount: ticketAmount,
-          currency: 'gbp',
-          confirm: true,
-          confirmation_method: 'manual',
-        })
-      } else if (body.paymentIntent) {
-        intent = await stripe.paymentIntents.confirm(body.paymentIntent)
-      }
+    if (ticketAmount <= 0) {
+      joinLaunchParty({
+        body,
+        ticketPrice,
+        summary,
+      })
+      return ctx.send({
+        status: 'no-charge',
+      })
+    } else {
+      try {
+        let intent
+        if (body.paymentMethod) {
+          intent = await stripe.paymentIntents.create({
+            payment_method: body.paymentMethod,
+            amount: ticketAmount,
+            currency: 'gbp',
+            confirm: true,
+            confirmation_method: 'manual',
+          })
+        } else if (body.paymentIntent) {
+          intent = await stripe.paymentIntents.confirm(body.paymentIntent)
+        }
 
-      const response = generateResponse(intent)
+        const response = generateResponse(intent)
 
-      if (response.success) {
-        await strapi.plugins['email'].services.email.send({
-          template: 'join-launch-party',
-          to: { name: body.name, email: body.email },
-          subject: 'Joined Launch Party',
-          data: {
-            guests: body.guests,
+        if (response.success) {
+          joinLaunchParty({
+            body,
             ticketPrice,
-            firstName: body.firstName,
-            donation: body.donation,
-            total: summary.total,
-            discount: summary.discount,
-          },
-        })
+            summary,
+            intentId: intent.id,
+          })
+        }
 
-        await strapi.query('contact').create({
-          contact: body.email,
-          context: 'launch_party',
-          metadata: {
-            paymentIntent: intent.id,
-            guests: body.guests,
-            donation: `£${body.donation}`,
-            promo: body.promoCode,
-            email: body.email,
-            firstName: body.firstName,
-            lastName: body.lastName,
-            phone: body.phone,
-          },
-        })
+        return ctx.send(response)
+      } catch (e) {
+        strapi.log.error(e)
+        return ctx.send({ error: 'Could not process payment' })
       }
-
-      return ctx.send(response)
-    } catch (e) {
-      strapi.log.error(e)
-      return ctx.send({ error: 'Could not process payment' })
     }
   },
 }

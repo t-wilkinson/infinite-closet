@@ -652,6 +652,8 @@ function handleServerResponse(response, stripe, dispatch) {
   if (response.error) {
     // Show error from server on payment form
     dispatch({ type: 'payment-failed', payload: 'Unable to process payment' })
+  } else if (response.status === 'no-charge') {
+    dispatch({ type: 'payment-succeeded' })
   } else if (response.requires_action) {
     // Use Stripe.js to handle required card action
     stripe
