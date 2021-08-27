@@ -297,7 +297,13 @@ module.exports = {
 
     const products = await strapi
       .query('product')
-      .find({ published_at_null: false })
+      .find({ published_at_null: false }, [
+        'designer',
+        'colors',
+        'images',
+        'sizes',
+      ])
+
     let rows = new Set()
     for (const product of products) {
       // Each product variant such as different size should be considered seperate
@@ -308,7 +314,11 @@ module.exports = {
             strapi.services.size.normalize(sizeItem),
             size.quantity
           )
-          rows.add(toCSVRow(row))
+          try {
+            rows.add(toCSVRow(row))
+          } catch (e) {
+            strapi.log.error('facebook-catalog %o', e)
+          }
         }
       }
     }
