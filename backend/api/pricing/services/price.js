@@ -16,7 +16,7 @@ const toPrice = (amount) => amount / SMALLEST_CURRENCY_UNIT
 async function availableCoupon(context, code) {
   return await strapi
     .query('coupon')
-    .findOne({ context, code: code.toUpperCase() })
+    .findOne({ context, code: (code || '').toUpperCase() })
 }
 
 function discount(coupon, price) {
