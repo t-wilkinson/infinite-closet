@@ -269,6 +269,7 @@ module.exports = {
     ]
 
     function toRow(product, size, quantity) {
+      console.log(product)
       return {
         id: `${product.id}_${size}`,
         item_group_ID: product.id,
@@ -309,12 +310,12 @@ module.exports = {
       // Each product variant such as different size should be considered seperate
       for (const size of product.sizes) {
         for (const sizeItem of strapi.services.size.range(size)) {
-          const row = toRow(
-            product,
-            strapi.services.size.normalize(sizeItem),
-            size.quantity
-          )
           try {
+            const row = toRow(
+              product,
+              strapi.services.size.normalize(sizeItem),
+              size.quantity
+            )
             rows.add(toCSVRow(row))
           } catch (e) {
             strapi.log.error('facebook-catalog %o', e)

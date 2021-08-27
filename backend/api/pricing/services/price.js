@@ -57,13 +57,7 @@ function valid(coupon, existingCoupons = []) {
 async function summary({ price, context, code, existingCoupons }) {
   const coupon = await availableCoupon(context, code)
   const isValid = valid(coupon, existingCoupons)
-
-  let discountPrice
-  if (isValid) {
-    discountPrice = discount(coupon, price)
-  } else {
-    discountPrice = 0
-  }
+  const discountPrice = isValid ? discount(coupon, price) : 0
 
   return {
     total: price - discountPrice,
