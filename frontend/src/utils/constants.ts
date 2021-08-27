@@ -17,7 +17,7 @@ const routes = [
     label: 'How It Works',
     value: 'howitworks',
     href: '/#how-it-works',
-    img: 'how-it-works-menu-image.jpg',
+    img: 'how-it-works.png',
     data: [
       {
         label: null,
@@ -38,7 +38,7 @@ const routes = [
     label: 'Clothing',
     value: 'clothing',
     href: '/products/clothing',
-    img: 'clothing-menu-image.jpg',
+    img: 'clothing.png',
     data: [
       {
         label: 'All Clothing',
@@ -69,7 +69,7 @@ const routes = [
     label: 'Accessories',
     value: 'accessories',
     href: null,
-    img: 'accessories-menu-image.jpg',
+    img: 'accessories.png',
     type: null,
     data: [
       {
@@ -87,7 +87,7 @@ const routes = [
     value: 'trending',
     href: null,
     type: null,
-    img: 'trending-menu-image.jpg',
+    img: 'trending.png',
     data: [
       {
         label: null,
@@ -112,7 +112,7 @@ const routes = [
     label: 'Blogs',
     value: 'blogs',
     href: '/blogs',
-    img: 'how-it-works-menu-image.jpg',
+    img: 'how-it-works.png',
     data: [],
   },
 ] as const
