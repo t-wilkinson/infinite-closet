@@ -1,9 +1,10 @@
-const request = require('supertest')
-const { createOrder } = require('../orders/factory')
-const { createUser } = require('../user/factory')
-const { jwt } = require('./../helpers/strapi')
+// const request = require('supertest')
+// const { createOrder } = require('../orders/factory')
+// const { createUser } = require('../user/factory')
+// const { jwt } = require('./../helpers/strapi')
 
 require('./timing')
+it.todo('Cleaning')
 
 // describe('Shipping service', () => {
 //   let order

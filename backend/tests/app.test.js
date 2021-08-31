@@ -35,5 +35,7 @@ describe('Strapi', () => {
 
 require('./pricing')
 require('./shipping')
-// require('./orders')
+require('./sizing')
+require('./orders')
+it.todo('mailchimp')
 // require('./user')

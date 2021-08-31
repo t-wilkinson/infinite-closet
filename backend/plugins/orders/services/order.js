@@ -223,6 +223,7 @@ async function create({
   return await strapi.query('order', 'orders').create(orderBody)
 }
 
+// TODO: split module
 module.exports = {
   toKey,
   create,
