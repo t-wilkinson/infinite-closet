@@ -40,9 +40,8 @@ module.exports = withPWA({
   },
   images: {
     domains: [
-      'localhost',
-      'infinitecloset.treywilkinson.com',
-      'api.infinitecloset.treywilkinson.com',
+      'frontend',
+      'backend',
       'dev.' + domain,
       'api.dev.' + domain,
       domain,

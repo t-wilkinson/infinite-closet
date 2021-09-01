@@ -4,8 +4,8 @@ services:
   frontend:
     image: node:14
     environment:
-      NEXT_PUBLIC_FRONTEND: 'https://infinitecloset.treywilkinson.com'
-      NEXT_PUBLIC_BACKEND: 'https://api.infinitecloset.treywilkinson.com'
+      NEXT_PUBLIC_FRONTEND: 'http://frontend:3000'
+      NEXT_PUBLIC_BACKEND: 'http://backend:1337'
     command: yarn run develop
     volumes:
       - ../frontend:/app
@@ -15,8 +15,8 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
     environment:
-      FRONTEND_DOMAIN: infinitecloset.treywilkinson.com
-      BACKEND_DOMAIN: api.infinitecloset.treywilkinson.com
+      FRONTEND_DOMAIN: frontend
+      BACKEND_DOMAIN: backend
     command: yarn run develop:admin
     volumes:
       - ../backend:/app
