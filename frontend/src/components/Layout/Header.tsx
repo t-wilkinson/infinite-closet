@@ -41,7 +41,10 @@ const SmallHeader = ({ router }) => {
 
 const LargeHeader = ({ user, router }) => (
   <>
-    <div className="w-full justify-center h-32">
+    <div
+      className={`w-full justify-center h-32
+     ${router.pathname === '/' ? 'my-4' : ''} `}
+    >
       <div className="relative justify-between items-center">
         <LargeHeaderLogo router={router} />
         <div className="absolute xl:bottom-0 right-0 -mb-1 mt-0 mr-4 z-20">
@@ -52,11 +55,7 @@ const LargeHeader = ({ user, router }) => (
         </div>
       </div>
     </div>
-    <div
-      className={`w-full
-    ${router.pathname === '/' ? '' : 'mt-4 h-px bg-pri'}
-    `}
-    />
+    <div className="w-full h-px bg-pri" />
   </>
 )
 
@@ -139,7 +138,6 @@ export const Header = ({}) => {
       </div>
       <div
         className={`z-30 items-center hidden w-full md:flex select-none relative
-          ${router.pathname === '/' ? '' : 'mt-4'}
         `}
       >
         <LargeHeader user={user} router={router} />
