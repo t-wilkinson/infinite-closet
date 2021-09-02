@@ -11,10 +11,7 @@ module.exports = ({ env }) => ({
   host: env('HOST', '0.0.0.0'),
   port: env.int('PORT', 1337),
   proxy: true,
-  url:
-    process.env.NODE_ENV === 'production'
-      ? `https://${env('BACKEND_DOMAIN', 'api.infinitecloset.co.uk')}`
-      : `http://${env('BACKEND_DOMAIN', 'api.infinitecloset.co.uk')}`,
+  url: `https://${env('BACKEND_DOMAIN', 'api.infinitecloset.co.uk')}`,
   admin: {
     host: env('HOST', '0.0.0.0'),
     autoOpen: false,
