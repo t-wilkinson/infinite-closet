@@ -6,7 +6,7 @@ const stripe = require('stripe')(process.env.STRIPE_KEY)
 async function createCart(orders) {
   const numAvailable = await strapi.plugins[
     'orders'
-  ].services.order.numAvailableCart(orders)
+  ].services.helpers.numAvailableCart(orders)
 
   // add price and available quantity to each order
   return await Promise.all(
@@ -45,7 +45,7 @@ async function createCart(orders) {
 async function createValidOrders({ cart, address, paymentMethod, insurance }) {
   const numAvailable = await strapi.plugins[
     'orders'
-  ].services.order.numAvailableCart(cart)
+  ].services.helpers.numAvailableCart(cart)
 
   let settledOrders = await Promise.allSettled(
     cart.map(async (order) => {

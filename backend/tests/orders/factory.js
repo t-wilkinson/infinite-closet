@@ -1,5 +1,3 @@
-const mockProduct = require('../__mocks__/product')
-
 const defaultData = {
   status: 'cart',
   rentalLength: 'short',
@@ -41,7 +39,7 @@ const mockOrderData = (options = {}) => {
 const createOrder = async (strapi, data) => {
   let options = Object.assign(mockOrderData(), data)
 
-  return await strapi.plugins['orders'].services.order.create({
+  return await strapi.plugins['orders'].services.helpers.create({
     ...options,
   })
 }

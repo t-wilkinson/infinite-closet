@@ -1,15 +1,16 @@
 'use strict'
 
-const dayjs = require('dayjs')
-const utc = require('dayjs/plugin/utc')
-const timezone = require('dayjs/plugin/timezone')
-dayjs.extend(utc)
-dayjs.extend(timezone)
-
 const inProgress = (status) =>
   ['planning', 'shipping', 'cleaning'].includes(status)
 
 // identifies order with size and product id
+/**
+ * Allow us to group orders by the unique products they refer to
+ * @param {object} obj
+ * @param {ID|Product} obj.product
+ * @param {Size} obj.size
+ * @return {string} Unique key
+ */
 function toKey(order) {
   let productID
   if (order.product === undefined) {
@@ -22,8 +23,12 @@ function toKey(order) {
   return `${order.size}_${productID}`
 }
 
-// calculate available product quantities by date based on overlapping orders
-// dates: {order key: date range[]}
+/**
+ * Calculate available product quantities by date based on overlapping orders
+ * @param {object[]} orders
+ * @param {object.<string, DateRange[]>} dates
+ * @param dates.key
+ */
 function numAvailable(orders, dates) {
   const numAvailable = orders.reduce((counter, order) => {
     const key = toKey(order)
@@ -67,6 +72,11 @@ function numAvailable(orders, dates) {
   return numAvailable
 }
 
+/**
+ * Total quantity of associated product
+ * @param {Order} order
+ * @returns number
+ */
 async function quantity(order) {
   if (!order.product.sizes) {
     order.product = await strapi.query('product').findOne(
@@ -87,111 +97,9 @@ async function quantity(order) {
   }
 }
 
-async function notifyArrival(orders) {
-  for (const order of orders) {
-    const user = order.user
-    const range = strapi.services.timing.range(order)
-    const date = strapi.services.timing.day(range.start)
-    const today = strapi.services.timing.day()
-
-    if (!date.isSame(today, 'day')) continue
-    // const complete = await strapi.services.shipment.complete(order.shipment)
-    // if (!complete) return
-
-    strapi.log.info('order arriving %o', order.id)
-    strapi.plugins['email'].services.email.send({
-      template: 'order-arriving',
-      to: user.email,
-      subject: `Your order of ${order.product.name} by ${order.product.designer.name} is arriving today`,
-      data: {
-        ...order,
-        firstName: user.firstName,
-        range,
-        price: strapi.plugins['orders'].services.price.price(order),
-      },
-    })
-  }
-}
-
-async function sendToCleaners(orders) {
-  for (const order of orders) {
-    const user = order.user
-    const range = strapi.services.timing.range(order)
-    const date = strapi.services.timing.day(range.end)
-    const today = strapi.services.timing.day()
-    if (!date.isSame(today, 'day')) continue
-
-    const shippingRequest = {
-      collection:
-        strapi.plugins['orders'].services.order.toShippingAddress(order),
-      recipient: 'oxwash',
-      shippingClass: 'two',
-      shipmentPrice: strapi.plugins['orders'].services.price.price(order),
-    }
-
-    strapi.log.info('cleaning order %o', order.id)
-    strapi
-      .query('order', 'orders')
-      .update({ id: order.id }, { status: 'cleaning' })
-      .then(() => strapi.services.shipment.ship(shippingRequest))
-      .then(() =>
-        strapi.plugins['email'].services.email.send({
-          template: 'order-leaving',
-          to: user.email,
-          cc: 'battersea@oxwash.com',
-          subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
-          data: {
-            ...order,
-            firstName: user.firstName,
-            range,
-            price: strapi.plugins['orders'].services.price.price(order),
-          },
-        })
-      )
-      .catch((err) =>
-        strapi.plugins['orders'].services.order.shippingFailure(order, err)
-      )
-  }
-}
-
-async function shippingFailure(order, err) {
-  await strapi
-    .query('order', 'orders')
-    .update({ id: order.id }, { status: 'error', message: err })
-  await strapi.plugins['email'].services.email.send({
-    template: 'order-shipping-failure',
-    to: 'info@infinitecloset.co.uk',
-    subject: 'Failed to ship order',
-    data: { order, error: err },
-  })
-  strapi.log.error('failed to ship order to client %o', err)
-}
-
-// calculate number of available products for each cart item
-async function numAvailableCart(cart = []) {
-  const reqRanges = cart.reduce((acc, order) => {
-    const key = toKey(order)
-    if (!acc[key]) {
-      acc[key] = []
-    }
-    acc[key].push(strapi.services.timing.range(order))
-    return acc
-  }, {})
-
-  // attach `sizes` component to `order.product.sizes`
-  let orders = await strapi.query('order', 'orders').find({}, [])
-  orders = await Promise.all(
-    orders.map(async (order) => {
-      order.product = await strapi
-        .query('product')
-        .findOne({ id: order.product }, ['sizes'])
-      return order
-    })
-  )
-
-  return numAvailable(orders, reqRanges)
-}
-
+/**
+ * Convert to shipping address for shipments
+ */
 function toShippingAddress(order) {
   const { address, user } = order
   return {
@@ -204,38 +112,10 @@ function toShippingAddress(order) {
   }
 }
 
-async function create({
-  user,
-  status,
-  size,
-  product,
-  startDate,
-  rentalLength,
-}) {
-  const orderBody = {
-    user,
-    status,
-    size,
-    product,
-    startDate,
-    rentalLength,
-  }
-  return await strapi.query('order', 'orders').create(orderBody)
-}
-
-// TODO: split module
 module.exports = {
   toKey,
-  create,
   quantity,
-
   inProgress,
-  shippingFailure,
   toShippingAddress,
-
   numAvailable,
-  numAvailableCart,
-
-  notifyArrival,
-  sendToCleaners,
 }

@@ -8,8 +8,8 @@ module.exports = {
       .find({ status: 'shipping' }, ['product', 'product.designer', 'user'])
 
     if (process.env.NODE_ENV === 'production') {
-      strapi.plugins['orders'].services.order.sendToCleaners(orders)
-      strapi.plugins['orders'].services.order.notifyArrival(orders)
+      strapi.plugins['orders'].services.helpers.sendToCleaners(orders)
+      strapi.plugins['orders'].services.helpers.notifyArrival(orders)
     }
   },
 }

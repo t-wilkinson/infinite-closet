@@ -42,7 +42,7 @@ module.exports = {
       return
     }
 
-    const order = await strapi.plugins['orders'].services.order.create({
+    const order = await strapi.plugins['orders'].services.helpers.create({
       user: user.id,
       status: body.status,
       size: body.size,
@@ -140,7 +140,7 @@ module.exports = {
       )
       .then(sendShippingEmail)
       .catch((err) =>
-        strapi.plugins['orders'].services.order.shippingFailure(order, err)
+        strapi.plugins['orders'].services.helpers.shippingFailure(order, err)
       )
 
     ctx.send({ order })
