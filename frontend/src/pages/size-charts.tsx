@@ -9,7 +9,7 @@ export const Page = () => {
 
   React.useEffect(() => {
     axios
-      .get('/products/size-chart')
+      .get('/size-chart')
       .then((res) => res.data)
       .then(setSizeChart)
       .catch((err) => console.error(err))
