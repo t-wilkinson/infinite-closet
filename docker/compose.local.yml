@@ -4,19 +4,33 @@ services:
   frontend:
     image: node:14
     environment:
-      NEXT_PUBLIC_FRONTEND: 'http://frontend:3000'
-      NEXT_PUBLIC_BACKEND: 'http://backend:1337'
+      NEXT_PUBLIC_FRONTEND: 'http://ic.local'
+      NEXT_PUBLIC_BACKEND: 'http://api.ic.local'
     command: yarn run develop
+    networks:
+      default:
+        aliases:
+            - ic.local
     volumes:
       - ../frontend:/app
+    extra_hosts:
+      - "ic.local:127.0.0.1"
 
   backend:
     image: node:14
     ports:
       - "127.0.0.1:8000:8000"
     environment:
-      FRONTEND_DOMAIN: frontend
-      BACKEND_DOMAIN: backend
+      FRONTEND_DOMAIN: ic.local
+      BACKEND_DOMAIN: api.ic.local
     command: yarn run develop:admin
     volumes:
       - ../backend:/app
+    networks:
+      default:
+        aliases:
+            - api.ic.local
+            - admin.ic.local
+    extra_hosts:
+      - "api.ic.local:127.0.0.1"
+      - "admin.ic.local:127.0.0.1"

@@ -121,13 +121,16 @@ module.exports = {
     ctx.send(total)
   },
 
-  // !TODO
   async setCart(ctx) {
-    // const body = ctx.request.body
-    // const user = ctx.state.user
-    //     strapi.query('user', 'users-permissions').update({id: user.id}, {
-    //       orders: body.orders
-    //     })
+    const body = ctx.request.body
+    const cart = Object.values(body.cart)
+    const user = ctx.state.user
+    strapi.query('user', 'users-permissions').update(
+      { id: user.id },
+      {
+        orders: cart,
+      }
+    )
 
     ctx.send()
   },
@@ -142,10 +145,14 @@ module.exports = {
       ['product', 'product.sizes', 'product.designer', 'product.images']
     )
 
-    const cart = await createCart(orders)
-    ctx.send({
-      cart,
-    })
+    let cart = await createCart(orders)
+    cart = cart.reduce((acc, order) => {
+      const key = strapi.plugins['orders'].services.order.toKey(order)
+      acc[key] = order
+      return acc
+    }, {})
+
+    ctx.send(cart)
   },
 
   async create(ctx) {

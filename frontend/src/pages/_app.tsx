@@ -21,6 +21,7 @@ import { browserIs } from '@/utils/helpers'
 import { userActions } from '@/User/slice'
 import * as storage from '@/utils/storage'
 import * as CartUtils from '@/utils/cart'
+import * as cartSlice from '@/Cart/slice'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -90,6 +91,15 @@ const Wrapper = ({ router, children }) => {
   const analytics = useAnalytics()
   const consent = useSelector(layoutSelectors.consent)
   const user = useSelector((state) => state.user.data)
+  // dispatch(cartSlice.CartUtils.get()).then((res) => console.log(res))
+  const cart = useSelector((state) => state.cart.cart)
+  console.log('State.cart', cart)
+
+  React.useEffect(() => {
+    dispatch(cartSlice.CartUtils.get()).then((res) => {
+      console.log('Cart Slice Get()', res)
+    })
+  }, [])
 
   const showPopup = () => {
     window.setTimeout(() => {
@@ -200,7 +210,7 @@ const Wrapper = ({ router, children }) => {
 const setupUserCart = (user) => {
   axios
     .get(`/orders/cart/${user.id}`, { withCredentials: true })
-    .then((res) => res.data.cart)
+    .then((res) => Object.values(res.data))
     .then((cart) => {
       if (!CartUtils.isUsed()) {
         CartUtils.insertAll(
