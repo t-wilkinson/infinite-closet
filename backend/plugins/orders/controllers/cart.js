@@ -203,7 +203,7 @@ module.exports = {
     })
     const { total, coupon } = await strapi.plugins[
       'orders'
-    ].services.price.checkoutTotal({
+    ].services.price.totalPrice({
       cart,
       insurance: body.insurance,
       user,

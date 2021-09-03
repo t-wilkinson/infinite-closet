@@ -1,3 +1,3 @@
 // require('./cart')
+require('./pricing')
 it.todo('Orders')
-it.todo('Pricing')

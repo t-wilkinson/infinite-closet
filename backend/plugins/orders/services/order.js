@@ -3,7 +3,6 @@
 const inProgress = (status) =>
   ['planning', 'shipping', 'cleaning'].includes(status)
 
-// identifies order with size and product id
 /**
  * Allow us to group orders by the unique products they refer to
  * @param {object} obj
@@ -98,7 +97,7 @@ async function quantity(order) {
 }
 
 /**
- * Convert to shipping address for shipments
+ * Convert order to shipping address for shipments
  */
 function toShippingAddress(order) {
   const { address, user } = order
