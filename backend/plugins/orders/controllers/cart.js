@@ -94,36 +94,12 @@ module.exports = {
     const count = await strapi
       .query('order', 'orders')
       .count({ user: user.id, status: 'cart' })
-    ctx.send({ count })
-  },
-
-  // TODO: should this calculate the coupon amount as well?
-  // if so, must rate limit this endpoint
-  async totalPrice(ctx) {
-    const body = ctx.request.body
-
-    const total = await strapi.plugins['orders'].services.price.totalPrice({
-      cart: body.cart.filter((order) => order.valid),
-      insurance: body.insurance,
-    })
-    ctx.send(total)
-  },
-
-  async totalUserPrice(ctx) {
-    const body = ctx.request.body
-    const user = ctx.state.user
-
-    const total = await strapi.plugins['orders'].services.price.totalPrice({
-      cart: body.cart.filter((order) => order.valid),
-      insurance: body.insurance,
-      user,
-    })
-    ctx.send(total)
+    ctx.send(count)
   },
 
   async setCart(ctx) {
     const body = ctx.request.body
-    const cart = Object.values(body.cart)
+    const cart = body.cart
     const user = ctx.state.user
     strapi.query('user', 'users-permissions').update(
       { id: user.id },
@@ -133,6 +109,29 @@ module.exports = {
     )
 
     ctx.send()
+  },
+
+  async guestCartPriceSummary(ctx) {
+    const { cart, insurance } = ctx.request.body
+
+    const summary = await strapi.plugins['orders'].services.price.summary({
+      cart: cart.filter((order) => order.valid),
+      insurance,
+    })
+    ctx.send(summary)
+  },
+
+  // TODO!: can this merge with above?
+  async userCartPriceSummary(ctx) {
+    const { cart, insurance } = ctx.request.body
+    const user = ctx.state.user
+
+    const summary = await strapi.plugins['orders'].services.price.summary({
+      cart: cart.filter((order) => order.valid),
+      insurance,
+      user,
+    })
+    ctx.send(summary)
   },
 
   async getUserCart(ctx) {
@@ -145,17 +144,11 @@ module.exports = {
       ['product', 'product.sizes', 'product.designer', 'product.images']
     )
 
-    let cart = await createCart(orders)
-    cart = cart.reduce((acc, order) => {
-      const key = strapi.plugins['orders'].services.order.toKey(order)
-      acc[key] = order
-      return acc
-    }, {})
-
+    const cart = await createCart(orders)
     ctx.send(cart)
   },
 
-  async create(ctx) {
+  async getGuestCart(ctx) {
     const body = ctx.request.body
     const orders = await Promise.all(
       body.cart.map(async (order) => {
@@ -179,18 +172,6 @@ module.exports = {
     })
   },
 
-  // TODO: remove this, use PUT instead
-  async removeCartItem(ctx) {
-    const { id } = ctx.params
-    const order = await strapi
-      .query('order', 'orders')
-      .update({ id }, { status: 'dropped' })
-    ctx.send({
-      order,
-    })
-  },
-
-  // TODO: This needs to be refactored
   async checkout(ctx) {
     const user = ctx.state.user
     const body = ctx.request.body
@@ -203,7 +184,7 @@ module.exports = {
     })
     const { total, coupon } = await strapi.plugins[
       'orders'
-    ].services.price.totalPrice({
+    ].services.price.summary({
       cart,
       insurance: body.insurance,
       user,

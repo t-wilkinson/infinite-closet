@@ -1,5 +1,4 @@
 import React from 'react'
-import { useRouter } from 'next/router'
 
 import Checkout from '@/User/Checkout'
 import Layout from '@/Layout'
@@ -7,7 +6,6 @@ import { useSelector } from '@/utils/store'
 
 const Page = () => {
   const user = useSelector((state) => state.user.data)
-  const router = useRouter()
 
   if (user === undefined) {
     return null
@@ -15,7 +13,7 @@ const Page = () => {
 
   return (
     <Layout spacing={false}>
-      <Checkout user={user} />
+      <Checkout />
     </Layout>
   )
 }

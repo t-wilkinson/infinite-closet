@@ -80,7 +80,7 @@ async function getDiscountPrice(price, user) {
  * @param {User} obj.user
  * @param {string} obj.couponCode
  */
-async function totalPrice({ insurance, cart, user, couponCode }) {
+async function summary({ insurance, cart, user, couponCode }) {
   const insurancePrice =
     Object.entries(insurance).filter(
       ([k, v]) =>
@@ -115,20 +115,6 @@ async function totalPrice({ insurance, cart, user, couponCode }) {
   }
 }
 
-/**
- * Converts {@link totalPrice} to amount
- */
-function totalAmount(props) {
-  const price = totalPrice(props)
-
-  const amount = {}
-  for (const key in price) {
-    amount[key] = strapi.services.price.toAmount(price[key])
-  }
-
-  return amount
-}
-
 async function existingCoupons(user, code) {
   return (
     await strapi.query('order', 'orders').find({ user, 'coupon.code': code })
@@ -136,8 +122,7 @@ async function existingCoupons(user, code) {
 }
 
 module.exports = {
-  totalAmount,
-  totalPrice,
+  summary,
   price,
   amount,
   cartPrice,

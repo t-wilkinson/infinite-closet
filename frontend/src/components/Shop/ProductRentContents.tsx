@@ -9,7 +9,7 @@ import * as sizing from '@/utils/sizing'
 import { rentalLengths } from '@/utils/constants'
 import { userActions } from '@/User/slice'
 import { Size } from '@/Products/types'
-import * as CartUtils from '@/utils/cart'
+import { CartUtils } from '@/Cart/slice'
 
 import { SizeChartPopup, SizeSelector } from './Size'
 import { shopActions } from './slice'

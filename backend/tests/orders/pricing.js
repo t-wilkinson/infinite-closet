@@ -3,7 +3,7 @@ const pricingApi = require('../../plugins/orders/services/price')
 
 describe('Total Price', () => {
   it('should sum', async () => {
-    const totalPrice = await pricingApi.totalPrice({
+    const totalPrice = await pricingApi.summary({
       insurance: {},
       cart: [],
       user: undefined,
