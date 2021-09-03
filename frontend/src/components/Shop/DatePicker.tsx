@@ -44,6 +44,9 @@ export const DatePicker = () => {
           </button>
         </div>
         <Date state={state} dispatch={dispatch} rentalLength={rentalLength} />
+        <div className="w-full items-center py-2">
+          <small>We recommend ordering 1-2 days before your event.</small>
+        </div>
       </div>
     </div>
   )
