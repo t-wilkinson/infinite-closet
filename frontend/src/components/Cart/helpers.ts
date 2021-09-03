@@ -24,7 +24,7 @@ export function getGuestCart() {
 }
 
 export async function getUserCart(user) {
-  const res = await axios.get(`/orders/cart/${user.id}`, {
+  const res = await axios.get(`/orders/cart/view/${user.id}`, {
     withCredentials: true,
   })
   const cart = res.data

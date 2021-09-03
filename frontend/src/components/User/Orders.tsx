@@ -38,7 +38,7 @@ export const Orders = () => {
   )
 }
 
-export const OrderItem = ({ dispatch, product, insurance_, ...order }) => {
+export const OrderItem = ({ dispatch, product, ...order }) => {
   const date = dayjs(order.startDate).tz('Europe/London') // order.startDate is utc
   const startDate = date.format('ddd, MMM D')
   const endDate = date

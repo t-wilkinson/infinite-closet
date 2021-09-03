@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-import { StrapiOrder } from '@/utils/models'
 import { RootState } from '@/utils/store'
+import { StrapiOrder } from '@/utils/models'
 
 import * as helpers from './helpers'
 import { CheckoutCart, Cart } from './types'
@@ -14,17 +14,23 @@ export default {
     const user = getUser(getState)
     return await helpers.getCart(user)
   }),
-  summary: createAsyncThunk<Cart, void | Cart>(
+  summary: createAsyncThunk<Cart, void>(
     'cart/summary',
-    async (cart, { getState }) => {
+    async (_, { getState }) => {
       const user = getUser(getState)
+      const state = getState() as RootState
+      const cart = state.cart.checkoutCart
       let res
       if (user) {
-        res = await axios.get(`/cart/summary/${user.id}`, {
-          withCredentials: true,
-        })
+        res = await axios.post(
+          `/orders/cart/summary/${user.id}`,
+          { cart },
+          {
+            withCredentials: true,
+          }
+        )
       } else {
-        res = await axios.post(`/cart/summary`, { cart })
+        res = await axios.post(`/orders/cart/summary`, { cart })
       }
       return res.data
     }
@@ -56,16 +62,18 @@ export default {
       }
     }
   ),
-  view: createAsyncThunk<CheckoutCart, void | Cart>(
+  view: createAsyncThunk<CheckoutCart, void>(
     'cart/view',
-    async (cart, { getState }) => {
+    async (_, { getState }) => {
       const user = getUser(getState)
+      const state = getState()
       let res
       if (user) {
         res = await axios.get(`/orders/cart/view/${user.id}`, {
           withCredentials: true,
         })
       } else {
+        const cart = helpers.getGuestCart()
         res = await axios.post(`/orders/cart/view`, { cart })
       }
       return res.data

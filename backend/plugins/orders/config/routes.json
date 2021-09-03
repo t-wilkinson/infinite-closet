@@ -35,18 +35,10 @@
     },
     {
       "method": "POST",
-      "path": "/cart/summary/:id",
-      "handler": "cart.userCartPriceSummary",
+      "path": "/cart/summary",
+      "handler": "cart.priceSummary",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/cart/summary",
-      "handler": "cart.guestCartPriceSummary",
-      "config": {
-        "policies": []
       }
     },
     {

@@ -166,7 +166,6 @@ const Checkout = ({ fetchCart, analytics }) => {
           address: state.address,
           paymentMethod: state.paymentMethod,
           cart,
-          insurance: state.insurance,
           couponCode: cleaned.couponCode,
         },
         { withCredentials: true }
@@ -174,7 +173,6 @@ const Checkout = ({ fetchCart, analytics }) => {
       .then((res) => {
         fetchCart()
         dispatch({ type: 'status-success' })
-        dispatch({ type: 'clear-insurance' })
         analytics.logEvent('purchase', {
           user: user ? user.email : 'guest',
           type: 'checkout',
@@ -238,12 +236,7 @@ const Checkout = ({ fetchCart, analytics }) => {
               Please Sign In to Checkout
             </button>
           )}
-          <Cart
-            toggleInsurance={(id) =>
-              dispatch({ type: 'toggle-insurance', payload: id })
-            }
-            insurance={state.insurance}
-          />
+          <Cart />
           <Button
             onClick={checkout}
             disabled={

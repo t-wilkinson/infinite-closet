@@ -19,5 +19,4 @@ export type PreviewCart = {
   toggleInsurance: (id: string) => void
   remove: (order: any) => void
   cart: CheckoutItem[]
-  insurance: { [key: string]: boolean }
 }

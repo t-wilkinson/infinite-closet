@@ -42,7 +42,7 @@ async function createCart(orders) {
   )
 }
 
-async function createValidOrders({ cart, address, paymentMethod, insurance }) {
+async function createValidOrders({ cart, address, paymentMethod }) {
   const numAvailable = await strapi.plugins[
     'orders'
   ].services.helpers.numAvailableCart(cart)
@@ -70,7 +70,7 @@ async function createValidOrders({ cart, address, paymentMethod, insurance }) {
           address: address,
           paymentMethod: paymentMethod,
           status: 'planning',
-          insurance: insurance[order.id] || false,
+          insurance: order.insurance,
         })
       } else {
         return Promise.reject(
@@ -111,24 +111,12 @@ module.exports = {
     ctx.send()
   },
 
-  async guestCartPriceSummary(ctx) {
-    const { cart, insurance } = ctx.request.body
-
-    const summary = await strapi.plugins['orders'].services.price.summary({
-      cart: cart.filter((order) => order.valid),
-      insurance,
-    })
-    ctx.send(summary)
-  },
-
-  // TODO!: can this merge with above?
-  async userCartPriceSummary(ctx) {
-    const { cart, insurance } = ctx.request.body
+  async priceSummary(ctx) {
+    const { cart } = ctx.request.body
     const user = ctx.state.user
 
     const summary = await strapi.plugins['orders'].services.price.summary({
-      cart: cart.filter((order) => order.valid),
-      insurance,
+      cart,
       user,
     })
     ctx.send(summary)
@@ -180,13 +168,11 @@ module.exports = {
       cart: body.cart,
       address: body.address,
       paymentMethod: body.paymentMethod,
-      insurance: body.insurance,
     })
     const { total, coupon } = await strapi.plugins[
       'orders'
     ].services.price.summary({
       cart,
-      insurance: body.insurance,
       user,
       couponCode: body.couponCode,
     })
