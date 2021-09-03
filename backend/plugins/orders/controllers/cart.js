@@ -1,6 +1,5 @@
 'use strict'
 
-const _ = require('lodash')
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 async function createCart(orders) {
@@ -42,7 +41,7 @@ async function createCart(orders) {
   )
 }
 
-async function createValidOrders({ cart, address, paymentMethod }) {
+async function getValidOrders({ cart, address, paymentMethod }) {
   const numAvailable = await strapi.plugins[
     'orders'
   ].services.helpers.numAvailableCart(cart)
@@ -65,13 +64,15 @@ async function createValidOrders({ cart, address, paymentMethod }) {
       )
 
       if (valid) {
-        return strapi.query('order', 'orders').create({
-          ..._.omit(order, ['id']),
-          address: address,
-          paymentMethod: paymentMethod,
-          status: 'planning',
-          insurance: order.insurance,
-        })
+        return strapi.query('order', 'orders').update(
+          { id: order.id },
+          {
+            address,
+            paymentMethod,
+            status: 'planning',
+            insurance: order.insurance,
+          }
+        )
       } else {
         return Promise.reject(
           `${strapi.services.timing
@@ -160,11 +161,12 @@ module.exports = {
     })
   },
 
+  // TODO: easy to fake ownership of cart
   async checkout(ctx) {
     const user = ctx.state.user
     const body = ctx.request.body
 
-    let cart = await createValidOrders({
+    let cart = await getValidOrders({
       cart: body.cart,
       address: body.address,
       paymentMethod: body.paymentMethod,

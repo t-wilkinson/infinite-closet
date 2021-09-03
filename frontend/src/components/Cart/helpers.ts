@@ -58,19 +58,3 @@ export async function setCart(user, cart) {
     setGuestCart(cart)
   }
 }
-
-export const toKey = (order: StrapiOrder) => {
-  if (!order) {
-    return
-  }
-
-  let productID: unknown
-  if (order.product === undefined) {
-    productID = undefined
-  } else if (order.product.id !== undefined) {
-    productID = order.product.id
-  } else {
-    productID = order.product
-  }
-  return `${order.size}_${productID}`
-}

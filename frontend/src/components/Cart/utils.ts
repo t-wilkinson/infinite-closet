@@ -79,6 +79,21 @@ export default {
       return res.data
     }
   ),
+  status: createAsyncThunk<Cart, void>(
+    'cart/status',
+    async (_, { getState }) => {
+      const user = getUser(getState)
+      if (user) {
+        const res = await axios.get('/orders/status', { withCredentials: true })
+        return res.data.orders
+      } else {
+        const cart = helpers.getGuestCart()
+        return cart.filter(
+          (order) => !['cart', 'dropped', 'list'].includes(order)
+        )
+      }
+    }
+  ),
   set: createAsyncThunk<Cart, Cart>('cart/set', async (cart, { getState }) => {
     const user = getUser(getState)
     helpers.setCart(user, cart)
@@ -91,6 +106,11 @@ export default {
       if (user) {
         axios.post('/orders', order, { withCredentials: true })
       } else {
+        const res = await axios.post('/orders', order, {
+          withCredentials: true,
+        })
+        order = res.data
+
         const cart = helpers.getGuestCart()
         cart.push(order)
         helpers.setGuestCart(cart)
