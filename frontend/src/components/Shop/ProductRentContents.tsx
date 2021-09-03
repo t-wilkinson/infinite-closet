@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 import { useRouter } from 'next/router'
 
 import useAnalytics from '@/utils/useAnalytics'
@@ -7,7 +6,6 @@ import { useDispatch, useSelector } from '@/utils/store'
 import { Button, Icon } from '@/components'
 import * as sizing from '@/utils/sizing'
 import { rentalLengths } from '@/utils/constants'
-import { userActions } from '@/User/slice'
 import { Size } from '@/Products/types'
 import { CartUtils } from '@/Cart/slice'
 

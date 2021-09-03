@@ -7,7 +7,8 @@ import { StrapiOrder } from '@/utils/models'
 import * as helpers from './helpers'
 import { CheckoutCart, Cart } from './types'
 
-export const getUser = (getState) => (getState() as any).user.data
+export const getUser = (getState: () => any) =>
+  (getState() as RootState).user.data
 
 export default {
   get: createAsyncThunk<Cart, void>('cart/get', async (_, { getState }) => {
@@ -20,10 +21,10 @@ export default {
       const user = getUser(getState)
       const state = getState() as RootState
       const cart = state.cart.checkoutCart
-      let res
+      let res: unknown & { data: Cart }
       if (user) {
         res = await axios.post(
-          `/orders/cart/summary/${user.id}`,
+          `/orders/cart/summary`,
           { cart },
           {
             withCredentials: true,
@@ -66,8 +67,7 @@ export default {
     'cart/view',
     async (_, { getState }) => {
       const user = getUser(getState)
-      const state = getState()
-      let res
+      let res: unknown & { data: CheckoutCart }
       if (user) {
         res = await axios.get(`/orders/cart/view/${user.id}`, {
           withCredentials: true,
