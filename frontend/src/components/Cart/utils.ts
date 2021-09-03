@@ -21,6 +21,7 @@ export default {
       const user = getUser(getState)
       const state = getState() as RootState
       const cart = state.cart.checkoutCart
+      console.log(cart)
       let res: unknown & { data: Cart }
       if (user) {
         res = await axios.post(
@@ -127,24 +128,23 @@ export default {
       return cart
     }
   ),
-  // remove: createAsyncThunk<Cart, StrapiOrder[]>(
-  //   'cart/remove',
-  //   async (items, { getState }) => {
-  //     // TODO:
-  //     const user = getUser(getState)
-  //     const state = getState() as RootState
-  //     let cart = state.cart.checkoutCart
-
-  //     if (!Array.isArray(items)) {
-  //       items = [items]
-  //     }
-
-  //     items.forEach((item) => {
-  //       delete cart[helpers.toKey(item)]
-  //     })
-
-  //     helpers.setCart(user, cart)
-  //     return cart
-  //   }
-  // ),
+  remove: createAsyncThunk<Cart, string>(
+    'cart/remove',
+    async (id, { getState }) => {
+      const user = getUser(getState)
+      if (user) {
+        await axios.put(
+          `/orders/${id}`,
+          { id, status: 'dropped' },
+          { withCredentials: true }
+        )
+      } else {
+        const cart = helpers.getGuestCart()
+        const index = cart.indexOf((v) => v.id === id)
+        cart[index] = { ...cart[index], status: 'dropped' }
+        helpers.setGuestCart(cart)
+      }
+      return helpers.getCart(user)
+    }
+  ),
 }

@@ -15,16 +15,12 @@ import { Checkbox } from '@/Form/'
 import { Icon, Hover } from '@/components'
 import { rentalLengths } from '@/utils/constants'
 import * as sizing from '@/utils/sizing'
-import { useSelector } from '@/utils/store'
+import { useDispatch, useSelector } from '@/utils/store'
+import CartUtils from '@/Cart/utils'
 
-import { PreviewCart, CheckoutItem } from './types'
+import { CheckoutItem } from './types'
 
-// export type CartItem = PreviewCartItem & {
-//   toggleInsurance: (id: string) => void
-//   remove: (order: any) => void
-// }
-
-export const Cart = ({}: PreviewCart) => {
+export const Cart = () => {
   const cart = useSelector((state) => state.cart.checkoutCart)
   return (
     <div className="w-full space-y-2">
@@ -49,15 +45,19 @@ export const CartItem = ({
     .format('ddd, MMM D')
   const Bold = (props: object) => <span className="font-bold" {...props} />
   const analytics = useAnalytics()
+  const dispatch = useDispatch()
 
-  // TODO!
-  function toggleInsurance() {}
+  function toggleInsurance(id) {
+    dispatch(CartUtils.update({ id, insurance: !order.insurance }))
+  }
 
   const removeItem = () => {
+    dispatch(CartUtils.remove(order.id))
     analytics.logEvent('remove_from_cart', {
       user: order.user?.email || '',
     })
   }
+
   return (
     <div
       className={`flex-row items-center border p-4 rounded-sm relative bg-white

@@ -1,6 +1,7 @@
 import React from 'react'
 
-import Checkout from '@/User/Checkout'
+import UserCheckout from '@/User/Checkout'
+import GuestCheckout from '@/Guest/Checkout'
 import Layout from '@/Layout'
 import { useSelector } from '@/utils/store'
 
@@ -9,13 +10,19 @@ const Page = () => {
 
   if (user === undefined) {
     return null
+  } else if (user === null) {
+    return (
+      <Layout spacing={false}>
+        <GuestCheckout />
+      </Layout>
+    )
+  } else {
+    return (
+      <Layout spacing={false}>
+        <UserCheckout />
+      </Layout>
+    )
   }
-
-  return (
-    <Layout spacing={false}>
-      <Checkout />
-    </Layout>
-  )
 }
 
 export const getServerSideProps = async () => {
