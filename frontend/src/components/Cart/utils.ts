@@ -84,7 +84,20 @@ export default {
     helpers.setCart(user, cart)
     return cart
   }),
-  insert: createAsyncThunk<Cart, StrapiOrder[]>(
+  add: createAsyncThunk<void, Partial<StrapiOrder>>(
+    'cart/add',
+    async (order, { getState }) => {
+      const user = getUser(getState)
+      if (user) {
+        axios.post('/orders', order, { withCredentials: true })
+      } else {
+        const cart = helpers.getGuestCart()
+        cart.push(order)
+        helpers.setGuestCart(cart)
+      }
+    }
+  ),
+  insert: createAsyncThunk<Cart, Partial<StrapiOrder>[] | Partial<StrapiOrder>>(
     'cart/insert',
     async (items, { getState }) => {
       const user = getUser(getState)

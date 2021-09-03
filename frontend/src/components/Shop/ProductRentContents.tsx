@@ -53,7 +53,7 @@ export const productRentContents = {
         setStatus('error')
       }
 
-      const order = {
+      const order: any = {
         user: user ? user.id : null,
         status: 'cart',
         size: sizing.unnormalize(size.size),
@@ -62,25 +62,12 @@ export const productRentContents = {
         rentalLength: state.oneTime,
       }
 
-      CartUtils.insert(order)
-      dispatch(userActions.countCart(CartUtils.count(user?.id)))
+      dispatch(CartUtils.add(order))
 
       analytics.logEvent('add_to_cart', {
         user: user ? user.email : 'guest',
         items: [order],
       })
-
-      if (user) {
-        axios
-          .put(
-            `/orders/cart/${user.id}`,
-            {
-              cart: CartUtils.getByUser(user.id),
-            },
-            { withCredentials: true }
-          )
-          .catch((err) => console.error(err))
-      }
 
       if (user) {
         router.push('/user/checkout')
