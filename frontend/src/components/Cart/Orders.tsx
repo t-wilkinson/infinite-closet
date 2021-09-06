@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import axios from 'axios'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
@@ -8,37 +7,31 @@ import timezone from 'dayjs/plugin/timezone'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+import { CartUtils } from '@/Cart/slice'
 import { fmtPrice } from '@/utils/helpers'
 import { getURL } from '@/utils/api'
-import { useSelector } from '@/utils/store'
+import { useDispatch, useSelector } from '@/utils/store'
 import { rentalLengths } from '@/utils/constants'
 
 export const Orders = () => {
-  const [orders, setOrders] = React.useState([])
   const user = useSelector((state) => state.user.data)
+  const dispatch = useDispatch()
+  const orders = useSelector((state) => state.cart.ordersStatus)
 
   React.useEffect(() => {
-    if (user) {
-      axios
-        .get(`/orders/status`, { withCredentials: true })
-        .then((res) => setOrders(res.data.orders))
-    }
+    dispatch(CartUtils.status())
   }, [])
-
-  if (!user) {
-    return null
-  }
 
   return (
     <div className="">
       {orders.map((order) => (
-        <OrderItem key={order.id} {...order} />
+        <OrderItem key={order.id} dispatch={dispatch} {...order} />
       ))}
     </div>
   )
 }
 
-export const OrderItem = ({ dispatch, product, insurance_, ...order }) => {
+export const OrderItem = ({ dispatch, product, ...order }) => {
   const date = dayjs(order.startDate).tz('Europe/London') // order.startDate is utc
   const startDate = date.format('ddd, MMM D')
   const endDate = date

@@ -7,8 +7,14 @@ services:
       NEXT_PUBLIC_FRONTEND: 'http://ic.com'
       NEXT_PUBLIC_BACKEND: 'http://api.ic.com'
     command: yarn run develop
+    networks:
+      default:
+        aliases:
+            - ic.local
     volumes:
       - ../frontend:/app
+    extra_hosts:
+      - "ic.local:127.0.0.1"
 
   backend:
     image: node:14
@@ -20,3 +26,11 @@ services:
     command: yarn run develop:admin
     volumes:
       - ../backend:/app
+    networks:
+      default:
+        aliases:
+            - api.ic.local
+            - admin.ic.local
+    extra_hosts:
+      - "api.ic.local:127.0.0.1"
+      - "admin.ic.local:127.0.0.1"

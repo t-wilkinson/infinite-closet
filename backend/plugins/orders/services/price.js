@@ -75,34 +75,34 @@ async function getDiscountPrice(price, user) {
 /**
  * Calculates total price including discounts, promo codes, etc.
  * @param {object} obj
- * @param {object} obj.insurance - Object mapping order ids to if insurance is enabled
  * @param {Cart} obj.cart
  * @param {User} obj.user
  * @param {string} obj.couponCode
  */
-async function totalPrice({ insurance, cart, user, couponCode }) {
+async function summary({ cart, user, couponCode }) {
   const insurancePrice =
-    Object.entries(insurance).filter(
-      ([k, v]) =>
-        v && (cart.find((item) => item.id == k) || { valid: true }).valid // add insurance only if cart item is valid
-    ).length * INSURANCE_PRICE
-
+    cart.filter((item) => item.valid === true && item.insurance).length *
+    INSURANCE_PRICE
   const shippingPrice = cart.reduce((acc, order) => {
     if (order.shippingClass) {
       return acc + shippingPrices[order.shippingClass]
     }
     return acc
   }, 0)
+
+  const subtotal = cartPrice(cart)
+  const preDiscountPrice = subtotal + insurancePrice + shippingPrice
+
   const coupon = await strapi.services.price.availableCoupon(
     'checkout',
     couponCode
   )
-
-  const subtotal = cartPrice(cart)
-  const preDiscountPrice = subtotal + insurancePrice + shippingPrice
+  const couponDiscount = coupon
+    ? strapi.services.price.discount(coupon, preDiscountPrice)
+    : 0
   const discountPrice =
-    (await getDiscountPrice(preDiscountPrice, user)) +
-    strapi.services.price.discount(coupon, preDiscountPrice)
+    (await getDiscountPrice(preDiscountPrice, user)) + couponDiscount
+
   const total = Math.max(0, preDiscountPrice - discountPrice)
 
   return {
@@ -115,20 +115,6 @@ async function totalPrice({ insurance, cart, user, couponCode }) {
   }
 }
 
-/**
- * Converts {@link totalPrice} to amount
- */
-function totalAmount(props) {
-  const price = totalPrice(props)
-
-  const amount = {}
-  for (const key in price) {
-    amount[key] = strapi.services.price.toAmount(price[key])
-  }
-
-  return amount
-}
-
 async function existingCoupons(user, code) {
   return (
     await strapi.query('order', 'orders').find({ user, 'coupon.code': code })
@@ -136,8 +122,7 @@ async function existingCoupons(user, code) {
 }
 
 module.exports = {
-  totalAmount,
-  totalPrice,
+  summary,
   price,
   amount,
   cartPrice,

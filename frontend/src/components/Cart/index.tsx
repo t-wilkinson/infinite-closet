@@ -9,63 +9,34 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 
 import useAnalytics from '@/utils/useAnalytics'
-import { userActions } from '@/User/slice'
 import { fmtPrice } from '@/utils/helpers'
 import { getURL } from '@/utils/api'
 import { Checkbox } from '@/Form/'
 import { Icon, Hover } from '@/components'
 import { rentalLengths } from '@/utils/constants'
 import * as sizing from '@/utils/sizing'
-import { useSelector, useDispatch } from '@/utils/store'
-import { StrapiOrder } from '@/utils/models'
-import * as CartUtils from '@/utils/cart'
+import { useDispatch, useSelector } from '@/utils/store'
+import CartUtils from '@/Cart/utils'
 
-type Cart = {
-  toggleInsurance: (id: string) => void
-  remove: (order: any) => void
-  cart: StrapiCartItem[]
-  insurance: { [key: string]: boolean }
-}
+import { CheckoutItem } from './types'
 
-export const Cart = ({ toggleInsurance, remove, cart, insurance }: Cart) => {
+export const Cart = () => {
+  const cart = useSelector((state) => state.cart.checkoutCart)
   return (
     <div className="w-full space-y-2">
       {cart.map((item) => {
-        return (
-          <CartItem
-            key={CartUtils.toKey(item)}
-            remove={remove}
-            toggleInsurance={toggleInsurance}
-            itemInsurance={insurance[item.id]}
-            {...item}
-          />
-        )
+        return <CartItem key={item.id} {...item} />
       })}
     </div>
   )
 }
 
-export type StrapiCartItem = {
-  itemInsurance: boolean
-  valid: boolean
-  price: number
-  available: number
-} & StrapiOrder
-
-export type CartItem = StrapiCartItem & {
-  toggleInsurance: (id: string) => void
-  remove: (order: any) => void
-}
-
 export const CartItem = ({
-  toggleInsurance,
-  remove,
-  itemInsurance,
   valid,
   price,
   available,
   ...order
-}: CartItem) => {
+}: CheckoutItem) => {
   const { product } = order
   const date = dayjs(order.startDate).tz('Europe/London') // order.startDate is utc
   const startDate = date.format('ddd, MMM D')
@@ -75,16 +46,18 @@ export const CartItem = ({
   const Bold = (props: object) => <span className="font-bold" {...props} />
   const analytics = useAnalytics()
   const dispatch = useDispatch()
-  const user = useSelector((state) => state.user.data)
+
+  function toggleInsurance(id) {
+    dispatch(CartUtils.update({ id, insurance: !order.insurance }))
+  }
 
   const removeItem = () => {
-    CartUtils.remove(order)
-    remove(order)
-    dispatch(userActions.countCart(CartUtils.count(user?.id)))
+    dispatch(CartUtils.remove(order.id))
     analytics.logEvent('remove_from_cart', {
       user: order.user?.email || '',
     })
   }
+
   return (
     <div
       className={`flex-row items-center border p-4 rounded-sm relative bg-white
@@ -155,7 +128,7 @@ export const CartItem = ({
           <div className="relative flex-row items-center">
             <Checkbox
               onChange={() => toggleInsurance(order.id)}
-              value={itemInsurance}
+              value={order.insurance}
               label="Include insurance"
             />
             <Hover position="right-0">

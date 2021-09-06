@@ -8,24 +8,21 @@ dayjs.extend(utc)
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { fmtPrice } from '@/utils/helpers'
-import { fetchAPI } from '@/utils/api'
 import { CouponCode } from '@/Form'
 import useFields, { cleanFields } from '@/Form/useFields'
 import { Button, BlueLink, Icon } from '@/components'
 import { CartUtils } from '@/Cart/slice'
-
-import { PaymentMethods, AddPaymentMethod } from './Payment'
-import { Addresses, AddAddress } from './Address'
 import Cart from '@/Cart'
+
+import { PaymentMethods, AddPaymentMethod } from '@/User/Payment'
+import { Addresses, AddAddress } from '@/User/Address'
 
 type Popup = 'none' | 'address' | 'payment'
 type Status = null | 'checking-out' | 'error' | 'success'
 
 const initialState = {
   paymentMethod: undefined,
-  paymentMethods: [],
   address: undefined,
-  addresses: [],
   popup: 'none' as Popup,
   error: undefined,
   status: null as Status,
@@ -42,15 +39,9 @@ const reducer = (state, action) => {
     case 'status-error': return {...state, status: 'error'}
     case 'status-success': return {...state, status: 'success'}
 
-    case 'edit-payment': return { ...state, popup: 'payment' }
-    case 'edit-address': return { ...state, popup: 'address' }
-    case 'close-popup': return { ...state, popup: 'none' }
-
     case 'choose-address': return def('address')
     case 'set-addresses': return def('addresses')
 
-    case 'choose-payment-method': return { ...state, paymentMethod: action.payload }
-    case 'add-payment-method': return { ...state, paymentMethods: [...state.paymentMethods, action.payload], }
     case 'set-payment-methods': return { ...state, paymentMethods: action.payload, }
     case 'remove-payment-method': {
       const paymentMethods = [...state.paymentMethods].splice(action.payload, 1)
@@ -78,7 +69,6 @@ const StateContext = React.createContext(null)
 const DispatchContext = React.createContext(null)
 
 export const CheckoutWrapper = ({}) => {
-  const user = useSelector((state) => state.user.data)
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
@@ -90,47 +80,13 @@ export const CheckoutWrapper = ({}) => {
 
   React.useEffect(() => {
     analytics.logEvent('view_cart', {
-      user: user ? user.email : 'guest',
+      user: 'guest',
     })
   }, [])
 
   React.useEffect(() => {
-    if (!user) {
-      fetchCart()
-      return
-    }
     fetchCart()
-
-    dispatch({
-      type: 'set-addresses',
-      payload: user.addresses,
-    })
-    if (user.addresses && user.addresses[0] && user.addresses[0].id) {
-      dispatch({
-        type: 'choose-address',
-        payload: user.addresses[0].id,
-      })
-    }
-
-    fetchAPI('/account/payment-methods')
-      .then((res) => {
-        dispatch({
-          type: 'set-payment-methods',
-          payload: res.paymentMethods,
-        })
-        if (
-          res.paymentMethods &&
-          res.paymentMethods[0] &&
-          res.paymentMethods[0].id
-        ) {
-          dispatch({
-            type: 'choose-payment-method',
-            payload: res.paymentMethods[0].id,
-          })
-        }
-      })
-      .catch((err) => console.error(err))
-  }, [user])
+  }, [])
 
   return (
     <div className="w-full flex-grow items-center bg-gray-light px-4 pt-4">
@@ -174,7 +130,7 @@ const Checkout = ({ fetchCart, analytics }) => {
         fetchCart()
         dispatch({ type: 'status-success' })
         analytics.logEvent('purchase', {
-          user: user ? user.email : 'guest',
+          user: 'guest',
           type: 'checkout',
         })
       })
@@ -245,9 +201,7 @@ const Checkout = ({ fetchCart, analytics }) => {
               cart.every(isOrderInvalid)
             }
           >
-            {!user
-              ? 'Please Sign In to Checkout'
-              : !state.address
+            {!state.address
               ? 'Please Select an Address'
               : !state.paymentMethod
               ? 'Please Select a Payment Method'
@@ -299,57 +253,35 @@ const SideItem = ({ label, children, user, protect = false }) =>
 //   </div>
 // )
 
-const Address = ({ state, user, dispatch }) => (
+const Address = ({ user, dispatch }) => (
   <>
-    <Addresses
-      userId={user.id}
-      addresses={user.addresses}
-      state={state}
-      select={(id) => dispatch({ type: 'choose-address', payload: id })}
-    />
-    {state.popup === 'address' && (
-      <div className="fixed inset-0 z-30 bg-black bg-opacity-50 items-center justify-center">
-        <div className="w-full max-w-sm w-full p-6 bg-white rounded-lg relative">
-          <div className="w-full items-center">
-            <span className="font-bold text-3xl mt-2">Add Address</span>
-          </div>
-
-          <div className="w-full h-px bg-pri mb-6 mt-1 rounded-full" />
-
-          <button
-            className="absolute top-0 right-0 m-3"
-            type="button"
-            onClick={() => dispatch({ type: 'close-popup' })}
-          >
-            <Icon name="close" size={20} />
-          </button>
-          <AddAddress
-            user={user}
-            onSubmit={() => dispatch({ type: 'close-popup' })}
-          />
+    <div className="z-30 bg-black bg-opacity-50 items-center justify-center">
+      <div className="w-full max-w-sm w-full p-6 bg-white rounded-lg relative">
+        <div className="w-full items-center">
+          <span className="font-bold text-3xl mt-2">Add Address</span>
         </div>
+
+        <div className="w-full h-px bg-pri mb-6 mt-1 rounded-full" />
+
+        <button
+          className="absolute top-0 right-0 m-3"
+          type="button"
+          onClick={() => dispatch({ type: 'close-popup' })}
+        >
+          <Icon name="close" size={20} />
+        </button>
+        <AddAddress
+          user={user}
+          onSubmit={() => dispatch({ type: 'close-popup' })}
+        />
       </div>
-    )}
-    <div className="h-0" />
-    <button
-      className="flex p-2 bg-white rounded-sm border border-gray justify-center"
-      onClick={() => dispatch({ type: 'edit-address' })}
-    >
-      <span className="inline">Add Address</span>
-    </button>
+    </div>
   </>
 )
 
 const Payment = ({ state, user, dispatch }) => (
   <>
-    <PaymentMethods user={user} dispatch={dispatch} state={state} />
     <AddPaymentMethod user={user} state={state} dispatch={dispatch} />
-    <button
-      className="flex p-2 bg-white rounded-sm border border-gray justify-center"
-      onClick={() => dispatch({ type: 'edit-payment' })}
-    >
-      <span className="inline">Add Payment</span>
-    </button>
   </>
 )
 

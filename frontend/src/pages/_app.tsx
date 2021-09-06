@@ -18,9 +18,8 @@ import Banner from '@/Layout/Banner'
 import { signin } from '@/User'
 const FourOFour = dynamic(() => import('@/pages/404'))
 import { browserIs } from '@/utils/helpers'
-import { userActions } from '@/User/slice'
 import * as storage from '@/utils/storage'
-import * as CartUtils from '@/utils/cart'
+import { CartUtils } from '@/Cart/slice'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -90,6 +89,7 @@ const Wrapper = ({ router, children }) => {
   const analytics = useAnalytics()
   const consent = useSelector(layoutSelectors.consent)
   const user = useSelector((state) => state.user.data)
+  const cart = useSelector((state) => state.cart.checkoutCart)
 
   const showPopup = () => {
     window.setTimeout(() => {
@@ -113,30 +113,32 @@ const Wrapper = ({ router, children }) => {
   }, [router.pathname])
 
   React.useEffect(() => {
-    dispatch(userActions.countCart(CartUtils.count(user?.id)))
     if (user) {
       document.getElementById('_app').removeEventListener('scroll', showPopup)
     }
   }, [user])
 
   React.useEffect(() => {
-    const cart = CartUtils.get()
-    switch (Object.prototype.toString.call(cart)) {
-      case '[object Array]':
-        CartUtils.reset()
-        CartUtils.insertAll(cart as object[])
-        break
-      case '[object Object]':
-        break
-      default:
-        CartUtils.reset()
-        break
-    }
+    dispatch(CartUtils.count())
+  }, [user])
 
-    if (storage.get('cart-used') === null) {
-      CartUtils.reset()
-    }
+  React.useEffect(() => {
+    // for every order in local storage attached to user -> move cart to backend
+    // guest -> do nothing
 
+    // TODO: remove this
+    if (user) {
+      const cart = storage.get('cart')
+      const notUserCart = cart.filter((order: any) => order.user !== user.id)
+      storage.set('cart', notUserCart)
+      const userCart = cart.filter(
+        (order: any) => (order.user = user.id)
+      ) as any
+      dispatch(CartUtils.insert(userCart))
+    }
+  }, [user])
+
+  React.useEffect(() => {
     if (window.fbq) {
       analytics.revoke()
     }
@@ -149,7 +151,7 @@ const Wrapper = ({ router, children }) => {
 
     dispatch(layoutActions.loadFirebase(firebase.analytics()))
     signin(dispatch)
-      .then((user) => setupUserCart(user))
+      .then((user) => setupUserCart(user, cart, dispatch))
       .catch(() => {
         const loggedIn = storage.get('logged-in')
 
@@ -197,24 +199,14 @@ const Wrapper = ({ router, children }) => {
   )
 }
 
-const setupUserCart = (user) => {
-  axios
-    .get(`/orders/cart/${user.id}`, { withCredentials: true })
-    .then((res) => res.data.cart)
-    .then((cart) => {
-      if (!CartUtils.isUsed()) {
-        CartUtils.insertAll(
-          cart.map((order) => ({ ...order, product: order.product.id }))
-        )
-      }
-    })
-    .then(() => {
-      // attach any guest cart items to user
-      const guestCart = CartUtils.getList().filter((order) => !order.user)
-      guestCart.forEach((order) => {
-        CartUtils.insert({ ...order, user: user.id })
-      })
-    })
+const setupUserCart = (user, cart, dispatch) => {
+  // attach any guest cart items to user if
+  const cartList = cart
+  const users = new Set(cartList.map((order) => order.user))
+  if (users.size <= 1 && users.has(undefined)) {
+    const guestCart = cart.filter((order) => !order.user) as any
+    dispatch(CartUtils.insert(guestCart))
+  }
 }
 
 // const useSaveScrollPos = () => {

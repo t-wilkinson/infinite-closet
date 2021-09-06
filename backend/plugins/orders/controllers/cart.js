@@ -1,6 +1,5 @@
 'use strict'
 
-const _ = require('lodash')
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 async function createCart(orders) {
@@ -42,7 +41,7 @@ async function createCart(orders) {
   )
 }
 
-async function createValidOrders({ cart, address, paymentMethod, insurance }) {
+async function getValidOrders({ cart, address, paymentMethod }) {
   const numAvailable = await strapi.plugins[
     'orders'
   ].services.helpers.numAvailableCart(cart)
@@ -65,13 +64,15 @@ async function createValidOrders({ cart, address, paymentMethod, insurance }) {
       )
 
       if (valid) {
-        return strapi.query('order', 'orders').create({
-          ..._.omit(order, ['id']),
-          address: address,
-          paymentMethod: paymentMethod,
-          status: 'planning',
-          insurance: insurance[order.id] || false,
-        })
+        return strapi.query('order', 'orders').update(
+          { id: order.id },
+          {
+            address,
+            paymentMethod,
+            status: 'planning',
+            insurance: order.insurance,
+          }
+        )
       } else {
         return Promise.reject(
           `${strapi.services.timing
@@ -94,42 +95,32 @@ module.exports = {
     const count = await strapi
       .query('order', 'orders')
       .count({ user: user.id, status: 'cart' })
-    ctx.send({ count })
+    ctx.send(count)
   },
 
-  // TODO: should this calculate the coupon amount as well?
-  // if so, must rate limit this endpoint
-  async totalPrice(ctx) {
-    const body = ctx.request.body
-
-    const total = await strapi.plugins['orders'].services.price.totalPrice({
-      cart: body.cart.filter((order) => order.valid),
-      insurance: body.insurance,
-    })
-    ctx.send(total)
-  },
-
-  async totalUserPrice(ctx) {
-    const body = ctx.request.body
-    const user = ctx.state.user
-
-    const total = await strapi.plugins['orders'].services.price.totalPrice({
-      cart: body.cart.filter((order) => order.valid),
-      insurance: body.insurance,
-      user,
-    })
-    ctx.send(total)
-  },
-
-  // !TODO
   async setCart(ctx) {
-    // const body = ctx.request.body
-    // const user = ctx.state.user
-    //     strapi.query('user', 'users-permissions').update({id: user.id}, {
-    //       orders: body.orders
-    //     })
+    const body = ctx.request.body
+    const cart = body.cart
+    const user = ctx.state.user
+    strapi.query('user', 'users-permissions').update(
+      { id: user.id },
+      {
+        orders: cart,
+      }
+    )
 
     ctx.send()
+  },
+
+  async priceSummary(ctx) {
+    const { cart } = ctx.request.body
+    const user = ctx.state.user
+
+    const summary = await strapi.plugins['orders'].services.price.summary({
+      cart,
+      user,
+    })
+    ctx.send(summary)
   },
 
   async getUserCart(ctx) {
@@ -143,12 +134,10 @@ module.exports = {
     )
 
     const cart = await createCart(orders)
-    ctx.send({
-      cart,
-    })
+    ctx.send(cart)
   },
 
-  async create(ctx) {
+  async getGuestCart(ctx) {
     const body = ctx.request.body
     const orders = await Promise.all(
       body.cart.map(async (order) => {
@@ -172,33 +161,20 @@ module.exports = {
     })
   },
 
-  // TODO: remove this, use PUT instead
-  async removeCartItem(ctx) {
-    const { id } = ctx.params
-    const order = await strapi
-      .query('order', 'orders')
-      .update({ id }, { status: 'dropped' })
-    ctx.send({
-      order,
-    })
-  },
-
-  // TODO: This needs to be refactored
+  // TODO: easy to fake ownership of cart
   async checkout(ctx) {
     const user = ctx.state.user
     const body = ctx.request.body
 
-    let cart = await createValidOrders({
+    let cart = await getValidOrders({
       cart: body.cart,
       address: body.address,
       paymentMethod: body.paymentMethod,
-      insurance: body.insurance,
     })
     const { total, coupon } = await strapi.plugins[
       'orders'
-    ].services.price.totalPrice({
+    ].services.price.summary({
       cart,
-      insurance: body.insurance,
       user,
       couponCode: body.couponCode,
     })
