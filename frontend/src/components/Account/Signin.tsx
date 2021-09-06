@@ -5,8 +5,7 @@ import { useRouter } from 'next/router'
 
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
-import { Button } from '@/components'
-import { Input, OR, Warnings, Password, FormHeader } from '@/Form'
+import { Submit, Input, OR, Warnings, Password, FormHeader } from '@/Form'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { userActions } from '@/User/slice'
 
@@ -56,9 +55,9 @@ export const Signin = ({ onSubmit = () => {} }) => {
       <Warnings warnings={warnings} />
       <Input {...fields.email} />
       <Password {...fields.password} />
-      <Button onClick={signinUser} disabled={!isValid(fields)}>
+      <Submit onSubmit={signinUser} disabled={!isValid(fields)}>
         Sign In
-      </Button>
+      </Submit>
 
       <OR />
 

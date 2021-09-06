@@ -3,7 +3,7 @@ import Link from 'next/link'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 
-import { Input, Warnings, Password, FormHeader, Checkbox } from '@/Form'
+import { Submit, Input, Warnings, Password, FormHeader, Checkbox } from '@/Form'
 import { Button } from '@/components'
 import useFields, { isValid, cleanFields } from '@/Form/useFields'
 import { useDispatch } from '@/utils/store'
@@ -80,9 +80,9 @@ export const Register = ({
       <Input {...fields.email} />
       <Password {...fields.password} />
       <Checkbox {...fields.mailingList} className="mt-2 mb-4" />
-      <Button onClick={registerUser} disabled={!isValid(fields)}>
+      <Submit onSubmit={registerUser} disabled={!isValid(fields)}>
         Register
-      </Button>
+      </Submit>
     </>
   )
 }

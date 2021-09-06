@@ -1,8 +1,16 @@
 import React from 'react'
 import { configureStore } from '@reduxjs/toolkit'
-import { storeOptions } from '@/utils/store'
+import { RootState, storeOptions } from '@/utils/store'
 import * as testing from '@testing-library/react'
 import { Provider } from 'react-redux'
+
+export type State = RootState
+
+type RecursivePartial<T> = {
+  [P in keyof T]?: RecursivePartial<T[P]>
+}
+
+export type PartialState = RecursivePartial<State>
 
 function render(
   ui: React.ReactElement<any>,

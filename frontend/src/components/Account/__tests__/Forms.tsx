@@ -39,6 +39,7 @@ describe('User', () => {
         lastName: mockUser.lastName,
         email: mockUser.email,
         password: mockUser.password,
+        subscribed: '',
       })
       .reply(200, { user: mockUser })
 

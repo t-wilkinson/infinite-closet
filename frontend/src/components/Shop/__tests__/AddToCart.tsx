@@ -1,15 +1,21 @@
 import React from 'react'
 import nock from 'nock'
-import ProductRentContents from '../ProductRentContents'
+import dayjs from 'dayjs'
+
 import * as t from '@/utils/test'
 import { mockProduct } from '@/Products/__mocks__/product'
+
+import ProductRentContents, {
+  OneTimeRentalTime,
+  OneTimeSizeSelector,
+} from '../ProductRentContents'
 
 const mockState = {
   rentType: 'OneTime',
   oneTime: 'short',
   membership: 'Short',
   dateVisible: false,
-}
+} as const
 
 const sizeChart = {
   id: '20',
@@ -30,36 +36,67 @@ const sizeChart = {
   published_at: null,
 }
 
-const renderShopContents = (initialState: object) => {
-  t.render(
-    <ProductRentContents product={mockProduct} sizeChart={sizeChart} />,
-    { initialState }
-  )
-}
+describe('Add to cart', () => {
+  const render = (initialState: object) => {
+    // TODO: this does not work
+    return t.render(<ProductRentContents product={mockProduct} />, {
+      initialState,
+    })
+  }
 
-// prettier-ignore
-describe('<Shop /> size selector', () => {
+  it('works for guest', () => {
+    const scope = nock(t.api).get('/size-chart').reply(200, sizeChart)
+
+    const selectedDate = dayjs()
+    selectedDate.set('day', selectedDate.get('day') + 15)
+    const component = render({
+      shop: { ...mockState, selectedDate, size: 'MD' },
+      user: { data: null },
+    })
+
+    const addToCart = t.screen.getByText(/Add to Cart/)
+    t.fireEvent.click(addToCart)
+  })
+})
+
+describe('OneTimeSizeSelector', () => {
+  const render = (
+    initialState: t.PartialState,
+    { setChartOpen = () => {}, chartOpen }
+  ) => {
+    t.render(
+      <OneTimeSizeSelector
+        product={mockProduct}
+        setChartOpen={setChartOpen}
+        chartOpen={chartOpen}
+      />,
+      {
+        initialState,
+      }
+    )
+  }
+
+  // prettier-ignore
   it('is populated with users size', () => {
-    renderShopContents({ shop: mockState, user: { data: { size: 'MD' } } })
+    render({ shop: mockState, user: { data: { size: 'MD'} } }as any, {chartOpen: false})
 
     const Size = t.screen.getByText('Size').nextElementSibling as HTMLElement
     expect(t.within(Size).getByText(/md/i)).toBeInTheDocument()
   })
 
+  // prettier-ignore
   it('is populated with text', () => {
-    renderShopContents({ shop: mockState })
+    render({ shop: mockState }, {chartOpen: false})
 
     const SizeSelector = t.screen.getByText('Size').nextElementSibling as HTMLElement
     expect(t.within(SizeSelector).getByText(/select size/i)).toBeInTheDocument()
   })
 
+  // prettier-ignore
   it('can select size', () => {
-    renderShopContents({ shop: mockState })
+    render({ shop: mockState }, {chartOpen: true})
 
     const SizeSelector = t.screen.getByText('Size').nextElementSibling as HTMLElement
-    const SizeDropDown = t.within(SizeSelector).getByLabelText('Dropdown product sizes')
-
-    t.fireEvent.click(SizeDropDown, {})
     const sizeMD = t.within(SizeSelector).getByText(/md/i)
 
     t.fireEvent.click(sizeMD)
@@ -68,20 +105,26 @@ describe('<Shop /> size selector', () => {
 })
 
 // prettier-ignore
-describe('<Shop /> rental time', () => {
+describe('OneTimeRentalTime', () => {
+  const render = (initialState: t.PartialState) => {
+    t.render(<OneTimeRentalTime />, {
+      initialState,
+    })
+  }
+
   it('renders', () => {
-    renderShopContents({ shop: mockState })
+    render({ shop: mockState })
   })
 
   // TODO
   it('can select rental length', () => {
-    renderShopContents({ shop: mockState })
+    render({ shop: mockState })
      t.screen.getByText('Rental time').nextElementSibling as HTMLElement
   })
 
   // TODO
   it('can select date', () => {
-    renderShopContents({ shop: mockState })
+    render({ shop: mockState })
      t.screen.getByText('Rental time').nextElementSibling as HTMLElement
   })
 })

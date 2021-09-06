@@ -24,7 +24,7 @@ describe('Tests', () => {
       .persist()
       .post(t.Url('/account/wallet'))
       .reply(200, {})
-      .post(t.Url('/orders/cart/:number'))
+      .post(t.Url('/orders/cart/create'), { cart: [] })
       .reply(200, { cart: mockCart })
       .post(t.Url('/orders/cart/price'), /.*/)
       .reply(200, {})

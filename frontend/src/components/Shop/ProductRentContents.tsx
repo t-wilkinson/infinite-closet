@@ -105,63 +105,12 @@ export const productRentContents = {
       <>
         <DatePicker />
 
-        <SelectorItem label="Size" className="my-2 z-10 w-full">
-          <SizeChartPopup
-            product={product}
-            state={chartOpen}
-            setState={setChartOpen}
-          />
-          <div className="relative flex-row justify-start space-x-4 items-center w-full">
-            {/* select elements are too difficult to style
-                divs don't act like buttons
-                buttons can't use aria-role
-            */}
-            <SizeSelector
-              onChange={(size) => dispatch(shopActions.changeSize(size))}
-              product={product}
-              size={state.size}
-            />
-            <button onClick={() => setChartOpen((state) => !state)}>
-              <span className="underline">Size Chart</span>
-            </button>
-          </div>
-          {/* <div className="relative"> */}
-          {/*   <div id="mySize" /> */}
-          {/* </div> */}
-        </SelectorItem>
-
-        <SelectorItem label="Rental time" className="my-2">
-          <div className="flex-row justify-between w-full flex-wrap">
-            <div className="mr-6">
-              <OneTimeRadioButton
-                selected={state.oneTime === 'short'}
-                oneTime="short"
-                dispatch={dispatch}
-              />
-              <OneTimeRadioButton
-                selected={state.oneTime === 'long'}
-                oneTime="long"
-                dispatch={dispatch}
-              />
-            </div>
-            {state.size !== undefined && (
-              <button
-                className="flex flex-grow border border-gray py-2 px-2 rounded-sm rounded-sm flex-row flex-grow justify-between items-center"
-                onClick={() => dispatch(shopActions.showDate())}
-              >
-                <span>
-                  {state.selectedDate &&
-                    state.selectedDate.format('ddd M/D') +
-                      ' - ' +
-                      state.selectedDate
-                        .add(rentalLengths[state.oneTime] + 1, 'day')
-                        .format('ddd M/D')}
-                </span>
-                <Icon className="text-gray" name="date" size={24} />
-              </button>
-            )}
-          </div>
-        </SelectorItem>
+        <OneTimeSizeSelector
+          product={product}
+          chartOpen={chartOpen}
+          setChartOpen={setChartOpen}
+        />
+        <OneTimeRentalTime />
 
         <Button
           onClick={addToCart}
@@ -193,6 +142,78 @@ export const productRentContents = {
       <span className="font-subheader text-center text-3xl">Coming Soon</span>
     </div>
   ),
+}
+
+export const OneTimeSizeSelector = ({ product, chartOpen, setChartOpen }) => {
+  const state = useSelector((state) => state.shop)
+  const dispatch = useDispatch()
+
+  return (
+    <SelectorItem label="Size" className="my-2 z-10 w-full">
+      <SizeChartPopup
+        product={product}
+        state={chartOpen}
+        setState={setChartOpen}
+      />
+      <div className="relative flex-row justify-start space-x-4 items-center w-full">
+        {/* select elements are too difficult to style
+                divs don't act like buttons
+                buttons can't use aria-role
+            */}
+        <SizeSelector
+          onChange={(size: Size) => dispatch(shopActions.changeSize(size))}
+          product={product}
+          size={state.size}
+        />
+        <button onClick={() => setChartOpen((state) => !state)}>
+          <span className="underline">Size Chart</span>
+        </button>
+      </div>
+      {/* <div className="relative"> */}
+      {/*   <div id="mySize" /> */}
+      {/* </div> */}
+    </SelectorItem>
+  )
+}
+
+export const OneTimeRentalTime = () => {
+  const state = useSelector((state) => state.shop)
+  const dispatch = useDispatch()
+
+  return (
+    <SelectorItem label="Rental time" className="my-2">
+      <div className="flex-row justify-between w-full flex-wrap">
+        <div className="mr-6">
+          <OneTimeRadioButton
+            selected={state.oneTime === 'short'}
+            oneTime="short"
+            dispatch={dispatch}
+          />
+          <OneTimeRadioButton
+            selected={state.oneTime === 'long'}
+            oneTime="long"
+            dispatch={dispatch}
+          />
+        </div>
+        {state.size !== undefined && (
+          <button
+            className="flex flex-grow border border-gray py-2 px-2 rounded-sm rounded-sm flex-row flex-grow justify-between items-center"
+            onClick={() => dispatch(shopActions.showDate())}
+          >
+            <span>
+              {state.selectedDate &&
+                state.selectedDate.format('ddd M/D') +
+                  ' - ' +
+                  state.selectedDate
+                    .add(rentalLengths[state.oneTime] + 1, 'day')
+                    .format('ddd M/D')}
+            </span>
+            <Icon className="text-gray" name="date" size={24} />
+          </button>
+        )}
+      </div>
+    </SelectorItem>
+  )
 }
 
 const SelectorItem = ({ label, children, ...props }) => (
