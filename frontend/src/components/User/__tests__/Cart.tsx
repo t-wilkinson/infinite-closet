@@ -1,16 +1,14 @@
 import React from 'react'
 import nock from 'nock'
-import { CartItem } from '../Cart'
+import { CartItem } from '@/Cart'
 import * as t from '@/utils/test'
 import { cartItem } from '../__mocks__/order'
 jest.mock('next/image')
 
 jest.mock('@/utils/storage')
-const mockCartItem = (props: object): CartItem => {
+const mockCartItem = (props: object): typeof CartItem => {
   return {
     ...cartItem,
-    remove: jest.fn(),
-    toggleInsurance: jest.fn(),
     ...props,
   }
 }
