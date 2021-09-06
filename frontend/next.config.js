@@ -40,8 +40,9 @@ module.exports = withPWA({
   },
   images: {
     domains: [
-      'frontend',
-      'backend',
+      'ic.com',
+      'api.ic.com',
+      'admin.ic.com',
       'dev.' + domain,
       'api.dev.' + domain,
       domain,
