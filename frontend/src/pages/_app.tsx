@@ -128,7 +128,7 @@ const Wrapper = ({ router, children }) => {
 
     // TODO: remove this
     if (user) {
-      const cart = storage.get('cart')
+      const cart = storage.get('cart') || []
       const notUserCart = cart.filter((order: any) => order.user !== user.id)
       storage.set('cart', notUserCart)
       const userCart = cart.filter(
