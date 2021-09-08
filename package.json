@@ -4,19 +4,22 @@
   "version": "1.0.0",
   "scripts": {
     "develop:backend": "yarn --cwd backend develop",
-    "develop:frontend": "wait-on http://backend:1337 && yarn --cwd frontend develop",
+    "develop:frontend": "wait-on http://api.ic.com && yarn --cwd frontend develop",
     "develop": "FORCE_COLOR=1 npm-run-all -l -p develop:*",
     "test:frontend": "yarn --cwd frontend test --passWithNoTests",
     "test:backend": "yarn --cwd backend test --passWithNoTests",
-    "test": "FORCE_COLOR=1 npm-run-all -l test:*"
+    "test": "FORCE_COLOR=1 npm-run-all -l test:*",
+    "cypress": "cypress open"
   },
   "devDependencies": {
     "core-js": "3",
+    "cypress-plugin-tab": "^1.0.5",
     "npm-run-all": "4.1.5",
     "react-app": "^1.1.2",
     "wait-on": "5.2.1"
   },
   "dependencies": {
+    "cypress": "^8.3.1",
     "lodash-es": "^4.17.21"
   }
 }

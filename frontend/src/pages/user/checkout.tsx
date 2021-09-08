@@ -1,28 +1,27 @@
 import React from 'react'
-import { useRouter } from 'next/router'
 
-import Checkout from '@/User/Checkout'
+import UserCheckout from '@/User/Checkout'
+import GuestCheckout from '@/Guest/Checkout'
 import Layout from '@/Layout'
 import { useSelector } from '@/utils/store'
 
 const Page = () => {
   const user = useSelector((state) => state.user.data)
-  const router = useRouter()
 
   if (user === undefined) {
     return null
-  }
-
-  return (
-    <Layout spacing={false}>
-      <Checkout user={user} />
-    </Layout>
-  )
-}
-
-export const getServerSideProps = async () => {
-  return {
-    props: {},
+  } else if (user === null) {
+    return (
+      <Layout spacing={false}>
+        <GuestCheckout />
+      </Layout>
+    )
+  } else {
+    return (
+      <Layout spacing={false}>
+        <UserCheckout />
+      </Layout>
+    )
   }
 }
 

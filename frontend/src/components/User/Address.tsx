@@ -1,13 +1,27 @@
 import React from 'react'
 import axios from 'axios'
 
+import { StrapiAddress } from '@/utils/models'
 import { Button, Icon } from '@/components'
 import { Input } from '@/Form'
 import { useFields, cleanFields } from '@/Form/useFields'
-import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
-import { signin } from './'
+import { useSignin } from './'
+
+export const useAddressFields = (address: Partial<StrapiAddress> = {}) => {
+  const str = (field: string) =>
+    typeof address[field] === 'string' ? address[field] : ''
+  const fields = useFields({
+    firstName: { constraints: 'required', default: str('firstName') },
+    lastName: { constraints: 'required', default: str('lastName') },
+    address: { constraints: 'required', default: str('address') },
+    town: { constraints: 'required', default: str('town') },
+    postcode: { constraints: 'required', default: str('postcode') },
+    mobileNumber: { constraints: 'required', default: str('phoneNumber') },
+  })
+  return fields
+}
 
 export const Addresses = ({ userId, addresses, state, select }) => {
   return (
@@ -36,12 +50,12 @@ export const Address = ({
   lastName,
   userId,
 }) => {
-  const rootDispatch = useDispatch()
+  const signin = useSignin()
 
   const removeAddress = () => {
     axios
       .delete(`/account/${userId}/addresses/${id}`, { withCredentials: true })
-      .then(() => signin(rootDispatch))
+      .then(() => signin())
       .catch((err) => console.error(err))
   }
 
@@ -84,16 +98,8 @@ export const Address = ({
   )
 }
 
-export const UpdateAddress = ({ user, dispatch, address }) => {
-  const fields = useFields({
-    firstName: { constraints: 'required', default: address.firstName },
-    lastName: { constraints: 'required', default: address.lastName },
-    address: { constraints: 'required', default: address.address },
-    town: { constraints: 'required', default: address.town },
-    postcode: { constraints: 'required', default: address.postcode },
-    mobileNumber: { constraints: 'required', default: user.phoneNumber },
-  })
-
+export const UpdateAddress = ({ dispatch, address }) => {
+  const fields = useAddressFields(address)
   const onSubmit = () => {
     const cleaned = cleanFields(fields)
     axios
@@ -114,15 +120,12 @@ export const UpdateAddress = ({ user, dispatch, address }) => {
 }
 
 export const AddAddress = ({ user, onSubmit }) => {
-  const fields = useFields({
-    firstName: { constraints: 'required', default: user.firstName },
-    lastName: { constraints: 'required', default: user.lastName },
-    address: { constraints: 'required', default: '' },
-    town: { constraints: 'required', default: '' },
-    postcode: { constraints: 'required', default: '' },
-    mobileNumber: { constraints: 'required', default: user.phoneNumber },
+  const fields = useAddressFields({
+    firstName: user.firstName,
+    lastName: user.lastName,
+    mobileNumber: user.phoneNumber,
   })
-  const rootDispatch = useDispatch()
+  const signin = useSignin()
   const analytics = useAnalytics()
 
   const createAddress = () => {
@@ -140,7 +143,7 @@ export const AddAddress = ({ user, onSubmit }) => {
           user: user.email,
         })
         onSubmit()
-        signin(rootDispatch)
+        signin()
       })
       .catch((err) => console.error(err))
   }
@@ -148,36 +151,44 @@ export const AddAddress = ({ user, onSubmit }) => {
   return <EditAddress onSubmit={createAddress} fields={fields} />
 }
 
-const EditAddress = ({ onSubmit, fields }) => {
-  const [valid, setValid] = React.useState(true)
-
-  const validatePostcode = () => {
-    if (
-      process.env.NODE_ENV === 'test' ||
-      process.env.NODE_ENV === 'production'
-    ) {
-      axios
-        .get(`/addresses/verify/${fields.postcode.value}`)
-        .then((res) => {
-          setValid(res.data.valid)
-          if (res.data.valid) {
-            onSubmit()
-          }
-        })
-        .catch((err) => {
-          console.error(err)
-          setValid(false)
-        })
-    } else {
-      onSubmit()
-    }
+export const validatePostcode = async (value) => {
+  if (
+    process.env.NODE_ENV === 'test' ||
+    process.env.NODE_ENV === 'production'
+  ) {
+    return axios
+      .get(`/addresses/verify/${value}`)
+      .then((res) => {
+        if (res.data.valid) {
+          return
+        } else {
+          throw new Error('Postcode not served')
+        }
+      })
+      .catch((err) => {
+        throw err
+      })
+  } else {
+    return
   }
+}
+
+export const EditAddress = ({ onSubmit, fields }) => {
+  const [valid, setValid] = React.useState(true)
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault()
-        validatePostcode()
+        validatePostcode(fields.postcode.value)
+          .then(() => {
+            setValid(true)
+            onSubmit()
+          })
+          .catch((err) => {
+            setValid(false)
+            console.error(err)
+          })
       }}
     >
       <div className="grid grid-flow-row grid-cols-2 w-full gap-x-4">

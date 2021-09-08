@@ -43,17 +43,15 @@ module.exports = {
     }
 
     const order = await strapi.plugins['orders'].services.helpers.create({
-      user: user.id,
+      user: user ? user.id : undefined,
       status: body.status,
       size: body.size,
       product: body.product,
-      startDate: body.date,
+      startDate: body.startDate,
       rentalLength: body.rentalLength,
     })
 
-    ctx.send({
-      order,
-    })
+    ctx.send(order)
   },
 
   async status(ctx) {
@@ -72,9 +70,7 @@ module.exports = {
       order.price = strapi.plugins['orders'].services.price.price(order)
     }
 
-    ctx.send({
-      orders,
-    })
+    ctx.send({ orders })
   },
 
   // TODO: should only take order id

@@ -1,4 +1,4 @@
-import Orders from '@/User/Orders'
+import Orders from '@/Cart/Orders'
 import User from '@/User'
 import Layout from '@/Layout'
 

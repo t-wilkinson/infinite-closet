@@ -5,20 +5,18 @@ import utc from 'dayjs/plugin/utc'
 import { useRouter } from 'next/router'
 dayjs.extend(utc)
 
-import { userActions } from '@/User/slice'
-import { useDispatch } from '@/utils/store'
+import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { fmtPrice } from '@/utils/helpers'
 import { fetchAPI } from '@/utils/api'
-import { Coupon } from '@/Form/types'
 import { CouponCode } from '@/Form'
 import useFields, { cleanFields } from '@/Form/useFields'
 import { Button, BlueLink, Icon } from '@/components'
-import * as CartUtils from '@/utils/cart'
+import { CartUtils } from '@/Cart/slice'
 
 import { PaymentMethods, AddPaymentMethod } from './Payment'
 import { Addresses, AddAddress } from './Address'
-import Cart from './Cart'
+import Cart from '@/Cart'
 
 type Popup = 'none' | 'address' | 'payment'
 type Status = null | 'checking-out' | 'error' | 'success'
@@ -31,10 +29,6 @@ const initialState = {
   popup: 'none' as Popup,
   error: undefined,
   status: null as Status,
-  cart: [],
-  insurance: {},
-  total: undefined,
-  coupon: undefined as Coupon,
 }
 
 const reducer = (state, action) => {
@@ -43,12 +37,6 @@ const reducer = (state, action) => {
   switch (action.type) {
     case 'correct-coupon': return def('coupon')
     case 'clear-coupon': return {...state, coupon: undefined,}
-
-    case 'clear-insurance': return {...state, insurance: {}}
-    case 'toggle-insurance': return {...state, insurance: {...state.insurance,  [action.payload]: !state.insurance[action.payload]}}
-
-    case 'cart-total': return def('total')
-    case 'fill-cart': return def('cart')
 
     case 'status-checkout': return {...state, status: 'checking-out'}
     case 'status-error': return {...state, status: 'error'}
@@ -86,21 +74,19 @@ const reducer = (state, action) => {
   }
 }
 
-export const CheckoutWrapper = ({ user }) => {
+const StateContext = React.createContext(null)
+const DispatchContext = React.createContext(null)
+
+export const CheckoutWrapper = ({}) => {
+  const user = useSelector((state) => state.user.data)
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
+  const cart = useSelector((state) => state.cart.checkoutCart)
 
-  const fetchCart = async () => {
-    await axios
-      .post(`/orders/cart/create`, {
-        cart: CartUtils.getByUser(user?.id),
-      })
-      .then((res) => {
-        dispatch({ type: 'fill-cart', payload: res.data.cart })
-        rootDispatch(userActions.countCart(res.data.cart.length))
-      })
-      .catch((err) => console.error(err))
+  const fetchCart = () => {
+    rootDispatch(CartUtils.view())
+    rootDispatch(CartUtils.summary())
   }
 
   React.useEffect(() => {
@@ -110,10 +96,12 @@ export const CheckoutWrapper = ({ user }) => {
   }, [])
 
   React.useEffect(() => {
-    if (!user) {
-      fetchCart()
-      return
-    }
+    rootDispatch(CartUtils.summary())
+  }, [cart])
+
+  React.useEffect(() => {
+    fetchCart()
+
     dispatch({
       type: 'set-addresses',
       payload: user.addresses,
@@ -124,8 +112,6 @@ export const CheckoutWrapper = ({ user }) => {
         payload: user.addresses[0].id,
       })
     }
-
-    fetchCart()
 
     fetchAPI('/account/payment-methods')
       .then((res) => {
@@ -147,38 +133,27 @@ export const CheckoutWrapper = ({ user }) => {
       .catch((err) => console.error(err))
   }, [user])
 
-  React.useEffect(() => {
-    axios
-      .post(
-        user ? `/orders/cart/price/${user.id}` : '/orders/cart/price',
-        {
-          insurance: state.insurance,
-          cart: state.cart,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => dispatch({ type: 'cart-total', payload: res.data }))
-      .catch((err) => console.error(err))
-  }, [state.cart, state.insurance])
-
   return (
     <div className="w-full flex-grow items-center bg-gray-light px-4 pt-4">
-      <Checkout
-        fetchCart={fetchCart}
-        analytics={analytics}
-        dispatch={dispatch}
-        state={state}
-        user={user}
-      />
+      <StateContext.Provider value={state}>
+        <DispatchContext.Provider value={dispatch}>
+          <Checkout fetchCart={fetchCart} analytics={analytics} />
+        </DispatchContext.Provider>
+      </StateContext.Provider>
     </div>
   )
 }
 
-const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
-  const router = useRouter()
+const Checkout = ({ fetchCart, analytics }) => {
+  const dispatch = React.useContext(DispatchContext)
+  const state = React.useContext(StateContext)
+  const cartCount = useSelector((state) => state.cart.count)
+  const cart = useSelector((state) => state.cart.checkoutCart)
+  const user = useSelector((state) => state.user.data)
   const fields = useFields({
     couponCode: {},
   })
+  const summary = useSelector((state) => state.cart.checkoutSummary)
 
   const checkout = () => {
     dispatch({ type: 'payment-succeeded' })
@@ -191,21 +166,18 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
         {
           address: state.address,
           paymentMethod: state.paymentMethod,
-          cart: state.cart,
-          insurance: state.insurance,
+          cart: cart.map((item) => item.order),
           couponCode: cleaned.couponCode,
         },
         { withCredentials: true }
       )
-      .then((res) => {
-        CartUtils.removeAll(res.data.checkedOut)
+      .then(() => {
+        fetchCart()
         dispatch({ type: 'status-success' })
-        dispatch({ type: 'clear-insurance' })
         analytics.logEvent('purchase', {
           user: user ? user.email : 'guest',
           type: 'checkout',
         })
-        fetchCart()
       })
       .catch((err) => {
         console.error(err)
@@ -221,17 +193,17 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
     >
       <div className="md:w-2/5 space-y-4">
         <SideItem label="Addresses" user={user} protect>
-          <Address state={state} dispatch={dispatch} user={user} />
+          <Address user={user} state={state} dispatch={dispatch} />
         </SideItem>
         <SideItem label="Payment Methods" user={user} protect>
-          <Payment state={state} dispatch={dispatch} user={user} />
+          <Payment user={user} state={state} dispatch={dispatch} />
         </SideItem>
         <SideItem label="Summary" user={user}>
           <Summary
             user={user}
-            couponCode={fields.couponCode}
-            state={state}
+            summary={summary}
             dispatch={dispatch}
+            couponCode={fields.couponCode}
           />
         </SideItem>
       </div>
@@ -241,7 +213,7 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
             Thank you for your purchase!
           </span>
         </div>
-      ) : state.cart.length === 0 ? (
+      ) : cartCount === 0 ? (
         <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
           <span className="font-bold text-xl flex flex-col items-center">
             <div>Hmm... Your cart looks empty. </div>
@@ -255,35 +227,16 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
         </div>
       ) : (
         <div className="w-full space-y-4">
-          {!user && (
-            <button
-              className="bg-sec hover:bg-pri transition-all duration-200 p-3 font-bold text-white mb-2"
-              onClick={() => {
-                router.push('/account/signin')
-              }}
-            >
-              Please Sign In to Checkout
-            </button>
-          )}
-          <Cart
-            cart={state.cart}
-            remove={() => fetchCart()}
-            toggleInsurance={(id) =>
-              dispatch({ type: 'toggle-insurance', payload: id })
-            }
-            insurance={state.insurance}
-          />
+          <Cart />
           <Button
             onClick={checkout}
             disabled={
               !(state.paymentMethod && state.address) ||
               ['checking-out'].includes(state.status) ||
-              state.cart.every(isOrderInvalid)
+              cart.every(isOrderInvalid)
             }
           >
-            {!user
-              ? 'Please Sign In to Checkout'
-              : !state.address
+            {!state.address
               ? 'Please Select an Address'
               : !state.paymentMethod
               ? 'Please Select a Payment Method'
@@ -293,9 +246,9 @@ const Checkout = ({ fetchCart, analytics, state, dispatch, user }) => {
               ? 'Oops... We ran into an issue'
               : state.status === 'success'
               ? 'Successfully Checked Out'
-              : state.cart.every(isOrderInvalid)
+              : cart.every(isOrderInvalid)
               ? 'No Available Items'
-              : state.cart.some(isOrderInvalid)
+              : cart.some(isOrderInvalid)
               ? 'Checkout Available Items'
               : 'Checkout'}
           </Button>
@@ -315,25 +268,8 @@ const SideItem = ({ label, children, user, protect = false }) =>
         <div className="w-full h-px bg-pri mt-2 -mb-2" />
       </span>
       {children}
-      {/* {protect && user ? ( */}
-      {/*   children */}
-      {/* ) : protect ? ( */}
-      {/*   <PleaseSignIn label={label} /> */}
-      {/* ) : ( */}
-      {/*   children */}
-      {/* )} */}
     </div>
   )
-
-// const PleaseSignIn = ({ label }) => (
-//   <div className="relative w-full h-32">
-//     <div className="absolute inset-0 bg-white border-gray justify-end">
-//       {/* <button className="bg-sec text-white font-bold p-3 hover:bg-pri transition-all duration-200"> */}
-//       {/*   Please Sign In */}
-//       {/* </button> */}
-//     </div>
-//   </div>
-// )
 
 const Address = ({ state, user, dispatch }) => (
   <>
@@ -389,16 +325,16 @@ const Payment = ({ state, user, dispatch }) => (
   </>
 )
 
-const Summary = ({ user, couponCode, dispatch, state }) => {
-  const { total, coupon } = state
-  if (!total) {
+const Summary = ({ user, couponCode, dispatch, summary }) => {
+  if (!summary) {
     return <div />
   }
+  const { coupon } = summary
 
   return (
     <div>
       <CouponCode
-        price={total.total}
+        price={summary.total}
         user={user.id}
         context="checkout"
         setCoupon={(coupon) =>
@@ -406,18 +342,18 @@ const Summary = ({ user, couponCode, dispatch, state }) => {
         }
         field={couponCode}
       />
-      <Price label="Subtotal" price={total.subtotal} />
-      <Price label="Insurance" price={total.insurance} />
-      <Price label="Shipping" price={total.shipping} />
+      <Price label="Subtotal" price={summary.subtotal} />
+      <Price label="Insurance" price={summary.insurance} />
+      <Price label="Shipping" price={summary.shipping} />
       <Price
         negative
         label="Discount"
-        price={total.discount + coupon?.discount || 0}
+        price={summary.discount + (coupon?.discount || 0)}
       />
       <div className="h-px bg-pri my-1" />
       <Price
         label="Total"
-        price={coupon?.price || total.total}
+        price={coupon?.price || summary.total}
         className="font-bold"
       />
     </div>

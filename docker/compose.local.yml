@@ -17,6 +17,7 @@ services:
     environment:
       FRONTEND_DOMAIN: ic.com
       BACKEND_DOMAIN: api.ic.com
+      LOCAL: 'true'
     command: yarn run develop:admin
     volumes:
       - ../backend:/app

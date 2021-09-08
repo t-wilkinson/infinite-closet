@@ -133,7 +133,7 @@ type Status = 'None' | 'Error' | 'Submitted' | 'Submitting'
 const Waitlist = () => {
   const [status, setStatus] = React.useState<Status>('None')
   const fields = useFields({
-    email: {
+    footerEmail: {
       constraints: 'email',
       label: 'Email Address',
     },
@@ -144,7 +144,7 @@ const Waitlist = () => {
     const cleaned = cleanFields(fields)
     axios
       .post('/account/mailinglist', {
-        email: cleaned.email,
+        email: cleaned.footerEmail,
       })
       .then(() => setStatus('Submitted'))
       .catch(() => {
@@ -180,7 +180,10 @@ const Waitlist = () => {
         </div>
       ) : null}
       <div className="flex-row space-x-4 w-full">
-        <Input {...fields.email} after={<Button className="">Join</Button>} />
+        <Input
+          {...fields.footerEmail}
+          after={<Button className="">Join</Button>}
+        />
       </div>
       <h3 className="font-bold text-sm -mt-1 text-white">
         Get 10% off your first rental

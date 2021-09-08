@@ -222,10 +222,12 @@ export const Password = (props) => {
       {...props}
       type={passwordVisible ? 'text' : 'password'}
       after={
-        <PasswordVisible
-          passwordVisible={passwordVisible}
-          setPasswordVisible={setPasswordVisible}
-        />
+        <div className="mr-2">
+          <PasswordVisible
+            passwordVisible={passwordVisible}
+            setPasswordVisible={setPasswordVisible}
+          />
+        </div>
       }
     />
   )
@@ -306,7 +308,7 @@ export const CouponCode = ({
   setCoupon,
   field,
 }: {
-  user: string
+  user?: string
   context: StrapiCoupon['context']
   price: number
   setCoupon: (coupon: Coupon) => void
@@ -319,7 +321,6 @@ export const CouponCode = ({
     const code = cleanField(field)
     return axios
       .post(`/coupons/discount`, {
-        user,
         code,
         context,
         price,

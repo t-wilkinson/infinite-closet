@@ -44,7 +44,7 @@ export const DatePicker = () => {
           </button>
         </div>
         <Date state={state} dispatch={dispatch} rentalLength={rentalLength} />
-        <div className="w-full items-center py-2">
+        <div className="w-full items-center pt-6">
           <small>We recommend ordering 1-2 days before your event.</small>
         </div>
       </div>
@@ -124,10 +124,12 @@ const Days = ({ days, state, dispatch, rentalLength }) => {
             {days.slice(i * 7, i * 7 + 7).map((date: Dayjs) => (
               <button
                 key={date.day()}
+                aria-label="Date"
                 onMouseEnter={() => {
                   if (valid[date.toJSON()]) setHover(date)
                   else setHover(undefined)
                 }}
+                disabled={!valid[date.toJSON()]}
                 onClick={() => {
                   if (hover) {
                     dispatch(shopActions.selectDate(date))

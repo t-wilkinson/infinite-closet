@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 import { Button, Icon } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
-import * as CartUtils from '@/utils/cart'
+import { cartSelectors } from '@/Cart/slice'
 
 import { layoutActions } from './slice'
 import Navbar from './Navbar'
@@ -72,10 +72,7 @@ export const LargeHeaderLogo = ({ router }) => (
 )
 
 const Account = ({ user }) => {
-  const [count, setCount] = React.useState(0)
-  React.useEffect(() => {
-    setCount(CartUtils.count(user?.id))
-  }, [user])
+  const count = useSelector((state) => state.cart.count)
 
   if (user) {
     return (

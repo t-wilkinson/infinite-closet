@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 import { useRouter } from 'next/router'
 
 import useAnalytics from '@/utils/useAnalytics'
@@ -7,9 +6,8 @@ import { useDispatch, useSelector } from '@/utils/store'
 import { Button, Icon } from '@/components'
 import * as sizing from '@/utils/sizing'
 import { rentalLengths } from '@/utils/constants'
-import { userActions } from '@/User/slice'
 import { Size } from '@/Products/types'
-import * as CartUtils from '@/utils/cart'
+import { CartUtils } from '@/Cart/slice'
 
 import { SizeChartPopup, SizeSelector } from './Size'
 import { shopActions } from './slice'
@@ -53,7 +51,7 @@ export const productRentContents = {
         setStatus('error')
       }
 
-      const order = {
+      const order: any = {
         user: user ? user.id : null,
         status: 'cart',
         size: sizing.unnormalize(size.size),
@@ -62,8 +60,7 @@ export const productRentContents = {
         rentalLength: state.oneTime,
       }
 
-      CartUtils.insert(order)
-      dispatch(userActions.countCart(CartUtils.count(user?.id)))
+      dispatch(CartUtils.add(order))
 
       analytics.logEvent('add_to_cart', {
         user: user ? user.email : 'guest',
@@ -71,21 +68,9 @@ export const productRentContents = {
       })
 
       if (user) {
-        axios
-          .put(
-            `/orders/cart/${user.id}`,
-            {
-              cart: CartUtils.getByUser(user.id),
-            },
-            { withCredentials: true }
-          )
-          .catch((err) => console.error(err))
-      }
-
-      if (user) {
         router.push('/user/checkout')
       } else {
-        router.push('/account/signin?redir=/user/checkout')
+        router.push('/account/signin/checkout')
       }
     }
 
@@ -197,6 +182,7 @@ export const OneTimeRentalTime = () => {
         </div>
         {state.size !== undefined && (
           <button
+            aria-label="Date selector"
             className="flex flex-grow border border-gray py-2 px-2 rounded-sm rounded-sm flex-row flex-grow justify-between items-center"
             onClick={() => dispatch(shopActions.showDate())}
           >

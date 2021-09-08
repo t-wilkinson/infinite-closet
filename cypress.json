@@ -1,0 +1,7 @@
+{
+  "baseUrl": "http://ic.com",
+  "numTestsKeptInMemory": 5,
+  "env": {
+    "backendUrl": "http://api.ic.com"
+  }
+}

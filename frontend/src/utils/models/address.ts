@@ -8,6 +8,8 @@ export interface StrapiAddress {
   postcode: string;
   firstName: string;
   lastName: string;
+  mobileNumber?: string;
+  deliveryInstructions?: string;
   created_by: string;
   updated_at: string;
   published_at: string;
