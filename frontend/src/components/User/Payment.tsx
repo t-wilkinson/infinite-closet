@@ -5,10 +5,8 @@ import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { StrapiUser } from '@/utils/models'
 import { fetchAPI } from '@/utils/api'
 import { Button, Icon } from '@/components'
-import { Submit } from '@/Form'
 import { PaymentWrapper } from '@/Form/Payments'
-import { useDispatch } from '@/utils/store'
-import { signin } from '@/User'
+import { useSignin } from '@/User'
 import useAnalytics from '@/utils/useAnalytics'
 
 import './CheckoutForm.module.css'
@@ -39,14 +37,14 @@ export const PaymentMethod = ({
   card: { brand, exp_month, exp_year, last4 },
   userId,
 }) => {
-  const rootDispatch = useDispatch()
+  const signin = useSignin()
 
   const removePaymentMethod = () => {
     axios
       .delete(`/account/${userId}/payment-methods/${id}`, {
         withCredentials: true,
       })
-      .then(() => signin(rootDispatch))
+      .then(() => signin())
       .catch((err) => console.error(err))
   }
 
@@ -88,7 +86,7 @@ export const PaymentMethod = ({
   )
 }
 
-const cardStyle = {
+export const cardStyle = {
   style: {
     base: {
       color: 'black',
@@ -167,7 +165,7 @@ const AddPaymentMethodHeader = ({ onClose }) => (
   </>
 )
 
-const Authorise = ({ setAuthorisation, authorised }) => (
+export const Authorise = ({ setAuthorisation, authorised }) => (
   <button
     onClick={() => setAuthorisation(!authorised)}
     aria-label="Authorize Infinite Closet to handle card details"

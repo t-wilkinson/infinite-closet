@@ -96,6 +96,30 @@ async function getValidOrders({ cart, address, paymentMethod }) {
     .map((value) => value.value)
 }
 
+const generateResponse = (intent) => {
+  if (
+    intent.status === 'requires_action' &&
+    intent.next_action.type === 'use_stripe_sdk'
+  ) {
+    // Tell the client to handle the action
+    return {
+      requires_action: true,
+      payment_intent_client_secret: intent.client_secret,
+    }
+  } else if (intent.status === 'succeeded') {
+    // The payment didn’t need any additional actions and completed!
+    // Handle post-payment fulfillment
+    return {
+      success: true,
+    }
+  } else {
+    // Invalid status
+    return {
+      error: 'Invalid PaymentIntent status',
+    }
+  }
+}
+
 module.exports = {
   async count(ctx) {
     const user = ctx.state.user
@@ -164,7 +188,6 @@ module.exports = {
     )
 
     const cart = await createCart(orders)
-    console.log(cart)
     ctx.send(cart)
   },
 
@@ -218,8 +241,11 @@ module.exports = {
         }))
       )
 
-    const successEmail = (orders) =>
-      strapi.plugins['email'].services.email.send({
+    const successEmail = (orders) => {
+      if (!user) {
+        return
+      }
+      return strapi.plugins['email'].services.email.send({
         template: 'checkout',
         to: user.email,
         cc:
@@ -234,26 +260,57 @@ module.exports = {
           totalPrice: strapi.services.price.toPrice(total),
         },
       })
+    }
 
-    stripe.paymentIntents
-      .create({
-        amount: total,
-        currency: 'gbp',
-        customer: user.customer,
-        payment_method: body.paymentMethod,
-        off_session: false,
-        confirm: true,
-      })
-      .then((paymentIntent) => attachPaymentIntent(cart, paymentIntent))
-      .then(filterSettled)
-      .then(fillOrderData)
-      .then(filterSettled)
-      .then(successEmail)
-      .catch((err) => strapi.log.error(err))
+    if (user) {
+      stripe.paymentIntents
+        .create({
+          amount: total,
+          currency: 'gbp',
+          customer: user.customer,
+          payment_method: body.paymentMethod,
+          off_session: false,
+          confirm: true,
+        })
+        .then((paymentIntent) => attachPaymentIntent(cart, paymentIntent))
+        .then(filterSettled)
+        .then(fillOrderData)
+        .then(filterSettled)
+        .then(successEmail)
+        .catch((err) => strapi.log.error(err))
+      return ctx.send()
+    } else {
+      try {
+        let intent
+        if (body.paymentMethod) {
+          intent = await stripe.paymentIntents.create({
+            payment_method: body.paymentMethod,
+            amount: total,
+            currency: 'gbp',
+            confirm: true,
+            confirmation_method: 'manual',
+          })
+        } else if (body.paymentIntent) {
+          intent = await stripe.paymentIntents.confirm(body.paymentIntent)
+        }
 
-    ctx.send({
-      checkedOut: cart,
-    })
+        const response = generateResponse(intent)
+
+        if (response.success) {
+          attachPaymentIntent(cart, intent)
+            .then(filterSettled)
+            .then(fillOrderData)
+            .then(filterSettled)
+            .then(successEmail)
+            .catch((err) => strapi.log.error(err))
+        }
+
+        return ctx.send(response)
+      } catch (e) {
+        strapi.log.error(e)
+        return ctx.send({ error: 'Could not process payment' })
+      }
+    }
   },
 }
 

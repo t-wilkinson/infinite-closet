@@ -15,16 +15,16 @@ import * as sizing from '@/utils/sizing'
 import { useDispatch, useSelector } from '@/utils/store'
 import { SizeChartPopup } from '@/Shop/Size'
 
-import { signin } from './'
+import { useSignin } from './'
 import { AddAddress } from './Address'
 
 export const Profile = () => {
   const user = useSelector((state) => state.user.data)
   const [status, setStatus] = React.useState(null)
-  const dispatch = useDispatch()
+  const signin = useSignin()
 
   React.useEffect(() => {
-    signin(dispatch).catch((err) => {
+    signin().catch((err) => {
       setStatus('error')
       console.error(err)
     })

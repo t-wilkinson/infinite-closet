@@ -1,3 +1,8 @@
+const product = {
+  designer: 'gaala',
+  slug: 'aimee',
+}
+
 context('Add To Cart', () => {
   it.skip('Can select product', () => {
     cy.login()
@@ -8,11 +13,6 @@ context('Add To Cart', () => {
   })
 
   it('Can add to cart', function () {
-    const product = {
-      designer: 'gaala',
-      slug: 'aimee',
-    }
-
     cy.login()
     cy.visit(`/shop/${product.designer}/${product.slug}`)
 

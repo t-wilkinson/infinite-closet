@@ -3,24 +3,46 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 
-import { useDispatch } from '@/utils/store'
+import CartUtils from '@/Cart/utils'
+import { useSelector, useDispatch } from '@/utils/store'
 import { userActions } from '@/User/slice'
 import { useProtected } from '@/User/Protected'
 
-export const signin = async (dispatch) => {
-  return axios
+const signin = (dispatch, cart) =>
+  axios
     .post('/account/signin', {}, { withCredentials: true })
     .then((res) => {
       if (res.data.user) {
         // loggedIn tracks if the user has logged into the web site
         window.localStorage.setItem('logged-in', 'true')
         dispatch(userActions.signin(res.data.user))
+
+        // attach any guest cart items to user
+        const users = new Set(
+          cart.map((order) => order.user || order?.order?.user)
+        )
+        if (users.size <= 1 && users.has(undefined)) {
+          const guestCart = cart.filter(
+            (order) => !order.user || order?.order?.user
+          ) as any
+          dispatch(CartUtils.insert(guestCart))
+        }
+
         return res.data.user
       } else {
         dispatch(userActions.signout())
         throw new Error('User not found')
       }
     })
+    .catch(() => {
+      dispatch(userActions.signout())
+      throw new Error('User not found')
+    })
+
+export const useSignin = () => {
+  const dispatch = useDispatch()
+  const cart = useSelector((state) => state.cart.checkoutCart)
+  return () => signin(dispatch, cart)
 }
 
 export const User = ({ children }) => {

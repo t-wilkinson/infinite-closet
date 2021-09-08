@@ -1,4 +1,5 @@
 import { StrapiAddress } from './address';
+import { StrapiCoupon } from './coupon';
 import { StrapiProduct } from './product';
 import { StrapiUser } from './user';
 
@@ -20,6 +21,7 @@ export interface StrapiOrder {
   product?: StrapiProduct;
   user?: StrapiUser;
   insurance?: boolean;
+  coupon?: StrapiCoupon;
   created_by: string;
   updated_at: string;
   published_at: string;

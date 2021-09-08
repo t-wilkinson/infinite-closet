@@ -10,6 +10,8 @@ import { CheckoutCart, Cart } from './types'
 export const getUser = (getState: () => any) =>
   (getState() as RootState).user.data
 
+const toKey = (order) => `${order.size}_${order.product.id}`
+
 export default {
   get: createAsyncThunk<Cart, void>('cart/get', async (_, { getState }) => {
     const user = getUser(getState)
@@ -31,7 +33,9 @@ export default {
           }
         )
       } else {
-        res = await axios.post(`/orders/cart/summary`, { cart })
+        res = await axios.post(`/orders/cart/summary`, {
+          cart: cart.map((item) => item.order),
+        })
       }
       return res.data
     }
@@ -106,13 +110,14 @@ export default {
       if (user) {
         axios.post('/orders', order, { withCredentials: true })
       } else {
-        const res = await axios.post('/orders', order, {
-          withCredentials: true,
-        })
+        const res = await axios.post('/orders', order)
         order = res.data
+        const key = toKey(order)
 
         const cart = helpers.getGuestCart()
-        cart.push(order)
+        if (!cart.find((v) => toKey(v) === key)) {
+          cart.push(order)
+        }
         helpers.setGuestCart(cart)
       }
     }

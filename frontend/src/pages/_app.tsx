@@ -15,7 +15,7 @@ import { accountActions } from '@/Account/slice'
 import { layoutActions } from '@/Layout/slice'
 import SkipLink from '@/Layout/SkipLink'
 import Banner from '@/Layout/Banner'
-import { signin } from '@/User'
+import { useSignin } from '@/User'
 const FourOFour = dynamic(() => import('@/pages/404'))
 import { browserIs } from '@/utils/helpers'
 import * as storage from '@/utils/storage'
@@ -89,7 +89,7 @@ const Wrapper = ({ router, children }) => {
   const analytics = useAnalytics()
   const consent = useSelector(layoutSelectors.consent)
   const user = useSelector((state) => state.user.data)
-  const cart = useSelector((state) => state.cart.checkoutCart)
+  const signin = useSignin()
 
   const showPopup = () => {
     window.setTimeout(() => {
@@ -152,22 +152,20 @@ const Wrapper = ({ router, children }) => {
     }
 
     dispatch(layoutActions.loadFirebase(firebase.analytics()))
-    signin(dispatch)
-      .then((user) => setupUserCart(user, cart, dispatch))
-      .catch(() => {
-        const loggedIn = storage.get('logged-in')
+    signin().catch(() => {
+      const loggedIn = storage.get('logged-in')
 
-        // TODO: temporary
-        const joinedWaitlist = storage.get('joined-waitlist')
-        if (joinedWaitlist) {
-          storage.session.set('popup-form', joinedWaitlist)
-        }
+      // TODO: temporary
+      const joinedWaitlist = storage.get('joined-waitlist')
+      if (joinedWaitlist) {
+        storage.session.set('popup-form', joinedWaitlist)
+      }
 
-        const popupForm = storage.session.get('popup-form')
-        if (!loggedIn && !popupForm) {
-          document.getElementById('_app').addEventListener('scroll', showPopup)
-        }
-      })
+      const popupForm = storage.session.get('popup-form')
+      if (!loggedIn && !popupForm) {
+        document.getElementById('_app').addEventListener('scroll', showPopup)
+      }
+    })
   }, [])
 
   React.useEffect(() => {
@@ -199,16 +197,6 @@ const Wrapper = ({ router, children }) => {
       </div>
     </>
   )
-}
-
-const setupUserCart = (user, cart, dispatch) => {
-  // attach any guest cart items to user if
-  const cartList = cart
-  const users = new Set(cartList.map((order) => order.user))
-  if (users.size <= 1 && users.has(undefined)) {
-    const guestCart = cart.filter((order) => !order.user) as any
-    dispatch(CartUtils.insert(guestCart))
-  }
 }
 
 // const useSaveScrollPos = () => {

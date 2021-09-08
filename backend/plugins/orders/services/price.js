@@ -115,6 +115,7 @@ async function summary({ cart, user, couponCode }) {
   }
 }
 
+// TODO: should this return [] when not passed user?
 async function existingCoupons(user, code) {
   return (
     await strapi.query('order', 'orders').find({ user, 'coupon.code': code })

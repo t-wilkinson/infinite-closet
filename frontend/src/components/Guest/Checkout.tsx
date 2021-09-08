@@ -2,64 +2,45 @@ import React from 'react'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { useRouter } from 'next/router'
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 dayjs.extend(utc)
 
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { fmtPrice } from '@/utils/helpers'
-import { CouponCode } from '@/Form'
-import useFields, { cleanFields } from '@/Form/useFields'
-import { Button, BlueLink, Icon } from '@/components'
+import { Submit, CouponCode, Input } from '@/Form'
+import useFields, { cleanFields, isValid } from '@/Form/useFields'
+import { BlueLink } from '@/components'
 import { CartUtils } from '@/Cart/slice'
 import Cart from '@/Cart'
 
-import { AddPaymentMethod } from '@/User/Payment'
-import { AddAddress } from '@/User/Address'
+import { cardStyle, Authorise } from '@/User/Payment'
+import { PaymentWrapper } from '@/Form/Payments'
+import { validatePostcode, useAddressFields } from '@/User/Address'
 
-type Popup = 'none' | 'address' | 'payment'
 type Status = null | 'checking-out' | 'error' | 'success'
 
 const initialState = {
-  paymentMethod: undefined,
-  address: undefined,
-  popup: 'none' as Popup,
   error: undefined,
   status: null as Status,
+  authorised: false,
 }
 
 const reducer = (state, action) => {
-  const def = (key) => ({ ...state, [key]: action.payload })
+  const def = (key: string) => ({ ...state, [key]: action.payload })
   // prettier-ignore
   switch (action.type) {
     case 'correct-coupon': return def('coupon')
     case 'clear-coupon': return {...state, coupon: undefined,}
+    case 'authorise': return {...state, authorised: true}
+    case 'un-authorise': return {...state, authorised: false}
 
-    case 'status-checkout': return {...state, status: 'checking-out'}
-    case 'status-error': return {...state, status: 'error'}
+    case 'set-payment-method': return def('paymentMethod')
+
+    case 'status-clear': return {...state, status: null, error: ''}
+    case 'status-processing': return {...state, status: 'processing'}
     case 'status-success': return {...state, status: 'success'}
-
-    case 'choose-address': return def('address')
-    case 'set-addresses': return def('addresses')
-
-    case 'set-payment-methods': return { ...state, paymentMethods: action.payload, }
-    case 'remove-payment-method': {
-      const paymentMethods = [...state.paymentMethods].splice(action.payload, 1)
-      return { ...state, paymentMethods }
-    }
-
-    case 'payment-error': return { ...state, paymentStatus: 'disabled', error: action.payload }
-    case 'payment-succeeded': return { ...state, paymentStatus: action.payload ?? 'succeeded', error: null, }
-    case 'payment-processing': return { ...state, paymentStatus: 'processing' }
-    case 'payment-failed': {
-      let error: string
-      if (action.payload.error?.message) {
-        error = `Payment failed ${action.payload.error.message}`
-      } else {
-        error = `Payment failed`
-      }
-      return { ...state, paymentStatus: 'failed', error: error }
-    }
+    case 'status-error': return {...state, status: 'error', error: action.payload}
 
     default: return state
   }
@@ -68,7 +49,7 @@ const reducer = (state, action) => {
 const StateContext = React.createContext(null)
 const DispatchContext = React.createContext(null)
 
-export const CheckoutWrapper = ({}) => {
+export const CheckoutContextWrapper = ({}) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
@@ -92,53 +73,23 @@ export const CheckoutWrapper = ({}) => {
     <div className="w-full flex-grow items-center bg-gray-light px-4 pt-4">
       <StateContext.Provider value={state}>
         <DispatchContext.Provider value={dispatch}>
-          <Checkout fetchCart={fetchCart} analytics={analytics} />
+          <PaymentWrapper>
+            <CheckoutWrapper fetchCart={fetchCart} />
+          </PaymentWrapper>
         </DispatchContext.Provider>
       </StateContext.Provider>
     </div>
   )
 }
 
-const Checkout = ({ fetchCart, analytics }) => {
-  const router = useRouter()
-  const dispatch = React.useContext(DispatchContext)
+const CheckoutWrapper = ({ fetchCart }) => {
   const state = React.useContext(StateContext)
   const cartCount = useSelector((state) => state.cart.count)
-  const cart = useSelector((state) => state.cart.checkoutCart)
-  const user = useSelector((state) => state.user.data)
   const fields = useFields({
     couponCode: {},
+    email: { constraints: 'required string' },
   })
-
-  const checkout = () => {
-    dispatch({ type: 'payment-succeeded' })
-    dispatch({ type: 'status-checkout' })
-    dispatch({ type: 'clear-coupon' })
-    const cleaned = cleanFields(fields)
-    axios
-      .post(
-        '/orders/checkout',
-        {
-          address: state.address,
-          paymentMethod: state.paymentMethod,
-          cart,
-          couponCode: cleaned.couponCode,
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        fetchCart()
-        dispatch({ type: 'status-success' })
-        analytics.logEvent('purchase', {
-          user: 'guest',
-          type: 'checkout',
-        })
-      })
-      .catch((err) => {
-        console.error(err)
-        dispatch({ type: 'status-error' })
-      })
-  }
+  const address = useAddressFields()
 
   return (
     <div
@@ -146,22 +97,6 @@ const Checkout = ({ fetchCart, analytics }) => {
       md:flex-row space-y-4 md:space-y-0 md:space-x-4
       "
     >
-      <div className="md:w-2/5 space-y-4">
-        <SideItem label="Addresses" user={user} protect>
-          <Address user={user} state={state} dispatch={dispatch} />
-        </SideItem>
-        <SideItem label="Payment Methods" user={user} protect>
-          <Payment user={user} state={state} dispatch={dispatch} />
-        </SideItem>
-        <SideItem label="Summary" user={user}>
-          <Summary
-            state={state}
-            dispatch={dispatch}
-            user={user}
-            couponCode={fields.couponCode}
-          />
-        </SideItem>
-      </div>
       {state.status === 'success' ? (
         <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
           <span className="font-bold text-xl flex flex-col items-center">
@@ -182,138 +117,206 @@ const Checkout = ({ fetchCart, analytics }) => {
         </div>
       ) : (
         <div className="w-full space-y-4">
-          {!user && (
-            <button
-              className="bg-sec hover:bg-pri transition-all duration-200 p-3 font-bold text-white mb-2"
-              onClick={() => {
-                router.push('/account/signin')
-              }}
-            >
-              Please Sign In to Checkout
-            </button>
-          )}
-          <Cart />
-          <Button
-            onClick={checkout}
-            disabled={
-              !(state.paymentMethod && state.address) ||
-              ['checking-out'].includes(state.status) ||
-              cart.every(isOrderInvalid)
-            }
-          >
-            {!state.address
-              ? 'Please Select an Address'
-              : !state.paymentMethod
-              ? 'Please Select a Payment Method'
-              : state.status === 'checking-out'
-              ? 'Checkout Out...'
-              : state.status === 'error'
-              ? 'Oops... We ran into an issue'
-              : state.status === 'success'
-              ? 'Successfully Checked Out'
-              : cart.every(isOrderInvalid)
-              ? 'No Available Items'
-              : cart.some(isOrderInvalid)
-              ? 'Checkout Available Items'
-              : 'Checkout'}
-          </Button>
+          <Checkout fetchCart={fetchCart} fields={fields} address={address} />
         </div>
       )}
     </div>
   )
 }
 
+const Checkout = ({ fields, address, fetchCart }) => {
+  const state = React.useContext(StateContext)
+  const dispatch = React.useContext(DispatchContext)
+  const cart = useSelector((state) => state.cart.checkoutCart)
+  const summary = useSelector((state) => state.cart.checkoutSummary)
+  const analytics = useAnalytics()
+  const elements = useElements()
+  const stripe = useStripe()
+
+  const checkout = () => {
+    dispatch({ type: 'status-processing' })
+    const cleaned = cleanFields(fields)
+    const cleanedAddress = cleanFields(address)
+
+    validatePostcode(address.postcode)
+      .then(() =>
+        stripe.createPaymentMethod({
+          type: 'card',
+          card: elements.getElement(CardElement),
+          billing_details: {
+            name: `${cleanedAddress.firstName} ${cleanedAddress.lastName}`,
+            email: cleaned.email,
+            phone: cleanedAddress.mobileNumber,
+          },
+        })
+      )
+
+      .then((res) => {
+        if (res.error) {
+          return Promise.reject(res.error)
+        } else {
+          return axios.post('/orders/checkout', {
+            address: state.address,
+            paymentMethod: res.paymentMethod.id,
+            cart: cart.map((item) => item.order),
+            couponCode: cleaned.couponCode,
+          })
+        }
+      })
+
+      .then((res) => handleServerResponse(res.data, stripe, dispatch))
+
+      .then(() => {
+        fetchCart()
+        dispatch({ type: 'payment-succeeded' })
+        analytics.logEvent('purchase', {
+          user: 'guest',
+          type: 'checkout',
+        })
+      })
+
+      .catch((err) => {
+        console.error(err)
+        dispatch({ type: 'status-error' })
+      })
+  }
+
+  return (
+    <>
+      <Cart />
+      <div className="py-8 bg-white items-center ">
+        <div className="max-w-screen-sm space-y-8">
+          <SideItem label="Address">
+            <Address address={address} email={fields.email} />
+          </SideItem>
+          <SideItem label="Payment Method">
+            <Payment state={state} dispatch={dispatch} />
+          </SideItem>
+          <SideItem label="Summary">
+            <Summary
+              summary={summary}
+              dispatch={dispatch}
+              couponCode={fields.couponCode}
+            />
+          </SideItem>
+          <div className="mt-4 w-full">
+            <Submit
+              onSubmit={checkout}
+              disabled={
+                ['error', 'processing'].includes(state.status) ||
+                !isValid(address) ||
+                cart.every(isOrderInvalid)
+              }
+            >
+              {state.status === 'checking-out'
+                ? 'Checkout Out...'
+                : state.status === 'error'
+                ? 'Oops... We ran into an issue'
+                : state.status === 'success'
+                ? 'Successfully Checked Out'
+                : cart.every(isOrderInvalid)
+                ? 'No Available Items'
+                : cart.some(isOrderInvalid)
+                ? 'Checkout Available Items'
+                : 'Checkout'}
+            </Submit>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
 const isOrderInvalid = (order) => !order.valid
 
-const SideItem = ({ label, children, user, protect = false }) =>
-  protect && !user ? null : (
-    <div className="space-y-2 bg-white p-3 rounded-sm relative">
-      <span className="font-subheader text-xl lg:text-2xl my-2">
-        {label}
-        <div className="w-full h-px bg-pri mt-2 -mb-2" />
-      </span>
-      {children}
-      {/* {protect && user ? ( */}
-      {/*   children */}
-      {/* ) : protect ? ( */}
-      {/*   <PleaseSignIn label={label} /> */}
-      {/* ) : ( */}
-      {/*   children */}
-      {/* )} */}
+const SideItem = ({ label, children }) => (
+  <div>
+    <span className="font-subheader text-xl">
+      {label}
+      <div className="w-full h-px bg-pri mt-2 mb-2" />
+    </span>
+    {children}
+  </div>
+)
+
+const Address = ({ email, address }) => {
+  return (
+    <div className="grid grid-flow-row grid-cols-2 w-full gap-x-4">
+      {Object.keys(address).map((field) => (
+        <Input key={field} {...address[field]} />
+      ))}
+      <Input {...email} />
     </div>
   )
+}
 
-// const PleaseSignIn = ({ label }) => (
-//   <div className="relative w-full h-32">
-//     <div className="absolute inset-0 bg-white border-gray justify-end">
-//       {/* <button className="bg-sec text-white font-bold p-3 hover:bg-pri transition-all duration-200"> */}
-//       {/*   Please Sign In */}
-//       {/* </button> */}
-//     </div>
-//   </div>
-// )
+const Payment = ({ state, dispatch }) => {
+  const handleChange = async (event) => {
+    if (event.error) {
+      dispatch({
+        type: 'status-error',
+        payload: event.error ? event.error.message : '',
+      })
+    } else {
+      dispatch({ type: 'status-clear' })
+    }
+  }
 
-const Address = ({ user, dispatch }) => (
-  <>
-    <div className="z-30 bg-black bg-opacity-50 items-center justify-center">
-      <div className="w-full max-w-sm w-full p-6 bg-white rounded-lg relative">
-        <div className="w-full items-center">
-          <span className="font-bold text-3xl mt-2">Add Address</span>
-        </div>
-
-        <div className="w-full h-px bg-pri mb-6 mt-1 rounded-full" />
-
-        <button
-          className="absolute top-0 right-0 m-3"
-          type="button"
-          onClick={() => dispatch({ type: 'close-popup' })}
-        >
-          <Icon name="close" size={20} />
-        </button>
-        <AddAddress
-          user={user}
-          onSubmit={() => dispatch({ type: 'close-popup' })}
+  return (
+    <>
+      <div className="mb-4 mt-2 border border-gray rounded-sm p-4">
+        <CardElement
+          id="card-element"
+          options={cardStyle}
+          onChange={handleChange}
         />
       </div>
-    </div>
-  </>
-)
+      {/* Show any error that happens when processing the payment */}
+      {state.error && (
+        <div className="text-error" role="alert">
+          {state.error}
+        </div>
+      )}
+      <Authorise
+        setAuthorisation={(allowed) =>
+          allowed
+            ? dispatch({ type: 'authorise' })
+            : dispatch({ type: 'un-authorise' })
+        }
+        authorised={state.authorised}
+      />
+    </>
+  )
+}
 
-const Payment = ({ state, user, dispatch }) => (
-  <>
-    <AddPaymentMethod user={user} state={state} dispatch={dispatch} />
-  </>
-)
-
-const Summary = ({ user, couponCode, dispatch, state }) => {
-  const { total, coupon } = state
-  if (!total) {
+const Summary = ({ couponCode, dispatch, summary }) => {
+  if (!summary) {
     return <div />
   }
+  const { coupon } = summary
 
   return (
     <div>
       <CouponCode
-        price={total.total}
-        user={user.id}
+        price={summary.total}
         context="checkout"
         setCoupon={(coupon) =>
           dispatch({ type: 'correct-coupon', payload: coupon })
         }
         field={couponCode}
       />
-      <Price label="Subtotal" price={total.subtotal} />
-      <Price label="Insurance" price={total.insurance} />
-      <Price label="Shipping" price={total.shipping} />
+      <Price label="Subtotal" price={summary.subtotal} />
+      <Price label="Insurance" price={summary.insurance} />
+      <Price label="Shipping" price={summary.shipping} />
       <Price
         negative
         label="Discount"
-        price={total.discount + coupon?.discount || 0}
+        price={summary.discount + coupon?.discount || 0}
       />
       <div className="h-px bg-pri my-1" />
       <Price
         label="Total"
-        price={coupon?.price || total.total}
+        price={coupon?.price || summary.total}
         className="font-bold"
       />
     </div>
@@ -329,4 +332,34 @@ const Price = ({ negative = false, label, price, className = '' }) => (
   </div>
 )
 
-export default CheckoutWrapper
+function handleServerResponse(response, stripe, dispatch) {
+  if (response.error) {
+    // Show error from server on payment form
+    dispatch({ type: 'status-error', payload: 'Unable to process payment' })
+  } else if (response.status === 'no-charge') {
+    dispatch({ type: 'status-success' })
+  } else if (response.requires_action) {
+    // Use Stripe.js to handle required card action
+    stripe
+      .handleCardAction(response.payment_intent_client_secret)
+      .then((res) => handleStripeJsResult(res, stripe, dispatch))
+  } else {
+    dispatch({ type: 'status-success' })
+  }
+}
+
+function handleStripeJsResult(result, stripe, dispatch) {
+  if (result.error) {
+    dispatch({ type: 'status-error', payload: result.error })
+  } else {
+    // The card action has been handled
+    // The PaymentIntent can be confirmed again on the server
+    axios
+      .post('/orders/checkout', {
+        paymentIntent: result.paymentIntent.id,
+      })
+      .then((res) => handleServerResponse(res.data, stripe, dispatch))
+  }
+}
+
+export default CheckoutContextWrapper

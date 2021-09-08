@@ -25,10 +25,4 @@ const Page = () => {
   }
 }
 
-export const getServerSideProps = async () => {
-  return {
-    props: {},
-  }
-}
-
 export default Page

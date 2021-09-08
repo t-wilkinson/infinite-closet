@@ -96,9 +96,6 @@ export const CheckoutWrapper = ({}) => {
 
   React.useEffect(() => {
     fetchCart()
-    if (!user) {
-      return
-    }
 
     dispatch({
       type: 'set-addresses',
@@ -169,7 +166,7 @@ const Checkout = ({ fetchCart, analytics }) => {
         },
         { withCredentials: true }
       )
-      .then((res) => {
+      .then(() => {
         fetchCart()
         dispatch({ type: 'status-success' })
         analytics.logEvent('purchase', {
@@ -225,16 +222,6 @@ const Checkout = ({ fetchCart, analytics }) => {
         </div>
       ) : (
         <div className="w-full space-y-4">
-          {!user && (
-            <button
-              className="bg-sec hover:bg-pri transition-all duration-200 p-3 font-bold text-white mb-2"
-              onClick={() => {
-                router.push('/account/signin')
-              }}
-            >
-              Please Sign In to Checkout
-            </button>
-          )}
           <Cart />
           <Button
             onClick={checkout}
@@ -244,9 +231,7 @@ const Checkout = ({ fetchCart, analytics }) => {
               cart.every(isOrderInvalid)
             }
           >
-            {!user
-              ? 'Please Sign In to Checkout'
-              : !state.address
+            {!state.address
               ? 'Please Select an Address'
               : !state.paymentMethod
               ? 'Please Select a Payment Method'
@@ -278,25 +263,8 @@ const SideItem = ({ label, children, user, protect = false }) =>
         <div className="w-full h-px bg-pri mt-2 -mb-2" />
       </span>
       {children}
-      {/* {protect && user ? ( */}
-      {/*   children */}
-      {/* ) : protect ? ( */}
-      {/*   <PleaseSignIn label={label} /> */}
-      {/* ) : ( */}
-      {/*   children */}
-      {/* )} */}
     </div>
   )
-
-// const PleaseSignIn = ({ label }) => (
-//   <div className="relative w-full h-32">
-//     <div className="absolute inset-0 bg-white border-gray justify-end">
-//       {/* <button className="bg-sec text-white font-bold p-3 hover:bg-pri transition-all duration-200"> */}
-//       {/*   Please Sign In */}
-//       {/* </button> */}
-//     </div>
-//   </div>
-// )
 
 const Address = ({ state, user, dispatch }) => (
   <>
