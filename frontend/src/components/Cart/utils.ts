@@ -21,20 +21,19 @@ export default {
     'cart/summary',
     async (_, { getState }) => {
       const user = getUser(getState)
-      const state = getState() as RootState
-      const cart = state.cart.checkoutCart
+      const cart = await helpers.getCart(user)
       let res: unknown & { data: Cart }
       if (user) {
         res = await axios.post(
           `/orders/cart/summary`,
-          { cart },
+          { cart: cart.map((item) => item.order) },
           {
             withCredentials: true,
           }
         )
       } else {
         res = await axios.post(`/orders/cart/summary`, {
-          cart: cart.map((item) => item.order),
+          cart,
         })
       }
       return res.data
@@ -127,7 +126,7 @@ export default {
     async (items, { getState }) => {
       const user = getUser(getState)
       let cart = await helpers.getCart(user)
-      cart = cart.concat(items)
+      cart = cart.concat(items).map((item) => item.order.id)
       helpers.setCart(user, cart)
       return cart
     }
@@ -144,9 +143,8 @@ export default {
         )
       } else {
         const cart = helpers.getGuestCart()
-        const index = cart.indexOf((v) => v.id === id)
-        cart[index] = { ...cart[index], status: 'dropped' }
-        helpers.setGuestCart(cart)
+        const filtered = cart.filter((item) => item.id !== id)
+        helpers.setGuestCart(filtered)
       }
       return helpers.getCart(user)
     }

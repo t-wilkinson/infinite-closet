@@ -53,6 +53,7 @@ export const CheckoutContextWrapper = ({}) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
+  const cart = useSelector((state) => state.cart.checkoutCart)
 
   const fetchCart = async () => {
     rootDispatch(CartUtils.view())
@@ -64,6 +65,10 @@ export const CheckoutContextWrapper = ({}) => {
       user: 'guest',
     })
   }, [])
+
+  React.useEffect(() => {
+    rootDispatch(CartUtils.summary())
+  }, [cart])
 
   React.useEffect(() => {
     fetchCart()
@@ -132,6 +137,7 @@ const Checkout = ({ fields, address, fetchCart }) => {
   const analytics = useAnalytics()
   const elements = useElements()
   const stripe = useStripe()
+  const rootDispatch = useDispatch()
 
   const checkout = () => {
     dispatch({ type: 'status-processing' })
@@ -167,6 +173,7 @@ const Checkout = ({ fields, address, fetchCart }) => {
       .then((res) => handleServerResponse(res.data, stripe, dispatch))
 
       .then(() => {
+        rootDispatch(CartUtils.set([]))
         fetchCart()
         dispatch({ type: 'payment-succeeded' })
         analytics.logEvent('purchase', {
@@ -311,7 +318,7 @@ const Summary = ({ couponCode, dispatch, summary }) => {
       <Price
         negative
         label="Discount"
-        price={summary.discount + coupon?.discount || 0}
+        price={summary.discount + (coupon?.discount || 0)}
       />
       <div className="h-px bg-pri my-1" />
       <Price

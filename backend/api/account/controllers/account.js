@@ -1,5 +1,4 @@
 'use strict'
-const _ = require('lodash')
 const { sanitizeEntity } = require('strapi-utils')
 const Auth = require('../../../extensions/users-permissions/extensions').Auth
 

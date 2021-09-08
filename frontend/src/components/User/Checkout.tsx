@@ -82,6 +82,7 @@ export const CheckoutWrapper = ({}) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
+  const cart = useSelector((state) => state.cart.checkoutCart)
 
   const fetchCart = () => {
     rootDispatch(CartUtils.view())
@@ -93,6 +94,10 @@ export const CheckoutWrapper = ({}) => {
       user: user ? user.email : 'guest',
     })
   }, [])
+
+  React.useEffect(() => {
+    rootDispatch(CartUtils.summary())
+  }, [cart])
 
   React.useEffect(() => {
     fetchCart()
@@ -140,7 +145,6 @@ export const CheckoutWrapper = ({}) => {
 }
 
 const Checkout = ({ fetchCart, analytics }) => {
-  const router = useRouter()
   const dispatch = React.useContext(DispatchContext)
   const state = React.useContext(StateContext)
   const cartCount = useSelector((state) => state.cart.count)
@@ -149,6 +153,7 @@ const Checkout = ({ fetchCart, analytics }) => {
   const fields = useFields({
     couponCode: {},
   })
+  const summary = useSelector((state) => state.cart.checkoutSummary)
 
   const checkout = () => {
     dispatch({ type: 'payment-succeeded' })
@@ -161,7 +166,7 @@ const Checkout = ({ fetchCart, analytics }) => {
         {
           address: state.address,
           paymentMethod: state.paymentMethod,
-          cart,
+          cart: cart.map((item) => item.order),
           couponCode: cleaned.couponCode,
         },
         { withCredentials: true }
@@ -195,9 +200,9 @@ const Checkout = ({ fetchCart, analytics }) => {
         </SideItem>
         <SideItem label="Summary" user={user}>
           <Summary
-            state={state}
-            dispatch={dispatch}
             user={user}
+            summary={summary}
+            dispatch={dispatch}
             couponCode={fields.couponCode}
           />
         </SideItem>
@@ -320,16 +325,16 @@ const Payment = ({ state, user, dispatch }) => (
   </>
 )
 
-const Summary = ({ user, couponCode, dispatch, state }) => {
-  const { total, coupon } = state
-  if (!total) {
+const Summary = ({ user, couponCode, dispatch, summary }) => {
+  if (!summary) {
     return <div />
   }
+  const { coupon } = summary
 
   return (
     <div>
       <CouponCode
-        price={total.total}
+        price={summary.total}
         user={user.id}
         context="checkout"
         setCoupon={(coupon) =>
@@ -337,18 +342,18 @@ const Summary = ({ user, couponCode, dispatch, state }) => {
         }
         field={couponCode}
       />
-      <Price label="Subtotal" price={total.subtotal} />
-      <Price label="Insurance" price={total.insurance} />
-      <Price label="Shipping" price={total.shipping} />
+      <Price label="Subtotal" price={summary.subtotal} />
+      <Price label="Insurance" price={summary.insurance} />
+      <Price label="Shipping" price={summary.shipping} />
       <Price
         negative
         label="Discount"
-        price={total.discount + coupon?.discount || 0}
+        price={summary.discount + (coupon?.discount || 0)}
       />
       <div className="h-px bg-pri my-1" />
       <Price
         label="Total"
-        price={coupon?.price || total.total}
+        price={coupon?.price || summary.total}
         className="font-bold"
       />
     </div>

@@ -201,13 +201,14 @@ module.exports = {
       address: body.address,
       paymentMethod: body.paymentMethod,
     })
-    const { total, coupon } = await strapi.plugins[
+    let { total, coupon } = await strapi.plugins[
       'orders'
     ].services.price.summary({
       cart,
       user,
       couponCode: body.couponCode,
     })
+    total = strapi.services.price.toAmount(total)
 
     const filterSettled = (settled) =>
       settled

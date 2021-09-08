@@ -254,10 +254,12 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
           />
         </div>
 
-        <Authorise
-          setAuthorisation={setAuthorisation}
-          authorised={authorised}
-        />
+        <div className="mb-4">
+          <Authorise
+            setAuthorisation={setAuthorisation}
+            authorised={authorised}
+          />
+        </div>
 
         <div className="w-full items-center">
           <Button
