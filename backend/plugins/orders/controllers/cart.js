@@ -27,8 +27,16 @@ async function createCart(orders) {
         existingOrders
       )
 
+      const order_ = await strapi
+        .query('order', 'orders')
+        .findOne({ id: order.id }, [
+          'product.sizes',
+          'product.images',
+          'product.designer',
+        ])
+
       return {
-        ...order,
+        order: order_,
         price: strapi.plugins['orders'].services.price.price(order),
         available: numAvailable[key],
         valid,
@@ -156,9 +164,8 @@ module.exports = {
     )
 
     const cart = await createCart(orders)
-    ctx.send({
-      cart,
-    })
+    console.log(cart)
+    ctx.send(cart)
   },
 
   // TODO: easy to fake ownership of cart

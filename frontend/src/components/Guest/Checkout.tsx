@@ -14,8 +14,8 @@ import { Button, BlueLink, Icon } from '@/components'
 import { CartUtils } from '@/Cart/slice'
 import Cart from '@/Cart'
 
-import { PaymentMethods, AddPaymentMethod } from '@/User/Payment'
-import { Addresses, AddAddress } from '@/User/Address'
+import { AddPaymentMethod } from '@/User/Payment'
+import { AddAddress } from '@/User/Address'
 
 type Popup = 'none' | 'address' | 'payment'
 type Status = null | 'checking-out' | 'error' | 'success'

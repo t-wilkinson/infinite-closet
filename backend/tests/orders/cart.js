@@ -23,7 +23,5 @@ describe('Cart', () => {
         size: { quantity: 1, size: 'MD' },
       })
       .expect('Content-Type', /json/)
-
-    console.log(res.body)
   })
 })

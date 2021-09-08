@@ -1,3 +1,6 @@
 {
-  "baseUrl": "http://ic.com"
+  "baseUrl": "http://ic.com",
+  "env": {
+    "backendUrl": "http://api.ic.com"
+  }
 }

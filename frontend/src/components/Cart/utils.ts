@@ -21,7 +21,6 @@ export default {
       const user = getUser(getState)
       const state = getState() as RootState
       const cart = state.cart.checkoutCart
-      console.log(cart)
       let res: unknown & { data: Cart }
       if (user) {
         res = await axios.post(

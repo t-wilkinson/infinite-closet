@@ -182,6 +182,7 @@ export const OneTimeRentalTime = () => {
         </div>
         {state.size !== undefined && (
           <button
+            aria-label="Date selector"
             className="flex flex-grow border border-gray py-2 px-2 rounded-sm rounded-sm flex-row flex-grow justify-between items-center"
             onClick={() => dispatch(shopActions.showDate())}
           >

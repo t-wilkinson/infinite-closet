@@ -22,21 +22,17 @@ import { CheckoutItem } from './types'
 
 export const Cart = () => {
   const cart = useSelector((state) => state.cart.checkoutCart)
+
   return (
     <div className="w-full space-y-2">
       {cart.map((item) => {
-        return <CartItem key={item.id} {...item} />
+        return <CartItem key={item.order.id} {...item} />
       })}
     </div>
   )
 }
 
-export const CartItem = ({
-  valid,
-  price,
-  available,
-  ...order
-}: CheckoutItem) => {
+export const CartItem = ({ valid, price, available, order }: CheckoutItem) => {
   const { product } = order
   const date = dayjs(order.startDate).tz('Europe/London') // order.startDate is utc
   const startDate = date.format('ddd, MMM D')

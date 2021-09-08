@@ -43,11 +43,11 @@ module.exports = {
     }
 
     const order = await strapi.plugins['orders'].services.helpers.create({
-      user: user.id,
+      user: user ? user.id : undefined,
       status: body.status,
       size: body.size,
       product: body.product,
-      startDate: body.date,
+      startDate: body.startDate,
       rentalLength: body.rentalLength,
     })
 

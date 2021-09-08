@@ -21,8 +21,6 @@ function db(input) {
   })
 }
 
-console.log(process.env)
-
 /**
  * @type {Cypress.PluginConfig}
  */
@@ -40,7 +38,16 @@ module.exports = (on, config) => {
       })
       return null
     },
+
+    // TODO: helper function to create test product
+    // async 'db:products:test'() {
+    //   await db('DELETE FROM "products" WHERE slug=test')
+    //   await db('INSERT INTO "products"')
+    // }
   })
+
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
+
+  return config
 }

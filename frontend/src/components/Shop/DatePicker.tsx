@@ -124,10 +124,12 @@ const Days = ({ days, state, dispatch, rentalLength }) => {
             {days.slice(i * 7, i * 7 + 7).map((date: Dayjs) => (
               <button
                 key={date.day()}
+                aria-label="Date"
                 onMouseEnter={() => {
                   if (valid[date.toJSON()]) setHover(date)
                   else setHover(undefined)
                 }}
+                disabled={!valid[date.toJSON()]}
                 onClick={() => {
                   if (hover) {
                     dispatch(shopActions.selectDate(date))

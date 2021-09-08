@@ -14,7 +14,8 @@ export type CheckoutItem = {
   valid: boolean
   price: number
   available: number
-} & StrapiOrder
+  order: StrapiOrder
+}
 
 export type PreviewCart = {
   toggleInsurance: (id: string) => void

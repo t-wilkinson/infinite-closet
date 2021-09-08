@@ -83,7 +83,7 @@ export const CheckoutWrapper = ({}) => {
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
 
-  const fetchCart = async () => {
+  const fetchCart = () => {
     rootDispatch(CartUtils.view())
     rootDispatch(CartUtils.summary())
   }
@@ -95,11 +95,10 @@ export const CheckoutWrapper = ({}) => {
   }, [])
 
   React.useEffect(() => {
+    fetchCart()
     if (!user) {
-      fetchCart()
       return
     }
-    fetchCart()
 
     dispatch({
       type: 'set-addresses',
