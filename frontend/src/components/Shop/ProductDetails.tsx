@@ -17,6 +17,9 @@ export const ProductDetails = ({ state, product }) => {
         .filter((item) => toContent(item.value, product))
         .map((item, index) => {
           const content = toContent(item.value, product)
+          if (item.value === 'designer.notes') {
+            console.log(content)
+          }
 
           if (!content) {
             return null
@@ -39,16 +42,22 @@ export const ProductDetails = ({ state, product }) => {
   )
 }
 
-const toContent = (v: string | ((o: object) => any), o: object) =>
-  typeof v === 'function'
-    ? v
-    : v.split('.').reduce((acc, key) => acc[key], o)
-    ? () => (
+const toContent = (v: string | ((o: object) => any), o: object) => {
+  if (typeof v === 'function') {
+    return v
+  } else {
+    const content = v.split('.').reduce((acc, key) => acc[key], o)
+    if (content) {
+      return () => (
         <div className="bg-gray-light px-2 py-4">
-          <Markdown content={o[v]} />
+          <Markdown content={content} />
         </div>
       )
-    : null
+    } else {
+      return null
+    }
+  }
+}
 
 const ProductDetail = ({ Content, index, state, selected, item, product }) => {
   const dispatch = useDispatch()
