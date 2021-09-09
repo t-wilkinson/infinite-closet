@@ -21,12 +21,6 @@ export const ProductRentContents = ({ product }) => {
   const Contents = productRentContents[rentType]
   const dispatch = useDispatch()
 
-  React.useEffect(() => {
-    if (user?.dressSize) {
-      user.dressSize && dispatch(shopActions.changeSize(user.dressSize as Size))
-    }
-  }, [user])
-
   return (
     <Contents
       router={router}

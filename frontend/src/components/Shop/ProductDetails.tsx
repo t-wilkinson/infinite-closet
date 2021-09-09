@@ -10,29 +10,49 @@ import useAnalytics from '@/utils/useAnalytics'
 
 import { shopActions } from './slice'
 
-export const ProductDetails = ({
-  content,
-  index,
-  state,
-  selected,
-  item,
-  product,
-}) => {
+export const ProductDetails = ({ state, product }) => {
+  return (
+    <>
+      {details
+        .filter((item) => toContent(item.value, product))
+        .map((item, index) => {
+          const content = toContent(item.value, product)
+
+          if (!content) {
+            return null
+          }
+
+          return (
+            <React.Fragment key={item.label}>
+              <ProductDetail
+                index={index}
+                item={item}
+                selected={item.value === state.details}
+                state={state}
+                product={product}
+                Content={content}
+              />
+            </React.Fragment>
+          )
+        })}
+    </>
+  )
+}
+
+const toContent = (v: string | ((o: object) => any), o: object) =>
+  typeof v === 'function'
+    ? v
+    : v.split('.').reduce((acc, key) => acc[key], o)
+    ? () => (
+        <div className="bg-gray-light px-2 py-4">
+          <Markdown content={o[v]} />
+        </div>
+      )
+    : null
+
+const ProductDetail = ({ Content, index, state, selected, item, product }) => {
   const dispatch = useDispatch()
   const ref = React.useRef()
-
-  const Details =
-    details[item.value] ||
-    (() => (
-      <div className="bg-gray-light px-2 py-4">
-        <Markdown content={content} />
-      </div>
-    ))
-
-  // TODO: move this statement to parent
-  if (!details[item.value] && !content) {
-    return null
-  }
 
   return (
     <>
@@ -57,38 +77,45 @@ export const ProductDetails = ({
           </div>
         </summary>
         <div ref={ref}>
-          <Details state={state} selected={selected} product={product} />
+          <Content state={state} selected={selected} product={product} />
         </div>
       </details>
     </>
   )
 }
 
-const details = {
-  share: ({ selected, product }) => (
-    <div
-      className={`flex-row px-2 pt-1 pb-4 space-x-2
-        ${selected ? '' : 'hidden'}
-        `}
-    >
-      {[
-        <share.Facebook
-          url={createProductURL(product)}
-          description={product.description}
-        />,
-        <share.Pinterest
-          url={createProductURL(product)}
-          description={product.description}
-          imageURL={product.images[0].url}
-        />,
-      ].map((share, i) => (
-        <div key={i} className="w-16 h-8 relative cursor-pointer">
-          {share}
-        </div>
-      ))}
-    </div>
-  ),
-} as const
+const details = [
+  { value: 'designer.notes', label: 'Designer' },
+  { value: 'details', label: 'Product Details' },
+  { value: 'stylistNotes', label: 'Stylist Notes' },
+  { value: 'sizingNotes', label: 'Style & Fit' },
+  {
+    label: 'Share',
+    value: ({ selected, product }) => (
+      <div
+        className={`flex-row px-2 pt-1 pb-4 space-x-2
+          ${selected ? '' : 'hidden'}
+          `}
+      >
+        {[
+          <share.Facebook
+            url={createProductURL(product)}
+            description={product.description}
+          />,
+          <share.Pinterest
+            url={createProductURL(product)}
+            description={product.description}
+            imageURL={product.images[0].url}
+          />,
+        ].map((share, i) => (
+          <div key={i} className="w-16 h-8 relative cursor-pointer">
+            {share}
+          </div>
+        ))}
+      </div>
+    ),
+  },
+]
 
 const createProductURL = ({ slug, designer: { slug: designer_slug } }) =>
   `${process.env.NEXT_PUBLIC_FRONTEND}/shop/${designer_slug}/${slug}`

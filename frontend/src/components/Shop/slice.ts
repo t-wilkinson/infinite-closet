@@ -21,6 +21,7 @@ const initialState: State = {
   oneTime: 'short',
   membership: 'Short',
   dateVisible: false,
+  details: 'details',
 }
 
 export const shopSlice = createSlice({

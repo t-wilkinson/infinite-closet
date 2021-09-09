@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "materials",
+  "info": {
+    "name": "Material"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "Name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "Name"
+    }
+  }
+}
