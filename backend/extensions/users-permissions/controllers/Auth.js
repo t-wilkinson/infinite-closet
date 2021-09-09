@@ -75,7 +75,6 @@ module.exports = {
         .findOne(query)
 
       if (!user) {
-        console.log('no user')
         return ctx.badRequest(
           null,
           formatError({
@@ -125,7 +124,6 @@ module.exports = {
       ].services.user.validatePassword(params.password, user.password)
 
       if (!validPassword) {
-        console.log('bad password')
         return ctx.badRequest(
           null,
           formatError({

@@ -119,7 +119,8 @@ const RouteColumn = ({ dispatch, focused, section, serverRoutes }) =>
         .slice(0, 15)
         .map(
           (v: any, i: number) =>
-            (section.value !== 'clothing' || v.href) && (
+            (!['clothing', 'accessories'].includes(section.value) ||
+              v.href) && (
               <RouteContents
                 key={v.name + v.slug + v.href}
                 dispatch={dispatch}

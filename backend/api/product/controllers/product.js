@@ -363,7 +363,7 @@ module.exports = {
 
   async routes(ctx) {
     const categories = await strapi.query('category').find({
-      slug_in: ['clothing'],
+      slug_in: ['clothing', 'accessories'],
     })
 
     let routes = {}

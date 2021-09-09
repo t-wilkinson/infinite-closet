@@ -68,16 +68,17 @@ const routes = [
   {
     label: 'Accessories',
     value: 'accessories',
-    href: null,
+    href: '/products/accessories',
     img: 'accessories.png',
-    type: null,
     data: [
       {
         label: 'All Accessories',
-        href: null,
+        href: '/products/accessories',
+        value: 'accessories',
+        type: 'slug',
         data: [
-          { name: 'Bags', slug: null },
-          { name: 'Jewelry', slug: null },
+          { name: 'Jewelry', slug: 'jewelry' },
+          { name: 'Bags', slug: 'bags' },
         ],
       },
     ],

@@ -7,14 +7,19 @@ import { capitalize } from '@/utils/helpers'
 export const Crumbs = ({ slug, ...props }) => {
   return (
     <div {...props} style={{ flexDirection: 'row' }}>
-      {['browse', ...slug].map((v, i) => (
+      <span className="text-gray-dark whitespace-pre">Browse / </span>
+
+      {[...slug].map((v, i) => (
         <Link key={v} href={`/products/${slug.slice(0, i).join('/')}`}>
           <a>
             {i === slug.length ? (
               <span>{capitalize(v)}</span>
             ) : (
-              <span className="text-gray-dark whitespace-pre">
-                {capitalize(v)} /{' '}
+              <span>
+                <span className="text-gray-dark whitespace-pre hover:underline">
+                  {capitalize(v)}
+                </span>
+                &nbsp;/&nbsp;
               </span>
             )}
           </a>

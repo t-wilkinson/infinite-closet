@@ -1,4 +1,4 @@
-export const ProductRoutes = ['clothing'] as const
+export const ProductRoutes = ['clothing', 'accessories'] as const
 export type ProductRoutes = typeof ProductRoutes[number]
 
 export const Filter = [
