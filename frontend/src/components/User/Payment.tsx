@@ -94,7 +94,7 @@ export const cardStyle = {
       fontSmoothing: 'antialiased',
       fontSize: '16px',
       '::placeholder': {
-        color: '#ccc',
+        color: '#666',
       },
     },
     invalid: {

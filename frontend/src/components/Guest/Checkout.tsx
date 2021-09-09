@@ -225,7 +225,7 @@ const Checkout = ({ fields, address, fetchCart }) => {
                 ? 'No Available Items'
                 : cart.some(isOrderInvalid)
                 ? 'Checkout Available Items'
-                : 'Checkout'}
+                : 'Secure Checkout'}
             </Submit>
           </div>
         </div>

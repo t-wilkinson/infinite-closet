@@ -98,6 +98,10 @@
     },
     "dateOfBirth": {
       "type": "string"
+    },
+    "event": {
+      "via": "user",
+      "model": "events"
     }
   }
 }

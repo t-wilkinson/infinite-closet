@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "events",
+  "info": {
+    "name": "Events"
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "context": {
+      "type": "string"
+    },
+    "data": {
+      "type": "json"
+    },
+    "user": {
+      "plugin": "users-permissions",
+      "model": "user",
+      "via": "event"
+    },
+    "session": {
+      "type": "uid"
+    }
+  }
+}

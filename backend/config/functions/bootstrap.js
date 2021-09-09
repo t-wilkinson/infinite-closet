@@ -42,7 +42,6 @@ const populatePrivateFields = () => {
           if (filter === 'sizes') {
             slugs = product[filter].map((v) => v.innerSize || v.size).join(',')
           } else {
-            console.log(product[filter])
             slugs = product[filter].map((v) => v.slug).join(',')
           }
           data[`${filter}_`] = slugs

@@ -2,7 +2,6 @@ import React from 'react'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { useRouter } from 'next/router'
 dayjs.extend(utc)
 
 import { useSelector, useDispatch } from '@/utils/store'
@@ -250,7 +249,7 @@ const Checkout = ({ fetchCart, analytics }) => {
               ? 'No Available Items'
               : cart.some(isOrderInvalid)
               ? 'Checkout Available Items'
-              : 'Checkout'}
+              : 'Secure Checkout'}
           </Button>
         </div>
       )}
