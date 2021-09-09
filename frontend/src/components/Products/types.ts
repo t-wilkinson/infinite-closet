@@ -23,6 +23,7 @@ export const SortBy = [
 export type SortBy = typeof SortBy[number]
 
 export const _Size = [
+  'ONESIZE',
   'XXS',
   'XS',
   'S',
@@ -38,6 +39,7 @@ export const _Size = [
 export type _Size = typeof _Size[number]
 
 export const Size = [
+  'ONESIZE',
   'XXS',
   'XS',
   'S',

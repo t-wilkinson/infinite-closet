@@ -21,8 +21,8 @@
       "required": true
     },
     "products": {
-      "collection": "product",
-      "via": "designer"
+      "via": "designer",
+      "collection": "product"
     },
     "notes": {
       "type": "richtext"

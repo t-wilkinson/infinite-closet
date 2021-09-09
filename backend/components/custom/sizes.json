@@ -22,7 +22,8 @@
         "_3XL",
         "_4XL",
         "_5XL",
-        "_6XL"
+        "_6XL",
+        "ONESIZE"
       ]
     },
     "sizeRange": {
@@ -50,7 +51,9 @@
     },
     "units": {
       "type": "enumeration",
-      "enum": ["cm"],
+      "enum": [
+        "cm"
+      ],
       "default": "cm"
     },
     "hips": {

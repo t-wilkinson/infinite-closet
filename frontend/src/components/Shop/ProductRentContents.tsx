@@ -132,6 +132,11 @@ export const productRentContents = {
 export const OneTimeSizeSelector = ({ product, chartOpen, setChartOpen }) => {
   const state = useSelector((state) => state.shop)
   const dispatch = useDispatch()
+  const size = useSelector((state) => state.shop.size)
+
+  if (size === 'ONESIZE') {
+    return null
+  }
 
   return (
     <SelectorItem label="Size" className="my-2 z-10 w-full">
