@@ -179,6 +179,28 @@ export const FilterItems: FilterItems = {
       </>
     )
   },
+
+  materials: ({ panel }) => {
+    const data = useSelector((state) =>
+      Object.values(state.layout.data.materials)
+    )
+
+    return (
+      <>
+        <FilterCheckboxes panel={panel} data={data} />
+      </>
+    )
+  },
+
+  metals: ({ panel }) => {
+    const data = useSelector((state) => Object.values(state.layout.data.metals))
+
+    return (
+      <>
+        <FilterCheckboxes panel={panel} data={data} />
+      </>
+    )
+  },
 }
 
 /*

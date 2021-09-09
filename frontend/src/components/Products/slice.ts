@@ -34,6 +34,8 @@ const initialState: State = {
       weather: [],
       styles: [],
       sizes: [],
+      materials: [],
+      metals: [],
     },
   },
   sortBy: 'Alphabetical',

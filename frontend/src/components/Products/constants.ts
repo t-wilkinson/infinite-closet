@@ -12,6 +12,8 @@ export const filterData: FilterData = {
   weather: { label: 'Weather' },
   styles: { label: 'Styles' },
   sizes: { label: 'Sizes' },
+  materials: { label: 'Materials' },
+  metals: { label: 'Materials' },
 }
 
 export const sortData: {
@@ -34,5 +36,5 @@ export const sortData: {
 
 export const filtersByRoute: { readonly [key in ProductRoutes]: Filter[] } = {
   clothing: ['designers', 'colors', 'occasions', 'weather', 'sizes'],
-  accessories: ['designers', 'colors', 'occasions', 'styles', 'weather'],
+  accessories: ['designers', 'colors', 'occasions', 'materials'],
 }

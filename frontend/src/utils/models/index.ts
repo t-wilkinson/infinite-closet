@@ -9,6 +9,8 @@ export * from './designer';
 export * from './document';
 export * from './file';
 export * from './fit';
+export * from './material';
+export * from './metal';
 export * from './occasion';
 export * from './order';
 export * from './permission';

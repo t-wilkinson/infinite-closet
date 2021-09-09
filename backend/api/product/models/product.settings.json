@@ -41,10 +41,7 @@
     "images": {
       "collection": "file",
       "via": "related",
-      "allowedTypes": [
-        "images",
-        "videos"
-      ],
+      "allowedTypes": ["images", "videos"],
       "plugin": "upload",
       "required": true
     },
@@ -80,6 +77,12 @@
     "weather": {
       "collection": "weather"
     },
+    "materials": {
+      "collection": "material"
+    },
+    "metals": {
+      "collection": "metal"
+    },
     "categories_": {
       "type": "string",
       "private": true
@@ -101,6 +104,14 @@
       "private": true
     },
     "weather_": {
+      "type": "string",
+      "private": true
+    },
+    "materials_": {
+      "type": "string",
+      "private": true
+    },
+    "metals_": {
       "type": "string",
       "private": true
     },

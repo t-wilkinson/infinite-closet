@@ -9,6 +9,8 @@ import {
   StrapiWeather,
   StrapiStyle,
   StrapiCategory,
+  StrapiMaterial,
+  StrapiMetal,
 } from '@/utils/models'
 import { Size } from '@/Products/types'
 
@@ -25,6 +27,8 @@ export interface State {
     styles: StrapiStyle[]
     categories: StrapiCategory[]
     sizes: Size[]
+    materials: StrapiMaterial[]
+    metals: StrapiMetal[]
   }
   loading: boolean
   headerOpen: boolean
@@ -43,6 +47,8 @@ const initialState: State = {
     weather: [],
     styles: [],
     sizes: [],
+    materials: [],
+    metals: [],
   },
   loading: false,
   headerOpen: false,

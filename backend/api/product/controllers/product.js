@@ -41,6 +41,8 @@ const productFilters = [
   'categories',
   'styles',
   'sizes',
+  'materials',
+  'metals',
 ]
 
 // Some product filters contain a private hash of values to speed up searching
