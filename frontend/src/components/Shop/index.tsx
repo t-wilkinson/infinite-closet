@@ -13,6 +13,16 @@ import ProductRentHeaders from './ProductRentHeaders'
 import ProductRentContents from './ProductRentContents'
 
 export const Shop = ({ data }) => {
+  const dispatch = useDispatch()
+
+  React.useEffect(() => {
+    // Don't save selected date
+    // Maybe should use react state instead
+    dispatch(shopActions.selectDate(undefined))
+    dispatch(shopActions.hideDate())
+    dispatch(shopActions.changeRentType('OneTime'))
+  }, [])
+
   return (
     <div className="px-4 xl:px:0 sm:flex-row flex-col w-full max-w-screen-xl mb-8">
       <ProductImages images={data.product.images} />
