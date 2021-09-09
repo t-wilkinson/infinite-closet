@@ -51,7 +51,7 @@ module.exports = {
     await strapi.plugins['email'].services.email.send({
       template: 'mailinglist-subscription',
       to: { name: body.name, email: body.email },
-      subject: 'You subscribed to the mailinglist',
+      subject: 'You subscribed to the mailing list',
     })
 
     await strapi.query('contact').create({
