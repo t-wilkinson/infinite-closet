@@ -26,7 +26,7 @@ const Product = ({ data }) => {
   const state = useSelector((state) => state.shop)
   const dispatch = useDispatch()
 
-  if (!sizing.get(product.sizes, state.size)) {
+  if (!sizing.get(product.sizes, state.size) && product.sizes[0]) {
     dispatch(shopActions.changeSize(product.sizes[0].size))
   }
 

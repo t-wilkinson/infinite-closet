@@ -34,5 +34,5 @@ export const sortData: {
 
 export const filtersByRoute: { readonly [key in ProductRoutes]: Filter[] } = {
   clothing: ['designers', 'colors', 'occasions', 'weather', 'sizes'],
-  accessories: ['designers', 'colors'],
+  accessories: ['designers', 'colors', 'occasions', 'styles', 'weather'],
 }
