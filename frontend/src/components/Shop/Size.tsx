@@ -82,18 +82,20 @@ export const SizeChart = ({ sizeEnum, chart }) => {
         </thead>
 
         <tbody className="p-2">
-          {sizeEnum.map((size) => (
-            <tr key={size} className="border-t border-gray-light">
-              <th scope="row" className="p-1 font-bold">
-                {size}
-              </th>
-              {chart.map((item: StrapiSizeChart) => (
-                <td key={item.name} className="text-center">
-                  {item[size] || '-'}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {sizeEnum
+            .filter((size) => size !== 'ONESIZE')
+            .map((size) => (
+              <tr key={size} className="border-t border-gray-light">
+                <th scope="row" className="p-1 font-bold">
+                  {size}
+                </th>
+                {chart.map((item: StrapiSizeChart) => (
+                  <td key={item.name} className="text-center">
+                    {item[size] || '-'}
+                  </td>
+                ))}
+              </tr>
+            ))}
         </tbody>
       </table>
     </>

@@ -17,9 +17,6 @@ export const ProductDetails = ({ state, product }) => {
         .filter((item) => toContent(item.value, product))
         .map((item, index) => {
           const content = toContent(item.value, product)
-          if (item.value === 'designer.notes') {
-            console.log(content)
-          }
 
           if (!content) {
             return null
