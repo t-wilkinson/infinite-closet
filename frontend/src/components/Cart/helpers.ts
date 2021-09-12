@@ -8,7 +8,7 @@ export function getGuestCart() {
 
   switch (Object.prototype.toString.call(cart)) {
     case '[object Object]':
-      cart = cart
+      cart = Object.values(cart)
       storage.set('cart', cart)
       break
     case '[object Array]': // Cart should be an object

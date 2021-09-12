@@ -137,6 +137,8 @@ const Wrapper = ({ router, children }) => {
         (order: any) => (order.user = user.id)
       ) as any
       dispatch(CartUtils.insert(userCart))
+    } else {
+      dispatch(CartUtils.get())
     }
   }, [user])
 
