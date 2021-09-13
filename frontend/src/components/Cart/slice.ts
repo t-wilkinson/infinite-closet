@@ -13,7 +13,7 @@ const initialState: State = {
   ordersStatus: [],
 }
 
-export const getUser = (getState) => (getState() as RootState).user.data
+export const getUser = (getState: any) => (getState() as RootState).user.data
 
 export const slice = createSlice({
   name: 'CART',
@@ -28,15 +28,15 @@ export const slice = createSlice({
     })
     builder.addCase(CartUtils.view.fulfilled, (state, action) => {
       state.checkoutCart = action.payload
+      state.count = Object.values(action.payload).length
     })
     builder.addCase(CartUtils.count.fulfilled, (state, action) => {
       state.count = action.payload
     })
-    builder.addCase(CartUtils.remove.fulfilled, (state, action) => {
-      state.checkoutCart = action.payload
-      state.count = action.payload.length
+    builder.addCase(CartUtils.remove.fulfilled, (state) => {
+      state.count = state.count - 1
     })
-    builder.addCase(CartUtils.add.fulfilled, (state, action) => {
+    builder.addCase(CartUtils.add.fulfilled, (state) => {
       state.count = state.count + 1
     })
   },

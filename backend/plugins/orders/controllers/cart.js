@@ -1,5 +1,6 @@
 'use strict'
 
+const _ = require('lodash')
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 async function createCart(orders) {
@@ -47,6 +48,18 @@ async function createCart(orders) {
       }
     })
   )
+}
+
+async function getUserCart(user) {
+  const orders = await strapi
+    .query('order', 'orders')
+    .find({ user: user.id, status: 'cart' }, [
+      'product',
+      'product.sizes',
+      'product.designer',
+      'product.images',
+    ])
+  return orders
 }
 
 async function getValidOrders({ cart, address, paymentMethod }) {
@@ -132,14 +145,20 @@ module.exports = {
 
   async setCart(ctx) {
     const body = ctx.request.body
-    const cart = body.cart
     const user = ctx.state.user
-    strapi.query('user', 'users-permissions').update(
-      { id: user.id },
-      {
-        orders: cart,
-      }
+    const cart = body.cart
+      .map((order) => (order.id ? order.id : order))
+      .filter((v) => v)
+
+    Promise.all(
+      cart.map((order) =>
+        strapi.query('order', 'orders').update({ id: order }, { user: user.id })
+      )
     )
+
+    strapi
+      .query('user', 'users-permissions')
+      .update({ id: user.id }, { orders: cart })
 
     ctx.send()
   },
@@ -157,19 +176,18 @@ module.exports = {
 
   async getUserCart(ctx) {
     const user = ctx.state.user
-    const orders = await strapi.query('order', 'orders').find(
-      {
-        user: user.id,
-        status: 'cart',
-      },
-      ['product', 'product.sizes', 'product.designer', 'product.images']
-    )
+    const orders = await getUserCart(user)
+    ctx.send(orders)
+  },
 
+  async viewUserCart(ctx) {
+    const user = ctx.state.user
+    const orders = await getUserCart(user)
     const cart = await createCart(orders)
     ctx.send(cart)
   },
 
-  async getGuestCart(ctx) {
+  async viewGuestCart(ctx) {
     const body = ctx.request.body
     const orders = await Promise.all(
       body.cart.map(async (order) => {

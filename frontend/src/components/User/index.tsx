@@ -17,17 +17,6 @@ const signin = (dispatch, cart) =>
         window.localStorage.setItem('logged-in', 'true')
         dispatch(userActions.signin(res.data.user))
 
-        // attach any guest cart items to user
-        const users = new Set(
-          cart.map((order) => order.user || order?.order?.user)
-        )
-        if (users.size <= 1 && users.has(undefined)) {
-          const guestCart = cart.filter(
-            (order) => !order.user || order?.order?.user
-          ) as any
-          dispatch(CartUtils.insert(guestCart))
-        }
-
         return res.data.user
       } else {
         dispatch(userActions.signout())

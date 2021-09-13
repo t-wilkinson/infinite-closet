@@ -43,8 +43,16 @@
     },
     {
       "method": "GET",
-      "path": "/cart/view/:user_id",
+      "path": "/cart/:user_id",
       "handler": "cart.getUserCart",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/cart/view/:user_id",
+      "handler": "cart.viewUserCart",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -52,7 +60,7 @@
     {
       "method": "POST",
       "path": "/cart/view",
-      "handler": "cart.getGuestCart",
+      "handler": "cart.viewGuestCart",
       "config": {
         "policies": []
       }

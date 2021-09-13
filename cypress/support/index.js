@@ -20,5 +20,6 @@ import './commands'
 // require('./commands')
 
 before(() => {
-  cy.task('db:clear:users')
+  cy.task('users:clear')
+  cy.task('orders:clear')
 })

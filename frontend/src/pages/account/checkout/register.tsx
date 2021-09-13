@@ -1,4 +1,4 @@
-import GuestCheckout from '@/Account/GuestCheckout'
+import GuestCheckout from '@/Account/CheckoutRegister'
 
 export const Page = () => {
   return <GuestCheckout />

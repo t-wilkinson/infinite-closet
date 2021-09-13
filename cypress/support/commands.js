@@ -36,13 +36,13 @@ Cypress.Commands.add(
   }
 )
 
-Cypress.Commands.add('getSessionStorage', (key) => {
-  cy.window().then((window) => window.sessionStorage.getItem(key))
+Cypress.Commands.add('getLocalStorage', (key) => {
+  cy.window().then((window) => JSON.parse(window.localStorage.getItem(key)))
 })
 
-Cypress.Commands.add('setSessionStorage', (key, value) => {
+Cypress.Commands.add('setLocalStorage', (key, value) => {
   cy.window().then((window) => {
-    window.sessionStorage.setItem(key, value)
+    window.localStorage.setItem(key, JSON.stringify(value))
   })
 })
 Cypress.Commands.add('iframeLoaded', { prevSubject: 'element' }, ($iframe) => {

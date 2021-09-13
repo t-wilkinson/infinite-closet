@@ -44,11 +44,13 @@ export const CartItem = ({ valid, price, available, order }: CheckoutItem) => {
   const dispatch = useDispatch()
 
   function toggleInsurance(id) {
-    dispatch(CartUtils.update({ id, insurance: !order.insurance }))
+    dispatch(CartUtils.update({ id, insurance: !order.insurance })).then(() =>
+      dispatch(CartUtils.view())
+    )
   }
 
   const removeItem = () => {
-    dispatch(CartUtils.remove(order.id))
+    dispatch(CartUtils.remove(order.id)).then(() => dispatch(CartUtils.view()))
     analytics.logEvent('remove_from_cart', {
       user: order.user?.email || '',
     })

@@ -27,7 +27,7 @@ function db(input) {
 // eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
   on('task', {
-    async 'db:clear:users'() {
+    async 'users:clear'() {
       await db('DELETE FROM "users-permissions_user"')
       await axios.post('http://api.ic.com/auth/local/register', {
         firstName: 'Infinite',
@@ -36,6 +36,11 @@ module.exports = (on, config) => {
         password: 'asdfasdf!',
         subscribed: false,
       })
+      return null
+    },
+
+    async 'orders:clear'() {
+      await db('DELETE FROM "order"')
       return null
     },
 

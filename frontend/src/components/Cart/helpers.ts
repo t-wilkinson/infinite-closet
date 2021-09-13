@@ -1,7 +1,8 @@
 import axios from 'axios'
 import * as storage from '@/utils/storage'
 
-import { StrapiOrder } from '@/utils/models'
+import { StrapiUser, StrapiOrder } from '@/utils/models'
+import { Cart } from './types'
 
 export function getGuestCart() {
   let cart = storage.get('cart') || []
@@ -23,15 +24,15 @@ export function getGuestCart() {
   return cart.filter((order: StrapiOrder) => !order.user)
 }
 
-export async function getUserCart(user) {
-  const res = await axios.get(`/orders/cart/view/${user.id}`, {
+export async function getUserCart(user: StrapiUser) {
+  const res = await axios.get(`/orders/cart/${user.id}`, {
     withCredentials: true,
   })
   const cart = res.data
   return cart
 }
 
-export async function getCart(user) {
+export async function getCart(user: StrapiUser): Promise<Cart> {
   if (user) {
     return getUserCart(user)
   } else {
@@ -39,7 +40,7 @@ export async function getCart(user) {
   }
 }
 
-export async function setUserCart(user, cart) {
+export async function setUserCart(user: StrapiUser, cart: Cart | string[]) {
   await axios.put(
     `/orders/cart/${user.id}`,
     { cart },
@@ -47,11 +48,14 @@ export async function setUserCart(user, cart) {
   )
 }
 
-export function setGuestCart(cart) {
+export function setGuestCart(cart: Cart | string[]) {
   storage.set('cart', cart)
 }
 
-export async function setCart(user, cart) {
+export async function setCart(
+  user: StrapiUser,
+  cart: Cart | string[]
+): Promise<void> {
   if (user) {
     setUserCart(user, cart)
   } else {

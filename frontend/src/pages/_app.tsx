@@ -20,6 +20,7 @@ const FourOFour = dynamic(() => import('@/pages/404'))
 import { browserIs } from '@/utils/helpers'
 import * as storage from '@/utils/storage'
 import { CartUtils } from '@/Cart/slice'
+import { StrapiOrder } from '@/utils/models'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -126,19 +127,21 @@ const Wrapper = ({ router, children }) => {
     // for every order in local storage attached to user -> move cart to backend
     // guest -> do nothing
 
-    // TODO: remove this
+    if (!storage.get('reset-cart')) {
+      storage.set('cart', [])
+      storage.set('reset-cart', true)
+    }
+
+    // Attach guest cart to current user cart
     if (user) {
-      const cart = storage.get('cart') || []
-      const notUserCart = Object.values(cart).filter(
-        (order: any) => order.user !== user.id
-      )
-      storage.set('cart', notUserCart)
-      const userCart = cart.filter(
-        (order: any) => (order.user = user.id)
-      ) as any
-      dispatch(CartUtils.insert(userCart))
-    } else {
-      dispatch(CartUtils.get())
+      let cart = storage.get('cart') || []
+      if (!Array.isArray(cart)) {
+        storage.set('cart', [])
+        cart = []
+      }
+
+      storage.set('cart', [])
+      dispatch(CartUtils.insert(cart))
     }
   }, [user])
 
@@ -157,7 +160,6 @@ const Wrapper = ({ router, children }) => {
     signin().catch(() => {
       const loggedIn = storage.get('logged-in')
 
-      // TODO: temporary
       const joinedWaitlist = storage.get('joined-waitlist')
       if (joinedWaitlist) {
         storage.session.set('popup-form', joinedWaitlist)

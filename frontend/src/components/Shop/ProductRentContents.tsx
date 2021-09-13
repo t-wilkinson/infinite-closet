@@ -64,7 +64,7 @@ export const productRentContents = {
       if (user) {
         router.push('/user/checkout')
       } else {
-        router.push('/account/signin/checkout')
+        router.push('/account/checkout/register')
       }
     }
 

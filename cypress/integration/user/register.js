@@ -7,7 +7,7 @@ context('Register', () => {
       password: 'asdfasdf!',
     }
     const fields = ['firstName', 'lastName', 'email', 'password']
-    cy.task('db:clear:users')
+    cy.task('users:clear')
 
     cy.visit('/account/register?redir=/')
     fields.forEach((field) => {
