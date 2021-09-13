@@ -1,6 +1,5 @@
 'use strict'
 
-const _ = require('lodash')
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 async function createCart(orders) {
@@ -9,7 +8,7 @@ async function createCart(orders) {
   ].services.helpers.numAvailableCart(orders)
 
   // add price and available quantity to each order
-  return await Promise.all(
+  const cart = await Promise.all(
     orders.map(async (order) => {
       const key = strapi.plugins['orders'].services.order.toKey(order)
       const quantity = await strapi.plugins['orders'].services.order.quantity(
@@ -48,6 +47,8 @@ async function createCart(orders) {
       }
     })
   )
+
+  return cart.filter((item) => item.order)
 }
 
 async function getUserCart(user) {
@@ -191,7 +192,7 @@ module.exports = {
     const body = ctx.request.body
     const orders = await Promise.all(
       body.cart.map(async (order) => {
-        if (typeof order.product === 'number') {
+        if (['number', 'string'].includes(typeof order.product)) {
           const product = await strapi.query('product').findOne(
             {
               id: order.product,
