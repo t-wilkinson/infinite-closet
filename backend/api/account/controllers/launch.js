@@ -23,6 +23,7 @@ const getTicketPrice = () => {
 }
 
 async function joinLaunchParty({ ticketPrice, body, summary, intentId = '' }) {
+  strapi.log.info('%o', { ticketPrice, body, summary })
   await strapi.plugins['email'].services.email.send({
     template: 'join-launch-party',
     to: { name: body.name, email: body.email },
@@ -80,7 +81,7 @@ module.exports = {
     }
 
     const summary = await strapi.services.price.summary({
-      price: ticketPrice,
+      price: ticketPrice * (body.guests.length + 1),
       context: 'launch-party',
       code: body.promoCode,
       existingCoupons: [],
