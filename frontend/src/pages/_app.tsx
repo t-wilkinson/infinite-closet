@@ -131,7 +131,6 @@ const Wrapper = ({ router, children }) => {
     if (!storage.get('reset-cart')) {
       storage.set('cart', [])
       storage.set('reset-cart', true)
-      router.push('/')
     }
 
     // Attach guest cart to current user cart
