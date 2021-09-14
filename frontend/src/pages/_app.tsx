@@ -80,6 +80,8 @@ const allowedPages = [
   '/user/checkout',
   '/user/orders',
   '/user/profile',
+  '/account/checkout/register',
+  '/account/checkout/signin',
 ]
 
 const Wrapper = ({ router, children }) => {
