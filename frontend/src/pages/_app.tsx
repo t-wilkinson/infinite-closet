@@ -136,6 +136,7 @@ const Wrapper = ({ router, children }) => {
           Object.prototype.toString.call(cart)
         )
       ) {
+        storage.set('cart', [])
         cart = Object.values(cart)
         cart.forEach((order) => {
           const valid = [
