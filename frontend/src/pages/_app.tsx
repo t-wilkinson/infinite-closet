@@ -129,8 +129,36 @@ const Wrapper = ({ router, children }) => {
     // guest -> do nothing
 
     if (!storage.get('reset-cart')) {
-      storage.set('cart', [])
       storage.set('reset-cart', true)
+      let cart = storage.get('cart')
+      if (
+        ['[object Array]', '[object Object]'].includes(
+          Object.prototype.toString.call(cart)
+        )
+      ) {
+        cart = Object.values(cart)
+        cart.forEach((order) => {
+          const valid = [
+            'status',
+            'size',
+            'product',
+            'startDate',
+            'rentalLength',
+          ].every((x) => order[x])
+          const getId = (key) => (order[key].id ? order[key].id : order[key])
+          if (valid) {
+            const product = getId('product')
+            dispatch(
+              CartUtils.add({
+                ...order,
+                product,
+              })
+            )
+          }
+        })
+      } else {
+        storage.set('cart', [])
+      }
     }
 
     // Attach guest cart to current user cart
