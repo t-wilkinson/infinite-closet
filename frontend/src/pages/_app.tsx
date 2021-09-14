@@ -20,7 +20,6 @@ const FourOFour = dynamic(() => import('@/pages/404'))
 import { browserIs } from '@/utils/helpers'
 import * as storage from '@/utils/storage'
 import { CartUtils } from '@/Cart/slice'
-import { StrapiOrder } from '@/utils/models'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -132,6 +131,7 @@ const Wrapper = ({ router, children }) => {
     if (!storage.get('reset-cart')) {
       storage.set('cart', [])
       storage.set('reset-cart', true)
+      router.push('/')
     }
 
     // Attach guest cart to current user cart
