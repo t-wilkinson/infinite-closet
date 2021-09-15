@@ -14,9 +14,9 @@ const getTicketPrice = () => {
   const today = strapi.services.timing.day()
   const ticketPrice = today.isSameOrBefore('2021-08-18', 'day')
     ? 20
-    : today.isSameOrBefore('2021-09-11')
+    : today.isSameOrBefore('2021-09-11', 'day')
       ? 30
-      : today.isSameOrBefore('2021-09-15')
+      : today.isSameOrBefore('2021-09-18', 'day')
         ? 35
         : -1
   return ticketPrice

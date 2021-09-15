@@ -118,7 +118,7 @@ const SideBar = () => (
         text="£20, includes a glass of champagne upon arrival"
       />
       <DetailItem label="Regular Tickets (ends 11/09)" text="£30" />
-      <DetailItem label="Final Release (ends 15/09 or sold out)" text="£35" />
+      <DetailItem label="Final Release (ends 18/09 or sold out)" text="£35" />
     </Details>
   </>
 )
