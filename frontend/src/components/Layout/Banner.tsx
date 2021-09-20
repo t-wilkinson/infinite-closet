@@ -1,6 +1,8 @@
 import React from 'react'
+
 import { useDispatch } from '@/utils/store'
 import { accountActions } from '@/Account/slice'
+import * as storage from '@/utils/storage'
 
 export const Banner = () => {
   const dispatch = useDispatch()
@@ -9,6 +11,7 @@ export const Banner = () => {
       <button
         onClick={() => {
           dispatch(accountActions.showPopup('email'))
+          storage.session.set('popup-form', true)
         }}
       >
         Get 10% off your first rental when you join our mailing list
