@@ -208,9 +208,11 @@ const Wrapper = ({ router, children }) => {
     }
   }, [consent.statistics])
 
-  if (router.pathname === '/launch-party') {
-    router.push('/')
-  }
+  React.useEffect(() => {
+    if (router && router.pathname === '/launch-party') {
+      router.push('/')
+    }
+  }, [])
 
   if (
     !allowedPages.includes(router.pathname) &&
