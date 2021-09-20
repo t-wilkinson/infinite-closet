@@ -208,6 +208,10 @@ const Wrapper = ({ router, children }) => {
     }
   }, [consent.statistics])
 
+  if (router.pathname === '/launch-party') {
+    router.push('/')
+  }
+
   if (
     !allowedPages.includes(router.pathname) &&
     process.env.NODE_ENV === 'production'
