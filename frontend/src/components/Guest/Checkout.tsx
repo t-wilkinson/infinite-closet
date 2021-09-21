@@ -24,6 +24,7 @@ const initialState = {
   error: undefined,
   status: null as Status,
   authorised: false,
+  coupon: undefined,
 }
 
 const reducer = (state, action) => {
@@ -300,7 +301,7 @@ const Summary = ({ couponCode, dispatch, summary }) => {
   if (!summary) {
     return <div />
   }
-  const { coupon } = summary
+  const { coupon } = React.useContext(StateContext)
 
   return (
     <div>
@@ -323,7 +324,7 @@ const Summary = ({ couponCode, dispatch, summary }) => {
       <div className="h-px bg-pri my-1" />
       <Price
         label="Total"
-        price={coupon?.price || summary.total}
+        price={coupon?.total || summary.total}
         className="font-bold"
       />
     </div>

@@ -302,7 +302,6 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
 type CouponStatus = undefined | 'success' | 'failure'
 
 export const CouponCode = ({
-  user,
   context,
   price,
   setCoupon,
@@ -365,10 +364,14 @@ export const CouponCode = ({
       />
     )
   } else if (status === 'success') {
-    return <span className="w-full p-2">Successfully applied promo code!</span>
+    return (
+      <span className="w-full p-2 mb-2 text-sec bg-gray-light">
+        Successfully applied promo code!
+      </span>
+    )
   } else {
     return (
-      <span className="text-warning w-full p-2">
+      <span className="text-warning w-full p-2 mb-2 bg-gray-light">
         {message === 'not-found'
           ? `Unable to find promo code matching ${field.value}.`
           : message === 'maxed-out'
