@@ -70,7 +70,7 @@ describe('ShippingClass', () => {
 
 describe.skip('Hived', () => {
   it('ships to City of London', async () => {
-    const valid = await shipment.verify('E16AN')
+    const valid = await timing.valid()
     expect(valid).toBeTruthy()
   })
 
@@ -78,4 +78,31 @@ describe.skip('Hived', () => {
     const valid = await shipment.verify('')
     expect(valid).toBeFalsy()
   })
+})
+
+describe('Valid', () => {
+  it.each([
+    [1, 1, 1],
+    [2, 1, 1],
+    [14, 0, 0],
+  ])(
+    'Arrives %d days from now, %d available to be ordered, %d in stock',
+    (days, available, quantity, existing = false, expected = true) => {
+      const today = timing.day().add(days, 'day')
+      const valid = timing.valid(today, available, quantity, Number(existing))
+      expect(valid).toBe(expected)
+    }
+  )
+
+  it.each([
+    [0, 1, 1],
+    [2, 0, 1],
+  ])(
+    'Does not arrive %d days from now, %d available to be ordered, %d in stock',
+    (days, available, quantity, existing = false, expected = false) => {
+      const today = timing.day().add(days, 'day')
+      const valid = timing.valid(today, available, quantity, Number(existing))
+      expect(valid).toBe(expected)
+    }
+  )
 })

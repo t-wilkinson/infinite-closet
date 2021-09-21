@@ -138,7 +138,7 @@ function valid(date, available, quantity, existing) {
   }
 
   if (shouldAddGracePeriod) {
-    arrives = arrives.add(10, 'day')
+    arrives = arrives.add(13, 'day')
   }
 
   const enoughShippingTime = date.isSameOrAfter(arrives, 'day')
