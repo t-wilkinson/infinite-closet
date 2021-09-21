@@ -8,36 +8,34 @@ dayjs.tz.setDefault('Europe/London')
 // Given curDay, find all days that would appear on a 7x6 calendar for curDay.Month
 export const useDays = (curDay: Dayjs) => {
   const [date, setDate] = React.useState(
-    curDay ??
-      dayjs().tz('Europe/London').millisecond(0).second(0).minute(0).hour(12)
+    (curDay ?? dayjs().tz('Europe/London').millisecond(0).second(0).minute(0))
+      .hour(12)
+      .date(1)
   )
 
-  const prevMonth: Dayjs[] = []
-  const nextMonth: Dayjs[] = []
-  const curMonth: Dayjs[] = []
-
-  const monthDate = date.date(1)
+  let prevMonth: Dayjs[] = []
+  let nextMonth: Dayjs[] = []
+  let curMonth: Dayjs[] = []
 
   // Previous Month
-  const prevDays = monthDate.day()
+  const prevDays = date.day()
   if (prevDays !== 0) {
-    const prevMonthDate = monthDate.subtract(prevDays, 'day')
-    for (var d = prevMonthDate.date(); d <= prevMonthDate.daysInMonth(); d++) {
-      prevMonth.push(prevMonthDate.date(d))
-    }
+    prevMonth = Array(prevDays)
+      .fill(0)
+      .map((_, i) => date.date(1 - (prevDays - i)))
   }
 
   // Current Month
-  for (var d = monthDate.date(); d <= monthDate.daysInMonth(); d++) {
-    curMonth.push(monthDate.date(d))
+  for (var d = date.date(); d <= date.daysInMonth(); d++) {
+    curMonth.push(date.date(d))
   }
 
   // Next Month
   let nextDays = 6 - date.date(date.daysInMonth()).day()
-  while (prevMonth.length + curMonth.length + nextDays < 7 * 6) {
+  while (prevMonth.length + curMonth.length + nextDays <= 7 * 6) {
     nextDays = nextDays + 7
   }
-  const nextMonthDate = monthDate.date(date.daysInMonth()).add(1, 'day')
+  const nextMonthDate = date.date(date.daysInMonth()).add(1, 'day')
   for (var d = nextMonthDate.date(); d <= nextDays; d++) {
     nextMonth.push(nextMonthDate.date(d))
   }

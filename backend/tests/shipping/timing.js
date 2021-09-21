@@ -1,6 +1,16 @@
 const timing = require('../../api/shipping/services/timing')
 const shipment = require('../../api/shipping/services/shipment')
 const hived = require('../../api/shipping/services/utils/hived')
+const MockDate = require('mockdate')
+const objectSupport = require('dayjs/plugin/objectSupport')
+const dayjs = require('dayjs')
+dayjs.extend(objectSupport)
+
+const withinDate = (day, fn) => {
+  MockDate.set(timing.day().set(day).toDate())
+  fn()
+  MockDate.reset()
+}
 
 describe('Arrival', () => {
   let today = timing.day()
@@ -83,20 +93,36 @@ describe.skip('Hived', () => {
 describe('Valid', () => {
   it.each([
     [1, 1, 1],
-    [2, 1, 1],
     [14, 0, 0],
   ])(
     'Arrives %d days from now, %d available to be ordered, %d in stock',
-    (days, available, quantity, existing = false, expected = true) => {
-      const today = timing.day().add(days, 'day')
-      const valid = timing.valid(today, available, quantity, Number(existing))
-      expect(valid).toBe(expected)
+    (days, available, quantity, existing = false) => {
+      withinDate({ hour: 0 }, () => {
+        const today = timing.day().add(days, 'day')
+        const valid = timing.valid(
+          today,
+          available,
+          quantity,
+          Number(existing)
+        )
+        expect(valid).toBeTruthy()
+      })
+      withinDate({ hour: 13 }, () => {
+        const today = timing.day().add(days, 'day')
+        const valid = timing.valid(
+          today,
+          available,
+          quantity,
+          Number(existing)
+        )
+        expect(valid).toBeFalsy()
+      })
     }
   )
 
   it.each([
     [0, 1, 1],
-    [2, 0, 1],
+    [14, 0, 1],
   ])(
     'Does not arrive %d days from now, %d available to be ordered, %d in stock',
     (days, available, quantity, existing = false, expected = false) => {

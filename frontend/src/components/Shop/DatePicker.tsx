@@ -26,11 +26,15 @@ export const DatePicker = () => {
   const dispatch = useDispatch()
   const rentalLength = rentalLengths[state.oneTime] + 1
 
-  if (!state.dateVisible) {
-    return null
-  }
+  // if (!state.dateVisible) {
+  //   return null
+  // }
   return (
-    <div className="fixed inset-0 items-center justify-center bg-opacity-50 bg-black z-30">
+    <div
+      className={`fixed inset-0 items-center justify-center bg-opacity-50 bg-black z-30
+      ${state.dateVisible ? '' : 'invisible'}
+      `}
+    >
       <div
         className="absolute inset-0"
         onClick={() => {
@@ -43,7 +47,7 @@ export const DatePicker = () => {
             <Icon name="close" size={16} />
           </button>
         </div>
-        <Date state={state} dispatch={dispatch} rentalLength={rentalLength} />
+        <Date dispatch={dispatch} rentalLength={rentalLength} />
         <div className="w-full items-center pt-6">
           <small>We recommend ordering 1-2 days before your event.</small>
         </div>
@@ -54,8 +58,9 @@ export const DatePicker = () => {
 
 export default DatePicker
 
-const Date = ({ state, rentalLength, dispatch }) => {
-  const { date, setDate, days } = useDays(state.selectedDate)
+const Date = ({ rentalLength, dispatch }) => {
+  const selectedDate = useSelector((state) => state.shop.selectedDate)
+  const { date, setDate, days } = useDays(selectedDate)
   const ref = React.useRef()
 
   React.useEffect(() => {
@@ -89,8 +94,8 @@ const Date = ({ state, rentalLength, dispatch }) => {
         ))}
       </div>
       <Days
+        date={date}
         days={days}
-        state={state}
         dispatch={dispatch}
         rentalLength={rentalLength}
       />
@@ -98,22 +103,42 @@ const Date = ({ state, rentalLength, dispatch }) => {
   )
 }
 
-const Days = ({ days, state, dispatch, rentalLength }) => {
+const Days = ({ date, days, dispatch, rentalLength }) => {
   const [hover, setHover] = React.useState<Dayjs>()
   const [valid, setValid] = React.useState({})
+  const state = useSelector((state) => state.shop)
   const product = useSelector((state) => state.layout.data.product)
 
   React.useEffect(() => {
+    if (!product) {
+      return null
+    }
+    const curDay = date.hour(12).date(1)
+    const validDays = [
+      curDay.date(0).subtract(1, 'month'),
+      curDay.date(0),
+      curDay.add(1, 'month').date(0),
+      curDay.add(2, 'month').date(0),
+      curDay.add(3, 'month').date(0),
+    ].reduce((acc, day) => {
+      Array(day.date())
+        .fill(0)
+        .map((_, i) => {
+          acc.push(day.set('date', i + 1))
+        })
+      return acc
+    }, [])
+
     axios
       .post('/orders/dates/valid', {
-        dates: days,
+        dates: validDays,
         product: product.id,
         size: sizing.get(product.sizes, state.size).size,
         rentalLength: state.oneTime,
       })
-      .then((res) => setValid(res.data.valid))
+      .then((res) => setValid((valid) => ({ ...valid, ...res.data.valid })))
       .catch((err) => console.error(err))
-  }, [days])
+  }, [date, days])
 
   return (
     <div className="border-gray-light border-r border-b">
