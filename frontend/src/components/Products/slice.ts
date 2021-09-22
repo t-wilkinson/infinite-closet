@@ -7,7 +7,7 @@ import { SortBy, Filter, Filters } from './types'
 export interface State {
   data: any // TODO: can this be more abstract? in a Root state?
   pageNumber: number
-  focusedFilter?: Filter
+  focusedFilter: Set<Filter>
   loading: boolean
   panel: {
     open: boolean
@@ -40,7 +40,7 @@ const initialState: State = {
   },
   sortBy: 'Alphabetical',
   filters: {},
-  focusedFilter: 'designers',
+  focusedFilter: new Set(['designers', 'sizes'] as const),
 }
 
 export const productsSlice = createSlice({
@@ -55,11 +55,15 @@ export const productsSlice = createSlice({
       const n = state.pageNumber
       state.pageNumber = n > 0 ? n - 1 : 0
     },
-    focusFilter(state, { payload: filter }: PayloadAction<Filter>) {
-      state.focusedFilter = state.focusedFilter === filter ? undefined : filter
+    toggleFilter(state, { payload: filter }: PayloadAction<Filter>) {
+      if (state.focusedFilter.has(filter)) {
+        state.focusedFilter.delete(filter)
+      } else {
+        state.focusedFilter.add(filter)
+      }
     },
-    unfocusFilter(state) {
-      state.focusedFilter = undefined
+    unfocusFilter(state, { payload: filter }: PayloadAction<Filter>) {
+      state.focusedFilter.delete(filter)
     },
     dataReceived(state, { payload }) {
       // fetched data from server
@@ -119,7 +123,7 @@ const productsSelectors = {
   panelSelector,
   isFilterSelected: createSelector(
     [productsSelector, (_: any, filter: Filter) => filter],
-    (products, filter) => products.focusedFilter === filter
+    (products, filter) => products.focusedFilter.has(filter)
   ),
   panelFilter: createSelector(
     [panelSelector, (_: any, filter: Filter) => filter],

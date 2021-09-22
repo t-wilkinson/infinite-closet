@@ -42,7 +42,7 @@ const colorStyle = (color: StrapiColor) => ({
 const ColorCheck = ({ color }) => (
   <Icon
     name="check"
-    className="w-5 h-5"
+    className="w-6 h-6 sm:w-4 sm:h-4"
     style={{
       color: pickFgColorFromBgColor(
         color.value || color.slug.replace('-', ''),
@@ -61,7 +61,7 @@ export const Color = ({ panel, color }) => (
         position="left-0 bottom-0"
       >
         <div
-          className="rounded-full w-8 h-8 items-center justify-center border-gray"
+          className="rounded-full w-10 h-10 sm:w-8 sm:h-8 items-center justify-center border-gray"
           style={colorStyle(color)}
         >
           {panel.values.includes(color.slug) && <ColorCheck color={color} />}

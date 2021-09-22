@@ -51,7 +51,7 @@ const initialState: State = {
 export const ProductImages = ({ images }) => {
   const [state, dispatch] = React.useReducer<typeof reducer>(
     reducer,
-    initialState,
+    initialState
   )
 
   return (

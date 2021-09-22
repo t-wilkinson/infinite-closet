@@ -19,6 +19,7 @@ export const Filters = ({}) => {
   return (
     <div
       className={`h-full justify-start bg-white w-full sm:w-64 md:w-72
+        overflow-y-auto
           ${isOpen ? 'fixed inset-0 sm:hidden z-20' : 'hidden w-full sm:flex'}
           `}
     >
@@ -31,7 +32,7 @@ export const Filters = ({}) => {
         <FilterWrapper
           key={filter}
           filter={filter}
-          selectFilter={() => dispatch(productsActions.focusFilter(filter))}
+          selectFilter={() => dispatch(productsActions.toggleFilter(filter))}
         />
       ))}
       <FilterFooter />
@@ -46,7 +47,7 @@ const FilterHeader = () => {
 
   return (
     <div className="flex-row items-end justify-between w-full my-4 px-2 flex-wrap">
-      <FiltersCount className="text-2xl" />
+      <FiltersCount className="text-2xl sm:text-lg font-bold" />
       <button
         onClick={() => {
           router.push({
@@ -55,7 +56,7 @@ const FilterHeader = () => {
           })
         }}
       >
-        <span className="underline"> clear all </span>
+        <span className="underline sm:text-xs"> Clear all </span>
       </button>
     </div>
   )
@@ -70,22 +71,25 @@ const FilterWrapper = ({ selectFilter, filter }) => {
   const numToggled = useSelector((state) =>
     productsSelectors.numToggledFilter(state, filter)
   )
+  const data = useSelector((state) => state.layout.data)
+
+  if (data[filter]?.length === 0) {
+    return null
+  }
 
   return (
     <>
-      <div>
-        <button onClick={() => selectFilter()}>
-          <div className="flex-row items-center justify-between py-4 px-2">
-            <span className="font-bold">
-              {filterData[filter].label ?? filter}
-              {numToggled > 0 && ` (${numToggled})`}
-            </span>
-            <Icon name={selected ? 'down' : 'up'} size={12} />
-          </div>
-        </button>
-        <div className={`p-4 ${selected ? 'flex' : 'hidden'}`}>
-          <Filter key={filter} filter={filter} panel={panel} />
+      <button onClick={() => selectFilter()}>
+        <div className="flex-row text-lg sm:text-sm items-center justify-between py-4 px-2">
+          <span className="font-bold">
+            {filterData[filter].label ?? filter}
+            {numToggled > 0 && ` (${numToggled})`}
+          </span>
+          <Icon name={selected ? 'down' : 'up'} size={12} />
         </div>
+      </button>
+      <div className={`p-4 text-lg sm:text-sm ${selected ? 'flex' : 'hidden'}`}>
+        <Filter key={filter} filter={filter} panel={panel} />
       </div>
       <Divider />
     </>
@@ -117,13 +121,13 @@ const FilterFooter = () => {
 
   return (
     <div className="sm:hidden p-2 flex-row w-full">
-      <button
-        className="flex-grow bg-pri p-4 text-white rounded-sm"
-        onClick={applyFilterPanel}
-      >
-        Apply
-      </button>
-      <div className="w-4" />
+      {/* <button */}
+      {/*   className="flex-grow bg-pri p-4 text-white rounded-sm" */}
+      {/*   onClick={applyFilterPanel} */}
+      {/* > */}
+      {/*   Apply */}
+      {/* </button> */}
+      {/* <div className="w-4" /> */}
       <button
         className="flex-grow bg-white border border-gray p-4 rounded-sm"
         onClick={() => dispatch(productsActions.closePanel())}

@@ -26,9 +26,6 @@ export const DatePicker = () => {
   const dispatch = useDispatch()
   const rentalLength = rentalLengths[state.oneTime] + 1
 
-  // if (!state.dateVisible) {
-  //   return null
-  // }
   return (
     <div
       className={`fixed inset-0 items-center justify-center bg-opacity-50 bg-black z-30
@@ -73,11 +70,15 @@ const Date = ({ rentalLength, dispatch }) => {
   return (
     <div ref={ref} tabIndex={-1}>
       <div className="flex-row items-center justify-between w-full">
-        <button onClick={() => setDate((d) => d.subtract(1, 'month'))}>
-          <div className="border-gray-light border p-2">
-            <Icon size={16} name="left" />
-          </div>
-        </button>
+        {date.get('month') > dayjs().get('month') ? (
+          <button onClick={() => setDate((d) => d.subtract(1, 'month'))}>
+            <div className="border-gray-light border p-2">
+              <Icon size={16} name="left" />
+            </div>
+          </button>
+        ) : (
+          <div className="w-8" />
+        )}
         <span>{date.format('MMMM YYYY')}</span>
         <button onClick={() => setDate((d) => d.add(1, 'month'))}>
           <div className="border border-gray-light p-2">

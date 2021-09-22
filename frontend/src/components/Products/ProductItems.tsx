@@ -61,7 +61,7 @@ export const ProductItems = ({ data, loading }) => {
 }
 
 export const ProductWrapper = ({ children = null }) => (
-  <div className="px-4 py-6 w-1/2 lg:w-1/3 ">
+  <div className="md:px-4 md:py-6 w-1/2 lg:w-1/3 ">
     <div
       className="w-full
         border-transparent border hover:border-gray  "
@@ -125,7 +125,7 @@ const ProductImages = ({ product }) => {
       }}
     >
       {product.images.map((image: StrapiFile, i: number) => {
-        const format = image.formats.small || image
+        const format = image.formats.medium || image
         return (
           <div className="absolute inset-0 z-0" key={format.url}>
             <div

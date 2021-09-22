@@ -25,6 +25,7 @@ export const Checkbox = ({
   color = undefined,
   children = undefined,
   className = 'flex-wrap',
+  size = 20,
 }) => (
   <button
     onClick={() => onChange(!value)}
@@ -32,8 +33,11 @@ export const Checkbox = ({
   >
     <input className="hidden" type="checkbox" checked={value} readOnly={true} />
     <div className={`flex-row items-center ${className}`}>
-      <div className="items-center flex-shrink-0 justify-center w-5 h-5 bg-white border border-black rounded-sm">
-        {value && <Icon name="check" className="w-3 h-3" style={{ color }} />}
+      <div
+        className="items-center flex-shrink-0 justify-center bg-white border border-black"
+        style={{ width: size, height: size, borderRadius: size / 8 }}
+      >
+        {value && <Icon name="check" size={(size * 2) / 3} style={{ color }} />}
       </div>
       &nbsp;&nbsp;
       <span className="inline">{label}</span>

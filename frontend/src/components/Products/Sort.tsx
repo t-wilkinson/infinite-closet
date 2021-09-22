@@ -29,7 +29,7 @@ export const Sort = ({ sortBy }: { sortBy: SortBy }) => {
             <Icon name="sort" size={18} />
           </div>
           <div className="w-1" />
-          <span>Sort By</span>
+          <span className="whitespace-no-wrap">Sort By</span>
           <div
             className={`absolute left-0 bottom-0 -mb-px z-20 h-px w-full
               ${hover ? 'bg-white' : 'bg-transparent'}

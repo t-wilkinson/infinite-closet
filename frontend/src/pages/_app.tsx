@@ -219,6 +219,7 @@ const Wrapper = ({ router, children }) => {
     process.env.NODE_ENV === 'production'
   ) {
     children = <FourOFour />
+    router.push('/404')
   }
 
   return (

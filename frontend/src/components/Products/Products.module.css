@@ -1,0 +1,9 @@
+.sticky {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  justify-items: end;
+  padding: 0.5em 2em;
+  background: #efefef;
+}

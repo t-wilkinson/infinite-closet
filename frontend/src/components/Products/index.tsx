@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 
 import { Icon, ScrollUp } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
+import { capitalize } from '@/utils/helpers'
 
 import { Crumbs } from './BreadCrumbs'
 import { QUERY_LIMIT } from './constants'
@@ -10,13 +11,14 @@ import { productsActions } from './slice'
 import Filters, { FiltersCount, useToggleFilter } from './Filters'
 import ProductItems from './ProductItems'
 import Sort from './Sort'
+import styles from './Products.module.css'
 
 export const Products = ({ data, loading }) => {
   return (
     <div className="items-center w-full">
-      <div className="flex-row w-full max-w-screen-xl h-full px-1 px-4 xl:px-0">
+      <div className="flex-row w-full max-w-screen-xl h-full md:px-4 xl:px-0">
         <Filters />
-        <div className="w-2" />
+        <div className="hidden md:block w-2" />
         <ProductItemsWrapper data={data} loading={loading} />
       </div>
       <ScrollUp />
@@ -32,54 +34,100 @@ const ProductItemsWrapper = ({ data, loading }) => {
 
   return (
     <div className="w-full flex-shrink">
-      <Header data={data} totalPages={totalPages} sortBy={sortBy} />
+      <HeaderWrapper data={data} totalPages={totalPages} sortBy={sortBy} />
       <ProductItems data={data} loading={loading} />
       <Footer totalPages={totalPages} />
     </div>
   )
 }
 
-const Header = ({ data, totalPages, sortBy }) => {
-  const dispatch = useDispatch()
+const HeaderWrapper = ({ data, totalPages, sortBy }) => {
   const router = useRouter()
   const slug = router.query.slug as string[]
 
   return (
-    <div className="mb-4">
-      <div className="sm:hidden">
-        <Crumbs slug={slug} />
-      </div>
-
+    <div className="mx-2 md:mx-0 mb-4">
       <div className="sm:flex-row items-end sm:items-center justify-between w-full">
-        <span className="font-subheader text-xl self-start sm:self-center">
-          {router.query.slug.slice(-1)[0]} ({data.productsCount})
-        </span>
-        <div className="flex-row space-x-1 items-center mb-1 md:mb-0">
-          <div className="flex-row sm:hidden justify-end py-2">
-            <button
-              onClick={() => {
-                dispatch(productsActions.togglePanel())
-              }}
-            >
-              <div className="flex-row items-center">
-                <div className="hidden md:flex">
-                  <Icon name="settings" size={14} />
-                </div>
-                <div className="md:hidden">
-                  <Icon name="settings" size={18} />
-                </div>
-                <div className="w-1" />
-                <FiltersCount className="text-lg" />
-              </div>
-            </button>
+        <div className="flex-row justify-between w-full sm:w-auto items-end">
+          <div className="sm:hidden">
+            <Crumbs slugs={slug} />
           </div>
-
-          <Sort sortBy={sortBy} />
-          <PageNavigation totalPages={totalPages} />
+          <span className="hidden sm:inline font-bold text-xl self-start sm:self-center">
+            {capitalize(router.query.slug.slice(-1)[0])} ({data.productsCount})
+          </span>
         </div>
+        <Header totalPages={totalPages} sortBy={sortBy} />
       </div>
       <div className="mt-4">
         <QuickFilter data={data} />
+      </div>
+    </div>
+  )
+}
+
+const Header = ({ sortBy, totalPages }) => {
+  const dispatch = useDispatch()
+  const [sticky, setSticky] = React.useState(false)
+  const ref = React.useRef(null)
+
+  React.useEffect(() => {
+    const header = ref.current
+    const app = document.getElementById('_app')
+    if (!header || !app) {
+      return
+    }
+
+    const stickyScroll = () => {
+      if (app.scrollTop > header.offsetTop) {
+        setSticky(true)
+      } else {
+        setSticky(false)
+      }
+    }
+    const toggleStickyScroll = () => {
+      if (window.innerWidth > 640) {
+        setSticky(false)
+        app.removeEventListener('scroll', stickyScroll)
+      } else {
+        app.addEventListener('scroll', stickyScroll)
+      }
+    }
+
+    window.addEventListener('resize', toggleStickyScroll)
+    app.addEventListener('scroll', stickyScroll)
+    return () => {
+      app.removeEventListener('scroll', stickyScroll)
+      window.removeEventListener('resize', toggleStickyScroll)
+    }
+  }, [ref])
+
+  return (
+    <div
+      ref={ref}
+      className={`flex-row space-x-1 items-center mb-1 md:mb-0 z-10
+        ${sticky ? styles.sticky : ''}`}
+    >
+      <div className="flex-row sm:hidden py-2 justify-end">
+        <button
+          onClick={() => {
+            dispatch(productsActions.togglePanel())
+          }}
+        >
+          <div className="flex-row items-center">
+            <div className="hidden md:flex">
+              <Icon name="settings" size={14} />
+            </div>
+            <div className="md:hidden">
+              <Icon name="settings" size={18} />
+            </div>
+            <div className="w-1" />
+            <FiltersCount className="whitespace-no-wrap" />
+          </div>
+        </button>
+      </div>
+      <Sort sortBy={sortBy} />
+      <div className="w-full">
+        <PageNavigation totalPages={totalPages} />
       </div>
     </div>
   )
@@ -154,23 +202,27 @@ const PageNavigation = ({ totalPages, ...props }) => {
 
   return (
     <div className="flex-row items-center justify-end" {...props}>
-      <button onClick={decreasePageNumber}>
-        <div className="hidden md:flex p-1 border border-gray-light rounded-sm">
-          <Icon name="left" size={16} />
-        </div>
-        <div className="md:hidden p-2 border border-gray-light rounded-sm">
-          <Icon name="left" size={20} />
+      <button
+        onClick={decreasePageNumber}
+        className={`
+          ${pageNumber === 1 ? 'text-gray cursor-default' : ''}
+          `}
+      >
+        <div className="md:flex p-1 border border-gray-light rounded-sm">
+          <Icon name="left" className="w-4 h-4 md:w-6 md:h-6" />
         </div>
       </button>
-      <span className="mx-1 text-lg">
+      <span className="mx-1 text-lg whitespace-no-wrap">
         {pageNumber} / {totalPages}
       </span>
-      <button onClick={increasePageNumber}>
-        <div className="hidden md:flex p-1 border border-gray-light rounded-sm">
-          <Icon name="right" size={16} />
-        </div>
-        <div className="md:hidden p-2 border border-gray-light rounded-sm">
-          <Icon name="right" size={20} />
+      <button
+        onClick={increasePageNumber}
+        className={`
+          ${pageNumber >= totalPages ? 'text-gray cursor-default' : ''}
+          `}
+      >
+        <div className="md:flex p-1 border border-gray-light rounded-sm">
+          <Icon name="right" className="w-4 h-4 md:w-6 md:h-6" />
         </div>
       </button>
     </div>

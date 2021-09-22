@@ -4,22 +4,24 @@ import { StrapiCategory } from '@/utils/models'
 import { useSelector } from '@/utils/store'
 import { capitalize } from '@/utils/helpers'
 
-export const Crumbs = ({ slug, ...props }) => {
+export const Crumbs = ({ slugs = [], ...props }) => {
   return (
     <div {...props} style={{ flexDirection: 'row' }}>
-      <span className="text-gray-dark whitespace-pre">Browse / </span>
-
-      {[...slug].map((v, i) => (
-        <Link key={v} href={`/products/${slug.slice(0, i).join('/')}`}>
+      <span className="text-gray whitespace-pre">Browse</span>
+      {slugs.map((v, i) => (
+        <Link key={v} href={`/products/${slugs.slice(0, i + 1).join('/')}`}>
           <a>
-            {i === slug.length ? (
-              <span>{capitalize(v)}</span>
+            {i === slugs.length - 1 ? (
+              <span>
+                &nbsp;&nbsp;/&nbsp;&nbsp;
+                <span className="hover:underline">{capitalize(v)}</span>
+              </span>
             ) : (
               <span>
-                <span className="text-gray-dark whitespace-pre hover:underline">
+                &nbsp;&nbsp;/&nbsp;&nbsp;
+                <span className="text-gray whitespace-pre hover:underline">
                   {capitalize(v)}
                 </span>
-                &nbsp;/&nbsp;
               </span>
             )}
           </a>
@@ -37,7 +39,7 @@ export const BreadCrumbs = ({}) => {
     <div className="items-start mb-2 w-full px-1 hidden sm:flex">
       <span className="mb-4">
         <Crumbs
-          slug={categories.map((v) => v.slug)}
+          slugs={categories.map((v) => v.slug)}
           className="hidden sm:flex text-sm"
         />
       </span>
@@ -62,7 +64,7 @@ const BreadCrumb = ({ slug, name, href, level, categories }) => {
   const selectedSlug = categories.slice(-1)[0].slug
 
   return (
-    <div key={slug}>
+    <div key={slug} className="text-sm">
       <span className={`${selectedSlug === slug ? 'font-bold' : ''}`}>
         {level !== 0 && <BreadCrumbLink key={slug} href={href} label={name} />}
       </span>

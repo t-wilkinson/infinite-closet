@@ -1,5 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 import thunk from 'redux-thunk'
+import { enableMapSet } from 'immer'
+
+enableMapSet()
 
 import productsSlice from '@/Products/slice'
 import layoutSlice from '@/Layout/slice'

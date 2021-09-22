@@ -72,6 +72,7 @@ export const FilterItems: FilterItems = {
               let { slug, name } = designers[index]
               return (
                 <Checkbox
+                  size={14}
                   key={slug}
                   onChange={() => panel.toggle(slug)}
                   value={panel.values.includes(slug)}
@@ -239,9 +240,14 @@ const FilterCheckboxes = ({ panel, data, sort = true }) => {
       )
     : data
 
+  // if (data.length === 0) {
+  //   return <span>No available filters</span>
+  // }
+
   return data?.map((v: { slug: string; name: string }) => (
     <div key={v.slug} className="py-0.5">
       <Checkbox
+        size={14}
         onChange={() => panel.toggle(v.slug)}
         value={panel.values.includes(v.slug)}
         label={<span className="whitespace-no-wrap">{v.name}</span>}
