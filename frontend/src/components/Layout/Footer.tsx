@@ -53,7 +53,7 @@ export const Footer = () => {
 
 const FooterWrapper = ({ children }) => (
   <div className="items-center w-full px-2 bg-sec text-white">
-    <footer className="flex flex-col w-full p-16 max-w-screen-lg">
+    <footer className="flex flex-col w-full p-8 sm:p-16 max-w-screen-lg">
       {children}
     </footer>
     <div className="mb-8">
