@@ -2,7 +2,12 @@ import React from 'react'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
+import {
+  PaymentRequestButtonElement,
+  CardElement,
+  useStripe,
+  useElements,
+} from '@stripe/react-stripe-js'
 dayjs.extend(utc)
 
 import { useSelector, useDispatch } from '@/utils/store'
@@ -27,7 +32,7 @@ const initialState = {
   coupon: undefined,
 }
 
-const reducer = (state, action) => {
+const reducer = (state: typeof initialState, action: any) => {
   const def = (key: string) => ({ ...state, [key]: action.payload })
   // prettier-ignore
   switch (action.type) {
@@ -49,12 +54,19 @@ const reducer = (state, action) => {
 
 const StateContext = React.createContext(null)
 const DispatchContext = React.createContext(null)
+const FieldsContext = React.createContext(null)
+const AddressContext = React.createContext(null)
 
 export const CheckoutContextWrapper = ({}) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
   const cart = useSelector((state) => state.cart.checkoutCart)
+  const fields = useFields({
+    couponCode: {},
+    email: { constraints: 'required string' },
+  })
+  const address = useAddressFields()
 
   const fetchCart = async () => {
     rootDispatch(CartUtils.view())
@@ -79,9 +91,13 @@ export const CheckoutContextWrapper = ({}) => {
     <div className="w-full flex-grow items-center bg-gray-light px-4 pt-4">
       <StateContext.Provider value={state}>
         <DispatchContext.Provider value={dispatch}>
-          <PaymentWrapper>
-            <CheckoutWrapper fetchCart={fetchCart} />
-          </PaymentWrapper>
+          <FieldsContext.Provider value={fields}>
+            <AddressContext.Provider value={address}>
+              <PaymentWrapper>
+                <CheckoutWrapper fetchCart={fetchCart} />
+              </PaymentWrapper>
+            </AddressContext.Provider>
+          </FieldsContext.Provider>
         </DispatchContext.Provider>
       </StateContext.Provider>
     </div>
@@ -91,11 +107,6 @@ export const CheckoutContextWrapper = ({}) => {
 const CheckoutWrapper = ({ fetchCart }) => {
   const state = React.useContext(StateContext)
   const cartCount = useSelector((state) => state.cart.count)
-  const fields = useFields({
-    couponCode: {},
-    email: { constraints: 'required string' },
-  })
-  const address = useAddressFields()
 
   return (
     <div
@@ -123,21 +134,140 @@ const CheckoutWrapper = ({ fetchCart }) => {
         </div>
       ) : (
         <div className="w-full space-y-4">
-          <Checkout fetchCart={fetchCart} fields={fields} address={address} />
+          <Cart />
+
+          <PaymentRequest fetchCart={fetchCart} />
         </div>
       )}
     </div>
   )
 }
 
-const Checkout = ({ fields, address, fetchCart }) => {
+const CheckoutForm = ({ checkout }) => {
   const state = React.useContext(StateContext)
-  const dispatch = React.useContext(DispatchContext)
+  const fields = React.useContext(FieldsContext)
   const cart = useSelector((state) => state.cart.checkoutCart)
   const summary = useSelector((state) => state.cart.checkoutSummary)
+  const address = React.useContext(AddressContext)
+
+  return (
+    <div className="py-8 -mx-4 px-4 sm:mx-0 sm:px-0 bg-white items-center ">
+      <div className="max-w-screen-sm space-y-8">
+        <SideItem label="Address">
+          <Address address={address} email={fields.email} />
+        </SideItem>
+        <SideItem label="Payment Method">
+          <Payment />
+        </SideItem>
+        <SideItem label="Summary">
+          <Summary summary={summary} />
+        </SideItem>
+        <div className="mt-4 w-full">
+          <Submit
+            onSubmit={checkout}
+            disabled={
+              ['error', 'processing'].includes(state.status) ||
+              !isValid(address) ||
+              cart.every(isOrderInvalid)
+            }
+          >
+            {state.status === 'checking-out'
+              ? 'Checkout Out...'
+              : state.status === 'error'
+              ? 'Oops... We ran into an issue'
+              : state.status === 'success'
+              ? 'Successfully Checked Out'
+              : cart.every(isOrderInvalid)
+              ? 'No Available Items'
+              : cart.some(isOrderInvalid)
+              ? 'Checkout Available Items'
+              : 'Secure Checkout'}
+          </Submit>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const isOrderInvalid = (order: { valid: boolean }) => !order.valid
+
+const SideItem = ({ label, children }) => (
+  <div>
+    <span className="font-subheader text-xl">
+      {label}
+      <div className="w-full h-px bg-pri mt-2 mb-2" />
+    </span>
+    {children}
+  </div>
+)
+
+const Address = ({ email, address }) => {
+  return (
+    <div className="grid grid-flow-row grid-cols-2 w-full gap-x-4">
+      {Object.keys(address).map((field) => (
+        <Input key={field} {...address[field]} />
+      ))}
+      <Input {...email} />
+    </div>
+  )
+}
+
+const Payment = () => {
+  const state = React.useContext(StateContext)
+  const dispatch = React.useContext(DispatchContext)
+
+  const handleChange = async (event: any) => {
+    if (event.error) {
+      dispatch({
+        type: 'status-error',
+        payload: event.error ? event.error.message : '',
+      })
+    } else {
+      dispatch({ type: 'status-clear' })
+    }
+  }
+
+  return (
+    <>
+      <div className="mb-4 mt-2 border border-gray rounded-sm p-4">
+        <CardElement
+          id="card-element"
+          options={cardStyle}
+          onChange={handleChange}
+        />
+      </div>
+      {/* Show any error that happens when processing the payment */}
+      {state.error && (
+        <div className="text-error" role="alert">
+          {state.error}
+        </div>
+      )}
+      <Authorise
+        setAuthorisation={(allowed: boolean) =>
+          allowed
+            ? dispatch({ type: 'authorise' })
+            : dispatch({ type: 'un-authorise' })
+        }
+        authorised={state.authorised}
+      />
+    </>
+  )
+}
+
+const PaymentRequest = ({ fetchCart }) => {
+  const stripe = useStripe()
+  const state = React.useContext(StateContext)
+  const dispatch = React.useContext(DispatchContext)
+  const summary = useSelector((state) => state.cart.checkoutSummary)
+  const address = React.useContext(AddressContext)
+  const fields = React.useContext(FieldsContext)
+  const cart = useSelector((state) => state.cart.checkoutCart)
+  const { couponCode } = React.useContext(FieldsContext)
+  const [paymentRequest, setPaymentRequest] = React.useState(null)
+  const [paymentIntent, setPaymentIntent] = React.useState(null)
+
   const analytics = useAnalytics()
   const elements = useElements()
-  const stripe = useStripe()
   const rootDispatch = useDispatch()
 
   const checkout = () => {
@@ -189,118 +319,160 @@ const Checkout = ({ fields, address, fetchCart }) => {
       })
   }
 
-  return (
-    <>
-      <Cart />
-      <div className="py-8 bg-white items-center ">
-        <div className="max-w-screen-sm space-y-8">
-          <SideItem label="Address">
-            <Address address={address} email={fields.email} />
-          </SideItem>
-          <SideItem label="Payment Method">
-            <Payment state={state} dispatch={dispatch} />
-          </SideItem>
-          <SideItem label="Summary">
-            <Summary
-              summary={summary}
-              dispatch={dispatch}
-              couponCode={fields.couponCode}
-            />
-          </SideItem>
-          <div className="mt-4 w-full">
-            <Submit
-              onSubmit={checkout}
-              disabled={
-                ['error', 'processing'].includes(state.status) ||
-                !isValid(address) ||
-                cart.every(isOrderInvalid)
-              }
-            >
-              {state.status === 'checking-out'
-                ? 'Checkout Out...'
-                : state.status === 'error'
-                ? 'Oops... We ran into an issue'
-                : state.status === 'success'
-                ? 'Successfully Checked Out'
-                : cart.every(isOrderInvalid)
-                ? 'No Available Items'
-                : cart.some(isOrderInvalid)
-                ? 'Checkout Available Items'
-                : 'Secure Checkout'}
-            </Submit>
-          </div>
-        </div>
-      </div>
-    </>
-  )
-}
-
-const isOrderInvalid = (order) => !order.valid
-
-const SideItem = ({ label, children }) => (
-  <div>
-    <span className="font-subheader text-xl">
-      {label}
-      <div className="w-full h-px bg-pri mt-2 mb-2" />
-    </span>
-    {children}
-  </div>
-)
-
-const Address = ({ email, address }) => {
-  return (
-    <div className="grid grid-flow-row grid-cols-2 w-full gap-x-4">
-      {Object.keys(address).map((field) => (
-        <Input key={field} {...address[field]} />
-      ))}
-      <Input {...email} />
-    </div>
-  )
-}
-
-const Payment = ({ state, dispatch }) => {
-  const handleChange = async (event) => {
-    if (event.error) {
-      dispatch({
-        type: 'status-error',
-        payload: event.error ? event.error.message : '',
-      })
+  React.useEffect(() => {
+    if (paymentIntent) {
+      axios
+        .put(`/orders/checkout/payment-intents/${paymentIntent.id}`, {
+          couponCode: couponCode.value,
+          cart: cart.map((item) => item.order),
+        })
+        .then((res) => res.data)
+        .then((res) => setPaymentIntent(res))
+        .catch(() => setPaymentIntent(null))
     } else {
-      dispatch({ type: 'status-clear' })
+      axios
+        .post('/orders/checkout/payment-intents', {
+          couponCode: couponCode.value,
+          cart: cart.map((item) => item.order),
+        })
+        .then((res) => res.data)
+        .then((res) => setPaymentIntent(res))
+        .catch(() => setPaymentIntent(null))
     }
+  }, [cart])
+
+  React.useEffect(() => {
+    if (!stripe || !paymentIntent) return
+    const pr = stripe.paymentRequest({
+      country: 'GB',
+      currency: 'gbp',
+      total: {
+        label: 'Checkout total',
+        amount: paymentIntent.amount,
+      },
+      requestPayerName: true,
+      requestPayerEmail: true,
+      requestShipping: true,
+      shippingOptions: [
+        {
+          id: 'default-shipping',
+          label: 'Zero Emission Delivery',
+          detail: 'Carbon-neutral shipping by Hived',
+          amount: summary.shipping,
+        },
+      ],
+    })
+
+    // Check the availability of the Payment Request API.
+    pr.canMakePayment().then((result) => {
+      if (result) {
+        setPaymentRequest(pr)
+      }
+    })
+  }, [stripe, paymentIntent])
+
+  React.useEffect(() => {
+    if (!stripe || !paymentRequest || !paymentIntent || !summary) return
+    paymentRequest.update({
+      total: {
+        label: 'Checkout total',
+        amount: paymentIntent.amount,
+      },
+      shippingOptions: [
+        {
+          id: 'default-shipping',
+          label: 'Zero Emission Delivery',
+          detail: 'Carbon-neutral shipping by Hived',
+          amount: summary.shipping,
+        },
+      ],
+    })
+  }, [paymentRequest, paymentIntent, summary])
+
+  React.useEffect(() => {
+    if (!paymentRequest || !paymentIntent) return
+
+    const { client_secret: clientSecret } = paymentIntent
+
+    paymentRequest.on('paymentmethod', async (ev: any) => {
+      // Confirm the PaymentIntent without handling potential next actions (yet).
+      const { paymentIntent, error: confirmError } =
+        await stripe.confirmCardPayment(
+          clientSecret,
+          { payment_method: ev.paymentMethod.id },
+          { handleActions: false }
+        )
+
+      if (confirmError) {
+        // Report to the browser that the payment failed, prompting it to
+        // re-show the payment interface, or show an error message and close
+        // the payment interface.
+        ev.complete('fail')
+      } else {
+        // Report to the browser that the confirmation was successful, prompting
+        // it to close the browser payment method collection interface.
+        ev.complete('success')
+        // Check if the PaymentIntent requires any actions and if so let Stripe.js
+        // handle the flow. If using an API version older than "2019-02-11"
+        // instead check for: `paymentIntent.status === "requires_source_action"`.
+        if (paymentIntent.status === 'requires_action') {
+          // Let Stripe.js handle the rest of the payment flow.
+          const { error } = await stripe.confirmCardPayment(clientSecret)
+          if (error) {
+            // The payment failed -- ask your customer for a new payment method.
+            setPaymentRequest(null)
+          } else {
+            // The payment has succeeded.
+            checkout()
+          }
+        } else {
+          // The payment has succeeded.
+          checkout()
+        }
+      }
+    })
+
+    paymentRequest.on('shippingaddresschange', async function (ev: any) {
+      if (
+        process.env.NODE_ENV === 'test' ||
+        process.env.NODE_ENV === 'production'
+      ) {
+        return axios
+          .get(`/addresses/verify/${ev.shippingAddress.postalCode}`)
+          .then((res) => {
+            if (res.data.valid) {
+              ev.updateWith({
+                status: 'success',
+              })
+            } else {
+              throw new Error('Postcode not served')
+            }
+          })
+          .catch(() => {
+            ev.updateWith({ status: 'invalid_shipping_address' })
+          })
+      } else {
+        ev.updateWith({
+          status: 'success',
+        })
+      }
+    })
+  }, [paymentRequest, paymentIntent])
+
+  if (paymentRequest && paymentIntent) {
+    return <PaymentRequestButtonElement options={{ paymentRequest }} />
   }
 
-  return (
-    <>
-      <div className="mb-4 mt-2 border border-gray rounded-sm p-4">
-        <CardElement
-          id="card-element"
-          options={cardStyle}
-          onChange={handleChange}
-        />
-      </div>
-      {/* Show any error that happens when processing the payment */}
-      {state.error && (
-        <div className="text-error" role="alert">
-          {state.error}
-        </div>
-      )}
-      <Authorise
-        setAuthorisation={(allowed) =>
-          allowed
-            ? dispatch({ type: 'authorise' })
-            : dispatch({ type: 'un-authorise' })
-        }
-        authorised={state.authorised}
-      />
-    </>
-  )
+  // Use a traditional checkout form.
+  return <CheckoutForm checkout={checkout} />
 }
 
-const Summary = ({ couponCode, dispatch, summary }) => {
+const Summary = ({ summary }) => {
   if (!summary) {
     return <div />
   }
+  const { couponCode } = React.useContext(FieldsContext)
+  const dispatch = React.useContext(DispatchContext)
   const { coupon } = React.useContext(StateContext)
 
   return (

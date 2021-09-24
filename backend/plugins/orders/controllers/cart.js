@@ -63,6 +63,7 @@ async function getUserCart(user) {
   return orders
 }
 
+// TODO: move this into service and don't require paymentMethod
 async function getValidOrders({ cart, address, paymentMethod }) {
   const numAvailable = await strapi.plugins[
     'orders'
@@ -84,7 +85,6 @@ async function getValidOrders({ cart, address, paymentMethod }) {
         quantity,
         existingOrders
       )
-
       if (valid) {
         return strapi.query('order', 'orders').update(
           { id: order.id },
@@ -330,6 +330,47 @@ module.exports = {
         strapi.log.error(e)
         return ctx.send({ error: 'Could not process payment' })
       }
+    }
+  },
+
+  async updatePaymentIntent(ctx) {
+    const body = ctx.request.body
+    const { id } = ctx.params
+    const cart = await getValidOrders({
+      cart: body.cart,
+      address: body.address,
+    })
+    const summary = await strapi.plugins['orders'].services.price.summary({
+      cart,
+      couponCode: body.couponCode,
+    })
+
+    const paymentIntent = await stripe.paymentIntents.update(id, {
+      ...body.data,
+      amount: strapi.services.price.toAmount(summary.total),
+    })
+    ctx.send(paymentIntent)
+  },
+
+  async createPaymentIntent(ctx) {
+    const body = ctx.request.body
+    const cart = await getValidOrders({
+      cart: body.cart,
+      address: body.address,
+    })
+    const summary = await strapi.plugins['orders'].services.price.summary({
+      cart,
+      couponCode: body.couponCode,
+    })
+
+    if (summary.total <= 100) {
+      ctx.send({ error: 'Total too small' }, 400)
+    } else {
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: strapi.services.price.toAmount(summary.total),
+        currency: 'gbp',
+      })
+      ctx.send(paymentIntent)
     }
   },
 }
