@@ -57,6 +57,15 @@ const DispatchContext = React.createContext(null)
 const FieldsContext = React.createContext(null)
 const AddressContext = React.createContext(null)
 
+const useFetchCart = () => {
+  const rootDispatch = useDispatch()
+
+  return () => {
+    rootDispatch(CartUtils.view())
+    rootDispatch(CartUtils.summary())
+  }
+}
+
 export const CheckoutContextWrapper = ({}) => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const rootDispatch = useDispatch()
@@ -67,11 +76,7 @@ export const CheckoutContextWrapper = ({}) => {
     email: { constraints: 'required string' },
   })
   const address = useAddressFields()
-
-  const fetchCart = async () => {
-    rootDispatch(CartUtils.view())
-    rootDispatch(CartUtils.summary())
-  }
+  const fetchCart = useFetchCart()
 
   React.useEffect(() => {
     analytics.logEvent('view_cart', {
@@ -94,7 +99,7 @@ export const CheckoutContextWrapper = ({}) => {
           <FieldsContext.Provider value={fields}>
             <AddressContext.Provider value={address}>
               <PaymentWrapper>
-                <CheckoutWrapper fetchCart={fetchCart} />
+                <CheckoutWrapper />
               </PaymentWrapper>
             </AddressContext.Provider>
           </FieldsContext.Provider>
@@ -104,7 +109,7 @@ export const CheckoutContextWrapper = ({}) => {
   )
 }
 
-const CheckoutWrapper = ({ fetchCart }) => {
+const CheckoutWrapper = () => {
   const state = React.useContext(StateContext)
   const cartCount = useSelector((state) => state.cart.count)
 
@@ -136,19 +141,32 @@ const CheckoutWrapper = ({ fetchCart }) => {
         <div className="w-full space-y-4">
           <Cart />
 
-          <PaymentRequest fetchCart={fetchCart} />
+          <PaymentRequest />
         </div>
       )}
     </div>
   )
 }
 
-const CheckoutForm = ({ checkout }) => {
+const CheckoutForm = () => {
   const state = React.useContext(StateContext)
   const fields = React.useContext(FieldsContext)
   const cart = useSelector((state) => state.cart.checkoutCart)
   const summary = useSelector((state) => state.cart.checkoutSummary)
   const address = React.useContext(AddressContext)
+  const checkout = useCheckout()
+
+  const onSubmit = () => {
+    const cleanedFields = cleanFields(fields)
+    const cleanedAddress = cleanFields(address)
+    checkout({
+      name: `${cleanedAddress.firstName} ${cleanedAddress.lastName}`,
+      phone: cleanedAddress.mobileNumber,
+      email: cleanedFields.email,
+      address: cleanedAddress,
+      couponCode: cleanedFields.couponCode,
+    })
+  }
 
   return (
     <div className="py-8 -mx-4 px-4 sm:mx-0 sm:px-0 bg-white items-center ">
@@ -164,7 +182,7 @@ const CheckoutForm = ({ checkout }) => {
         </SideItem>
         <div className="mt-4 w-full">
           <Submit
-            onSubmit={checkout}
+            onSubmit={onSubmit}
             disabled={
               ['error', 'processing'].includes(state.status) ||
               !isValid(address) ||
@@ -254,37 +272,25 @@ const Payment = () => {
   )
 }
 
-const PaymentRequest = ({ fetchCart }) => {
-  const stripe = useStripe()
-  const state = React.useContext(StateContext)
-  const dispatch = React.useContext(DispatchContext)
-  const summary = useSelector((state) => state.cart.checkoutSummary)
-  const address = React.useContext(AddressContext)
-  const fields = React.useContext(FieldsContext)
-  const cart = useSelector((state) => state.cart.checkoutCart)
-  const { couponCode } = React.useContext(FieldsContext)
-  const [paymentRequest, setPaymentRequest] = React.useState(null)
-  const [paymentIntent, setPaymentIntent] = React.useState(null)
-
+const useCheckout = () => {
   const analytics = useAnalytics()
+  const cart = useSelector((state) => state.cart.checkoutCart)
+  const dispatch = React.useContext(DispatchContext)
   const elements = useElements()
+  const fetchCart = useFetchCart()
   const rootDispatch = useDispatch()
+  const state = React.useContext(StateContext)
+  const stripe = useStripe()
 
-  const checkout = () => {
+  const checkout = ({ address, name, email, phone, couponCode }) => {
     dispatch({ type: 'status-processing' })
-    const cleaned = cleanFields(fields)
-    const cleanedAddress = cleanFields(address)
 
     validatePostcode(address.postcode)
       .then(() =>
         stripe.createPaymentMethod({
           type: 'card',
           card: elements.getElement(CardElement),
-          billing_details: {
-            name: `${cleanedAddress.firstName} ${cleanedAddress.lastName}`,
-            email: cleaned.email,
-            phone: cleanedAddress.mobileNumber,
-          },
+          billing_details: { name, email, phone },
         })
       )
 
@@ -296,7 +302,7 @@ const PaymentRequest = ({ fetchCart }) => {
             address: state.address,
             paymentMethod: res.paymentMethod.id,
             cart: cart.map((item) => item.order),
-            couponCode: cleaned.couponCode,
+            couponCode,
           })
         }
       })
@@ -317,6 +323,35 @@ const PaymentRequest = ({ fetchCart }) => {
         console.error(err)
         dispatch({ type: 'status-error' })
       })
+  }
+
+  return checkout
+}
+
+const PaymentRequest = () => {
+  const stripe = useStripe()
+  const summary = useSelector((state) => state.cart.checkoutSummary)
+  const cart = useSelector((state) => state.cart.checkoutCart)
+  const checkout = useCheckout()
+  const { couponCode } = React.useContext(FieldsContext)
+  const [paymentRequest, setPaymentRequest] = React.useState(null)
+  const [paymentIntent, setPaymentIntent] = React.useState(null)
+
+  const toCheckout = (ev: any) => {
+    return {
+      name: ev.payerName,
+      email: ev.payerEmail,
+      phone: ev.payerPhone,
+      couponCode: '', // !TODO
+      address: {
+        address: ev.shippingAddress.addressLine.join(', '),
+        town: ev.shippingAddress.city,
+        postcode: ev.shippingAddress.postalCode,
+        firstName: ev.payerName.split(' ')[0],
+        lastName: ev.payerName.split(' ').slice(1).join(' '),
+        mobileNumber: ev.payerPhone,
+      },
+    }
   }
 
   React.useEffect(() => {
@@ -364,15 +399,16 @@ const PaymentRequest = ({ fetchCart }) => {
       },
       requestPayerName: true,
       requestPayerEmail: true,
-      requestShipping: true,
-      shippingOptions: [
-        {
-          id: 'default-shipping',
-          label: 'Zero Emission Delivery',
-          detail: 'Carbon-neutral shipping by Hived',
-          amount: summary.shipping,
-        },
-      ],
+      requestPayerPhone: true,
+      // requestShipping: true,
+      // shippingOptions: [
+      //   {
+      //     id: 'default-shipping',
+      //     label: 'Zero Emission Delivery',
+      //     detail: 'Carbon-neutral shipping by Hived',
+      //     amount: summary.shipping,
+      //   },
+      // ],
     })
 
     // Check the availability of the Payment Request API.
@@ -435,11 +471,11 @@ const PaymentRequest = ({ fetchCart }) => {
             setPaymentRequest(null)
           } else {
             // The payment has succeeded.
-            checkout()
+            checkout(toCheckout(ev))
           }
         } else {
           // The payment has succeeded.
-          checkout()
+          checkout(toCheckout(ev))
         }
       }
     })
@@ -473,11 +509,16 @@ const PaymentRequest = ({ fetchCart }) => {
 
   console.log('payment{Request,Intent}', paymentRequest, paymentIntent)
   if (paymentRequest && paymentIntent) {
-    return <PaymentRequestButtonElement options={{ paymentRequest }} />
+    return (
+      <>
+        <PaymentRequestButtonElement options={{ paymentRequest }} />
+        <Summary summary={summary} />
+      </>
+    )
   }
 
   // Use a traditional checkout form.
-  return <CheckoutForm checkout={checkout} />
+  return <CheckoutForm />
 }
 
 const Summary = ({ summary }) => {
