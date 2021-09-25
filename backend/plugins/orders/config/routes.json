@@ -132,6 +132,14 @@
       }
     },
     {
+      "method": "GET",
+      "path": "/:id",
+      "handler": "order.findOne",
+      "config": {
+        "policies": [["admin::hasPermissions", ["plugins::orders.manage"]]]
+      }
+    },
+    {
       "method": "POST",
       "path": "/ship/:id",
       "handler": "order.ship",

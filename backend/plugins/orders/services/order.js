@@ -1,7 +1,6 @@
 'use strict'
 
-const inProgress = (status) =>
-  ['planning', 'shipping', 'cleaning'].includes(status)
+const inProgress = ['planning', 'shipping', 'cleaning']
 
 /**
  * Allow us to group orders by the unique products they refer to
@@ -56,7 +55,7 @@ function numAvailable(orders, dates) {
       }
       const overlaps =
         date &&
-        inProgress(order.status) &&
+        inProgress.includes(order.status) &&
         strapi.services.timing.overlap(date, order.range)
       return overlaps
     }, false)

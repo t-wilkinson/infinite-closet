@@ -18,6 +18,7 @@ async function createCart(orders) {
       const existingOrders = await strapi.query('order', 'orders').count({
         product: order.product.id || order.product,
         size: order.size,
+        status_in: strapi.plugins['orders'].services.order.inProgress,
       })
 
       const valid = strapi.services.timing.valid(
@@ -63,8 +64,7 @@ async function getUserCart(user) {
   return orders
 }
 
-// TODO: move this into service and don't require paymentMethod
-async function getValidOrders({ cart, address, paymentMethod }) {
+async function getValidOrders({ cart }) {
   const numAvailable = await strapi.plugins[
     'orders'
   ].services.helpers.numAvailableCart(cart)
@@ -75,9 +75,11 @@ async function getValidOrders({ cart, address, paymentMethod }) {
       const quantity = await strapi.plugins['orders'].services.order.quantity(
         order
       )
-      const existingOrders = await strapi
-        .query('order', 'orders')
-        .count({ product: order.product.id, size: order.size })
+      const existingOrders = await strapi.query('order', 'orders').count({
+        product: order.product.id || order.product,
+        size: order.size,
+        status_in: strapi.plugins['orders'].services.order.inProgress,
+      })
 
       const valid = strapi.services.timing.valid(
         order.startDate,
@@ -85,28 +87,12 @@ async function getValidOrders({ cart, address, paymentMethod }) {
         quantity,
         existingOrders
       )
-      if (valid) {
-        return strapi.query('order', 'orders').update(
-          { id: order.id },
-          {
-            address,
-            paymentMethod,
-            status: 'planning',
-            insurance: order.insurance,
-          }
-        )
-      } else {
-        return Promise.reject(
-          `${strapi.services.timing
-            .day(order.startDate)
-            .toJSON()} is not is available for this item`
-        )
-      }
+      return { ...order, valid }
     })
   )
 
   return settledOrders
-    .filter((v) => v.status === 'fulfilled')
+    .filter((v) => v.status === 'fulfilled' && v.value.valid)
     .map((value) => value.value)
 }
 
@@ -215,11 +201,22 @@ module.exports = {
     const user = ctx.state.user
     const body = ctx.request.body
 
-    let cart = await getValidOrders({
-      cart: body.cart,
-      address: body.address,
-      paymentMethod: body.paymentMethod,
-    })
+    let cart = await getValidOrders(body.cart).then((orders) =>
+      Promise.all(
+        orders.map((order) =>
+          strapi.query('order', 'orders').update(
+            { id: order.id },
+            {
+              address: body.address,
+              paymentMethod: body.paymentMethod,
+              status: 'planning',
+              insurance: order.insurance,
+            }
+          )
+        )
+      )
+    )
+
     let { total, coupon } = await strapi.plugins[
       'orders'
     ].services.price.summary({
@@ -338,7 +335,6 @@ module.exports = {
     const { id } = ctx.params
     const cart = await getValidOrders({
       cart: body.cart,
-      address: body.address,
     })
     const summary = await strapi.plugins['orders'].services.price.summary({
       cart,
@@ -356,14 +352,13 @@ module.exports = {
     const body = ctx.request.body
     const cart = await getValidOrders({
       cart: body.cart,
-      address: body.address,
     })
     const summary = await strapi.plugins['orders'].services.price.summary({
       cart,
       couponCode: body.couponCode,
     })
 
-    if (summary.total <= 100) {
+    if (summary.total < 1) {
       ctx.send({ error: 'Total too small' })
     } else {
       const paymentIntent = await stripe.paymentIntents.create({
