@@ -364,7 +364,7 @@ module.exports = {
     })
 
     if (summary.total <= 100) {
-      ctx.send({ error: 'Total too small' }, 400)
+      ctx.send({ error: 'Total too small' })
     } else {
       const paymentIntent = await stripe.paymentIntents.create({
         amount: strapi.services.price.toAmount(summary.total),

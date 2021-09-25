@@ -327,7 +327,13 @@ const PaymentRequest = ({ fetchCart }) => {
           cart: cart.map((item) => item.order),
         })
         .then((res) => res.data)
-        .then((res) => setPaymentIntent(res))
+        .then((res) => {
+          if (res.error) {
+            throw res.error
+          } else {
+            setPaymentIntent(res)
+          }
+        })
         .catch(() => setPaymentIntent(null))
     } else {
       axios
@@ -336,7 +342,13 @@ const PaymentRequest = ({ fetchCart }) => {
           cart: cart.map((item) => item.order),
         })
         .then((res) => res.data)
-        .then((res) => setPaymentIntent(res))
+        .then((res) => {
+          if (res.error) {
+            throw res.error
+          } else {
+            setPaymentIntent(res)
+          }
+        })
         .catch(() => setPaymentIntent(null))
     }
   }, [cart])
@@ -459,6 +471,7 @@ const PaymentRequest = ({ fetchCart }) => {
     })
   }, [paymentRequest, paymentIntent])
 
+  console.log('payment{Request,Intent}', paymentRequest, paymentIntent)
   if (paymentRequest && paymentIntent) {
     return <PaymentRequestButtonElement options={{ paymentRequest }} />
   }
