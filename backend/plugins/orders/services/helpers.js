@@ -105,6 +105,38 @@ async function numAvailableCart(cart = []) {
   return numAvailable(orders, reqRanges)
 }
 
+async function getValidOrders(cart) {
+  const numAvailable = await strapi.plugins[
+    'orders'
+  ].services.helpers.numAvailableCart(cart)
+
+  let settledOrders = await Promise.allSettled(
+    cart.map(async (order) => {
+      const key = strapi.plugins['orders'].services.order.toKey(order)
+      const quantity = await strapi.plugins['orders'].services.order.quantity(
+        order
+      )
+      const existingOrders = await strapi.query('order', 'orders').count({
+        product: order.product.id || order.product,
+        size: order.size,
+        status_in: strapi.plugins['orders'].services.order.inProgress,
+      })
+
+      const valid = strapi.services.timing.valid(
+        order.startDate,
+        numAvailable[key],
+        quantity,
+        existingOrders
+      )
+      return { ...order, valid }
+    })
+  )
+
+  return settledOrders
+    .filter((v) => v.status === 'fulfilled' && v.value.valid)
+    .map((value) => value.value)
+}
+
 async function create({
   user,
   status,
@@ -130,6 +162,7 @@ module.exports = {
 
   notifyArrival,
   sendToCleaners,
+  getValidOrders,
 
   create,
 }

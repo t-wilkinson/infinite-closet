@@ -1,7 +1,7 @@
 import React from 'react'
 
 import UserCheckout from '@/User/Checkout'
-import GuestCheckout from '@/Guest/Checkout'
+import GuestCheckout from '@/User/GuestCheckout'
 import Layout from '@/Layout'
 import { useSelector } from '@/utils/store'
 

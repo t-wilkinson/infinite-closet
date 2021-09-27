@@ -112,6 +112,7 @@ async function summary({ cart, user, couponCode }) {
     discount: discountPrice,
     coupon,
     total,
+    amount: strapi.services.price.toAmount(total),
   }
 }
 

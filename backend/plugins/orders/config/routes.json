@@ -20,7 +20,7 @@
     {
       "method": "POST",
       "path": "/checkout/payment-intents",
-      "handler": "cart.createPaymentIntent",
+      "handler": "checkout.createPaymentIntent",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
@@ -28,20 +28,36 @@
     {
       "method": "PUT",
       "path": "/checkout/payment-intents/:id",
-      "handler": "cart.updatePaymentIntent",
+      "handler": "checkout.updatePaymentIntent",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/checkout",
+      "handler": "checkout.checkoutGuest",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/checkout-request",
+      "handler": "checkout.checkoutRequestGuest",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/checkout/:id",
+      "handler": "checkout.checkoutUser",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
     },
 
-    {
-      "method": "POST",
-      "path": "/checkout",
-      "handler": "cart.checkout",
-      "config": {
-        "policies": ["plugins::users-permissions.permissions"]
-      }
-    },
     {
       "method": "GET",
       "path": "/cart/count",
