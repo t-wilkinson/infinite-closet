@@ -333,16 +333,18 @@ const PaymentRequest = () => {
   const summary = useSelector((state) => state.cart.checkoutSummary)
   const cart = useSelector((state) => state.cart.checkoutCart)
   const checkout = useCheckout()
+  const fields = React.useContext(FieldsContext)
   const { couponCode } = React.useContext(FieldsContext)
   const [paymentRequest, setPaymentRequest] = React.useState(null)
   const [paymentIntent, setPaymentIntent] = React.useState(null)
 
   const toCheckout = (ev: any) => {
+    const cleanedFields = cleanFields(fields)
     return {
       name: ev.payerName,
       email: ev.payerEmail,
       phone: ev.payerPhone,
-      couponCode: '', // !TODO
+      couponCode: cleanedFields.couponCode,
       address: {
         address: ev.shippingAddress.addressLine.join(', '),
         town: ev.shippingAddress.city,
@@ -511,8 +513,8 @@ const PaymentRequest = () => {
   if (paymentRequest && paymentIntent) {
     return (
       <>
-        <PaymentRequestButtonElement options={{ paymentRequest }} />
         <Summary summary={summary} />
+        <PaymentRequestButtonElement options={{ paymentRequest }} />
       </>
     )
   }
