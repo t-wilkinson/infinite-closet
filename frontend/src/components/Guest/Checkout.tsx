@@ -334,6 +334,7 @@ const PaymentRequest = () => {
   const cart = useSelector((state) => state.cart.checkoutCart)
   const checkout = useCheckout()
   const fields = React.useContext(FieldsContext)
+  const state = React.useContext(StateContext)
   const { couponCode } = React.useContext(FieldsContext)
   const [paymentRequest, setPaymentRequest] = React.useState(null)
   const [paymentIntent, setPaymentIntent] = React.useState(null)
@@ -356,6 +357,7 @@ const PaymentRequest = () => {
     }
   }
 
+  // Create/Update paymentintent
   React.useEffect(() => {
     if (paymentIntent) {
       axios
@@ -388,10 +390,10 @@ const PaymentRequest = () => {
         })
         .catch(() => setPaymentIntent(null))
     }
-  }, [cart])
+  }, [cart, state.coupon])
 
   React.useEffect(() => {
-    if (!stripe || !paymentIntent) return
+    if (!stripe || !paymentIntent || paymentRequest) return
     const pr = stripe.paymentRequest({
       country: 'GB',
       currency: 'gbp',
@@ -419,8 +421,9 @@ const PaymentRequest = () => {
         setPaymentRequest(pr)
       }
     })
-  }, [stripe, paymentIntent])
+  }, [stripe])
 
+  // Update paymentRequest with updated price total
   React.useEffect(() => {
     if (!stripe || !paymentRequest || !paymentIntent || !summary) return
     paymentRequest.update({
