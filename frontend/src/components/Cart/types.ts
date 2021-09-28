@@ -12,7 +12,10 @@ export type Cart = CartItem[]
 
 export type CartItem = {
   valid: boolean
-  price: number
+  totalPrice: number
+  insurancePrice: number
+  shippingPrice: number
+  productPrice: number
   available: number
   order: StrapiOrder
 }

@@ -54,6 +54,7 @@ export const CheckoutForm = () => {
           <Submit
             onSubmit={onSubmit}
             disabled={
+              !state.authorised ||
               ['error', 'processing'].includes(state.status) ||
               !isValid(address) ||
               cart.every(isOrderInvalid)

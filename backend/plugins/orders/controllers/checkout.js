@@ -72,7 +72,7 @@ async function shipCart({
             .findOne({ id: order.product.designer }),
         },
         range: strapi.services.timing.range(order),
-        price: strapi.plugins['orders'].services.price.price(order),
+        price: strapi.plugins['orders'].services.price.orderTotal(order),
       }))
     )
 

@@ -20,7 +20,7 @@ async function notifyArrival(orders) {
         ...order,
         firstName: user.firstName,
         range,
-        price: strapi.plugins['orders'].services.price.price(order),
+        price: strapi.plugins['orders'].services.price.orderTotal(order),
       },
     })
   }
@@ -39,7 +39,7 @@ async function sendToCleaners(orders) {
         strapi.plugins['orders'].services.order.toShippingAddress(order),
       recipient: 'oxwash',
       shippingClass: 'two',
-      shipmentPrice: strapi.plugins['orders'].services.price.price(order),
+      shipmentPrice: strapi.plugins['orders'].services.price.orderTotal(order),
     }
 
     strapi.log.info('cleaning order %o', order.id)
@@ -57,7 +57,7 @@ async function sendToCleaners(orders) {
             ...order,
             firstName: user.firstName,
             range,
-            price: strapi.plugins['orders'].services.price.price(order),
+            price: strapi.plugins['orders'].services.price.orderTotal(order),
           },
         })
       )

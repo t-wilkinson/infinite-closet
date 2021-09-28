@@ -34,7 +34,7 @@ export const Cart = () => {
 
 export const CartItem = ({
   valid,
-  price,
+  totalPrice,
   available,
   order,
 }: types.CartItem) => {
@@ -112,7 +112,7 @@ export const CartItem = ({
           </div>
           <span>{sizing.normalize(order.size)}</span>
           <span>
-            <Bold>{fmtPrice(price)}</Bold>
+            <Bold>{fmtPrice(totalPrice)}</Bold>
           </span>
         </div>
         <div className="items-start lg:items-end">

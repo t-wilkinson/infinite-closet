@@ -54,7 +54,8 @@ async function createCartItem(numAvailableOrders, order) {
 
   return {
     order: order_,
-    price: priceUtils.price(order),
+    ...priceUtils.orderPrice(order),
+    totalPrice: priceUtils.orderTotal(order),
     available: numAvailableOrders[key],
     valid,
     shippingClass: strapi.services.shipment.shippingClass(

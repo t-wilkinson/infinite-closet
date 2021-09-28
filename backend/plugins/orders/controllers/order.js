@@ -15,12 +15,6 @@ dayjs.extend(timezone)
 module.exports = {
   ...generateAPI('order', 'orders'),
 
-  async amount(ctx) {
-    const body = ctx.request.body
-    const amount = strapi.plugins['orders'].services.price.amount(body.order)
-    ctx.send({ amount })
-  },
-
   // TODO: remove this, use PUT instead
   async complete(ctx) {
     const body = ctx.request.body
@@ -67,7 +61,7 @@ module.exports = {
 
     for (const order of orders) {
       strapi.services.shipment.shippingClass(order.created_at, order.startDate)
-      order.price = strapi.plugins['orders'].services.price.price(order)
+      order.price = strapi.plugins['orders'].services.price.orderTotal(order)
     }
 
     ctx.send({ orders })
@@ -98,7 +92,8 @@ module.exports = {
         'product.sizes',
       ])
     const user = order.user
-    const orderPrice = strapi.plugins['orders'].services.price.price(order)
+    const orderPrice =
+      strapi.plugins['orders'].services.price.orderTotal(order)
 
     const sendShippingEmail = () =>
       strapi.plugins['email'].services.email.send({

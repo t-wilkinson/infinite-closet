@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import { PaymentRequestButtonElement, useStripe } from '@stripe/react-stripe-js'
+import { useStripe } from '@stripe/react-stripe-js'
 
 import Cart from '@/Cart'
 import { CartUtils } from '@/Cart/slice'
@@ -168,7 +168,7 @@ const PaymentRequestWrapper = () => {
           id: 'default-shipping',
           label: 'Zero Emission Delivery',
           detail: 'Carbon-neutral shipping by Hived',
-          amount: summary.shipping,
+          amount: Math.round(summary.shipping * 100),
         },
       ],
     })
