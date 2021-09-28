@@ -151,7 +151,7 @@ const PaymentRequestWrapper = () => {
 
   // Create paymentRequest
   React.useEffect(() => {
-    if (!stripe || !paymentIntent) return
+    if (!stripe || !paymentIntent || !summary) return
     const pr = stripe.paymentRequest({
       country: 'GB',
       currency: 'gbp',
@@ -162,15 +162,15 @@ const PaymentRequestWrapper = () => {
       requestPayerName: true,
       requestPayerEmail: true,
       requestPayerPhone: true,
-      // requestShipping: true,
-      // shippingOptions: [
-      //   {
-      //     id: 'default-shipping',
-      //     label: 'Zero Emission Delivery',
-      //     detail: 'Carbon-neutral shipping by Hived',
-      //     amount: summary.shipping,
-      //   },
-      // ],
+      requestShipping: true,
+      shippingOptions: [
+        {
+          id: 'default-shipping',
+          label: 'Zero Emission Delivery',
+          detail: 'Carbon-neutral shipping by Hived',
+          amount: summary.shipping,
+        },
+      ],
     })
 
     // Check the availability of the Payment Request API.
@@ -179,7 +179,7 @@ const PaymentRequestWrapper = () => {
         setPaymentRequest(pr)
       }
     })
-  }, [stripe, paymentIntent])
+  }, [stripe, paymentIntent, summary])
 
   //   // Update paymentRequest with updated price total
   //   React.useEffect(() => {
