@@ -270,9 +270,12 @@ module.exports = {
         to: user.email,
         cc:
           process.env.NODE_ENV === 'production'
-            ? 'ukinfinitecloset@gmail.com'
+            ? 'info@infinitecloset.co.uk'
             : '',
-        bcc: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
+        bcc:
+          process.env.NODE_ENV === 'production'
+            ? 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com'
+            : '',
         subject: 'Thank you for your order',
         data: {
           firstName: user.firstName,
