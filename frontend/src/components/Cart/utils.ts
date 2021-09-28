@@ -101,8 +101,9 @@ export default {
       if (user) {
         await axios.put(`/orders/${order.id}`, order, { withCredentials: true })
       } else {
+        await axios.put(`/orders/${order.id}`, order)
         const cart = helpers.getGuestCart()
-        const index = cart.indexOf((v: StrapiOrder) => v.id === order.id)
+        const index = cart.findIndex((v: StrapiOrder) => v.id === order.id)
         cart[index] = { ...cart[index], ...order }
         helpers.setGuestCart(cart)
       }

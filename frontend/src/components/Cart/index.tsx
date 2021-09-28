@@ -44,9 +44,10 @@ export const CartItem = ({ valid, price, available, order }: CheckoutItem) => {
   const dispatch = useDispatch()
 
   function toggleInsurance(id) {
-    dispatch(CartUtils.update({ id, insurance: !order.insurance })).then(() =>
+    dispatch(CartUtils.update({ id, insurance: !order.insurance })).then(() => {
+      console.log('viewCart')
       dispatch(CartUtils.view())
-    )
+    })
   }
 
   const removeItem = () => {
