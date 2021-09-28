@@ -98,7 +98,6 @@ const Checkout = () => {
       ) : (
         <div className="w-full space-y-4">
           <Cart />
-
           <PaymentRequestWrapper />
         </div>
       )}
@@ -339,20 +338,27 @@ const PaymentRequest = ({
   return (
     <>
       <Summary summary={summary} />
-      <PaymentRequestButtonElement
-        options={{ paymentRequest }}
-        // onClick={() => {
-        //   console.log('updating with', paymentIntent.amount)
-        //   paymentRequest.update({
-        //     total: {
-        //       label: 'Checkout total',
-        //       amount: paymentIntent.amount,
-        //     },
-        //   })
-        // }}
-      />
+      <PaymentRequestButton paymentRequest={paymentRequest} stripe={stripe} />
     </>
   )
+}
+
+const PaymentRequestButton = ({ paymentRequest, stripe }) => {
+  const buttonContainer = React.useRef()
+  React.useEffect(() => {
+    const elements = stripe.elements()
+    const buttonElement = elements.create('paymentRequestButton', {
+      paymentRequest,
+    })
+    paymentRequest.canMakePayment().then((result: any) => {
+      if (!result || !buttonContainer.current) {
+        return
+      }
+      buttonElement.mount(buttonContainer.current)
+    })
+    return () => buttonElement.parentNode && buttonElement.destroy()
+  }, [buttonContainer, stripe, paymentRequest])
+  return <div ref={buttonContainer} />
 }
 
 export default CheckoutWrapper
