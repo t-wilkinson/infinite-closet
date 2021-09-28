@@ -165,7 +165,7 @@ const Checkout = ({ fetchCart, analytics }) => {
         {
           address: state.address,
           paymentMethod: state.paymentMethod,
-          cart: cart.map((item) => item.order),
+          orders: cart.map((item) => item.order),
           couponCode: cleaned.couponCode,
         },
         { withCredentials: true }

@@ -31,10 +31,16 @@ function price(order) {
 }
 
 const amount = (order) => strapi.services.price.toAmount(price(order))
-const cartPrice = (cart) =>
-  cart.reduce((total, item) => total + price(item), 0)
+const ordersPrice = (orders) =>
+  orders.reduce((total, order) => total + price(order), 0)
+const ordersAmount = (orders) =>
+  orders.reduce((total, order) => total + amount(order), 0)
+const cartPrice = (cart) => cart.reduce((total, item) => total + item.price, 0)
 const cartAmount = (cart) =>
-  cart.reduce((total, item) => total + amount(item), 0)
+  cart.reduce(
+    (total, item) => total + strapi.services.price.toAmount(item.price),
+    0
+  )
 
 async function userDiscount(user) {
   const hasOrderedBefore = await strapi.query('order', 'orders').findOne(
@@ -80,15 +86,13 @@ async function getDiscountPrice(price, user) {
  * @param {string} obj.couponCode
  */
 async function summary({ cart, user, couponCode }) {
+  const orders = strapi.plugins['orders'].services.cart.orders(cart)
   const insurancePrice =
-    cart.filter((item) => item.valid === true && item.insurance).length *
-    INSURANCE_PRICE
-  const shippingPrice = cart.reduce((acc, order) => {
-    if (order.shippingClass) {
-      return acc + shippingPrices[order.shippingClass]
-    }
-    return acc
-  }, 0)
+    orders.filter((order) => order.insurance).length * INSURANCE_PRICE
+  const shippingPrice = cart.reduce(
+    (acc, item) => acc + shippingPrices[item.shippingClass],
+    0
+  )
 
   const subtotal = cartPrice(cart)
   const preDiscountPrice = subtotal + insurancePrice + shippingPrice
@@ -127,7 +131,9 @@ module.exports = {
   summary,
   price,
   amount,
+  existingCoupons,
   cartPrice,
   cartAmount,
-  existingCoupons,
+  ordersPrice,
+  ordersAmount,
 }

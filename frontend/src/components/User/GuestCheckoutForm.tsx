@@ -149,6 +149,7 @@ export const Summary = ({ summary }) => {
   const { couponCode } = React.useContext(FieldsContext)
   const dispatch = React.useContext(DispatchContext)
   const { coupon } = React.useContext(StateContext)
+  console.log(summary)
 
   return (
     <div>

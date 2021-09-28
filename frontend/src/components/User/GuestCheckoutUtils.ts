@@ -94,7 +94,7 @@ export const useCheckout = () => {
           return axios.post('/orders/checkout', {
             address: state.address,
             paymentMethod: res.paymentMethod.id,
-            cart: cart.map((item) => item.order),
+            orders: cart.map((item) => item.order),
             couponCode,
           })
         }

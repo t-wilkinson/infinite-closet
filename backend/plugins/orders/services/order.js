@@ -110,10 +110,30 @@ function toShippingAddress(order) {
   }
 }
 
+async function create({
+  user,
+  status,
+  size,
+  product,
+  startDate,
+  rentalLength,
+}) {
+  const orderBody = {
+    user,
+    status,
+    size,
+    product,
+    startDate,
+    rentalLength,
+  }
+  return await strapi.query('order', 'orders').create(orderBody)
+}
+
 module.exports = {
   toKey,
   quantity,
   inProgress,
   toShippingAddress,
   numAvailable,
+  create,
 }

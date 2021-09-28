@@ -1,4 +1,4 @@
-const { toKey, numAvailable } = require('./order')
+'use strict'
 
 async function notifyArrival(orders) {
   for (const order of orders) {
@@ -80,89 +80,9 @@ async function shippingFailure(order, err) {
   strapi.log.error('failed to ship order to client %o', err)
 }
 
-// calculate number of available products for each cart item
-async function numAvailableCart(cart = []) {
-  const reqRanges = cart.reduce((acc, order) => {
-    const key = toKey(order)
-    if (!acc[key]) {
-      acc[key] = []
-    }
-    acc[key].push(strapi.services.timing.range(order))
-    return acc
-  }, {})
-
-  // attach `sizes` component to `order.product.sizes`
-  let orders = await strapi.query('order', 'orders').find({}, [])
-  orders = await Promise.all(
-    orders.map(async (order) => {
-      order.product = await strapi
-        .query('product')
-        .findOne({ id: order.product }, ['sizes'])
-      return order
-    })
-  )
-
-  return numAvailable(orders, reqRanges)
-}
-
-async function getValidOrders(cart) {
-  const numAvailable = await strapi.plugins[
-    'orders'
-  ].services.helpers.numAvailableCart(cart)
-
-  let settledOrders = await Promise.allSettled(
-    cart.map(async (order) => {
-      const key = strapi.plugins['orders'].services.order.toKey(order)
-      const quantity = await strapi.plugins['orders'].services.order.quantity(
-        order
-      )
-      const existingOrders = await strapi.query('order', 'orders').count({
-        product: order.product.id || order.product,
-        size: order.size,
-        status_in: strapi.plugins['orders'].services.order.inProgress,
-      })
-
-      const valid = strapi.services.timing.valid(
-        order.startDate,
-        numAvailable[key],
-        quantity,
-        existingOrders
-      )
-      return { ...order, valid }
-    })
-  )
-
-  return settledOrders
-    .filter((v) => v.status === 'fulfilled' && v.value.valid)
-    .map((value) => value.value)
-}
-
-async function create({
-  user,
-  status,
-  size,
-  product,
-  startDate,
-  rentalLength,
-}) {
-  const orderBody = {
-    user,
-    status,
-    size,
-    product,
-    startDate,
-    rentalLength,
-  }
-  return await strapi.query('order', 'orders').create(orderBody)
-}
-
 module.exports = {
   shippingFailure,
-  numAvailableCart,
 
   notifyArrival,
   sendToCleaners,
-  getValidOrders,
-
-  create,
 }

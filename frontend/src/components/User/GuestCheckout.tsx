@@ -120,7 +120,7 @@ const PaymentRequestWrapper = () => {
       axios
         .put(`/orders/checkout/payment-intents/${paymentIntent.id}`, {
           couponCode: couponCode.value,
-          cart: cart.map((item) => item.order),
+          orders: cart.map((item) => item.order),
         })
         .then((res) => res.data)
         .then((res) => {
@@ -135,7 +135,7 @@ const PaymentRequestWrapper = () => {
       axios
         .post('/orders/checkout/payment-intents', {
           couponCode: couponCode.value,
-          cart: cart.map((item) => item.order),
+          orders: cart.map((item) => item.order),
         })
         .then((res) => res.data)
         .then((res) => {
@@ -279,7 +279,7 @@ const PaymentRequest = ({
               axios.post('/orders/checkout-request', {
                 address: info.address,
                 paymentMethod: info.paymentMethod.id,
-                cart: cart.map((item) => item.order),
+                orders: cart.map((item) => item.order),
                 couponCode: info.couponCode,
                 paymentIntent: paymentIntent.id,
               })

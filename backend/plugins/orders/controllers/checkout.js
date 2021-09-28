@@ -1,61 +1,48 @@
 'use strict'
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
-const generateResponse = (intent) => {
-  if (
-    intent.status === 'requires_action' &&
-    intent.next_action.type === 'use_stripe_sdk'
-  ) {
-    // Tell the client to handle the action
-    return {
-      requires_action: true,
-      payment_intent_client_secret: intent.client_secret,
-    }
-  } else if (intent.status === 'succeeded') {
-    // The payment didn’t need any additional actions and completed!
-    // Handle post-payment fulfillment
-    return {
-      success: true,
-    }
-  } else {
-    // Invalid status
-    return {
-      error: 'Invalid PaymentIntent status',
-    }
-  }
-}
-
-async function shipOrders({
-  user,
-  cart,
-  paymentIntent,
-  address,
-  paymentMethod,
-  couponCode,
-}) {
-  cart = await strapi.plugins['orders'].services.helpers
-    .getValidOrders(cart)
-    .then((orders) =>
-      Promise.all(
-        orders.map((order) =>
-          strapi.query('order', 'orders').update(
-            { id: order.id },
-            {
-              address,
-              paymentMethod,
-              status: 'planning',
-              insurance: order.insurance,
-            }
-          )
-        )
-      )
-    )
+async function prepareCheckout(body, user = null) {
+  const cart = await strapi.plugins['orders'].services.cart.createValidCart(
+    body.orders
+  )
 
   const summary = await strapi.plugins['orders'].services.price.summary({
     cart,
     user,
-    couponCode,
+    couponCode: body.couponCode,
   })
+
+  if (body.paymentIntent) {
+    const paymentIntent = await stripe.paymentIntents.retrieve(
+      body.paymentIntent
+    )
+    return { summary, cart, paymentIntent }
+  } else {
+    return { summary, cart }
+  }
+}
+
+async function shipCart({
+  user,
+  cart,
+  summary,
+  paymentIntent,
+  address,
+  paymentMethod,
+}) {
+  const orders = await Promise.all(
+    strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
+      strapi.query('order', 'orders').update(
+        { id: order.id },
+        {
+          address,
+          paymentMethod,
+          status: 'planning',
+          insurance: order.insurance,
+        }
+      )
+    )
+  )
 
   const filterSettled = (settled) =>
     settled
@@ -64,12 +51,12 @@ async function shipOrders({
 
   const attachPaymentIntent = (paymentIntent) =>
     Promise.allSettled(
-      cart.map((order) =>
+      orders.map((order) =>
         strapi
           .query('order', 'orders')
           .update(
             { id: order.id },
-            { paymentIntent: paymentIntent.id, coupon: summary.coupon }
+            { paymentIntent: paymentIntent.id, coupon: summary.coupon.id }
           )
       )
     )
@@ -110,33 +97,12 @@ async function shipOrders({
     })
   }
 
-  return attachPaymentIntent(cart, paymentIntent)
+  return attachPaymentIntent(orders, paymentIntent)
     .then(filterSettled)
     .then(fillOrderData)
     .then(filterSettled)
     .then(successEmail)
     .catch((err) => strapi.log.error(err))
-}
-
-async function prepareCheckout(body, user = null) {
-  const cart = await strapi.plugins['orders'].services.helpers.getValidOrders(
-    body.cart
-  )
-
-  const summary = await strapi.plugins['orders'].services.price.summary({
-    cart,
-    user,
-    couponCode: body.couponCode,
-  })
-
-  if (body.paymentIntent) {
-    const paymentIntent = await stripe.paymentIntents.retrieve(
-      body.paymentIntent
-    )
-    return { summary, cart, paymentIntent }
-  } else {
-    return { summary, cart }
-  }
 }
 
 module.exports = {
@@ -155,7 +121,7 @@ module.exports = {
       cart[0].paymentIntent === paymentIntent.id &&
       paymentIntent.status === 'succeeded'
     ) {
-      shipOrders({ ...body, user, cart, paymentIntent })
+      shipCart({ ...body, summary, user, cart, paymentIntent })
       return ctx.send()
     } else {
       stripe.paymentIntents
@@ -168,7 +134,7 @@ module.exports = {
           confirm: true,
         })
         .then((paymentIntent) =>
-          shipOrders({ ...body, user, cart, paymentIntent })
+          shipCart({ ...body, summary, user, cart, paymentIntent })
         )
       return ctx.send()
     }
@@ -188,11 +154,11 @@ module.exports = {
       cart[0].paymentIntent === paymentIntent.id &&
       paymentIntent.status === 'succeeded'
     ) {
-      shipOrders({ ...body, cart, paymentIntent })
+      shipCart({ ...body, summary, cart, paymentIntent })
       return ctx.send()
     } else {
       strapi.log.error('PaymentRequest paymentIntent did not succeed %o', {
-        cart: cart.map((order) => order.id),
+        orders: cart.map((order) => order.id),
         paymentIntent,
       })
     }
@@ -222,7 +188,7 @@ module.exports = {
       const response = generateResponse(intent)
 
       if (response.success) {
-        shipOrders({ ...body, cart, paymentIntent: intent })
+        shipCart({ ...body, summary, cart, paymentIntent: intent })
       }
       return ctx.send({ ...response, body })
     } catch (e) {
@@ -234,8 +200,8 @@ module.exports = {
   async updatePaymentIntent(ctx) {
     const body = ctx.request.body
     const { id } = ctx.params
-    const cart = await strapi.plugins['orders'].services.helpers.getValidOrders(
-      body.cart
+    const cart = await strapi.plugins['orders'].services.cart.create(
+      body.orders
     )
     const summary = await strapi.plugins['orders'].services.price.summary({
       cart,
@@ -244,7 +210,7 @@ module.exports = {
 
     const paymentIntent = await stripe.paymentIntents.update(id, {
       ...body.data,
-      amount: strapi.services.price.toAmount(summary.total),
+      amount: summary.amount,
     })
 
     ctx.send(paymentIntent)
@@ -252,9 +218,9 @@ module.exports = {
 
   async createPaymentIntent(ctx) {
     const body = ctx.request.body
-    const cart = await await strapi.plugins[
-      'orders'
-    ].services.helpers.getValidOrders(body.cart)
+    const cart = await strapi.plugins['orders'].services.cart.create(
+      body.orders
+    )
     const summary = await strapi.plugins['orders'].services.price.summary({
       cart,
       couponCode: body.couponCode,
@@ -264,7 +230,7 @@ module.exports = {
       ctx.send({ error: 'Total too small' })
     } else {
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: strapi.services.price.toAmount(summary.total),
+        amount: summary.amount,
         currency: 'gbp',
       })
       cart.map((order) => {
@@ -275,4 +241,28 @@ module.exports = {
       ctx.send(paymentIntent)
     }
   },
+}
+
+function generateResponse(intent) {
+  if (
+    intent.status === 'requires_action' &&
+    intent.next_action.type === 'use_stripe_sdk'
+  ) {
+    // Tell the client to handle the action
+    return {
+      requires_action: true,
+      payment_intent_client_secret: intent.client_secret,
+    }
+  } else if (intent.status === 'succeeded') {
+    // The payment didn’t need any additional actions and completed!
+    // Handle post-payment fulfillment
+    return {
+      success: true,
+    }
+  } else {
+    // Invalid status
+    return {
+      error: 'Invalid PaymentIntent status',
+    }
+  }
 }
