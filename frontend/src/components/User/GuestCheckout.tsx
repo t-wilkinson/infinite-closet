@@ -152,7 +152,7 @@ const PaymentRequestWrapper = () => {
 
   // Create paymentRequest
   React.useEffect(() => {
-    if (!stripe || !paymentIntent || paymentRequest) return
+    if (!stripe || !paymentIntent) return
     const pr = stripe.paymentRequest({
       country: 'GB',
       currency: 'gbp',
@@ -341,15 +341,15 @@ const PaymentRequest = ({
       <Summary summary={summary} />
       <PaymentRequestButtonElement
         options={{ paymentRequest }}
-        onClick={() => {
-          console.log('updating with', paymentIntent.amount)
-          paymentRequest.update({
-            total: {
-              label: 'Checkout total',
-              amount: paymentIntent.amount,
-            },
-          })
-        }}
+        // onClick={() => {
+        //   console.log('updating with', paymentIntent.amount)
+        //   paymentRequest.update({
+        //     total: {
+        //       label: 'Checkout total',
+        //       amount: paymentIntent.amount,
+        //     },
+        //   })
+        // }}
       />
     </>
   )
