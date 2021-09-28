@@ -201,6 +201,8 @@ const PaymentRequestWrapper = () => {
     })
   }, [paymentRequest, paymentIntent, summary])
 
+  console.log('payment{Request,Intent}', paymentRequest, paymentIntent)
+
   if (paymentRequest && paymentIntent) {
     return (
       <PaymentRequest
