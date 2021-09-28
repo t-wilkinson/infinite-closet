@@ -74,6 +74,8 @@ export const useCheckout = () => {
   const state = React.useContext(StateContext)
   const stripe = useStripe()
   const onCheckoutSuccess = useCheckoutSuccess()
+  // TODO:
+  // const address = React.useContext(AddressContext)
 
   const checkout = ({ address, name, email, phone, couponCode }) => {
     dispatch({ type: 'status-processing' })
