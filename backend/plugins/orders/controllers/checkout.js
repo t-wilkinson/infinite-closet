@@ -217,13 +217,11 @@ module.exports = {
   },
 
   async createPaymentIntent(ctx) {
-    const body = ctx.request.body
-    const cart = await strapi.plugins['orders'].services.cart.create(
-      body.orders
-    )
+    const { couponCode, orders } = ctx.request.body
+    const cart = await strapi.plugins['orders'].services.cart.create(orders)
     const summary = await strapi.plugins['orders'].services.price.summary({
       cart,
-      couponCode: body.couponCode,
+      couponCode,
     })
 
     if (summary.total < 1) {
@@ -233,11 +231,11 @@ module.exports = {
         amount: summary.amount,
         currency: 'gbp',
       })
-      cart.map((order) => {
+      orders.map((order) =>
         strapi
           .query('order', 'orders')
           .update({ id: order.id }, { paymentIntent: paymentIntent.id })
-      })
+      )
       ctx.send(paymentIntent)
     }
   },

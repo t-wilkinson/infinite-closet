@@ -2,15 +2,15 @@ import { StrapiOrder } from '@/utils/models'
 
 export interface State {
   checkoutSummary?: any
-  checkoutCart?: CheckoutCart
+  checkoutCart?: Cart
   ordersStatus?: StrapiOrder[]
   count?: number
 }
 
-export type Cart = StrapiOrder[]
-export type CheckoutCart = CheckoutItem[]
+export type Orders = StrapiOrder[]
+export type Cart = CartItem[]
 
-export type CheckoutItem = {
+export type CartItem = {
   valid: boolean
   price: number
   available: number
@@ -20,5 +20,7 @@ export type CheckoutItem = {
 export type PreviewCart = {
   toggleInsurance: (id: string) => void
   remove: (order: any) => void
-  cart: CheckoutItem[]
+  cart: Cart
 }
+
+export type Order = StrapiOrder

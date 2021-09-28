@@ -27,7 +27,7 @@ async function numAvailable(orders = []) {
   return orderUtils.numAvailable(orders, reqRanges)
 }
 
-async function createCartItem(numAvailable, order) {
+async function createCartItem(numAvailableOrders, order) {
   const key = orderUtils.toKey(order)
   const quantity = await orderUtils.quantity(order)
 
@@ -39,7 +39,7 @@ async function createCartItem(numAvailable, order) {
 
   const valid = strapi.services.timing.valid(
     order.startDate,
-    numAvailable[key],
+    numAvailableOrders[key],
     quantity,
     existingOrders
   )
@@ -55,7 +55,7 @@ async function createCartItem(numAvailable, order) {
   return {
     order: order_,
     price: priceUtils.price(order),
-    available: numAvailable[key],
+    available: numAvailableOrders[key],
     valid,
     shippingClass: strapi.services.shipment.shippingClass(
       order.created_at,
@@ -65,11 +65,11 @@ async function createCartItem(numAvailable, order) {
 }
 
 async function create(orders) {
-  const numAvailable = await numAvailable(orders)
+  const numAvailableOrders = await numAvailable(orders)
 
   // add price and available quantity to each order
   const settledOrders = await Promise.allSettled(
-    orders.map((order) => createCartItem(numAvailable, order))
+    orders.map((order) => createCartItem(numAvailableOrders, order))
   )
 
   return settledOrders

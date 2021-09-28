@@ -5,7 +5,7 @@ import { RootState } from '@/utils/store'
 import { StrapiOrder } from '@/utils/models'
 
 import * as helpers from './helpers'
-import { CheckoutCart, Cart } from './types'
+import { Orders, Cart } from './types'
 
 export const getUser = (getState: () => any) =>
   (getState() as RootState).user.data
@@ -13,38 +13,41 @@ export const getUser = (getState: () => any) =>
 const toKey = (order: StrapiOrder) => `${order.size}_${order.product.id}`
 
 export default {
-  get: createAsyncThunk<Cart, void>('cart/get', async (_, { getState }) => {
+  get: createAsyncThunk<Orders, void>('cart/get', async (_, { getState }) => {
     const user = getUser(getState)
-    return await helpers.getCart(user)
+    return await helpers.getOrders(user)
   }),
-  set: createAsyncThunk<Cart, Cart>('cart/set', async (cart, { getState }) => {
-    const user = getUser(getState)
-    const uniqueOrders: Cart = Object.values(
-      cart.reduce((acc, order) => {
-        acc[toKey(order)] = order
-        return acc
-      }, {})
-    )
-    helpers.setCart(user, uniqueOrders)
-    return cart
-  }),
+  set: createAsyncThunk<Orders, Orders>(
+    'cart/set',
+    async (orders, { getState }) => {
+      const user = getUser(getState)
+      const uniqueOrders: Orders = Object.values(
+        orders.reduce((acc, order) => {
+          acc[toKey(order)] = order
+          return acc
+        }, {})
+      )
+      helpers.setOrders(user, uniqueOrders)
+      return orders
+    }
+  ),
   summary: createAsyncThunk<Cart, void>(
     'cart/summary',
     async (_, { getState }) => {
       const user = getUser(getState)
-      const cart = await helpers.getCart(user)
+      const orders = await helpers.getOrders(user)
       let res: unknown & { data: Cart }
       if (user) {
         res = await axios.post(
           `/orders/cart/summary`,
-          { cart },
+          { orders },
           {
             withCredentials: true,
           }
         )
       } else {
         res = await axios.post(`/orders/cart/summary`, {
-          cart,
+          orders,
         })
       }
       return res.data
@@ -57,12 +60,12 @@ export default {
       if (user) {
         return await axios.get('/orders/cart/count', { withCredentials: true })
       } else {
-        const cart = helpers.getGuestCart()
-        return cart.length
+        const orders = helpers.getGuestOrders()
+        return orders.length
       }
     }
   ),
-  status: createAsyncThunk<Cart, void>(
+  status: createAsyncThunk<Orders, void>(
     'cart/status',
     async (_, { getState }) => {
       const user = getUser(getState)
@@ -70,7 +73,7 @@ export default {
         const res = await axios.get('/orders/status', { withCredentials: true })
         return res.data.orders
       } else {
-        const cart = helpers.getGuestCart()
+        const cart = helpers.getGuestOrders()
         return cart.filter(
           (order: StrapiOrder) =>
             !['cart', 'dropped', 'list'].includes(order.status)
@@ -78,22 +81,19 @@ export default {
       }
     }
   ),
-  view: createAsyncThunk<CheckoutCart, void>(
-    'cart/view',
-    async (_, { getState }) => {
-      const user = getUser(getState)
-      let res: unknown & { data: CheckoutCart }
-      if (user) {
-        res = await axios.get(`/orders/cart/view/${user.id}`, {
-          withCredentials: true,
-        })
-      } else {
-        const cart = helpers.getGuestCart()
-        res = await axios.post(`/orders/cart/view`, { cart })
-      }
-      return res.data
+  view: createAsyncThunk<Cart, void>('cart/view', async (_, { getState }) => {
+    const user = getUser(getState)
+    let res: unknown & { data: Cart }
+    if (user) {
+      res = await axios.get(`/orders/cart/view/${user.id}`, {
+        withCredentials: true,
+      })
+    } else {
+      const orders = helpers.getGuestOrders()
+      res = await axios.post(`/orders/cart/view`, { orders })
     }
-  ),
+    return res.data
+  }),
   update: createAsyncThunk<void, Partial<StrapiOrder>>(
     'cart/update',
     async (order, { getState }) => {
@@ -102,10 +102,10 @@ export default {
         await axios.put(`/orders/${order.id}`, order, { withCredentials: true })
       } else {
         await axios.put(`/orders/${order.id}`, order)
-        const cart = helpers.getGuestCart()
-        const index = cart.findIndex((v: StrapiOrder) => v.id === order.id)
-        cart[index] = { ...cart[index], ...order }
-        helpers.setGuestCart(cart)
+        const orders = helpers.getGuestOrders()
+        const index = orders.findIndex((v: StrapiOrder) => v.id === order.id)
+        orders[index] = { ...orders[index], ...order }
+        helpers.setGuestOrders(orders)
       }
     }
   ),
@@ -117,28 +117,28 @@ export default {
         axios.post('/orders', order, { withCredentials: true })
       } else {
         order = await axios.post('/orders', order).then((res) => res.data)
-        const cart = [...helpers.getGuestCart(), order]
-        helpers.setGuestCart(cart)
+        const orders = [...helpers.getGuestOrders(), order as StrapiOrder]
+        helpers.setGuestOrders(orders)
       }
     }
   ),
-  insert: createAsyncThunk<Cart, Partial<StrapiOrder>[] | Partial<StrapiOrder>>(
-    'cart/insert',
-    async (orders, { getState }) => {
-      if (!Array.isArray(orders)) {
-        orders = [orders]
-      }
+  // insert: createAsyncThunk<Orders, Partial<StrapiOrder>[] | Partial<StrapiOrder>>(
+  //   'cart/insert',
+  //   async (inserts, { getState }) => {
+  //     if (!Array.isArray(inserts)) {
+  //       inserts = [inserts]
+  //     }
 
-      const user = getUser(getState)
-      const cart = await helpers.getCart(user)
-      const orderIds = cart
-        .concat(orders as Cart)
-        .map((order: StrapiOrder) => order.id)
-      helpers.setCart(user, orderIds)
-      return cart
-    }
-  ),
-  remove: createAsyncThunk<Cart, string>(
+  //     const user = getUser(getState)
+  //     const orders = await helpers.getOrders(user)
+  //     const orderIds = orders
+  //       .concat(inserts as Orders)
+  //       .map((order: StrapiOrder) => order.id)
+  //     helpers.setOrders(user, orderIds)
+  //     return orders
+  //   }
+  // ),
+  remove: createAsyncThunk<Orders, string>(
     'cart/remove',
     async (id, { getState }) => {
       const user = getUser(getState)
@@ -149,11 +149,11 @@ export default {
           { withCredentials: true }
         )
       } else {
-        const cart = helpers.getGuestCart()
-        const filtered = cart.filter((order: StrapiOrder) => order.id !== id)
-        helpers.setGuestCart(filtered)
+        const orders = helpers.getGuestOrders()
+        const filtered = orders.filter((order: StrapiOrder) => order.id !== id)
+        helpers.setGuestOrders(filtered)
       }
-      return helpers.getCart(user)
+      return helpers.getOrders(user)
     }
   ),
 }

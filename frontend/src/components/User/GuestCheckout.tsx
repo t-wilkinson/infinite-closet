@@ -184,7 +184,6 @@ const PaymentRequestWrapper = () => {
   //   // Update paymentRequest with updated price total
   //   React.useEffect(() => {
   //     if (!stripe || !paymentRequest || !paymentIntent || !summary) return
-  //       console.log('update price', paymentIntent.amount)
   //     paymentRequest.update({
   //       total: {
   //         label: 'Checkout total',

@@ -2,63 +2,62 @@ import axios from 'axios'
 import * as storage from '@/utils/storage'
 
 import { StrapiUser, StrapiOrder } from '@/utils/models'
-import { Cart } from './types'
+import { Orders } from './types'
 
-export function getGuestCart() {
-  let cart = storage.get('cart') || []
+export function getGuestOrders(): Orders {
+  let orders = storage.get('cart') || []
 
-  switch (Object.prototype.toString.call(cart)) {
+  switch (Object.prototype.toString.call(orders)) {
     case '[object Object]':
-      cart = Object.values(cart)
-      storage.set('cart', cart)
+      orders = Object.values(orders)
+      storage.set('cart', orders)
       break
     case '[object Array]': // Cart should be an object
       break
     default:
       // If we can't current cart value, reset it
-      cart = []
-      storage.set('cart', cart)
+      orders = []
+      storage.set('cart', orders)
       break
   }
 
-  return cart.filter((order: StrapiOrder) => !order.user)
+  return orders.filter((order: StrapiOrder) => !order.user)
 }
 
-export async function getUserCart(user: StrapiUser) {
+export async function getUserOrders(user: StrapiUser): Promise<Orders> {
   const res = await axios.get(`/orders/cart/${user.id}`, {
     withCredentials: true,
   })
-  const cart = res.data
-  return cart
+  return res.data
 }
 
-export async function getCart(user: StrapiUser): Promise<Cart> {
+export async function getOrders(user: StrapiUser): Promise<Orders> {
   if (user) {
-    return getUserCart(user)
+    return getUserOrders(user)
   } else {
-    return getGuestCart()
+    return getGuestOrders()
   }
 }
 
-export async function setUserCart(user: StrapiUser, cart: Cart | string[]) {
+export async function setUserOrders(user: StrapiUser, orders: Orders) {
   await axios.put(
     `/orders/cart/${user.id}`,
-    { cart },
+    { orders },
     { withCredentials: true }
   )
 }
 
-export function setGuestCart(cart: Cart | string[]) {
-  storage.set('cart', cart)
+export function setGuestOrders(orders: Orders) {
+  storage.set('cart', orders)
 }
 
-export async function setCart(
+export async function setOrders(
   user: StrapiUser,
-  cart: Cart | string[]
+  orders: Orders
 ): Promise<void> {
   if (user) {
-    setUserCart(user, cart)
+    setUserOrders(user, orders)
   } else {
-    setGuestCart(cart)
+    setGuestOrders(orders)
   }
 }
