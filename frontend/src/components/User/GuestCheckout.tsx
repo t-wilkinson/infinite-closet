@@ -180,7 +180,7 @@ const PaymentRequestWrapper = () => {
         setPaymentRequest(pr)
       }
     })
-  }, [stripe])
+  }, [stripe, paymentIntent])
 
   // Update paymentRequest with updated price total
   React.useEffect(() => {
@@ -199,9 +199,7 @@ const PaymentRequestWrapper = () => {
         },
       ],
     })
-  }, [paymentRequest, paymentIntent, summary])
-
-  console.log('payment{Request,Intent}', paymentRequest, paymentIntent)
+  }, [paymentIntent, summary])
 
   if (paymentRequest && paymentIntent) {
     return (
@@ -230,8 +228,6 @@ const PaymentRequest = ({
   const cart = useSelector((state) => state.cart.checkoutCart)
 
   React.useEffect(() => {
-    if (!paymentRequest || !paymentIntent) return
-
     const { client_secret: clientSecret } = paymentIntent
     paymentRequest.on('paymentmethod', async (ev: any) => {
       // Confirm the PaymentIntent without handling potential next actions (yet).
