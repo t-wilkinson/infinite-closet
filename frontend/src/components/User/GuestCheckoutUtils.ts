@@ -2,10 +2,10 @@ import React from 'react'
 import axios from 'axios'
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js'
 
+import { CartUtils } from '@/Cart/slice'
 import { validatePostcode } from '@/User/Address'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
-import { CartUtils } from '@/Cart/slice'
 
 type Status = null | 'checking-out' | 'error' | 'success'
 

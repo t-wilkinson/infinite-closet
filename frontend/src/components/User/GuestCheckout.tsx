@@ -2,14 +2,14 @@ import React from 'react'
 import axios from 'axios'
 import { PaymentRequestButtonElement, useStripe } from '@stripe/react-stripe-js'
 
-import { validatePostcode } from '@/User/Address'
-import { useSelector, useDispatch } from '@/utils/store'
-import useFields, { cleanFields } from '@/Form/useFields'
-import { BlueLink } from '@/components'
-import { CartUtils } from '@/Cart/slice'
 import Cart from '@/Cart'
+import { CartUtils } from '@/Cart/slice'
 import { PaymentWrapper } from '@/Form/Payments'
+import useFields, { cleanFields } from '@/Form/useFields'
+import { validatePostcode } from '@/User/Address'
 import { useAddressFields } from '@/User/Address'
+import { BlueLink } from '@/components'
+import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
 import CheckoutForm, { Summary } from './GuestCheckoutForm'
@@ -24,7 +24,7 @@ import {
   useCheckoutSuccess,
 } from './GuestCheckoutUtils'
 
-export const CheckoutContextWrapper = () => {
+export const CheckoutWrapper = () => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
@@ -57,7 +57,7 @@ export const CheckoutContextWrapper = () => {
           <FieldsContext.Provider value={fields}>
             <AddressContext.Provider value={address}>
               <PaymentWrapper>
-                <CheckoutWrapper />
+                <Checkout />
               </PaymentWrapper>
             </AddressContext.Provider>
           </FieldsContext.Provider>
@@ -67,7 +67,7 @@ export const CheckoutContextWrapper = () => {
   )
 }
 
-const CheckoutWrapper = () => {
+const Checkout = () => {
   const state = React.useContext(StateContext)
   const cartCount = useSelector((state) => state.cart.count)
 
@@ -182,24 +182,25 @@ const PaymentRequestWrapper = () => {
     })
   }, [stripe, paymentIntent])
 
-  // Update paymentRequest with updated price total
-  React.useEffect(() => {
-    if (!stripe || !paymentRequest || !paymentIntent || !summary) return
-    paymentRequest.update({
-      total: {
-        label: 'Checkout total',
-        amount: paymentIntent.amount,
-      },
-      shippingOptions: [
-        {
-          id: 'default-shipping',
-          label: 'Zero Emission Delivery',
-          detail: 'Carbon-neutral shipping by Hived',
-          amount: summary.shipping,
-        },
-      ],
-    })
-  }, [paymentIntent, summary])
+  //   // Update paymentRequest with updated price total
+  //   React.useEffect(() => {
+  //     if (!stripe || !paymentRequest || !paymentIntent || !summary) return
+  //       console.log('update price', paymentIntent.amount)
+  //     paymentRequest.update({
+  //       total: {
+  //         label: 'Checkout total',
+  //         amount: paymentIntent.amount,
+  //       },
+  //       // shippingOptions: [
+  //       //   {
+  //       //     id: 'default-shipping',
+  //       //     label: 'Zero Emission Delivery',
+  //       //     detail: 'Carbon-neutral shipping by Hived',
+  //       //     amount: summary.shipping,
+  //       //   },
+  //       // ],
+  //     })
+  //   }, [paymentIntent, summary])
 
   if (paymentRequest && paymentIntent) {
     return (
@@ -338,9 +339,20 @@ const PaymentRequest = ({
   return (
     <>
       <Summary summary={summary} />
-      <PaymentRequestButtonElement options={{ paymentRequest }} />
+      <PaymentRequestButtonElement
+        options={{ paymentRequest }}
+        onClick={() => {
+          console.log('updating with', paymentIntent.amount)
+          paymentRequest.update({
+            total: {
+              label: 'Checkout total',
+              amount: paymentIntent.amount,
+            },
+          })
+        }}
+      />
     </>
   )
 }
 
-export default CheckoutContextWrapper
+export default CheckoutWrapper
