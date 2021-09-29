@@ -75,7 +75,7 @@ async function create(orders) {
   console.log('createSettledOrders', settledOrders)
 
   return settledOrders
-    .filter((v) => v.status === 'fulfilled' && v.value.valid)
+    .filter((v) => v.status === 'fulfilled')
     .map((value) => value.value)
 }
 
