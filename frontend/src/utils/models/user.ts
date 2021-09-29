@@ -1,4 +1,5 @@
 import { StrapiAddress } from './address';
+import { StrapiEvents } from './events';
 import { StrapiOrder } from './order';
 import { StrapiRole } from './role';
 
@@ -29,6 +30,7 @@ export interface StrapiUser {
   height?: string;
   weight?: string;
   dateOfBirth?: string;
+  event?: StrapiEvents;
   created_by: string;
   updated_at: string;
   published_at: string;

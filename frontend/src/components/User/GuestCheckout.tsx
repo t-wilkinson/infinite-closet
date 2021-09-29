@@ -12,16 +12,16 @@ import { BlueLink } from '@/components'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
-import CheckoutForm, { Summary } from './GuestCheckoutForm'
+import CheckoutForm from './GuestCheckoutForm'
+import { Summary, useFetchCart } from './CheckoutUtils'
 import {
+  useCheckoutSuccess,
   DispatchContext,
   StateContext,
   FieldsContext,
   AddressContext,
   reducer,
   initialState,
-  useFetchCart,
-  useCheckoutSuccess,
 } from './GuestCheckoutUtils'
 
 export const CheckoutWrapper = () => {
@@ -32,6 +32,7 @@ export const CheckoutWrapper = () => {
   const fields = useFields({
     couponCode: {},
     email: { constraints: 'required string' },
+    billingName: { constraints: 'required string' },
   })
   const address = useAddressFields()
   const fetchCart = useFetchCart()
@@ -98,14 +99,16 @@ const Checkout = () => {
       ) : (
         <div className="w-full space-y-4">
           <Cart />
-          <PaymentRequestWrapper />
+          <PaymentRequest>
+            <CheckoutForm />
+          </PaymentRequest>
         </div>
       )}
     </div>
   )
 }
 
-const PaymentRequestWrapper = () => {
+export const PaymentRequest = ({ children }) => {
   const stripe = useStripe()
   const summary = useSelector((state) => state.cart.checkoutSummary)
   const cart = useSelector((state) => state.cart.checkoutCart)
@@ -181,28 +184,9 @@ const PaymentRequestWrapper = () => {
     })
   }, [stripe, paymentIntent, summary])
 
-  //   // Update paymentRequest with updated price total
-  //   React.useEffect(() => {
-  //     if (!stripe || !paymentRequest || !paymentIntent || !summary) return
-  //     paymentRequest.update({
-  //       total: {
-  //         label: 'Checkout total',
-  //         amount: paymentIntent.amount,
-  //       },
-  //       // shippingOptions: [
-  //       //   {
-  //       //     id: 'default-shipping',
-  //       //     label: 'Zero Emission Delivery',
-  //       //     detail: 'Carbon-neutral shipping by Hived',
-  //       //     amount: summary.shipping,
-  //       //   },
-  //       // ],
-  //     })
-  //   }, [paymentIntent, summary])
-
   if (paymentRequest && paymentIntent) {
     return (
-      <PaymentRequest
+      <PaymentRequestContainer
         paymentRequest={paymentRequest}
         setPaymentRequest={setPaymentRequest}
         paymentIntent={paymentIntent}
@@ -211,10 +195,10 @@ const PaymentRequestWrapper = () => {
   }
 
   // Use a traditional checkout form.
-  return <CheckoutForm />
+  return children
 }
 
-const PaymentRequest = ({
+const PaymentRequestContainer = ({
   paymentRequest,
   setPaymentRequest,
   paymentIntent,
@@ -225,6 +209,7 @@ const PaymentRequest = ({
   const onCheckoutSuccess = useCheckoutSuccess()
   const dispatch = React.useContext(DispatchContext)
   const cart = useSelector((state) => state.cart.checkoutCart)
+  const state = React.useContext(StateContext)
 
   React.useEffect(() => {
     const { client_secret: clientSecret } = paymentIntent
@@ -253,19 +238,20 @@ const PaymentRequest = ({
         const toCheckout = (ev: any) => {
           const cleanedFields = cleanFields(fields)
           return {
-            name: ev.payerName,
-            email: ev.payerEmail,
-            phone: ev.payerPhone,
             couponCode: cleanedFields.couponCode,
+            paymentMethod: ev.paymentMethod,
+            email: ev.payerEmail,
+            billing: {
+              name: cleanedFields.billingName,
+            },
             address: {
-              address: ev.shippingAddress.addressLine.join(', '),
+              name: ev.payerName,
+              mobileNumber: ev.payerPhone,
+              addressLine1: ev.shippingAddress.addressLine[0],
+              addressLine2: ev.shippingAddress.addressLine[1],
               town: ev.shippingAddress.city,
               postcode: ev.shippingAddress.postalCode,
-              firstName: ev.payerName.split(' ')[0],
-              lastName: ev.payerName.split(' ').slice(1).join(' '),
-              mobileNumber: ev.payerPhone,
             },
-            paymentMethod: ev.paymentMethod,
           } as const
         }
 
@@ -277,9 +263,10 @@ const PaymentRequest = ({
             .then(() =>
               axios.post('/orders/checkout-request', {
                 address: info.address,
-                paymentMethod: info.paymentMethod.id,
-                orders: cart.map((item) => item.order),
+                email: info.email,
                 couponCode: info.couponCode,
+                orders: cart.map((item) => item.order),
+                paymentMethod: info.paymentMethod.id,
                 paymentIntent: paymentIntent.id,
               })
             )
@@ -318,6 +305,12 @@ const PaymentRequest = ({
             if (res.data.valid) {
               ev.updateWith({
                 status: 'success',
+                shippingOptions: {
+                  id: 'default-shipping',
+                  label: 'Zero Emission Delivery',
+                  detail: 'Carbon-neutral shipping by Hived',
+                  amount: Math.round(summary.shipping * 100),
+                },
               })
             } else {
               throw new Error('Postcode not served')
@@ -329,6 +322,12 @@ const PaymentRequest = ({
       } else {
         ev.updateWith({
           status: 'success',
+          shippingOptions: {
+            id: 'default-shipping',
+            label: 'Zero Emission Delivery',
+            detail: 'Carbon-neutral shipping by Hived',
+            amount: Math.round(summary.shipping * 100),
+          },
         })
       }
     })
@@ -336,7 +335,12 @@ const PaymentRequest = ({
 
   return (
     <>
-      <Summary summary={summary} />
+      <Summary
+        summary={summary}
+        couponCode={fields.couponCode}
+        dispatch={dispatch}
+        coupon={state.coupon}
+      />
       <PaymentRequestButton paymentRequest={paymentRequest} stripe={stripe} />
     </>
   )

@@ -11,9 +11,24 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "address": {
+    "fullName": {
       "type": "string",
       "required": true
+    },
+    "email": {
+      "type": "string",
+      "required": false
+    },
+    "mobileNumber": {
+      "type": "string"
+    },
+    "addressLine1": {
+      "type": "string",
+      "required": true
+    },
+    "addressLine2": {
+      "type": "string",
+      "required": false
     },
     "town": {
       "type": "string",
@@ -22,17 +37,6 @@
     "postcode": {
       "type": "string",
       "required": true
-    },
-    "firstName": {
-      "type": "string",
-      "required": true
-    },
-    "lastName": {
-      "type": "string",
-      "required": true
-    },
-    "mobileNumber": {
-      "type": "string"
     },
     "deliveryInstructions": {
       "type": "string"

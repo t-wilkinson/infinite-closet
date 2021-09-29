@@ -6,6 +6,7 @@ import { CartUtils } from '@/Cart/slice'
 import { validatePostcode } from '@/User/Address'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
+import { useFetchCart } from './CheckoutUtils'
 
 type Status = null | 'checking-out' | 'error' | 'success'
 
@@ -41,15 +42,6 @@ export const DispatchContext = React.createContext(null)
 export const FieldsContext = React.createContext(null)
 export const AddressContext = React.createContext(null)
 
-export const useFetchCart = () => {
-  const rootDispatch = useDispatch()
-
-  return () => {
-    rootDispatch(CartUtils.view())
-    rootDispatch(CartUtils.summary())
-  }
-}
-
 export const useCheckoutSuccess = () => {
   const analytics = useAnalytics()
   const fetchCart = useFetchCart()
@@ -71,13 +63,10 @@ export const useCheckout = () => {
   const cart = useSelector((state) => state.cart.checkoutCart)
   const dispatch = React.useContext(DispatchContext)
   const elements = useElements()
-  const state = React.useContext(StateContext)
   const stripe = useStripe()
   const onCheckoutSuccess = useCheckoutSuccess()
-  // TODO:
-  // const address = React.useContext(AddressContext)
 
-  const checkout = ({ address, name, email, phone, couponCode }) => {
+  const checkout = ({ address, billing, email, couponCode }) => {
     dispatch({ type: 'status-processing' })
 
     validatePostcode(address.postcode)
@@ -85,7 +74,7 @@ export const useCheckout = () => {
         stripe.createPaymentMethod({
           type: 'card',
           card: elements.getElement(CardElement),
-          billing_details: { name, email, phone },
+          billing_details: { name: billing.name, email },
         })
       )
 
@@ -94,7 +83,8 @@ export const useCheckout = () => {
           return Promise.reject(res.error)
         } else {
           return axios.post('/orders/checkout', {
-            address: state.address,
+            address,
+            email,
             paymentMethod: res.paymentMethod.id,
             orders: cart.map((item) => item.order),
             couponCode,

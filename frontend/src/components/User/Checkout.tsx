@@ -6,16 +6,15 @@ dayjs.extend(utc)
 
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
-import { fmtPrice } from '@/utils/helpers'
 import { fetchAPI } from '@/utils/api'
-import { CouponCode } from '@/Form'
 import useFields, { cleanFields } from '@/Form/useFields'
 import { Button, BlueLink, Icon } from '@/components'
 import { CartUtils } from '@/Cart/slice'
+import Cart from '@/Cart'
 
+import { Summary, useFetchCart, useCheckout } from './CheckoutUtils'
 import { PaymentMethods, AddPaymentMethod } from './Payment'
 import { Addresses, AddAddress } from './Address'
-import Cart from '@/Cart'
 
 type Popup = 'none' | 'address' | 'payment'
 type Status = null | 'checking-out' | 'error' | 'success'
@@ -28,6 +27,7 @@ const initialState = {
   popup: 'none' as Popup,
   error: undefined,
   status: null as Status,
+  coupon: undefined,
 }
 
 const reducer = (state, action) => {
@@ -37,9 +37,10 @@ const reducer = (state, action) => {
     case 'correct-coupon': return def('coupon')
     case 'clear-coupon': return {...state, coupon: undefined,}
 
-    case 'status-checkout': return {...state, status: 'checking-out'}
-    case 'status-error': return {...state, status: 'error'}
+    case 'status-clear': return {...state, status: null, error: ''}
+    case 'status-processing': return {...state, status: 'processing'}
     case 'status-success': return {...state, status: 'success'}
+    case 'status-error': return {...state, status: 'error', error: action.payload}
 
     case 'edit-payment': return { ...state, popup: 'payment' }
     case 'edit-address': return { ...state, popup: 'address' }
@@ -47,6 +48,9 @@ const reducer = (state, action) => {
 
     case 'choose-address': return def('address')
     case 'set-addresses': return def('addresses')
+
+    case 'authorise': return {...state, authorised: true}
+    case 'un-authorise': return {...state, authorised: false}
 
     case 'choose-payment-method': return { ...state, paymentMethod: action.payload }
     case 'add-payment-method': return { ...state, paymentMethods: [...state.paymentMethods, action.payload], }
@@ -75,6 +79,7 @@ const reducer = (state, action) => {
 
 const StateContext = React.createContext(null)
 const DispatchContext = React.createContext(null)
+const FieldsContext = React.createContext(null)
 
 export const CheckoutWrapper = ({}) => {
   const user = useSelector((state) => state.user.data)
@@ -82,15 +87,14 @@ export const CheckoutWrapper = ({}) => {
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
   const cart = useSelector((state) => state.cart.checkoutCart)
-
-  const fetchCart = () => {
-    rootDispatch(CartUtils.view())
-    rootDispatch(CartUtils.summary())
-  }
+  const fields = useFields({
+    couponCode: {},
+  })
+  const fetchCart = useFetchCart()
 
   React.useEffect(() => {
     analytics.logEvent('view_cart', {
-      user: user ? user.email : 'guest',
+      user: user.email,
     })
   }, [])
 
@@ -136,7 +140,9 @@ export const CheckoutWrapper = ({}) => {
     <div className="w-full flex-grow items-center bg-gray-light px-4 pt-4">
       <StateContext.Provider value={state}>
         <DispatchContext.Provider value={dispatch}>
-          <Checkout fetchCart={fetchCart} analytics={analytics} />
+          <FieldsContext.Provider value={fields}>
+            <Checkout fetchCart={fetchCart} analytics={analytics} />
+          </FieldsContext.Provider>
         </DispatchContext.Provider>
       </StateContext.Provider>
     </div>
@@ -146,19 +152,15 @@ export const CheckoutWrapper = ({}) => {
 const Checkout = ({ fetchCart, analytics }) => {
   const dispatch = React.useContext(DispatchContext)
   const state = React.useContext(StateContext)
+  const fields = React.useContext(FieldsContext)
   const cartCount = useSelector((state) => state.cart.count)
   const cart = useSelector((state) => state.cart.checkoutCart)
   const user = useSelector((state) => state.user.data)
-  const fields = useFields({
-    couponCode: {},
-  })
   const summary = useSelector((state) => state.cart.checkoutSummary)
 
   const checkout = () => {
-    dispatch({ type: 'payment-succeeded' })
-    dispatch({ type: 'status-checkout' })
-    dispatch({ type: 'clear-coupon' })
-    const cleaned = cleanFields(fields)
+    dispatch({ type: 'status-processing' })
+    const cleanedFields = cleanFields(fields)
     axios
       .post(
         '/orders/checkout',
@@ -166,7 +168,7 @@ const Checkout = ({ fetchCart, analytics }) => {
           address: state.address,
           paymentMethod: state.paymentMethod,
           orders: cart.map((item) => item.order),
-          couponCode: cleaned.couponCode,
+          couponCode: cleanedFields.couponCode,
         },
         { withCredentials: true }
       )
@@ -180,7 +182,7 @@ const Checkout = ({ fetchCart, analytics }) => {
       })
       .catch((err) => {
         console.error(err)
-        dispatch({ type: 'status-error' })
+        dispatch({ type: 'status-error', payload: "Can't process order" })
       })
   }
 
@@ -199,9 +201,10 @@ const Checkout = ({ fetchCart, analytics }) => {
         </SideItem>
         <SideItem label="Summary" user={user}>
           <Summary
-            user={user}
+            userId={user.id}
             summary={summary}
             dispatch={dispatch}
+            coupon={state.coupon}
             couponCode={fields.couponCode}
           />
         </SideItem>
@@ -322,50 +325,6 @@ const Payment = ({ state, user, dispatch }) => (
       <span className="inline">Add Payment</span>
     </button>
   </>
-)
-
-const Summary = ({ user, couponCode, dispatch, summary }) => {
-  if (!summary) {
-    return <div />
-  }
-  const { coupon } = summary
-
-  return (
-    <div>
-      <CouponCode
-        price={summary.total}
-        user={user.id}
-        context="checkout"
-        setCoupon={(coupon) =>
-          dispatch({ type: 'correct-coupon', payload: coupon })
-        }
-        field={couponCode}
-      />
-      <Price label="Subtotal" price={summary.subtotal} />
-      <Price label="Insurance" price={summary.insurance} />
-      <Price label="Shipping" price={summary.shipping} />
-      <Price
-        negative
-        label="Discount"
-        price={summary.discount + (coupon?.discount || 0)}
-      />
-      <div className="h-px bg-pri my-1" />
-      <Price
-        label="Total"
-        price={coupon?.price || summary.total}
-        className="font-bold"
-      />
-    </div>
-  )
-}
-
-const Price = ({ negative = false, label, price, className = '' }) => (
-  <div className={`flex-row justify-between ${className}`}>
-    <span>{label}</span>
-    <span>
-      {negative && '-'} {fmtPrice(price)}
-    </span>
-  </div>
 )
 
 export default CheckoutWrapper

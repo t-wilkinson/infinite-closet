@@ -306,6 +306,7 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
 type CouponStatus = undefined | 'success' | 'failure'
 
 export const CouponCode = ({
+  user,
   context,
   price,
   setCoupon,
@@ -324,6 +325,7 @@ export const CouponCode = ({
     const code = cleanField(field)
     return axios
       .post(`/coupons/discount`, {
+        user,
         code,
         context,
         price,

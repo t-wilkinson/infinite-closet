@@ -8,6 +8,8 @@ import { Button, Icon } from '@/components'
 import { PaymentWrapper } from '@/Form/Payments'
 import { useSignin } from '@/User'
 import useAnalytics from '@/utils/useAnalytics'
+import { useFields, cleanFields } from '@/Form/useFields'
+import { Input } from '@/Form'
 
 import './CheckoutForm.module.css'
 
@@ -193,6 +195,13 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
   const stripe = useStripe()
   const elements = useElements()
   const analytics = useAnalytics()
+  const fields = useFields({
+    name: {
+      label: 'Billing Name',
+      constraints: 'required',
+      default: `${user.firstName} ${user.lastName}`,
+    },
+  })
 
   React.useEffect(() => {
     if (user) {
@@ -209,16 +218,16 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
   }
 
   const addPaymentMethod = async (e) => {
+    const cleaned = cleanFields(fields)
     e.preventDefault()
     setProcessing(true)
     const payload = await stripe.confirmCardSetup(clientSecret, {
       payment_method: {
         card: elements.getElement(CardElement),
         billing_details: {
-          // TODO: is it better to include this or ask user for information?
-          //   name: user.firstName + ' ' + user.lastName,
-          //   email: user.email,
-          //   phone: user.phoneNumber,
+          name: cleaned.name,
+          email: user.email,
+          phone: user.phoneNumber,
         },
       },
     })
@@ -246,6 +255,7 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
       >
         <AddPaymentMethodHeader onClose={onClose} />
 
+        <Input {...fields.name} />
         <div className="my-8 border border-gray rounded-sm p-4">
           <CardElement
             id="card-element"

@@ -5,10 +5,10 @@ import { CardElement } from '@stripe/react-stripe-js'
 dayjs.extend(utc)
 
 import { useSelector } from '@/utils/store'
-import { fmtPrice } from '@/utils/helpers'
-import { Submit, CouponCode, Input } from '@/Form'
+import { Submit, Input } from '@/Form'
 import { cleanFields, isValid } from '@/Form/useFields'
 import { cardStyle, Authorise } from '@/User/Payment'
+import { Summary } from './CheckoutUtils'
 
 import {
   useCheckout,
@@ -25,15 +25,17 @@ export const CheckoutForm = () => {
   const summary = useSelector((state) => state.cart.checkoutSummary)
   const address = React.useContext(AddressContext)
   const checkout = useCheckout()
+  const dispatch = React.useContext(DispatchContext)
 
   const onSubmit = () => {
     const cleanedFields = cleanFields(fields)
     const cleanedAddress = cleanFields(address)
     checkout({
-      name: `${cleanedAddress.firstName} ${cleanedAddress.lastName}`,
-      phone: cleanedAddress.mobileNumber,
-      email: cleanedFields.email,
       address: cleanedAddress,
+      billing: {
+        name: cleanedFields.billingName,
+      },
+      email: cleanedFields.email,
       couponCode: cleanedFields.couponCode,
     })
   }
@@ -45,10 +47,16 @@ export const CheckoutForm = () => {
           <Address address={address} email={fields.email} />
         </SideItem>
         <SideItem label="Payment Method">
+          <Input {...fields.billingName} />
           <Payment />
         </SideItem>
         <SideItem label="Summary">
-          <Summary summary={summary} />
+          <Summary
+            summary={summary}
+            couponCode={fields.couponCode}
+            dispatch={dispatch}
+            coupon={state.coupon}
+          />
         </SideItem>
         <div className="mt-4 w-full">
           <Submit
@@ -142,50 +150,5 @@ const Payment = () => {
     </>
   )
 }
-
-export const Summary = ({ summary }) => {
-  if (!summary) {
-    return <div />
-  }
-  const { couponCode } = React.useContext(FieldsContext)
-  const dispatch = React.useContext(DispatchContext)
-  const { coupon } = React.useContext(StateContext)
-
-  return (
-    <div>
-      <CouponCode
-        price={summary.total}
-        context="checkout"
-        setCoupon={(coupon) =>
-          dispatch({ type: 'correct-coupon', payload: coupon })
-        }
-        field={couponCode}
-      />
-      <Price label="Subtotal" price={summary.subtotal} />
-      <Price label="Insurance" price={summary.insurance} />
-      <Price label="Shipping" price={summary.shipping} />
-      <Price
-        negative
-        label="Discount"
-        price={summary.discount + (coupon?.discount || 0)}
-      />
-      <div className="h-px bg-pri my-1" />
-      <Price
-        label="Total"
-        price={coupon?.total || summary.total}
-        className="font-bold"
-      />
-    </div>
-  )
-}
-
-const Price = ({ negative = false, label, price, className = '' }) => (
-  <div className={`flex-row justify-between ${className}`}>
-    <span>{label}</span>
-    <span>
-      {negative && '-'} {fmtPrice(price)}
-    </span>
-  </div>
-)
 
 export default CheckoutForm

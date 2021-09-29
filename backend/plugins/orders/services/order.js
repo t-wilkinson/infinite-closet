@@ -101,12 +101,12 @@ async function quantity(order) {
 function toShippingAddress(order) {
   const { address, user } = order
   return {
-    name: address.firstName + ' ' + address.lastName,
-    address: [address.address],
+    name: address.fullName,
+    address: [address.addressLine1, address.addressLine2],
     town: address.town,
     postcode: address.postcode,
-    email: user.email,
-    phone: user.phoneNumber,
+    email: address.email || user.email,
+    phone: address.phoneNumber,
   }
 }
 
