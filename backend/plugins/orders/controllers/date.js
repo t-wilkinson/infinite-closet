@@ -13,12 +13,17 @@ module.exports = {
 
     const orderProduct = await strapi
       .query('product')
-      .findOne({ id: product }, ['sizes'])
+      .findOne({ id: product.id || product }, ['sizes'])
     const quantity = orderProduct.sizes.find((s) => s.size === size).quantity
 
-    const matchingOrders = await strapi
-      .query('order', 'orders')
-      .find({ product, size }, []) // TODO: why can't we attach products.sizes
+    const matchingOrders = await strapi.query('order', 'orders').find(
+      {
+        product: orderProduct.id,
+        size,
+        status_in: strapi.plugins['orders'].services.order.inProgress,
+      },
+      []
+    )
 
     // Attach product to orders
     const orders = matchingOrders.map((order) => {

@@ -133,8 +133,6 @@ function valid(date, available, quantity, existing) {
     (available < 0 && gracePeriodInUse) || (available <= 0 && hasQuantity)
   const shouldAddGracePeriod = !gracePeriodInUse && !hasQuantity
 
-  console.log({ hasNoAvailableItems, shouldAddGracePeriod })
-
   if (hasNoAvailableItems) {
     return false
   }
@@ -146,7 +144,6 @@ function valid(date, available, quantity, existing) {
   const enoughShippingTime = date.isSameOrAfter(arrives, 'day')
   const notTooFarInFuture = date.isBefore(today.add(4 * 30, 'day'))
 
-  console.log({ enoughShippingTime, notTooFarInFuture })
   return enoughShippingTime && notTooFarInFuture
 }
 

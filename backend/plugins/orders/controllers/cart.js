@@ -87,7 +87,6 @@ module.exports = {
     )
 
     const cart = await strapi.plugins['orders'].services.cart.create(orders)
-    console.log({ body: body.orders, orders, cart })
     ctx.send(cart)
   },
 }

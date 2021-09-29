@@ -72,7 +72,6 @@ async function create(orders) {
   const settledOrders = await Promise.allSettled(
     orders.map((order) => createCartItem(numAvailableOrders, order))
   )
-  console.log('createSettledOrders', settledOrders)
 
   return settledOrders
     .filter((v) => v.status === 'fulfilled')
