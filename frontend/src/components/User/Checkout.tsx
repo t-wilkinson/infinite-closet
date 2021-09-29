@@ -12,9 +12,10 @@ import { Button, BlueLink, Icon } from '@/components'
 import { CartUtils } from '@/Cart/slice'
 import Cart from '@/Cart'
 
-import { Summary, useFetchCart, useCheckout } from './CheckoutUtils'
+import { Summary, useFetchCart } from './CheckoutUtils'
 import { PaymentMethods, AddPaymentMethod } from './Payment'
 import { Addresses, AddAddress } from './Address'
+import { PaymentRequest } from './CheckoutUtils'
 
 type Popup = 'none' | 'address' | 'payment'
 type Status = null | 'checking-out' | 'error' | 'success'
@@ -157,13 +158,14 @@ const Checkout = ({ fetchCart, analytics }) => {
   const cart = useSelector((state) => state.cart.checkoutCart)
   const user = useSelector((state) => state.user.data)
   const summary = useSelector((state) => state.cart.checkoutSummary)
+  const [isVisible, setVisible] = React.useState(false)
 
   const checkout = () => {
     dispatch({ type: 'status-processing' })
     const cleanedFields = cleanFields(fields)
     axios
       .post(
-        '/orders/checkout',
+        `/orders/checkout/${user.id}`,
         {
           address: state.address,
           paymentMethod: state.paymentMethod,
@@ -176,7 +178,7 @@ const Checkout = ({ fetchCart, analytics }) => {
         fetchCart()
         dispatch({ type: 'status-success' })
         analytics.logEvent('purchase', {
-          user: user ? user.email : 'guest',
+          user: user?.email,
           type: 'checkout',
         })
       })
@@ -230,30 +232,45 @@ const Checkout = ({ fetchCart, analytics }) => {
       ) : (
         <div className="w-full space-y-4">
           <Cart />
-          <Button
-            onClick={checkout}
-            disabled={
-              !(state.paymentMethod && state.address) ||
-              ['checking-out'].includes(state.status) ||
-              cart.every(isOrderInvalid)
-            }
+          <PaymentRequest
+            setVisible={setVisible}
+            couponCode={fields.couponCode}
+            coupon={state.coupon}
+            dispatch={dispatch}
+            onCheckout={() => {
+              fetchCart()
+              dispatch({ type: 'status-success' })
+              analytics.logEvent('purchase', {
+                user: user?.email,
+                type: 'checkout',
+              })
+            }}
           >
-            {!state.address
-              ? 'Please Select an Address'
-              : !state.paymentMethod
-              ? 'Please Select a Payment Method'
-              : state.status === 'checking-out'
-              ? 'Checkout Out...'
-              : state.status === 'error'
-              ? 'Oops... We ran into an issue'
-              : state.status === 'success'
-              ? 'Successfully Checked Out'
-              : cart.every(isOrderInvalid)
-              ? 'No Available Items'
-              : cart.some(isOrderInvalid)
-              ? 'Checkout Available Items'
-              : 'Secure Checkout'}
-          </Button>
+            <Button
+              onClick={checkout}
+              disabled={
+                !(state.paymentMethod && state.address) ||
+                ['checking-out'].includes(state.status) ||
+                cart.every(isOrderInvalid)
+              }
+            >
+              {!state.address
+                ? 'Please Select an Address'
+                : !state.paymentMethod
+                ? 'Please Select a Payment Method'
+                : state.status === 'checking-out'
+                ? 'Checkout Out...'
+                : state.status === 'error'
+                ? 'Oops... We ran into an issue'
+                : state.status === 'success'
+                ? 'Successfully Checked Out'
+                : cart.every(isOrderInvalid)
+                ? 'No Available Items'
+                : cart.some(isOrderInvalid)
+                ? 'Checkout Available Items'
+                : 'Secure Checkout'}
+            </Button>
+          </PaymentRequest>
         </div>
       )}
     </div>
