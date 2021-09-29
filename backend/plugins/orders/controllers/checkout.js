@@ -12,22 +12,22 @@ async function prepareCheckout(body, user = null) {
     couponCode: body.couponCode,
   })
 
+  let paymentIntent, paymentMethod
   if (body.paymentIntent) {
-    const paymentIntent = await stripe.paymentIntents.retrieve(
-      body.paymentIntent
-    )
-    return { summary, cart, paymentIntent }
-  } else {
-    return { summary, cart }
+    paymentIntent = await stripe.paymentIntents.retrieve(body.paymentIntent)
   }
+  if (body.paymentMethod) {
+    paymentMethod = await stripe.paymentMethods.retrieve(body.paymentMethod)
+  }
+  return { summary, cart, paymentIntent, paymentMethod }
 }
 
 async function shipCart({
   user,
   cart,
   summary,
-  paymentIntent,
   address,
+  paymentIntent,
   paymentMethod,
 }) {
   const orders = await Promise.all(
@@ -36,7 +36,8 @@ async function shipCart({
         { id: order.id },
         {
           address,
-          paymentMethod,
+          paymentIntent: paymentIntent.id,
+          paymentMethod: paymentMethod.id,
           status: 'planning',
           insurance: order.insurance,
         }
@@ -49,14 +50,18 @@ async function shipCart({
       .filter((settle) => settle.status == 'fulfilled')
       .map((settle) => settle.value)
 
-  const attachPaymentIntent = (paymentIntent) =>
+  const attachPaymentInfo = () =>
     Promise.allSettled(
       orders.map((order) =>
         strapi
           .query('order', 'orders')
           .update(
             { id: order.id },
-            { paymentIntent: paymentIntent.id, coupon: summary.coupon.id }
+            {
+              paymentIntent: paymentIntent.id,
+              paymentMethod: paymentMethod.id,
+              coupon: summary.coupon.id,
+            }
           )
       )
     )
@@ -97,7 +102,7 @@ async function shipCart({
     })
   }
 
-  return attachPaymentIntent(orders, paymentIntent)
+  return attachPaymentInfo()
     .then(filterSettled)
     .then(fillOrderData)
     .then(filterSettled)
