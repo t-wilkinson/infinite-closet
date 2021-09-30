@@ -13,7 +13,6 @@ async function prepareCheckout(body, user = null) {
   })
 
   let paymentIntent, paymentMethod
-  console.log('init payment', body.paymentIntent, body.paymentMethod)
   if (body.paymentIntent) {
     paymentIntent = await stripe.paymentIntents.retrieve(body.paymentIntent)
   }
@@ -147,7 +146,6 @@ module.exports = {
   async checkoutRequestGuest(ctx) {
     const body = ctx.request.body
     const { paymentIntent, summary, cart } = await prepareCheckout(body)
-    console.log('prepareCheckout', { paymentIntent, summary, cart })
     if (cart.length === 0 || summary.amount < 100) {
       return ctx.send()
     }
@@ -156,13 +154,12 @@ module.exports = {
       // TODO: what if only some paymentIntents match?
       // Only use paymentIntent created by the server
       // Don't use paymentIntent passed from client
-      cart[0].paymentIntent === paymentIntent.id &&
+      cart[0].order.paymentIntent === paymentIntent.id &&
       paymentIntent.status === 'succeeded'
     ) {
       console.log('shipping')
       shipCart({ ...body, summary, cart, paymentIntent })
       console.log('shipped')
-      shipCart({ ...body, summary, cart, paymentIntent })
       return ctx.send()
     } else {
       strapi.log.error('PaymentRequest paymentIntent did not succeed %o', {
