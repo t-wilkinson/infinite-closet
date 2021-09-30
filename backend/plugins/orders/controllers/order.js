@@ -92,8 +92,9 @@ module.exports = {
         'product.sizes',
       ])
     const user = order.user
-    const orderPrice =
-      strapi.plugins['orders'].services.price.orderTotal(order)
+    const orderData = await strapi.plugins[
+      'orders'
+    ].services.cart.createCartItem(order)
 
     const sendShippingEmail = () =>
       strapi.plugins['email'].services.email.send({
@@ -104,10 +105,8 @@ module.exports = {
         },
         subject: `Your order of ${order.product.name} by ${order.product.designer.name} has shipped!`,
         data: {
-          ...order,
           firstName: user.firstName,
-          range: strapi.services.timing.range(order),
-          price: orderPrice,
+          ...orderData,
         },
       })
 
@@ -119,7 +118,7 @@ module.exports = {
         order.created_at,
         order.startDate
       ),
-      shipmentPrice: orderPrice,
+      shipmentPrice: orderData.totalPrice,
     }
 
     strapi.services.shipment

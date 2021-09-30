@@ -66,7 +66,7 @@ async function createAvailableCartItem(numAvailableOrders, order) {
   )
 
   return {
-    ...createCartItem(order),
+    ...(await createCartItem(order)),
     valid,
     available: numAvailableOrders[key],
   }

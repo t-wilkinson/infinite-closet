@@ -10,7 +10,7 @@ import { getFrontendURL, getBackendURL } from '../api'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-const Order = ({ size, price, product, range }) => {
+const Order = ({ size, totalPrice, product, range }) => {
   const formatDate = (date) =>
     dayjs(date).tz('Europe/London').format('dddd, MMM D')
 
@@ -79,7 +79,7 @@ const Order = ({ size, price, product, range }) => {
                     </span>
                   </span>
                 }
-                right={<div style={{ fontWeight: 700 }}>£{price}</div>}
+                right={<div style={{ fontWeight: 700 }}>£{totalPrice}</div>}
               />
             </Grid.Row>
           </Grid>
