@@ -138,6 +138,12 @@ module.exports = {
     if (cart.length === 0 || summary.amount < 100) {
       return ctx.send()
     }
+    strapi.log.info({ paymentMethod, paymentIntent, summary, cart })
+    strapi.log.info(
+      cart[0].order.paymentIntent,
+      paymentIntent.id,
+      paymentIntent.status
+    )
 
     if (validPaymentIntent(cart, paymentIntent)) {
       try {
