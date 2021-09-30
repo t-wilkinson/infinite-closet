@@ -183,8 +183,10 @@ const Wrapper = ({ router, children }) => {
           } else {
             await axios
               .get(`/orders/${order.id}`, { withCredentials: true })
-              .catch(() => {
-                delete cart[i]
+              .catch((err) => {
+                if (err.response.status === 404) {
+                  delete cart[i]
+                }
               })
           }
         })
