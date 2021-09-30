@@ -40,6 +40,8 @@ async function shipCart({
     address = address.id
   }
   strapi.log.error('address: %o', address)
+  strapi.log.error('paymentIntent: %o', paymentIntent)
+  strapi.log.error('paymentMethod: %o', paymentMethod)
 
   let orders = await Promise.allSettled(
     strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
@@ -56,6 +58,8 @@ async function shipCart({
       )
     )
   )
+
+  strapi.log.error('summary: %o', summary)
   strapi.log.error('orders: %o', orders)
   orders = orders.filter((v) => v.status === 'fulfilled').map((v) => v.value)
   strapi.log.error('contact: %o', contact)

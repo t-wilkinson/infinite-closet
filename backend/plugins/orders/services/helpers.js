@@ -17,10 +17,8 @@ async function notifyArrival(orders) {
       to: user.email,
       subject: `Your order of ${order.product.name} by ${order.product.designer.name} is arriving today`,
       data: {
-        ...order,
+        ...(await strapi.plugins['orders'].services.cart.createCartItem(order)),
         firstName: user.firstName,
-        range,
-        price: strapi.plugins['orders'].services.price.orderTotal(order),
       },
     })
   }
@@ -47,17 +45,16 @@ async function sendToCleaners(orders) {
       .query('order', 'orders')
       .update({ id: order.id }, { status: 'cleaning' })
       .then(() => strapi.services.shipment.ship(shippingRequest))
-      .then(() =>
+      .then(() => strapi.plugins['orders'].services.cart.createCartItem(order))
+      .then((order) =>
         strapi.plugins['email'].services.email.send({
           template: 'order-leaving',
           to: user.email,
           cc: 'battersea@oxwash.com',
           subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
           data: {
-            ...order,
             firstName: user.firstName,
-            range,
-            price: strapi.plugins['orders'].services.price.orderTotal(order),
+            ...order,
           },
         })
       )

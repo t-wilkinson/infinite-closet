@@ -27,9 +27,30 @@ async function numAvailable(orders = []) {
   return orderUtils.numAvailable(orders, reqRanges)
 }
 
-async function createCartItem(numAvailableOrders, order) {
-  const key = orderUtils.toKey(order)
+async function createCartItem(order) {
+  order = await strapi
+    .query('order', 'orders')
+    .findOne({ id: order.id }, [
+      'product.sizes',
+      'product.images',
+      'product.designer',
+    ])
+
+  return {
+    order,
+    ...priceUtils.orderPrice(order),
+    totalPrice: priceUtils.orderTotal(order),
+    range: strapi.services.timing.range(order),
+    shippingClass: strapi.services.shipment.shippingClass(
+      order.created_at,
+      order.startDate
+    ),
+  }
+}
+
+async function createAvailableCartItem(numAvailableOrders, order) {
   const quantity = await orderUtils.quantity(order)
+  const key = orderUtils.toKey(order)
 
   const existingOrders = await strapi.query('order', 'orders').count({
     product: order.product.id || order.product,
@@ -44,25 +65,10 @@ async function createCartItem(numAvailableOrders, order) {
     existingOrders
   )
 
-  const order_ = await strapi
-    .query('order', 'orders')
-    .findOne({ id: order.id }, [
-      'product.sizes',
-      'product.images',
-      'product.designer',
-    ])
-
   return {
-    order: order_,
-    ...priceUtils.orderPrice(order),
-    totalPrice: priceUtils.orderTotal(order),
-    available: numAvailableOrders[key],
-    range: strapi.services.timing.range(order),
+    ...createCartItem(order),
     valid,
-    shippingClass: strapi.services.shipment.shippingClass(
-      order.created_at,
-      order.startDate
-    ),
+    available: numAvailableOrders[key],
   }
 }
 
@@ -71,7 +77,7 @@ async function create(orders) {
 
   // add price and available quantity to each order
   const settledOrders = await Promise.allSettled(
-    orders.map((order) => createCartItem(numAvailableOrders, order))
+    orders.map((order) => createAvailableCartItem(numAvailableOrders, order))
   )
 
   return settledOrders
@@ -98,6 +104,7 @@ function validOrders(cart) {
 
 module.exports = {
   create,
+  createCartItem,
   numAvailable,
 
   createValidCart,
