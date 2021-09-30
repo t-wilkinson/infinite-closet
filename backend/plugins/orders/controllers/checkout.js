@@ -37,7 +37,7 @@ async function shipCart({
       .then((res) => res.id)
   }
 
-  const orders = await Promise.all(
+  let orders = await Promise.allSettled(
     strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
       strapi.query('order', 'orders').update(
         { id: order.id },
@@ -53,6 +53,8 @@ async function shipCart({
       )
     )
   )
+  strapi.log.info('%o', orders)
+  orders = orders.filter((v) => v.status === 'fulfilled').map((v) => v.value)
 
   if (contact) {
     return strapi.plugins['email'].services.email.send({
@@ -138,12 +140,6 @@ module.exports = {
     if (cart.length === 0 || summary.amount < 100) {
       return ctx.send()
     }
-    strapi.log.info({ paymentMethod, paymentIntent, summary, cart })
-    strapi.log.info(
-      cart[0].order.paymentIntent,
-      paymentIntent.id,
-      paymentIntent.status
-    )
 
     if (validPaymentIntent(cart, paymentIntent)) {
       try {
@@ -159,6 +155,7 @@ module.exports = {
         strapi.log.error('PaymentRequest paymentIntent did not succeed %o', {
           orders: cart.map((order) => order.id),
           paymentIntent,
+          error: e,
         })
         return ctx.send({ error: 'PaymentIntent invalid' }, 400)
       }
