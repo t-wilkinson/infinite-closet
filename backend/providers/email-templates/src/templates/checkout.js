@@ -11,8 +11,8 @@ export default ({ data }) => {
       <span>Thank you for your order.</span>
 
       <Grid style={{ marginTop: 8, marginBottom: 8 }}>
-        {data.orders.map((order, i) => (
-          <Order key={i} {...order} />
+        {data.cart.map((item, i) => (
+          <Order key={i} {...item} />
         ))}
       </Grid>
 

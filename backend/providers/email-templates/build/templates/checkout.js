@@ -47,8 +47,8 @@ exports.default = function (_ref) {
     _react2.default.createElement(
       _Grid2.default,
       { style: { marginTop: 8, marginBottom: 8 } },
-      data.orders.map(function (order, i) {
-        return _react2.default.createElement(_Order2.default, Object.assign({ key: i }, order));
+      data.cart.map(function (item, i) {
+        return _react2.default.createElement(_Order2.default, Object.assign({ key: i }, item));
       })
     ),
     _react2.default.createElement(_Between2.default, {

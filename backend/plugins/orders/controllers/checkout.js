@@ -30,20 +30,14 @@ async function shipCart({
   paymentIntent,
   paymentMethod,
 }) {
-  strapi.log.error('hi')
-  strapi.log.error('address: %o', address)
-  strapi.log.error('cart: %o', cart)
   if (typeof address === 'object') {
     address = await strapi
       .query('address')
       .create({ ...address, email: contact.email })
     address = address.id
   }
-  strapi.log.error('address: %o', address)
-  strapi.log.error('paymentIntent: %o', paymentIntent)
-  strapi.log.error('paymentMethod: %o', paymentMethod)
 
-  let orders = await Promise.allSettled(
+  await Promise.all(
     strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
       strapi.query('order', 'orders').update(
         { id: order.id },
@@ -63,12 +57,6 @@ async function shipCart({
     )
   )
 
-  strapi.log.error('summary: %o', summary)
-  strapi.log.error('orders: %o', orders)
-  orders = orders.filter((v) => v.status === 'fulfilled').map((v) => v.value)
-  strapi.log.error('contact: %o', contact)
-  return
-
   if (contact) {
     await strapi.plugins['email'].services.email.send({
       template: 'checkout',
@@ -84,7 +72,7 @@ async function shipCart({
         // TODO: should emails take cart instead?
         name: contact.fullName,
         firstName: contact.nickName,
-        orders,
+        cart,
         totalPrice: summary.total,
       },
     })

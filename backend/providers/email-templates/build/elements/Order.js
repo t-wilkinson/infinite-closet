@@ -40,9 +40,8 @@ _dayjs2.default.extend(_utc2.default);
 _dayjs2.default.extend(_timezone2.default);
 
 var Order = function Order(_ref) {
-  var size = _ref.size,
-      price = _ref.price,
-      product = _ref.product,
+  var totalPrice = _ref.totalPrice,
+      order = _ref.order,
       range = _ref.range;
 
   var formatDate = function formatDate(date) {
@@ -68,12 +67,12 @@ var Order = function Order(_ref) {
       left: _react2.default.createElement(
         'a',
         {
-          href: (0, _api.getFrontendURL)('/shop/' + product.slug + '/' + product.designer.slug)
+          href: (0, _api.getFrontendURL)('/shop/' + order.product.slug + '/' + order.product.designer.slug)
         },
         _react2.default.createElement(_Img2.default, {
           style: { width: 96, height: 96 },
-          src: (0, _api.getBackendURL)(product.images[0].url),
-          alt: product.images[0].alternativeText
+          src: (0, _api.getBackendURL)(order.product.images[0].url),
+          alt: order.product.images[0].alternativeText
         })
       ),
       right: _react2.default.createElement(
@@ -123,23 +122,23 @@ var Order = function Order(_ref) {
               _react2.default.createElement(
                 'span',
                 { style: { fontWeight: 700 } },
-                size
+                order.size
               ),
               ' ',
-              product.name,
+              order.product.name,
               ' by',
               ' ',
               _react2.default.createElement(
                 'span',
                 { style: { fontWeight: 700 } },
-                product.designer.name
+                order.product.designer.name
               )
             ),
             right: _react2.default.createElement(
               'div',
               { style: { fontWeight: 700 } },
               '\xA3',
-              price
+              totalPrice
             )
           })
         )
