@@ -30,6 +30,8 @@ async function shipCart({
   paymentIntent,
   paymentMethod,
 }) {
+  strapi.log.error('hi')
+  strapi.log.error('address %o', address)
   if (typeof address === 'object') {
     address = await strapi
       .query('address')
