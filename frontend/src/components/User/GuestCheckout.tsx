@@ -119,7 +119,7 @@ const Checkout = () => {
             onCheckout={() => {
               rootDispatch(CartUtils.set([]))
               fetchCart()
-              dispatch({ type: 'payment-succeeded' })
+              dispatch({ type: 'status-success' })
               analytics.logEvent('purchase', {
                 user: 'guest',
                 type: 'checkout',

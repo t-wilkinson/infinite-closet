@@ -68,8 +68,6 @@ async function shipCart({
       bcc: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
       subject: 'Thank you for your order',
       data: {
-        // TODO: use cart to fill information
-        // TODO: should emails take cart instead?
         name: contact.fullName,
         firstName: contact.nickName,
         cart,
