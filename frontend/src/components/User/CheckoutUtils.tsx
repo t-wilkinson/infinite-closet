@@ -211,21 +211,19 @@ const PaymentRequestContainer = ({
         // instead check for: `paymentIntent.status === "requires_source_action"`.
 
         const toCheckout = (ev: any) => {
-          const cleanedCouponCode = cleanField(couponCode)
           return {
-            couponCode: cleanedCouponCode,
-            paymentMethod: ev.paymentMethod,
-            email: ev.payerEmail,
-            billing: {
-              name: ev.payerName,
-            },
             address: {
-              name: ev.payerName,
-              mobileNumber: ev.payerPhone,
+              name: ev.shippingAddress.recipient,
+              mobileNumber: ev.shippingAddress.phone,
               addressLine1: ev.shippingAddress.addressLine[0],
               addressLine2: ev.shippingAddress.addressLine[1],
               town: ev.shippingAddress.city,
               postcode: ev.shippingAddress.postalCode,
+            },
+            contact: {
+              email: ev.payerEmail,
+              fullName: ev.payerName,
+              nickName: ev.payerName.split(' ')[0],
             },
           } as const
         }
@@ -237,12 +235,12 @@ const PaymentRequestContainer = ({
           validatePostcode(info.address.postcode)
             .then(() =>
               axios.post('/orders/checkout-request', {
+                contact: info.contact,
                 address: info.address,
-                email: info.email,
-                couponCode: info.couponCode,
+                couponCode: cleanField(couponCode),
                 orders: cart.map((item) => item.order),
-                paymentMethod: info.paymentMethod.id,
                 paymentIntent: paymentIntent.id,
+                paymentMethod: ev.paymentMethod.id,
               })
             )
             .then(onCheckout)

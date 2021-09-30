@@ -23,108 +23,87 @@ async function prepareCheckout(body, user = null) {
 }
 
 async function shipCart({
-  user,
+  contact,
+  address,
   cart,
   summary,
-  address,
   paymentIntent,
   paymentMethod,
 }) {
-  const orders = await Promise.all(
-    strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
-      strapi.query('order', 'orders').update(
-        { id: order.id },
-        {
-          address,
-          paymentIntent: paymentIntent.id,
-          paymentMethod: paymentMethod.id,
-          status: 'planning',
-          insurance: order.insurance,
-        }
-      )
-    )
-  )
+  try {
+    if (typeof address === 'object') {
+      address = await strapi
+        .query('address')
+        .create(address)
+        .then((res) => res.id)
+    }
 
-  const filterSettled = (settled) =>
-    settled
-      .filter((settle) => settle.status == 'fulfilled')
-      .map((settle) => settle.value)
-
-  const attachPaymentInfo = () =>
-    Promise.allSettled(
-      orders.map((order) =>
+    const orders = await Promise.all(
+      strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
         strapi.query('order', 'orders').update(
           { id: order.id },
           {
-            paymentIntent: paymentIntent.id,
-            paymentMethod: paymentMethod.id,
+            address,
+            paymentIntent: paymentIntent
+              ? paymentIntent.id
+              : paymentIntent || '',
+            paymentMethod: paymentMethod
+              ? paymentMethod.id
+              : paymentMethod || '',
+            status: 'planning',
             coupon: summary.coupon.id,
+            range: strapi.services.timing.range(order),
+            price: strapi.plugins['orders'].services.price.orderTotal(order),
           }
         )
       )
     )
 
-  const fillOrderData = (orders) =>
-    Promise.allSettled(
-      orders.map(async (order) => ({
-        ...order,
-        product: {
-          ...order.product,
-          designer: await strapi
-            .query('designer')
-            .findOne({ id: order.product.designer }),
+    if (contact) {
+      return strapi.plugins['email'].services.email.send({
+        template: 'checkout',
+        to: contact.email,
+        cc:
+          process.env.NODE_ENV === 'production'
+            ? 'ukinfinitecloset@gmail.com'
+            : '',
+        bcc: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
+        subject: 'Thank you for your order',
+        data: {
+          name: contact.fullName,
+          firstName: contact.nickName,
+          orders,
+          totalPrice: summary.total,
         },
-        range: strapi.services.timing.range(order),
-        price: strapi.plugins['orders'].services.price.orderTotal(order),
-      }))
-    )
-
-  const successEmail = (orders) => {
-    if (!user) {
-      return
+      })
     }
-    return strapi.plugins['email'].services.email.send({
-      template: 'checkout',
-      to: user.email,
-      cc:
-        process.env.NODE_ENV === 'production'
-          ? 'ukinfinitecloset@gmail.com'
-          : '',
-      bcc: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
-      subject: 'Thank you for your order',
-      data: {
-        firstName: user.firstName,
-        orders,
-        totalPrice: summary.total,
-      },
-    })
+  } catch (err) {
+    strapi.log.error(err)
   }
+}
 
-  return attachPaymentInfo()
-    .then(filterSettled)
-    .then(fillOrderData)
-    .then(filterSettled)
-    .then(successEmail)
-    .catch((err) => strapi.log.error(err))
+function validPaymentIntent(cart, paymentIntent) {
+  // TODO: what if only some paymentIntents match?
+  // Only use paymentIntent created by the server
+  // Don't use paymentIntent passed from client
+  return (
+    cart[0].order.paymentIntent === paymentIntent.id &&
+    paymentIntent.status === 'succeeded'
+  )
 }
 
 module.exports = {
   async checkoutUser(ctx) {
     const user = ctx.state.user
     const body = ctx.request.body
-    const { paymentIntent, summary, cart } = await prepareCheckout(body, user)
+    const { paymentMethod, paymentIntent, summary, cart } =
+      await prepareCheckout(body, user)
     if (cart.length === 0 || summary.amount < 100) {
       return ctx.send()
     }
 
-    if (
-      // TODO: what if only some paymentIntents match?
-      // Only use paymentIntent created by the server
-      // Don't use paymentIntent passed from client
-      cart[0].paymentIntent === paymentIntent.id &&
-      paymentIntent.status === 'succeeded'
-    ) {
-      shipCart({ ...body, summary, user, cart, paymentIntent })
+    if (validPaymentIntent(cart, paymentIntent)) {
+      shipCart({ ...body, summary, cart, paymentMethod, paymentIntent })
       return ctx.send()
     } else {
       stripe.paymentIntents
@@ -137,7 +116,13 @@ module.exports = {
           confirm: true,
         })
         .then((paymentIntent) =>
-          shipCart({ ...body, summary, user, cart, paymentIntent })
+          shipCart({
+            ...body,
+            summary,
+            cart,
+            paymentMethod,
+            paymentIntent,
+          })
         )
       return ctx.send()
     }
@@ -145,33 +130,27 @@ module.exports = {
 
   async checkoutRequestGuest(ctx) {
     const body = ctx.request.body
-    const { paymentIntent, summary, cart } = await prepareCheckout(body)
+    const { paymentMethod, paymentIntent, summary, cart } =
+      await prepareCheckout(body)
     if (cart.length === 0 || summary.amount < 100) {
       return ctx.send()
     }
 
-    if (
-      // TODO: what if only some paymentIntents match?
-      // Only use paymentIntent created by the server
-      // Don't use paymentIntent passed from client
-      cart[0].order.paymentIntent === paymentIntent.id &&
-      paymentIntent.status === 'succeeded'
-    ) {
-      console.log('shipping')
-      shipCart({ ...body, summary, cart, paymentIntent })
-      console.log('shipped')
+    if (validPaymentIntent(cart, paymentIntent)) {
+      shipCart({ ...body, summary, cart, paymentMethod, paymentIntent })
       return ctx.send()
     } else {
       strapi.log.error('PaymentRequest paymentIntent did not succeed %o', {
         orders: cart.map((order) => order.id),
         paymentIntent,
       })
+      return ctx.send({ error: 'PaymentIntent invalid' }, 400)
     }
   },
 
   async checkoutGuest(ctx) {
     const body = { ...(ctx.request.body.body || {}), ...ctx.request.body }
-    const { summary, cart } = await prepareCheckout(body)
+    const { paymentMethod, summary, cart } = await prepareCheckout(body)
     if (cart.length === 0 || summary.amount < 100) {
       return ctx.send()
     }
@@ -193,12 +172,18 @@ module.exports = {
       const response = generateResponse(intent)
 
       if (response.success) {
-        shipCart({ ...body, summary, cart, paymentIntent: intent })
+        shipCart({
+          ...body,
+          summary,
+          cart,
+          paymentMethod,
+          paymentIntent: intent,
+        })
       }
       return ctx.send({ ...response, body })
     } catch (e) {
       strapi.log.error(e)
-      return ctx.send({ error: 'Could not process payment', body })
+      return ctx.send({ error: 'Could not process payment', body }, 400)
     }
   },
 

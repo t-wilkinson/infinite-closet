@@ -4,6 +4,7 @@
 export interface StrapiAddress {
   id: string;
   fullName: string;
+  email?: string;
   mobileNumber?: string;
   addressLine1: string;
   addressLine2?: string;

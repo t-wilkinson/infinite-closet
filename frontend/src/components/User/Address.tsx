@@ -54,7 +54,7 @@ export const Address = ({
   userId,
   fullName,
   addressLine1,
-  addressLine2,
+  addressLine2 = '',
   town,
   postcode,
 }) => {

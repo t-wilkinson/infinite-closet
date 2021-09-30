@@ -83,8 +83,12 @@ export const useCheckout = () => {
           return Promise.reject(res.error)
         } else {
           return axios.post('/orders/checkout', {
+            contact: {
+              email,
+              fullName: address.fullName,
+              nickName: address.fullName.split(' ')[0],
+            },
             address,
-            email,
             paymentMethod: res.paymentMethod.id,
             orders: cart.map((item) => item.order),
             couponCode,

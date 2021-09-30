@@ -167,6 +167,11 @@ const Checkout = ({ fetchCart, analytics }) => {
       .post(
         `/orders/checkout/${user.id}`,
         {
+          contact: {
+            fullName: `${user.firstName} ${user.lastName}`,
+            nickName: user.firstName,
+            email: user.email,
+          },
           address: state.address,
           paymentMethod: state.paymentMethod,
           orders: cart.map((item) => item.order),

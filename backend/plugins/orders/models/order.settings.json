@@ -68,6 +68,9 @@
     },
     "coupon": {
       "model": "coupon"
+    },
+    "charge": {
+      "type": "decimal"
     }
   }
 }
