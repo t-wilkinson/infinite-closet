@@ -213,7 +213,7 @@ const PaymentRequestContainer = ({
         const toCheckout = (ev: any) => {
           return {
             address: {
-              name: ev.shippingAddress.recipient,
+              fullName: ev.shippingAddress.recipient,
               mobileNumber: ev.shippingAddress.phone,
               addressLine1: ev.shippingAddress.addressLine[0],
               addressLine2: ev.shippingAddress.addressLine[1],

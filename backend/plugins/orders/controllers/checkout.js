@@ -30,56 +30,49 @@ async function shipCart({
   paymentIntent,
   paymentMethod,
 }) {
-  try {
-    if (typeof address === 'object') {
-      address = await strapi
-        .query('address')
-        .create(address)
-        .then((res) => res.id)
-    }
+  if (typeof address === 'object') {
+    address = await strapi
+      .query('address')
+      .create(address)
+      .then((res) => res.id)
+  }
 
-    const orders = await Promise.all(
-      strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
-        strapi.query('order', 'orders').update(
-          { id: order.id },
-          {
-            address,
-            paymentIntent: paymentIntent
-              ? paymentIntent.id
-              : paymentIntent || '',
-            paymentMethod: paymentMethod
-              ? paymentMethod.id
-              : paymentMethod || '',
-            status: 'planning',
-            coupon: summary.coupon.id,
-            range: strapi.services.timing.range(order),
-            price: strapi.plugins['orders'].services.price.orderTotal(order),
-          }
-        )
+  const orders = await Promise.all(
+    strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
+      strapi.query('order', 'orders').update(
+        { id: order.id },
+        {
+          address,
+          paymentIntent: paymentIntent ? paymentIntent.id : paymentIntent || '',
+          paymentMethod: paymentMethod ? paymentMethod.id : paymentMethod || '',
+          status: 'planning',
+          coupon: summary.coupon.id,
+          range: strapi.services.timing.range(order),
+          price: strapi.plugins['orders'].services.price.orderTotal(order),
+        }
       )
     )
+  )
 
-    if (contact) {
-      return strapi.plugins['email'].services.email.send({
-        template: 'checkout',
-        to: contact.email,
-        cc:
-          process.env.NODE_ENV === 'production'
-            ? 'ukinfinitecloset@gmail.com'
-            : '',
-        bcc: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
-        subject: 'Thank you for your order',
-        data: {
-          name: contact.fullName,
-          firstName: contact.nickName,
-          orders,
-          totalPrice: summary.total,
-        },
-      })
-    }
-  } catch (err) {
-    strapi.log.error(err)
+  if (contact) {
+    return strapi.plugins['email'].services.email.send({
+      template: 'checkout',
+      to: contact.email,
+      cc:
+        process.env.NODE_ENV === 'production'
+          ? 'ukinfinitecloset@gmail.com'
+          : '',
+      bcc: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
+      subject: 'Thank you for your order',
+      data: {
+        name: contact.fullName,
+        firstName: contact.nickName,
+        orders,
+        totalPrice: summary.total,
+      },
+    })
   }
+  return { status: 'success' }
 }
 
 function validPaymentIntent(cart, paymentIntent) {
@@ -102,29 +95,39 @@ module.exports = {
       return ctx.send()
     }
 
-    if (validPaymentIntent(cart, paymentIntent)) {
-      shipCart({ ...body, summary, cart, paymentMethod, paymentIntent })
-      return ctx.send()
-    } else {
-      stripe.paymentIntents
-        .create({
-          amount: summary.amount,
-          currency: 'gbp',
-          customer: user.customer,
-          payment_method: body.paymentMethod,
-          off_session: false,
-          confirm: true,
+    try {
+      if (validPaymentIntent(cart, paymentIntent)) {
+        await shipCart({
+          ...body,
+          summary,
+          cart,
+          paymentMethod,
+          paymentIntent,
         })
-        .then((paymentIntent) =>
-          shipCart({
-            ...body,
-            summary,
-            cart,
-            paymentMethod,
-            paymentIntent,
+        return ctx.send()
+      } else {
+        await stripe.paymentIntents
+          .create({
+            amount: summary.amount,
+            currency: 'gbp',
+            customer: user.customer,
+            payment_method: body.paymentMethod,
+            off_session: false,
+            confirm: true,
           })
-        )
-      return ctx.send()
+          .then((paymentIntent) =>
+            shipCart({
+              ...body,
+              summary,
+              cart,
+              paymentMethod,
+              paymentIntent,
+            })
+          )
+        return ctx.send()
+      }
+    } catch (e) {
+      strapi.log.error('checkoutUser %o', e)
     }
   },
 
@@ -137,8 +140,22 @@ module.exports = {
     }
 
     if (validPaymentIntent(cart, paymentIntent)) {
-      shipCart({ ...body, summary, cart, paymentMethod, paymentIntent })
-      return ctx.send()
+      try {
+        await shipCart({
+          ...body,
+          summary,
+          cart,
+          paymentMethod,
+          paymentIntent,
+        })
+        return ctx.send()
+      } catch (e) {
+        strapi.log.error('PaymentRequest paymentIntent did not succeed %o', {
+          orders: cart.map((order) => order.id),
+          paymentIntent,
+        })
+        return ctx.send({ error: 'PaymentIntent invalid' }, 400)
+      }
     } else {
       strapi.log.error('PaymentRequest paymentIntent did not succeed %o', {
         orders: cart.map((order) => order.id),
@@ -172,7 +189,7 @@ module.exports = {
       const response = generateResponse(intent)
 
       if (response.success) {
-        shipCart({
+        await shipCart({
           ...body,
           summary,
           cart,
