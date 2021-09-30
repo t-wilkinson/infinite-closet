@@ -49,11 +49,15 @@ async function shipCart({
         { id: order.id },
         {
           address,
-          // paymentIntent: paymentIntent ? paymentIntent.id : paymentIntent || '',
-          // paymentMethod: paymentMethod ? paymentMethod.id : paymentMethod || '',
+          paymentIntent: paymentIntent
+            ? paymentIntent.id
+            : paymentIntent || null,
+          paymentMethod: paymentMethod
+            ? paymentMethod.id
+            : paymentMethod || null,
           status: 'planning',
-          // coupon: summary.coupon.id,
-          // charge: strapi.plugins['orders'].services.price.orderTotal(order),
+          coupon: summary.coupon ? summary.coupon.id : null,
+          charge: strapi.plugins['orders'].services.price.orderTotal(order),
         }
       )
     )
@@ -63,6 +67,7 @@ async function shipCart({
   strapi.log.error('orders: %o', orders)
   orders = orders.filter((v) => v.status === 'fulfilled').map((v) => v.value)
   strapi.log.error('contact: %o', contact)
+  return
 
   if (contact) {
     await strapi.plugins['email'].services.email.send({
@@ -162,16 +167,16 @@ module.exports = {
         return ctx.send()
       } catch (e) {
         strapi.log.error('PaymentRequest paymentIntent did not succeed %o', {
-          orders: cart.map((order) => order.id),
-          paymentIntent,
+          cart,
+          paymentIntent: paymentIntent.id,
           error: e,
         })
         return ctx.send({ error: 'PaymentIntent invalid' }, 400)
       }
     } else {
       strapi.log.error('PaymentRequest paymentIntent did not succeed %o', {
-        orders: cart.map((order) => order.id),
-        paymentIntent,
+        cart,
+        paymentIntent: paymentIntent.id,
       })
       return ctx.send({ error: 'PaymentIntent invalid' }, 400)
     }
