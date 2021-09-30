@@ -13,6 +13,7 @@ async function prepareCheckout(body, user = null) {
   })
 
   let paymentIntent, paymentMethod
+  console.log('init payment', body.paymentIntent, body.paymentMethod)
   if (body.paymentIntent) {
     paymentIntent = await stripe.paymentIntents.retrieve(body.paymentIntent)
   }
@@ -53,16 +54,14 @@ async function shipCart({
   const attachPaymentInfo = () =>
     Promise.allSettled(
       orders.map((order) =>
-        strapi
-          .query('order', 'orders')
-          .update(
-            { id: order.id },
-            {
-              paymentIntent: paymentIntent.id,
-              paymentMethod: paymentMethod.id,
-              coupon: summary.coupon.id,
-            }
-          )
+        strapi.query('order', 'orders').update(
+          { id: order.id },
+          {
+            paymentIntent: paymentIntent.id,
+            paymentMethod: paymentMethod.id,
+            coupon: summary.coupon.id,
+          }
+        )
       )
     )
 
@@ -148,6 +147,7 @@ module.exports = {
   async checkoutRequestGuest(ctx) {
     const body = ctx.request.body
     const { paymentIntent, summary, cart } = await prepareCheckout(body)
+    console.log('prepareCheckout', { paymentIntent, summary, cart })
     if (cart.length === 0 || summary.amount < 100) {
       return ctx.send()
     }
@@ -159,6 +159,9 @@ module.exports = {
       cart[0].paymentIntent === paymentIntent.id &&
       paymentIntent.status === 'succeeded'
     ) {
+      console.log('shipping')
+      shipCart({ ...body, summary, cart, paymentIntent })
+      console.log('shipped')
       shipCart({ ...body, summary, cart, paymentIntent })
       return ctx.send()
     } else {
