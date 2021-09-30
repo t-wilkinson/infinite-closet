@@ -57,6 +57,7 @@ async function createCartItem(numAvailableOrders, order) {
     ...priceUtils.orderPrice(order),
     totalPrice: priceUtils.orderTotal(order),
     available: numAvailableOrders[key],
+    range: strapi.services.timing.range(order),
     valid,
     shippingClass: strapi.services.shipment.shippingClass(
       order.created_at,

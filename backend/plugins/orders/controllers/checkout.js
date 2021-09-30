@@ -47,11 +47,11 @@ async function shipCart({
         { id: order.id },
         {
           address,
-          paymentIntent: paymentIntent ? paymentIntent.id : paymentIntent || '',
-          paymentMethod: paymentMethod ? paymentMethod.id : paymentMethod || '',
+          // paymentIntent: paymentIntent ? paymentIntent.id : paymentIntent || '',
+          // paymentMethod: paymentMethod ? paymentMethod.id : paymentMethod || '',
           status: 'planning',
-          coupon: summary.coupon.id,
-          charge: strapi.plugins['orders'].services.price.orderTotal(order),
+          // coupon: summary.coupon.id,
+          // charge: strapi.plugins['orders'].services.price.orderTotal(order),
         }
       )
     )
@@ -71,13 +71,11 @@ async function shipCart({
       bcc: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
       subject: 'Thank you for your order',
       data: {
+        // TODO: use cart to fill information
+        // TODO: should emails take cart instead?
         name: contact.fullName,
         firstName: contact.nickName,
-        orders: orders.map((order) => ({
-          ...order,
-          range: strapi.services.timing.range(order),
-          // product,
-        })),
+        orders,
         totalPrice: summary.total,
       },
     })
