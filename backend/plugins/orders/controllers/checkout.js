@@ -53,11 +53,12 @@ async function shipCart({
       )
     )
   )
-  strapi.log.info('%o', orders)
+  strapi.log.error('orders: %o', orders)
   orders = orders.filter((v) => v.status === 'fulfilled').map((v) => v.value)
+  strapi.log.error('contact: %o', contact)
 
   if (contact) {
-    return strapi.plugins['email'].services.email.send({
+    await strapi.plugins['email'].services.email.send({
       template: 'checkout',
       to: contact.email,
       cc:
@@ -74,7 +75,6 @@ async function shipCart({
       },
     })
   }
-  return { status: 'success' }
 }
 
 function validPaymentIntent(cart, paymentIntent) {
