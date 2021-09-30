@@ -19,9 +19,6 @@
       "type": "string",
       "required": false
     },
-    "mobileNumber": {
-      "type": "string"
-    },
     "addressLine1": {
       "type": "string",
       "required": true
@@ -37,6 +34,9 @@
     "postcode": {
       "type": "string",
       "required": true
+    },
+    "mobileNumber": {
+      "type": "string"
     },
     "deliveryInstructions": {
       "type": "string"

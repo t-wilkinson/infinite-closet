@@ -36,9 +36,10 @@ async function shipCart({
   if (typeof address === 'object') {
     address = await strapi
       .query('address')
-      .create(address)
-      .then((res) => res.id)
+      .create({ ...address, email: contact.email })
+    address = address.id
   }
+  strapi.log.error('address: %o', address)
 
   let orders = await Promise.allSettled(
     strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
@@ -50,8 +51,7 @@ async function shipCart({
           paymentMethod: paymentMethod ? paymentMethod.id : paymentMethod || '',
           status: 'planning',
           coupon: summary.coupon.id,
-          range: strapi.services.timing.range(order),
-          price: strapi.plugins['orders'].services.price.orderTotal(order),
+          charge: strapi.plugins['orders'].services.price.orderTotal(order),
         }
       )
     )
@@ -73,7 +73,11 @@ async function shipCart({
       data: {
         name: contact.fullName,
         firstName: contact.nickName,
-        orders,
+        orders: orders.map((order) => ({
+          ...order,
+          range: strapi.services.timing.range(order),
+          // product,
+        })),
         totalPrice: summary.total,
       },
     })
