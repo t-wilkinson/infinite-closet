@@ -66,7 +66,7 @@ export const CheckoutWrapper = () => {
 }
 
 const Checkout = () => {
-  const [_isVisible, setVisible] = React.useState(false)
+  const [isVisible, setVisible] = React.useState(false)
   const state = React.useContext(StateContext)
   const dispatch = React.useContext(DispatchContext)
   const fields = React.useContext(FieldsContext)
@@ -118,7 +118,7 @@ const Checkout = () => {
               })
             }}
           />
-          <OR />
+          {isVisible && <OR />}
           <CheckoutForm />
         </div>
       )}

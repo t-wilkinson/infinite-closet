@@ -257,7 +257,7 @@ const Checkout = ({ fetchCart, analytics }) => {
               })
             }}
           />
-          <OR />
+          {isVisible && <OR />}
           <Button
             onClick={checkout}
             disabled={
