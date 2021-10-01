@@ -17,7 +17,6 @@ export const Page = ({ data }) => {
     analytics.viewContent()
   }, [])
 
-  data.error = 'hi'
   if (data.error) {
     return (
       <Layout title="Infinite Closet">
