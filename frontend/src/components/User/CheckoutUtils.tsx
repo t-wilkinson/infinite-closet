@@ -4,7 +4,7 @@ import { useStripe } from '@stripe/react-stripe-js'
 
 import { useSelector, useDispatch } from '@/utils/store'
 import { validatePostcode } from '@/User/Address'
-import { cleanField, cleanFields } from '@/Form/useFields'
+import { cleanField } from '@/Form/useFields'
 import { CouponCode } from '@/Form'
 import { CartUtils } from '@/Cart/slice'
 import { fmtPrice } from '@/utils/helpers'
@@ -23,7 +23,7 @@ export const Summary = ({
   return (
     <div>
       <CouponCode
-        price={summary.total}
+        price={summary.preDiscount}
         user={userId}
         context="checkout"
         setCoupon={(coupon) =>
@@ -42,7 +42,7 @@ export const Summary = ({
       <div className="h-px bg-pri my-1" />
       <Price
         label="Total"
-        price={coupon?.total || summary.total}
+        price={summary.total - (coupon?.discount || 0)}
         className="font-bold"
       />
     </div>
@@ -62,8 +62,7 @@ export const useFetchCart = () => {
   const rootDispatch = useDispatch()
 
   return () => {
-    rootDispatch(CartUtils.view())
-    rootDispatch(CartUtils.summary())
+    rootDispatch(CartUtils.view()).then(() => rootDispatch(CartUtils.summary()))
   }
 }
 

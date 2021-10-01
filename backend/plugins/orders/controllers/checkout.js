@@ -57,8 +57,6 @@ async function shipCart({
     )
   )
 
-  strapi.log.error('shipCart contact: %o', contact)
-  strapi.log.error('shipCart cart: %o', cart)
   if (contact) {
     await strapi.plugins['email'].services.email.send({
       template: 'checkout',

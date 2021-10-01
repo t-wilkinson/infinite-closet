@@ -108,6 +108,7 @@ async function summary({ cart, user, couponCode }) {
   const total = Math.max(0, preDiscountPrice - discountPrice)
 
   return {
+    preDiscount: preDiscountPrice,
     subtotal: productPrice,
     shipping: shippingPrice,
     insurance: insurancePrice,
