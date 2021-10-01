@@ -387,11 +387,10 @@ module.exports = {
       .query('product')
       .findOne({ published_at_null: false, slug })
 
-    strapi.log.error(
-      'shopItem: %o %o %o',
-      product,
-      ctx.params,
-      ctx.response.body
+    strapi.log.debug(
+      'shopItem: product=%o params=%o',
+      product ? product.sizes : product,
+      ctx.params
     )
     for (const [key, size] of Object.entries(product.sizes)) {
       product.sizes[key].size = strapi.services.size.normalize(size.size)
