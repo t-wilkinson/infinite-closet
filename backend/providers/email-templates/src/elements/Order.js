@@ -10,7 +10,7 @@ import { getFrontendURL, getBackendURL } from '../api'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
-const Order = ({ size, price, product, range }) => {
+const Order = ({ totalPrice, order, range }) => {
   const formatDate = (date) =>
     dayjs(date).tz('Europe/London').format('dddd, MMM D')
 
@@ -32,13 +32,13 @@ const Order = ({ size, price, product, range }) => {
         left={
           <a
             href={getFrontendURL(
-              `/shop/${product.slug}/${product.designer.slug}`
+              `/shop/${order.product.slug}/${order.product.designer.slug}`
             )}
           >
             <Img
               style={{ width: 96, height: 96 }}
-              src={getBackendURL(product.images[0].url)}
-              alt={product.images[0].alternativeText}
+              src={getBackendURL(order.product.images[0].url)}
+              alt={order.product.images[0].alternativeText}
             />
           </a>
         }
@@ -72,14 +72,14 @@ const Order = ({ size, price, product, range }) => {
               <Between
                 left={
                   <span>
-                    <span style={{ fontWeight: 700 }}>{size}</span>{' '}
-                    {product.name} by{' '}
+                    <span style={{ fontWeight: 700 }}>{order.size}</span>{' '}
+                    {order.product.name} by{' '}
                     <span style={{ fontWeight: 700 }}>
-                      {product.designer.name}
+                      {order.product.designer.name}
                     </span>
                   </span>
                 }
-                right={<div style={{ fontWeight: 700 }}>£{price}</div>}
+                right={<div style={{ fontWeight: 700 }}>£{totalPrice}</div>}
               />
             </Grid.Row>
           </Grid>

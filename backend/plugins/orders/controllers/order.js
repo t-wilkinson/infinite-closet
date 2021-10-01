@@ -15,12 +15,6 @@ dayjs.extend(timezone)
 module.exports = {
   ...generateAPI('order', 'orders'),
 
-  async amount(ctx) {
-    const body = ctx.request.body
-    const amount = strapi.plugins['orders'].services.price.amount(body.order)
-    ctx.send({ amount })
-  },
-
   // TODO: remove this, use PUT instead
   async complete(ctx) {
     const body = ctx.request.body
@@ -42,7 +36,7 @@ module.exports = {
       return
     }
 
-    const order = await strapi.plugins['orders'].services.helpers.create({
+    const order = await strapi.plugins['orders'].services.order.create({
       user: user ? user.id : undefined,
       status: body.status,
       size: body.size,
@@ -67,7 +61,7 @@ module.exports = {
 
     for (const order of orders) {
       strapi.services.shipment.shippingClass(order.created_at, order.startDate)
-      order.price = strapi.plugins['orders'].services.price.price(order)
+      order.price = strapi.plugins['orders'].services.price.orderTotal(order)
     }
 
     ctx.send({ orders })
@@ -98,7 +92,9 @@ module.exports = {
         'product.sizes',
       ])
     const user = order.user
-    const orderPrice = strapi.plugins['orders'].services.price.price(order)
+    const orderData = await strapi.plugins[
+      'orders'
+    ].services.cart.createCartItem(order)
 
     const sendShippingEmail = () =>
       strapi.plugins['email'].services.email.send({
@@ -109,10 +105,8 @@ module.exports = {
         },
         subject: `Your order of ${order.product.name} by ${order.product.designer.name} has shipped!`,
         data: {
-          ...order,
           firstName: user.firstName,
-          range: strapi.services.timing.range(order),
-          price: orderPrice,
+          ...orderData,
         },
       })
 
@@ -124,7 +118,7 @@ module.exports = {
         order.created_at,
         order.startDate
       ),
-      shipmentPrice: orderPrice,
+      shipmentPrice: orderData.totalPrice,
     }
 
     strapi.services.shipment

@@ -18,7 +18,7 @@ import * as sizing from '@/utils/sizing'
 import { useDispatch, useSelector } from '@/utils/store'
 import CartUtils from '@/Cart/utils'
 
-import { CheckoutItem } from './types'
+import * as types from './types'
 
 export const Cart = () => {
   const cart = useSelector((state) => state.cart.checkoutCart)
@@ -32,7 +32,12 @@ export const Cart = () => {
   )
 }
 
-export const CartItem = ({ valid, price, available, order }: CheckoutItem) => {
+export const CartItem = ({
+  valid,
+  totalPrice,
+  available,
+  order,
+}: types.CartItem) => {
   const { product } = order
   const date = dayjs(order.startDate).tz('Europe/London') // order.startDate is utc
   const startDate = date.format('ddd, MMM D')
@@ -43,7 +48,7 @@ export const CartItem = ({ valid, price, available, order }: CheckoutItem) => {
   const analytics = useAnalytics()
   const dispatch = useDispatch()
 
-  function toggleInsurance(id) {
+  function toggleInsurance(id: string) {
     dispatch(CartUtils.update({ id, insurance: !order.insurance })).then(() =>
       dispatch(CartUtils.view())
     )
@@ -107,7 +112,7 @@ export const CartItem = ({ valid, price, available, order }: CheckoutItem) => {
           </div>
           <span>{sizing.normalize(order.size)}</span>
           <span>
-            <Bold>{fmtPrice(price)}</Bold>
+            <Bold>{fmtPrice(totalPrice)}</Bold>
           </span>
         </div>
         <div className="items-start lg:items-end">

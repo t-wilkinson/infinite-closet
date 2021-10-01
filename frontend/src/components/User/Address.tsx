@@ -13,12 +13,20 @@ export const useAddressFields = (address: Partial<StrapiAddress> = {}) => {
   const str = (field: string) =>
     typeof address[field] === 'string' ? address[field] : ''
   const fields = useFields({
-    firstName: { constraints: 'required', default: str('firstName') },
-    lastName: { constraints: 'required', default: str('lastName') },
-    address: { constraints: 'required', default: str('address') },
+    fullName: { constraints: 'required', default: str('fullName') },
+    mobileNumber: { constraints: 'required', default: str('phoneNumber') },
+    addressLine1: {
+      constraints: 'required',
+      label: 'Street Address',
+      default: str('addressLine1'),
+    },
+    addressLine2: {
+      constraints: '',
+      label: 'Apt, Suit, etc.',
+      default: str('addressLine2'),
+    },
     town: { constraints: 'required', default: str('town') },
     postcode: { constraints: 'required', default: str('postcode') },
-    mobileNumber: { constraints: 'required', default: str('phoneNumber') },
   })
   return fields
 }
@@ -26,7 +34,7 @@ export const useAddressFields = (address: Partial<StrapiAddress> = {}) => {
 export const Addresses = ({ userId, addresses, state, select }) => {
   return (
     <div className="space-y-4">
-      {addresses.map((address) => (
+      {addresses.map((address: StrapiAddress) => (
         <Address
           key={address.id}
           selected={state.address}
@@ -43,12 +51,12 @@ export const Address = ({
   id,
   select,
   selected,
-  address,
+  userId,
+  fullName,
+  addressLine1,
+  addressLine2 = '',
   town,
   postcode,
-  firstName,
-  lastName,
-  userId,
 }) => {
   const signin = useSignin()
 
@@ -65,7 +73,7 @@ export const Address = ({
         className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
     ${id === selected ? 'border-black' : ''}
     `}
-        aria-label={`Choose address with name of ${firstName} ${lastName} in ${address} ${town} ${postcode}`}
+        aria-label={`Choose address with name of ${fullName} in ${addressLine1} ${town} ${postcode}`}
         onClick={() => select(id)}
       >
         <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
@@ -77,10 +85,9 @@ export const Address = ({
         </div>
 
         <div className="items-start">
-          <span>
-            {firstName} {lastName}
-          </span>
-          <span>{address}</span>
+          <span>{fullName}</span>
+          <span>{addressLine1}</span>
+          <span>{addressLine2}</span>
           <span>{town}</span>
           <span>{postcode}</span>
         </div>
@@ -121,8 +128,7 @@ export const UpdateAddress = ({ dispatch, address }) => {
 
 export const AddAddress = ({ user, onSubmit }) => {
   const fields = useAddressFields({
-    firstName: user.firstName,
-    lastName: user.lastName,
+    fullName: `${user.firstName} ${user.lastName}`,
     mobileNumber: user.phoneNumber,
   })
   const signin = useSignin()

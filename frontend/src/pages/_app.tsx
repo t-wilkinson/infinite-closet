@@ -20,6 +20,7 @@ const FourOFour = dynamic(() => import('@/pages/404'))
 import { browserIs } from '@/utils/helpers'
 import * as storage from '@/utils/storage'
 import { CartUtils } from '@/Cart/slice'
+import { StrapiOrder } from '@/utils/models'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND
 axios.defaults.headers.post['Content-Type'] = 'application/json'
@@ -138,7 +139,7 @@ const Wrapper = ({ router, children }) => {
       ) {
         storage.set('cart', [])
         cart = Object.values(cart)
-        cart.forEach((order) => {
+        cart.forEach((order: StrapiOrder) => {
           const valid = [
             'status',
             'size',
@@ -146,7 +147,8 @@ const Wrapper = ({ router, children }) => {
             'startDate',
             'rentalLength',
           ].every((x) => order[x])
-          const getId = (key) => (order[key].id ? order[key].id : order[key])
+          const getId = (key: string) =>
+            order[key].id ? order[key].id : order[key]
           if (valid) {
             const product = getId('product')
             dispatch(
@@ -164,14 +166,38 @@ const Wrapper = ({ router, children }) => {
 
     // Attach guest cart to current user cart
     if (user) {
+      // TODO:
+      // let cart = storage.get('cart') || []
+      // if (!Array.isArray(cart)) {
+      //   storage.set('cart', [])
+      //   cart = []
+      // }
+      // storage.set('cart', [])
+      // dispatch(CartUtils.insert(cart))
+    } else {
       let cart = storage.get('cart') || []
-      if (!Array.isArray(cart)) {
-        storage.set('cart', [])
-        cart = []
-      }
-
-      storage.set('cart', [])
-      dispatch(CartUtils.insert(cart))
+      Promise.allSettled(
+        cart.map(async (order: StrapiOrder, i: number) => {
+          if (!order.id) {
+            delete cart[i]
+          } else {
+            await axios
+              .get(`/orders/${order.id}`, { withCredentials: true })
+              .catch((err) => {
+                if (err.response.status === 404) {
+                  delete cart[i]
+                }
+              })
+          }
+        })
+      ).then(() => {
+        storage.set(
+          'cart',
+          cart.filter((v: StrapiOrder) => v)
+        )
+        dispatch(CartUtils.get())
+        dispatch(CartUtils.view())
+      })
     }
   }, [user])
 

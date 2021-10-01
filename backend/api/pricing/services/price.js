@@ -71,13 +71,15 @@ async function summary({ price, context, code, existingCoupons }) {
   const coupon = await availableCoupon(context, code)
   const isValid = valid(coupon, existingCoupons)
   const discountPrice = isValid ? discount(coupon, price) : 0
+  const total = price - discountPrice
 
   return {
-    total: price - discountPrice,
+    total,
     subtotal: price,
     discount: discountPrice,
     valid: isValid,
     coupon,
+    amount: toAmount(total),
   }
 }
 

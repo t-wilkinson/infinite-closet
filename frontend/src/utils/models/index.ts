@@ -7,6 +7,7 @@ export * from './coupon';
 export * from './custom/sizes';
 export * from './designer';
 export * from './document';
+export * from './events';
 export * from './file';
 export * from './fit';
 export * from './material';

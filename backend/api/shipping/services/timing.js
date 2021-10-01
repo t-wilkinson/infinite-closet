@@ -123,7 +123,7 @@ function overlap(date1, date2, granularity = 'day') {
 function valid(date, available, quantity, existing) {
   date = day(date)
   const today = day()
-  let arrives = arrival(today)
+  let arrives = arrival(today, 'one')
 
   // Grace period is time to allow items not in stock to be procured
   const hasQuantity = quantity > 0

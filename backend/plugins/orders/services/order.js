@@ -1,7 +1,6 @@
 'use strict'
 
-const inProgress = (status) =>
-  ['planning', 'shipping', 'cleaning'].includes(status)
+const inProgress = ['planning', 'shipping', 'cleaning']
 
 /**
  * Allow us to group orders by the unique products they refer to
@@ -56,7 +55,7 @@ function numAvailable(orders, dates) {
       }
       const overlaps =
         date &&
-        inProgress(order.status) &&
+        inProgress.includes(order.status) &&
         strapi.services.timing.overlap(date, order.range)
       return overlaps
     }, false)
@@ -102,13 +101,32 @@ async function quantity(order) {
 function toShippingAddress(order) {
   const { address, user } = order
   return {
-    name: address.firstName + ' ' + address.lastName,
-    address: [address.address],
+    name: address.fullName,
+    address: [address.addressLine1, address.addressLine2],
     town: address.town,
     postcode: address.postcode,
-    email: user.email,
-    phone: user.phoneNumber,
+    email: address.email || user.email,
+    phone: address.phoneNumber,
   }
+}
+
+async function create({
+  user,
+  status,
+  size,
+  product,
+  startDate,
+  rentalLength,
+}) {
+  const orderBody = {
+    user,
+    status,
+    size,
+    product,
+    startDate,
+    rentalLength,
+  }
+  return await strapi.query('order', 'orders').create(orderBody)
 }
 
 module.exports = {
@@ -117,4 +135,5 @@ module.exports = {
   inProgress,
   toShippingAddress,
   numAvailable,
+  create,
 }

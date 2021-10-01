@@ -26,15 +26,6 @@
     },
 
     {
-      "method": "GET",
-      "path": "/addresses/verify/:postcode",
-      "handler": "addresses.verify",
-      "config": {
-        "policies": []
-      }
-    },
-
-    {
       "method": "POST",
       "path": "/account/waitlist",
       "handler": "mail.waitlist",
