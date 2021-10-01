@@ -70,7 +70,7 @@ export const useFetchCart = () => {
 export const PaymentRequest = ({
   onCheckout,
   dispatch,
-  children,
+  children = null,
   couponCode,
   coupon,
   setVisible,

@@ -44,7 +44,7 @@
     {
       "method": "POST",
       "path": "/checkout-request",
-      "handler": "checkout.checkoutRequestGuest",
+      "handler": "checkout.checkoutRequest",
       "config": {
         "policies": []
       }

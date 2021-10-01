@@ -102,14 +102,6 @@ const Checkout = () => {
       ) : (
         <div className="w-full space-y-4">
           <Cart />
-          {isVisible && (
-            <Summary
-              summary={summary}
-              couponCode={fields.couponCode}
-              dispatch={dispatch}
-              coupon={state.coupon}
-            />
-          )}
           <PaymentRequest
             setVisible={setVisible}
             couponCode={fields.couponCode}
@@ -124,9 +116,8 @@ const Checkout = () => {
                 type: 'checkout',
               })
             }}
-          >
-            <CheckoutForm />
-          </PaymentRequest>
+          />
+          <CheckoutForm />
         </div>
       )}
     </div>

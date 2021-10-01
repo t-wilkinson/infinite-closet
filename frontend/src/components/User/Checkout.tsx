@@ -7,6 +7,7 @@ dayjs.extend(utc)
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { fetchAPI } from '@/utils/api'
+import { OR } from '@/Form'
 import useFields, { cleanFields } from '@/Form/useFields'
 import { Button, BlueLink, Icon } from '@/components'
 import { CartUtils } from '@/Cart/slice'
@@ -249,32 +250,32 @@ const Checkout = ({ fetchCart, analytics }) => {
                 type: 'checkout',
               })
             }}
+          />
+          <OR />
+          <Button
+            onClick={checkout}
+            disabled={
+              !(state.paymentMethod && state.address) ||
+              ['checking-out'].includes(state.status) ||
+              cart.every(isOrderInvalid)
+            }
           >
-            <Button
-              onClick={checkout}
-              disabled={
-                !(state.paymentMethod && state.address) ||
-                ['checking-out'].includes(state.status) ||
-                cart.every(isOrderInvalid)
-              }
-            >
-              {!state.address
-                ? 'Please Select an Address'
-                : !state.paymentMethod
-                ? 'Please Select a Payment Method'
-                : state.status === 'checking-out'
-                ? 'Checkout Out...'
-                : state.status === 'error'
-                ? 'Oops... We ran into an issue'
-                : state.status === 'success'
-                ? 'Successfully Checked Out'
-                : cart.every(isOrderInvalid)
-                ? 'No Available Items'
-                : cart.some(isOrderInvalid)
-                ? 'Checkout Available Items'
-                : 'Secure Checkout'}
-            </Button>
-          </PaymentRequest>
+            {!state.address
+              ? 'Please Select an Address'
+              : !state.paymentMethod
+              ? 'Please Select a Payment Method'
+              : state.status === 'checking-out'
+              ? 'Checkout Out...'
+              : state.status === 'error'
+              ? 'Oops... We ran into an issue'
+              : state.status === 'success'
+              ? 'Successfully Checked Out'
+              : cart.every(isOrderInvalid)
+              ? 'No Available Items'
+              : cart.some(isOrderInvalid)
+              ? 'Checkout Available Items'
+              : 'Secure Checkout'}
+          </Button>
         </div>
       )}
     </div>

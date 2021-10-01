@@ -93,51 +93,38 @@ module.exports = {
   async checkoutUser(ctx) {
     const user = ctx.state.user
     const body = ctx.request.body
-    const { paymentMethod, paymentIntent, summary, cart } =
-      await prepareCheckout(body, user)
+    const { paymentMethod, summary, cart } = await prepareCheckout(body, user)
     if (cart.length === 0 || summary.amount < 100) {
       return ctx.send()
     }
 
     try {
-      if (validPaymentIntent(cart, paymentIntent)) {
-        strapi.log.error('checkoutUser paymentIntent valid')
-        await shipCart({
-          ...body,
-          summary,
-          cart,
-          paymentMethod,
-          paymentIntent,
+      strapi.log.error('checkoutUser')
+      await stripe.paymentIntents
+        .create({
+          amount: summary.amount,
+          currency: 'gbp',
+          customer: user.customer,
+          payment_method: paymentMethod.id,
+          off_session: false,
+          confirm: true,
         })
-        return ctx.send()
-      } else {
-        strapi.log.error('checkoutUser paymentIntent invalid')
-        await stripe.paymentIntents
-          .create({
-            amount: summary.amount,
-            currency: 'gbp',
-            customer: user.customer,
-            payment_method: paymentMethod.id,
-            off_session: false,
-            confirm: true,
+        .then((paymentIntent) =>
+          shipCart({
+            ...body,
+            summary,
+            cart,
+            paymentMethod,
+            paymentIntent,
           })
-          .then((paymentIntent) =>
-            shipCart({
-              ...body,
-              summary,
-              cart,
-              paymentMethod,
-              paymentIntent,
-            })
-          )
-        return ctx.send()
-      }
+        )
+      return ctx.send()
     } catch (e) {
       strapi.log.error('checkoutUser error %o', e)
     }
   },
 
-  async checkoutRequestGuest(ctx) {
+  async checkoutRequest(ctx) {
     const body = ctx.request.body
     const { paymentMethod, paymentIntent, summary, cart } =
       await prepareCheckout(body)
