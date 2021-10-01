@@ -57,8 +57,8 @@ async function shipCart({
     )
   )
 
-  strapi.log.error('contact: %o', contact)
-  strapi.log.error('cart: %o', cart)
+  strapi.log.error('shipCart contact: %o', contact)
+  strapi.log.error('shipCart cart: %o', cart)
   if (contact) {
     await strapi.plugins['email'].services.email.send({
       template: 'checkout',
@@ -101,6 +101,7 @@ module.exports = {
 
     try {
       if (validPaymentIntent(cart, paymentIntent)) {
+        strapi.log.error('checkoutUser paymentIntent valid')
         await shipCart({
           ...body,
           summary,
@@ -110,12 +111,13 @@ module.exports = {
         })
         return ctx.send()
       } else {
+        strapi.log.error('checkoutUser paymentIntent invalid')
         await stripe.paymentIntents
           .create({
             amount: summary.amount,
             currency: 'gbp',
             customer: user.customer,
-            payment_method: body.paymentMethod,
+            payment_method: paymentMethod.id,
             off_session: false,
             confirm: true,
           })
@@ -131,7 +133,7 @@ module.exports = {
         return ctx.send()
       }
     } catch (e) {
-      strapi.log.error('checkoutUser %o', e)
+      strapi.log.error('checkoutUser error %o', e)
     }
   },
 
@@ -204,7 +206,7 @@ module.exports = {
       }
       return ctx.send({ ...response, body })
     } catch (e) {
-      strapi.log.error(e)
+      strapi.log.error('checkoutGuest error %o', e)
       return ctx.send({ error: 'Could not process payment', body }, 400)
     }
   },
