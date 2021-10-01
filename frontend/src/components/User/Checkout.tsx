@@ -225,7 +225,6 @@ const Checkout = ({ fetchCart, analytics }) => {
       ) : cartCount === 0 ? (
         <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
           <span className="font-bold text-xl flex flex-col items-center">
-            <div>Hmm... Your cart looks empty. </div>
             <div>
               <BlueLink
                 href="/products/clothing"
