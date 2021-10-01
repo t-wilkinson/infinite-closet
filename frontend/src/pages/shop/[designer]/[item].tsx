@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 
+import { Button } from '@/components'
 import Shop from '@/Shop'
 import Layout from '@/Layout'
 import useData from '@/Layout/useData'
@@ -10,14 +11,33 @@ import { StrapiProduct } from '@/utils/models'
 import useAnalytics from '@/utils/useAnalytics'
 
 export const Page = ({ data }) => {
+  const analytics = useAnalytics()
+  const router = useRouter()
+  React.useEffect(() => {
+    analytics.viewContent()
+  }, [])
+
+  data.error = 'hi'
+  if (data.error) {
+    return (
+      <Layout title="Infinite Closet">
+        <div className="w-full h-full items-center justify-center">
+          <span className="font-bold text-2xl">
+            Sorry, this page is unavailable.
+          </span>
+          <div className="h-8" />
+          <Button onClick={() => router.push('/products/clothing')}>
+            Continue shopping
+          </Button>
+        </div>
+      </Layout>
+    )
+  }
+
   const loading = useData(data)
   const title = loading
     ? 'Products'
     : `${data.product.name} by ${data.product.designer.name}`
-  const analytics = useAnalytics()
-  React.useEffect(() => {
-    analytics.viewContent()
-  }, [])
 
   return (
     <>
@@ -73,14 +93,22 @@ const OpenGraph = (product: StrapiProduct) => {
 }
 
 export async function getServerSideProps({ params }) {
-  const product: StrapiProduct = await axios
-    .get(`/products/shop/${params.item}`)
-    .then((res) => res.data)
+  try {
+    const product: StrapiProduct = await axios
+      .get(`/products/shop/${params.item}`)
+      .then((res) => res.data)
 
-  return {
-    props: {
-      data: { product },
-    },
+    return {
+      props: {
+        data: { product },
+      },
+    }
+  } catch (e) {
+    return {
+      props: {
+        data: { error: e.response.status },
+      },
+    }
   }
 }
 export default Page
