@@ -4,17 +4,18 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
-import { useSelector, useDispatch } from '@/utils/store'
-import useAnalytics from '@/utils/useAnalytics'
-import { fetchAPI } from '@/utils/api'
+import Cart from '@/Cart'
+import { CartUtils } from '@/Cart/slice'
 import { OR } from '@/Form'
+import { PaymentWrapper } from '@/Form/Payments'
 import useFields, { cleanFields } from '@/Form/useFields'
 import { Button, BlueLink, Icon } from '@/components'
-import { CartUtils } from '@/Cart/slice'
-import Cart from '@/Cart'
+import { fetchAPI } from '@/utils/api'
+import { useSelector, useDispatch } from '@/utils/store'
+import useAnalytics from '@/utils/useAnalytics'
 
 import { Summary, useFetchCart } from './CheckoutUtils'
-import { PaymentMethods, AddPaymentMethod } from './Payment'
+import { PaymentMethods, AddPaymentMethodFormWrapper } from './Payment'
 import { Addresses, AddAddress } from './Address'
 import { PaymentRequest } from './CheckoutUtils'
 
@@ -143,7 +144,9 @@ export const CheckoutWrapper = ({}) => {
       <StateContext.Provider value={state}>
         <DispatchContext.Provider value={dispatch}>
           <FieldsContext.Provider value={fields}>
-            <Checkout fetchCart={fetchCart} analytics={analytics} />
+            <PaymentWrapper>
+              <Checkout fetchCart={fetchCart} analytics={analytics} />
+            </PaymentWrapper>
           </FieldsContext.Provider>
         </DispatchContext.Provider>
       </StateContext.Provider>
@@ -339,7 +342,11 @@ const Address = ({ state, user, dispatch }) => (
 const Payment = ({ state, user, dispatch }) => (
   <>
     <PaymentMethods user={user} dispatch={dispatch} state={state} />
-    <AddPaymentMethod user={user} state={state} dispatch={dispatch} />
+    <AddPaymentMethodFormWrapper
+      user={user}
+      state={state}
+      dispatch={dispatch}
+    />
     <button
       className="flex p-2 bg-white rounded-sm border border-gray justify-center"
       onClick={() => dispatch({ type: 'edit-payment' })}

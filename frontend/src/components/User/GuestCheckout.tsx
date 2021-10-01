@@ -8,9 +8,10 @@ import { useAddressFields } from '@/User/Address'
 import { BlueLink } from '@/components'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
+import { OR } from '@/Form'
 
 import CheckoutForm from './GuestCheckoutForm'
-import { PaymentRequest, useFetchCart, Summary } from './CheckoutUtils'
+import { PaymentRequest, useFetchCart } from './CheckoutUtils'
 import {
   DispatchContext,
   StateContext,
@@ -65,7 +66,7 @@ export const CheckoutWrapper = () => {
 }
 
 const Checkout = () => {
-  const [isVisible, setVisible] = React.useState(false)
+  const [_isVisible, setVisible] = React.useState(false)
   const state = React.useContext(StateContext)
   const dispatch = React.useContext(DispatchContext)
   const fields = React.useContext(FieldsContext)
@@ -74,7 +75,7 @@ const Checkout = () => {
   const analytics = useAnalytics()
   const fetchCart = useFetchCart()
   const rootDispatch = useDispatch()
-  const summary = useSelector((state) => state.cart.checkoutSummary)
+  // const summary = useSelector((state) => state.cart.checkoutSummary)
 
   return (
     <div
@@ -117,6 +118,7 @@ const Checkout = () => {
               })
             }}
           />
+          <OR />
           <CheckoutForm />
         </div>
       )}
