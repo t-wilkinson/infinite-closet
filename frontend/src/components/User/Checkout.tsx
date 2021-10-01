@@ -13,6 +13,7 @@ import { Button, BlueLink, Icon } from '@/components'
 import { fetchAPI } from '@/utils/api'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
+import { StrapiCoupon } from '@/utils/models'
 
 import { Summary, useFetchCart } from './CheckoutUtils'
 import { PaymentMethods, AddPaymentMethodFormWrapper } from './Payment'
@@ -214,7 +215,9 @@ const Checkout = ({ fetchCart, analytics }) => {
           <Summary
             userId={user.id}
             summary={summary}
-            dispatch={dispatch}
+            setCoupon={(coupon: StrapiCoupon) =>
+              dispatch({ type: 'correct-coupon', payload: coupon })
+            }
             coupon={state.coupon}
             couponCode={fields.couponCode}
           />

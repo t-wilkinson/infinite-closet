@@ -8,6 +8,8 @@ import { useSelector } from '@/utils/store'
 import { Submit, Input } from '@/Form'
 import { cleanFields, isValid } from '@/Form/useFields'
 import { cardStyle, Authorise } from '@/User/Payment'
+import { StrapiCoupon } from '@/utils/models'
+
 import { Summary } from './CheckoutUtils'
 
 import {
@@ -54,7 +56,9 @@ export const CheckoutForm = () => {
           <Summary
             summary={summary}
             couponCode={fields.couponCode}
-            dispatch={dispatch}
+            setCoupon={(coupon: StrapiCoupon) =>
+              dispatch({ type: 'correct-coupon', payload: coupon })
+            }
             coupon={state.coupon}
           />
         </SideItem>

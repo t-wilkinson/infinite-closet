@@ -13,7 +13,7 @@ export const Summary = ({
   userId = undefined,
   summary,
   couponCode,
-  dispatch,
+  setCoupon,
   coupon,
 }) => {
   if (!summary) {
@@ -26,9 +26,7 @@ export const Summary = ({
         price={summary.preDiscount}
         user={userId}
         context="checkout"
-        setCoupon={(coupon) =>
-          dispatch({ type: 'correct-coupon', payload: coupon })
-        }
+        setCoupon={setCoupon}
         field={couponCode}
       />
       <Price label="Subtotal" price={summary.subtotal} />
