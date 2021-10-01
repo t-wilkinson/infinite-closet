@@ -209,7 +209,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
           `}
       >
         <div className="md:flex p-1 border border-gray-light rounded-sm">
-          <Icon name="left" className="w-4 h-4 md:w-6 md:h-6" />
+          <Icon name="left" className="w-4 h-4 md:w-4 md:h-4" />
         </div>
       </button>
       <span className="mx-1 text-lg whitespace-no-wrap">
@@ -222,7 +222,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
           `}
       >
         <div className="md:flex p-1 border border-gray-light rounded-sm">
-          <Icon name="right" className="w-4 h-4 md:w-6 md:h-6" />
+          <Icon name="right" className="w-4 h-4 md:w-4 md:h-4" />
         </div>
       </button>
     </div>
