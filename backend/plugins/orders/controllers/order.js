@@ -48,25 +48,6 @@ module.exports = {
     ctx.send(order)
   },
 
-  async status(ctx) {
-    const user = ctx.state.user
-
-    let orders = await strapi
-      .query('order', 'orders')
-      .find({ user: user.id }, [
-        'product',
-        'product.designer',
-        'product.images',
-      ])
-
-    for (const order of orders) {
-      strapi.services.shipment.shippingClass(order.created_at, order.startDate)
-      order.price = strapi.plugins['orders'].services.price.orderTotal(order)
-    }
-
-    ctx.send({ orders })
-  },
-
   // TODO: should only take order id
   async ship(ctx) {
     let { order } = ctx.request.body
@@ -115,7 +96,7 @@ module.exports = {
       recipient:
         strapi.plugins['orders'].services.order.toShippingAddress(order),
       shippingClass: strapi.services.shipment.shippingClass(
-        order.created_at,
+        order.shippingDate,
         order.startDate
       ),
       shipmentPrice: orderData.totalPrice,

@@ -10,7 +10,6 @@ export { CartUtils }
 // TODO: store cart here for caching
 const initialState: State = {
   checkoutCart: [],
-  ordersStatus: [],
 }
 
 export const getUser = (getState: any) => (getState() as RootState).user.data
@@ -20,9 +19,6 @@ export const slice = createSlice({
   initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(CartUtils.status.fulfilled, (state, action) => {
-      state.ordersStatus = action.payload
-    })
     builder.addCase(CartUtils.summary.fulfilled, (state, action) => {
       state.checkoutSummary = action.payload
     })

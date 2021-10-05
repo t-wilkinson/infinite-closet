@@ -65,9 +65,9 @@ function isDateRange(date) {
  * @param {DateLike} created_at
  * @returns {DateRange}
  */
-function range({ startDate, shippingDate, rentalLength, created_at }) {
+function range({ startDate, shippingDate, rentalLength }) {
   rentalLength = rentalLengths[rentalLength]
-  const hoursSendClient = shippingClassHours(created_at, startDate)
+  const hoursSendClient = shippingClassHours(shippingDate, startDate)
   const shipped = shippingDate
     ? day(shippingDate)
     : day(startDate).subtract(hoursSendClient, 'hours')
@@ -121,10 +121,6 @@ function overlap(date1, date2, granularity = 'day') {
  * without letting the product available quantity be negative.
  */
 function valid(date, available, quantity, existing) {
-  date = day(date)
-  const today = day()
-  let arrives = arrival(today, 'one')
-
   // Grace period is time to allow items not in stock to be procured
   const hasQuantity = quantity > 0
   const gracePeriodInUse = existing > 0
@@ -136,6 +132,10 @@ function valid(date, available, quantity, existing) {
   if (hasNoAvailableItems) {
     return false
   }
+
+  date = day(date)
+  const today = day()
+  let arrives = arrival(today, 'one')
 
   if (shouldAddGracePeriod) {
     arrives = arrives.add(15, 'day')

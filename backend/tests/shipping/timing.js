@@ -93,7 +93,7 @@ describe.skip('Hived', () => {
 describe('Valid', () => {
   it.each([
     [1, 1, 1],
-    [14, 0, 0],
+    [16, 0, 0],
   ])(
     'Arrives %d days from now, %d available to be ordered, %d in stock',
     (days, available, quantity, existing = false) => {

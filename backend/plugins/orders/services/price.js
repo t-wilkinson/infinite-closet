@@ -16,9 +16,10 @@ const shippingPrices = {
  */
 function orderPrice(order) {
   const shippingClass = strapi.services.shipment.shippingClass(
-    order.created_at,
+    order.shippingDate,
     order.startDate
   )
+
   const shippingPrice = shippingPrices[shippingClass]
 
   const productPrice = strapi.services.product.price(
