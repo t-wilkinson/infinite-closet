@@ -77,8 +77,27 @@ async function shippingFailure(order, err) {
   strapi.log.error('failed to ship order to client %o', err)
 }
 
+async function notifyAction(orders) {
+  orders = orders.filter((order) => {
+    const range = strapi.services.timing.range(order)
+    const today = strapi.services.timing.day()
+    const shipped = strapi.services.timing.day(range.shipped)
+    return today.isSame(shipped, 'day')
+  })
+
+  await strapi.plugins['email'].services.email.send({
+    template: 'shipping-action',
+    to: 'info@infinitecloset.co.uk',
+    subject: 'Some orders need to be shipped today',
+    data: {
+      cart: await strapi.plugins['orders'].services.cart.create(orders),
+    },
+  })
+}
+
 module.exports = {
   shippingFailure,
   notifyArrival,
   sendToCleaners,
+  notifyAction,
 }
