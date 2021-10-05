@@ -1,8 +1,10 @@
 import React from "react";
 import styled from "styled-components";
+import { OrdersContext } from "./utils";
 
-const OrderStatus = {
-  planning: ({ update, order }) => {
+export const OrderAction = {
+  planning: ({ order }) => {
+    const { getOrders } = React.useContext(OrdersContext);
     const ship = () => {
       fetch(strapi.backendURL + "/orders/ship/" + order.id, {
         method: "POST",
@@ -14,26 +16,15 @@ const OrderStatus = {
           order,
         }),
       })
-        .then(() => update())
+        .then(() => getOrders())
         .catch((err) => console.error(err));
     };
 
-    return (
-      <div className="process">
-        <div>
-          {order.product.name} by{" "}
-          {order.product.designer && order.product.designer.name}
-        </div>
-        <div>
-          <span className="process__label">Size:</span>{" "}
-          {order.size.replace("_", "")}
-        </div>
-        <button onClick={ship}>Ship</button>
-      </div>
-    );
+    return <OrderActionButton onClick={ship}>Ship</OrderActionButton>;
   },
+  cleaning: ({ order }) => {
+    const { getOrders } = React.useContext(OrdersContext);
 
-  cleaning: ({ order, update }) => {
     const complete = () => {
       fetch(strapi.backendURL + `/orders/complete/${order.id}`, {
         method: "POST",
@@ -45,38 +36,69 @@ const OrderStatus = {
           order,
         }),
       })
-        .then(() => update())
+        .then(() => getOrders())
         .catch((err) => console.error(err));
     };
 
     return (
+      <OrderActionButton onClick={complete}>Complete Order</OrderActionButton>
+    );
+  },
+};
+
+const OrderActionButton = styled.button`
+  padding: 0.25rem 1rem;
+  border-radius: 2px;
+  background: #007eff;
+  color: white;
+`;
+
+const OrderStatus = {
+  planning: ({ order }) => {
+    const Action = OrderAction[order.status];
+    return (
+      <div className="process">
+        <div>
+          {order.fullName} {order.email}
+        </div>
+        <div>
+          {order.product.name} by{" "}
+          {order.product.designer && order.product.designer.name}
+        </div>
+        <div>
+          <span className="process__label">Size:</span>{" "}
+          {order.size.replace("_", "")}
+        </div>
+        <Action order={order} />
+      </div>
+    );
+  },
+
+  cleaning: ({ order }) => {
+    const Action = OrderAction[order.status];
+
+    return (
       <div className="cleaning">
-        <button onClick={complete}>Complete Order</button>
+        <Action order={order} />
       </div>
     );
   },
 };
 
-const OrderDetails = ({ className, order, update }) => {
+const OrderDetails_ = ({ className, order }) => {
   const Status = OrderStatus[order.status];
   return (
     <div className={className}>
-      <Status order={order} update={update} />
+      <Status order={order} />
     </div>
   );
 };
 
-const OrderDetailsWrapper = styled(OrderDetails)`
-  * {
-    color: black;
-  }
+const OrderDetails = styled(OrderDetails_)`
+  color: black;
 
   button {
     margin-top: 8px;
-    padding: 0.25rem 1rem;
-    border-radius: 2px;
-    background: #007eff;
-    color: white;
   }
 
   .process,
@@ -98,4 +120,4 @@ const OrderDetailsWrapper = styled(OrderDetails)`
   .cleaning {
   }
 `;
-export default OrderDetailsWrapper;
+export default OrderDetails;

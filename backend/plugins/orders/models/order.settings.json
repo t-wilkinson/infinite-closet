@@ -71,6 +71,15 @@
     },
     "charge": {
       "type": "decimal"
+    },
+    "fullName": {
+      "type": "string"
+    },
+    "nickName": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
     }
   }
 }
