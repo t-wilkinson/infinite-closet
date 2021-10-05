@@ -3,7 +3,6 @@ import { StrapiOrder } from '@/utils/models'
 export interface State {
   checkoutSummary?: any
   checkoutCart?: Cart
-  ordersStatus?: StrapiOrder[]
   count?: number
 }
 

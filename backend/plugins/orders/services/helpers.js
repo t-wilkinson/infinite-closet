@@ -79,7 +79,6 @@ async function shippingFailure(order, err) {
 
 module.exports = {
   shippingFailure,
-
   notifyArrival,
   sendToCleaners,
 }
