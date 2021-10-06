@@ -18,20 +18,22 @@ function arrival(sent, shippingClass = 'one') {
 
 /**
  * Returns cheapest {@link ShippingClass} given time constraints on when it can leave and arrive.
- * @param {DateLike} orderedOn
+ * @param {=DateLike} earliestDeliveryDate
  * @param {DateLike} startsOn
  * @returns {ShippingClass}
  */
-function shippingClass(orderedOn, startsOn) {
-  orderedOn = day(orderedOn)
+function shippingClass(earliestDeliveryDate, startsOn) {
+  earliestDeliveryDate = day(earliestDeliveryDate)
   startsOn = day(startsOn)
 
-  if (!orderedOn) {
+  if (!earliestDeliveryDate) {
     return undefined
   }
-  if (startsOn.isSameOrAfter(arrival(orderedOn, 'two'), 'day')) {
+  if (startsOn.isSameOrAfter(arrival(earliestDeliveryDate, 'two'), 'day')) {
     return 'two'
-  } else if (startsOn.isSameOrAfter(arrival(orderedOn, 'one'), 'day')) {
+  } else if (
+    startsOn.isSameOrAfter(arrival(earliestDeliveryDate, 'one'), 'day')
+  ) {
     return 'one'
   } else {
     return undefined
@@ -42,10 +44,11 @@ function shippingClass(orderedOn, startsOn) {
  * Like {@link shippingClass} but returns hours shipping will take
  * @returns {number}
  */
-function shippingClassHours(orderedOn, startsOn) {
+function shippingClassHours(earliestDeliveryDate, startsOn) {
   return (
-    hived.config.shippingClassesHours[shippingClass(orderedOn, startsOn)] ||
-    hived.config.shippingClassesHours.two
+    hived.config.shippingClassesHours[
+      shippingClass(earliestDeliveryDate, startsOn)
+    ] || hived.config.shippingClassesHours.two
   )
 }
 

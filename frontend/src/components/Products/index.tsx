@@ -93,8 +93,8 @@ const Header = ({ sortBy, totalPages }) => {
       }
     }
 
+    toggleStickyScroll()
     window.addEventListener('resize', toggleStickyScroll)
-    app.addEventListener('scroll', stickyScroll)
     return () => {
       app.removeEventListener('scroll', stickyScroll)
       window.removeEventListener('resize', toggleStickyScroll)

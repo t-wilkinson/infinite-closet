@@ -65,22 +65,6 @@ export default {
       }
     }
   ),
-  status: createAsyncThunk<Orders, void>(
-    'cart/status',
-    async (_, { getState }) => {
-      const user = getUser(getState)
-      if (user) {
-        const res = await axios.get('/orders/status', { withCredentials: true })
-        return res.data.orders
-      } else {
-        const cart = helpers.getGuestOrders()
-        return cart.filter(
-          (order: StrapiOrder) =>
-            !['cart', 'dropped', 'list'].includes(order.status)
-        )
-      }
-    }
-  ),
   view: createAsyncThunk<Cart, void>('cart/view', async (_, { getState }) => {
     const user = getUser(getState)
     let res: unknown & { data: Cart }

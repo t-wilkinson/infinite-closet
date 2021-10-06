@@ -52,6 +52,9 @@ async function shipCart({
           status: 'planning',
           coupon: summary.coupon ? summary.coupon.id : null,
           charge: strapi.plugins['orders'].services.price.orderTotal(order),
+          fullName: contact.fullName,
+          nickName: contact.nickName,
+          email: contact.email,
         }
       )
     )

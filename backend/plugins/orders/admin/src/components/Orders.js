@@ -1,7 +1,8 @@
-import React from 'react';
-import Order from './Order';
-import OrderDetails from './OrderDetails';
-import styled from 'styled-components';
+import React from "react";
+import Order from "./Order";
+import OrderDetails from "./OrderDetails";
+import styled from "styled-components";
+import { OrdersContext } from "./utils";
 
 const Orders = ({ plugin, className }) => {
   const [orders, setOrders] = React.useState([]);
@@ -10,8 +11,8 @@ const Orders = ({ plugin, className }) => {
   const getOrders = () => {
     // fetch orders
     // also fetch respective product designer because it is not included
-    fetch(strapi.backendURL + '/orders?status_in=planning&status_in=cleaning', {
-      method: 'GET',
+    fetch(strapi.backendURL + "/orders?status_in=planning&status_in=cleaning", {
+      method: "GET",
     })
       .then((res) => res.json())
       .then((res) =>
@@ -20,7 +21,7 @@ const Orders = ({ plugin, className }) => {
             fetch(
               strapi.backendURL + `/designers?id=${item.product.designer}`,
               {
-                method: 'GET',
+                method: "GET",
               }
             )
               .then((res) => res.json())
@@ -40,7 +41,7 @@ const Orders = ({ plugin, className }) => {
 
   React.useEffect(() => {
     getOrders();
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       const timer = window.setInterval(getOrders, 60 * 1000);
       return () => window.clearInterval(timer);
     }
@@ -50,24 +51,26 @@ const Orders = ({ plugin, className }) => {
     <div className={className}>
       <HeadingWrapper />
       <main>
-        <table className="order">
-          <HeaderWrapper />
-          <tbody>
-            {orders.map((order, index) => (
-              <Order
-                key={order.id}
-                order={order}
-                selected={selectedOrder === index}
-                onClick={() => selectOrder(index)}
-              />
-            ))}
-          </tbody>
-        </table>
-        <div className="details">
-          {orders[selectedOrder] && (
-            <OrderDetails update={getOrders} order={orders[selectedOrder]} />
-          )}
-        </div>
+        <OrdersContext.Provider value={{ orders, setOrders, getOrders }}>
+          <table className="order">
+            <HeaderWrapper />
+            <tbody>
+              {orders.map((order, index) => (
+                <Order
+                  key={order.id}
+                  order={order}
+                  selected={selectedOrder === index}
+                  onClick={() => selectOrder(index)}
+                />
+              ))}
+            </tbody>
+          </table>
+          <div className="details">
+            {orders[selectedOrder] && (
+              <OrderDetails update={getOrders} order={orders[selectedOrder]} />
+            )}
+          </div>
+        </OrdersContext.Provider>
       </main>
     </div>
   );
@@ -79,41 +82,47 @@ const OrdersWrapper = styled(Orders)`
 
   main {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 1fr;
   }
 
   table {
     box-shadow: 0 2px 4px #e3e9f3;
     border-radius: 3px;
-    table-layout: fixed;
+
+    thead {
+      background: #f3f3f3;
+      color: black;
+      font-weight: 800;
+      font-size: 1.3rem;
+    }
+
+    td {
+      padding: 0 25px;
+    }
+
+    tbody td {
+      border-top: 1px solid #f1f1f2 !important;
+    }
+
+    tbody tr:hover {
+      background-color: #f7f8f8;
+      cursor: pointer;
+    }
   }
 
-  thead {
-    background: #f3f3f3;
-    color: black;
-    font-weight: 800;
-    font-size: 1.3rem;
-  }
-
-  td {
-    padding: 0 25px;
-  }
-
-  tbody td {
-    border-top: 1px solid #f1f1f2 !important;
-  }
-
-  tbody tr:hover {
-    background-color: #f7f8f8;
-    cursor: pointer;
+  .details {
   }
 `;
 
 const Header = ({ className }) => (
   <thead className={className}>
     <tr className="header__tr">
+      <td className="header__td">id</td>
+      <td className="header__td">Customer name</td>
       <td className="header__td">Status</td>
-      <td className="header__td">Next Action</td>
+      <td className="header__td">Next action</td>
+      <td className="header__td">Start date</td>
+      <td className="header__td"></td>
     </tr>
   </thead>
 );
@@ -123,7 +132,7 @@ const HeaderWrapper = styled(Header)`
   }
 
   .header__td {
-    padding: 0.5rem 0.25rem;
+    padding: 1rem;
   }
 `;
 
