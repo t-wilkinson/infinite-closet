@@ -64,11 +64,13 @@ async function shipCart({
     await strapi.plugins['email'].services.email.send({
       template: 'checkout',
       to: contact.email,
-      cc:
+      bcc:
         process.env.NODE_ENV === 'production'
-          ? 'ukinfinitecloset@gmail.com'
-          : '',
-      bcc: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
+          ? [
+            'ukinfinitecloset@gmail.com',
+            'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
+          ]
+          : [],
       subject: 'Thank you for your order',
       data: {
         name: contact.fullName,
