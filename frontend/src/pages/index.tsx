@@ -8,6 +8,11 @@ import { Button } from '@/components'
 import Layout from '@/Layout'
 import { StrapiProduct } from '@/utils/models'
 
+import whyRentPic from '@/media/home/why-rent.png'
+import formalClothingPic from '@/media/home/formal-clothing.png'
+import weddingDressesPic from '@/media/home/wedding-dresses.png'
+import sustainableFashionRentalPic from '@/media/home/sustainable-fashion-rental.png'
+
 export const Home = () => {
   const [products, setProducts] = React.useState([])
 
@@ -93,7 +98,7 @@ const Introduction = () => (
   >
     <Image
       priority={true}
-      src="/media/home/sustainable-fashion-rental.png"
+      src={sustainableFashionRentalPic}
       alt="Women enjoying stylish rental dresses"
       layout="fill"
       objectFit="cover"
@@ -191,7 +196,7 @@ const WhyRent = () => (
       }}
     >
       <Image
-        src="/media/home/why-rent.png"
+        src={whyRentPic}
         alt="Feel good"
         layout="fill"
         objectFit="cover"
@@ -240,7 +245,7 @@ const productCategories = [
   {
     title: 'Oh My Gown',
     text: 'The Formal Edit',
-    src: '/media/home/formal-clothing.png',
+    src: formalClothingPic,
     alt: 'Pink dress for formal occasions',
     href: '/products/clothing/gowns',
     position: 'center 20%',
@@ -248,7 +253,7 @@ const productCategories = [
   {
     title: 'Say I (HEN) Do',
     text: 'Find Your Wedding Bliss',
-    src: '/media/home/wedding-dresses.png',
+    src: weddingDressesPic,
     alt: 'White wedding dress for your wedding',
     href: '/products/clothing?occasions=bridal',
     position: 'center',

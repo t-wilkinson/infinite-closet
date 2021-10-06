@@ -45,6 +45,7 @@
     "jest": "^27.0.4",
     "jest-css-modules-transform": "^4.3.0",
     "jsdoc": "^3.6.7",
+    "next-images": "^1.8.1",
     "nock": "^13.1.1",
     "postcss-flexbugs-fixes": "^4.2.1",
     "postcss-preset-env": "^6.7.0",
