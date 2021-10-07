@@ -125,7 +125,7 @@ const Section = ({ title, links = [], children = null }) => (
 // }
 
 const FooterLink = ({ href, label }) => (
-  <Link href={href}>
+  <Link href={href} prefetch={false}>
     <a>
       <span className="my-2 cursor-pointer">{label}</span>
     </a>
@@ -206,7 +206,7 @@ export const FollowUs = () => (
 )
 
 export const SocialMediaIcon = ({ name, icon }) => (
-  <Link href={socialMediaLinks[name]}>
+  <Link prefetch={false} href={socialMediaLinks[name]}>
     <a aria-label={`Social media link to ${name}`}>
       <div className="rounded-full cursor-pointer items-center justify-center">
         <Icon icon={icon} className="w-6 h-6" />

@@ -13,23 +13,7 @@ import formalClothingPic from '@/media/home/formal-clothing.png'
 import weddingDressesPic from '@/media/home/wedding-dresses.png'
 import sustainableFashionRentalPic from '@/media/home/sustainable-fashion-rental.png'
 
-export const Home = () => {
-  const [products, setProducts] = React.useState([])
-
-  React.useEffect(() => {
-    const products = ['asher-dress', 'etude-wrap', 'elora', 'juliette-dress']
-    axios
-      .get(`/products?slug_in=${products.join('&slug_in=')}`)
-      .then((res) => res.data)
-      .then((res) => {
-        res.sort(
-          (p1, p2) => products.indexOf(p1.slug) - products.indexOf(p2.slug)
-        )
-        setProducts(res)
-      })
-      .catch((err) => console.error(err))
-  }, [])
-
+export const Home = ({ products }) => {
   return (
     <>
       {process.env.NODE_ENV === 'production' && <FacebookMessenger />}
@@ -379,12 +363,30 @@ const ProductItems = ({ products }) => {
   )
 }
 
-export const Page = () => {
+export const Page = ({ products }) => {
   return (
     <Layout spacing={false}>
-      <Home />
+      <Home products={products} />
     </Layout>
   )
+}
+
+export async function getStaticProps() {
+  const products = ['asher-dress', 'etude-wrap', 'elora', 'juliette-dress']
+  await axios
+    .get(`/products?slug_in=${products.join('&slug_in=')}`)
+    .then((res) => res.data)
+    .then((res) =>
+      res.sort(
+        (p1, p2) => products.indexOf(p1.slug) - products.indexOf(p2.slug)
+      )
+    )
+    .catch((err) => console.error(err))
+  return {
+    props: {
+      products,
+    },
+  }
 }
 
 export default Page

@@ -9,6 +9,7 @@
     "sts": "sts -c .stsconfig",
     "test": "jest"
   },
+  "sideEffects": [],
   "dependencies": {
     "@next/bundle-analyzer": "^11.1.2",
     "@reduxjs/toolkit": "^1.5.1",
