@@ -1,5 +1,6 @@
 const domain = 'infinitecloset.co.uk'
 const withPWA = require('next-pwa')
+const withImages = require('next-images')
 
 // const StylelintPlugin = require('stylelint-webpack-plugin')
 // const ESLintPlugin = require('eslint-webpack-plugin')
@@ -41,6 +42,7 @@ module.exports = withImages(
       defaultLocale: 'en-GB',
     },
     images: {
+      deviceSizes: [1024, 1920, 2048, 3840],
       domains: [
         'ic.com',
         'api.ic.com',

@@ -85,6 +85,10 @@ async function notifyAction(orders) {
     return today.isSame(shipped, 'day')
   })
 
+  if (orders.length === 0) {
+    return
+  }
+
   await strapi.plugins['email'].services.email.send({
     template: 'shipping-action',
     to: 'info@infinitecloset.co.uk',

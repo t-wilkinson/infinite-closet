@@ -78,6 +78,13 @@ const emailFields = [
 function normalizeAddress(addr) {
   if (!addr) {
     return undefined
+  } else if (Array.isArray(addr)) {
+    addr = addr.map(normalizeAddress).filter((v) => v)
+    if (addr.length === 0) {
+      return undefined
+    } else {
+      return addr.join(', ')
+    }
   } else if (typeof addr === 'string') {
     return addr
   } else {
@@ -109,7 +116,7 @@ async function sendEmail(client, settings, options) {
     to: normalizeAddress(options.to),
     cc: normalizeAddress(options.cc),
     bcc: normalizeAddress(options.bcc),
-    from: options.from || settings.from,
+    from: normalizeAddress(options.from || settings.from),
     replyTo: options.replyTo || settings.replyTo,
     html: options.html || options.text,
   }

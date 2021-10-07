@@ -11,5 +11,7 @@ declare global {
 
 declare var firebase: any
 
+declare module '*.png'
+
 // make typescript realize this is module
 export {}
