@@ -184,6 +184,7 @@ const WhyRent = () => (
         src={whyRentPic}
         alt="Feel good"
         layout="fill"
+        placeholder="blur"
         objectFit="cover"
         objectPosition="center"
       />
