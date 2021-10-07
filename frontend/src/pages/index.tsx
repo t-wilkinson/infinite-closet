@@ -99,6 +99,7 @@ const Introduction = () => (
     <Image
       priority={true}
       src={sustainableFashionRentalPic}
+      placeholder="blur"
       alt="Women enjoying stylish rental dresses"
       layout="fill"
       objectFit="cover"

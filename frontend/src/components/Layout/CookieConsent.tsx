@@ -1,7 +1,5 @@
 import React from 'react'
 
-// import { Checkbox } from '@/Form'
-// import useFields from '@/Form/useFields'
 import { useDispatch, useSelector } from '@/utils/store'
 import { BlueLink } from '@/components'
 import * as storage from '@/utils/storage'

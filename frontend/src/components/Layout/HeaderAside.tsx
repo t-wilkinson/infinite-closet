@@ -7,8 +7,10 @@ import { routes } from '@/utils/constants'
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon, Divider } from '@/components'
 import { toRows } from '@/Layout/Navbar'
+import { iconDown, iconUp } from '@/components/Icons'
 
 import { layoutActions } from './slice'
+import { iconClose } from '@/components/Icons'
 
 const HeaderAside = () => {
   const dispatch = useDispatch()
@@ -76,7 +78,7 @@ const Header = ({ dispatch }) => (
       aria-label="Toggle side navigation"
       className="p-3"
     >
-      <Icon name="close" size={24} />
+      <Icon icon={iconClose} size={24} />
     </button>
   </div>
 )
@@ -180,7 +182,7 @@ const RouteHeader = ({ setFocused, focused, section, dispatch }) => {
         >
           {section.label}
         </span>
-        <Icon name={focused === section.value ? 'down' : 'up'} size={12} />
+        <Icon icon={focused === section.value ? iconDown : iconUp} size={12} />
       </div>
     </button>
   )

@@ -6,6 +6,10 @@ import { StrapiCoupon } from '@/utils/models'
 
 import { DateOfBirthField, Coupon, Field } from './types'
 import { validate, cleanField } from './useFields'
+import { iconEye } from '@/components/Icons'
+import { iconEyeHidden } from '@/components/Icons'
+import { iconDown } from '@/components/Icons'
+import { iconCheck } from '@/components/Icons'
 
 export const DateOfBirth = ({ day, month, year }: DateOfBirthField) => (
   <fieldset className="mt-2">
@@ -37,7 +41,9 @@ export const Checkbox = ({
         className="items-center flex-shrink-0 justify-center bg-white border border-black"
         style={{ width: size, height: size, borderRadius: size / 8 }}
       >
-        {value && <Icon name="check" size={(size * 2) / 3} style={{ color }} />}
+        {value && (
+          <Icon icon={iconCheck} size={(size * 2) / 3} style={{ color }} />
+        )}
       </div>
       &nbsp;&nbsp;
       <span className="inline">{label}</span>
@@ -174,9 +180,6 @@ export const Form = ({
 
 export const FormHeader = ({ label }) => (
   <>
-    {/* <div className="items-center text-pri -mb-6"> */}
-    {/*   <Icon name="logo" size={64} /> */}
-    {/* </div> */}
     <span className="text-center font-subheader-light text-3xl mb-4">
       {label}
     </span>
@@ -245,9 +248,9 @@ export const PasswordVisible = ({ passwordVisible, setPasswordVisible }) => (
     onClick={() => setPasswordVisible(!passwordVisible)}
   >
     {passwordVisible ? (
-      <Icon name="eye" size={24} />
+      <Icon icon={iconEye} size={24} />
     ) : (
-      <Icon name="eye-hidden" size={24} />
+      <Icon icon={iconEyeHidden} size={24} />
     )}
   </button>
 )
@@ -272,7 +275,7 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
           {...(props as any)}
           onChange={onChange}
           value={values.find((v) => v.key === value)?.label || ''}
-          after={<Icon name="down" size={16} className="mt-1" />}
+          after={<Icon icon={iconDown} size={16} className="mt-1" />}
           className="cursor-pointer"
         />
         <div className="absolute inset-0 cursor-pointer" />

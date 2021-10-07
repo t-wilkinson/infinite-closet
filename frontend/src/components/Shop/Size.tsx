@@ -6,6 +6,8 @@ import { Icon } from '@/components'
 import { toTitleCase } from '@/utils/helpers'
 import * as sizing from '@/utils/sizing'
 import { Size } from '@/Products/types'
+import { iconClose } from '@/components/Icons'
+import { iconDown } from '@/components/Icons'
 
 interface SizeSelector {
   product: StrapiProduct
@@ -29,7 +31,7 @@ export const SizeSelector = ({ product, size, onChange }: SizeSelector) => {
           ? 'No available sizes'
           : (sizing.index(product.sizes, size) !== undefined && size) ||
             'Select Size'}
-        <Icon name="down" size={16} className="mt-1" />
+        <Icon icon={iconDown} size={16} className="mt-1" />
       </button>
       {product.sizes.length > 0 && (
         <div
@@ -168,7 +170,7 @@ export const SizeChartPopup = ({
       >
         <button onClick={() => setState(false)} className="ml-auto">
           <div className="p-4">
-            <Icon name="close" size={16} />
+            <Icon icon={iconClose} size={16} />
           </div>
         </button>
         <div className="overflow-y-auto space-y-8 pb-8 px-4">

@@ -128,7 +128,7 @@ export const TableOfContents = () => {
 
     Array.from(document.querySelectorAll('h2,h3')).reduce(
       (hier, heading) => toc(hier, heading),
-      -1,
+      -1
     ),
       setHeadings(headings)
   }, [])

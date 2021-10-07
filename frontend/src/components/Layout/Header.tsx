@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 import { Button, Icon } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
-import { cartSelectors } from '@/Cart/slice'
+import { iconMenu, iconShoppingBag, iconUser } from '@/components/Icons'
 
 import { layoutActions } from './slice'
 import Navbar from './Navbar'
@@ -22,7 +22,7 @@ const SmallHeader = ({ router }) => {
           aria-label="Toggle side navigation"
           className="p-2"
         >
-          <Icon name="menu" size={32} />
+          <Icon icon={iconMenu} size={32} />
         </button>
         <Link href="/">
           <a>
@@ -77,9 +77,9 @@ const Account = ({ user }) => {
   if (user) {
     return (
       <div className="flex-row items-center">
-        <IconLink href="/user/profile" size={18} name="user" />
+        <IconLink href="/user/profile" size={18} icon={iconUser} />
         {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
-        <IconLink href="/user/checkout" size={18} name="shopping-bag">
+        <IconLink href="/user/checkout" size={18} icon={iconShoppingBag}>
           {count > 0 && (
             <span className="absolute right-0 bottom-0 text-xs bg-sec-light rounded-full px-1">
               {count}
@@ -91,7 +91,7 @@ const Account = ({ user }) => {
   } else {
     return (
       <div className="flex-row items-center space-x-3">
-        <IconLink href="/user/checkout" size={18} name="shopping-bag">
+        <IconLink href="/user/checkout" size={18} icon={iconShoppingBag}>
           {count > 0 && (
             <span className="absolute right-0 bottom-0 text-xs bg-sec-light rounded-full px-1">
               {count}
@@ -115,10 +115,10 @@ const Account = ({ user }) => {
   }
 }
 
-const IconLink = ({ size, name, href, children = null }) => (
+const IconLink = ({ size, name = null, icon, href, children = null }) => (
   <Link href={href}>
     <a className="p-2 relative">
-      <Icon size={size} name={name} />
+      <Icon size={size} icon={icon} />
       {children}
     </a>
   </Link>

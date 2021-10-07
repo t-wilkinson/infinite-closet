@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { getURL } from '@/utils/api'
 import { Icon } from '@/components'
 import { StrapiFile } from '@/utils/models'
+import { iconLeft, iconDown, iconUp, iconRight } from '@/components/Icons'
 
 type Action =
   | { type: 'focus-image'; index: number }
@@ -79,7 +80,7 @@ const ImagesSmall = ({ images, state, dispatch }) => (
         }
       >
         <div className="p-2 items-center">
-          <Icon name="left" size={16} />
+          <Icon icon={iconLeft} size={16} />
         </div>
       </button>
       {images.map((_: unknown, i: number) => (
@@ -104,7 +105,7 @@ const ImagesSmall = ({ images, state, dispatch }) => (
         }
       >
         <div className="p-2 items-center">
-          <Icon size={16} name="right" />
+          <Icon size={16} icon={iconRight} />
         </div>
       </button>
     </div>
@@ -120,8 +121,8 @@ const ImagesLarge = ({ images, state, dispatch }) => (
         disabled={state.startIndex < 1}
       >
         <div className="border-gray-light border p-2 items-center">
-          <Icon size={16} name="up" className="hidden md:block" />
-          <Icon size={16} name="left" className="md:hidden" />
+          <Icon size={16} icon={iconUp} className="hidden md:block" />
+          <Icon size={16} icon={iconLeft} className="md:hidden" />
         </div>
       </button>
       {images
@@ -151,8 +152,8 @@ const ImagesLarge = ({ images, state, dispatch }) => (
         disabled={state.startIndex + 1 > images.length - 3}
       >
         <div className="border-gray-light border p-2 items-center">
-          <Icon size={16} name="down" className="hidden md:block" />
-          <Icon size={16} name="right" className="md:hidden" />
+          <Icon size={16} icon={iconDown} className="hidden md:block" />
+          <Icon size={16} icon={iconRight} className="md:hidden" />
         </div>
       </button>
     </div>

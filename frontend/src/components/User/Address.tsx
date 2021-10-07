@@ -8,6 +8,7 @@ import { useFields, cleanFields } from '@/Form/useFields'
 import useAnalytics from '@/utils/useAnalytics'
 
 import { useSignin } from './'
+import { iconClose } from '@/components/Icons'
 
 export const useAddressFields = (address: Partial<StrapiAddress> = {}) => {
   const str = (field: string) =>
@@ -99,7 +100,7 @@ export const Address = ({
         type="button"
         onClick={removeAddress}
       >
-        <Icon name="close" size={16} />
+        <Icon icon={iconClose} size={16} />
       </button>
     </div>
   )

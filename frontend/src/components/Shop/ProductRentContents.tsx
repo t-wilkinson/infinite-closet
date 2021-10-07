@@ -12,6 +12,7 @@ import { CartUtils } from '@/Cart/slice'
 import { SizeChartPopup, SizeSelector } from './Size'
 import { shopActions } from './slice'
 import DatePicker from './DatePicker'
+import { iconDate } from '@/components/Icons'
 
 export const ProductRentContents = ({ product }) => {
   const router = useRouter()
@@ -193,7 +194,7 @@ export const OneTimeRentalTime = () => {
                     .add(rentalLengths[state.oneTime] + 1, 'day')
                     .format('ddd M/D')}
             </span>
-            <Icon className="text-gray" name="date" size={24} />
+            <Icon className="text-gray" icon={iconDate} size={24} />
           </button>
         )}
       </div>

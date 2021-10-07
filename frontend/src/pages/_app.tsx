@@ -6,21 +6,21 @@ import firebase from 'firebase/app'
 import 'firebase/analytics'
 import '@/styles/index.css'
 
-import { layoutSelectors } from '@/Layout/slice'
-import useAnalytics from '@/utils/useAnalytics'
-import store, { useDispatch, useSelector } from '@/utils/store'
-import CookieConsent from '@/Layout/CookieConsent'
-import Popup from '@/Account/Popup'
 import { accountActions } from '@/Account/slice'
-import { layoutActions } from '@/Layout/slice'
-import SkipLink from '@/Layout/SkipLink'
-import Banner from '@/Layout/Banner'
-import { useSignin } from '@/User'
-const FourOFour = dynamic(() => import('@/pages/404'))
-import { browserIs } from '@/utils/helpers'
-import * as storage from '@/utils/storage'
 import { CartUtils } from '@/Cart/slice'
+import Banner from '@/Layout/Banner'
+import SkipLink from '@/Layout/SkipLink'
+import { layoutActions, layoutSelectors } from '@/Layout/slice'
+import { useSignin } from '@/User'
+import { browserIs } from '@/utils/helpers'
 import { StrapiOrder } from '@/utils/models'
+import * as storage from '@/utils/storage'
+import store, { useDispatch, useSelector } from '@/utils/store'
+import useAnalytics from '@/utils/useAnalytics'
+
+const Popup = dynamic(() => import('@/Account/Popup'))
+const FourOFour = dynamic(() => import('@/pages/404'))
+const CookieConsent = dynamic(() => import('@/Layout/CookieConsent'))
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND
 axios.defaults.headers.post['Content-Type'] = 'application/json'

@@ -166,9 +166,6 @@ const myLoader = ({ src, width, quality }) => {
 
 const ProductImage = ({ alt, src, ratio }) => (
   <div className="relative h-full">
-    {/* <div className="absolute top-0 right-0 p-2"> */}
-    {/*   <Icon size={20} name="heart" /> */}
-    {/* </div> */}
     <Image
       loader={myLoader}
       alt={alt}
@@ -223,9 +220,6 @@ const ProductInfo = ({ product }) => (
         </span>
       </div>
     </div>
-    {/* <div className="self-end p-4 border border-gray-light rounded-full"> */}
-    {/*   <Icon name="shopping-bag" size={16} /> */}
-    {/* </div> */}
   </div>
 )
 

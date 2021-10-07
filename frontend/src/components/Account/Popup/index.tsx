@@ -5,6 +5,7 @@ import Form from '@/Form'
 import { accountActions } from '@/Account/slice'
 import { useDispatch } from '@/utils/store'
 import { Icon } from '@/components'
+import { iconClose } from '@/components/Icons'
 
 const PopupRegister = dynamic(() => import('./Register'))
 const PopupSignin = dynamic(() => import('./Signin'))
@@ -37,7 +38,7 @@ export const Popup = ({ popup }) => {
           onClick={() => dispatch(accountActions.hidePopup())}
           type="button"
         >
-          <Icon name="close" size={20} />
+          <Icon icon={iconClose} size={20} />
         </button>
         <div className="h-3" />
         <PopupForm />

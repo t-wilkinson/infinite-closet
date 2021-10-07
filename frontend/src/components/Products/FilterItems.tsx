@@ -10,6 +10,7 @@ import { SizeChartPopup } from '@/Shop/Size'
 import Color from './Color'
 import * as sizing from '@/utils/sizing'
 import { Filter } from './types'
+import { iconSearch } from '@/components/Icons'
 
 type FilterItems = {
   [key in Filter]: (props: {
@@ -64,7 +65,7 @@ export const FilterItems: FilterItems = {
         <div className="h-64 justify-start">
           <Input {...form.search} className="w-full">
             <div className="justify-center pr-2 pointer-events-none h-full bg-white">
-              <Icon name="search" size={20} />
+              <Icon icon={iconSearch} size={20} />
             </div>
           </Input>
           <div className="h-full space-y justify-start overflow-y-scroll">
