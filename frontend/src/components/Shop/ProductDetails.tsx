@@ -8,6 +8,7 @@ import { useDispatch } from '@/utils/store'
 import Markdown from '@/Markdown'
 import useAnalytics from '@/utils/useAnalytics'
 
+import { iconDown, iconUp } from '@/components/Icons'
 import { shopActions } from './slice'
 
 export const ProductDetails = ({ state, product }) => {
@@ -79,7 +80,7 @@ const ProductDetail = ({ Content, index, state, selected, item, product }) => {
             <span className={`${selected ? 'font-bold' : ''}`}>
               {item.label}
             </span>
-            <Icon size={12} name={selected ? 'down' : 'up'} />
+            <Icon size={12} name={selected ? iconDown : iconUp} />
           </div>
         </summary>
         <div ref={ref}>

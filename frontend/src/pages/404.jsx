@@ -6,6 +6,10 @@ import { useRouter } from 'next/router'
 import { Divider, Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 import Header from '@/Layout/Header'
+import { iconInstagram } from '@/components/Icons'
+import { iconFacebook } from '@/components/Icons'
+import { iconTwitter } from '@/components/Icons'
+import { iconTiktok } from '@/components/Icons'
 
 const Page = () => {
   return (
@@ -45,20 +49,20 @@ const ComingSoon = () => {
       <Divider />
 
       <div className="flex-row w-full max-w-sm justify-evenly my-6">
-        <SocialMediaIcon name="facebook" />
-        <SocialMediaIcon name="instagram" />
-        <SocialMediaIcon name="twitter" />
-        <SocialMediaIcon name="tiktok" />
+        <SocialMediaIcon name="facebook" icon={iconFacebook} />
+        <SocialMediaIcon name="instagram" icon={iconInstagram} />
+        <SocialMediaIcon name="twitter" icon={iconTwitter} />
+        <SocialMediaIcon name="tiktok" icon={iconTiktok} />
       </div>
     </div>
   )
 }
 
-const SocialMediaIcon = ({ name }) => (
+const SocialMediaIcon = ({ name, icon }) => (
   <Link href={socialMediaLinks[name]}>
     <a aria-label={`Social media link to ${name}`}>
       <div className="border border-gray rounded-full p-4 items-center justify-center">
-        <Icon size={20} name={name} />
+        <Icon size={20} icon={icon} />
       </div>
     </a>
   </Link>

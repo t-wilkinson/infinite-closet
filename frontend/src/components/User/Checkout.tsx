@@ -19,6 +19,7 @@ import { Summary, useFetchCart } from './CheckoutUtils'
 import { PaymentMethods, AddPaymentMethodFormWrapper } from './Payment'
 import { Addresses, AddAddress } from './Address'
 import { PaymentRequest } from './CheckoutUtils'
+import { iconClose } from '@/components/Icons'
 
 type Popup = 'none' | 'address' | 'payment'
 type Status = null | 'checking-out' | 'error' | 'success'
@@ -323,7 +324,7 @@ const Address = ({ state, user, dispatch }) => (
             type="button"
             onClick={() => dispatch({ type: 'close-popup' })}
           >
-            <Icon name="close" size={20} />
+            <Icon icon={iconClose} size={20} />
           </button>
           <AddAddress
             user={user}

@@ -7,6 +7,10 @@ import useFields, { cleanFields } from '@/Form/useFields'
 import { Input } from '@/Form'
 import { Button, Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
+import { iconInstagram } from '@/components/Icons'
+import { iconFacebook } from '@/components/Icons'
+import { iconTwitter } from '@/components/Icons'
+import { iconTiktok } from '@/components/Icons'
 
 export const Footer = () => {
   return (
@@ -121,7 +125,7 @@ const Section = ({ title, links = [], children = null }) => (
 // }
 
 const FooterLink = ({ href, label }) => (
-  <Link href={href}>
+  <Link href={href} prefetch={false}>
     <a>
       <span className="my-2 cursor-pointer">{label}</span>
     </a>
@@ -194,18 +198,18 @@ const Waitlist = () => {
 
 export const FollowUs = () => (
   <div className="flex-row width-full max-w-20 content-evenly space-x-3">
-    <SocialMediaIcon name="facebook" />
-    <SocialMediaIcon name="instagram" />
-    <SocialMediaIcon name="twitter" />
-    <SocialMediaIcon name="tiktok" />
+    <SocialMediaIcon name="facebook" icon={iconFacebook} />
+    <SocialMediaIcon name="instagram" icon={iconInstagram} />
+    <SocialMediaIcon name="twitter" icon={iconTwitter} />
+    <SocialMediaIcon name="tiktok" icon={iconTiktok} />
   </div>
 )
 
-export const SocialMediaIcon = ({ name }) => (
-  <Link href={socialMediaLinks[name]}>
+export const SocialMediaIcon = ({ name, icon }) => (
+  <Link prefetch={false} href={socialMediaLinks[name]}>
     <a aria-label={`Social media link to ${name}`}>
       <div className="rounded-full cursor-pointer items-center justify-center">
-        <Icon name={name} className="w-6 h-6" />
+        <Icon icon={icon} className="w-6 h-6" />
       </div>
     </a>
   </Link>

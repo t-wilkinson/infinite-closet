@@ -12,6 +12,10 @@ import Filters, { FiltersCount, useToggleFilter } from './Filters'
 import ProductItems from './ProductItems'
 import Sort from './Sort'
 import styles from './Products.module.css'
+import { iconSettings } from '@/components/Icons'
+import { iconClose } from '@/components/Icons'
+import { iconLeft } from '@/components/Icons'
+import { iconRight } from '@/components/Icons'
 
 export const Products = ({ data, loading }) => {
   return (
@@ -115,10 +119,10 @@ const Header = ({ sortBy, totalPages }) => {
         >
           <div className="flex-row items-center">
             <div className="hidden md:flex">
-              <Icon name="settings" size={14} />
+              <Icon icon={iconSettings} size={14} />
             </div>
             <div className="md:hidden">
-              <Icon name="settings" size={18} />
+              <Icon icon={iconSettings} size={18} />
             </div>
             <div className="w-1" />
             <FiltersCount className="whitespace-no-wrap" />
@@ -156,7 +160,7 @@ const QuickFilter = ({ data }) => {
                 onClick={() => toggleFilter(key, slug)}
               >
                 <span>{filter?.name || filter}</span>
-                <Icon name="close" size={8} className="mt-1" />
+                <Icon icon={iconClose} size={8} className="mt-1" />
               </button>
             )
           })
@@ -209,7 +213,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
           `}
       >
         <div className="md:flex p-1 border border-gray-light rounded-sm">
-          <Icon name="left" className="w-4 h-4 md:w-4 md:h-4" />
+          <Icon icon={iconLeft} className="w-4 h-4 md:w-4 md:h-4" />
         </div>
       </button>
       <span className="mx-1 text-lg whitespace-no-wrap">
@@ -222,7 +226,7 @@ const PageNavigation = ({ totalPages, ...props }) => {
           `}
       >
         <div className="md:flex p-1 border border-gray-light rounded-sm">
-          <Icon name="right" className="w-4 h-4 md:w-4 md:h-4" />
+          <Icon icon={iconRight} className="w-4 h-4" />
         </div>
       </button>
     </div>

@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from '@/utils/store'
 import { productsActions, productsSelectors } from './slice'
 import { sortData } from './constants'
 import { SortBy } from './types'
+import { iconSort } from '@/components/Icons'
 
 export const Sort = ({ sortBy }: { sortBy: SortBy }) => {
   const [hover, setHover] = React.useState(false)
@@ -23,10 +24,10 @@ export const Sort = ({ sortBy }: { sortBy: SortBy }) => {
          ${hover ? 'border-gray-light' : 'border-transparent'}`}
         >
           <div className="hidden md:flex">
-            <Icon name="sort" size={14} />
+            <Icon icon={iconSort} size={14} />
           </div>
           <div className="md:hidden">
-            <Icon name="sort" size={18} />
+            <Icon icon={iconSort} size={18} />
           </div>
           <div className="w-1" />
           <span className="whitespace-no-wrap">Sort By</span>

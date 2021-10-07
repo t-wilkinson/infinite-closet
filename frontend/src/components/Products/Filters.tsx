@@ -9,6 +9,7 @@ import { filtersByRoute, filterData } from './constants'
 import { productsActions, productsSelectors } from './slice'
 import { Filter } from './types'
 import FilterItems from './FilterItems'
+import { iconUp, iconDown } from '@/components/Icons'
 
 export const Filters = ({}) => {
   const router = useRouter()
@@ -85,7 +86,7 @@ const FilterWrapper = ({ selectFilter, filter }) => {
             {filterData[filter].label ?? filter}
             {numToggled > 0 && ` (${numToggled})`}
           </span>
-          <Icon name={selected ? 'down' : 'up'} size={12} />
+          <Icon icon={selected ? iconUp : iconDown} size={12} />
         </div>
       </button>
       <div className={`p-4 text-lg sm:text-sm ${selected ? 'flex' : 'hidden'}`}>
@@ -100,24 +101,24 @@ const FilterFooter = () => {
   const dispatch = useDispatch()
   const router = useRouter()
   const panel = useSelector((state) => productsSelectors.panelSelector(state))
-  const applyFilterPanel = () => {
-    dispatch(productsActions.closePanel())
+  // const applyFilterPanel = () => {
+  //   dispatch(productsActions.closePanel())
 
-    // turn panel filters into query
-    let filters = Object.keys(filterData).reduce((acc, filter) => {
-      if (filter) acc[filter] = panel.filters[filter]
-      return acc
-    }, {} as any)
-    if (panel.sortBy) filters.sort = panel.sortBy
+  //   // turn panel filters into query
+  //   let filters = Object.keys(filterData).reduce((acc, filter) => {
+  //     if (filter) acc[filter] = panel.filters[filter]
+  //     return acc
+  //   }, {} as any)
+  //   if (panel.sortBy) filters.sort = panel.sortBy
 
-    router.push({
-      pathname: router.pathname,
-      query: {
-        ...router.query,
-        ...filters,
-      },
-    })
-  }
+  //   router.push({
+  //     pathname: router.pathname,
+  //     query: {
+  //       ...router.query,
+  //       ...filters,
+  //     },
+  //   })
+  // }
 
   return (
     <div className="sm:hidden p-2 flex-row w-full">

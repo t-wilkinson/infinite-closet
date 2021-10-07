@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from '@/utils/store'
 import * as sizing from '@/utils/sizing'
 
 import { shopActions } from './slice'
+import { iconLeft, iconClose, iconRight } from '@/components/Icons'
 
 dayjs.extend(isSameOrAfter)
 dayjs.extend(isBetween)
@@ -41,7 +42,7 @@ export const DatePicker = () => {
       <div className="relative bg-white p-6">
         <div className="self-end pb-4">
           <button onClick={() => dispatch(shopActions.hideDate())}>
-            <Icon name="close" size={16} />
+            <Icon icon={iconClose} size={16} />
           </button>
         </div>
         <Date dispatch={dispatch} rentalLength={rentalLength} />
@@ -73,7 +74,7 @@ const Date = ({ rentalLength, dispatch }) => {
         {date.get('month') > dayjs().get('month') ? (
           <button onClick={() => setDate((d) => d.subtract(1, 'month'))}>
             <div className="border-gray-light border p-2">
-              <Icon size={16} name="left" />
+              <Icon size={16} icon={iconLeft} />
             </div>
           </button>
         ) : (
@@ -82,7 +83,7 @@ const Date = ({ rentalLength, dispatch }) => {
         <span>{date.format('MMMM YYYY')}</span>
         <button onClick={() => setDate((d) => d.add(1, 'month'))}>
           <div className="border border-gray-light p-2">
-            <Icon size={16} name="right" />
+            <Icon size={16} icon={iconRight} />
           </div>
         </button>
       </div>

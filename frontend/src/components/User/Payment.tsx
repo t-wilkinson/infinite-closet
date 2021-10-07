@@ -12,6 +12,7 @@ import { useFields, cleanFields } from '@/Form/useFields'
 import { Input } from '@/Form'
 
 import './CheckoutForm.module.css'
+import { iconClose, iconCheck } from '@/components/Icons'
 
 const toTitleCase = (string: string) =>
   string.charAt(0).toUpperCase() + string.slice(1)
@@ -82,7 +83,7 @@ export const PaymentMethod = ({
         type="button"
         onClick={removePaymentMethod}
       >
-        <Icon name="close" size={16} />
+        <Icon icon={iconClose} size={16} />
       </button>
     </div>
   )
@@ -162,7 +163,7 @@ const AddPaymentMethodHeader = ({ onClose }) => (
     <div className="w-full h-px bg-pri mb-6 mt-1 rounded-full" />
 
     <button className="absolute top-0 right-0 m-3" onClick={onClose}>
-      <Icon name="close" size={20} />
+      <Icon icon={iconClose} size={20} />
     </button>
   </>
 )
@@ -174,7 +175,7 @@ export const Authorise = ({ setAuthorisation, authorised }) => (
   >
     <div className="flex-row items-center">
       <div className="items-center justify-center w-5 h-5 bg-white border border-black rounded-sm mr-4">
-        {authorised && <Icon name="check" className="w-3 h-3" />}
+        {authorised && <Icon icon={iconCheck} className="w-3 h-3" />}
       </div>
       <span className="w-full text-left">
         I authorise Infinite Closet to send instructions to the financial

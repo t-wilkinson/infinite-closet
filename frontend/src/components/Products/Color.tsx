@@ -2,6 +2,7 @@ import React from 'react'
 
 import { StrapiColor } from '@/utils/models'
 import { Icon, Tooltip } from '@/components'
+import { iconCheck } from '@/components/Icons'
 
 const pickFgColorFromBgColor = (
   bgColor: string,
@@ -41,7 +42,7 @@ const colorStyle = (color: StrapiColor) => ({
 
 const ColorCheck = ({ color }) => (
   <Icon
-    name="check"
+    icon={iconCheck}
     className="w-6 h-6 sm:w-4 sm:h-4"
     style={{
       color: pickFgColorFromBgColor(

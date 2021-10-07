@@ -19,6 +19,7 @@ import '@/User/CheckoutForm.module.css'
 import { Button, Hover, Icon } from '@/components'
 import { PaymentCard, PaymentWrapper } from '@/Form/Payments'
 import Layout from '@/Layout'
+import { iconPin, iconClock, iconClose } from '@/components/Icons'
 
 const Page = () => {
   return (
@@ -90,14 +91,14 @@ const SideBar = () => (
 
     <Details>
       <div className="flex-row">
-        <Icon name="clock" size={20} className="text-gray mr-6 mt-2" />
+        <Icon icon={iconClock} size={20} className="text-gray mr-6 mt-2" />
         <div className="">
           <span>Saturday, September 18, 2021</span>
           <span>8pm to 12am (BST)</span>
         </div>
       </div>
       <span className="flex flex-row items-center">
-        <Icon name="pin" size={20} className="text-gray mr-6" />
+        <Icon icon={iconPin} size={20} className="text-gray mr-6" />
         44 Great Cumberland Pl, London W1H 7BS
       </span>
     </Details>
@@ -346,7 +347,7 @@ const GuestInfo = ({
               aria-label={`Remove guest ${i}`}
               onClick={() => removeGuest(i)}
             >
-              <Icon name="close" size={16} />
+              <Icon icon={iconClose} size={16} />
             </button>
           }
         />

@@ -1,17 +1,6 @@
 /// <reference types="next" />
 /// <reference types="next/types/global" />
+/// <reference types="next/image-types/global" />
 
-// this should work but doesn't
-declare global {
-  interface Window {
-    firebase?: any
-    fbq?: any
-  }
-}
-
-declare var firebase: any
-
-declare module '*.png'
-
-// make typescript realize this is module
-export {}
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/basic-features/typescript for more information.

@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from '@/utils/store'
 import CartUtils from '@/Cart/utils'
 
 import * as types from './types'
+import { iconClose } from '@/components/Icons'
 
 export const Cart = () => {
   const cart = useSelector((state) => state.cart.checkoutCart)
@@ -73,7 +74,7 @@ export const CartItem = ({
         className="absolute top-0 right-0 m-2 cursor-pointer"
       >
         <div className="p-1">
-          <Icon name="close" size={16} />
+          <Icon icon={iconClose} size={16} />
         </div>
       </button>
       <div className="h-32 w-32 relative mr-4">
