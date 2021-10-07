@@ -372,8 +372,8 @@ export const Page = ({ products }) => {
 }
 
 export async function getStaticProps() {
-  const products = ['asher-dress', 'etude-wrap', 'elora', 'juliette-dress']
-  await axios
+  let products = ['asher-dress', 'etude-wrap', 'elora', 'juliette-dress']
+  products = await axios
     .get(`/products?slug_in=${products.join('&slug_in=')}`)
     .then((res) => res.data)
     .then((res) =>
