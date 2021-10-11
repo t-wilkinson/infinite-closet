@@ -98,22 +98,26 @@ export default {
       return await helpers.viewOrders(user)
     }
   ),
-  // insert: createAsyncThunk<Orders, Partial<StrapiOrder>[] | Partial<StrapiOrder>>(
-  //   'cart/insert',
-  //   async (inserts, { getState }) => {
-  //     if (!Array.isArray(inserts)) {
-  //       inserts = [inserts]
-  //     }
+  insert: createAsyncThunk<Cart, Partial<StrapiOrder>[] | Partial<StrapiOrder>>(
+    'cart/insert',
+    async (inserts, { getState }) => {
+      const user = getUser(getState)
+      if (!user) {
+        return
+      }
 
-  //     const user = getUser(getState)
-  //     const orders = await helpers.getOrders(user)
-  //     const orderIds = orders
-  //       .concat(inserts as Orders)
-  //       .map((order: StrapiOrder) => order.id)
-  //     helpers.setOrders(user, orderIds)
-  //     return orders
-  //   }
-  // ),
+      if (!Array.isArray(inserts)) {
+        inserts = [inserts]
+      }
+
+      const orders = await helpers.getUserOrders(user)
+      const orderIds = orders
+        .concat(inserts as Orders)
+        .map((order: StrapiOrder) => order.id)
+      helpers.setUserOrders(user, orderIds)
+      return await helpers.viewOrders(user)
+    }
+  ),
   remove: createAsyncThunk<Orders, string>(
     'cart/remove',
     async (id, { getState }) => {

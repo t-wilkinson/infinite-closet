@@ -39,7 +39,10 @@ export async function getOrders(user: StrapiUser): Promise<Orders> {
   }
 }
 
-export async function setUserOrders(user: StrapiUser, orders: Orders) {
+export async function setUserOrders(
+  user: StrapiUser,
+  orders: Orders | string[]
+) {
   await axios.put(
     `/orders/cart/${user.id}`,
     { orders },

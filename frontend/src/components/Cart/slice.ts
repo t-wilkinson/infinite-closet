@@ -22,6 +22,10 @@ export const slice = createSlice({
     builder.addCase(CartUtils.summary.fulfilled, (state, action) => {
       state.checkoutSummary = action.payload
     })
+    builder.addCase(CartUtils.insert.fulfilled, (state, action) => {
+      state.checkoutCart = action.payload
+      state.count = Object.values(action.payload).length
+    })
     builder.addCase(CartUtils.view.fulfilled, (state, action) => {
       state.checkoutCart = action.payload
       state.count = Object.values(action.payload).length

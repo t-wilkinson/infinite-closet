@@ -167,13 +167,13 @@ const Wrapper = ({ router, children }) => {
     // Attach guest cart to current user cart
     if (user) {
       // TODO:
-      // let cart = storage.get('cart') || []
-      // if (!Array.isArray(cart)) {
-      //   storage.set('cart', [])
-      //   cart = []
-      // }
-      // storage.set('cart', [])
-      // dispatch(CartUtils.insert(cart))
+      let cart = storage.get('cart') || []
+      if (!Array.isArray(cart)) {
+        storage.set('cart', [])
+        cart = []
+      }
+      storage.set('cart', [])
+      dispatch(CartUtils.insert(cart))
     } else {
       let cart = storage.get('cart') || []
       Promise.allSettled(
