@@ -23,7 +23,7 @@ function arrival(sent, shippingClass = 'one') {
  * @returns {ShippingClass}
  */
 function shippingClass(earliestDeliveryDate, startsOn) {
-  earliestDeliveryDate = day(earliestDeliveryDate)
+  earliestDeliveryDate = day(earliestDeliveryDate || undefined)
   startsOn = day(startsOn)
 
   if (!earliestDeliveryDate) {

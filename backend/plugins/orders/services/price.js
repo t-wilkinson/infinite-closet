@@ -15,10 +15,11 @@ const shippingPrices = {
  * @returns number
  */
 function orderPrice(order) {
-  const shippingClass = strapi.services.shipment.shippingClass(
-    order.shippingDate,
-    order.startDate
-  )
+  const shippingClass =
+    strapi.services.shipment.shippingClass(
+      order.shippingDate,
+      order.startDate
+    ) || shippingPrices.two
 
   const shippingPrice = shippingPrices[shippingClass]
 

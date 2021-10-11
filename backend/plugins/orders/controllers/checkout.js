@@ -228,6 +228,8 @@ module.exports = {
       couponCode,
     })
 
+    console.log(cart)
+    console.log(summary)
     if (summary.total < 1) {
       ctx.send({ error: 'Total too small' })
     } else {

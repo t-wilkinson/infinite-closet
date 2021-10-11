@@ -36,6 +36,11 @@ async function createCartItem(order) {
       'product.designer',
     ])
 
+  console.log(
+    'orderPrice',
+    priceUtils.orderPrice(order),
+    priceUtils.orderTotal(order)
+  )
   return {
     order,
     ...priceUtils.orderPrice(order),
