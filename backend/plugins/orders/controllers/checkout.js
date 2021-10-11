@@ -72,7 +72,7 @@ async function shipCart({
       bcc:
         process.env.NODE_ENV === 'production'
           ? [
-            'ukinfinitecloset@gmail.com',
+            'info@infinitecloset.co.uk',
             'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
           ]
           : [],
