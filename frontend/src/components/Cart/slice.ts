@@ -32,7 +32,8 @@ export const slice = createSlice({
     builder.addCase(CartUtils.remove.fulfilled, (state) => {
       state.count = state.count - 1
     })
-    builder.addCase(CartUtils.add.fulfilled, (state) => {
+    builder.addCase(CartUtils.add.fulfilled, (state, action) => {
+      state.checkoutCart = action.payload
       state.count = state.count + 1
     })
   },

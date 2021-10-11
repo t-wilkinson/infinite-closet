@@ -67,16 +67,7 @@ export default {
   ),
   view: createAsyncThunk<Cart, void>('cart/view', async (_, { getState }) => {
     const user = getUser(getState)
-    let res: unknown & { data: Cart }
-    if (user) {
-      res = await axios.get(`/orders/cart/view/${user.id}`, {
-        withCredentials: true,
-      })
-    } else {
-      const orders = helpers.getGuestOrders()
-      res = await axios.post(`/orders/cart/view`, { orders })
-    }
-    return res.data
+    return helpers.viewOrders(user)
   }),
   update: createAsyncThunk<void, Partial<StrapiOrder>>(
     'cart/update',
@@ -93,17 +84,18 @@ export default {
       }
     }
   ),
-  add: createAsyncThunk<void, Partial<StrapiOrder>>(
+  add: createAsyncThunk<Cart, Partial<StrapiOrder>>(
     'cart/add',
     async (order, { getState }) => {
       const user = getUser(getState)
       if (user) {
-        axios.post('/orders', order, { withCredentials: true })
+        await axios.post('/orders', order, { withCredentials: true })
       } else {
         order = await axios.post('/orders', order).then((res) => res.data)
         const orders = [...helpers.getGuestOrders(), order as StrapiOrder]
         helpers.setGuestOrders(orders)
       }
+      return await helpers.viewOrders(user)
     }
   ),
   // insert: createAsyncThunk<Orders, Partial<StrapiOrder>[] | Partial<StrapiOrder>>(

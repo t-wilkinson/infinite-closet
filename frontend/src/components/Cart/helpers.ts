@@ -2,7 +2,7 @@ import axios from 'axios'
 import * as storage from '@/utils/storage'
 
 import { StrapiUser, StrapiOrder } from '@/utils/models'
-import { Orders } from './types'
+import { Cart, Orders } from './types'
 
 export function getGuestOrders(): Orders {
   let orders = storage.get('cart') || []
@@ -60,4 +60,17 @@ export async function setOrders(
   } else {
     setGuestOrders(orders)
   }
+}
+
+export async function viewOrders(user: StrapiUser): Promise<Cart> {
+  let res: unknown & { data: Cart }
+  if (user) {
+    res = await axios.get(`/orders/cart/view/${user.id}`, {
+      withCredentials: true,
+    })
+  } else {
+    const orders = getGuestOrders()
+    res = await axios.post(`/orders/cart/view`, { orders })
+  }
+  return res.data
 }
