@@ -37,7 +37,7 @@ async function shipCart({
     address = address.id
   }
 
-  await Promise.all(
+  Promise.allSettled(
     strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
       strapi.query('order', 'orders').update(
         { id: order.id },
@@ -57,6 +57,11 @@ async function shipCart({
           email: contact.email,
         }
       )
+    )
+  ).then((settled) =>
+    strapi.log.error(
+      'Failed  shipOrder %o',
+      settled.filter((res) => res.status === 'rejected')
     )
   )
 
@@ -228,8 +233,6 @@ module.exports = {
       couponCode,
     })
 
-    console.log(cart)
-    console.log(summary)
     if (summary.total < 1) {
       ctx.send({ error: 'Total too small' })
     } else {
