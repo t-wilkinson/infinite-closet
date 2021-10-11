@@ -28,6 +28,7 @@ async function numAvailable(orders = []) {
 }
 
 async function createCartItem(order) {
+  // TODO: speed this up
   order = await strapi
     .query('order', 'orders')
     .findOne({ id: order.id }, [
@@ -35,6 +36,10 @@ async function createCartItem(order) {
       'product.images',
       'product.designer',
     ])
+  order.product.sizes = await strapi
+    .query('product')
+    .findOne({ id: order.product.id }, ['sizes'])
+    .then((res) => res.sizes)
 
   return {
     order,

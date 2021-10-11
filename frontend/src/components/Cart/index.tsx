@@ -17,6 +17,7 @@ import { rentalLengths } from '@/utils/constants'
 import * as sizing from '@/utils/sizing'
 import { useDispatch, useSelector } from '@/utils/store'
 import CartUtils from '@/Cart/utils'
+import DatePicker from '@/Shop/DatePicker'
 
 import * as types from './types'
 import { iconClose } from '@/components/Icons'
@@ -49,7 +50,10 @@ export const CartItem = ({
   const analytics = useAnalytics()
   const dispatch = useDispatch()
 
-  function toggleInsurance(id: string) {
+  const [selectedDate, selectDate] = React.useState()
+  const [visible, setVisible] = React.useState(false)
+
+  const toggleInsurance = (id: string) => {
     dispatch(CartUtils.update({ id, insurance: !order.insurance })).then(() =>
       dispatch(CartUtils.view())
     )
@@ -62,12 +66,28 @@ export const CartItem = ({
     })
   }
 
+  const changeDate = (id, date) => {
+    dispatch(CartUtils.update({ id, startDate: date.toJSON() })).then(() =>
+      dispatch(CartUtils.view())
+    )
+  }
+
   return (
     <div
       className={`flex-row items-center border p-4 rounded-sm relative bg-white
         ${!valid ? 'border-warning' : 'border-gray'}
         `}
     >
+      <DatePicker
+        size={order.size}
+        product={product}
+        selectedDate={selectedDate}
+        selectDate={(date) => changeDate(order.id, date)}
+        visible={visible}
+        setVisible={(visible) => setVisible(visible)}
+        rentalLength={order.rentalLength}
+        previousDate={dayjs(order.startDate)}
+      />
       <button
         onClick={removeItem}
         aria-label="Remove checkout item"
@@ -77,9 +97,9 @@ export const CartItem = ({
           <Icon icon={iconClose} size={16} />
         </div>
       </button>
-      <div className="h-32 w-32 relative mr-4">
+      <div className="mr-4">
         <Link href={`/shop/${product.designer.slug}/${product.slug}`}>
-          <a>
+          <a className="h-32 w-32 relative">
             <Image
               src={getURL(
                 product.images[0].formats.thumbnail?.url ||
@@ -105,12 +125,14 @@ export const CartItem = ({
               </a>
             </Link>
           </span>
-          <div className="flex flex-row items-center">
-            <span className={`${valid ? '' : 'text-warning'}`}>
-              {startDate} - {endDate}
-            </span>
-            {!valid && <Hover>This rental date is no longer valid.</Hover>}
-          </div>
+          <button onClick={() => setVisible(!visible)}>
+            <div className="flex flex-row items-center">
+              <span className={`underline ${valid ? '' : 'text-warning'}`}>
+                {startDate} - {endDate}
+              </span>
+              {!valid && <Hover>This rental date is no longer valid.</Hover>}
+            </div>
+          </button>
           <span>{sizing.normalize(order.size)}</span>
           <span>
             <Bold>{fmtPrice(totalPrice)}</Bold>
@@ -132,7 +154,7 @@ export const CartItem = ({
           <div className="relative flex-row items-center">
             <Checkbox
               onChange={() => toggleInsurance(order.id)}
-              value={order.insurance}
+              value={order.insurance || false}
               label="Include insurance"
             />
             <Hover position="right-0">

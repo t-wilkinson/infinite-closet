@@ -20,6 +20,7 @@ dayjs.tz.guess()
 dayjs.tz.setDefault('Europe/London')
 
 export const DatePicker = ({
+  previousDate = undefined,
   selectDate,
   size,
   product,
@@ -52,6 +53,7 @@ export const DatePicker = ({
           product={product}
           selectedDate={selectedDate}
           rentalLength={rentalLength}
+          previousDate={previousDate}
         />
         <div className="w-full items-center pt-6">
           <small>We recommend ordering 1-2 days before your event.</small>
@@ -68,6 +70,7 @@ const Date = ({
   product,
   selectedDate,
   rentalLength,
+  previousDate,
 }) => {
   const { date, setDate, days } = useDays(selectedDate)
   const ref = React.useRef()
@@ -83,7 +86,7 @@ const Date = ({
   return (
     <div ref={ref} tabIndex={-1}>
       <div className="flex-row items-center justify-between w-full">
-        {date.get('month') > dayjs().get('month') ? (
+        {date.isSameOrAfter(dayjs()) ? (
           <button
             onClick={() => {
               setHover(null)
@@ -126,6 +129,7 @@ const Date = ({
         days={days}
         rentalLength={rentalLength}
         size={size}
+        previousDate={previousDate}
         selectedDate={selectedDate}
         selectDate={selectDate}
       />
@@ -135,6 +139,7 @@ const Date = ({
 
 const Days = ({
   setVisible,
+  previousDate,
   selectedDate,
   selectDate,
   size,
@@ -165,6 +170,7 @@ const Days = ({
       return acc
     }, [])
 
+    // TODO: should not refetch everytime new date overed over
     axios
       .post('/orders/dates/valid', {
         dates: validDays,
@@ -174,7 +180,14 @@ const Days = ({
       })
       .then((res) => setValid((valid) => ({ ...valid, ...res.data.valid })))
       .catch((err) => console.error(err))
-  }, [date, days])
+  }, [date])
+
+  const isBetween = (currentDate, date) => {
+    return (
+      date &&
+      currentDate.isBetween(date, date.add(rentalDays, 'day'), 'day', '[)')
+    )
+  }
 
   return (
     <div className="border-gray-light border-r border-b">
@@ -201,24 +214,9 @@ const Days = ({
                 <Day
                   date={date}
                   unavailable={!valid[date.toJSON()]}
-                  selected={
-                    selectedDate &&
-                    date.isBetween(
-                      selectedDate,
-                      selectedDate.add(rentalDays, 'day'),
-                      'day',
-                      '[)'
-                    )
-                  }
-                  hover={
-                    hover &&
-                    date.isBetween(
-                      hover,
-                      hover!.add(rentalDays, 'day'),
-                      'day',
-                      '[)'
-                    )
-                  }
+                  selected={isBetween(date, selectedDate)}
+                  hover={isBetween(date, hover)}
+                  previous={isBetween(date, previousDate)}
                 />
               </button>
             ))}
@@ -233,14 +231,17 @@ const Day = ({
   selected = false,
   unavailable = false,
   hover = false,
+  previous = false,
 }: {
   date: Dayjs
-  selected: Boolean
-  unavailable: Boolean
-  hover: Boolean
+  selected: boolean
+  unavailable: boolean
+  hover: boolean
+  previous: boolean
 }) => (
   <div
     className={`border-l border-t border-gray-light w-12 h-12 p-4 items-center justify-center
+      ${previous ? 'bg-sec-light' : ''}
       ${hover ? 'bg-sec-light' : ''}
       ${date.day() !== 0 ? 'cursor-pointer' : ''}
       ${unavailable && !selected ? 'bg-gray-light text-gray-dark' : ''}
