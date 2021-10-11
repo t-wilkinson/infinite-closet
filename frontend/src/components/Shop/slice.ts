@@ -11,9 +11,9 @@ export interface State {
   oneTime: OneTime
   membership: Membership
   dateVisible: boolean
-  selectedDate?: Dayjs
   details?: string
   size?: Size
+  selectedDate?: Dayjs
 }
 
 const initialState: State = {
@@ -45,15 +45,14 @@ export const shopSlice = createSlice({
     selectDate(state, { payload }: PayloadAction<Dayjs>) {
       state.selectedDate = payload
     },
-
+    setDateVisibility(state, { payload }: PayloadAction<boolean>) {
+      state.dateVisible = payload
+    },
     showDate(state) {
       state.dateVisible = true
     },
     hideDate(state) {
       state.dateVisible = false
-    },
-    toggleDateVisibility(state) {
-      state.dateVisible = !state.dateVisible
     },
 
     toggleDetails(state, { payload }: PayloadAction<string>) {

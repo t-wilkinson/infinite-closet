@@ -83,14 +83,29 @@ export const productRentContents = {
 
     return (
       <>
-        <DatePicker />
+        <DatePicker
+          size={state.size}
+          product={product}
+          selectedDate={state.selectedDate}
+          selectDate={(date) => dispatch(shopActions.selectDate(date))}
+          visible={state.dateVisible}
+          setVisible={(visible) =>
+            dispatch(shopActions.setDateVisibility(visible))
+          }
+          rentalLength={state.oneTime}
+        />
 
         <OneTimeSizeSelector
           product={product}
           chartOpen={chartOpen}
           setChartOpen={setChartOpen}
         />
-        <OneTimeRentalTime />
+        <OneTimeRentalTime
+          selectedDate={state.selectedDate}
+          setVisible={(visible) =>
+            dispatch(shopActions.setDateVisibility(visible))
+          }
+        />
 
         <Button
           onClick={addToCart}
@@ -161,7 +176,7 @@ export const OneTimeSizeSelector = ({ product, chartOpen, setChartOpen }) => {
   )
 }
 
-export const OneTimeRentalTime = () => {
+export const OneTimeRentalTime = ({ selectedDate, setVisible }) => {
   const state = useSelector((state) => state.shop)
   const dispatch = useDispatch()
 
@@ -184,13 +199,13 @@ export const OneTimeRentalTime = () => {
           <button
             aria-label="Date selector"
             className="flex flex-grow border border-gray py-2 px-2 rounded-sm rounded-sm flex-row flex-grow justify-between items-center"
-            onClick={() => dispatch(shopActions.showDate())}
+            onClick={() => setVisible(true)}
           >
             <span>
-              {state.selectedDate &&
-                state.selectedDate.format('ddd M/D') +
+              {selectedDate &&
+                selectedDate.format('ddd M/D') +
                   ' - ' +
-                  state.selectedDate
+                  selectedDate
                     .add(rentalLengths[state.oneTime] + 1, 'day')
                     .format('ddd M/D')}
             </span>

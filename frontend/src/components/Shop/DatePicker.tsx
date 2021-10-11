@@ -6,14 +6,11 @@ import timezone from 'dayjs/plugin/timezone'
 import isBetween from 'dayjs/plugin/isBetween'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
-import { rentalLengths } from '@/utils/constants'
 import { Icon } from '@/components'
-import useDays from '@/utils/useDays'
-import { useDispatch, useSelector } from '@/utils/store'
-import * as sizing from '@/utils/sizing'
-
-import { shopActions } from './slice'
 import { iconLeft, iconClose, iconRight } from '@/components/Icons'
+import * as sizing from '@/utils/sizing'
+import useDays from '@/utils/useDays'
+import { rentalLengths } from '@/utils/constants'
 
 dayjs.extend(isSameOrAfter)
 dayjs.extend(isBetween)
@@ -22,30 +19,40 @@ dayjs.extend(timezone)
 dayjs.tz.guess()
 dayjs.tz.setDefault('Europe/London')
 
-export const DatePicker = () => {
-  const state = useSelector((state) => state.shop)
-  const dispatch = useDispatch()
-  const rentalLength = rentalLengths[state.oneTime] + 1
+export const DatePicker = ({
+  selectDate,
+  size,
+  product,
+  selectedDate,
+  visible,
+  setVisible,
+  rentalLength,
+}) => {
+  if (!size || !product) {
+    return null
+  }
 
   return (
     <div
       className={`fixed inset-0 items-center justify-center bg-opacity-50 bg-black z-30
-      ${state.dateVisible ? '' : 'invisible'}
+      ${visible ? '' : 'invisible'}
       `}
     >
-      <div
-        className="absolute inset-0"
-        onClick={() => {
-          dispatch(shopActions.hideDate())
-        }}
-      />
+      <div className="absolute inset-0" onClick={() => setVisible(false)} />
       <div className="relative bg-white p-6">
         <div className="self-end pb-4">
-          <button onClick={() => dispatch(shopActions.hideDate())}>
+          <button onClick={() => setVisible(false)}>
             <Icon icon={iconClose} size={16} />
           </button>
         </div>
-        <Date dispatch={dispatch} rentalLength={rentalLength} />
+        <Date
+          setVisible={setVisible}
+          selectDate={selectDate}
+          size={size}
+          product={product}
+          selectedDate={selectedDate}
+          rentalLength={rentalLength}
+        />
         <div className="w-full items-center pt-6">
           <small>We recommend ordering 1-2 days before your event.</small>
         </div>
@@ -54,12 +61,17 @@ export const DatePicker = () => {
   )
 }
 
-export default DatePicker
-
-const Date = ({ rentalLength, dispatch }) => {
-  const selectedDate = useSelector((state) => state.shop.selectedDate)
+const Date = ({
+  setVisible,
+  selectDate,
+  size,
+  product,
+  selectedDate,
+  rentalLength,
+}) => {
   const { date, setDate, days } = useDays(selectedDate)
   const ref = React.useRef()
+  const [hover, setHover] = React.useState<Dayjs>()
 
   React.useEffect(() => {
     if (ref.current) {
@@ -72,7 +84,12 @@ const Date = ({ rentalLength, dispatch }) => {
     <div ref={ref} tabIndex={-1}>
       <div className="flex-row items-center justify-between w-full">
         {date.get('month') > dayjs().get('month') ? (
-          <button onClick={() => setDate((d) => d.subtract(1, 'month'))}>
+          <button
+            onClick={() => {
+              setHover(null)
+              setDate((d) => d.subtract(1, 'month'))
+            }}
+          >
             <div className="border-gray-light border p-2">
               <Icon size={16} icon={iconLeft} />
             </div>
@@ -81,7 +98,12 @@ const Date = ({ rentalLength, dispatch }) => {
           <div className="w-8" />
         )}
         <span>{date.format('MMMM YYYY')}</span>
-        <button onClick={() => setDate((d) => d.add(1, 'month'))}>
+        <button
+          onClick={() => {
+            setHover(null)
+            setDate((d) => d.add(1, 'month'))
+          }}
+        >
           <div className="border border-gray-light p-2">
             <Icon size={16} icon={iconRight} />
           </div>
@@ -96,25 +118,37 @@ const Date = ({ rentalLength, dispatch }) => {
         ))}
       </div>
       <Days
+        hover={hover}
+        setHover={setHover}
+        setVisible={setVisible}
+        product={product}
         date={date}
         days={days}
-        dispatch={dispatch}
         rentalLength={rentalLength}
+        size={size}
+        selectedDate={selectedDate}
+        selectDate={selectDate}
       />
     </div>
   )
 }
 
-const Days = ({ date, days, dispatch, rentalLength }) => {
-  const [hover, setHover] = React.useState<Dayjs>()
+const Days = ({
+  setVisible,
+  selectedDate,
+  selectDate,
+  size,
+  product,
+  date,
+  days,
+  rentalLength,
+  hover,
+  setHover,
+}) => {
   const [valid, setValid] = React.useState({})
-  const state = useSelector((state) => state.shop)
-  const product = useSelector((state) => state.layout.data.product)
+  const rentalDays = rentalLengths[rentalLength] + 1
 
   React.useEffect(() => {
-    if (!product) {
-      return null
-    }
     const curDay = date.hour(12).date(1)
     const validDays = [
       curDay.date(0).subtract(1, 'month'),
@@ -135,8 +169,8 @@ const Days = ({ date, days, dispatch, rentalLength }) => {
       .post('/orders/dates/valid', {
         dates: validDays,
         product: product.id,
-        size: sizing.get(product.sizes, state.size).size,
-        rentalLength: state.oneTime,
+        size: sizing.get(product.sizes, size).size || product.sizes[0].size,
+        rentalLength,
       })
       .then((res) => setValid((valid) => ({ ...valid, ...res.data.valid })))
       .catch((err) => console.error(err))
@@ -159,8 +193,8 @@ const Days = ({ date, days, dispatch, rentalLength }) => {
                 disabled={!valid[date.toJSON()]}
                 onClick={() => {
                   if (hover) {
-                    dispatch(shopActions.selectDate(date))
-                    dispatch(shopActions.hideDate())
+                    selectDate(date)
+                    setVisible(false)
                   }
                 }}
               >
@@ -168,10 +202,10 @@ const Days = ({ date, days, dispatch, rentalLength }) => {
                   date={date}
                   unavailable={!valid[date.toJSON()]}
                   selected={
-                    state.selectedDate &&
+                    selectedDate &&
                     date.isBetween(
-                      state.selectedDate,
-                      state.selectedDate.add(rentalLength, 'day'),
+                      selectedDate,
+                      selectedDate.add(rentalDays, 'day'),
                       'day',
                       '[)'
                     )
@@ -180,7 +214,7 @@ const Days = ({ date, days, dispatch, rentalLength }) => {
                     hover &&
                     date.isBetween(
                       hover,
-                      hover!.add(rentalLength, 'day'),
+                      hover!.add(rentalDays, 'day'),
                       'day',
                       '[)'
                     )
@@ -216,3 +250,5 @@ const Day = ({
     <span>{date.date()}</span>
   </div>
 )
+
+export default DatePicker
