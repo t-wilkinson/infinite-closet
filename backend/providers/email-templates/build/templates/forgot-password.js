@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _react = require("react");
+var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -14,27 +14,31 @@ exports.default = function (_ref) {
   var data = _ref.data;
 
   return _react2.default.createElement(
-    "div",
-    null,
+    'div',
+    {
+      style: {
+        padding: '1em 2em'
+      }
+    },
     _react2.default.createElement(
-      "p",
+      'p',
       null,
-      "We heard that you lost your password. Sorry about that!"
+      'We heard that you lost your password. Sorry about that!'
     ),
     _react2.default.createElement(
-      "p",
+      'p',
       null,
-      "But don\u2019t worry! You can use the following link to reset your password:"
+      'But don\u2019t worry! You can use the following link to reset your password:'
     ),
     _react2.default.createElement(
-      "p",
+      'p',
       null,
       data.url
     ),
     _react2.default.createElement(
-      "p",
+      'p',
       null,
-      "Thanks."
+      'Thanks.'
     )
   );
 };

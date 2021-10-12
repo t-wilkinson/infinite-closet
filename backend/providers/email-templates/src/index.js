@@ -22,9 +22,9 @@ const order = {
 };
 
 const orderData = {
-  ...order,
+  order,
   firstName: "First Name",
-  price: 30.13,
+  totalPrice: 30.13,
   range: { start: "8/24/2020", end: "8/28/2020" },
 };
 
@@ -45,7 +45,7 @@ const data = {
   },
   checkout: {
     firstName: "First Name",
-    orders: [orderData, orderData],
+    cart: [orderData, orderData],
     totalPrice: 25,
   },
   "newsletter-subscription": {},
@@ -53,7 +53,7 @@ const data = {
   "mailinglist-subscription": {},
   "join-launch-party": {
     firstName: "First Name",
-    TICKET_PRICE: 25,
+    ticketPrice: 25,
     donation: 25.0,
     discount: 5,
     total: 45,
@@ -78,14 +78,28 @@ const Emails = () => {
 
   return (
     <div>
-      <nav className="flex-row justify-start space-x-2 border-b border-gray p-2">
+      <nav
+        style={{
+          padding: 4,
+          display: "flex",
+          flexWrap: "wrap",
+        }}
+      >
         {Object.keys(data)
           .sort()
           .map((k) => (
             <a
               key={k}
               href={`/${k}`}
-              style={{ margin: 4, color: "black", textDecoration: "none" }}
+              style={{
+                margin: "0.25rem 0.25rem",
+                color: "black",
+                textDecoration: "none",
+                padding: "4px 8px",
+                backgroundColor: "#eee",
+                borderRadius: 4,
+                fontSize: 14,
+              }}
             >
               {k}
             </a>

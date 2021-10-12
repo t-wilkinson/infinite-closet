@@ -1,8 +1,12 @@
-import React from "react";
+import React from 'react'
 
 export default ({ data }) => {
   return (
-    <div>
+    <div
+      style={{
+        padding: '1em 2em',
+      }}
+    >
       <p>We heard that you lost your password. Sorry about that!</p>
 
       <p>
@@ -12,5 +16,5 @@ export default ({ data }) => {
 
       <p>Thanks.</p>
     </div>
-  );
-};
+  )
+}

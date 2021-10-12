@@ -1,6 +1,7 @@
 #!/bin/sh
-if [[ $(dirname $(pwd)) != 'infinte-closet' ]]; then
-    echo 'Please run in root directory'
+
+if [[ $(basename $(pwd)) != 'infinite-closet' ]]; then
+    echo 'Please run in root project directory'
     exit 1
 fi
 

@@ -42,7 +42,7 @@ const HeaderAside = () => {
           <Divider className="my-2" />
           {user ? (
             <>
-              <AsideLink href="/user/profile" label="My Accout" />
+              <AsideLink href="/user/profile" label="My Account" />
               <AsideLink href="/user/checkout" label="Checkout" />
             </>
           ) : (

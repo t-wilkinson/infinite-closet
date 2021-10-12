@@ -264,7 +264,9 @@ const ProductCategories = () => (
         <div className="w-full items-center my-4">
           <Link href={data.href}>
             <a>
-              <span className="font-bold uppercase">{data.title}</span>
+              <span className="font-bold uppercase underline">
+                {data.title}
+              </span>
             </a>
           </Link>
           <Link href={data.href}>
@@ -373,7 +375,12 @@ export const Page = ({ products }) => {
 }
 
 export async function getStaticProps() {
-  let products = ['asher-dress', 'etude-wrap', 'elora', 'juliette-dress']
+  let products = [
+    'glamour-jumpsuit',
+    'nomi',
+    'greta-outer-space-dress',
+    'audrey-robe',
+  ]
   products = await axios
     .get(`/products?slug_in=${products.join('&slug_in=')}`)
     .then((res) => res.data)
