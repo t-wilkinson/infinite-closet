@@ -377,7 +377,7 @@ export const Page = ({ products }) => {
 export async function getStaticProps() {
   let products = [
     'glamour-jumpsuit',
-    'nomi',
+    'ora',
     'greta-outer-space-dress',
     'audrey-robe',
   ]
@@ -389,7 +389,6 @@ export async function getStaticProps() {
         (p1, p2) => products.indexOf(p1.slug) - products.indexOf(p2.slug)
       )
     )
-    .catch((err) => console.error(err))
   return {
     props: {
       products,

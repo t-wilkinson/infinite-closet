@@ -1,8 +1,7 @@
 'use strict'
 
 const INSURANCE_PRICE = 5
-const WAITLIST_DISCOUNT_PRICE = 5
-const NEW_USER_DISCOUNT_PERCENT = 10
+const OG_USER_DISCOUNT_FLAT = 5
 
 const shippingPrices = {
   one: 9.95,
@@ -51,6 +50,14 @@ function cartPrice(cart) {
 }
 
 async function userDiscount(user) {
+  const isOgUser = await strapi.query('user', 'users-permissions').findOne(
+    {
+      user: user.id,
+      created_at_lt: strapi.services.timing.day('2021-07-20').toJSON(),
+    },
+    []
+  )
+
   const hasOrderedBefore = await strapi.query('order', 'orders').findOne(
     {
       user: user.id,
@@ -60,20 +67,12 @@ async function userDiscount(user) {
     []
   )
 
-  const newUserDiscountPercent = hasOrderedBefore
-    ? 0
-    : NEW_USER_DISCOUNT_PERCENT
-
-  const isOnWaitingList = await strapi.query('contact').findOne({
-    context_in: ['waitlist', 'newsletter'],
-    contact: user.email,
-  })
-  const waitlistDiscountPrice =
-    !hasOrderedBefore && isOnWaitingList ? WAITLIST_DISCOUNT_PRICE : 0
+  const ogUserDiscountFlat =
+    isOgUser && !hasOrderedBefore ? OG_USER_DISCOUNT_FLAT : 0
 
   return {
-    price: waitlistDiscountPrice,
-    percent: newUserDiscountPercent,
+    price: ogUserDiscountFlat,
+    percent: 0,
   }
 }
 
