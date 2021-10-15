@@ -240,7 +240,7 @@ const PaymentRequestContainer = ({
                 paymentMethod: ev.paymentMethod.id,
               })
             )
-            .then(onCheckout)
+            .then(() => onCheckout({ contact: info.contact }))
             .catch((err) => {
               console.error(err)
               dispatch({ type: 'status-error' })

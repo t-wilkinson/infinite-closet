@@ -9,6 +9,8 @@ import { Submit, Input } from '@/Form'
 import { cleanFields, isValid } from '@/Form/useFields'
 import { cardStyle, Authorise } from '@/User/Payment'
 import { StrapiCoupon } from '@/utils/models'
+import { Password } from '@/Form'
+import { useRegisterUser } from '@/Account/Register'
 
 import { Summary } from './CheckoutUtils'
 
@@ -20,7 +22,7 @@ import {
   AddressContext,
 } from './GuestCheckoutUtils'
 
-export const CheckoutForm = () => {
+export const CheckoutForm = ({ onCheckout }) => {
   const state = React.useContext(StateContext)
   const fields = React.useContext(FieldsContext)
   const cart = useSelector((state) => state.cart.checkoutCart)
@@ -28,11 +30,14 @@ export const CheckoutForm = () => {
   const address = React.useContext(AddressContext)
   const checkout = useCheckout()
   const dispatch = React.useContext(DispatchContext)
+  const registerUser = useRegisterUser({
+    onError: (err) => dispatch({ type: 'register-error', payload: err }),
+  })
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const cleanedFields = cleanFields(fields)
     const cleanedAddress = cleanFields(address)
-    checkout({
+    const { contact } = await checkout({
       address: cleanedAddress,
       billing: {
         name: cleanedFields.billingName,
@@ -40,6 +45,15 @@ export const CheckoutForm = () => {
       email: cleanedFields.email,
       couponCode: cleanedFields.couponCode,
     })
+    if (cleanedFields.password) {
+      registerUser({
+        email: contact.email,
+        firstName: contact.fullName.split(' ')[0],
+        lastName: contact.fullName.split(' ')[1],
+        password: cleanedFields.password,
+      })
+    }
+    onCheckout({ contact })
   }
 
   return (
@@ -62,6 +76,12 @@ export const CheckoutForm = () => {
             coupon={state.coupon}
           />
         </SideItem>
+        <div className="p-8 bg-gray-light">
+          <span className="font-bold text-lg">
+            Checkout faster next time with an Infinite Closet account.
+          </span>
+          <Password {...fields.password} />
+        </div>
         <div className="mt-4 w-full">
           <Submit
             onSubmit={onSubmit}

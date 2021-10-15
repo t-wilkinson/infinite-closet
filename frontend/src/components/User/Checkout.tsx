@@ -294,7 +294,7 @@ const isOrderInvalid = (order) => !order.valid
 const SideItem = ({ label, children, user, protect = false }) =>
   protect && !user ? null : (
     <div className="space-y-2 bg-white p-3 rounded-sm relative">
-      <span className="font-subheader text-xl lg:text-2xl my-2">
+      <span className="font-bold text-lg lg:text-xl my-2">
         {label}
         <div className="w-full h-px bg-pri mt-2 -mb-2" />
       </span>

@@ -4,6 +4,7 @@ import UserCheckout from '@/User/Checkout'
 import GuestCheckout from '@/User/GuestCheckout'
 import Layout from '@/Layout'
 import { useSelector } from '@/utils/store'
+import { FacebookMessenger } from '@/components'
 
 const Page = () => {
   const user = useSelector((state) => state.user.data)
@@ -13,12 +14,14 @@ const Page = () => {
   } else if (user === null) {
     return (
       <Layout spacing={false}>
+        {process.env.NODE_ENV === 'production' && <FacebookMessenger />}
         <GuestCheckout />
       </Layout>
     )
   } else {
     return (
       <Layout spacing={false}>
+        {process.env.NODE_ENV === 'production' && <FacebookMessenger />}
         <UserCheckout />
       </Layout>
     )

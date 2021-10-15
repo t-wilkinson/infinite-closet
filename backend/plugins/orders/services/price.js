@@ -52,7 +52,7 @@ function cartPrice(cart) {
 async function userDiscount(user) {
   const isOgUser = await strapi.query('user', 'users-permissions').findOne(
     {
-      user: user.id,
+      id: user.id,
       created_at_lt: strapi.services.timing.day('2021-07-20').toJSON(),
     },
     []

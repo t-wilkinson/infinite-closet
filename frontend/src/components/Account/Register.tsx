@@ -9,17 +9,59 @@ import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { userActions } from '@/User/slice'
 
-export const Register = ({
-  email,
-  firstName,
-  lastName,
-  onSubmit = () => {},
-}: {
+interface Register {
   email?: string
   firstName?: string
   lastName?: string
   onSubmit?: () => void
-}) => {
+}
+
+export const useRegisterUser = ({
+  onError = console.error,
+  onSubmit = () => {},
+} = {}) => {
+  const dispatch = useDispatch()
+  const analytics = useAnalytics()
+
+  const registerUser = (fields) => {
+    axios
+      .post(
+        '/auth/local/register',
+        {
+          firstName: fields.firstName,
+          lastName: fields.lastName,
+          email: fields.email,
+          password: fields.password,
+          subscribed: fields.mailingList ? 'mailinglist' : '',
+        },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        dispatch(userActions.signin(res.data.user))
+        analytics.logEvent('form_submit', {
+          type: 'account.register',
+          user: fields.email,
+        })
+        onSubmit()
+      })
+      .catch((err) => {
+        try {
+          console.error(err.response.data.data[0].messages)
+          onError(err.response.data.data[0].messages.map((v) => v.message))
+        } catch {
+          onError(['Encountered unkown error'])
+        }
+      })
+  }
+  return registerUser
+}
+
+export const RegisterForm = ({
+  email,
+  firstName,
+  lastName,
+  onSubmit = () => {},
+}: Register) => {
   const fields = useFields({
     firstName: { constraints: 'required', default: firstName },
     lastName: { constraints: '', label: 'Last Name', default: lastName },
@@ -31,57 +73,34 @@ export const Register = ({
     password: { constraints: 'required password' },
     mailingList: { label: 'I want to receive exclusive offers' },
   })
-  const dispatch = useDispatch()
-  const analytics = useAnalytics()
   const [warnings, setWarnings] = React.useState<string[]>([])
-
-  const registerUser = () => {
-    const cleaned = cleanFields(fields)
-
-    axios
-      .post(
-        '/auth/local/register',
-        {
-          firstName: cleaned.firstName,
-          lastName: cleaned.lastName,
-          email: cleaned.email,
-          password: cleaned.password,
-          subscribed: cleaned.mailingList && 'mailinglist',
-        },
-        { withCredentials: true }
-      )
-      .then((res) => {
-        dispatch(userActions.signin(res.data.user))
-        analytics.logEvent('form_submit', {
-          type: 'account.register',
-          user: cleaned.email,
-        })
-        onSubmit()
-      })
-      .catch((err) => {
-        try {
-          console.error(err.response.data.data[0].messages)
-          setWarnings(err.response.data.data[0].messages.map((v) => v.message))
-        } catch {
-          setWarnings(['Encountered unkown error'])
-        }
-      })
-  }
+  const registerUser = useRegisterUser({ onError: setWarnings, onSubmit })
 
   return (
     <>
-      <FormHeader label="Join Us for Free" />
       <Warnings warnings={warnings} />
-      <div className="flex-row space-x-2">
+      <div className="w-full flex-row space-x-2">
         <Input {...fields.firstName} />
         <Input {...fields.lastName} />
       </div>
       <Input {...fields.email} />
       <Password {...fields.password} />
       <Checkbox {...fields.mailingList} className="mt-2 mb-4" />
-      <Submit onSubmit={registerUser} disabled={!isValid(fields)}>
+      <Submit
+        onSubmit={() => registerUser(cleanFields(fields))}
+        disabled={!isValid(fields)}
+      >
         Register
       </Submit>
+    </>
+  )
+}
+
+export const Register = (props: Register) => {
+  return (
+    <>
+      <FormHeader label="Join Us for Free" />
+      <RegisterForm {...props} />
     </>
   )
 }

@@ -15,6 +15,8 @@ export const initialState = {
   status: null as Status,
   authorised: false,
   coupon: undefined,
+  contact: undefined as { email: string; fullName: string; nickName: string },
+  registerError: false,
 }
 
 export const reducer = (state: typeof initialState, action: any) => {
@@ -27,6 +29,9 @@ export const reducer = (state: typeof initialState, action: any) => {
     case 'un-authorise': return {...state, authorised: false}
 
     case 'set-payment-method': return def('paymentMethod')
+
+    case 'register-error': return {...state,  registerError: true, error: action.payload}
+    case 'change-contact': return {...state, contact: action.payload}
 
     case 'status-clear': return {...state, status: null, error: ''}
     case 'status-processing': return {...state, status: 'processing'}
@@ -66,10 +71,15 @@ export const useCheckout = () => {
   const stripe = useStripe()
   const onCheckoutSuccess = useCheckoutSuccess()
 
-  const checkout = ({ address, billing, email, couponCode }) => {
+  const checkout = async ({ address, billing, email, couponCode }) => {
     dispatch({ type: 'status-processing' })
+    const contact = {
+      email,
+      fullName: address.fullName,
+      nickName: address.fullName.split(' ')[0],
+    }
 
-    validatePostcode(address.postcode)
+    await validatePostcode(address.postcode)
       .then(() =>
         stripe.createPaymentMethod({
           type: 'card',
@@ -83,11 +93,7 @@ export const useCheckout = () => {
           return Promise.reject(res.error)
         } else {
           return axios.post('/orders/checkout', {
-            contact: {
-              email,
-              fullName: address.fullName,
-              nickName: address.fullName.split(' ')[0],
-            },
+            contact,
             address,
             paymentMethod: res.paymentMethod.id,
             orders: cart.map((item) => item.order),
@@ -105,6 +111,7 @@ export const useCheckout = () => {
         console.error(err)
         dispatch({ type: 'status-error' })
       })
+    return { contact }
   }
 
   return checkout
