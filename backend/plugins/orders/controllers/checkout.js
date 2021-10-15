@@ -60,8 +60,9 @@ async function shipCart({
     )
   ).then((settled) =>
     strapi.log.error(
-      'Failed  shipOrder %o',
-      settled.filter((res) => res.status === 'rejected')
+      'Failed shipOrder %o',
+      settled
+      // settled.filter((res) => res.status === 'rejected')
     )
   )
 

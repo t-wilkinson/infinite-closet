@@ -175,7 +175,7 @@ const Days = ({
       .post('/orders/dates/valid', {
         dates: validDays,
         product: product.id,
-        size: sizing.get(product.sizes, size).size || product.sizes[0].size,
+        size: (sizing.get(product.sizes, size) || product.sizes[0]).size,
         rentalLength,
       })
       .then((res) => setValid((valid) => ({ ...valid, ...res.data.valid })))

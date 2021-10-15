@@ -120,6 +120,7 @@ export const Input = ({
 
       <div
         className={`w-full h-full flex-row justify-between items-center border rounded-sm transform duration-200
+          ${disabled ? 'bg-gray-light' : 'bg-white'}
           ${focused ? 'border-sec' : ''}
           ${
             changed && validations.length > 0 ? 'border-warning' : 'border-gray'
@@ -130,9 +131,7 @@ export const Input = ({
         <input
           {...props}
           disabled={disabled}
-          className={`p-2 py-3 w-full h-full outline-none
-            ${disabled ? 'bg-gray-light' : 'bg-white'}
-          `}
+          className={`p-2 py-3 w-full h-full outline-none `}
           id={field}
           name={field}
           type={type}
