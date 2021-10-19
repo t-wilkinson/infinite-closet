@@ -58,33 +58,39 @@ async function shipCart({
         }
       )
     )
-  ).then((settled) =>
-    strapi.log.error(
-      'Failed shipOrder %o',
-      settled
-      // settled.filter((res) => res.status === 'rejected')
-    )
-  )
+  ).then((settled) => {
+    const failed = settled.filter((res) => res.status === 'rejected')
+    if (failed.length > 0) {
+      strapi.log.error('Failed shipOrder', failed)
+    }
+  })
 
   if (contact) {
-    await strapi.plugins['email'].services.email.send({
-      template: 'checkout',
-      to: contact.email,
-      bcc:
-        process.env.NODE_ENV === 'production'
-          ? [
-            'info@infinitecloset.co.uk',
-            'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
-          ]
-          : [],
-      subject: 'Thank you for your order',
-      data: {
-        name: contact.fullName,
-        firstName: contact.nickName,
-        cart,
-        totalPrice: summary.total,
-      },
-    })
+    console.log('shipCart', { contact, summary, cart })
+    await strapi.plugins['email'].services.email
+      .send({
+        template: 'checkout',
+        to: contact.email,
+        bcc:
+          process.env.NODE_ENV === 'production'
+            ? [
+              'info@infinitecloset.co.uk',
+              'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
+            ]
+            : [],
+        subject: 'Thank you for your order',
+        data: {
+          cart,
+          name: contact.fullName,
+          firstName: contact.nickName,
+          totalPrice: summary.total,
+        },
+      })
+      .catch((e) => {
+        console.error(e)
+        strapi.error('Failed to send checkout email. Error:', e)
+      })
+    console.log('after shipCart email')
   }
 }
 
@@ -127,9 +133,11 @@ module.exports = {
             paymentIntent,
           })
         )
-      return ctx.send()
     } catch (e) {
-      strapi.log.error('checkoutUser error %o', e)
+      strapi.log.error('checkoutUser error', e)
+      strapi.log.error('checkoutUser error', e.stack)
+    } finally {
+      ctx.send()
     }
   },
 
@@ -152,7 +160,7 @@ module.exports = {
         })
         return ctx.send()
       } catch (e) {
-        strapi.log.error('PaymentRequest paymentIntent did not succeed %o', {
+        strapi.log.error('PaymentRequest paymentIntent did not succeed', {
           cart,
           paymentIntent: paymentIntent.id,
           error: e,
@@ -160,7 +168,7 @@ module.exports = {
         return ctx.send({ error: 'PaymentIntent invalid' }, 400)
       }
     } else {
-      strapi.log.error('PaymentRequest paymentIntent did not succeed %o', {
+      strapi.log.error('PaymentRequest paymentIntent did not succeed', {
         cart,
         paymentIntent: paymentIntent.id,
       })
@@ -202,7 +210,7 @@ module.exports = {
       }
       return ctx.send({ ...response, body })
     } catch (e) {
-      strapi.log.error('checkoutGuest error %o', e)
+      strapi.log.error('checkoutGuest error', e)
       return ctx.send({ error: 'Could not process payment', body }, 400)
     }
   },

@@ -12,7 +12,7 @@ import useFields, {
 import { Button, Divider } from '@/components'
 import { Size } from '@/Products/types'
 import * as sizing from '@/utils/sizing'
-import { useDispatch, useSelector } from '@/utils/store'
+import { useSelector } from '@/utils/store'
 import { SizeChartPopup } from '@/Shop/Size'
 
 import { useSignin } from './'

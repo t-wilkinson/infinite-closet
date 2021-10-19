@@ -6,6 +6,7 @@ import axios from 'axios'
 import { useSelector, useDispatch } from '@/utils/store'
 import { userActions } from '@/User/slice'
 import { useProtected } from '@/User/Protected'
+import { CartUtils } from '@/Cart/slice'
 
 const signin = (dispatch, cart) =>
   axios
@@ -61,7 +62,9 @@ const SideMenu = () => {
       .post('/account/signout', {}, { withCredentials: true })
       .then((res) => {
         dispatch(userActions.signout())
-        window.location.href = '/'
+          .then(() => dispatch(CartUtils.count()))
+          .then(() => dispatch(CartUtils.view()))
+        router.push('/')
       })
       .catch((err) => console.error(err))
   }

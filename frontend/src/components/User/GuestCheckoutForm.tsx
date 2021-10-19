@@ -114,7 +114,7 @@ const isOrderInvalid = (order: { valid: boolean }) => !order.valid
 
 const SideItem = ({ label, children }) => (
   <div>
-    <span className="font-subheader text-xl">
+    <span className="font-bold text-lg">
       {label}
       <div className="w-full h-px bg-pri mt-2 mb-2" />
     </span>

@@ -7,14 +7,14 @@ const ReactDOMServer = require('react-dom/server')
 const STYLE_TAG = '%STYLE%'
 const CONTENT_TAG = '%CONTENT%'
 
-function saveEmail(file, email) {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(path.join('build', 'emails', file + '.html'), email, (err) => {
-      if (err) return reject(err)
-      return resolve()
-    })
-  })
-}
+// function saveEmail(file, email) {
+//   return new Promise((resolve, reject) => {
+//     fs.writeFile(path.join('build', 'emails', file + '.html'), email, (err) => {
+//       if (err) return reject(err)
+//       return resolve()
+//     })
+//   })
+// }
 
 function createEmail(Email, data) {
   return Promise.all([

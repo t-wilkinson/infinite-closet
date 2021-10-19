@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 
 import Cart from '@/Cart'
 import { CartUtils } from '@/Cart/slice'
@@ -72,6 +73,7 @@ const Checkout = () => {
   const dispatch = React.useContext(DispatchContext)
   const fields = React.useContext(FieldsContext)
 
+  const router = useRouter()
   const cartCount = useSelector((state) => state.cart.count)
   const analytics = useAnalytics()
   const fetchCart = useFetchCart()
@@ -87,6 +89,7 @@ const Checkout = () => {
       user: 'guest',
       type: 'checkout',
     })
+    router.push('/')
   }
 
   React.useEffect(() => {
