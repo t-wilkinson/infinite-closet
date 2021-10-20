@@ -13,7 +13,10 @@ function arrival(sent, shippingClass = 'one') {
   sent = day(sent)
   const hoursSendClient = hived.config.shippingClassesHours[shippingClass]
   const offset = sent.hour() > hived.config.cutoff ? HOURS_IN_DAY : 0
-  return sent.add(hoursSendClient + offset, 'hours').hour(hived.config.cutoff)
+  const arrives = sent
+    .add(hoursSendClient + offset, 'hours')
+    .hour(hived.config.cutoff)
+  return arrives
 }
 
 /**

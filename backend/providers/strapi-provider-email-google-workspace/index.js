@@ -3,32 +3,12 @@ const path = require('path')
 const { google } = require('googleapis')
 const _ = require('lodash')
 const emailTemplates = require('email-templates')
-
-const kebabize = (str) => {
-  str = str.replace(/([A-Z])/g, '$1')
-  return str.charAt(0).toUpperCase() + str.slice(1)
-}
-
-function makeBody(options) {
-  const toEmailField = (f) =>
-    options[f] ? `${kebabize(f)}: ${options[f]}\n` : ''
-
-  var str = [
-    'Content-Type: text/html; charset="UTF-8"\n',
-    'MIME-Version: 1.0\n',
-    'Content-Transfer-Encoding: 7bit\n',
-    ...['to', 'from', 'replyTo', 'cc', 'bcc', 'subject'].map(toEmailField),
-    '\n',
-    options.html,
-  ].join('')
-
-  var encodedMail = Buffer.from(str)
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-
-  return encodedMail
-}
+const {
+  encodeMail,
+  makeBody,
+  emailFields,
+  normalizeAddress,
+} = require('./lib')
 
 const gmail = {
   init(options) {
@@ -48,7 +28,7 @@ const gmail = {
     return {
       auth: authClient,
       send(options) {
-        const raw = makeBody(options)
+        const raw = encodeMail(makeBody(options))
         const gmail = google.gmail({ version: 'v1', auth: this.auth })
 
         return gmail.users.messages
@@ -61,39 +41,6 @@ const gmail = {
       },
     }
   },
-}
-
-const emailFields = [
-  'from',
-  'replyTo',
-  'to',
-  'cc',
-  'bcc',
-  'subject',
-  'text',
-  'html',
-  'attachments',
-]
-
-function normalizeAddress(addr) {
-  if (!addr) {
-    return undefined
-  } else if (Array.isArray(addr)) {
-    addr = addr.map(normalizeAddress).filter((v) => v)
-    if (addr.length === 0) {
-      return undefined
-    } else {
-      return addr.join(', ')
-    }
-  } else if (typeof addr === 'string') {
-    return addr
-  } else {
-    if (addr.email && addr.name) {
-      return `${addr.name} <${addr.email}>`
-    } else {
-      return addr.email
-    }
-  }
 }
 
 async function templateEmail(client, settings, options) {

@@ -95,26 +95,16 @@ describe('Valid', () => {
     [1, 1, 1],
     [16, 0, 0],
   ])(
-    'Arrives %d days from now, %d available to be ordered, %d in stock',
-    (days, available, quantity, existing = false) => {
-      withinDate({ hour: 0 }, () => {
+    'Arrives %d days from now with %d available to be ordered, %d in stock',
+    (days, available, quantity, existing = 0) => {
+      withinDate({ hour: 1 }, () => {
         const today = timing.day().add(days, 'day')
-        const valid = timing.valid(
-          today,
-          available,
-          quantity,
-          Number(existing)
-        )
+        const valid = timing.valid(today, available, quantity, existing)
         expect(valid).toBeTruthy()
       })
       withinDate({ hour: 13 }, () => {
         const today = timing.day().add(days, 'day')
-        const valid = timing.valid(
-          today,
-          available,
-          quantity,
-          Number(existing)
-        )
+        const valid = timing.valid(today, available, quantity, existing)
         expect(valid).toBeFalsy()
       })
     }
@@ -125,10 +115,14 @@ describe('Valid', () => {
     [14, 0, 1],
   ])(
     'Does not arrive %d days from now, %d available to be ordered, %d in stock',
-    (days, available, quantity, existing = false, expected = false) => {
-      const today = timing.day().add(days, 'day')
-      const valid = timing.valid(today, available, quantity, Number(existing))
-      expect(valid).toBe(expected)
+    (days, available, quantity, existing = 0) => {
+      for (const hour of [0, 13]) {
+        withinDate({ hour }, () => {
+          const today = timing.day().add(days, 'day')
+          const valid = timing.valid(today, available, quantity, existing)
+          expect(valid).toBeFalsy()
+        })
+      }
     }
   )
 })

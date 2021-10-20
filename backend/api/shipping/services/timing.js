@@ -120,7 +120,7 @@ function overlap(date1, date2, granularity = 'day') {
  * @returns {boolean} True if there is enough time for order to go through lifecycle
  * without letting the product available quantity be negative.
  */
-function valid(date, available, quantity, existing) {
+function valid(date, available, quantity, existing = 0) {
   // Grace period is time to allow items not in stock to be procured
   const hasQuantity = quantity > 0
   const gracePeriodInUse = existing > 0
