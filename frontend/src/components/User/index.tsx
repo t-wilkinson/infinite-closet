@@ -61,10 +61,10 @@ const SideMenu = () => {
     axios
       .post('/account/signout', {}, { withCredentials: true })
       .then((res) => {
+        router.push('/')
         dispatch(userActions.signout())
           .then(() => dispatch(CartUtils.count()))
           .then(() => dispatch(CartUtils.view()))
-        router.push('/')
       })
       .catch((err) => console.error(err))
   }
