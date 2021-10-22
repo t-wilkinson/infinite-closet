@@ -14,7 +14,9 @@ export const Banner = () => {
           storage.session.set('popup-form', true)
         }}
       >
-        Get 10% off your first rental when you join our mailing list
+        {/* Get 10% off your first rental when you join our mailing list */}
+        Rent your holiday looks by selecting a 4 day rental for Dec 22 and keep
+        your outfits until Jan 4. Our gift to you!
       </button>
     </div>
   )
