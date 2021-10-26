@@ -1,20 +1,32 @@
-const defaultData = {
+const defaultOrderData = {
   status: 'cart',
-  rentalLength: 'short',
-  startDate: new Date().toJSON(),
   size: 'MD',
-  // address: {
-  //   address: '120, 234',
-  //   town: 'Town',
-  //   postcode: 'Postcode',
-  //   firstName: 'First Name',
-  //   lastName: 'Last Name',
-  // },
-  // user: {
-  //   firstName: 'First Name',
-  //   lastName: 'Last Name',
-  // },
+  startDate: new Date().toJSON(),
+  shippingDate: null,
+  rentalLength: 'short',
+  address: {
+    fullName: 'First Last',
+    addressLine1: 'Line 1',
+    addressLien2: 'Line 2',
+    town: 'Town',
+    postcode: 'Postcode',
+  },
+  paymentMethod: null,
+  paymentIntent: null,
+  shipment: null,
+  product: null,
+  user: null,
+  insurance: false,
+  coupon: null,
+  charge: null,
+  fullName: 'First Last',
+  nickName: 'Nick name',
+  email: 'firstlast@example.com',
 }
+
+// const defaultCartItemData = {
+//   order: defaultOrderData,
+// }
 
 /**
  * @param {object} options that overwrites default options
@@ -25,7 +37,7 @@ const defaultData = {
  */
 const mockOrderData = (options = {}) => {
   return {
-    ...defaultData,
+    ...defaultOrderData,
     ...options,
   }
 }
@@ -47,5 +59,5 @@ const createOrder = async (strapi, data) => {
 module.exports = {
   mockOrderData,
   createOrder,
-  defaultData,
+  defaultOrderData,
 }

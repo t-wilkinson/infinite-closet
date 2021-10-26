@@ -1,16 +1,21 @@
+const { withinDate } = require('../helpers')
 const timing = require('../../api/shipping/services/timing')
 const shipment = require('../../api/shipping/services/shipment')
 const hived = require('../../api/shipping/services/utils/hived')
-const MockDate = require('mockdate')
-const objectSupport = require('dayjs/plugin/objectSupport')
-const dayjs = require('dayjs')
-dayjs.extend(objectSupport)
+const { day } = require('../../api/shipping/services/timing')
 
-const withinDate = (day, fn) => {
-  MockDate.set(timing.day().set(day).toDate())
-  fn()
-  MockDate.reset()
-}
+describe('Shipment timing', () => {
+  const cutoff = hived.config.cutoff
+  const today = day().set({ hour: cutoff, second: 0 })
+
+  it.each([
+    [today.set({ hour: 0 }), today.add({ day: 1 })],
+    [today, today.add({ day: 2 })],
+  ])('When sent on %j, arrives on %j', (sent, expects) => {
+    const arrives = shipment.arrival(sent)
+    expect(expects.isSame(arrives, 'hour')).toBeTruthy()
+  })
+})
 
 describe('Arrival', () => {
   let today = timing.day()

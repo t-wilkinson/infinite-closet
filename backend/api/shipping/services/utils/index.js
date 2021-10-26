@@ -3,11 +3,13 @@ const isBetween = require('dayjs/plugin/isBetween')
 const utc = require('dayjs/plugin/utc')
 const timezone = require('dayjs/plugin/timezone')
 const isSameOrAfter = require('dayjs/plugin/isSameOrAfter')
+const objectSupport = require('dayjs/plugin/objectSupport')
 
 dayjs.extend(isSameOrAfter)
 dayjs.extend(isBetween)
 dayjs.extend(utc)
 dayjs.extend(timezone)
+dayjs.extend(objectSupport)
 
 /**
  * Use same timezone for all dates for more predictable and reliable behavior

@@ -1,12 +1,10 @@
 const pricingApi = require('../../plugins/orders/services/price')
-// const { createOrder } = require('./factory')
+const { mockOrderData } = require('./factory')
 
 describe.skip('Total Price', () => {
-  it('should sum', async () => {
-    const totalPrice = await pricingApi.summary({
-      cart: [],
-      user: undefined,
-    })
-    expect(totalPrice.total).toBe(0)
+  it('Total price is calculated', async () => {
+    const orderData = mockOrderData()
+    const price = pricingApi.orderPrice(orderData)
+    console.log(price)
   })
 })

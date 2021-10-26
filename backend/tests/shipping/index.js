@@ -4,7 +4,6 @@
 // const { jwt } = require('./../helpers/strapi')
 
 require('./timing')
-it.todo('Cleaning')
 
 // describe('Shipping service', () => {
 //   let order

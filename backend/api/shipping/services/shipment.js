@@ -4,15 +4,25 @@ const hived = require('./utils/hived')
 const HOURS_IN_DAY = 24
 
 /**
+ * @typedef ShippingClass
+ * @type {'one'|'two'}
+ */
+
+/**
+ * @typedef DateLike
+ * @type {Date|Dayjs}
+ */
+
+/**
  * Determine when an item will likely arrive, given shipping info
- * @param {DayLike} sent - When the item is sent
+ * @param {DateLike} sent - When the item is sent
  * @param {ShippingClass} shippingClass
  * @returns {DateLike} When item will arrive
  */
 function arrival(sent, shippingClass = 'one') {
   sent = day(sent)
   const hoursSendClient = hived.config.shippingClassesHours[shippingClass]
-  const offset = sent.hour() > hived.config.cutoff ? HOURS_IN_DAY : 0
+  const offset = sent.hour() >= hived.config.cutoff ? HOURS_IN_DAY : 0
   const arrives = sent
     .add(hoursSendClient + offset, 'hours')
     .hour(hived.config.cutoff)

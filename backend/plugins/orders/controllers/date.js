@@ -31,23 +31,37 @@ module.exports = {
       return order
     })
 
-    // For each date, find available product is available for order
+    // Find if product is available on each date
     let validDates = {}
-    // prettier-ignore
     for (const date of dates) {
       if (orders.length === 0) {
-        validDates[date] = strapi.services.timing.valid(date, quantity, quantity)
+        validDates[date] = strapi.services.timing.valid(
+          date,
+          quantity,
+          quantity
+        )
         continue
       } else {
         const key = strapi.plugins['orders'].services.order.toKey(orders[0]) // all orders have the same key
-        const dates = { [key]: [strapi.services.timing.range({
-          startDate: date,
-          rentalLength,
-          created_at: strapi.services.timing.day(),
-        })] }
-        const numAvailable = strapi.plugins['orders'].services.order.numAvailable(orders, dates)[key]
+        const dates = {
+          [key]: [
+            strapi.services.timing.range({
+              startDate: date,
+              rentalLength,
+              created_at: strapi.services.timing.day(),
+            }),
+          ],
+        }
+        const numAvailable = strapi.plugins[
+          'orders'
+        ].services.order.numAvailable(orders, dates)[key]
 
-        validDates[date] = strapi.services.timing.valid(date, numAvailable, quantity, orders.length)
+        validDates[date] = strapi.services.timing.valid(
+          date,
+          numAvailable,
+          quantity,
+          orders.length
+        )
       }
     }
 
