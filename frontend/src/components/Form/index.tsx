@@ -89,7 +89,6 @@ export const Input = ({
       }}
       onBlur={() => {
         setFocused(false)
-        setChanged(true)
       }}
     >
       <label

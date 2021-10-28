@@ -3,13 +3,13 @@ ARG NODE_ENV=development
 ARG FRONTEND_DOMAIN
 
 # alpine wont work for now because of the low-level `sharp` library
-FROM node:14-buster-slim as deps
+FROM node:14 as deps
 WORKDIR /app
 COPY package.json yarn.lock ./
 COPY ./providers ./providers
 RUN yarn install --frozen-lockfile
 
-FROM node:14-buster-slim as base
+FROM node:14 as base
 WORKDIR /app
 COPY . ./
 COPY --from=deps /app/node_modules ./node_modules

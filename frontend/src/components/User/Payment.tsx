@@ -2,14 +2,14 @@ import React from 'react'
 import axios from 'axios'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
-import { StrapiUser } from '@/utils/models'
-import { fetchAPI } from '@/utils/api'
-import { Button, Icon } from '@/components'
-import { PaymentWrapper } from '@/Form/Payments'
-import { useSignin } from '@/User'
-import useAnalytics from '@/utils/useAnalytics'
-import { useFields, cleanFields } from '@/Form/useFields'
 import { Input } from '@/Form'
+import { PaymentWrapper } from '@/Form/Payments'
+import { useFields, cleanFields } from '@/Form/useFields'
+import { useSignin } from '@/User'
+import {BlueLink, Button, Icon } from '@/components'
+import { fetchAPI } from '@/utils/api'
+import { StrapiUser } from '@/utils/models'
+import useAnalytics from '@/utils/useAnalytics'
 
 import './CheckoutForm.module.css'
 import { iconClose, iconCheck } from '@/components/Icons'
@@ -180,7 +180,9 @@ export const Authorise = ({ setAuthorisation, authorised }) => (
       <span className="w-full text-left">
         I authorise Infinite Closet to send instructions to the financial
         institution that issued my card to take payments from my card account in
-        accordance with the terms of my agreement with you.
+        accordance with the {' '}
+        <BlueLink href="/terms-and-conditions" label="terms and conditions" />
+        .
       </span>
     </div>
   </button>

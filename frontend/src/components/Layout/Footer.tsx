@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import axios from 'axios'
 
 import useFields, { cleanFields } from '@/Form/useFields'
@@ -186,7 +185,7 @@ const Waitlist = () => {
       <div className="flex-row space-x-4 w-full">
         <Input
           {...fields.footerEmail}
-          after={<Button className="">Join</Button>}
+          after={<Button className="h-full">Join</Button>}
         />
       </div>
       <h3 className="font-bold text-sm -mt-1 text-white">
