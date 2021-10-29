@@ -36,7 +36,7 @@ module.exports = {
       return
     }
 
-    const order = await strapi.plugins['orders'].services.order.create({
+    const order = await strapi.query('order', 'orders').create({
       user: user ? user.id : undefined,
       status: body.status,
       size: body.size,

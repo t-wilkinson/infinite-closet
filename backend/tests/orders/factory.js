@@ -47,9 +47,7 @@ const mockOrderData = (options = {}) => {
 const createOrder = async (strapi, data) => {
   let options = Object.assign(mockOrderData(), data)
 
-  return await strapi.plugins['orders'].services.order.create({
-    ...options,
-  })
+  return await strapi.query('order', 'orders').create(options)
 }
 
 module.exports = {
