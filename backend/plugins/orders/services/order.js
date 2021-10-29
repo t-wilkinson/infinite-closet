@@ -39,6 +39,21 @@ function toKey({ product, size }) {
 }
 
 /**
+ * Convert order to shipping address for shipments
+ */
+function toShippingAddress(order) {
+  const { address, user } = order
+  return {
+    name: address.fullName,
+    address: [address.addressLine1, address.addressLine2],
+    town: address.town,
+    postcode: address.postcode,
+    email: address.email || user.email,
+    phone: address.phoneNumber,
+  }
+}
+
+/**
  * Find all orders that have the same {@link OrderProduct}
  * @param {OrderProduct}
  * @returns {Order[]}
@@ -130,27 +145,11 @@ async function totalAvailable(order, orders) {
   return quantity - overlaps
 }
 
-/**
- * Convert order to shipping address for shipments
- */
-function toShippingAddress(order) {
-  const { address, user } = order
-  return {
-    name: address.fullName,
-    address: [address.addressLine1, address.addressLine2],
-    town: address.town,
-    postcode: address.postcode,
-    email: address.email || user.email,
-    phone: address.phoneNumber,
-  }
-}
-
 module.exports = {
   toKey,
-  productQuantity,
   inProgress,
+  productQuantity,
   toShippingAddress,
-
   overlap,
   totalOverlaps,
   relevantOrders,
