@@ -3,28 +3,29 @@ const orderUtils = require('./order')
 const priceUtils = require('./price')
 
 // calculate number of available products for each cart item
+/**
+ * For each order, find the number of existing orders whose lifecycle overlaps
+ * @param {Order[]} orders
+ * @returns {object<string,number>}
+ */
 async function numAvailable(orders = []) {
-  const reqRanges = orders.reduce((acc, order) => {
+  const available = {}
+
+  for (const order of orders) {
     const key = orderUtils.toKey(order)
-    if (!acc[key]) {
-      acc[key] = []
+    if (available[key]) {
+      continue
     }
-    acc[key].push(strapi.services.timing.range(order))
-    return acc
-  }, {})
 
-  // attach `sizes` component to `order.product.sizes`
-  orders = await strapi.query('order', 'orders').find({}, [])
-  orders = await Promise.all(
-    orders.map(async (order) => {
-      order.product = await strapi
-        .query('product')
-        .findOne({ id: order.product }, ['sizes'])
-      return order
-    })
-  )
+    const relevantOrders = await strapi.plugins[
+      'orders'
+    ].services.order.relevantOrders(order)
+    available[key] = await strapi.plugins[
+      'orders'
+    ].services.order.totalAvailable(order, relevantOrders)
+  }
 
-  return orderUtils.numAvailable(orders, reqRanges)
+  return available
 }
 
 async function createCartItem(order) {
@@ -54,7 +55,7 @@ async function createCartItem(order) {
 }
 
 async function createAvailableCartItem(numAvailableOrders, order) {
-  const quantity = await orderUtils.quantity(order)
+  const quantity = await orderUtils.productQuantity(order)
   const key = orderUtils.toKey(order)
 
   const existingOrders = await strapi.query('order', 'orders').count({

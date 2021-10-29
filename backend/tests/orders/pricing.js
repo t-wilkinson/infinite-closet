@@ -5,6 +5,5 @@ describe.skip('Total Price', () => {
   it('Total price is calculated', async () => {
     const orderData = mockOrderData()
     const price = pricingApi.orderPrice(orderData)
-    console.log(price)
   })
 })

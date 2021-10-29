@@ -70,7 +70,7 @@ async function shipCart({
     await strapi.plugins['email'].services.email
       .send({
         template: 'checkout',
-        to: contact.email,
+        to: { name: contact.fullName, email: contact.email },
         bcc:
           process.env.NODE_ENV === 'production'
             ? [
@@ -114,7 +114,6 @@ module.exports = {
     }
 
     try {
-      strapi.log.error('checkoutUser')
       await stripe.paymentIntents
         .create({
           amount: summary.amount,

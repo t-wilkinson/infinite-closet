@@ -16,49 +16,34 @@ module.exports = {
       .findOne({ id: product.id || product }, ['sizes'])
     const quantity = orderProduct.sizes.find((s) => s.size === size).quantity
 
-    const matchingOrders = await strapi.query('order', 'orders').find(
-      {
-        product: orderProduct.id,
-        size,
-        status_in: strapi.plugins['orders'].services.order.inProgress,
-      },
-      []
+    const orders = await strapi.plugins['orders'].services.order.relevantOrders(
+      { size, product: orderProduct }
     )
 
-    // Attach product to orders
-    const orders = matchingOrders.map((order) => {
-      order.product = orderProduct
-      return order
-    })
-
-    // Find if product is available on each date
+    // Find if order can be made on each date
     let validDates = {}
     for (const date of dates) {
       if (orders.length === 0) {
         validDates[date] = strapi.services.timing.valid(
           date,
-          quantity,
+          quantity, // If no orders exist for that product then numAvailable=quantity
           quantity
         )
         continue
       } else {
-        const key = strapi.plugins['orders'].services.order.toKey(orders[0]) // all orders have the same key
-        const dates = {
-          [key]: [
-            strapi.services.timing.range({
-              startDate: date,
-              rentalLength,
-              created_at: strapi.services.timing.day(),
-            }),
-          ],
-        }
-        const numAvailable = strapi.plugins[
-          'orders'
-        ].services.order.numAvailable(orders, dates)[key]
+        const range = strapi.services.timing.range({
+          startDate: date,
+          rentalLength,
+        })
+
+        const overlaps = strapi.plugins['orders'].services.order.totalOverlaps(
+          range,
+          orders
+        )
 
         validDates[date] = strapi.services.timing.valid(
           date,
-          numAvailable,
+          quantity - overlaps,
           quantity,
           orders.length
         )

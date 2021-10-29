@@ -24,10 +24,6 @@ const defaultOrderData = {
   email: 'firstlast@example.com',
 }
 
-// const defaultCartItemData = {
-//   order: defaultOrderData,
-// }
-
 /**
  * @param {object} options that overwrites default options
  * @param {Date} options.startDate that overwrites default options

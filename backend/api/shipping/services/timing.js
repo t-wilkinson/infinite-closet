@@ -91,6 +91,13 @@ function range({ startDate, shippingDate, rentalLength }) {
  * @returns {boolean} True if the dates overlap
  */
 function overlap(date1, date2, granularity = 'day') {
+  if (!isDateRange(date1)) {
+    date1 = day(date1)
+  }
+  if (!isDateRange(date2)) {
+    date2 = day(date2)
+  }
+
   switch ([isDateRange(date1), isDateRange(date2)].toString()) {
     case 'true,true':
       return !(
@@ -116,7 +123,7 @@ function overlap(date1, date2, granularity = 'day') {
  * @param {Date} date - Start date of order
  * @param {number=} available - Number of product sizes that do not overlap with orders
  * @param {number=} quantity - Total number of product sizes in stock
- * @param {number=} existing - Total number of orders of specific product size
+ * @param {number=} existing - Total number of orders of specific product size. Lets us check if product has been ordered before.
  * @returns {boolean} True if there is enough time for order to go through lifecycle
  * without letting the product available quantity be negative.
  */
