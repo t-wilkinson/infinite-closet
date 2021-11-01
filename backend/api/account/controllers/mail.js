@@ -45,7 +45,7 @@ module.exports = {
     ctx.send({ ok: true })
   },
 
-  async mailinglist(ctx) {
+  async mailingList(ctx) {
     const body = ctx.request.body
 
     await strapi.plugins['email'].services.email.send({

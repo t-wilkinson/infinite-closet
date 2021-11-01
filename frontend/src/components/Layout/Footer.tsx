@@ -146,7 +146,7 @@ const Waitlist = () => {
     e.preventDefault()
     const cleaned = cleanFields(fields)
     axios
-      .post('/account/mailinglist', {
+      .post('/account/mailing-list', {
         email: cleaned.footerEmail,
       })
       .then(() => setStatus('Submitted'))

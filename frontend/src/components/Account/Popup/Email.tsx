@@ -22,7 +22,7 @@ export const Email = () => {
   const joinMailingList = () => {
     const cleaned = cleanFields(fields)
     axios
-      .post('/account/mailinglist', {
+      .post('/account/mailing-list', {
         name: cleaned.name,
         email: cleaned.email,
         dateOfBirth: toDate(dateOfBirth).toJSON(),

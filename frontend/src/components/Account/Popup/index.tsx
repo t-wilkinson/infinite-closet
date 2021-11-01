@@ -9,12 +9,12 @@ import { iconClose } from '@/components/Icons'
 
 const PopupRegister = dynamic(() => import('./Register'))
 const PopupSignin = dynamic(() => import('./Signin'))
-const PopupJoinWaitlist = dynamic(() => import('./JoinWaitlist'))
+// const PopupJoinWaitlist = dynamic(() => import('./JoinWaitlist'))
 const PopupEmail = dynamic(() => import('./Email'))
 
 const popups = {
   hidden: () => null,
-  waitlist: PopupJoinWaitlist,
+  // waitlist: PopupJoinWaitlist,
   email: PopupEmail,
   register: PopupRegister,
   signin: PopupSignin,
