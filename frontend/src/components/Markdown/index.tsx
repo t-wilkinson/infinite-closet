@@ -89,7 +89,7 @@ export const MarkdownWrapper = ({
             Last Updated: {updated_at}
           </span>
         </div>
-        <div className="flex-row">
+        <div className="sm:flex-row">
           <TableOfContents />
           <div className="w-full items-center">
             <Markdown content={content} />
@@ -138,9 +138,9 @@ export const TableOfContents = () => {
   }
 
   return (
-    <div className="w-1/3 items-start p-4 space-y-2">
+    <div className="w-full sm:w-1/3 items-start p-4 space-y-2">
       <Divider />
-      <nav className="flex flex-col w-full space-y-2">
+      <nav className="flex flex-col items-center sm:items-start w-full space-y-2">
         {headings.map(({ heading, children }) => (
           <React.Fragment key={heading}>
             <Link href={`#${headingToID(heading)}`}>

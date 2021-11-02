@@ -52,7 +52,7 @@ const HeaderAside = () => {
             </>
           )}
           <AsideLink href="/about-us" label="About Us" />
-          <AsideLink href="/help" label="Help" />
+          <AsideLink href="/faqs" label="Help" />
           <Divider className="my-2" />
         </div>
       </aside>
