@@ -65,7 +65,7 @@ module.exports = {
       subject: 'You subscribed to the mailing list',
     })
 
-    const [firstName, lastName] = splitName(body.name)
+    const { firstName, lastName } = splitName(body.name)
     await strapi.query('contact').create({
       email: body.email,
       phoneNumber: body.phoneNumber,

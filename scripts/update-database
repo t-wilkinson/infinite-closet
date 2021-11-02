@@ -5,6 +5,15 @@ if [[ $(basename $(pwd)) != 'infinite-closet' ]]; then
     exit 1
 fi
 
-rsync -avz infinitecloset:/www/infinite-closet/main/backend/public/uploads/ ./backend/public/uploads
-ssh infinitecloset 'docker exec dev_db_1 pg_dump -d infinite-closet-dev -U test -CcO | bzip2'  | bunzip2 | docker exec -i local_db_1 psql -d infinite-closet-dev -U test
+# Sync uploaded photos
+# rsync -avz infinitecloset:/www/infinite-closet/main/backend/public/uploads/ ./backend/public/uploads
 
+# Sync the database
+ssh infinitecloset 'docker exec prod_db_1 pg_dump -d infinite-closet -U infinite-closet -CcO | bzip2'  | bunzip2 | scripts/exec-psql local -i
+
+scripts/exec-psql local -i <<SQL
+\c postgres
+DROP DATABASE IF EXISTS "infinite-closet-dev-old";
+ALTER DATABASE "infinite-closet-dev" RENAME TO "infinite-closet-dev-old";
+ALTER DATABASE "infinite-closet" RENAME TO "infinite-closet-dev";
+SQL

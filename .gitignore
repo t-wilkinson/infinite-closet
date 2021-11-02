@@ -48,7 +48,6 @@ $RECYCLE.BIN/
 # Logs and Databases
 .tmp
 *.log
-*.sql
 *.sqlite
 *.sqlite3
 
