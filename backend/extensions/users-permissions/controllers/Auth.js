@@ -542,16 +542,12 @@ module.exports = {
         .query('user', 'users-permissions')
         .create(params)
 
-      if (ctx.request.body.subscribed) {
-        await strapi.query('contact').create({
-          contact: user.email,
-          context: ctx.request.body.subscribed,
-          metadata: {
-            name: `${user.firstName} ${user.lastName}`,
-            email: user.email,
-          },
-        })
-      }
+      await strapi.query('contact').create({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        subscribed: ctx.request.body.subscribed,
+      })
 
       const sanitizedUser = sanitizeEntity(user, {
         model: strapi.query('user', 'users-permissions').model,

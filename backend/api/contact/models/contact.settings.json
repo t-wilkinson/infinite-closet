@@ -11,15 +11,27 @@
     "draftAndPublish": false
   },
   "attributes": {
+    "email": {
+      "type": "string"
+    },
+    "phoneNumber": {
+      "type": "string"
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "lastName": {
+      "type": "string"
+    },
+    "dateOfBirth": {
+      "type": "date"
+    },
+    "subscribed": {
+      "type": "boolean",
+      "default": false
+    },
     "metadata": {
       "type": "json"
-    },
-    "context": {
-      "type": "enumeration",
-      "enum": ["mailinglist", "waitlist", "launch_party", "newsletter"]
-    },
-    "contact": {
-      "type": "string"
     }
   }
 }
