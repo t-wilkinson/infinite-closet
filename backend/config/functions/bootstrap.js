@@ -1,9 +1,9 @@
 'use strict'
 
-const fs = require('fs')
+// const fs = require('fs')
 const models = require('../../data/data.js').models
 
-const { categories } = require('../../data/data')
+// const { categories } = require('../../data/data')
 
 const setDefaultPermissions = async () => {
   const permissions_applications = await strapi

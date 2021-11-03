@@ -1,23 +1,20 @@
 function normalizeAddress(addr) {
-  const type = Object.prototype.toString.call(addr)
-
-  if (type === '[object Array]') {
-    addr = addr.map(normalizeAddress).filter((v) => v)
-    if (addr.length === 0) {
-      return undefined
-    } else {
+  switch (Object.prototype.toString.call(addr)) {
+    case '[object Array]':
+      addr = addr.map(normalizeAddress).filter((v) => v)
+      if (addr.length === 0) {
+        return undefined
+      }
       return addr.join(', ')
-    }
-  } else if (type === '[object String]') {
-    return addr
-  } else if (type === '[object Object]') {
-    if (addr.email && addr.name) {
-      return `${addr.name} <${addr.email}>`
-    } else {
+    case '[object String]':
+      return addr
+    case '[object Object]':
+      if (addr.email && addr.name) {
+        return `${addr.name} <${addr.email}>`
+      }
       return addr.email
-    }
-  } else {
-    return undefined
+    default:
+      return undefined
   }
 }
 

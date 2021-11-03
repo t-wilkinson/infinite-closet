@@ -3,9 +3,17 @@
 const mailchimp = require('@mailchimp/mailchimp_transactional')(
   process.env.MAILCHIMP_TOKEN
 )
-const emailTemplates = require('email-templates')
+// const emailTemplates = require('email-templates')
 
 module.exports = mailchimp
+
+/**
+ * @typedef {object} message
+ * @prop {string} from_email
+ * @prop {string} from_name
+ * @prop {string} subject
+ * @prop {string|object|string[]|object[]} to
+ */
 
 const default_message = {
   merge_language: 'handlebars',
@@ -18,17 +26,24 @@ const default_message = {
 // message.to expects [{email, name, type}], not [email]
 const normalizeTo = (to) => {
   const res = []
-  if (typeof to === 'string') {
-    res.push({ email: to })
-  } else {
-    for (const email in to) {
-      if (typeof email === 'string') {
-        res.push({ email })
-      } else {
-        res.push(email)
+  switch (Object.prototype.toString.call(to)) {
+    case '[object String]':
+      res.push({ email: to, type: 'to' })
+      break
+    case '[object Object]':
+      res.push({ type: 'to', ...to })
+      break
+    case '[object Array]':
+      for (const email in to) {
+        if (typeof email === 'string') {
+          res.push({ email, type: 'to' })
+        } else {
+          res.push({ type: 'to', ...email })
+        }
       }
-    }
+      break
   }
+
   return res
 }
 
