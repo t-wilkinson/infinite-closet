@@ -70,7 +70,7 @@ module.exports = {
     })
 
     const { firstName, lastName } = splitName(body.name)
-    await strapi.query('contact').create({
+    strapi.query('contact').create({
       email: body.email,
       phoneNumber: body.phoneNumber || null,
       firstName,

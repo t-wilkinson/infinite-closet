@@ -3,6 +3,11 @@
 module.exports = {
   lifecycles: {
     async afterCreate(result) {
+      strapi.log.debug(
+        'created contact',
+        result,
+        strapi.services.mailchimp.contactsListId
+      )
       if (process.env.NODE_ENV === 'production') {
         const res = await strapi.services.mailchimp.lists.addListMember(
           strapi.services.mailchimp.contactsListId,
