@@ -64,7 +64,7 @@ module.exports = {
     //   subject: 'You subscribed to the mailing list',
     // })
 
-    strapi.services.mailchimp.template('mailing-list', {
+    strapi.services.mailchimp.template('welcome-to-the-fashion-revolution', {
       subject: 'Welcome to the fashion revolution',
       to: { name: body.name, email: body.email },
     })
