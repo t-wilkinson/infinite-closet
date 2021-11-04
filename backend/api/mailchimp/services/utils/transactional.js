@@ -21,6 +21,10 @@ const default_message = {
   from_name: 'Infinite Closet',
   subject: 'Infinite Closet',
   inline_css: true,
+  COMPANY: ['Infinite Closet'],
+  DESCRIPTION: [],
+  LIST_ADDRESS_HTML:
+    '<a href="mailto:info@infinitecloset.co.uk">info@infinitecloset.co.uk</a>',
 }
 
 // message.to expects [{email, name, type}], not [email]
@@ -48,7 +52,9 @@ const normalizeTo = (to) => {
 }
 
 const normalizeVars = (merge_vars) => {
-  if (Array.isArray(merge_vars)) {
+  if (!merge_vars) {
+    return []
+  } else if (Array.isArray(merge_vars)) {
     return merge_vars
   } else {
     return Object.entries(merge_vars).map(([k, v]) => ({
@@ -62,9 +68,8 @@ const normalizeMessage = (message) => {
   let msg = { ...default_message, ...message }
 
   msg.to = normalizeTo(message.to)
-  if ('global_merge_vars' in message) {
-    msg.global_merge_vars = normalizeVars(message.global_merge_vars)
-  }
+  msg.global_merge_vars = normalizeVars(message.global_merge_vars)
+  msg.merge_vars = normalizeVars(message.merge_vars)
   return msg
 }
 
