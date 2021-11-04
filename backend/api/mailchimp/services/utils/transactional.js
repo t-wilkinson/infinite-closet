@@ -21,9 +21,9 @@ const default_message = {
   from_name: 'Infinite Closet',
   subject: 'Infinite Closet',
   inline_css: true,
-  COMPANY: ['Infinite Closet'],
-  DESCRIPTION: [],
-  LIST_ADDRESS_HTML:
+  'LIST:COMPANY': ['Infinite Closet'],
+  'LIST:DESCRIPTION': [],
+  'HTML:LIST_ADDRESS_HTML':
     '<a href="mailto:info@infinitecloset.co.uk">info@infinitecloset.co.uk</a>',
 }
 
