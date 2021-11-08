@@ -80,7 +80,20 @@ class MyDocument extends Document {
 
 const Production = () => (
   <>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-160256805-2">
+    </script>
+    <script dangerouslySetInnerHTML={{
+      __html: `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-160256805-2');
+      `}}
+    />
+
     <script src="https://www.googleoptimize.com/optimize.js?id=OPT-WBR7X5S"></script>
+
     <meta
       name="facebook-domain-verification"
       content="269etuycs1smrwxwh8odkse0wn00z6"

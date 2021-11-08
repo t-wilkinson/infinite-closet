@@ -102,6 +102,19 @@ const Wrapper = ({ router, children }) => {
     document.getElementById('_app').removeEventListener('scroll', showPopup)
   }
 
+  const handleRouteChange = (url) => {
+    window.gtag('config', '[Tracking ID]', {
+      page_path: url,
+    });
+  };
+
+  React.useEffect(() => {
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.events]);
+
   React.useEffect(() => {
     analytics.setCurrentScreen(router.asPath)
     if (!document.title) {

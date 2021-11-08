@@ -1,4 +1,7 @@
 'use strict'
+/**
+ * Core functions for manipulating date and time.
+ */
 
 const { day } = require('./utils')
 const { cleaningDuration } = require('./cleaning')
@@ -120,12 +123,13 @@ function overlap(date1, date2, granularity = 'day') {
 }
 
 /**
+ * A date is valid if there is enough time for order to go through lifecycle
+ * without letting the product available quantity be negative.
  * @param {Date} date - Start date of order
  * @param {number=} available - Number of product sizes that do not overlap with orders
  * @param {number=} quantity - Total number of product sizes in stock
  * @param {number=} existing - Total number of orders of specific product size. Lets us check if product has been ordered before.
- * @returns {boolean} True if there is enough time for order to go through lifecycle
- * without letting the product available quantity be negative.
+ * @returns {boolean}
  */
 function valid(date, available, quantity, existing = 0) {
   // Grace period is time to allow items not in stock to be procured
