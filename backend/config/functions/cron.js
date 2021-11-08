@@ -1,15 +1,5 @@
 'use strict'
-
-// Split name into first and last name
-function splitName(name) {
-  if (!name || typeof name !== 'string') {
-    return { firstName: '', lastName: '' }
-  }
-
-  const [first, last] = name.split('[^.] ') // Don't split `Dr.`, etc.
-
-  return { firstName: first || '', lastName: last || '' }
-}
+const { splitName } = require('../../api/utils')
 
 function isValidDate(date) {
   return date instanceof Date && !isNaN(date)

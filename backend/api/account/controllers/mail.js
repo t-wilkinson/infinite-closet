@@ -1,14 +1,5 @@
 'use strict'
-
-// Split name into first and last name
-function splitName(name) {
-  if (!name || typeof name !== 'string') {
-    return { firstName: null, lastName: null }
-  }
-
-  const [first, last] = name.split('[^.] ') // Don't split `Dr.`, etc.
-  return { firstName: first || null, lastName: last || null }
-}
+const { splitName } = require('../../utils')
 
 module.exports = {
   // async newsletter(ctx) {

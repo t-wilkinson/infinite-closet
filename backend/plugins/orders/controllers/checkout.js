@@ -1,5 +1,10 @@
 'use strict'
+/**
+ * Everything to do with checkout
+ */
+
 const stripe = require('stripe')(process.env.STRIPE_KEY)
+const { splitName } = require('../../../api/utils')
 
 async function prepareCheckout(body, user = null) {
   const cart = await strapi.plugins['orders'].services.cart.createValidCart(
@@ -23,7 +28,7 @@ async function prepareCheckout(body, user = null) {
 }
 
 async function shipCart({
-  contact,
+  contact, // {fullName, nickName, email}
   address,
   cart,
   summary,
@@ -67,8 +72,25 @@ async function shipCart({
 
   if (contact) {
     console.log('shipCart', { contact, summary, cart })
-    await strapi.plugins['email'].services.email
-      .send({
+
+    try {
+      const existingContact = await strapi
+        .query('contact')
+        .findOne({ email: contact.email })
+      const { firstName, lastName } = splitName(contact.fullName)
+      const contactData = { firstName, lastName }
+
+      if (existingContact) {
+        strapi.query('contact').update({ id: existingContact.id }, contactData)
+      } else {
+        strapi.query('contact').insert(contactData)
+      }
+    } catch (e) {
+      strapi.log.error('Failure creating contact.', e)
+    }
+
+    try {
+      await strapi.plugins['email'].services.email.send({
         template: 'checkout',
         to: { name: contact.fullName, email: contact.email },
         bcc:
@@ -86,11 +108,9 @@ async function shipCart({
           totalPrice: summary.total,
         },
       })
-      .catch((e) => {
-        console.error(e)
-        strapi.error('Failed to send checkout email. Error:', e)
-      })
-    console.log('after shipCart email')
+    } catch (e) {
+      strapi.log.error('Failed to send checkout email. Error:', e)
+    }
   }
 }
 

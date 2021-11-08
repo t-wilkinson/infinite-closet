@@ -76,6 +76,17 @@ const generateAPI = (name, plugin = '') => {
   }
 }
 
+// Split name into first and last name
+function splitName(name) {
+  if (!name || typeof name !== 'string') {
+    return { firstName: null, lastName: null }
+  }
+
+  const [first, last] = name.split('[^.] ') // Don't split `Dr.`, etc.
+  return { firstName: first || null, lastName: last || null }
+}
+
 module.exports = {
   generateAPI,
+  splitName,
 }
