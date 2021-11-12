@@ -1,4 +1,5 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
+# Simple script to test mailchimp api
 
 dc="us19"
 apikey="7689fa4da0c6233b920f5b9079ee4f81-us19"

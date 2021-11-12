@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Run docker compose
+#
+# Arguments
+#   $1 = Docker service
+#   ${@:2} = Arguments pass to docker compose
+#
+
+declare -A profiles
+profiles[prod]="-p prod -f docker/compose.yml -f docker/compose.prod.yml"
+profiles[dev]="-p dev -f docker/compose.yml -f docker/compose.dev.yml"
+profiles[local]="-p local -f docker/compose.yml -f docker/compose.dev.yml -f docker/compose.local.yml"
+profiles[test]="-p local -f docker/compose.yml -f docker/compose.dev.yml -f docker/compose.test.yml"
+
+declare -A nodeenv
+nodeenv[prod]=production
+nodeenv[dev]=development
+nodeenv[local]=development
+nodeenv[test]=development
+
+NODE_ENV=${nodeenv[$1]} COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose ${profiles[$1]} ${@:2}

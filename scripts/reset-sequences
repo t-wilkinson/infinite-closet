@@ -1,4 +1,11 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
+# When moving stuff around on the database, sometimes the sequences can unsync with their table, causing duplicate ids.
+#
+# This script resyncs sequences of either specified table or all tables.
+# Arguments:
+#   $1 = docker service
+#   $2 = optional table
+#
 
 reset_sequences() {
     ./exec-psql $1 <<EOF
@@ -7,6 +14,7 @@ EOF
 }
 
 if [[ -z $2 ]]; then
+    # If no table is specified, resync all tables
     sequences=$(echo 'copy (select sequence_name from information_schema.sequences) to STDOUT with CSV;' | ./exec-psql $1 | sed 's/_id_seq//g')
     for sequence in $sequences; do
         reset_sequences $1 $sequence &

@@ -1,5 +1,5 @@
 -- `contacts` has a `metadata` column of type jsonb
--- This script maps some of the values in `metadata` to columns in the `contact` table
+-- This script maps some of the values in `metadata` to columns in the `contact` table.
 
 -- Return string or null if it is empty-like
 CREATE OR REPLACE FUNCTION str_or_null(text) RETURNS text AS $$

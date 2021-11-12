@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 """Move emails to database
+
+Emails are expected to be downloaded from gmail.
+Should be ran inside directory with emails.
+
 At this point we have multiple emails from newsletters and waitlists stored as emails.
-This script converts these emails to SQL insert statements.
+This script converts these emails to valid SQL insert statements to be fed into the database.
 """
 import os
 import re
