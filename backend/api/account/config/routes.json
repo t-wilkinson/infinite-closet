@@ -1,31 +1,6 @@
 {
   "routes": [
     {
-      "method": "GET",
-      "path": "/launch/party/price",
-      "handler": "launch.ticketPrice",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/launch/party/promo",
-      "handler": "launch.promo",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/launch/party/join",
-      "handler": "launch.join",
-      "config": {
-        "policies": []
-      }
-    },
-
-    {
       "method": "POST",
       "path": "/account/mailing-list",
       "handler": "mail.mailingList",

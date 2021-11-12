@@ -7,54 +7,6 @@
       "config": {
         "policies": []
       }
-    },
-    {
-      "method": "GET",
-      "path": "/size-charts",
-      "handler": "size-chart.find",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/size-charts/count",
-      "handler": "size-chart.count",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/size-charts/:id",
-      "handler": "size-chart.findOne",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/size-charts",
-      "handler": "size-chart.create",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "PUT",
-      "path": "/size-charts/:id",
-      "handler": "size-chart.update",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "DELETE",
-      "path": "/size-charts/:id",
-      "handler": "size-chart.delete",
-      "config": {
-        "policies": []
-      }
     }
   ]
 }

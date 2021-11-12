@@ -2,21 +2,12 @@
   "routes": [
     {
       "method": "GET",
-      "path": "/products/facebook-catalog.csv",
-      "handler": "product.facebookCatalog",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
       "path": "/products/filters",
       "handler": "product.query",
       "config": {
         "policies": []
       }
     },
-
     {
       "method": "GET",
       "path": "/products/routes",
@@ -33,55 +24,6 @@
         "policies": []
       }
     },
-
-    {
-      "method": "GET",
-      "path": "/designers",
-      "handler": "designer.find",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/designers/count",
-      "handler": "designer.count",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/designers/:slug",
-      "handler": "designer.findOne",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/designers",
-      "handler": "designer.create",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "PUT",
-      "path": "/designers/:id",
-      "handler": "designer.update",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "DELETE",
-      "path": "/designers/:id",
-      "handler": "designer.delete",
-      "config": {
-        "policies": []
-      }
-    },
     {
       "method": "GET",
       "path": "/products",
@@ -90,42 +32,20 @@
         "policies": []
       }
     },
+
     {
       "method": "GET",
-      "path": "/products/count",
-      "handler": "product.count",
+      "path": "/products/facebook-catalog.csv",
+      "handler": "product.facebookCatalog",
       "config": {
         "policies": []
       }
     },
+
     {
       "method": "GET",
-      "path": "/products/:slug",
-      "handler": "product.findOne",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/products",
-      "handler": "product.create",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "PUT",
-      "path": "/products/:id",
-      "handler": "product.update",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "DELETE",
-      "path": "/products/:id",
-      "handler": "product.delete",
+      "path": "/designers",
+      "handler": "designer.find",
       "config": {
         "policies": []
       }
