@@ -2,12 +2,30 @@
   "routes": [
     {
       "method": "GET",
-      "path": "/products/filters",
-      "handler": "product.query",
+      "path": "/products",
+      "handler": "product.find",
       "config": {
         "policies": []
       }
     },
+    {
+      "method": "GET",
+      "path": "/designers",
+      "handler": "designer.find",
+      "config": {
+        "policies": []
+      }
+    },
+
+    {
+      "method": "GET",
+      "path": "/products/filters",
+      "handler": "shop.query",
+      "config": {
+        "policies": []
+      }
+    },
+
     {
       "method": "GET",
       "path": "/products/routes",
@@ -26,26 +44,8 @@
     },
     {
       "method": "GET",
-      "path": "/products",
-      "handler": "product.find",
-      "config": {
-        "policies": []
-      }
-    },
-
-    {
-      "method": "GET",
       "path": "/products/facebook-catalog.csv",
       "handler": "product.facebookCatalog",
-      "config": {
-        "policies": []
-      }
-    },
-
-    {
-      "method": "GET",
-      "path": "/designers",
-      "handler": "designer.find",
       "config": {
         "policies": []
       }

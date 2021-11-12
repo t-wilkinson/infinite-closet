@@ -1,5 +1,4 @@
 'use strict'
-// const { sanitizeEntity } = require('strapi-utils')
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 module.exports = {

@@ -3,7 +3,10 @@
     {
       "method": "GET",
       "path": "/blogs",
-      "handler": "blog.find"
+      "handler": "blog.find",
+      "config": {
+        "policies": []
+      }
     },
     {
       "method": "GET",
