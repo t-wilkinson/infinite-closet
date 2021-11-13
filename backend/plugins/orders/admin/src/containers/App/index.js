@@ -1,26 +1,27 @@
-/**
- *
- * This component is the skeleton around the actual pages, and should only
- * contain code that should be seen on all pages. (e.g. navigation bar)
- *
- */
-
 import React from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import { NotFound } from "strapi-helper-plugin";
 // Utils
 import pluginId from "../../pluginId";
 // Containers
 import HomePage from "../HomePage";
+import Emails from "../Emails";
+import SideMenu from "../SideMenu";
+import Wrapper from "./Wrapper";
 
 const App = () => {
   return (
-    <div>
+    <Wrapper>
+      <SideMenu />
       <Switch>
-        <Route path={`/plugins/${pluginId}`} component={HomePage} exact />
+        <Route path={`/plugins/${pluginId}/orders`} component={HomePage} />
+        <Route path={`/plugins/${pluginId}/emails`} component={Emails} />
+        <Route exact path={`/plugins/${pluginId}`}>
+          <Redirect to={`/plugins/${pluginId}/orders`} />
+        </Route>
         <Route component={NotFound} />
       </Switch>
-    </div>
+    </Wrapper>
   );
 };
 

@@ -8,6 +8,7 @@ const shippingPrices = {
   two: 0,
 }
 
+// TODO: should this fail if any of the prices are undefined/null?
 /**
  * Calculate price of order
  * @param {object} order
@@ -18,14 +19,11 @@ function orderPrice(order) {
     strapi.services.shipment.shippingClass(
       order.shippingDate,
       order.startDate
-    ) || shippingPrices.two
+    ) || 'two'
 
-  const shippingPrice = shippingPrices[shippingClass]
-
-  const productPrice = strapi.services.product.price(
-    order.product,
-    order.rentalLength
-  )
+  const shippingPrice = shippingPrices[shippingClass] || 0
+  const productPrice =
+    strapi.services.product.price(order.product, order.rentalLength) || 0
   const insurancePrice = order.insurance ? INSURANCE_PRICE : 0
 
   return { productPrice, insurancePrice, shippingPrice }

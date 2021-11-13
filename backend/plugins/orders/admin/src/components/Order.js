@@ -34,7 +34,7 @@ const Order = ({ selected, className, order, ...props }) => {
   return (
     <tr className={`${className} ${selected ? "selected" : ""}`} {...props}>
       <td className="order__field">{order.id}</td>
-      <td className="order__field">{order.fullName || ""}</td>
+      <td className="order__field">{order.fullName || order.email || ""}</td>
       <td className="order__field">{order.status}</td>
       <td className="order__field">
         {range && showRange(range, order.status)}

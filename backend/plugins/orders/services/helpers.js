@@ -1,6 +1,6 @@
 'use strict'
 
-const { splitName } = require('../../api/utils')
+const { splitName } = require('../../../api/utils')
 
 function isValidDate(date) {
   return date instanceof Date && !isNaN(date)

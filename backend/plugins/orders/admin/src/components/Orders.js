@@ -4,7 +4,7 @@ import OrderDetails from "./OrderDetails";
 import styled from "styled-components";
 import { OrdersContext } from "./utils";
 
-const Orders = ({ plugin, className }) => {
+const Orders = ({ className }) => {
   const [orders, setOrders] = React.useState([]);
   const [selectedOrder, selectOrder] = React.useState(0);
 

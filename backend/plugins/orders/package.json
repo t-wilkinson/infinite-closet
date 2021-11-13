@@ -7,7 +7,9 @@
     "icon": "plug",
     "description": "Description of order plugin."
   },
-  "dependencies": {},
+  "dependencies": {
+    "strapi-helper-plugin": "^3.6.8"
+  },
   "author": {
     "name": "A Strapi developer",
     "email": "",
