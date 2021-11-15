@@ -1,13 +1,13 @@
 import React from 'react'
 import axios from 'axios'
 
-import { StrapiProduct, StrapiSizeChart, StrapiSize } from '@/utils/models'
-import { Icon } from '@/components'
-import { toTitleCase } from '@/utils/helpers'
-import * as sizing from '@/utils/sizing'
 import { Size } from '@/Products/types'
+import { Icon } from '@/components'
 import { iconClose } from '@/components/Icons'
 import { iconDown } from '@/components/Icons'
+import { toTitleCase } from '@/utils/helpers'
+import { StrapiProduct, StrapiSizeChart, StrapiSize } from '@/utils/models'
+import * as sizing from '@/utils/sizing'
 
 interface SizeSelector {
   product: StrapiProduct
@@ -164,11 +164,16 @@ export const SizeChartPopup = ({
     return null
   } else {
     return (
+      <>
+        <div className="fixed inset-0"
+          style={{ backgroundColor: "#5f6368cc" }}
+          onClick={() => setState(false)}
+        />
       <div
         className="bottom-0 absolute bg-gray-light border-gray border z-30 w-96"
         style={{ maxHeight: 600 }}
       >
-        <button onClick={() => setState(false)} className="ml-auto">
+        <button onClick={() => setState(false)} className="place-self-end">
           <div className="p-4">
             <Icon icon={iconClose} size={16} />
           </div>
@@ -182,6 +187,7 @@ export const SizeChartPopup = ({
           </div>
         </div>
       </div>
+      </>
     )
   }
 }

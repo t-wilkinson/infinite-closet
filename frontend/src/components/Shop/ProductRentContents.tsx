@@ -149,7 +149,7 @@ export const OneTimeSizeSelector = ({ product, chartOpen, setChartOpen }) => {
   }
 
   return (
-    <SelectorItem label="Size" className="my-2 z-10 w-full">
+    <SelectorItem label="Size" className="my-2 z-30 w-full">
       <SizeChartPopup
         product={product}
         state={chartOpen}

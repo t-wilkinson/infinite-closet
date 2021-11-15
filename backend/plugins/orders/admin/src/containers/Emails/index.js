@@ -26,7 +26,6 @@ const Emails = () => {
 const RentalEnding = () => {
   const [orderId, setOrderId] = React.useState();
   const [status, setStatus] = React.useState({ code: null, message: null });
-  console.log(strapi.backendURL);
   const onSubmit = (e) => {
     e.preventDefault();
     fetch(`${strapi.backendURL}/emails/order-leaving/${orderId}`, {

@@ -149,7 +149,7 @@ export const FilterItems: FilterItems = {
           >
             Size chart
           </a>
-          <div className="relative ml-4">
+          <div className="z-30 absolute ml-16">
             <SizeChartPopup state={state} setState={setState} />
           </div>
         </div>
