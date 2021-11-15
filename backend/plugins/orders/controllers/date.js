@@ -1,5 +1,35 @@
 'use strict'
 
+/**
+ * Determines if an order date is valid by calculating the number of overlapping orders
+ */
+function isDateValid({ date, quantity, orders, rentalLength }) {
+  if (orders.length === 0) {
+    return strapi.services.timing.valid(
+      date,
+      quantity, // If no orders exist for that product then numAvailable=quantity
+      quantity
+    )
+  } else {
+    const range = strapi.services.timing.range({
+      startDate: date,
+      rentalLength,
+    })
+
+    const overlaps = strapi.plugins['orders'].services.order.totalOverlaps(
+      range,
+      orders
+    )
+
+    return strapi.services.timing.valid(
+      date,
+      quantity - overlaps,
+      quantity,
+      orders.length
+    )
+  }
+}
+
 module.exports = {
   async range(ctx) {
     const body = ctx.request.body
@@ -20,34 +50,10 @@ module.exports = {
       { size, product: orderProduct }
     )
 
-    // Find if order can be made on each date
+    // For each date, determine if order can be made
     let validDates = {}
     for (const date of dates) {
-      if (orders.length === 0) {
-        validDates[date] = strapi.services.timing.valid(
-          date,
-          quantity, // If no orders exist for that product then numAvailable=quantity
-          quantity
-        )
-        continue
-      } else {
-        const range = strapi.services.timing.range({
-          startDate: date,
-          rentalLength,
-        })
-
-        const overlaps = strapi.plugins['orders'].services.order.totalOverlaps(
-          range,
-          orders
-        )
-
-        validDates[date] = strapi.services.timing.valid(
-          date,
-          quantity - overlaps,
-          quantity,
-          orders.length
-        )
-      }
+      validDates[date] = isDateValid({ date, quantity, orders, rentalLength })
     }
 
     ctx.send({ valid: validDates })

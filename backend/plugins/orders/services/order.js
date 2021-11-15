@@ -71,7 +71,7 @@ async function relevantOrders({ product, size }) {
   )
 }
 
-// Currently uses default granularity of a day as a sort of buffer.
+// TODO: Currently uses default granularity of a day as a sort of buffer.
 // Eventually this should use a granularity of hours instead.
 /**
  * Determines if the order lifecycle overlaps with given date

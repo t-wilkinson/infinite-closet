@@ -1,3 +1,10 @@
+/**
+ * @file Searches for products in database based on query filters.
+ * The main function is {@link query} which returns products, available filters to further modify search by,
+ * and categories (primarily for breadcrumb list).
+ */
+
+'use strict'
 const _ = require('lodash')
 const models = require('../../../data/data.js').models
 
@@ -63,7 +70,7 @@ const toRawSQL = (_where) => {
     values.push(`%${slug}%`)
   }
 
-  // we to form a query as follows (notice we AND category filters but OR all others):
+  // We to form a query as follows (notice we AND category filters but OR all others):
   // (category1 AND ...) AND (color1 OR ...) AND (occasion1 OR ...) AND ...
   for (const [filter, slugs] of Object.entries(filterSlugs)) {
     // slugs is either a single string or list of strings
@@ -92,7 +99,7 @@ const toRawSQL = (_where) => {
 /**
  * Search for products in database matching `_where`
  */
-async function queryProducts(knex, _where, _paging) {
+async function findProducts(knex, _where, _paging) {
   // TODO: handle paging in SQL
   let sort = _paging.sort.split(':')
   sort[0] = `products."${sort[0]}"`
@@ -235,11 +242,11 @@ async function queryCategories(query) {
   return categories
 }
 
-const DEFAULT_PAGE = 0
+const DEFAULT_PAGE_NUMBER = 0
 const DEFAULT_PAGE_SIZE = 20
 
 module.exports = {
-  // TODO: there are plenty of ways to speed this up *when* it bottlenecks
+  // TODO: there are plenty of ways to speed this up when it bottlenecks
   async query(ctx) {
     const query = ctx.query
 
@@ -247,15 +254,15 @@ module.exports = {
       ['start', 'limit', 'sort'].includes(k)
     )
 
-    // TODO: can be sped up by a lot. use the results of `queryProducts` for the other two
+    // TODO: can be sped up by a lot. use the results of `findProducts` for the other two
     const knex = strapi.connections.default
     const [products, filters, categories] = await Promise.all([
-      queryProducts(knex, _where, _paging),
+      findProducts(knex, _where, _paging),
       queryFilters(knex, _where),
       queryCategories(query),
     ])
 
-    const start = parseInt(_paging.start) || DEFAULT_PAGE
+    const start = parseInt(_paging.start) || DEFAULT_PAGE_NUMBER
     const limit = parseInt(_paging.limit) || DEFAULT_PAGE_SIZE
     const end = start + limit
 

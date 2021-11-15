@@ -10,9 +10,7 @@ const shippingPrices = {
 
 // TODO: should this fail if any of the prices are undefined/null?
 /**
- * Calculate price of order
- * @param {object} order
- * @returns number
+ * Calculate sub-prices of order
  */
 function orderPrice(order) {
   const shippingClass =
@@ -29,6 +27,9 @@ function orderPrice(order) {
   return { productPrice, insurancePrice, shippingPrice }
 }
 
+/**
+ * Sum all the sub-prices of an order
+ */
 function orderTotal(order) {
   return Object.values(orderPrice(order)).reduce(
     (total, price) => total + price,
@@ -37,17 +38,17 @@ function orderTotal(order) {
 }
 
 function cartPrice(cart) {
+  const sum = (values, key) =>
+    values.reduce((total, value) => total + value[key], 0)
   return {
-    insurancePrice: cart.reduce(
-      (total, item) => total + item.insurancePrice,
-      0
-    ),
-    productPrice: cart.reduce((total, item) => total + item.productPrice, 0),
-    shippingPrice: cart.reduce((total, item) => total + item.shippingPrice, 0),
+    insurancePrice: sum(cart, 'insurancePrice'),
+    productPrice: sum(cart, 'productPrice'),
+    shippingPrice: sum(cart, 'shippingPrice'),
   }
 }
 
 async function userDiscount(user) {
+  // Users that signed up before prelaunch (2021-07-20)
   const isOgUser = await strapi.query('user', 'users-permissions').findOne(
     {
       id: user.id,
@@ -60,7 +61,7 @@ async function userDiscount(user) {
     {
       user: user.id,
       status_in: ['planning', 'shipping', 'cleaning', 'completed'],
-      shippingDate_gt: strapi.services.timing.day('2021-07-30').toJSON(),
+      shippingDate_gt: strapi.services.timing.day('2021-07-30').toJSON(), // When the discount is first applied
     },
     []
   )
@@ -84,11 +85,12 @@ async function getDiscountPrice(price, user) {
 }
 
 /**
- * Calculates total price including discounts, promo codes, etc.
+ * Calculates purchase summary of cart including discounts, promo codes, etc.
+ * Uses `user` and `couponCode` to apply potential discounts.
  * @param {object} obj
  * @param {Cart} obj.cart
- * @param {User} obj.user
- * @param {string} obj.couponCode
+ * @param {User=} obj.user
+ * @param {string=} obj.couponCode
  */
 async function summary({ cart, user, couponCode }) {
   const { productPrice, insurancePrice, shippingPrice } = cartPrice(cart)
@@ -119,6 +121,9 @@ async function summary({ cart, user, couponCode }) {
 }
 
 // TODO: should this return [] when not passed user?
+/**
+ * Coupons can only be used a certain number of times per user
+ */
 async function existingCoupons(user, code) {
   return (
     await strapi.query('order', 'orders').find({ user, 'coupon.code': code })

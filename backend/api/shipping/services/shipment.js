@@ -31,12 +31,12 @@ function arrival(sent, shippingClass = 'one') {
 
 /**
  * Returns cheapest {@link ShippingClass} given time constraints on when it can leave and arrive.
- * @param {=DateLike} earliestDeliveryDate
+ * @param {DateLike=} earliestDeliveryDate
  * @param {DateLike} startsOn
  * @returns {ShippingClass}
  */
 function shippingClass(earliestDeliveryDate, startsOn) {
-  earliestDeliveryDate = day(earliestDeliveryDate || undefined)
+  earliestDeliveryDate = day(earliestDeliveryDate || undefined) // Want to convert null to undefined
   startsOn = day(startsOn)
 
   if (!earliestDeliveryDate) {

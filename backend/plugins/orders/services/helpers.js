@@ -101,6 +101,7 @@ async function shippingFailure(order, err) {
 }
 
 async function notifyAction(orders) {
+  // Find orders that require manual action through the strapi plugin
   orders = orders.filter((order) => {
     const range = strapi.services.timing.range(order)
     const today = strapi.services.timing.day()
@@ -112,16 +113,20 @@ async function notifyAction(orders) {
     return
   }
 
+  const cart = await strapi.plugins['orders'].services.cart.create(orders)
   await strapi.plugins['email'].services.email.send({
     template: 'shipping-action',
     to: 'info@infinitecloset.co.uk',
     subject: 'Some orders need to be shipped today',
     data: {
-      cart: await strapi.plugins['orders'].services.cart.create(orders),
+      cart,
     },
   })
 }
 
+/**
+ * Merge mailchimp and local contacts list
+ */
 async function updateContactList() {
   const { members } = await strapi.services.mailchimp.lists.getListMembersInfo(
     strapi.services.mailchimp.contactsListId,
