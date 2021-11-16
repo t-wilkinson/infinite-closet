@@ -10,6 +10,7 @@ export { CartUtils }
 // TODO: store cart here for caching
 const initialState: State = {
   checkoutCart: [],
+  orderHistory: [],
 }
 
 export const getUser = (getState: any) => (getState() as RootState).user.data
@@ -28,6 +29,10 @@ export const slice = createSlice({
     })
     builder.addCase(CartUtils.view.fulfilled, (state, action) => {
       state.checkoutCart = action.payload
+      state.count = Object.values(action.payload).length
+    })
+    builder.addCase(CartUtils.history.fulfilled, (state, action) => {
+      state.orderHistory = action.payload
       state.count = Object.values(action.payload).length
     })
     builder.addCase(CartUtils.count.fulfilled, (state, action) => {

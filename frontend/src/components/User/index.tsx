@@ -74,8 +74,8 @@ const SideMenu = () => {
       <SideLink active={/profile/.test(router.pathname)} href="/user/profile">
         Profile
       </SideLink>
-      <SideLink active={/orders/.test(router.pathname)} href="/user/orders">
-        Orders
+      <SideLink active={/order-history/.test(router.pathname)} href="/user/order-history">
+        Order history
       </SideLink>
       <SideButton onClick={signout}>Sign out</SideButton>
     </div>

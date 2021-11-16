@@ -69,6 +69,13 @@ export default {
     const user = getUser(getState)
     return helpers.viewOrders(user)
   }),
+  history: createAsyncThunk<Cart, void>(
+    'cart/history',
+    async (_, { getState }) => {
+      const user = getUser(getState)
+      return helpers.orderHistory(user)
+    }
+  ),
   update: createAsyncThunk<void, Partial<StrapiOrder>>(
     'cart/update',
     async (order, { getState }) => {

@@ -261,7 +261,13 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
     <div
       className="relative w-full"
       tabIndex={0}
-      onBlur={() => setDropdown(false)}
+      onBlur={(e) => {
+        // TODO: need a better solution
+        // We call setTimeout to allow the child to handle the event first
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+          setDropdown(false)
+        }
+      }}
     >
       <div
         className="relative"
@@ -273,7 +279,7 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
           {...(props as any)}
           onChange={onChange}
           value={values.find((v) => v.key === value)?.label || ''}
-          after={<Icon icon={iconDown} size={16} className="mt-1" />}
+          after={<Icon icon={iconDown} size={16} className="mt-1 mr-2" />}
           className="cursor-pointer"
         />
         <div className="absolute inset-0 cursor-pointer" />

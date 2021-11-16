@@ -14,24 +14,24 @@ import { useDispatch, useSelector } from '@/utils/store'
 import { rentalLengths } from '@/utils/constants'
 
 export const Orders = () => {
-  const user = useSelector((state) => state.user.data)
   const dispatch = useDispatch()
-  const orders = useSelector((state) => state.cart.ordersStatus)
+  const cart = useSelector((state) => state.cart.orderHistory)
 
   React.useEffect(() => {
-    dispatch(CartUtils.status())
+    dispatch(CartUtils.history())
   }, [])
 
   return (
     <div className="">
-      {orders.map((order) => (
-        <OrderItem key={order.id} dispatch={dispatch} {...order} />
+      {cart.map((item) => (
+        <OrderItem key={item.order.id} dispatch={dispatch} item={item} />
       ))}
     </div>
   )
 }
 
-export const OrderItem = ({ dispatch, product, ...order }) => {
+export const OrderItem = ({item}) => {
+  const {order} = item
   const date = dayjs(order.startDate).tz('Europe/London') // order.startDate is utc
   const startDate = date.format('ddd, MMM D')
   const endDate = date
@@ -47,15 +47,15 @@ export const OrderItem = ({ dispatch, product, ...order }) => {
     >
       <div className="h-32 w-32 relative mr-4">
         <Image
-          src={getURL(product.images[0].url)}
-          alt={product.images[0].alternativeText}
+          src={getURL(order.product.images[0].url)}
+          alt={order.product.images[0].alternativeText}
           layout="fill"
           objectFit="contain"
         />
       </div>
       <div>
         <span>
-          {product.name} by <Bold>{product.designer.name}</Bold>
+          {order.product.name} by <Bold>{order.product.designer.name}</Bold>
         </span>
         <div className="flex flex-row items-center">
           <span>
@@ -64,7 +64,7 @@ export const OrderItem = ({ dispatch, product, ...order }) => {
         </div>
         <span>{order.size}</span>
         <span>
-          <Bold>{fmtPrice(order.price)}</Bold>
+          <Bold>{fmtPrice(item.totalPrice)}</Bold>
         </span>
         <span className="text-pri">{statuses[order.status]}</span>
       </div>

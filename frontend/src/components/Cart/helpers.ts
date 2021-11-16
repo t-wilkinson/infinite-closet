@@ -77,3 +77,15 @@ export async function viewOrders(user: StrapiUser): Promise<Cart> {
   }
   return res.data
 }
+
+export async function orderHistory(user: StrapiUser): Promise<Cart> {
+  let res: unknown & { data: Cart }
+  if (user) {
+    res = await axios.get(`/orders/cart/history/${user.id}`, {
+      withCredentials: true,
+    })
+    return res.data
+  } else {
+    return []
+  }
+}

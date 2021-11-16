@@ -1,6 +1,7 @@
 import { StrapiOrder } from '@/utils/models'
 
 export interface State {
+  orderHistory?: Cart
   checkoutSummary?: any
   checkoutCart?: Cart
   count?: number

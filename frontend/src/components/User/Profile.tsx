@@ -26,7 +26,6 @@ export const Profile = () => {
   React.useEffect(() => {
     signin().catch((err) => {
       setStatus('error')
-      console.error(err)
     })
     document.getElementById('_app').scrollTo({ top: 0 })
   }, [status])
@@ -87,9 +86,9 @@ const AccountDetails = ({ setStatus, user }) => {
   return (
     <Fieldset name="Account Details">
       <Field disabled={true} {...fields.email} />
+      <Field {...fields.phoneNumber} />
       <Field {...fields.firstName} />
       <Field {...fields.lastName} />
-      <Field {...fields.phoneNumber} />
       <Field {...fields.dateOfBirth} />
       <SubmitFields
         onSubmit={() => updateUser(user, fields, setStatus, analytics)}

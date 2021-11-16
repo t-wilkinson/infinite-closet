@@ -78,7 +78,7 @@ const allowedPages = [
   '/shop/[designer]/[item]',
   '/terms-and-conditions',
   '/user/checkout',
-  '/user/orders',
+  '/user/order-history',
   '/user/profile',
   '/account/checkout/register',
   '/account/checkout/signin',

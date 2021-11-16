@@ -89,4 +89,11 @@ module.exports = {
     const cart = await strapi.plugins['orders'].services.cart.create(orders)
     ctx.send(cart)
   },
+
+  async viewUserOrderHistory(ctx) {
+    const user = ctx.state.user
+    const orders = await getUserOrders(user)
+    const cart = await strapi.plugins['orders'].services.cart.create(orders)
+    ctx.send(cart)
+  },
 }
