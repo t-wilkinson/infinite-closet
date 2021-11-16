@@ -47,6 +47,12 @@ jobs:
         run: |
           ssh -T staging <<EOF
           scripts/run prod build
+          EOF
+
+      - name: Run production server
+        if: ${{ env.branch == 'main' }}
+        run: |
+          ssh -T staging <<EOF
           scripts/run prod up --no-deps -d
           EOF
 

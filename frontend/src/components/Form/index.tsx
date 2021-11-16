@@ -262,8 +262,6 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
       className="relative w-full"
       tabIndex={0}
       onBlur={(e) => {
-        // TODO: need a better solution
-        // We call setTimeout to allow the child to handle the event first
         if (!e.currentTarget.contains(e.relatedTarget)) {
           setDropdown(false)
         }
