@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   frontend:
-    image: node:14
+    image: node:14-buster
     environment:
       NEXT_PUBLIC_FRONTEND: 'http://ic.com'
       NEXT_PUBLIC_BACKEND: 'http://api.ic.com'
@@ -11,7 +11,7 @@ services:
       - ../frontend:/app
 
   backend:
-    image: node:14
+    image: node:14-buster
     ports:
       - "127.0.0.1:8000:8000"
     environment:

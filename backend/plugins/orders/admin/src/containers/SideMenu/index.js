@@ -4,6 +4,12 @@ import { LeftMenuList } from "strapi-helper-plugin";
 import pluginId from "../../pluginId";
 
 const SideMenu = () => {
+  const emailLink = ({ slug, title }) => ({
+    name: slug,
+    title,
+    to: `/plugins/${pluginId}/emails/${slug}`,
+  });
+
   const data = [
     {
       title: "Orders",
@@ -16,12 +22,9 @@ const SideMenu = () => {
       title: "Emails",
       name: "emails",
       links: [
-        {
-          name: "rental-ending",
-          title: "Rental Ending",
-          to: `/plugins/${pluginId}/emails/rental-ending`,
-        },
-      ],
+        { title: "Rental ending", slug: "rental-ending" },
+        { title: "Send to cleaners", slug: "send-cleaners" },
+      ].map(emailLink),
     },
   ];
 

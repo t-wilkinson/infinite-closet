@@ -7,6 +7,14 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "POST",
+      "path": "/emails/order-cleaners/:orderId",
+      "handler": "emails.sendToCleaners",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

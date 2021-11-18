@@ -1,3 +1,6 @@
+/**
+ * Accept multiple formats for email address
+ */
 function normalizeAddress(addr) {
   switch (Object.prototype.toString.call(addr)) {
     case '[object Array]':

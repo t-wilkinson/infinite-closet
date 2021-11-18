@@ -19,7 +19,7 @@ services:
         NODE_ENV: test
     ports:
       - "127.0.0.1:1339:1337"
-    # command: yarn run test
+    command: yarn run test
 
   db:
     ports:

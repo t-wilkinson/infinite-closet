@@ -110,21 +110,23 @@ async function fetchHived(url, method, body = {}) {
 function formatAddress(format, addr) {
   if (typeof addr === 'string') {
     return config.addresses[addr]
-  } else {
-    return Object.entries(addr).reduce((acc, [key, value]) => {
-      if (!value || !format[key]) {
-        return acc
-      }
-      if (key === 'address') {
-        for (const [index, line] of format.address) {
-          acc[line] = value[index]
-        }
-      } else {
-        acc[format[key]] = value
-      }
-      return acc
-    }, {})
   }
+
+  return Object.entries(addr).reduce((acc, [key, value]) => {
+    if (!value || !format[key]) {
+      return acc
+    }
+    if (key === 'address') {
+      for (const i in format.address) {
+        if (format.address[i] && value[i]) {
+          acc[format.address[i]] = value[i]
+        }
+      }
+    } else {
+      acc[format[key]] = value
+    }
+    return acc
+  }, {})
 }
 
 const api = {

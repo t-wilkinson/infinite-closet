@@ -17,18 +17,25 @@ const Emails = () => {
   return (
     <Wrapper>
       <Switch>
-        <Route path={path("rental-ending")} component={RentalEnding} />
+        <Route
+          path={path("rental-ending")}
+          component={() => <SendEmail slug="order-leaving" />}
+        />
+        <Route
+          path={path("send-cleaners")}
+          component={() => <SendEmail slug="order-cleaners" />}
+        />
       </Switch>
     </Wrapper>
   );
 };
 
-const RentalEnding = () => {
+const SendEmail = ({ slug }) => {
   const [orderId, setOrderId] = React.useState();
   const [status, setStatus] = React.useState({ code: null, message: null });
   const onSubmit = (e) => {
     e.preventDefault();
-    fetch(`${strapi.backendURL}/emails/order-leaving/${orderId}`, {
+    fetch(`${strapi.backendURL}/emails/${slug}/${orderId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -36,24 +43,34 @@ const RentalEnding = () => {
       body: JSON.stringify({}),
     })
       .then((res) => res.json())
-      .then(() =>
-        setStatus({ code: "success", message: "Successfully sent mail" })
-      )
-      .catch((err) =>
-        setStatus({ code: "error", message: "Failure sending mail" })
-      );
+      .then((res) => {
+        if (res.statusCode !== 200) {
+          throw new Error(res.message);
+        } else {
+          setStatus({ code: "success", message: "Successfully sent mail" });
+        }
+      })
+      .catch((err) => {
+        setStatus({
+          code: "error",
+          message: `Failure sending mail\n${err.message}`,
+        });
+        console.error(err);
+      });
   };
 
   return (
     <RentalEndingWrapper>
       <div>
         <form>
-          <Label message="Order id"></Label>
-          <InputNumber
-            value={orderId}
-            onChange={(e) => setOrderId(e.target.value)}
-            name="order-id"
-          />
+          <fieldset>
+            <Label message="Order id"></Label>
+            <InputNumber
+              value={orderId}
+              onChange={(e) => setOrderId(e.target.value)}
+              name="order-id"
+            />
+          </fieldset>
           <Button
             style={{ marginTop: "1rem" }}
             primary={true}

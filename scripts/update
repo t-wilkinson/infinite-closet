@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Update local database from server database
+#
+# Connects to server database through ssh and `pg_dump` data to computer
+
+if [[ $(basename $(pwd)) != 'infinite-closet' ]]; then
+    echo 'Please run in root project directory'
+    exit 1
+fi
+
+# Sync uploaded photos
+update_uploads() {
+    rsync -avz infinitecloset:/www/infinite-closet/main/backend/public/uploads/ ./backend/public/uploads
+}
+
+# Sync the database
+ssh infinitecloset 'docker exec prod_db_1 pg_dump -d infinite-closet -U infinite-closet -CcO | bzip2'  | bunzip2 | scripts/exec-psql "local" -i
+
+update_database() {
+    # If force is set, disconnect all connections from database
+    if  [[ $force ]]; then
+    scripts/exec-psql "local" -i <<SQL
+SELECT pg_terminate_backend(pg_stat_activity.pid)
+FROM pg_stat_activity
+WHERE datname = current_database()
+  AND pid <> pg_backend_pid();
+SQL
+    fi
+
+    scripts/exec-psql "local" -i <<SQL
+\c postgres
+DROP DATABASE IF EXISTS "infinite-closet-dev-old";
+ALTER DATABASE "infinite-closet-dev" RENAME TO "infinite-closet-dev-old";
+ALTER DATABASE "infinite-closet" RENAME TO "infinite-closet-dev";
+SQL
+}
+
+while [[ $# > 0 ]]; do
+    case "$1" in
+        -f) force=1;;
+        uploads) update_uploads;;
+        database) update_database;;
+        all)
+            update_uploads
+            update_database
+            ;;
+    esac
+    shift
+done

@@ -7,7 +7,9 @@ FROM node:14 as deps
 WORKDIR /app
 COPY package.json yarn.lock ./
 COPY ./providers ./providers
-RUN yarn install --frozen-lockfile
+RUN apt update && apt install -y \
+    python
+RUN yarn install
 
 FROM node:14 as base
 WORKDIR /app

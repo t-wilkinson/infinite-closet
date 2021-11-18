@@ -11,7 +11,10 @@ Other processes we have are:
 - GitHub actions which rebuilds and restarts docker processes when commits are pushed to the main branch.
 
 ## Getting started
-Get [docker](https://docs.docker.com/get-docker/) and [docker compose](https://docs.docker.com/compose/install/) if you don't already have it
+### Requirements
+    - [docker](https://docs.docker.com/get-docker/)
+    - [docker compose](https://docs.docker.com/compose/install/)
+    - [nvm](https://github.com/nvm-sh/nvm)
 ```bash
 git clone https://github.com/t-wilkinson/infinite-closet
 cd infinite-closet

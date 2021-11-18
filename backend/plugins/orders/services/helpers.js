@@ -49,12 +49,12 @@ async function notifyArrival(orders) {
 
 async function sendToCleaners(orders) {
   for (const order of orders) {
-    const user = order.user
     const range = strapi.services.timing.range(order)
     const date = strapi.services.timing.day(range.end)
     const today = strapi.services.timing.day()
     if (!date.isSame(today, 'day')) continue
 
+    const { user } = order
     const shippingRequest = {
       collection:
         strapi.plugins['orders'].services.order.toShippingAddress(order),
@@ -62,14 +62,16 @@ async function sendToCleaners(orders) {
       shippingClass: 'two',
       shipmentPrice: strapi.plugins['orders'].services.price.orderTotal(order),
     }
+    const cartItem = await strapi.plugins[
+      'orders'
+    ].services.cart.createCartItem(order)
 
     strapi.log.info('cleaning order %o', order.id)
     strapi
       .query('order', 'orders')
       .update({ id: order.id }, { status: 'cleaning' })
       .then(() => strapi.services.shipment.ship(shippingRequest))
-      .then(() => strapi.plugins['orders'].services.cart.createCartItem(order))
-      .then((order) =>
+      .then(() =>
         strapi.plugins['email'].services.email.send({
           template: 'order-leaving',
           to: user.email,
@@ -77,12 +79,12 @@ async function sendToCleaners(orders) {
           subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
           data: {
             firstName: user.firstName,
-            ...order,
+            ...cartItem,
           },
         })
       )
       .catch((err) =>
-        strapi.plugins['orders'].services.helpers.shippingFailure(order, err)
+        strapi.plugins['orders'].services.helpers.shippingFailure(cartItem, err)
       )
   }
 }
