@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+# values known at start
+client_secret=c4033a1a7bd2f30f3ebfc5c593afc383 # this should be kept secure
+client_id=254372856588977
+redirect_uri=https://infinitecloset.co.uk/auth
+
+# values received from last run
+authorization_code=AQDe_rZapvczJiuiWGYlFQdY2hdgH7o_WzdyRGzUNKIDN2FXBr4CBqiYNhYvo_HBzJtkiS5qpP6whiqUTtdwX24HBBczMlAFnhENoa5CvrFlLDVsAEpQiTNQiG1x9wySeMyfsRdLGLbB7coZaqXq4ApoNaDil6ELGj3-xLCJHah_v0yDPSZRjMYMurY1R90sjt97pGgk4oFYZfij4hPpujAWuCdV35x2KB9U9Oyg1hUmrQ
+access_token=IGQVJYLS1PaFU3Nm9HTVFqVnNvVTB6c1dMcEdvT0RiVE5CTjVxYWIxRS1ZARVJCeDNLMkJQbzVsd0xmU0dHTG5lWENVSC1uOGExWFE1VnFtZADlYMnd4RGhCN0lDLTFSenB4V0xJalNSZAkx0azhpUWNTbEsxRXJ3V2xIb0E4
+long_lived_access_token=IGQVJWVmdtRTgzZA2FiZAEloVUM3ejVwSlMwWnlWM3liOXJ3WnJUNFl3MjhsT0NaNjVDY1kzcC1obkJHcmswUk9wU1czeG42aVFObHZA5TTlQd2pCV19ic0ZA3SGg2QUdRZA2RZAUWJFYjVB
+
+authorize() {
+    :
+    # visit the following link in the browser
+    # https://api.instagram.com/oauth/authorize
+    #   ?client_id=${client_id}
+    #   &redirect_uri=${redirect_uri}
+    #   &scope=user_profile,user_media
+    #   &response_type=code
+}
+
+get_access_token() {
+    curl -X POST \
+      https://api.instagram.com/oauth/access_token \
+      -F client_id=${client_id} \
+      -F client_secret=${client_secret} \
+      -F grant_type=authorization_code \
+      -F redirect_uri=${redirect_uri} \
+      -F code=${authorization_code}
+    # => {"access_token": "IGQVJYLS1PaFU3Nm9HTVFqVnNvVTB6c1dMcEdvT0RiVE5CTjVxYWIxRS1ZARVJCeDNLMkJQbzVsd0xmU0dHTG5lWENVSC1uOGExWFE1VnFtZADlYMnd4RGhCN0lDLTFSenB4V0xJalNSZAkx0azhpUWNTbEsxRXJ3V2xIb0E4", "user_id": 17841450767383624}
+
+    # test access_token is correct
+    curl -X GET \
+      "https://graph.instagram.com/17841450767383624?fields=id,username&access_token=${access_token}"
+}
+
+# long_lived tokens live 60 days
+to_long_lived_token() {
+    curl -i -X GET "https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret=${client_secret}&access_token=${access_token}"
+    # => {"access_token":"IGQVJWVmdtRTgzZA2FiZAEloVUM3ejVwSlMwWnlWM3liOXJ3WnJUNFl3MjhsT0NaNjVDY1kzcC1obkJHcmswUk9wU1czeG42aVFObHZA5TTlQd2pCV19ic0ZA3SGg2QUdRZA2RZAUWJFYjVB","token_type":"bearer","expires_in":5184000}
+}
+
+refresh_access_token() {
+    curl -i -X GET "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token=${long_lived_access_token}"
+}
+
+get_images() {
+    curl -i -X GET "https://graph.instagram.com/me/media?fields=media_count,media_type,permalink,media_url&access_token=${long_lived_access_token}"
+}
