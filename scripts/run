@@ -6,6 +6,8 @@
 #   ${@:2} = Arguments pass to docker compose
 #
 
+cd $(dirname $(dirname $0))
+
 declare -A profiles
 profiles[prod]="-p prod -f docker/compose.yml -f docker/compose.prod.yml"
 profiles[dev]="-p dev -f docker/compose.yml -f docker/compose.dev.yml"

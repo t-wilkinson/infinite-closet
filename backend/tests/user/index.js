@@ -1,21 +1,40 @@
+/**
+ * @group api
+ */
 const request = require('supertest')
 const { updatePluginStore, responseHasError } = require('../helpers/strapi')
 const { createUser, defaultData, mockUserData } = require('./factory')
 // const nodemailerMock = require('nodemailer-mock')
 
-describe.skip('Default User methods', () => {
+function cookieParser(req) {
+  var cookies = req.get('Set-Cookie')
+  if (cookies) {
+    req.cookies = cookies.reduce((obj, c) => {
+      var n = c.split('=')
+      obj[n[0].trim()] = n[1].split('; ')[0].trim()
+      return obj
+    }, {})
+  }
+}
+
+describe('Default User methods', () => {
   let user
 
   beforeAll(async () => {
     user = await createUser(strapi)
   })
 
-  it('should login user and return jwt token', async () => {
+  it('should get user', async () => {
+    user = await strapi.query('user', 'users-permissions').findOne({id: user.id})
+    expect(user !== null).toBe(true)
+  })
+
+  it('should login user and return jwt token', (done) => {
     const jwt = strapi.plugins['users-permissions'].services.jwt.issue({
       id: user.id,
     })
 
-    await request(strapi.server) // app server is and instance of Class: http.Server
+    request(strapi.server)
       .post('/auth/local')
       .set('accept', 'application/json')
       .set('Content-Type', 'application/json')
@@ -26,15 +45,19 @@ describe.skip('Default User methods', () => {
       .expect('Content-Type', /json/)
       .expect(200)
       .then(async (data) => {
-        expect(data.body.jwt).toBeDefined()
+        cookieParser(data)
+        const token = data.cookies.token
+        expect(token).toBeDefined()
         const verified = await strapi.plugins[
           'users-permissions'
-        ].services.jwt.verify(data.body.jwt)
-        expect(data.body.jwt == jwt || !!verified).toBe(true) // jwt does have a random seed, each issue can be different
+        ].services.jwt.verify(token)
+        expect(token == jwt || !!verified).toBe(true) // jwt does have a random seed, each issue can be different
       })
+      .then(done)
+      .catch(done)
   })
 
-  it('should return users data for authenticated user', async () => {
+  it.skip('should return users data for authenticated user', async () => {
     const jwt = strapi.plugins['users-permissions'].services.jwt.issue({
       id: user.id,
     })
@@ -54,8 +77,8 @@ describe.skip('Default User methods', () => {
       })
   })
 
-  it('should allow register users ', async () => {
-    await request(strapi.server) // app server is and instance of Class: http.Server
+  it.skip('should allow register users ', (done) => {
+    request(strapi.server) // app server is and instance of Class: http.Server
       .post('/auth/local/register')
       .set('accept', 'application/json')
       .set('Content-Type', 'application/json')
@@ -66,9 +89,11 @@ describe.skip('Default User methods', () => {
       .expect(200)
       .then((data) => {
         expect(data.body).toBeDefined()
-        expect(data.body.jwt).toBeDefined()
+        // expect(data.body.jwt).toBeDefined()
         expect(data.body.user).toBeDefined()
       })
+      .then(done)
+      .catch(done)
   })
 })
 
@@ -92,7 +117,7 @@ describe.skip('Confirmation User methods', () => {
     })
   })
 
-  it('unconfirmed user should not login', async () => {
+  it.skip('unconfirmed user should not login', async () => {
     await request(strapi.server) // app server is and instance of Class: http.Server
       .post('/auth/local')
       .set('accept', 'application/json')

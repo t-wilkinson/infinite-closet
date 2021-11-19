@@ -6,9 +6,8 @@ ARG FRONTEND_DOMAIN
 FROM node:14 as deps
 WORKDIR /app
 COPY package.json yarn.lock ./
+COPY ./patches ./patches
 COPY ./providers ./providers
-RUN apt update && apt install -y \
-    python
 RUN yarn install
 
 FROM node:14 as base

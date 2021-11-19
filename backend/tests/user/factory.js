@@ -2,6 +2,8 @@
  * Default data that factory use
  */
 const defaultData = {
+  firstName: 'First',
+  lastName: 'Last',
   password: '1234Abc!',
   provider: 'local',
   confirmed: true,

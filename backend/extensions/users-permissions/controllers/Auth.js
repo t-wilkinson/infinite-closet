@@ -416,7 +416,7 @@ module.exports = {
         null,
         formatError({
           id: 'Auth.form.error.name.provide',
-          message: 'Please provide your name.',
+          message: 'Please provide your name. (firstName, lastName)',
         })
       )
     } else {

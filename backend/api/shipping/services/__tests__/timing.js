@@ -1,3 +1,6 @@
+/**
+ * @group lib
+ */
 'use strict'
 const MockDate = require('mockdate')
 const timing = require('../timing')

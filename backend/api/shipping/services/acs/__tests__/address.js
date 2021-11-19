@@ -1,3 +1,6 @@
+/**
+ * @group lib
+ */
 const config = require('../config')
 const { formatAddress } = require('../shipment')
 

@@ -1,0 +1,29 @@
+diff --git a/node_modules/strapi/lib/core/load-apis.js b/node_modules/strapi/lib/core/load-apis.js
+index 0f7f985..360b04d 100644
+--- a/node_modules/strapi/lib/core/load-apis.js
++++ b/node_modules/strapi/lib/core/load-apis.js
+@@ -1,12 +1,12 @@
+ 'use strict';
+ 
+-const { join } = require('path');
+-const { existsSync } = require('fs-extra');
++const {join} = require('path');
++const {existsSync} = require('fs-extra');
+ const _ = require('lodash');
+ const loadFiles = require('../load/load-files');
+ const loadConfig = require('../load/load-config-files');
+ 
+-module.exports = async ({ dir }) => {
++module.exports = async ({dir}) => {
+   const apiDir = join(dir, 'api');
+ 
+   if (!existsSync(apiDir)) {
+@@ -15,7 +15,7 @@ module.exports = async ({ dir }) => {
+     );
+   }
+ 
+-  const apis = await loadFiles(apiDir, '*/!(config)/**/*.*(js|json)');
++  const apis = await loadFiles(apiDir, '*/!(config)/**/*.*(js|json)', {globArgs: {ignore: ['**/__tests__/**']}});
+   const apiConfigs = await loadConfig(apiDir, '*/config/**/*.*(js|json)');
+ 
+   return _.merge(apis, apiConfigs);

@@ -1,3 +1,6 @@
+/**
+ * @group lib
+ */
 const priceApi = require('../price')
 
 const defaultData = {
