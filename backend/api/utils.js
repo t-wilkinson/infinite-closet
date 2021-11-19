@@ -82,8 +82,8 @@ function splitName(name) {
     return { firstName: null, lastName: null }
   }
 
-  const [first, last] = name.split('[^.] ') // Don't split `Dr.`, etc.
-  return { firstName: first || null, lastName: last || null }
+  const [first, ...last] = name.split(/ /) // Don't split `Dr.`, etc.
+  return { firstName: first || null, lastName: last.join(' ') || null }
 }
 
 module.exports = {

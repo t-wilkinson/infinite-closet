@@ -34,18 +34,6 @@
     },
     "_2XL": {
       "type": "string"
-    },
-    "_3XL": {
-      "type": "string"
-    },
-    "_4XL": {
-      "type": "string"
-    },
-    "_5XL": {
-      "type": "string"
-    },
-    "_6XL": {
-      "type": "string"
     }
   }
 }

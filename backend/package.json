@@ -24,6 +24,7 @@
     "node-fetch": "^2.6.1",
     "npm-run-script": "^0.0.4",
     "pg": "8.5.1",
+    "postcode-validator": "^3.5.3",
     "strapi": "3.5.4",
     "strapi-admin": "3.5.4",
     "strapi-connector-bookshelf": "3.5.4",
@@ -35,6 +36,7 @@
     "strapi-provider-email-google-workspace": "file:providers/strapi-provider-email-google-workspace",
     "strapi-utils": "3.5.4",
     "stripe": "^8.148.0",
+    "timezone-mock": "^1.2.2",
     "ws": "^7.4.6"
   },
   "author": {

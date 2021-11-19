@@ -8,9 +8,9 @@ module.exports = {
       }, {})
     )
 
-    const sizeEnum = strapi.services.size
-      .enum()
-      .map(strapi.services.size.normalize)
+    const sizeEnum = strapi.services.size.enum.map(
+      strapi.services.size.normalize
+    )
 
     ctx.send({
       chart: sizeChart,

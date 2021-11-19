@@ -9120,6 +9120,11 @@ posix-character-classes@^0.1.0:
   resolved "https://registry.yarnpkg.com/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
   integrity sha1-AerA/jta9xoqbAL+q7jB/vfgDqs=
 
+postcode-validator@^3.5.3:
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/postcode-validator/-/postcode-validator-3.5.3.tgz#69b4be5f8a96ad68f7627634e1552890d8bc5162"
+  integrity sha512-T/mxflCsYWQuS7CqYuloMA+RRITNOh0Z401Z1HRCd6HUuQbct+vMXV/YMhFdl7TmBCtX5rxDJEiDOh56gKzLug==
+
 postcss-modules-extract-imports@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/postcss-modules-extract-imports/-/postcss-modules-extract-imports-2.0.0.tgz#818719a1ae1da325f9832446b01136eeb493cd7e"
@@ -12016,6 +12021,11 @@ timers-browserify@^2.0.4:
   integrity sha512-9phl76Cqm6FhSX9Xe1ZUAMLtm1BLkKj2Qd5ApyWkXzsMRaA7dgr81kf4wJmQf/hAvg8EEyJxDo3du/0KlhPiKQ==
   dependencies:
     setimmediate "^1.0.4"
+
+timezone-mock@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/timezone-mock/-/timezone-mock-1.2.2.tgz#d7e047b30827ba34e4824bf3d6ff88ffc284b4fb"
+  integrity sha512-/tKX2gEuZHs/APPLLryuwBfMBa7esdfIICqHVmcnCr7tMfl3X+L8aXzuAsnaoB6nIFQp9N03e5Gt1QiKPlUmPw==
 
 tiny-invariant@^1.0.2:
   version "1.2.0"

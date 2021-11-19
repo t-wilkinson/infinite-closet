@@ -1,7 +1,9 @@
-const sizeEnum = () => strapi.query('custom.sizes').model.attributes.size.enum
+'use strict'
+
+const sizeEnum = ['XXS', 'XS', 'S', 'M', 'L', 'XL', '_2XL']
 
 function range({ size: start, sizeRange: end }) {
-  const sizes = sizeEnum()
+  const sizes = sizeEnum
   if (end) {
     return sizes.slice(sizes.indexOf(start), sizes.indexOf(end) + 1)
   } else {

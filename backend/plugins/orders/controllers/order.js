@@ -73,7 +73,7 @@ module.exports = {
         'product.sizes',
       ])
     const user = order.user
-    const orderData = await strapi.plugins[
+    const cartItem = await strapi.plugins[
       'orders'
     ].services.cart.createCartItem(order)
 
@@ -87,7 +87,7 @@ module.exports = {
         subject: `Your order of ${order.product.name} by ${order.product.designer.name} has shipped!`,
         data: {
           firstName: user.firstName,
-          ...orderData,
+          ...cartItem,
         },
       })
 
@@ -99,7 +99,8 @@ module.exports = {
         order.shippingDate,
         order.startDate
       ),
-      shipmentPrice: orderData.totalPrice,
+      shipmentPrice: cartItem.totalPrice,
+      order,
     }
 
     strapi.services.shipment
