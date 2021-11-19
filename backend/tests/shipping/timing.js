@@ -14,10 +14,6 @@ describe.skip('Shipment timing', () => {
     [today, today.add({ day: 2 })],
   ])('When sent on %j, arrives on %j', (sent, expects) => {
     const arrives = shipment.arrival(sent)
-    if (!expects.isSame(arrives, 'hour')) {
-      console.log(expects.toJSON())
-      console.log(arrives.toJSON())
-    }
     expect(expects.isSame(arrives, 'hour')).toBeTruthy()
   })
 })

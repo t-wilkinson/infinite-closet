@@ -47,7 +47,7 @@ module.exports = {
       .catch((err) =>
         strapi.plugins['orders'].services.helpers.shippingFailure(order, err)
       )
-    return ctx.send()
+    return ctx.send({})
   },
 
   async orderLeaving(ctx) {
@@ -76,6 +76,6 @@ module.exports = {
       }),
     })
 
-    return ctx.send()
+    return ctx.send({})
   },
 }

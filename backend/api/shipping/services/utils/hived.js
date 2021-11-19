@@ -109,7 +109,7 @@ async function fetchHived(url, method, body = {}) {
  */
 function formatAddress(format, addr) {
   if (typeof addr === 'string') {
-    return config.addresses[addr]
+    return formatAddress(format, config.addresses[addr])
   }
 
   return Object.entries(addr).reduce((acc, [key, value]) => {
@@ -148,7 +148,7 @@ const api = {
       formatAddress(config.formats.collection, collection)
     )
 
-    strapi.log.info('hived:ship %o', body)
+    strapi.log.info('hived:ship', body)
     if (process.env.NODE_ENV === 'production') {
       const res = await fetchHived(config.parcels, 'POST', body)
       strapi.log.info('hived:ship %o', res)

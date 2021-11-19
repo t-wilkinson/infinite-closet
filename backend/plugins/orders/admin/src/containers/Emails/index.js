@@ -42,13 +42,15 @@ const SendEmail = ({ slug }) => {
       },
       body: JSON.stringify({}),
     })
-      .then((res) => res.json())
       .then((res) => {
-        if (res.statusCode !== 200) {
+        if (!res.ok) {
           throw new Error(res.message);
         } else {
-          setStatus({ code: "success", message: "Successfully sent mail" });
+          return res.json();
         }
+      })
+      .then((res) => {
+        setStatus({ code: "success", message: "Successfully sent mail" });
       })
       .catch((err) => {
         setStatus({
@@ -62,7 +64,7 @@ const SendEmail = ({ slug }) => {
   return (
     <RentalEndingWrapper>
       <div>
-        <form>
+        <form onSubmit={onSubmit}>
           <fieldset>
             <Label message="Order id"></Label>
             <InputNumber
@@ -71,11 +73,7 @@ const SendEmail = ({ slug }) => {
               name="order-id"
             />
           </fieldset>
-          <Button
-            style={{ marginTop: "1rem" }}
-            primary={true}
-            onClick={onSubmit}
-          >
+          <Button style={{ marginTop: "1rem" }} type="submit" primary={true}>
             Send email
           </Button>
         </form>
