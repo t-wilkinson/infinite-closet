@@ -1,10 +1,10 @@
 /**
  * Accept multiple formats for email address
  */
-function normalizeAddress(addr) {
+function parseEmail(addr) {
   switch (Object.prototype.toString.call(addr)) {
     case '[object Array]':
-      addr = addr.map(normalizeAddress).filter((v) => v)
+      addr = addr.map(parseEmail).filter((v) => v)
       if (addr.length === 0) {
         return undefined
       }
@@ -66,7 +66,7 @@ function encodeMail(str) {
 module.exports = {
   encodeMail,
   kebabize,
-  normalizeAddress,
+  parseEmail,
   emailFields,
   makeBody,
 }

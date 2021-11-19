@@ -1,7 +1,7 @@
 'use strict'
 const MockDate = require('mockdate')
 const timing = require('../timing')
-const { day } = require('../utils')
+const {day} = require('../../../../utils')
 // const timezoneMock = require('timezone-mock')
 
 // TODO: using MockDate switches to UTC timezone

@@ -1,16 +1,6 @@
 'use strict'
 
-const { generateAPI } = require('../../../api/utils')
-const dayjs = require('dayjs')
-const duration = require('dayjs/plugin/duration')
-const isBetween = require('dayjs/plugin/isBetween')
-const utc = require('dayjs/plugin/utc')
-const timezone = require('dayjs/plugin/timezone')
-
-dayjs.extend(duration)
-dayjs.extend(isBetween)
-dayjs.extend(utc)
-dayjs.extend(timezone)
+const {day, generateAPI} = require('../../../utils')
 
 module.exports = {
   ...generateAPI('order', 'orders'),
@@ -59,7 +49,7 @@ module.exports = {
       { id: order.id },
       {
         status: 'shipping',
-        shippingDate: strapi.services.timing.day().toJSON(),
+        shippingDate: day().toJSON(),
       }
     )
     order = await strapi // TODO: can we do this in the update statement?

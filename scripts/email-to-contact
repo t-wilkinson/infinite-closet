@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Move emails to database
+"""Move maillist email contacts to database
 
 Emails are expected to be downloaded from gmail.
 Should be ran inside directory with emails.

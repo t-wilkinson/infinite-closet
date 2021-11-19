@@ -1,5 +1,14 @@
-const priceApi = require('../../api/pricing/services/price')
-const { mockCoupon } = require('./factory')
+const priceApi = require('../price')
+
+const defaultData = {
+  type: 'amount_off',
+  amount: 10,
+  code: 'COUPON_CODE',
+  maxUses: 1,
+  context: 'checkout',
+}
+
+const mockCoupon = (data) => ({...defaultData, ...data})
 
 describe('Currency', () => {
   it('Should convert price -> amount', () => {
@@ -40,3 +49,4 @@ describe('Coupon', () => {
     expect(valid).toBeFalsy()
   })
 })
+

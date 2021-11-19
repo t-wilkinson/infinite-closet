@@ -1,6 +1,53 @@
 'use strict'
 const { parseMultipartData, sanitizeEntity } = require('strapi-utils')
 
+const dayjs = require('dayjs')
+const duration = require('dayjs/plugin/duration')
+const isBetween = require('dayjs/plugin/isBetween')
+const utc = require('dayjs/plugin/utc')
+const timezone = require('dayjs/plugin/timezone')
+const isSameOrAfter = require('dayjs/plugin/isSameOrAfter')
+const isSameOrBefore = require('dayjs/plugin/isSameOrBefore')
+const objectSupport = require('dayjs/plugin/objectSupport')
+
+require('dayjs/locale/en-gb')
+
+dayjs.extend(duration)
+dayjs.extend(isSameOrAfter)
+dayjs.extend(isBetween)
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(objectSupport)
+dayjs.extend(isSameOrBefore)
+
+dayjs.locale('en-gb')
+dayjs.tz.setDefault('Europe/London')
+// dayjs has some odd effects so we must:
+//  check if a date is already a dayjs object
+//  change dayjs objects to utc before comparing
+
+/**
+ * Use same timezone for all dates for more predictable and reliable behavior
+ * @param {DateLike} date - Returns dayjs object in Europe/London timezone
+ */
+function day(date) {
+  if (dayjs.isDayjs(date)) {
+    return date
+  } else {
+    return dayjs.tz(date)
+  }
+}
+
+// Split name into first and last name
+function splitName(name) {
+  if (!name || typeof name !== 'string') {
+    return { firstName: null, lastName: null }
+  }
+
+  const [first, ...last] = name.split(/ /) // Don't split `Dr.`, etc.
+  return { firstName: first || null, lastName: last.join(' ') || null }
+}
+
 // TODO: might not need this
 const generateAPI = (name, plugin = '') => {
   return {
@@ -76,17 +123,8 @@ const generateAPI = (name, plugin = '') => {
   }
 }
 
-// Split name into first and last name
-function splitName(name) {
-  if (!name || typeof name !== 'string') {
-    return { firstName: null, lastName: null }
-  }
-
-  const [first, ...last] = name.split(/ /) // Don't split `Dr.`, etc.
-  return { firstName: first || null, lastName: last.join(' ') || null }
-}
-
 module.exports = {
   generateAPI,
   splitName,
+  day,
 }

@@ -1,5 +1,5 @@
 'use strict'
-const { splitName } = require('../../utils')
+const { splitName } = require('../../../utils')
 
 module.exports = {
   async mailingList(ctx) {

@@ -3,12 +3,7 @@ const path = require('path')
 const { google } = require('googleapis')
 const _ = require('lodash')
 const emailTemplates = require('email-templates')
-const {
-  encodeMail,
-  makeBody,
-  emailFields,
-  normalizeAddress,
-} = require('./lib')
+const { encodeMail, makeBody, emailFields, parseEmail } = require('./lib')
 
 const gmail = {
   init(options) {
@@ -46,10 +41,10 @@ const gmail = {
 async function templateEmail(client, settings, options) {
   const emailOptions = {
     ..._.pick(options, emailFields),
-    to: normalizeAddress(options.to),
-    cc: normalizeAddress(options.cc),
-    bcc: normalizeAddress(options.bcc),
-    from: normalizeAddress(options.from || settings.from),
+    to: parseEmail(options.to),
+    cc: parseEmail(options.cc),
+    bcc: parseEmail(options.bcc),
+    from: parseEmail(options.from || settings.from),
     subject: options.subject || settings.subject,
     html: await emailTemplates(options.template, options.data || {}),
   }
@@ -60,10 +55,10 @@ async function templateEmail(client, settings, options) {
 async function sendEmail(client, settings, options) {
   const emailOptions = {
     ..._.pick(options, emailFields),
-    to: normalizeAddress(options.to),
-    cc: normalizeAddress(options.cc),
-    bcc: normalizeAddress(options.bcc),
-    from: normalizeAddress(options.from || settings.from),
+    to: parseEmail(options.to),
+    cc: parseEmail(options.cc),
+    bcc: parseEmail(options.bcc),
+    from: parseEmail(options.from || settings.from),
     replyTo: options.replyTo || settings.replyTo,
     html: options.html || options.text,
   }

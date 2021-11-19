@@ -2,7 +2,7 @@
 const MockDate = require('mockdate')
 const shipment = require('../shipment')
 const config = require('../config')
-const { day } = require('../../utils')
+const {day} = require('../../../../../utils')
 
 const withinDate = (date, fn) => {
   MockDate.set(day().set(date).toDate())

@@ -1,6 +1,5 @@
 'use strict'
-const { day } = require('../utils')
-const { splitName } = require('../../../utils')
+const {day, splitName} = require('../../../../utils')
 const config = require('./config')
 
 const HOURS_IN_DAY = 24

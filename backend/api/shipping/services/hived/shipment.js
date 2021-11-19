@@ -1,5 +1,5 @@
 'use strict'
-const { day } = require('../utils')
+const {day} = require('../../../../utils')
 const config = require('./config')
 
 const HOURS_IN_DAY = 24

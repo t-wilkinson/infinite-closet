@@ -1,6 +1,6 @@
 'use strict'
 
-const { splitName } = require('../../../api/utils')
+const {day, splitName} = require('../../../utils')
 
 function isValidDate(date) {
   return date instanceof Date && !isNaN(date)
@@ -27,8 +27,8 @@ async function notifyArrival(orders) {
   for (const order of orders) {
     const user = order.user
     const range = strapi.services.timing.range(order)
-    const date = strapi.services.timing.day(range.start)
-    const today = strapi.services.timing.day()
+    const date = day(range.start)
+    const today = day()
 
     if (!date.isSame(today, 'day')) continue
     // const complete = await strapi.services.shipment.complete(order.shipment)
@@ -50,8 +50,8 @@ async function notifyArrival(orders) {
 async function sendToCleaners(orders) {
   for (const order of orders) {
     const range = strapi.services.timing.range(order)
-    const date = strapi.services.timing.day(range.end)
-    const today = strapi.services.timing.day()
+    const date = day(range.end)
+    const today = day()
     if (!date.isSame(today, 'day')) continue
 
     const { user } = order
@@ -106,8 +106,8 @@ async function notifyAction(orders) {
   // Find orders that require manual action through the strapi plugin
   orders = orders.filter((order) => {
     const range = strapi.services.timing.range(order)
-    const today = strapi.services.timing.day()
-    const shipped = strapi.services.timing.day(range.shipped)
+    const today = day()
+    const shipped = day(range.shipped)
     return today.isSame(shipped, 'day')
   })
 

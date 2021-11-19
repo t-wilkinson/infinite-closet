@@ -3,10 +3,7 @@
 #
 # Connects to server database through ssh and `pg_dump` data to computer
 
-if [[ $(basename $(pwd)) != 'infinite-closet' ]]; then
-    echo 'Please run in root project directory'
-    exit 1
-fi
+cd $(dirname $0)
 
 # Sync uploaded photos
 update_uploads() {

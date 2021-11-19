@@ -1,7 +1,7 @@
 'use strict'
 const { timing } = require('./acs')
-const { day } = require('./utils')
 const { arrival } = require('./shipment')
+const {day} = require('../../../utils')
 
 /**
  * @typedef {(null|'one'|'two')} ShippingClass

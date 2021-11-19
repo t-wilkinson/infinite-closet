@@ -1,5 +1,5 @@
 'use strict'
-const { day } = require('../utils')
+const {day} = require('../../../../utils')
 const { shippingClassHours } = require('./shipment')
 const config = require('./config')
 

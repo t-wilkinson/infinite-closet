@@ -4,7 +4,7 @@
  */
 
 const stripe = require('stripe')(process.env.STRIPE_KEY)
-const { splitName } = require('../../../api/utils')
+const { splitName } = require('../../../utils')
 
 async function prepareCheckout(body, user = null) {
   const cart = await strapi.plugins['orders'].services.cart.createValidCart(

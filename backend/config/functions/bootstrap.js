@@ -2,6 +2,7 @@
 
 // const fs = require('fs')
 const models = require('../../data/data.js').models
+require('../../utils')
 
 // const { categories } = require('../../data/data')
 

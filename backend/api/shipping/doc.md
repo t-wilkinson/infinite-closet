@@ -1,5 +1,5 @@
 # Shipping
-Rentals need to be shipped somehow, this api handles api integration and similar functionality.
+Rentals need to be shipped somehow, this handles api integration and similar functionality.
 
 ## Context
 Handles shipping related services such as:
@@ -9,7 +9,23 @@ Handles shipping related services such as:
 
 A solid shipping api is core to the rental shipping business model.
 
-What is the crisp abstraction for this functionality?
+## Testing
+- Rigorously test the timing library (every edge case)
+- Ensure all implementations have the same methods
+
+## Monitoring
+- Any failure of user-facing api
+
+## Alerting
+- Any failure to ship should be alerted
+
+## Security
+- Protect api keys and api integration from public
+
+## Implementation
+- How do we support multiple potential providers?
+    - Make a class and implement multiple times in sub-folder. Then export one of the implementations.
+- Separate sub-module per implementation
 - Must support the stages of a normal rental life-cycle
     - Warehouse -> Customer -> Cleaner -> Warehouse
     - We can decompose the lifecycles, individually assign to a provider, then compose them
@@ -21,23 +37,6 @@ What is the crisp abstraction for this functionality?
 - Notion of shipping class with a 'best' default shipping class
 - Default configuration and values
 - Map database address to internal representation
-
-## Testing
-Rigorously test the timing library
-- All the edge cases
-Ensure all implementations have the same methods.
-
-## Monitoring
-Any failure of user-facing api
-
-## Alerting
-
-## Security
-
-## Implementation
-How do we support multiple potential providers?
-- Make a class and implement multiple times in sub-folder. Then export one of the implementations.
-- Separate sub-module per imlementation
 
 ### ACS api
 - What are the shipping classes?

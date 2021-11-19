@@ -1,9 +1,9 @@
 const request = require('supertest')
-const { updatePluginStore, responseHasError } = require('./../helpers/strapi')
+const { updatePluginStore, responseHasError } = require('../helpers/strapi')
 const { createUser, defaultData, mockUserData } = require('./factory')
 // const nodemailerMock = require('nodemailer-mock')
 
-describe('Default User methods', () => {
+describe.skip('Default User methods', () => {
   let user
 
   beforeAll(async () => {
@@ -72,7 +72,7 @@ describe('Default User methods', () => {
   })
 })
 
-describe('Confirmation User methods', () => {
+describe.skip('Confirmation User methods', () => {
   let user
 
   beforeAll(async () => {

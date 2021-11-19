@@ -1,17 +1,10 @@
 'use strict'
 
 const stripe = require('stripe')(process.env.STRIPE_KEY)
-const dayjs = require('dayjs')
-const utc = require('dayjs/plugin/utc')
-const timezone = require('dayjs/plugin/timezone')
-const isSameOrBefore = require('dayjs/plugin/isSameOrBefore')
-
-dayjs.extend(utc)
-dayjs.extend(timezone)
-dayjs.extend(isSameOrBefore)
+const day = require('../../../utils')
 
 const getTicketPrice = () => {
-  const today = strapi.services.timing.day()
+  const today = day()
   const ticketPrice = today.isSameOrBefore('2021-08-18', 'day')
     ? 20
     : today.isSameOrBefore('2021-09-11', 'day')

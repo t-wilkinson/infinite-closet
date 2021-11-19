@@ -1,4 +1,5 @@
 'use strict'
+const {day} = require('../../../utils')
 
 const INSURANCE_PRICE = 5
 const OG_USER_DISCOUNT_FLAT = 5
@@ -52,7 +53,7 @@ async function userDiscount(user) {
   const isOgUser = await strapi.query('user', 'users-permissions').findOne(
     {
       id: user.id,
-      created_at_lt: strapi.services.timing.day('2021-07-20').toJSON(),
+      created_at_lt: day('2021-07-20').toJSON(),
     },
     []
   )
@@ -61,7 +62,7 @@ async function userDiscount(user) {
     {
       user: user.id,
       status_in: ['planning', 'shipping', 'cleaning', 'completed'],
-      shippingDate_gt: strapi.services.timing.day('2021-07-30').toJSON(), // When the discount is first applied
+      shippingDate_gt: day('2021-07-30').toJSON(), // When the discount is first applied
     },
     []
   )
