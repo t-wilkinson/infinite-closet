@@ -41,34 +41,6 @@ function toCSVRow(row) {
     .join(',')
 }
 
-function toRow(product, size, quantity) {
-  return {
-    id: `${product.id}_${size}`,
-    item_group_ID: product.id,
-    google_product_category: 'Clothing & Accessories > Clothing > Dresses',
-    title: product.name,
-    description: `${product.details ? product.details + '.\n' : ''}Rent ${
-      product.name
-    } by ${product.designer.name} for only £${
-      product.shortRentalPrice
-    } at Infinite Closet`,
-    availability: quantity > 0 ? 'in stock' : 'available for order',
-    condition: 'used',
-    price: product.shortRentalPrice + ' GBP',
-    link: `https://${process.env.FRONTEND_DOMAIN}/shop/${product.designer.slug}/${product.slug}`,
-    image_link: `https://${process.env.BACKEND_DOMAIN}${product.images[0].url}`,
-    brand: product.designer.name,
-    additional_image_link: product.images
-      .slice(1)
-      .map((image) => `https://${process.env.BACKEND_DOMAIN}${image.url}`)
-      .join(','),
-    color: product.colors[0] && product.colors[0].name,
-    gender: 'female',
-    size: size,
-    age_group: 'adult',
-  }
-}
-
 async function facebookCatalog(ctx) {
   const columns = [
     'id',
@@ -88,6 +60,34 @@ async function facebookCatalog(ctx) {
     'size',
     'age_group',
   ]
+
+  function toRow(product, size, quantity) {
+    return {
+      id: `${product.id}_${size}`,
+      item_group_ID: product.id,
+      google_product_category: 'Clothing & Accessories > Clothing > Dresses',
+      title: product.name,
+      description: `${product.details ? product.details + '.\n' : ''}Rent ${
+        product.name
+      } by ${product.designer.name} for only £${
+        product.shortRentalPrice
+      } at Infinite Closet`,
+      availability: quantity > 0 ? 'in stock' : 'available for order',
+      condition: 'used',
+      price: product.shortRentalPrice + ' GBP',
+      link: `https://${process.env.FRONTEND_DOMAIN}/shop/${product.designer.slug}/${product.slug}`,
+      image_link: `https://${process.env.BACKEND_DOMAIN}${product.images[0].url}`,
+      brand: product.designer.name,
+      additional_image_link: product.images
+        .slice(1)
+        .map((image) => `https://${process.env.BACKEND_DOMAIN}${image.url}`)
+        .join(','),
+      color: product.colors[0] && product.colors[0].name,
+      gender: 'female',
+      size: size,
+      age_group: 'adult',
+    }
+  }
 
   const products = await strapi
     .query('product')
@@ -128,8 +128,49 @@ async function facebookCatalog(ctx) {
   ctx.send(rows.join('\n'))
 }
 
+async function acsStockSetup(ctx) {
+  const columns = [ 'product_sku', 'unique_sku', 'name', 'designer', 'garment_type', 'sizes', 'description' ]
+  const products = await strapi.query('product').find({}, [ 'categories', 'designer', 'colors', 'images', 'sizes' ])
+
+  function toRow(product, size, index) {
+    return {
+      product_sku: product.id,
+      unique_sku: `${product.id}_${size.id}_${index}`,
+      name: product.name,
+      designer: product.designer.name,
+      garment_type: product.categories.map(category => category.name).join(', '),
+      sizes: strapi.services.size.rangeNormalized(size).join(', '),
+      description: product.details,
+    }
+  }
+
+  let rows = new Set()
+  for (const product of products) {
+    for (const size of product.sizes) {
+      for (let i = 1; i <= size.quantity; i++) {
+        try {
+          const row = toRow(product, size, i)
+          rows.add(toCSVRow(row))
+        } catch(e) {
+          strapi.log.error('acs-stock-setup %o', e)
+        }
+      }
+    }
+  }
+
+  ctx.set({
+    'Content-Disposition': 'attachment; filename="facebook-catalog.csv"',
+    'Content-Type': 'text/csv; charset=utf-8',
+  })
+
+  // Put columns at the top
+  rows = [toCSVRow(columns), ...rows]
+  ctx.send(rows.join('\n'))
+}
+
 module.exports = {
   routes,
   shopItem,
   facebookCatalog,
+  acsStockSetup
 }

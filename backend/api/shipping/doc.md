@@ -53,6 +53,7 @@ A solid shipping api is core to the rental shipping business model.
         - Size
         - Product SKU
         - Unique SKU
+    - How to add/remove products after initialization?
 - Order creation
     - Uses *PUT* for both order creation and modification
     - Use order.id for *OrderNumber*

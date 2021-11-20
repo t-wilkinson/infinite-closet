@@ -12,7 +12,7 @@ async function numAvailable(orders = []) {
   const available = {}
 
   for (const order of orders) {
-    const key = orderUtils.toKey(order)
+    const key = strapi.services.product.toKey(order)
     if (available[key]) {
       continue
     }
@@ -56,7 +56,7 @@ async function createCartItem(order) {
 
 async function createAvailableCartItem(numAvailableOrders, order) {
   const quantity = await orderUtils.productQuantity(order)
-  const key = orderUtils.toKey(order)
+  const key = strapi.services.product.toKey(order)
 
   const existingOrders = await strapi.query('order', 'orders').count({
     product: order.product.id || order.product,

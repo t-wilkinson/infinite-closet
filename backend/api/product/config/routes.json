@@ -16,7 +16,6 @@
         "policies": []
       }
     },
-
     {
       "method": "GET",
       "path": "/products/filters",
@@ -25,7 +24,6 @@
         "policies": []
       }
     },
-
     {
       "method": "GET",
       "path": "/products/routes",
@@ -38,6 +36,14 @@
       "method": "GET",
       "path": "/products/shop/:slug",
       "handler": "product.shopItem",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/products/acs-stock.csv",
+      "handler": "product.acsStockSetup",
       "config": {
         "policies": []
       }

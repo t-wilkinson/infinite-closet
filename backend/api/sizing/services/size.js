@@ -11,15 +11,20 @@ function range({ size: start, sizeRange: end }) {
   }
 }
 
+function normalize(size) {
+  return size.replace('_', '')
+}
+
 module.exports = {
   enum: sizeEnum,
   range,
+  normalize,
 
   contains(order, size) {
     return range(order).includes(size)
   },
 
-  normalize(size) {
-    return size.replace('_', '')
-  },
+  rangeNormalized(sizeRange) {
+    return range(sizeRange).map(normalize)
+  }
 }

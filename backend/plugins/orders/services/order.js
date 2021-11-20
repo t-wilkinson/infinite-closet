@@ -13,32 +13,6 @@ const inProgress = ['planning', 'shipping', 'cleaning']
  */
 
 /**
- * Strapi potentialy stores nested objects in different ways.
- * This function normalizes the extraction of the id field.
- * @param {object} obj The nested database property
- * @returns {string} Id of the nested database property
- */
-function itemId(obj) {
-  if (obj === undefined) {
-    return undefined
-  } else if (obj.id !== undefined) {
-    return obj.id
-  } else {
-    return obj
-  }
-}
-
-/**
- * Allow us to group orders by the unique products they refer to
- * @param {OrderProduct}
- * @return {string} Unique key
- */
-function toKey({ product, size }) {
-  const productId = itemId(product)
-  return `${size}_${productId}`
-}
-
-/**
  * Convert order to shipping address for shipments
  */
 function toShippingAddress(order) {
@@ -59,7 +33,7 @@ function toShippingAddress(order) {
  * @returns {Order[]}
  */
 async function relevantOrders({ product, size }) {
-  const productId = itemId(product)
+  const productId = strapi.services.product.itemId(product)
 
   return await strapi.query('order', 'orders').find(
     {
@@ -146,7 +120,6 @@ async function totalAvailable(order, orders) {
 }
 
 module.exports = {
-  toKey,
   inProgress,
   productQuantity,
   toShippingAddress,
