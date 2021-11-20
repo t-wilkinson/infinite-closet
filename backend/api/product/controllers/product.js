@@ -139,7 +139,7 @@ async function acsStockSetup(ctx) {
       name: product.name,
       designer: product.designer.name,
       garment_type: product.categories.map(category => category.name).join(', '),
-      sizes: strapi.services.size.rangeNormalized(size).join(', '),
+      sizes: strapi.services.size.range(size).map(s => s ? strapi.services.size.normalize(s) : '').join(', '),
       description: product.details,
     }
   }
@@ -152,6 +152,7 @@ async function acsStockSetup(ctx) {
           const row = toRow(product, size, i)
           rows.add(toCSVRow(row))
         } catch(e) {
+          console.log(e)
           strapi.log.error('acs-stock-setup %o', e)
         }
       }
