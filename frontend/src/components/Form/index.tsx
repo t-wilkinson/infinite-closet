@@ -253,8 +253,16 @@ export const PasswordVisible = ({ passwordVisible, setPasswordVisible }) => (
   </button>
 )
 
-// TODO: Dropdown always scrolls to bottom. Looks like firefox bug.
-export const Dropdown = ({ value, onChange, values, ...props }) => {
+export const Dropdown = ({
+  value,
+  onChange,
+  values,
+  ...props
+}: {
+  value: string
+  onChange: (value: string) => {}
+  values: { key: string; label: string }[]
+}) => {
   const [dropdown, setDropdown] = React.useState(false)
 
   return (
@@ -262,6 +270,7 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
       className="relative w-full"
       tabIndex={0}
       onBlur={(e) => {
+        // @ts-ignore
         if (!e.currentTarget.contains(e.relatedTarget)) {
           setDropdown(false)
         }
@@ -294,11 +303,11 @@ export const Dropdown = ({ value, onChange, values, ...props }) => {
             key={value.key}
             tabIndex={0}
             aria-label="Dropdown sizes"
-            onClick={(e) => {
+            onClick={() => {
               setDropdown(false)
               onChange(value.key)
             }}
-            className="flex cursor-pointer bg-white px-2"
+            className="flex cursor-pointer bg-white px-2 hover:bg-gray-light"
           >
             {value.label}
           </button>

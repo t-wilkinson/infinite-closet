@@ -144,8 +144,8 @@ const FitsAndPreferences = ({ user, setStatus }) => {
         }))}
       />
 
-      <div className="relative">
-        <button onClick={() => setChartOpen((state) => true)}>
+      <div className="relative z-20 py-2">
+        <button onClick={() => setChartOpen(() => true)}>
           <span className="underline">Size Chart</span>
         </button>
         <SizeChartPopup state={chartOpen} setState={setChartOpen} />
@@ -193,7 +193,7 @@ const SubmitFields = ({ onSubmit, disabled }) => (
   <>
     {/* <div className="w-full col-span-full" /> */}
 
-    <div className="w-full col-start-1">
+    <div className="w-full mt-3 col-start-1">
       <Button disabled={disabled} onClick={onSubmit}>
         Save Changes
       </Button>
