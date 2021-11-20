@@ -60,7 +60,7 @@ export const SizeSelector = ({ product, size, onChange }: SizeSelector) => {
   )
 }
 
-export const SizeChart = ({ sizeEnum, chart }) => {
+export const SizeChart = ({ sizeEnum, chart }: {sizeEnum: typeof Size, chart: StrapiSizeChart[]}) => {
   return (
     <>
       <table className="table-fixed border border-gray-light">
@@ -88,7 +88,7 @@ export const SizeChart = ({ sizeEnum, chart }) => {
             .filter((size) => size !== 'ONESIZE')
             .map((size) => (
               <tr key={size} className="border-t border-gray-light">
-                <th scope="row" className="p-1 font-bold">
+                <th scope="row" className="w-16 p-1 font-bold">
                   {size}
                 </th>
                 {chart.map((item: StrapiSizeChart) => (
@@ -104,6 +104,9 @@ export const SizeChart = ({ sizeEnum, chart }) => {
   )
 }
 
+/**
+ * Size measurements of a product
+ */
 export const SizeMeasurements = ({ chart, measurements, product }) => (
   <table className="table-fixed border border-gray-light">
     <thead className="border border-gray-light">
@@ -178,7 +181,7 @@ export const SizeChartPopup = ({
             <Icon icon={iconClose} size={16} />
           </div>
         </button>
-        <div className="overflow-y-auto space-y-8 pb-8 px-4">
+        <div className="overflow-y-auto space-y-8 px-4">
           <div className="bg-white rounded-md">
             <SizeChart {...sizeChart} />
           </div>
