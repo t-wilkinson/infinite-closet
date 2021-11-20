@@ -2,6 +2,22 @@
   "routes": [
     {
       "method": "GET",
+      "path": "/blogs",
+      "handler": "blog.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/blogs/:id",
+      "handler": "blog.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/documents",
       "handler": "document.find",
       "config": {

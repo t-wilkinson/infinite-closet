@@ -1,10 +1,11 @@
 /**
  * @group lib
  */
+'use strict'
 const sizing = require('../size')
 
-describe.skip('Size range', () => {
-  test.skip.each([
+describe('Size range', () => {
+  test.each([
     ['M', 'L', 'M'],
     ['M', undefined, 'M'],
   ])('%s-%s contains %s', (start, end, expected) => {
@@ -13,7 +14,7 @@ describe.skip('Size range', () => {
     ).toBeTruthy()
   })
 
-  test.skip.each([
+  test.each([
     ['M', 'L', 'S'],
     ['S', undefined, 'L'],
   ])('%s-%s does not contain %s', (start, end, expected) => {
