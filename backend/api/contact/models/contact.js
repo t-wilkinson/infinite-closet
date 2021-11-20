@@ -6,11 +6,11 @@ module.exports = {
       strapi.log.debug(
         'created contact',
         result,
-        strapi.services.mailchimp.contactsListId
+        strapi.services.mailchimp.marketing.contactsListId
       )
       if (process.env.NODE_ENV === 'production') {
-        const res = await strapi.services.mailchimp.lists.addListMember(
-          strapi.services.mailchimp.contactsListId,
+        const res = await strapi.services.mailchimp.marketing.lists.addListMember(
+          strapi.services.mailchimp.marketing.contactsListId,
           {
             email_address: result.email,
             status: result.subscribed ? 'subscribed' : 'unsubscribed',

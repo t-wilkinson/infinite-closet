@@ -1,11 +1,17 @@
 'use strict'
+const stripe = require('stripe')(process.env.STRIPE_KEY)
+
 /**
- * Everything to do with checkout
+ * @typedef {object} Contact
+ * @prop {string} fullName
+ * @prop {string} nickName
+ * @prop {string} email
  */
 
-const stripe = require('stripe')(process.env.STRIPE_KEY)
-const { splitName } = require('../../../utils')
-
+/**
+ * Convert request body to more useful information
+ * @returns - {summary, cart, paymentIntent, paymentMethod}
+ */
 async function prepareCheckout(body, user = null) {
   const cart = await strapi.plugins['orders'].services.cart.createValidCart(
     body.orders
@@ -27,93 +33,10 @@ async function prepareCheckout(body, user = null) {
   return { summary, cart, paymentIntent, paymentMethod }
 }
 
-async function shipCart({
-  contact, // {fullName, nickName, email}
-  address,
-  cart,
-  summary,
-  paymentIntent,
-  paymentMethod,
-}) {
-  if (typeof address === 'object') {
-    address = await strapi
-      .query('address')
-      .create({ ...address, email: contact.email })
-    address = address.id
-  }
-
-  Promise.allSettled(
-    strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
-      strapi.query('order', 'orders').update(
-        { id: order.id },
-        {
-          address,
-          paymentIntent: paymentIntent
-            ? paymentIntent.id
-            : paymentIntent || null,
-          paymentMethod: paymentMethod
-            ? paymentMethod.id
-            : paymentMethod || null,
-          status: 'planning',
-          coupon: summary.coupon ? summary.coupon.id : null,
-          charge: strapi.plugins['orders'].services.price.orderTotal(order),
-          fullName: contact.fullName,
-          nickName: contact.nickName,
-          email: contact.email,
-        }
-      )
-    )
-  ).then((settled) => {
-    const failed = settled.filter((res) => res.status === 'rejected')
-    if (failed.length > 0) {
-      strapi.log.error('Failed shipOrder', failed)
-    }
-  })
-
-  if (contact) {
-    console.log('shipCart', { contact, summary, cart })
-
-    try {
-      const existingContact = await strapi
-        .query('contact')
-        .findOne({ email: contact.email })
-      const { firstName, lastName } = splitName(contact.fullName)
-      const contactData = { firstName, lastName }
-
-      if (existingContact) {
-        strapi.query('contact').update({ id: existingContact.id }, contactData)
-      } else {
-        strapi.query('contact').insert(contactData)
-      }
-    } catch (e) {
-      strapi.log.error('Failure creating contact.', e)
-    }
-
-    try {
-      await strapi.plugins['email'].services.email.send({
-        template: 'checkout',
-        to: { name: contact.fullName, email: contact.email },
-        bcc:
-          process.env.NODE_ENV === 'production'
-            ? [
-              'info@infinitecloset.co.uk',
-              'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
-            ]
-            : [],
-        subject: 'Thank you for your order',
-        data: {
-          cart,
-          name: contact.fullName,
-          firstName: contact.nickName,
-          totalPrice: summary.total,
-        },
-      })
-    } catch (e) {
-      strapi.log.error('Failed to send checkout email. Error:', e)
-    }
-  }
-}
-
+/**
+ * Each cart item has an associated paymentIntent,
+ * which we need to check is valid before shipping order.
+ */
 function validPaymentIntent(cart, paymentIntent) {
   // TODO: what if only some paymentIntents match?
   // Only use paymentIntent created by the server
@@ -133,65 +56,27 @@ module.exports = {
       return ctx.send()
     }
 
+    // Charge user and checkout order
     try {
-      await stripe.paymentIntents
-        .create({
-          amount: summary.amount,
-          currency: 'gbp',
-          customer: user.customer,
-          payment_method: paymentMethod.id,
-          off_session: false,
-          confirm: true,
-        })
-        .then((paymentIntent) =>
-          shipCart({
-            ...body,
-            summary,
-            cart,
-            paymentMethod,
-            paymentIntent,
-          })
-        )
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: summary.amount,
+        currency: 'gbp',
+        customer: user.customer,
+        payment_method: paymentMethod.id,
+        off_session: false,
+        confirm: true,
+      })
+      await strapi.plugins['orders'].services.helpers.onCheckout({
+        ...body,
+        summary,
+        cart,
+        paymentMethod,
+        paymentIntent,
+      })
     } catch (e) {
       strapi.log.error('checkoutUser error', e)
-      strapi.log.error('checkoutUser error', e.stack)
     } finally {
       ctx.send()
-    }
-  },
-
-  async checkoutRequest(ctx) {
-    const body = ctx.request.body
-    const { paymentMethod, paymentIntent, summary, cart } =
-      await prepareCheckout(body)
-    if (cart.length === 0 || summary.amount < 100) {
-      return ctx.send()
-    }
-
-    if (validPaymentIntent(cart, paymentIntent)) {
-      try {
-        await shipCart({
-          ...body,
-          summary,
-          cart,
-          paymentMethod,
-          paymentIntent,
-        })
-        return ctx.send()
-      } catch (e) {
-        strapi.log.error('PaymentRequest paymentIntent did not succeed', {
-          cart,
-          paymentIntent: paymentIntent.id,
-          error: e,
-        })
-        return ctx.send({ error: 'PaymentIntent invalid' }, 400)
-      }
-    } else {
-      strapi.log.error('PaymentRequest paymentIntent did not succeed', {
-        cart,
-        paymentIntent: paymentIntent.id,
-      })
-      return ctx.send({ error: 'PaymentIntent invalid' }, 400)
     }
   },
 
@@ -199,7 +84,7 @@ module.exports = {
     const body = { ...(ctx.request.body.body || {}), ...ctx.request.body }
     const { paymentMethod, summary, cart } = await prepareCheckout(body)
     if (cart.length === 0 || summary.amount < 100) {
-      return ctx.send()
+      return ctx.send({})
     }
 
     try {
@@ -219,7 +104,7 @@ module.exports = {
       const response = generateResponse(intent)
 
       if (response.success) {
-        await shipCart({
+        await strapi.plugins['orders'].services.helpers.onCheckout({
           ...body,
           summary,
           cart,
@@ -231,6 +116,37 @@ module.exports = {
     } catch (e) {
       strapi.log.error('checkoutGuest error', e)
       return ctx.send({ error: 'Could not process payment', body }, 400)
+    }
+  },
+
+  // Through apple pay
+  async checkoutRequest(ctx) {
+    const body = ctx.request.body
+    const { paymentMethod, paymentIntent, summary, cart } =
+      await prepareCheckout(body)
+    if (cart.length === 0 || summary.amount < 100) {
+      return ctx.send()
+    }
+
+    try {
+      if (!validPaymentIntent(cart, paymentIntent)) {
+        throw new Error('Payment intent invalid')
+      }
+      await strapi.plugins['orders'].services.helpers.onCheckout({
+        ...body,
+        summary,
+        cart,
+        paymentMethod,
+        paymentIntent,
+      })
+      return ctx.send({})
+    } catch (e) {
+      strapi.log.error('PaymentRequest paymentIntent did not succeed', {
+        cart,
+        paymentIntent: paymentIntent.id,
+        error: e,
+      })
+      return ctx.send({ error: 'PaymentIntent invalid' }, 400)
     }
   },
 

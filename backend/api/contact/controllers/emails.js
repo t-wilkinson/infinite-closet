@@ -10,7 +10,6 @@ module.exports = {
       return ctx.send({}, 404)
     }
 
-    const { user } = order
     const shippingRequest = {
       collection:
         strapi.plugins['orders'].services.order.toShippingAddress(order),
@@ -29,21 +28,7 @@ module.exports = {
       .query('order', 'orders')
       .update({ id: order.id }, { status: 'cleaning' })
       .then(() => strapi.services.shipment.ship(shippingRequest))
-      .then(() =>
-        strapi.plugins['email'].services.email.send({
-          template: 'order-leaving',
-          to: user.email,
-          bcc:
-            process.env.NODE_ENV === 'production'
-              ? ['battersea@oxwash.com']
-              : [],
-          subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
-          data: {
-            firstName: user.firstName,
-            ...cartItem,
-          },
-        })
-      )
+      .then(() => strapi.services.templateEmail.orderLeaving(cartItem))
       .catch((err) =>
         strapi.plugins['orders'].services.helpers.shippingFailure(order, err)
       )
@@ -59,23 +44,12 @@ module.exports = {
       return ctx.send({}, 404)
     }
 
-    const { user } = order
     const cartItem = await strapi.plugins[
       'orders'
     ].services.cart.createCartItem(order)
     strapi.log.error('sending mail', cartItem.totalPrice)
 
-    strapi.plugins['email'].services.email.send({
-      template: 'order-leaving',
-      to: user.email,
-      bcc:
-        process.env.NODE_ENV === 'production' ? ['battersea@oxwash.com'] : [],
-      subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
-      data: Object.assign(cartItem, {
-        firstName: user.firstName,
-      }),
-    })
-
+    strapi.services.templateEmail.orderLeaving(cartItem)
     return ctx.send({})
   },
 }

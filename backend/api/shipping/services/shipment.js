@@ -1,5 +1,5 @@
 'use strict'
-const { shipment } = require('./acs')
+const { shipment } = require('./hived')
 
 /**
  * @typedef ShippingClass
@@ -22,4 +22,10 @@ const { shipment } = require('./acs')
  * @property {string} deliveryInstructions
  */
 
-module.exports = shipment
+/**
+ * Be clear about who our shipping provider is
+ * @typedef Provider
+ * @type {'acs'|'hived'}
+ */
+
+module.exports = {...shipment, provider: 'hived'}

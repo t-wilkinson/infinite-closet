@@ -68,4 +68,4 @@ A solid shipping api is core to the rental shipping business model.
 - Order status?
     - Assume *GET* of order creation endpoint
 - Create an order on checkout (instead of running a script through cron)
-- Ignore sendToCleaners
+- ~~Ignore sendToCleaners~~

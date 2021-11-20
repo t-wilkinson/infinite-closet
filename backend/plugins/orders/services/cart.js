@@ -36,6 +36,7 @@ async function createCartItem(order) {
       'product.sizes',
       'product.images',
       'product.designer',
+      ...(order.user ? ['user'] : []),
     ])
   order.product.sizes = await strapi
     .query('product')

@@ -6,7 +6,7 @@ export const OrderAction = {
   planning: ({ order }) => {
     const { getOrders } = React.useContext(OrdersContext);
     const ship = () => {
-      fetch(strapi.backendURL + "/orders/ship/" + order.id, {
+      fetch(`${strapi.backendURL}/orders/ship/${order.id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

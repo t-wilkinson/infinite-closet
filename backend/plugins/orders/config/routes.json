@@ -150,7 +150,7 @@
     },
     {
       "method": "POST",
-      "path": "/ship/:id",
+      "path": "/ship/:order_id",
       "handler": "order.ship",
       "config": {
         "policies": [["admin::hasPermissions", ["plugins::orders.manage"]]]
@@ -158,7 +158,7 @@
     },
     {
       "method": "POST",
-      "path": "/complete/:id",
+      "path": "/complete/:order_id",
       "handler": "order.complete",
       "config": {
         "plugins": [["admin::hasPermissions", ["plugins::orders.manage"]]]
