@@ -1,5 +1,5 @@
 'use strict'
-const { shipment } = require('./hived')
+const api = require('./hived/api')
 
 /**
  * @typedef ShippingClass
@@ -28,4 +28,4 @@ const { shipment } = require('./hived')
  * @type {'acs'|'hived'}
  */
 
-module.exports = {...shipment, provider: 'hived'}
+module.exports = {...api, provider: 'hived'}

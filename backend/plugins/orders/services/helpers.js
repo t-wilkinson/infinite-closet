@@ -113,7 +113,7 @@ async function ship(order) {
     collection: 'infinitecloset',
     recipient:
     strapi.plugins['orders'].services.order.toShippingAddress(order),
-    shippingClass: strapi.services.shipment.shippingClass(
+    shippingClass: strapi.services.timing.shippingClass(
       order.shippingDate,
       order.startDate
     ),

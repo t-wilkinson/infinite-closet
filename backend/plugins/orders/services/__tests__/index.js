@@ -1,9 +1,10 @@
 /**
  * @group lib
  */
+'use strict'
 const orderApi = require('../order')
 const {day } = require('../../../../utils')
-const { range } = require('../../../../api/shipping/services/timing')
+const { range } = require('../../../../api/shipping/services/timing') // we don't expect strapi global variable to be available
 
 const defaultOrderData = {
   status: 'cart',

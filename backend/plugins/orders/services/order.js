@@ -1,9 +1,7 @@
 'use strict'
 
-const timing = require('../../../api/shipping/services/timing')
 // An array because it can be used in strapi filter
 const inProgress = ['planning', 'shipping', 'cleaning']
-// const notInProgress = ['cart', 'list', 'completed', 'dropped', 'error']
 
 /**
  * Represent individual product
@@ -55,14 +53,14 @@ async function relevantOrders({ product, size }) {
  */
 function overlap(date, order) {
   if (!order.range) {
-    // Save timing.range() result as it can be expensive
-    order.range = timing.range(order)
+    // Save shipment.range() result as it can be expensive
+    order.range = strapi.services.timing.range(order)
   }
 
   const overlaps =
     date &&
     inProgress.includes(order.status) &&
-    timing.overlap(date, order.range)
+    strapi.services.timing.overlap(date, order.range)
   return overlaps
 }
 

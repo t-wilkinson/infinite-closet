@@ -48,7 +48,7 @@ async function createCartItem(order) {
     ...priceUtils.orderPrice(order),
     totalPrice: priceUtils.orderTotal(order),
     range: strapi.services.timing.range(order),
-    shippingClass: strapi.services.shipment.shippingClass(
+    shippingClass: strapi.services.timing.shippingClass(
       order.shippingDate,
       order.startDate
     ),

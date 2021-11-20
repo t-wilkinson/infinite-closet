@@ -15,7 +15,7 @@ const shippingPrices = {
  */
 function orderPrice(order) {
   const shippingClass =
-    strapi.services.shipment.shippingClass(
+    strapi.services.timing.shippingClass(
       order.shippingDate,
       order.startDate
     ) || 'two'

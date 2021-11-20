@@ -1,6 +1,5 @@
 'use strict'
-const { timing } = require('./hived')
-const { arrival } = require('./shipment')
+const timing = require('./hived/timing')
 const {day} = require('../../../utils')
 
 /**
@@ -103,7 +102,7 @@ function valid(start, available, quantity, existing = 0) {
 
   start = day(start)
   const today = day()
-  let arrives = arrival(today, 'one')
+  let arrives = timing.arrival(today, 'one')
 
   if (shouldAddGracePeriod) {
     arrives = arrives.add(15, 'day')
@@ -115,4 +114,4 @@ function valid(start, available, quantity, existing = 0) {
   return enoughShippingTime && notTooFarInFuture
 }
 
-module.exports = { day, valid, overlap, ...timing }
+module.exports = { ...timing, valid, overlap }
