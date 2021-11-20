@@ -6,10 +6,12 @@ import timezone from 'dayjs/plugin/timezone'
 import isBetween from 'dayjs/plugin/isBetween'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
+import {StrapiProduct, StrapiOrder} from '@/utils/models'
 import { Icon } from '@/components'
 import { iconLeft, iconClose, iconRight } from '@/components/Icons'
 import * as sizing from '@/utils/sizing'
 import useDays from '@/utils/useDays'
+import {Size} from '@/Products/types'
 import { rentalLengths } from '@/utils/constants'
 
 dayjs.extend(isSameOrAfter)
@@ -18,6 +20,17 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.tz.guess()
 dayjs.tz.setDefault('Europe/London')
+
+interface DatePicker {
+  previousDate?: Dayjs
+  selectDate: (_: Dayjs) => void
+  selectedDate: Dayjs
+  size: Size
+  product: StrapiProduct
+  visible: boolean
+  setVisible: (_: boolean) => void
+  rentalLength: StrapiOrder['rentalLength']
+}
 
 export const DatePicker = ({
   previousDate = undefined,
@@ -28,7 +41,7 @@ export const DatePicker = ({
   visible,
   setVisible,
   rentalLength,
-}) => {
+}: DatePicker) => {
   if (!size || !product) {
     return null
   }

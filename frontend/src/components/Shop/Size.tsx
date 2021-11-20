@@ -167,30 +167,35 @@ export const SizeChartPopup = ({
     return null
   } else {
     return (
-      <>
-        <div className="fixed inset-0"
-          style={{ backgroundColor: "#5f6368cc" }}
-          onClick={() => setState(false)}
-        />
-      <div
-        className="bottom-0 absolute bg-gray-light border-gray border z-30 w-96"
-        style={{ maxHeight: 600 }}
+      <div className="fixed inset-0 grid place-items-center z-30"
+        style={{ backgroundColor: "#5f6368cc" }}
+        onClick={(e) => {
+          // @ts-ignore
+          if (e.target === e.currentTarget) {
+            setState(false)
+          }
+        }}
       >
-        <button onClick={() => setState(false)} className="place-self-end">
-          <div className="p-4">
-            <Icon icon={iconClose} size={16} />
+        <div
+          className="bg-gray-light border-gray border w-96"
+          style={{ maxHeight: 600 }}
+        >
+          <button onClick={() => setState(false)} className="place-self-end">
+            <div className="p-4 pb-2">
+              <Icon icon={iconClose} size={16} />
+            </div>
+          </button>
+          <div className="overflow-y-auto space-y-8 px-8 pb-4">
+            <div className="bg-white rounded-md">
+              <SizeChart {...sizeChart} />
+            </div>
+            <div className="bg-white rounded-md">
+              {product && <SizeMeasurements {...sizeChart} product={product} />}
+            </div>
           </div>
-        </button>
-        <div className="overflow-y-auto space-y-8 px-4">
-          <div className="bg-white rounded-md">
-            <SizeChart {...sizeChart} />
-          </div>
-          <div className="bg-white rounded-md">
-            {product && <SizeMeasurements {...sizeChart} product={product} />}
-          </div>
+          {product && <div className="pb-4" /> }
         </div>
       </div>
-      </>
     )
   }
 }

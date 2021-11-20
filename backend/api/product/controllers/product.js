@@ -152,7 +152,6 @@ async function acsStockSetup(ctx) {
           const row = toRow(product, size, i)
           rows.add(toCSVRow(row))
         } catch(e) {
-          console.log(e)
           strapi.log.error('acs-stock-setup %o', e)
         }
       }

@@ -20,7 +20,7 @@ module.exports = {
       orders.filter((order) => order.status === status)
 
     const shippingOrders = filterOrders('shipping')
-    // strapi.plugins['orders'].services.helpers.sendToCleaners(shippingOrders)
+    strapi.plugins['orders'].services.helpers.sendToCleaners(shippingOrders)
     strapi.plugins['orders'].services.helpers.notifyArrival(shippingOrders)
 
     const planningOrders = filterOrders('planning')

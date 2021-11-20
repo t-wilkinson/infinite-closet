@@ -26,6 +26,10 @@
       "default": "cart",
       "required": true
     },
+    "details": {
+      "type": "string",
+      "unique": false
+    },
     "message": {
       "type": "json"
     },
@@ -41,7 +45,10 @@
     },
     "rentalLength": {
       "type": "enumeration",
-      "enum": ["short", "long"]
+      "enum": [
+        "short",
+        "long"
+      ]
     },
     "address": {
       "model": "address"
