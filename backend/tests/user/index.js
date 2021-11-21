@@ -1,6 +1,8 @@
 /**
  * @group api
+ * @group user
  */
+'use strict'
 const request = require('supertest')
 const { updatePluginStore, responseHasError } = require('../helpers/strapi')
 const { createUser, defaultData, mockUserData } = require('./factory')
@@ -29,7 +31,7 @@ describe('Default User methods', () => {
     expect(user !== null).toBe(true)
   })
 
-  it('should login user and return jwt token', (done) => {
+  it.skip('should login user and return jwt token', (done) => {
     const jwt = strapi.plugins['users-permissions'].services.jwt.issue({
       id: user.id,
     })

@@ -22,6 +22,11 @@ A solid shipping api is core to the rental shipping business model.
 ## Security
 - Protect api keys and api integration from public
 
+## Concepts
+- Shipping
+    - Shipment
+        - arrival() and range() are the most important functions
+
 ## Implementation
 - How do we support multiple potential providers?
     - Make a class and implement multiple times in sub-folder. Then export one of the implementations.

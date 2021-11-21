@@ -1,4 +1,4 @@
-'use snippet'
+'use strict'
 
 const {splitName} = require('../../../utils')
 

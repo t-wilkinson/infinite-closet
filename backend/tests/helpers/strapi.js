@@ -1,8 +1,9 @@
+'use strict'
 const Strapi = require('strapi')
 const http = require('http')
 
 let instance
-jest.setTimeout(30000)
+jest.setTimeout(15000)
 
 /**
  * Setups strapi for futher testing

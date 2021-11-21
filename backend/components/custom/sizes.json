@@ -11,37 +11,13 @@
       "required": false,
       "unique": false,
       "type": "enumeration",
-      "enum": [
-        "XXS",
-        "XS",
-        "S",
-        "M",
-        "L",
-        "XL",
-        "_2XL",
-        "_3XL",
-        "_4XL",
-        "_5XL",
-        "_6XL",
-        "ONESIZE"
-      ]
+      "enum": ["XXS", "XS", "S", "M", "L", "XL", "_2XL", "ONESIZE"]
     },
     "sizeRange": {
       "required": false,
       "unique": false,
       "type": "enumeration",
-      "enum": [
-        "XS",
-        "S",
-        "M",
-        "L",
-        "XL",
-        "_2XL",
-        "_3XL",
-        "_4XL",
-        "_5XL",
-        "_6XL"
-      ]
+      "enum": ["XS", "S", "M", "L", "XL", "_2XL"]
     },
     "quantity": {
       "type": "integer",
@@ -51,9 +27,7 @@
     },
     "units": {
       "type": "enumeration",
-      "enum": [
-        "cm"
-      ],
+      "enum": ["cm"],
       "default": "cm"
     },
     "hips": {

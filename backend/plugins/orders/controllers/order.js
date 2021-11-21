@@ -17,12 +17,13 @@ module.exports = {
   },
 
   // TODO: should check if product.sizes includes order.size
+  // Add to cart
   async create(ctx) {
     const body = ctx.request.body
     const user = ctx.state.user
 
     if (!['cart', 'list'].includes(body.status)) {
-      return
+      return ctx.send({message: 'Order status must be \'cart\' or \'list\''}, 404)
     }
 
     const order = await strapi.query('order', 'orders').create({

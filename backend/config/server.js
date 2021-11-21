@@ -1,7 +1,7 @@
-watchIgnoreFiles = [
+const watchIgnoreFiles = [
   '**/*.md',
-  '**/__test__/**',
-  'tests/**',
+  '**/__tests__/**',
+  '**/tests/**',
 ]
 
 module.exports = ({env}) => ({

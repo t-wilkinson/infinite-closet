@@ -66,8 +66,11 @@ async function shippingFailure(order, err) {
   strapi.log.error('failed to ship order to client %o', err)
 }
 
+/**
+ * Find orders that require manual action through the strapi plugin
+ * and send an email reminder
+ */
 async function notifyAction(orders) {
-  // Find orders that require manual action through the strapi plugin
   orders = orders.filter((order) => {
     const range = strapi.services.timing.range(order)
     const today = day()
@@ -206,9 +209,8 @@ async function onCheckout({
 module.exports = {
   onCheckout,
   ship,
-
+  sendToCleaners,
   shippingFailure,
   notifyArrival,
-  sendToCleaners,
   notifyAction,
 }

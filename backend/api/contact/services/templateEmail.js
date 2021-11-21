@@ -1,4 +1,4 @@
-'use snippet'
+'use strict'
 
 const send = (...props) => strapi.plugins['email'].services.email.send(...props)
 const unpackCartItem = (cartItem) => ({cartItem, order: cartItem.order, user: cartItem.order.user})

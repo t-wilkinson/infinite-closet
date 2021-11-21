@@ -1,0 +1,21 @@
+{
+  "name": "strapi-provider-email-test-google-workspace",
+  "version": "1.0.0",
+  "main": "index.js",
+  "description": "Google Workspace provider for strapi email",
+  "dependencies": {},
+  "keywords": [
+    "email",
+    "strapi",
+    "google"
+  ],
+  "strapi": {
+    "isProvider": true
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^27.3.1"
+  }
+}

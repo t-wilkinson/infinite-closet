@@ -11548,6 +11548,9 @@ strapi-provider-email-sendmail@3.5.4:
     sendmail "^1.6.1"
     strapi-utils "3.5.4"
 
+"strapi-provider-email-test-google-workspace@file:providers/strapi-provider-email-test-google-workspace":
+  version "1.0.0"
+
 strapi-provider-upload-local@3.5.4:
   version "3.5.4"
   resolved "https://registry.yarnpkg.com/strapi-provider-upload-local/-/strapi-provider-upload-local-3.5.4.tgz#175f9534a2fc3b038229d3488b213ed8f5060c41"
