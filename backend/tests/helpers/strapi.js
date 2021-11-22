@@ -129,6 +129,19 @@ const responseHasError = (errorId, response) => {
   return false
 }
 
+function parseCookies(req) {
+  var cookies = req.get('Set-Cookie')
+  if (!cookies) {
+    return {}
+  }
+
+  return cookies.reduce((obj, c) => {
+    var n = c.split('=')
+    obj[n[0].trim()] = n[1].split('; ')[0].trim()
+    return obj
+  }, {})
+}
+
 module.exports = {
   setupStrapi,
   jwt,
@@ -137,4 +150,5 @@ module.exports = {
   updatePluginStore,
   getPluginStore,
   responseHasError,
+  parseCookies,
 }

@@ -127,11 +127,7 @@ export const CheckoutWrapper = ({}) => {
           type: 'set-payment-methods',
           payload: res.paymentMethods,
         })
-        if (
-          res.paymentMethods &&
-          res.paymentMethods[0] &&
-          res.paymentMethods[0].id
-        ) {
+        if (res.paymentMethods?.[0]?.id) {
           dispatch({
             type: 'choose-payment-method',
             payload: res.paymentMethods[0].id,

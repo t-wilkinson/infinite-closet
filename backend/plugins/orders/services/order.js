@@ -6,8 +6,8 @@ const inProgress = ['planning', 'shipping', 'cleaning']
 /**
  * Represent individual product
  * @typedef {object} OrderProduct
- * @property {Size} size
- * @property {Product} product
+ * @prop {Size} size
+ * @prop {Product} product
  */
 
 /**

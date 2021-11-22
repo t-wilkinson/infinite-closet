@@ -224,9 +224,7 @@ async function queryFilters(knex, _where) {
 
 async function queryCategories(query) {
   const queryCategories =
-    typeof query.categories === 'string'
-      ? [query.categories]
-      : query.categories
+    typeof query.categories === 'string' ? [query.categories] : query.categories
   const unorderedCategories = await strapi.query('category').find({
     slug_in: query.categories,
   })

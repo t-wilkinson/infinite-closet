@@ -4,21 +4,10 @@
  */
 'use strict'
 const request = require('supertest')
-const { updatePluginStore, responseHasError } = require('../helpers/strapi')
+const { parseCookies, updatePluginStore, responseHasError } = require('../helpers/strapi')
 const f = {}
 f.user = require('./factory')
 // const nodemailerMock = require('nodemailer-mock')
-
-function cookieParser(req) {
-  var cookies = req.get('Set-Cookie')
-  if (cookies) {
-    req.cookies = cookies.reduce((obj, c) => {
-      var n = c.split('=')
-      obj[n[0].trim()] = n[1].split('; ')[0].trim()
-      return obj
-    }, {})
-  }
-}
 
 describe('Default User methods', () => {
   let user
@@ -48,8 +37,7 @@ describe('Default User methods', () => {
       .expect('Content-Type', /json/)
       .expect(200)
       .then(async (data) => {
-        cookieParser(data)
-        const token = data.cookies.token
+        const {token} = parseCookies(data)
         expect(token).toBeDefined()
         const verified = await strapi.plugins[
           'users-permissions'
@@ -85,9 +73,7 @@ describe('Default User methods', () => {
       .post('/auth/local/register')
       .set('accept', 'application/json')
       .set('Content-Type', 'application/json')
-      .send({
-        ...f.user.mock(),
-      })
+      .send(f.user.mock())
       .expect('Content-Type', /json/)
       .expect(200)
       .then((data) => {

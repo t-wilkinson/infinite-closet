@@ -24,11 +24,12 @@ const defaultData = {
     {
       name: 'Image 1',
       alternativeText: "Image 1",
-      url: 'http://infinitecloset.co.uk/image-1',
+      url: '/uploads/image-1',
       size: 1000,
       hash: 'image-1',
-      mime: 'image/jpg',
       provider: 'local',
+      ext: '.jpg',
+      mime: 'image/jpeg',
     },
   ],
 }

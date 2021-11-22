@@ -159,12 +159,7 @@ const PageRoutes = ({
 
 // TODO: the logic is kind of a mess
 export const toRows = (column, serverRoutes) => {
-  const defaultRoutes =
-    (serverRoutes.routes &&
-      serverRoutes.routes[column.value] &&
-      serverRoutes.routes[column.value].categories) ||
-    []
-
+  const defaultRoutes = serverRoutes.routes?.[column.value]?.categories || []
   const serverRows =
     (column.value === 'occasions' ? serverRoutes.occasions : defaultRoutes) ||
     []

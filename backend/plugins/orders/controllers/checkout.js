@@ -46,7 +46,7 @@ module.exports = {
     const body = ctx.request.body
     const { paymentMethod, summary, cart } = await prepareCheckout(body, user)
     if (cart.length === 0 || summary.amount < 100) {
-      return ctx.send()
+      return ctx.send({}, 404)
     }
 
     // Charge user and checkout order
@@ -66,10 +66,10 @@ module.exports = {
         paymentMethod,
         paymentIntent,
       })
+      ctx.send({ status: 'success' })
     } catch (e) {
-      strapi.log.error('checkoutUser error', e)
-    } finally {
-      ctx.send()
+      strapi.log.error('checkoutUser error', e.stack)
+      ctx.send({ status: 'error', error: e.message }, 404)
     }
   },
 

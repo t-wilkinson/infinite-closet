@@ -2,7 +2,6 @@
 const orderUtils = require('./order')
 const priceUtils = require('./price')
 
-// calculate number of available products for each cart item
 /**
  * For each order, find the number of existing orders whose lifecycle overlaps
  * @param {Order[]} orders

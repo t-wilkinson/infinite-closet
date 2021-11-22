@@ -1,6 +1,7 @@
 /**
  * @group api
  * @group order
+ * @group product
  */
 'use strict'
 // const fs = require('fs')
@@ -17,6 +18,7 @@ beforeAll(async () => {
   await Promise.all([
     strapi.query('designer').delete(),
     strapi.query('product').delete(),
+    strapi.query('coupon').delete(),
     strapi.query('user', 'users-permissions').delete(),
   ])
 })
@@ -45,5 +47,6 @@ describe('Strapi in general', () => {
 })
 
 require('./order')
+require('./product')
 // require('./user')
 it.todo('mailchimp')

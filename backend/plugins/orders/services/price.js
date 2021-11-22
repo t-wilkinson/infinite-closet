@@ -1,5 +1,5 @@
 'use strict'
-const {day} = require('../../../utils')
+const { day } = require('../../../utils')
 
 const INSURANCE_PRICE = 5
 const OG_USER_DISCOUNT_FLAT = 5
@@ -15,10 +15,8 @@ const shippingPrices = {
  */
 function orderPrice(order) {
   const shippingClass =
-    strapi.services.timing.shippingClass(
-      order.shippingDate,
-      order.startDate
-    ) || 'two'
+    strapi.services.timing.shippingClass(order.shippingDate, order.startDate) ||
+    'two'
 
   const shippingPrice = shippingPrices[shippingClass] || 0
   const productPrice =
@@ -52,7 +50,7 @@ async function userDiscount(user) {
   // Users that signed up before prelaunch (2021-07-20)
   const isOgUser = await strapi.query('user', 'users-permissions').findOne(
     {
-      id: user.id,
+      id: user,
       created_at_lt: day('2021-07-20').toJSON(),
     },
     []
@@ -60,7 +58,7 @@ async function userDiscount(user) {
 
   const hasOrderedBefore = await strapi.query('order', 'orders').findOne(
     {
-      user: user.id,
+      user,
       status_in: ['planning', 'shipping', 'cleaning', 'completed'],
       shippingDate_gt: day('2021-07-30').toJSON(), // When the discount is first applied
     },
@@ -85,30 +83,43 @@ async function getDiscountPrice(price, user) {
   }
 }
 
+async function applyDiscounts({ user, preDiscountPrice, couponCode }) {
+  const { coupon, discount } = await strapi.services.price.summary({
+    price: preDiscountPrice,
+    existingCoupons: await existingCoupons(user, couponCode),
+    code: couponCode,
+    context: 'checkout',
+  })
+
+  const discountPrice =
+    discount + (await getDiscountPrice(preDiscountPrice, user))
+  return { coupon, discountPrice }
+}
+
 /**
  * Calculates purchase summary of cart including discounts, promo codes, etc.
  * Uses `user` and `couponCode` to apply potential discounts.
  * @param {object} obj
  * @param {Cart} obj.cart
- * @param {User=} obj.user
+ * @param {User|string} obj.user
  * @param {string=} obj.couponCode
  */
 async function summary({ cart, user, couponCode }) {
+  user = user?.id || user
   const { productPrice, insurancePrice, shippingPrice } = cartPrice(cart)
+
   const preDiscountPrice = productPrice + insurancePrice + shippingPrice
+  const { coupon, discountPrice } = await applyDiscounts({
+    user,
+    preDiscountPrice,
+    couponCode,
+  })
 
-  const coupon = await strapi.services.price.availableCoupon(
-    'checkout',
-    couponCode
-  )
-  const couponDiscount = coupon
-    ? strapi.services.price.discount(coupon, preDiscountPrice)
-    : 0
-  const discountPrice =
-    (await getDiscountPrice(preDiscountPrice, user)) + couponDiscount
+  if (discountPrice > preDiscountPrice) {
+    throw new Error('Discount cannot be larger than pre-discount price.')
+  }
 
-  const total = Math.max(0, preDiscountPrice - discountPrice)
-
+  const total = preDiscountPrice - discountPrice
   return {
     preDiscount: preDiscountPrice,
     subtotal: productPrice,
@@ -121,11 +132,18 @@ async function summary({ cart, user, couponCode }) {
   }
 }
 
-// TODO: should this return [] when not passed user?
 /**
  * Coupons can only be used a certain number of times per user
  */
 async function existingCoupons(user, code) {
+  if (!user) {
+    // For now we are trusting that users will not abuse coupons
+    return []
+  }
+  if (typeof code !== 'string') {
+    return []
+  }
+
   return (
     await strapi.query('order', 'orders').find({ user, 'coupon.code': code })
   ).map((order) => order.coupon)

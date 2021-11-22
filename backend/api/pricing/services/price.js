@@ -15,10 +15,6 @@ const toPrice = (amount) => amount / SMALLEST_CURRENCY_UNIT
 
 /**
  * Calculate the discount given the coupon and price
- * @param {Coupon} coupon
- * @param {number} price
- *
- * @returns {number}
  */
 function discount(coupon, price) {
   switch (coupon.type) {
@@ -32,11 +28,9 @@ function discount(coupon, price) {
 }
 
 /**
- * Calculates the discount price given coupon
+ * Is coupon valid given existing uses of that coupon code?
  * @param {Coupon} coupon - Supplied coupon, the database object
- * @param {=Coupon[]} existingCoupons - List of existing coupons with same code that are related to current discount transaction. Ex. the coupons attached to orders of current user.
- *
- * @returns {Object} Containing the new price, discounted price, and a reference to the coupon used
+ * @param {Coupon[]=[]} existingCoupons - List of existing coupons with same code that are related to current discount transaction. Ex. the coupons attached to orders of current user.
  */
 function valid(coupon, existingCoupons = []) {
   if (!coupon) {
@@ -59,9 +53,12 @@ function valid(coupon, existingCoupons = []) {
  * Find coupon matching code
  */
 async function availableCoupon(context, code) {
+  if (typeof code !== 'string') {
+    return null
+  }
   return await strapi
     .query('coupon')
-    .findOne({ context, code: (code || '').toUpperCase() })
+    .findOne({ context, code: code.toUpperCase() })
 }
 
 /**
@@ -74,11 +71,11 @@ async function summary({ price, context, code, existingCoupons }) {
   const total = price - discountPrice
 
   return {
-    total,
-    subtotal: price,
     discount: discountPrice,
     valid: isValid,
     coupon,
+    subtotal: price,
+    total,
     amount: toAmount(total),
   }
 }
