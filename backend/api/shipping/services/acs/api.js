@@ -10,7 +10,11 @@ async function fetchApi(url, method, body = {}) {
   const basicAuth = Buffer.from(
     `${config.auth.username}:${config.auth.password}`
   ).toString('base64')
-  return fetch(`${config.endpoint.live}${url}`, {
+  const endpoint =
+    process.env.NODE_ENV === 'production'
+      ? config.endpoint.live
+      : config.endpoint.test
+  return fetch(`${endpoint}${url}`, {
     method,
     headers: {
       Authorization: 'Basic ' + basicAuth,

@@ -28,4 +28,20 @@ const api = require('./hived/api')
  * @type {'acs'|'hived'}
  */
 
-module.exports = {...api, provider: 'hived'}
+/**
+ * Validate address for shipping
+ */
+async function validateAddress(address) {
+  if (!address) {
+    return false
+  }
+  const valid = await api.verify(address.postcode)
+  return (
+    valid &&
+    ['addressLine1', 'town', 'postcode', 'email'].every(
+      (field) => field in address
+    )
+  )
+}
+
+module.exports = { ...api, validateAddress, provider: 'hived' }

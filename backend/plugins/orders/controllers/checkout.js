@@ -2,13 +2,6 @@
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 /**
- * @typedef {object} Contact
- * @prop {string} fullName
- * @prop {string} nickName
- * @prop {string} email
- */
-
-/**
  * Convert request body to more useful information
  * @returns - {summary, cart, paymentIntent, paymentMethod}
  */

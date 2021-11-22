@@ -23,11 +23,11 @@ module.exports = {
     const user = ctx.state.user
 
     if (!['cart', 'list'].includes(body.status)) {
-      return ctx.send({message: 'Order status must be \'cart\' or \'list\''}, 404)
+      return ctx.send({ message: "Order status must be 'cart' or 'list'" }, 404)
     }
 
     const order = await strapi.query('order', 'orders').create({
-      user: user ? user.id : undefined,
+      user: user ? user.id || user : undefined,
       status: body.status,
       size: body.size,
       product: body.product,
@@ -46,12 +46,14 @@ module.exports = {
     }
 
     try {
-      const cartItem = await strapi.plugins['orders'].services.helpers.ship(order)
+      const cartItem = await strapi.plugins['orders'].services.helpers.ship(
+        order
+      )
       await strapi.services.template_email.orderShipped(cartItem)
-      const {order} = cartItem
+      const { order } = cartItem
       return ctx.send({ order })
     } catch (e) {
-      return ctx.send({message: e.message}, 400)
+      return ctx.send({ message: e.message }, 400)
     }
   },
 }

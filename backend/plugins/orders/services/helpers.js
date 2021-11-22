@@ -1,6 +1,6 @@
 'use strict'
 
-const {day} = require('../../../utils')
+const { day } = require('../../../utils')
 
 async function notifyArrival(orders) {
   for (const order of orders) {
@@ -12,7 +12,9 @@ async function notifyArrival(orders) {
 
     strapi.log.info('order arriving %o', order.id)
 
-    const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(order)
+    const cartItem = await strapi.plugins[
+      'orders'
+    ].services.cart.createCartItem(order)
     strapi.services.template_email.orderArriving(cartItem)
   }
 }
@@ -20,7 +22,7 @@ async function notifyArrival(orders) {
 async function shipToCleaners(order) {
   const shippingRequest = {
     collection:
-    strapi.plugins['orders'].services.order.toShippingAddress(order),
+      strapi.plugins['orders'].services.order.toShippingAddress(order),
     recipient: 'oxwash',
     shippingClass: 'two',
     shipmentPrice: strapi.plugins['orders'].services.price.orderTotal(order),
@@ -108,14 +110,13 @@ async function ship(order) {
       'product.images',
       'product.sizes',
     ])
-  const cartItem = await strapi.plugins[
-    'orders'
-  ].services.cart.createCartItem(order)
+  const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(
+    order
+  )
 
   const shippingRequest = {
     collection: 'infinitecloset',
-    recipient:
-    strapi.plugins['orders'].services.order.toShippingAddress(order),
+    recipient: strapi.plugins['orders'].services.order.toShippingAddress(order),
     shippingClass: strapi.services.timing.shippingClass(
       order.shippingDate,
       order.startDate
@@ -140,8 +141,15 @@ async function ship(order) {
 /**
  * Change stage of cart items to 'planning' and update other information
  */
-async function toPlanning({cart, contact, paymentIntent, summary, address, paymentMethod}) {
-  await Promise.allSettled(
+async function toPlanning({
+  cart,
+  contact,
+  paymentIntent,
+  summary,
+  address,
+  paymentMethod,
+}) {
+  const settled = await Promise.allSettled(
     strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
       strapi.query('order', 'orders').update(
         { id: order.id },
@@ -155,26 +163,36 @@ async function toPlanning({cart, contact, paymentIntent, summary, address, payme
             : paymentMethod || null,
           status: 'planning',
           coupon: summary.coupon ? summary.coupon.id : null,
-          charge: strapi.plugins['orders'].services.price.orderTotal(order),
+          charge: strapi.services.price.toAmount(
+            strapi.plugins['orders'].services.price.orderTotal(order)
+          ),
           fullName: contact.fullName,
           nickName: contact.nickName,
           email: contact.email,
         }
       )
     )
-  ).then((settled) => {
-    const failed = settled.filter((res) => res.status === 'rejected')
-    if (failed.length > 0) {
-      strapi.log.error('Failed to prepare cart for shipping', failed)
-    }
-  })
+  )
+
+  const failed = settled.filter((res) => res.status === 'rejected')
+  if (failed.length > 0) {
+    strapi.log.error('Failed to prepare cart for shipping', failed)
+  }
 }
 
+/**
+ * @typedef {object} Contact
+ * @prop {string} fullName
+ * @prop {string} nickName
+ * @prop {string} email
+ */
 
 /**
+ * Core function used by all checkout methods which handles administrative tasks
  * On checkout, we need to:
+ *  - Validate address
+ *  - Update information about orders (change status, etc.)
  *  - Send an email to the client
- *  - Update information about orders
  */
 async function onCheckout({
   contact,
@@ -184,25 +202,54 @@ async function onCheckout({
   paymentIntent,
   paymentMethod,
 }) {
-  if (typeof address === 'object') {
-    address = await strapi
-      .query('address')
-      .create({ ...address, email: contact.email })
-    address = address.id
+  // Create/update address
+  const mergeParams = { email: contact.email, fullName: contact.fullName }
+  switch (typeof address) {
+    case 'object':
+      address = await strapi
+        .query('address')
+        .create({ ...mergeParams, ...address })
+      break
+    case 'string':
+      address = await strapi
+        .query('address')
+        .update({ id: address }, mergeParams)
+      break
   }
 
-  await toPlanning({cart, contact, paymentIntent, summary, address, paymentMethod})
+  // Validate address
+  const isAddressValid = await strapi.services.shipment.validateAddress(address)
+  if (!isAddressValid) {
+    throw new Error('Expected a valid address.')
+  }
+
+  // Update information for orders in cart
+  await toPlanning({
+    cart,
+    contact,
+    paymentIntent,
+    summary,
+    address,
+    paymentMethod,
+  })
+
+  // acs expects orders asap
   if (strapi.services.shipment.provider === 'acs') {
-    const settled = await Promise.allSettled(cart.map(cartItem => strapi.plugins['orders'].services.helpers.ship(cartItem.order)))
+    const settled = await Promise.allSettled(
+      cart.map((cartItem) =>
+        strapi.plugins['orders'].services.helpers.ship(cartItem.order)
+      )
+    )
     const failed = settled.filter((res) => res.status === 'rejected')
     if (failed.length > 0) {
       strapi.log.error('onCheckout: Failure to ship', failed)
     }
   }
 
+  // Create contact and send email
   if (contact) {
     await strapi.services.contact.upsertContact(contact)
-    await strapi.services.template_email.checkout({contact, summary, cart})
+    await strapi.services.template_email.checkout({ contact, summary, cart })
   }
 }
 

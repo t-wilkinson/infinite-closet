@@ -13,7 +13,7 @@
   "attributes": {
     "fullName": {
       "type": "string",
-      "required": true
+      "required": false
     },
     "email": {
       "type": "string",

@@ -494,7 +494,7 @@ module.exports = {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        subscribed: ctx.request.body.subscribed,
+        subscribed: ctx.request.body.subscribed || false,
       });
 
       const sanitizedUser = sanitizeEntity(user, {

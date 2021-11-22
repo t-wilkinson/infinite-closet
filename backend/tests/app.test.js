@@ -3,7 +3,7 @@
  * @group order
  */
 'use strict'
-const fs = require('fs')
+// const fs = require('fs')
 const { setupStrapi } = require('./helpers/strapi')
 
 jest.setTimeout(15000)
@@ -17,6 +17,7 @@ beforeAll(async () => {
   await Promise.all([
     strapi.query('designer').delete(),
     strapi.query('product').delete(),
+    strapi.query('user', 'users-permissions').delete(),
   ])
 })
 
@@ -44,5 +45,5 @@ describe('Strapi in general', () => {
 })
 
 require('./order')
-require('./user')
+// require('./user')
 it.todo('mailchimp')

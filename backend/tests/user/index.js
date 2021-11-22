@@ -5,7 +5,8 @@
 'use strict'
 const request = require('supertest')
 const { updatePluginStore, responseHasError } = require('../helpers/strapi')
-const { createUser, defaultData, mockUserData } = require('./factory')
+const f = {}
+f.user = require('./factory')
 // const nodemailerMock = require('nodemailer-mock')
 
 function cookieParser(req) {
@@ -23,7 +24,7 @@ describe('Default User methods', () => {
   let user
 
   beforeAll(async () => {
-    user = await createUser(strapi)
+    user = await f.user.create(strapi)
   })
 
   it('should get user', async () => {
@@ -42,7 +43,7 @@ describe('Default User methods', () => {
       .set('Content-Type', 'application/json')
       .send({
         identifier: user.email,
-        password: defaultData.password,
+        password: f.user.defaultData.password,
       })
       .expect('Content-Type', /json/)
       .expect(200)
@@ -85,7 +86,7 @@ describe('Default User methods', () => {
       .set('accept', 'application/json')
       .set('Content-Type', 'application/json')
       .send({
-        ...mockUserData(),
+        ...f.user.mock(),
       })
       .expect('Content-Type', /json/)
       .expect(200)
@@ -107,8 +108,8 @@ describe.skip('Confirmation User methods', () => {
       email_confirmation: true,
     })
 
-    user = await createUser(strapi, {
-      ...mockUserData(),
+    user = await f.user.create(strapi, {
+      ...f.user.mock(),
       confirmed: false,
     })
   })
@@ -126,7 +127,7 @@ describe.skip('Confirmation User methods', () => {
       .set('Content-Type', 'application/json')
       .send({
         identifier: user.email,
-        password: defaultData.password,
+        password: f.user.defaultData.password,
       })
       .expect('Content-Type', /json/)
       .expect(400)
@@ -140,7 +141,7 @@ describe.skip('Confirmation User methods', () => {
   // it("registartion of new user should send email", async () => {});
 
   it('should register, send email with confirmation link, link should confirm account', async () => {
-    const userData = mockUserData()
+    const userData = f.user.mock()
     // 1. send a request to register new user
 
     await request(strapi.server) // app server is and instance of Class: http.Server
