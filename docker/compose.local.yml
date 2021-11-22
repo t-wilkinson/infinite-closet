@@ -20,4 +20,4 @@ services:
       LOCAL: 'true'
     command: yarn run develop:admin
     volumes:
-      - ../backend:/app
+      - ../backend:/app:rw

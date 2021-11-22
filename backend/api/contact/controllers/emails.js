@@ -28,7 +28,7 @@ module.exports = {
       .query('order', 'orders')
       .update({ id: order.id }, { status: 'cleaning' })
       .then(() => strapi.services.shipment.ship(shippingRequest))
-      .then(() => strapi.services.templateEmail.orderLeaving(cartItem))
+      .then(() => strapi.services.template_email.orderLeaving(cartItem))
       .catch((err) =>
         strapi.plugins['orders'].services.helpers.shippingFailure(order, err)
       )
@@ -49,7 +49,7 @@ module.exports = {
     ].services.cart.createCartItem(order)
     strapi.log.error('sending mail', cartItem.totalPrice)
 
-    strapi.services.templateEmail.orderLeaving(cartItem)
+    strapi.services.template_email.orderLeaving(cartItem)
     return ctx.send({})
   },
 }

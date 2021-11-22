@@ -1,0 +1,1 @@
+- When testing backend api you must run it in the backend docker container. You must also make sure the /app directory has write permissions for all users or strapi can't write to sqlite database You must also make sure the /app directory has write permissions for all users or strapi can't write to sqlite database.

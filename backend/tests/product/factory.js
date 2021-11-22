@@ -20,6 +20,17 @@ const defaultData = {
   longRentalPrice: 20,
   retailPrice: 100,
   purchasePrice: 100,
+  images: [
+    {
+      name: 'Image 1',
+      alternativeText: "Image 1",
+      url: 'http://infinitecloset.co.uk/image-1',
+      size: 1000,
+      hash: 'image-1',
+      mime: 'image/jpg',
+      provider: 'local',
+    },
+  ],
 }
 
 /**
@@ -35,20 +46,19 @@ const mock = (options = {}) => {
 /**
  * Creates new product in strapi database, first calling mock() on `data`
  */
-const create = async (strapi, data={}) => {
+const create = async (strapi, data = {}) => {
   const productData = mock(data)
   if (typeof productData.designer === 'object') {
     const designer = await strapi.query('designer').create(productData.designer)
     productData.designer = designer.id
   }
 
-  // for (const [i, sizeData] of Object.entries(productData.sizes)) {
-  //   if (typeof sizeData === 'object') {
-  //     const size = await strapi.query('sizes').create
-  //     productData.sizes[i]
-  //    productData.sizes.filter(size => typeof size === 'object')
-  //   }
-  // }
+  for (const [i, imageData] of Object.entries(productData.images)) {
+    if (typeof imageData === 'object') {
+      const image = await strapi.query('file', 'upload').create(imageData)
+      productData.images[i] = image.id
+    }
+  }
   return await strapi.query('product').create(productData)
 }
 

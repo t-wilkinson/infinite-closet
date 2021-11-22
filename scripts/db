@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+cd $(dirname $0)/../backend
+
+if [[ $1 -eq test ]]; then
+    shift
+    mkdir -p .tmp
+    cd .tmp
+    if [[ $1 -eq create ]]; then
+        echo .save test.db | sqlite3
+        chmod 666 'test.db'
+    fi
+
+    if [[ $1 -eq clear ]]; then
+        sqlite3 <<SQL
+.output wipe.sql
+SELECT 'DELETE FROM "' || name || '";' FROM sqlite_master WHERE type = 'table';
+.output
+.read wipe.sql
+SQL
+    fi
+fi

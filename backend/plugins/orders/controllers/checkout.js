@@ -114,7 +114,7 @@ module.exports = {
       }
       return ctx.send({ ...response, body })
     } catch (e) {
-      strapi.log.error('checkoutGuest error', e)
+      strapi.log.error('checkoutGuest error', e.stack)
       return ctx.send({ error: 'Could not process payment', body }, 400)
     }
   },
@@ -178,7 +178,7 @@ module.exports = {
     })
 
     if (summary.total < 1) {
-      ctx.send({ error: 'Total too small' })
+      ctx.send({ error: 'Total too small' }, 404)
     } else {
       const paymentIntent = await stripe.paymentIntents.create({
         amount: summary.amount,

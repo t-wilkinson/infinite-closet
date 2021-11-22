@@ -47,7 +47,7 @@ module.exports = {
 
     try {
       const cartItem = await strapi.plugins['orders'].services.helpers.ship(order)
-      await strapi.services.templateEmail.orderShipped(cartItem)
+      await strapi.services.template_email.orderShipped(cartItem)
       const {order} = cartItem
       return ctx.send({ order })
     } catch (e) {

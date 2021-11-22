@@ -13,7 +13,7 @@ async function notifyArrival(orders) {
     strapi.log.info('order arriving %o', order.id)
 
     const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(order)
-    strapi.services.templateEmail.orderArriving(cartItem)
+    strapi.services.template_email.orderArriving(cartItem)
   }
 }
 
@@ -51,7 +51,7 @@ async function sendToCleaners(orders) {
           shipToCleaners(order)
         }
       })
-      .then(() => strapi.services.templateEmail.orderLeaving(cartItem))
+      .then(() => strapi.services.template_email.orderLeaving(cartItem))
       .catch((err) =>
         strapi.plugins['orders'].services.helpers.shippingFailure(cartItem, err)
       )
@@ -62,7 +62,7 @@ async function shippingFailure(order, err) {
   await strapi
     .query('order', 'orders')
     .update({ id: order.id }, { status: 'error', message: err })
-  await strapi.services.templateEmail.orderShippingFailure(order, err)
+  await strapi.services.template_email.orderShippingFailure(order, err)
   strapi.log.error('failed to ship order to client %o', err)
 }
 
@@ -83,7 +83,7 @@ async function notifyAction(orders) {
   }
 
   const cart = await strapi.plugins['orders'].services.cart.create(orders)
-  strapi.services.templateEmail.shippingAction(cart)
+  strapi.services.template_email.shippingAction(cart)
 }
 
 async function ship(order) {
@@ -202,7 +202,7 @@ async function onCheckout({
 
   if (contact) {
     await strapi.services.contact.upsertContact(contact)
-    await strapi.services.templateEmail.checkout({contact, summary, cart})
+    await strapi.services.template_email.checkout({contact, summary, cart})
   }
 }
 

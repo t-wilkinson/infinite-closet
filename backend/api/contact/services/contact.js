@@ -120,10 +120,10 @@ async function upsertContact(contact) {
     if (existingContact) {
       strapi.query('contact').update({ id: existingContact.id }, contactData)
     } else {
-      strapi.query('contact').insert(contactData)
+      strapi.query('contact').create(contactData)
     }
   } catch (e) {
-    strapi.log.error('Failure creating contact.', e)
+    strapi.log.error('Failure creating contact.', e.stack)
   }
 }
 

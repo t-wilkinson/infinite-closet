@@ -31,7 +31,7 @@ module.exports = {
       for (const order of orders) {
         if (isToday(order.startDate)) {
           strapi.plugins['orders'].services.cart.createCartItem(order)
-            .then((cartItem) => strapi.services.templateEmail.orderShipped(cartItem))
+            .then((cartItem) => strapi.services.template_email.orderShipped(cartItem))
             .catch((err) => strapi.log.error('cron failed to send user shipping email %o', err))
         }
       }

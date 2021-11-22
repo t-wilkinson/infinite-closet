@@ -3,20 +3,24 @@
 module.exports = {
   lifecycles: {
     async afterCreate(result) {
-      strapi.log.debug(
-        'created contact',
-        result,
-        strapi.services.mailchimp.marketing.contactsListId
-      )
       if (process.env.NODE_ENV === 'production') {
-        const res = await strapi.services.mailchimp.marketing.lists.addListMember(
-          strapi.services.mailchimp.marketing.contactsListId,
-          {
+        strapi.services.mailchimp.marketing.lists
+          .addListMember(strapi.services.mailchimp.marketing.contactsListId, {
             email_address: result.email,
             status: result.subscribed ? 'subscribed' : 'unsubscribed',
-          }
-        )
-        strapi.log.debug('mailchimp create contact', res)
+          })
+          .then((res) => {
+            if (res.status === 404) {
+              strapi.log.error(
+                'mailchimp create contact response=%o result=%o',
+                res,
+                result
+              )
+            }
+          })
+          .catch((err) =>
+            strapi.log.error('mailchimp failure creating contact error=%o', err)
+          )
       }
     },
   },
