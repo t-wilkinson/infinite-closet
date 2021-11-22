@@ -8,10 +8,10 @@ const getTicketPrice = () => {
   const ticketPrice = today.isSameOrBefore('2021-08-18', 'day')
     ? 20
     : today.isSameOrBefore('2021-09-11', 'day')
-      ? 30
-      : today.isSameOrBefore('2021-09-18', 'day')
-        ? 35
-        : -1
+    ? 30
+    : today.isSameOrBefore('2021-09-18', 'day')
+    ? 35
+    : -1
   return ticketPrice
 }
 

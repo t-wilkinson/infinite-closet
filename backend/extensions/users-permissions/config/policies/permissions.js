@@ -22,9 +22,7 @@ module.exports = async (ctx, next) => {
       }
 
       // fetch authenticated user
-      ctx.state.user = await strapi.plugins[
-        'users-permissions'
-      ].services.user.fetchAuthenticatedUser(id);
+      ctx.state.user = await strapi.plugins['users-permissions'].services.user.fetchAuthenticatedUser(id);
     } catch (err) {
       return handleErrors(ctx, err, 'unauthorized');
     }
@@ -45,19 +43,12 @@ module.exports = async (ctx, next) => {
       name: 'users-permissions',
     });
 
-    if (
-      _.get(await store.get({ key: 'advanced' }), 'email_confirmation') &&
-      !ctx.state.user.confirmed
-    ) {
+    if (_.get(await store.get({ key: 'advanced' }), 'email_confirmation') && !ctx.state.user.confirmed) {
       return handleErrors(ctx, 'Your account email is not confirmed.', 'unauthorized');
     }
 
     if (ctx.state.user.blocked) {
-      return handleErrors(
-        ctx,
-        'Your account has been blocked by the administrator.',
-        'unauthorized'
-      );
+      return handleErrors(ctx, 'Your account has been blocked by the administrator.', 'unauthorized');
     }
   }
 

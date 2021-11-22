@@ -26,6 +26,7 @@
     "eslintIntegration": false,
     "formatterPriority": 999,
     "semi": false,
+    "prettierWidth": 100,
     "singleQuote": true,
     "trailingComma": "es5",
     "tslintIntegration": false
