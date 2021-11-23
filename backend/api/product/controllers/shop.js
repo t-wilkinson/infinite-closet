@@ -248,6 +248,14 @@ module.exports = {
   async query(ctx) {
     const query = ctx.query
 
+    if (query.categories === 'new-in') {
+      // TODO: findProducts() first
+      // improve performance of this function
+      // refactor
+      // make it more intutive
+      // make it work for new-in and our-picks
+    }
+
     const [_paging, _where] = partitionObject(query, ([k]) =>
       ['start', 'limit', 'sort'].includes(k)
     )

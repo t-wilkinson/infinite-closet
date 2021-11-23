@@ -21,7 +21,7 @@ const routes = [
     data: [
       {
         label: null,
-        href: '',
+        href: '/',
         value: 'howitworks',
         type: 'href',
         data: [
@@ -87,16 +87,16 @@ const routes = [
     label: 'Trending',
     value: 'trending',
     href: null,
-    type: null,
     img: 'trending.png',
     data: [
       {
         label: null,
-        href: null,
+        href: '/products',
+        type: 'slug',
         data: [
-          { name: 'New In', slug: null },
+          { name: 'New In', slug: null /* 'new-in' */ },
+          { name: 'Our Picks', slug: null /* 'our-picks' */ },
           { name: 'Top Rated', slug: null },
-          { name: 'Our Picks', slug: null },
           { name: 'Brand Spotlight', slug: null },
         ],
       },

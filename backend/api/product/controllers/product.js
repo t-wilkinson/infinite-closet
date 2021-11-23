@@ -2,7 +2,7 @@
 async function routes(ctx) {
   const categories = await strapi.query('category').find({
     slug_in: ['clothing', 'accessories'],
-  })
+  }, ['categories'])
 
   let routes = {}
   for (const category of categories) {

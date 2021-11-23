@@ -157,6 +157,36 @@ const PageRoutes = ({
   )
 }
 
+const sortRoute = (r1, r2) => {
+  const s1 = r1.slug
+  const s2 = r2.slug
+  const alphabeticalOrder =
+    r1.name < r2.name ? -1 : r1.name > r2.name ? 1 : 0
+  if (s1 === null && s2 === null) {
+    return alphabeticalOrder
+  } else if (s1 !== null && s2 !== null) {
+    return alphabeticalOrder
+  } else if (s1 === null) {
+    return 1
+  } else {
+    return -1
+  }
+}
+
+const rowToHref = (column, row) => ({
+      ...row,
+      href:
+        row.slug === null
+          ? null
+          : column.type === 'slug'
+          ? `${column.href}/${row.slug}`
+          : column.type === 'href'
+          ? `${column.href}${row.slug}`
+          : column.type === 'query'
+          ? `${column.href}?${column.value}=${row.slug}`
+          : null,
+    })
+
 // TODO: the logic is kind of a mess
 export const toRows = (column, serverRoutes) => {
   const defaultRoutes = serverRoutes.routes?.[column.value]?.categories || []
@@ -169,10 +199,7 @@ export const toRows = (column, serverRoutes) => {
       if (row.slug === undefined) {
         row.slug === null
       }
-      if (
-        column.value !== 'occasions' &&
-        !(serverRoutes.routes && serverRoutes.routes[column.value])
-      ) {
+      if (column.value !== 'occasions' && !serverRoutes.routes?.[column.value]) {
         acc = [...acc, row]
       } else if (serverRows.every((r) => r.slug !== row.slug)) {
         row.slug = null
@@ -181,34 +208,8 @@ export const toRows = (column, serverRoutes) => {
       return acc
     }, serverRows) || column.data
   )
-    .sort((r1, r2) => {
-      const s1 = r1.slug
-      const s2 = r2.slug
-      const alphabeticalOrder =
-        r1.name < r2.name ? -1 : r1.name > r2.name ? 1 : 0
-      if (s1 === null && s2 === null) {
-        return alphabeticalOrder
-      } else if (s1 !== null && s2 !== null) {
-        return alphabeticalOrder
-      } else if (s1 === null) {
-        return 1
-      } else {
-        return -1
-      }
-    })
-    .map((row) => ({
-      ...row,
-      href:
-        row.slug === null
-          ? null
-          : column.type === 'slug'
-          ? `${column.href}/${row.slug}`
-          : column.type === 'query'
-          ? `${column.href}?${column.value}=${row.slug}`
-          : column.type === 'href'
-          ? `${column.href}/${row.slug}`
-          : null,
-    }))
+    .sort(sortRoute)
+    .map((row) => rowToHref(column, row))
 
   return rows
 }

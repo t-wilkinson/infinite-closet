@@ -23,7 +23,7 @@ export const Home = ({ products }) => {
         <WhyRent />
         <ProductCategories />
         <HowItWorks />
-        <InstagramSlider />
+        {/* <InstagramSlider /> */}
       </div>
     </>
   )
