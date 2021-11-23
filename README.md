@@ -12,9 +12,10 @@ Other processes we have are:
 
 ## Getting started
 ### Requirements
-    - [docker](https://docs.docker.com/get-docker/)
-    - [docker compose](https://docs.docker.com/compose/install/)
-    - [nvm](https://github.com/nvm-sh/nvm)
+- [docker](https://docs.docker.com/get-docker/)
+- [docker compose](https://docs.docker.com/compose/install/)
+- [nvm](https://github.com/nvm-sh/nvm)
+
 ```bash
 git clone https://github.com/t-wilkinson/infinite-closet
 cd infinite-closet

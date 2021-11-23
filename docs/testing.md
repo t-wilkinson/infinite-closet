@@ -1,1 +1,3 @@
-- When testing backend api you must run it in the backend docker container. You must also make sure the /app directory has write permissions for all users or strapi can't write to sqlite database You must also make sure the /app directory has write permissions for all users or strapi can't write to sqlite database.
+Before testing the backend you must run `scripts/db test create` to setup the test db.
+
+To test you must run `yarn run test`. Also note that `jest-runner-groups` is installed.
