@@ -11,14 +11,22 @@ const f = {}
 f.product = require('../product/factory')
 f.order = require('./factory')
 f.user = require('../user/factory')
+f.designer = require('../product/designer-factory')
+
+// function jsonRequest(url, data) {
+//   return this
+//     .post(url)
+//     .set('Accept', 'application/json')
+//     .set('Content-Type', 'application/json')
+//     .send(data)
+//     .expect('Content-Type', /json/)
+// }
 
 describe('Checkout', () => {
-  let order
-  let product
-  let paymentIntent
-  let paymentMethod
+  let designer
 
   beforeAll(async () => {
+    designer = await f.designer.create(strapi)
     await grantPrivileges(1, [
       'permissions.orders.controllers.order.create',
       'permissions.orders.controllers.checkout.checkoutUser',
@@ -28,10 +36,17 @@ describe('Checkout', () => {
       'permissions.orders.controllers.checkout.checkoutGuest',
       'permissions.orders.controllers.checkout.createPaymentIntent',
     ])
-    product = await f.product.create(strapi, {})
   })
 
   it('guest can checkout', async () => {
+    let order
+    let paymentIntent
+    let paymentMethod
+    let product = await f.product.create(strapi, {
+      name: 'Product-1',
+      slug: 'product-1',
+      designer: designer.id,
+    })
     let orderData = f.order.mock({
       startDate: day().add({day: 10}).format('YYYY-MM-DD')
     })
@@ -130,6 +145,14 @@ describe('Checkout', () => {
   })
 
   it('user can checkout', async () => {
+    let order
+    let paymentIntent
+    let paymentMethod
+    let product = await f.product.create(strapi, {
+      name: 'Product-2',
+      slug: 'product-2',
+      designer: designer.id,
+    })
     const userData = f.user.mock()
     const orderData = f.order.mock({
       startDate: day().add({ day: 10 }).format('YYYY-MM-DD'),

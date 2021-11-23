@@ -4,7 +4,7 @@
  * @group product
  */
 'use strict'
-// const fs = require('fs')
+const fs = require('fs')
 const { setupStrapi } = require('./helpers/strapi')
 
 jest.setTimeout(15000)
@@ -31,13 +31,14 @@ afterAll(async () => {
   const dbSettings = strapi.config.get('database.connections.default.settings')
 
   // delete test database after all tests
-   if (dbSettings && dbSettings.filename) {
-     const tmpDbFile = `${__dirname}/../${dbSettings.filename}`
-     if (fs.existsSync(tmpDbFile)) {
-       fs.unlinkSync(tmpDbFile)
-     }
-   }
-   */
+  if (dbSettings && dbSettings.filename) {
+    const tmpDbFile = `${__dirname}/../${dbSettings.filename}`
+    if (fs.existsSync(tmpDbFile)) {
+      fs.unlinkSync(tmpDbFile)
+    }
+  }
+  */
+
 })
 
 describe('Strapi in general', () => {
@@ -49,4 +50,3 @@ describe('Strapi in general', () => {
 require('./order')
 require('./product')
 // require('./user')
-it.todo('mailchimp')

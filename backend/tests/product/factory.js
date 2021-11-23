@@ -1,3 +1,6 @@
+const f = {}
+f.designer = require('./designer-factory')
+
 /**
  * Default data that factory uses
  */
@@ -6,10 +9,7 @@ const defaultData = {
   slug: 'product-1',
   email: 'info+test@infinitecloset.co.uk',
   status: 'cart',
-  designer: {
-    name: 'Designer 1',
-    slug: 'designer-1',
-  },
+  designer: f.designer.mock(),
   sizes: [
     {
       size: 'S',
@@ -50,7 +50,7 @@ const mock = (options = {}) => {
 const create = async (strapi, data = {}) => {
   const productData = mock(data)
   if (typeof productData.designer === 'object') {
-    const designer = await strapi.query('designer').create(productData.designer)
+    const designer = await f.designer.create(productData.designer)
     productData.designer = designer.id
   }
 

@@ -31,6 +31,7 @@ async function shopItem(ctx) {
   ctx.send(product)
 }
 
+// TODO: should take columns and sort
 function toCSVRow(row) {
   return Object.values(row)
     .map((v) =>

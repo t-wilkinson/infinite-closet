@@ -1,8 +1,11 @@
 'use strict'
 const _ = require('lodash')
 const emailTemplates = require('email-templates')
-// const { encodeMail, makeBody, emailFields, parseEmail } = require('./lib')
-const { encodeMail, makeBody, emailFields, parseEmail } = require('../strapi-provider-email-google-workspace/lib')
+const {
+  makeBody,
+  emailFields,
+  parseEmail,
+} = require('../strapi-provider-email-google-workspace/lib')
 
 async function templateEmail(client, settings, options) {
   const emailOptions = {
@@ -37,9 +40,9 @@ module.exports = {
   name: 'Test Google Workspace',
   init: (providerOptions = {}, settings = {}) => {
     const client = {
-      send(options) {
-        return encodeMail(makeBody(options))
-      }
+      async send(options) {
+        return makeBody(options)
+      },
     }
 
     return {

@@ -10,13 +10,13 @@ module.exports = ({ env }) => {
       },
     },
     email: {
-      provider: 'google-workspace',
+      provider: 'test-google-workspace',
       providerOptions: {
-        subject: 'info@infinitecloset.co.uk',
+        subject: 'info+test@infinitecloset.co.uk',
       },
       settings: {
-        from: 'Infinite Closet <info@infinitecloset.co.uk>',
-        replyTo: 'Infinite Closet <info@infinitecloset.co.uk>',
+        from: 'Infinite Closet Test <info+test@infinitecloset.co.uk>',
+        replyTo: 'Infinite Closet Test <info+test@infinitecloset.co.uk>',
         testAddress: 'info+test@infinitecloset.co.uk',
         subject: 'Infinite Closet',
       },
