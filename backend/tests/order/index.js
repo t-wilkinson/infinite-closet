@@ -6,4 +6,4 @@
 
 // require('./hived')
 // require('./acs')
-// require('./checkout')
+require('./checkout')

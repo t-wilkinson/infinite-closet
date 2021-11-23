@@ -31,7 +31,7 @@ module.exports = {
       status: body.status,
       size: body.size,
       product: body.product,
-      startDate: body.startDate,
+      startDate: body.startDate, // TODO: should this be a date time (as opposed to date) to handle utc offsets. should it be UTC?
       rentalLength: body.rentalLength,
     })
 

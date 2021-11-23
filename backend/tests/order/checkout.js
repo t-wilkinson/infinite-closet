@@ -33,7 +33,7 @@ describe('Checkout', () => {
 
   it('guest can checkout', async () => {
     let orderData = f.order.mock({
-      startDate: day().add({ day: 10 }).format('YYYY-MM-DD'),
+      startDate: day().add({day: 10}).format('YYYY-MM-DD')
     })
     const userData = f.user.mock()
     const contact = {
@@ -109,6 +109,7 @@ describe('Checkout', () => {
       .findOne({ id: order.id })
     expect(checkedOut).toMatchObject({
       ...orderData,
+      startDate: day(checkedOut.startDate).format('YYYY-MM-DD'),
       address: {
         addressLine1: 'Address Line 1',
         email: contact.email,
@@ -223,6 +224,7 @@ describe('Checkout', () => {
       .findOne({ id: order.id }, ['address'])
     expect(checkedOut).toMatchObject({
       ...orderData,
+      startDate: day(checkedOut.startDate).format('YYYY-MM-DD'),
       address: {
         addressLine1: 'Address Line 1',
         email: contact.email,
