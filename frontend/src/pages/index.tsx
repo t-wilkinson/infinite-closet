@@ -346,26 +346,22 @@ export const Page = ({ products }) => {
 
 const reviews = [
   {
-    message:
-      'I contacted Infinite Closet regarding a very last minute dress request. At the time the dress in question wasn’t available to rent, so Infinite Closet very kindly shipped the dress in \
-    for me. What’s more, I’m not based in London- so they sent the dress via next day delivery so it arrived the day before my event. I cannot recommend this company enough! They bent over backwards to ensure I got the dress I wanted & in time. Communication throughout was fantastic. \
-    Very grateful. 10/10',
+    message: `I contacted Infinite Closet regarding a very last minute dress request. At the time the dress in question wasn’t available to rent, so Infinite Closet very kindly shipped the dress in for me. What’s more, I’m not based in London- so they sent the dress via next day delivery so it arrived the day before my event.
+      I cannot recommend this company enough! They bent over backwards to ensure I got the dress I wanted & in time. Communication throughout was fantastic. Very grateful. 10/10`,
     name: 'Ella McNulty',
     image: 'review-image.jpg',
   },
   {
-    message:
-      'The process was really seamless!! Amazing dress options and easy to find one for a wedding I went to. The value was amazing and customer service is top notch. Even the delivery company, \
-    Hive, is sustainable and went above and beyond to make sure I received my package on time. I would definitely recommend for anytime a dress is needed for an event. Not only will you look good, \
-    but you will feel good about making a more sustainable fashion choice.',
+    message: `The process was really seamless!! Amazing dress options and easy to find one for a wedding I went to. The value was amazing and customer service is top notch.
+      Even the delivery company, Hive, is sustainable and went above and beyond to make sure I received my package on time.
+      I would definitely recommend for anytime a dress is needed for an event. Not only will you look good, but you will feel good about making a more sustainable fashion choice.`,
     name: 'Julia Donlin',
     image: 'review-image-1.jpg',
   },
   {
-    message:
-      "I stumbled across Infinite Closet on instagram and had to check it out with upcoming weddings! I hate spending loads of money on a dress only to wear it once so this was a perfect solution. \
-    I fell in love with a stunning Rat & Boa dress but wasn't sure what size to get so emailed the team and they were friendly and helpful. I got the perfect size, the perfect dress, and for such an \
-    amazing price. Can't wait to order again!",
+    message: `I stumbled across Infinite Closet on instagram and had to check it out with upcoming weddings!
+      I hate spending loads of money on a dress only to wear it once so this was a perfect solution. I fell in love with a stunning Rat & Boa dress but wasn't sure what size to get so emailed the team and they were friendly and helpful.
+      I got the perfect size, the perfect dress, and for such an amazing price. Can't wait to order again!`,
     name: 'Rachel Benson',
     image: 'review-image-2.jpg',
   },
@@ -375,6 +371,9 @@ const UserReviews = () => {
   return (
     <div className="my-16 w-full items-center max-w-screen-xl" id="instagram">
       <Heading>Reviews</Heading>
+      <div className="relative mt-6">
+        <TrustPilotReviews />
+      </div>
       <div className="px-8 w-full lg:justify-center overflow-x-auto flex-row space-x-4 mt-16 mb-8 h-128">
         {reviews.map((review) => (
           <Review key={review.name} {...review} />
@@ -383,6 +382,31 @@ const UserReviews = () => {
     </div>
   )
 }
+
+const TrustPilotReviews = () => (
+  <div
+    className="trustpilot-widget"
+    data-locale="en-GB"
+    data-template-id="5419b6a8b0d04a076446a9ad"
+    data-businessunit-id="6086b3b957503000011370f7"
+    data-style-height="24px"
+    data-style-width="100%"
+    data-theme="light"
+    data-stars="1,2,3,4,5"
+    data-no-reviews="hide"
+    data-scroll-to-list="true"
+    data-allow-robots="true"
+    data-min-review-count="10"
+  >
+    <a
+      href="https://uk.trustpilot.com/review/infinitecloset.co.uk"
+      target="_blank"
+      rel="noopener"
+    >
+      Trustpilot
+    </a>
+  </div>
+)
 
 const Review = ({ message, name, image }) => {
   const [hover, setHover] = React.useState(null)
