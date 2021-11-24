@@ -104,6 +104,18 @@ export const SizeChart = ({ sizeEnum, chart }: {sizeEnum: typeof Size, chart: St
   )
 }
 
+type Units = 'inches' | 'cm'
+const convertUnits = (size: number, from: Units, to: Units) => {
+  if (from === to) {
+    return size
+  }
+  switch ([from, to].toString()) {
+    case 'inches,cm': return size * 2.54
+    case 'cm,inches': return size / 2.54
+    default: return undefined
+  }
+}
+
 /**
  * Size measurements of a product
  */
@@ -137,9 +149,10 @@ export const SizeMeasurements = ({ chart, measurements, product }) => (
                 )}`
               : size.size}
           </th>
+          {console.log(size)}
           {measurements.map((measurement: string) => (
             <td key={measurement} className="text-center">
-              {size[measurement] || '-'}
+              {convertUnits(size[measurement], size.units, 'cm') || '-'}
             </td>
           ))}
         </tr>

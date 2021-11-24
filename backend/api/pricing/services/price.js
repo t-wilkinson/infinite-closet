@@ -7,6 +7,7 @@
  *
  ********************  IMPORTANT ********************/
 
+const {day} = require('../../../utils')
 const SMALLEST_CURRENCY_UNIT = 100
 
 // Services like stripe expect no decimal points, and to be in units of smallest currency
@@ -34,6 +35,11 @@ function discount(coupon, price) {
  */
 function valid(coupon, existingCoupons = []) {
   if (!coupon) {
+    return false
+  }
+
+  const expires = day(coupon.expiration)
+  if (coupon.expiration && day().isSameOrAfter(expires, 'day')) {
     return false
   }
 

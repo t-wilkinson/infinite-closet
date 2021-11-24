@@ -131,7 +131,7 @@ async function facebookCatalog(ctx) {
 
 async function acsStockSetup(ctx) {
   const columns = [ 'product_sku', 'unique_sku', 'name', 'designer', 'garment_type', 'sizes', 'description' ]
-  const products = await strapi.query('product').find({}, [ 'categories', 'designer', 'colors', 'images', 'sizes' ])
+  const products = await strapi.query('product').find({ published_at_null: false }, [ 'categories', 'designer', 'colors', 'images', 'sizes' ])
 
   function toRow(product, size, index) {
     return {
@@ -160,7 +160,7 @@ async function acsStockSetup(ctx) {
   }
 
   ctx.set({
-    'Content-Disposition': 'attachment; filename="facebook-catalog.csv"',
+    'Content-Disposition': 'attachment; filename="acs-stock.csv"',
     'Content-Type': 'text/csv; charset=utf-8',
   })
 

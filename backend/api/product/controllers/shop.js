@@ -224,7 +224,9 @@ async function queryFilters(knex, _where) {
 
 async function queryCategories(query) {
   const queryCategories =
-    typeof query.categories === 'string' ? [query.categories] : query.categories
+    typeof query.categories === 'string'
+      ? [query.categories]
+      : query.categories
   const unorderedCategories = await strapi.query('category').find({
     slug_in: query.categories,
   })
@@ -247,14 +249,6 @@ module.exports = {
   // TODO: there are plenty of ways to speed this up when it bottlenecks
   async query(ctx) {
     const query = ctx.query
-
-    if (query.categories === 'new-in') {
-      // TODO: findProducts() first
-      // improve performance of this function
-      // refactor
-      // make it more intutive
-      // make it work for new-in and our-picks
-    }
 
     const [_paging, _where] = partitionObject(query, ([k]) =>
       ['start', 'limit', 'sort'].includes(k)

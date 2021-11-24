@@ -352,16 +352,16 @@ const reviews = [
     image: 'review-image.jpg',
   },
   {
-    message: `The process was really seamless!! Amazing dress options and easy to find one for a wedding I went to. The value was amazing and customer service is top notch.
-      Even the delivery company, Hive, is sustainable and went above and beyond to make sure I received my package on time.
-      I would definitely recommend for anytime a dress is needed for an event. Not only will you look good, but you will feel good about making a more sustainable fashion choice.`,
+    message: `I stumbled across Infinite Closet on instagram and had to check it out with upcoming weddings!
+      I hate spending loads of money on a dress only to wear it once so this was a perfect solution. I fell in love with a stunning Rat & Boa dress but wasn't sure what size to get so emailed the team and they were friendly and helpful.
+      I got the perfect size, the perfect dress, and for such an amazing price. Can't wait to order again!`,
     name: 'Julia Donlin',
     image: 'review-image-1.jpg',
   },
   {
-    message: `I stumbled across Infinite Closet on instagram and had to check it out with upcoming weddings!
-      I hate spending loads of money on a dress only to wear it once so this was a perfect solution. I fell in love with a stunning Rat & Boa dress but wasn't sure what size to get so emailed the team and they were friendly and helpful.
-      I got the perfect size, the perfect dress, and for such an amazing price. Can't wait to order again!`,
+    message: `The process was really seamless!! Amazing dress options and easy to find one for a wedding I went to. The value was amazing and customer service is top notch.
+      Even the delivery company, Hive, is sustainable and went above and beyond to make sure I received my package on time.
+      I would definitely recommend for anytime a dress is needed for an event. Not only will you look good, but you will feel good about making a more sustainable fashion choice.`,
     name: 'Rachel Benson',
     image: 'review-image-2.jpg',
   },
@@ -397,6 +397,7 @@ const Review = ({ message, name, image }) => {
         layout="fill"
         objectFit="cover"
         objectPosition="center"
+        placeholder="blur"
       />
       <div
         className={`absolute inset-0 justify-center px-8 transition-all duration-300

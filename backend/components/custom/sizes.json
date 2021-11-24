@@ -27,7 +27,7 @@
     },
     "units": {
       "type": "enumeration",
-      "enum": ["cm"],
+      "enum": ["cm", "inches"],
       "default": "cm"
     },
     "hips": {

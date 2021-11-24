@@ -3,15 +3,13 @@
 #
 # Connects to server database through ssh and `pg_dump` data to computer
 
-cd $(dirname $0)
+cd $(dirname $0)/../
 
 # Sync uploaded photos
 update_uploads() {
     rsync -avz infinitecloset:/www/infinite-closet/main/backend/public/uploads/ ./backend/public/uploads
 }
 
-# Sync the database
-ssh infinitecloset 'docker exec prod_db_1 pg_dump -d infinite-closet -U infinite-closet -CcO | bzip2'  | bunzip2 | scripts/exec-psql "local" -i
 
 update_database() {
     # If force is set, disconnect all connections from database
@@ -24,6 +22,9 @@ WHERE datname = current_database()
 SQL
     fi
 
+    # Sync the database
+    ssh infinitecloset 'docker exec prod_db_1 pg_dump -d infinite-closet -U infinite-closet -CcO | bzip2'  | bunzip2 | scripts/exec-psql "local" -i
+
     scripts/exec-psql "local" -i <<SQL
 \c postgres
 DROP DATABASE IF EXISTS "infinite-closet-dev-old";
@@ -34,6 +35,16 @@ SQL
 
 while [[ $# > 0 ]]; do
     case "$1" in
+        -h)
+            cat <<EOF
+$(basename "$0") [uploads|database|all]+ -- sync local project with production data
+where:
+    uploads     update /backend/uploads
+    database    set local database to production database
+    all         all the above
+EOF
+            exit 0
+            ;;
         -f) force=1;;
         uploads) update_uploads;;
         database) update_database;;
