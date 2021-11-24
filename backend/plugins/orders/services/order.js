@@ -1,5 +1,7 @@
 'use strict'
 
+const {toId} = require('../../../utils')
+
 // An array because it can be used in strapi filter
 const inProgress = ['planning', 'shipping', 'cleaning']
 
@@ -31,7 +33,7 @@ function toShippingAddress(order) {
  * @returns {Order[]}
  */
 async function relevantOrders({ product, size }) {
-  const productId = strapi.services.product.itemId(product)
+  const productId = toId(product)
 
   return await strapi.query('order', 'orders').find(
     {

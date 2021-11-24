@@ -3,6 +3,7 @@
  */
 'use strict'
 const priceApi = require('../price')
+const {day} = require('../../../../utils')
 
 const defaultData = {
   type: 'amount_off',
@@ -50,6 +51,22 @@ describe('Coupon', () => {
   it('should max out with existing coupons', () => {
     const coupon = mockCoupon()
     const valid = priceApi.valid(coupon, [coupon])
+    expect(valid).toBeFalsy()
+  })
+
+  it('should expire on expiration date', () => {
+    const coupon = mockCoupon({
+      expiration: day(),
+    })
+    const valid = priceApi.valid(coupon, [])
+    expect(valid).toBeFalsy()
+  })
+
+  it('shouldn\'t expire before expiration date', () => {
+    const coupon = mockCoupon({
+      expiration: day({day: 1}),
+    })
+    const valid = priceApi.valid(coupon, [])
     expect(valid).toBeFalsy()
   })
 })

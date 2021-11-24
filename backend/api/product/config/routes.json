@@ -55,6 +55,23 @@
       "config": {
         "policies": []
       }
+    },
+
+    {
+      "method": "POST",
+      "path": "/products/:slug/reviews",
+      "handler": "review.add",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/products/:slug/reviews",
+      "handler": "review.productReviews",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

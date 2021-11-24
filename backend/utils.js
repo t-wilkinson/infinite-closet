@@ -48,6 +48,24 @@ function splitName(name) {
   return { firstName: first || null, lastName: last.join(' ') || null }
 }
 
+/**
+ * Objects from strapi.query either have nested relation objects or just their ids
+ */
+function toId(obj) {
+  return obj?.id || obj
+}
+
+/**
+ * If represents an id, retrieves corresponding object from id
+ * otherwise return the object
+ */
+async function fromId(data, name, plugin) {
+  if (typeof data === 'object') {
+    return data
+  }
+  return await strapi.query(name, plugin).findOne({id: data})
+}
+
 // TODO: might not need this
 const generateAPI = (name, plugin = '') => {
   return {
@@ -124,6 +142,8 @@ const generateAPI = (name, plugin = '') => {
 }
 
 module.exports = {
+  toId,
+  fromId,
   generateAPI,
   splitName,
   day,

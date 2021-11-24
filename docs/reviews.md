@@ -13,7 +13,7 @@ We need data
 - rating(product.reviews[])
 - fit(product.reviews[])
 - sortByRating(products[].reviews[])
-- reviews(product) -> product.reviews[]
+- productReviews(product) -> product.reviews[]
 
 **User**
 - age
@@ -32,7 +32,7 @@ We need data
 - sort(reviews[], sort_by)
 - filter(reviews[], filters)
 - userReviews(user_id)
-- canReview(review_id, user_id)
+- canReview(product_id, reviews, orderedProducts)
     - Users can only review products they've ordered
     - Users can only add one review per product
 - addReview(review)
