@@ -10,8 +10,8 @@ import { StrapiProduct } from '@/utils/models'
 
 import whyRentPic from '@/media/home/why-rent.png'
 import formalClothingPic from '@/media/home/formal-clothing.png'
-import weddingDressesPic from '@/media/home/wedding-dresses.png'
 import sustainableFashionRentalPic from '@/media/home/sustainable-fashion-rental.png'
+import holidaysTreatsPic from '@/media/home/holidays-treats.png'
 import reviewImage1 from  '@/media/home/review-image.jpg'
 import reviewImage2 from  '@/media/home/review-image-1.jpg'
 import reviewImage3 from  '@/media/home/review-image-2.jpg'
@@ -210,13 +210,21 @@ const productCategories = [
     position: 'center 20%',
   },
   {
-    title: 'Say I (HEN) Do',
-    text: 'Find Your Wedding Bliss',
-    src: weddingDressesPic,
-    alt: 'White wedding dress for your wedding',
-    href: '/products/clothing?occasions=bridal',
+    title: 'Our Holidays Treats',
+    text: 'Sparkle season has arrived',
+    src: holidaysTreatsPic,
+    alt: 'Dress fit for holidays',
+    href: '/products/clothing?occasions=holiday',
     position: 'center',
   },
+  // {
+  //   title: 'Say I (HEN) Do',
+  //   text: 'Find Your Wedding Bliss',
+  //   src: weddingDressesPic,
+  //   alt: 'White wedding dress for your wedding',
+  //   href: '/products/clothing?occasions=bridal',
+  //   position: 'center',
+  // },
 ]
 
 const ProductCategories = () => (
@@ -397,7 +405,7 @@ const Review = ({ message, name, image }) => {
     >
       <Image
         alt={name}
-        src={'/media/home/' + image}
+        src={image}
         layout="fill"
         objectFit="cover"
         objectPosition="center"
@@ -430,10 +438,10 @@ const Review = ({ message, name, image }) => {
 
 export async function getStaticProps() {
   let products = [
-    'glamour-jumpsuit',
-    'ora',
     'greta-outer-space-dress',
-    'audrey-robe',
+    'illegal-halter',
+    'polka-blue-dots',
+    'simone-night-fall',
   ]
   products = await axios
     .get(`/products?slug_in=${products.join('&slug_in=')}`)
