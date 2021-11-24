@@ -72,7 +72,6 @@ export async function getServerSideProps({ params, query }) {
     categories: query.slug,
   })
 
-  console.log({_where, _filters, _paging})
   const { products, count, filters, categories } = await axios
     .get(`/products/filters?${_paging}&${_where}&${_filters}`)
     .then((res) => res.data)

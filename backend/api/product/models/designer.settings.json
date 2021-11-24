@@ -29,6 +29,14 @@
     },
     "description": {
       "type": "richtext"
+    },
+    "oneSizeStart": {
+      "type": "enumeration",
+      "enum": ["XXS", "XS", "S", "M", "L", "XL", "_2XL"]
+    },
+    "oneSizeEnd": {
+      "type": "enumeration",
+      "enum": ["XS", "S", "M", "L", "XL", "_2XL"]
     }
   }
 }

@@ -24,7 +24,9 @@ function canReview(productId, userReviews, orderedProducts) {
   }
 
   // User can only review products they have ordered
-  const relevantProducts = orderedProducts.filter(product => toId(product) === productId)
+  const relevantProducts = orderedProducts.filter(
+    (product) => toId(product) === productId
+  )
   if (relevantProducts.length === 0) {
     return false
   }

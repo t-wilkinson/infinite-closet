@@ -1,8 +1,11 @@
 // Return available categories for header navigation
 async function routes(ctx) {
-  const categories = await strapi.query('category').find({
-    slug_in: ['clothing', 'accessories'],
-  }, ['categories'])
+  const categories = await strapi.query('category').find(
+    {
+      slug_in: ['clothing', 'accessories'],
+    },
+    ['categories']
+  )
 
   let routes = {}
   for (const category of categories) {
@@ -22,7 +25,7 @@ async function shopItem(ctx) {
   const slug = ctx.params.slug
   const product = await strapi
     .query('product')
-    .findOne({ published_at_null: false, slug })
+    .findOne({ published_at_null: false, slug }, ['designer', 'images', 'sizes'])
 
   for (const [key, size] of Object.entries(product.sizes)) {
     product.sizes[key].size = strapi.services.size.normalize(size.size)
@@ -130,8 +133,24 @@ async function facebookCatalog(ctx) {
 }
 
 async function acsStockSetup(ctx) {
-  const columns = [ 'product_sku', 'unique_sku', 'name', 'designer', 'garment_type', 'sizes', 'description' ]
-  const products = await strapi.query('product').find({ published_at_null: false }, [ 'categories', 'designer', 'colors', 'images', 'sizes' ])
+  const columns = [
+    'product_sku',
+    'unique_sku',
+    'name',
+    'designer',
+    'garment_type',
+    'sizes',
+    'description',
+  ]
+  const products = await strapi
+    .query('product')
+    .find({ published_at_null: false }, [
+      'categories',
+      'designer',
+      'colors',
+      'images',
+      'sizes',
+    ])
 
   function toRow(product, size, index) {
     return {
@@ -139,8 +158,13 @@ async function acsStockSetup(ctx) {
       unique_sku: `${product.id}_${size.id}_${index}`,
       name: product.name,
       designer: product.designer.name,
-      garment_type: product.categories.map(category => category.name).join(', '),
-      sizes: strapi.services.size.range(size).map(s => s ? strapi.services.size.normalize(s) : '').join(', '),
+      garment_type: product.categories
+        .map((category) => category.name)
+        .join(', '),
+      sizes: strapi.services.size
+        .range(size)
+        .map((s) => (s ? strapi.services.size.normalize(s) : ''))
+        .join(', '),
       description: product.details,
     }
   }
@@ -152,7 +176,7 @@ async function acsStockSetup(ctx) {
         try {
           const row = toRow(product, size, i)
           rows.add(toCSVRow(row))
-        } catch(e) {
+        } catch (e) {
           strapi.log.error('acs-stock-setup %o', e)
         }
       }
@@ -173,5 +197,5 @@ module.exports = {
   routes,
   shopItem,
   facebookCatalog,
-  acsStockSetup
+  acsStockSetup,
 }

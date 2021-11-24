@@ -85,7 +85,7 @@ export const SizeChart = ({ sizeEnum, chart }: {sizeEnum: typeof Size, chart: St
 
         <tbody className="p-2">
           {sizeEnum
-            .filter((size) => size !== 'ONESIZE')
+            // .filter((size) => size !== 'ONESIZE')
             .map((size) => (
               <tr key={size} className="border-t border-gray-light">
                 <th scope="row" className="w-16 p-1 font-bold">
@@ -149,7 +149,6 @@ export const SizeMeasurements = ({ chart, measurements, product }) => (
                 )}`
               : size.size}
           </th>
-          {console.log(size)}
           {measurements.map((measurement: string) => (
             <td key={measurement} className="text-center">
               {convertUnits(size[measurement], size.units, 'cm') || '-'}
@@ -172,6 +171,22 @@ export const SizeChartPopup = ({
     axios
       .get('/size-chart')
       .then((res) => res.data)
+      .then(sizeChart => {
+        if (!product?.designer?.oneSizeStart || !product?.designer?.oneSizeEnd) {
+          return sizeChart
+        }
+
+        // ONESIZE size range differs per designer
+        const start = product.designer.oneSizeStart
+        const end = product.designer.oneSizeEnd
+        sizeChart.sizeEnum.push('ONESIZE')
+
+        sizeChart.chart.forEach((chart) => {
+          chart['ONESIZE'] = `${chart[start]}-${chart[end]}`
+        })
+
+        return sizeChart
+      })
       .then(setSizeChart)
       .catch((err) => console.error(err))
   }, [])

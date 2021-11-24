@@ -8,14 +8,10 @@
   "options": {},
   "attributes": {
     "size": {
-      "required": false,
-      "unique": false,
       "type": "enumeration",
       "enum": ["XXS", "XS", "S", "M", "L", "XL", "_2XL", "ONESIZE"]
     },
     "sizeRange": {
-      "required": false,
-      "unique": false,
       "type": "enumeration",
       "enum": ["XS", "S", "M", "L", "XL", "_2XL"]
     },
