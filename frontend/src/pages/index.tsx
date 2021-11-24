@@ -383,31 +383,6 @@ const UserReviews = () => {
   )
 }
 
-const TrustPilotReviews = () => (
-  <div
-    className="trustpilot-widget"
-    data-locale="en-GB"
-    data-template-id="5419b6a8b0d04a076446a9ad"
-    data-businessunit-id="6086b3b957503000011370f7"
-    data-style-height="24px"
-    data-style-width="100%"
-    data-theme="light"
-    data-stars="1,2,3,4,5"
-    data-no-reviews="hide"
-    data-scroll-to-list="true"
-    data-allow-robots="true"
-    data-min-review-count="10"
-  >
-    <a
-      href="https://uk.trustpilot.com/review/infinitecloset.co.uk"
-      target="_blank"
-      rel="noopener"
-    >
-      Trustpilot
-    </a>
-  </div>
-)
-
 const Review = ({ message, name, image }) => {
   const [hover, setHover] = React.useState(null)
 
@@ -429,15 +404,12 @@ const Review = ({ message, name, image }) => {
         `}
         style={{
           ...(hover
-            ? {
-                backgroundColor: '#CECECEAA',
-                backdropFilter: 'blur(2px)',
-              }
+            ? { backgroundColor: '#DDDDDDAA', backdropFilter: 'blur(4px)' }
             : {}),
         }}
       >
         <span
-          className="absolute top-0 -ml-4 -mt-8"
+          className="absolute top-0 -ml-4 -mt-8 text-sec"
           style={{ fontSize: '1000%' }}
         >
           &ldquo;
@@ -446,19 +418,6 @@ const Review = ({ message, name, image }) => {
         <div className="absolute bottom-0 right-0 p-4 font-bold text-xl">
           - {name}
         </div>
-      </div>
-    </div>
-  )
-}
-
-const InstagramSlider = () => {
-  return (
-    <div className="my-16 w-full items-center max-w-screen-xl" id="instagram">
-      <Heading>What's Happening</Heading>
-      <div className="px-8 w-full lg:justify-center overflow-x-auto flex-row space-x-4 mt-16 mb-8">
-        <InstgramEmbedding link="https://www.instagram.com/p/CWdN-DugTBE/?utm_source=ig_embed&amp;utm_campaign=loading" />
-        <InstgramEmbedding link="https://www.instagram.com/p/CWOQZQPgweH/?utm_source=ig_embed&amp;utm_campaign=loading" />
-        <InstgramEmbedding link="https://www.instagram.com/p/CV-lpmlAfW_/?utm_source=ig_embed&amp;utm_campaign=loading" />
       </div>
     </div>
   )
@@ -487,6 +446,44 @@ export async function getStaticProps() {
 }
 
 export default Page
+
+const InstagramSlider = () => {
+  return (
+    <div className="my-16 w-full items-center max-w-screen-xl" id="instagram">
+      <Heading>What's Happening</Heading>
+      <div className="px-8 w-full lg:justify-center overflow-x-auto flex-row space-x-4 mt-16 mb-8">
+        <InstgramEmbedding link="https://www.instagram.com/p/CWdN-DugTBE/?utm_source=ig_embed&amp;utm_campaign=loading" />
+        <InstgramEmbedding link="https://www.instagram.com/p/CWOQZQPgweH/?utm_source=ig_embed&amp;utm_campaign=loading" />
+        <InstgramEmbedding link="https://www.instagram.com/p/CV-lpmlAfW_/?utm_source=ig_embed&amp;utm_campaign=loading" />
+      </div>
+    </div>
+  )
+}
+
+const TrustPilotReviews = () => (
+  <div
+    className="trustpilot-widget"
+    data-locale="en-GB"
+    data-template-id="5419b6a8b0d04a076446a9ad"
+    data-businessunit-id="6086b3b957503000011370f7"
+    data-style-height="24px"
+    data-style-width="100%"
+    data-theme="light"
+    data-stars="1,2,3,4,5"
+    data-no-reviews="hide"
+    data-scroll-to-list="true"
+    data-allow-robots="true"
+    data-min-review-count="10"
+  >
+    <a
+      href="https://uk.trustpilot.com/review/infinitecloset.co.uk"
+      target="_blank"
+      rel="noopener"
+    >
+      Trustpilot
+    </a>
+  </div>
+)
 
 const InstgramEmbedding = ({ link }) => {
   return (
