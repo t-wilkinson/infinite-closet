@@ -39,7 +39,7 @@ function valid(coupon, existingCoupons = []) {
   }
 
   const expires = day(coupon.expiration)
-  if (coupon.expiration && day().isSameOrAfter(expires, 'day')) {
+  if (coupon.expiration && day().isAfter(expires, 'day')) {
     return false
   }
 

@@ -155,7 +155,7 @@ async function acsStockSetup(ctx) {
   function toRow(product, size, index) {
     return {
       product_sku: product.id,
-      unique_sku: `${product.id}_${size.id}_${index}`,
+      unique_sku: `${product.id}_${index}`,
       name: product.name,
       designer: product.designer.name,
       garment_type: product.categories
