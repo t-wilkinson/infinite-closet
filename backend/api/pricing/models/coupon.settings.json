@@ -27,7 +27,8 @@
     },
     "context": {
       "type": "enumeration",
-      "enum": ["checkout", "launch-party"]
+      "enum": ["checkout", "launch-party"],
+      "default": "checkout"
     },
     "maxUses": {
       "type": "integer",
@@ -36,7 +37,8 @@
       "required": true
     },
     "expiration": {
-      "type": "date"
+      "type": "date",
+      "private": false
     }
   }
 }
