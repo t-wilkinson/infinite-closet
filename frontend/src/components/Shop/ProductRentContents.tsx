@@ -150,19 +150,20 @@ export const OneTimeSizeSelector = ({ product, chartOpen, setChartOpen }) => {
   }
 
   return (
-    <SelectorItem label="Size" className="my-2 z-30 w-full">
-      <SizeChartPopup
-        product={product}
-        state={chartOpen}
-        setState={setChartOpen}
-      />
+    <SelectorItem label="Size" className="my-2 w-full">
+      <div className="z-30">
+        <SizeChartPopup
+          product={product}
+          state={chartOpen}
+          setState={setChartOpen}
+        />
+      </div>
       <div className="relative flex-row justify-start space-x-4 items-center w-full">
-        {/* select elements are too difficult to style
-                divs don't act like buttons
-                buttons can't use aria-role
-            */}
         <SizeSelector
-          onChange={(size: Size) => dispatch(shopActions.changeSize(size))}
+          onChange={(size: Size) => {
+            dispatch(shopActions.changeSize(size))
+            dispatch(shopActions.selectDate(null))
+          }}
           product={product}
           size={state.size}
         />

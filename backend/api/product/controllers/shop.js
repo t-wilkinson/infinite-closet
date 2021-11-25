@@ -5,7 +5,6 @@
  */
 
 'use strict'
-const _ = require('lodash')
 const models = require('../../../data/data.js').models
 
 // Assigns default value to new keys
@@ -26,10 +25,10 @@ class DefaultDict {
   }
 }
 
-const partitionObject = (object, predicate) =>
-  Object.entries(object).reduce(
+function partitionObject(object, predicate) {
+  return Object.entries(object).reduce(
     ([left, right], item) => {
-      if (predicate(item)) {
+      if (predicate(item[0])) {
         left[item[0]] = item[1]
       } else {
         right[item[0]] = item[1]
@@ -38,62 +37,6 @@ const partitionObject = (object, predicate) =>
     },
     [{}, {}]
   )
-
-const productFilters = [
-  'designers',
-  'fits',
-  'colors',
-  'occasions',
-  'weather',
-  'categories',
-  'styles',
-  'sizes',
-  'materials',
-  'metals',
-]
-
-// Some product filters contain a private hash of values to speed up searching
-const toPrivate = (key) => key + '_'
-
-// Convert _where query params to raw SQL query
-const toRawSQL = (_where) => {
-  const filterSlugs = _.pick(_where, productFilters)
-  let values = []
-  let query = []
-
-  const addSlug = (filter, slug) => {
-    if (filter === 'designers') {
-      values.push('designers.slug')
-    } else {
-      values.push(toPrivate(filter))
-    }
-    values.push(`%${slug}%`)
-  }
-
-  // We to form a query as follows (notice we AND category filters but OR all others):
-  // (category1 AND ...) AND (color1 OR ...) AND (occasion1 OR ...) AND ...
-  for (const [filter, slugs] of Object.entries(filterSlugs)) {
-    // slugs is either a single string or list of strings
-    if (typeof slugs === 'string') {
-      addSlug(filter, slugs)
-      query.push('?? like ?')
-    } else {
-      const q = []
-      for (const slug of slugs) {
-        addSlug(filter, slug)
-        q.push('?? like ?')
-      }
-
-      // The `categories` filter should be ANDed together, all other filters are OR
-      if (filter === 'categories') {
-        query.push(q.join(' AND '))
-      } else {
-        query.push('( ' + q.join(' OR ') + ' )')
-      }
-    }
-  }
-
-  return [query.join(' AND '), values]
 }
 
 /**
@@ -110,7 +53,7 @@ async function findProducts(knex, _where, _paging) {
     .join('designers', 'products.designer', 'designers.id')
     .orderByRaw(sort)
     .whereNotNull('products.published_at')
-    .whereRaw(...toRawSQL(_where))
+    .whereRaw(...strapi.services.product.toRawSQL(_where))
 
   const products = await Promise.all(
     productIds.map(({ id }) =>
@@ -126,16 +69,11 @@ async function findProducts(knex, _where, _paging) {
  * @param {Object[]} products
  */
 function productSlugs(products) {
-  /* TODO: don't show filters that would result in 0 products showing up
-   * for each filter, show slugs that would match at least one product, given all the other filters
-   * product holds the key information to solve this
-   * how do we structure filter relations to ensure this?
-   */
   let filterSlugs = new DefaultDict(Set)
   for (const product of products) {
-    for (const filter of productFilters) {
+    for (const filter of strapi.services.product.filterSlugs) {
       if (filter in models) {
-        const slugs = product[toPrivate(filter)]
+        const slugs = product[strapi.services.product.toPrivateFilter(filter)]
         if (!slugs) {
           continue
         }
@@ -183,7 +121,7 @@ async function queryFilters(knex, _where) {
     .select('products.*')
     .from('products')
     .whereNotNull('products.published_at')
-    .whereRaw(...toRawSQL({ categories: _where.categories }))
+    .whereRaw(...strapi.services.product.toRawSQL({ categories: _where.categories }))
 
   // slugs contain only filters that match product categories
   // get all filters that match these slugs
@@ -222,16 +160,17 @@ async function queryFilters(knex, _where) {
   return filters
 }
 
-async function queryCategories(query) {
-  const queryCategories =
-    typeof query.categories === 'string'
-      ? [query.categories]
-      : query.categories
+async function queryCategories(_where) {
+  const filterCategories =
+    typeof _where.categories === 'string'
+      ? [_where.categories]
+      : _where.categories
   const unorderedCategories = await strapi.query('category').find({
-    slug_in: query.categories,
+    slug_in: filterCategories,
   })
+
   let categories = []
-  for (const slug of queryCategories) {
+  for (const slug of filterCategories) {
     category: for (const category of unorderedCategories) {
       if (slug === category.slug) {
         categories.push(category)
@@ -249,17 +188,15 @@ module.exports = {
   // TODO: there are plenty of ways to speed this up when it bottlenecks
   async query(ctx) {
     const query = ctx.query
-
-    const [_paging, _where] = partitionObject(query, ([k]) =>
+    const [_paging, _where] = partitionObject(query, (k) =>
       ['start', 'limit', 'sort'].includes(k)
     )
 
-    // TODO: can be sped up by a lot. use the results of `findProducts` for the other two
     const knex = strapi.connections.default
     const [products, filters, categories] = await Promise.all([
       findProducts(knex, _where, _paging),
       queryFilters(knex, _where),
-      queryCategories(query),
+      queryCategories(_where),
     ])
 
     const start = parseInt(_paging.start) || DEFAULT_PAGE_NUMBER

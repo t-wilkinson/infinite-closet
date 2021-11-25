@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 
 import { useDispatch } from '@/utils/store'
 import { accountActions } from '@/Account/slice'
@@ -6,17 +7,37 @@ import * as storage from '@/utils/storage'
 
 export const Banner = () => {
   const dispatch = useDispatch()
+  const [loaded, setLoaded] = React.useState(false)
+  const [content, setContent] = React.useState()
+
+  React.useEffect(() => {
+    axios
+      .get('/documents?slug=main-banner')
+      .then((res) => res.data?.[0])
+      .then((res) => {
+        setLoaded(true)
+        setTimeout(() => setContent(res.content), 500)
+      })
+      .catch((e) => console.error(e))
+  }, [])
+
+  if (!loaded) {
+    return null
+  }
+
   return (
-    <div className="items-center px-2 py-1 bg-sec text-white flex-row w-full justify-center">
+    <div
+      className={`items-center px-2 py-1 bg-sec text-white flex-row w-full justify-center transform transition-all duration-500
+        ${loaded && content ? 'translate-y-0' : '-translate-y-100'}
+      `}
+    >
       <button
         onClick={() => {
           dispatch(accountActions.showPopup('email'))
           storage.session.set('popup-form', true)
         }}
       >
-        {/* Get 10% off your first rental when you join our mailing list */}
-        Rent your holiday looks by selecting a 4 day rental for Dec 22 and keep
-        your outfits until Jan 4. Our gift to you!
+        {content}
       </button>
     </div>
   )

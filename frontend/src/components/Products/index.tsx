@@ -142,7 +142,7 @@ const QuickFilter = ({ data }) => {
   const toggleFilter = useToggleFilter()
 
   return (
-    <div className="space-x-2 flex-row">
+    <div className="space-x-2 flex-row flex-wrap space-y-2">
       {Object.entries(panel.filters)
         .map(([key, slugs]) =>
           slugs.map((slug) => {

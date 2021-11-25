@@ -68,7 +68,11 @@ class MyDocument extends Document {
           <meta property="og:site_name" content="Infinite Closet" />
           <meta property="og:locale" content="en_GB" />
 
-          <script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
+          <script
+            type="text/javascript"
+            src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
+            async
+          ></script>
           {process.env.NODE_ENV === 'production' && <Production />}
         </Head>
         <body>
@@ -85,7 +89,7 @@ const Production = () => (
     <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=UA-160256805-2"
-    ></script>
+    />
     <script
       dangerouslySetInnerHTML={{
         __html: `
@@ -97,7 +101,20 @@ const Production = () => (
       `,
       }}
     />
-
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-160256805-1"
+    />
+    <script
+      dangerouslySetInnerHTML={{
+        __html: `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-160256805-1');
+      `,
+      }}
+    />
     <script src="https://www.googleoptimize.com/optimize.js?id=OPT-WBR7X5S"></script>
 
     <meta

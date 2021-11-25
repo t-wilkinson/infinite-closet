@@ -80,7 +80,7 @@ const ProductDetail = ({ Content, index, state, selected, item, product }) => {
             <span className={`${selected ? 'font-bold' : ''}`}>
               {item.label}
             </span>
-            <Icon size={12} name={selected ? iconDown : iconUp} />
+            <Icon size={12} icon={selected ? iconDown : iconUp} />
           </div>
         </summary>
         <div ref={ref}>

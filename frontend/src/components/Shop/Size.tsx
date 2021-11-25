@@ -4,7 +4,6 @@ import axios from 'axios'
 import { Size } from '@/Products/types'
 import { Icon } from '@/components'
 import { iconClose } from '@/components/Icons'
-import { iconDown } from '@/components/Icons'
 import { toTitleCase } from '@/utils/helpers'
 import { StrapiProduct, StrapiSizeChart, StrapiSize } from '@/utils/models'
 import * as sizing from '@/utils/sizing'
@@ -15,50 +14,71 @@ interface SizeSelector {
   onChange: (size: Size) => void
 }
 
-export const SizeSelector = ({ product, size, onChange }: SizeSelector) => {
-  const [sizeState, setSizeState] = React.useState(false)
-
-  return (
-    <div className="w-40 relative">
-      <button
-        tabIndex={0}
-        aria-label="Dropdown product sizes"
-        className="flex p-2 border border-gray relative cursor-pointer justify-between flex-row"
-        onClick={() => setSizeState((state) => !state)}
-        disabled={product.sizes.length === 0}
-      >
-        {product.sizes.length === 0
-          ? 'No available sizes'
-          : (sizing.index(product.sizes, size) !== undefined && size) ||
-            'Select Size'}
-        <Icon icon={iconDown} size={16} className="mt-1" />
+export const SizeSelector = ({ product, size: currentSize, onChange }: SizeSelector) => {
+  return <>
+    {sizing.range(product.sizes).map((size: Size) => (
+    <button
+      key={size}
+      tabIndex={0}
+      aria-label="Dropdown sizes"
+      onClick={() => {
+        onChange(size)
+      }}
+      className={`flex border border-gray-dark w-10 h-10 items-center justify-center cursor-pointer rounded-md
+        ${currentSize === size ? 'bg-pri-light font-bold' : ''}
+      `}
+    >
+      {size}
       </button>
-      {product.sizes.length > 0 && (
-        <div
-          className={`
-        w-full absolute bottom-0 bg-white divide-y transform translate-y-full border border-gray z-10
-        ${sizeState ? '' : 'hidden'}
-        `}
-        >
-          {sizing.range(product.sizes).map((size: Size) => (
-            <button
-              key={size}
-              tabIndex={0}
-              aria-label="Dropdown sizes"
-              onClick={() => {
-                onChange(size)
-                setSizeState(false)
-              }}
-              className="flex justify-center cursor-pointer bg-white"
-            >
-              {size}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  )
+  ))
+    }
+  </>
 }
+
+// export const _SizeSelector = ({ product, size, onChange }: SizeSelector) => {
+//   const [sizeState, setSizeState] = React.useState(false)
+
+//   return (
+//     <div className="w-40 relative">
+//       <button
+//         tabIndex={0}
+//         aria-label="Dropdown product sizes"
+//         className="flex p-2 border border-gray relative cursor-pointer justify-between flex-row"
+//         onClick={() => setSizeState((state) => !state)}
+//         disabled={product.sizes.length === 0}
+//       >
+//         {product.sizes.length === 0
+//           ? 'No available sizes'
+//           : (sizing.index(product.sizes, size) !== undefined && size) ||
+//             'Select Size'}
+//         <Icon icon={iconDown} size={16} className="mt-1" />
+//       </button>
+//       {product.sizes.length > 0 && (
+//         <div
+//           className={`
+//         w-full absolute bottom-0 bg-white divide-y transform translate-y-full border border-gray z-10
+//         ${sizeState ? '' : 'hidden'}
+//         `}
+//         >
+//           {sizing.range(product.sizes).map((size: Size) => (
+//             <button
+//               key={size}
+//               tabIndex={0}
+//               aria-label="Dropdown sizes"
+//               onClick={() => {
+//                 onChange(size)
+//                 setSizeState(false)
+//               }}
+//               className="flex justify-center cursor-pointer bg-white"
+//             >
+//               {size}
+//             </button>
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   )
+// }
 
 export const SizeChart = ({ sizeEnum, chart }: {sizeEnum: typeof Size, chart: StrapiSizeChart[]}) => {
   return (
