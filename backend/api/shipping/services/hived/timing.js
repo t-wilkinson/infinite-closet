@@ -29,6 +29,10 @@ function arrival(sent, shippingClass = 'one') {
  * @returns {DateRange}
  */
 function range({ startDate, shippingDate, rentalLength, created_at }) {
+  if (!startDate || !rentalLength) {
+    throw new Error('Must include startDate and rentalLength')
+  }
+
   rentalLength = config.rentalLengths[rentalLength]
   const hoursSendClient = shippingClassHours(shippingDate, startDate)
   const shipped = shippingDate
@@ -98,11 +102,11 @@ function cleaningDuration(arrival) {
   // Oxwash doesn't operate on saturday/sunday
   // Check if arrival date is on sunday, friday, or saturday
   let delay = 0
-  if (arrival.date() === 0) {
+  if (arrival.get('day') === 0) {
     delay += 24
-  } else if (arrival.date() === 5) {
+  } else if (arrival.get('day') === 5) {
     delay += 48
-  } else if (arrival.date() === 6) {
+  } else if (arrival.get('day') === 6) {
     delay += 72
   }
 

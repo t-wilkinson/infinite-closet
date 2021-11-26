@@ -1,19 +1,20 @@
 /**
  * @group lib
+ * @group shipping/timing
  */
 'use strict'
 const MockDate = require('mockdate')
-const timing = require('../timing')
+const timing = { ...require('../timing'), ...require('../../timing') }
 const config = require('../config')
-const {day} = require('../../../../../utils')
+const { day } = require('../../../../../utils')
 
 const withinDate = (date, fn) => {
-  MockDate.set(day().set(date).toDate())
+  MockDate.set(day().set(date).toJSON())
   fn()
   MockDate.reset()
 }
 
-describe('timing timing', () => {
+describe('Order arrives', () => {
   const cutoff = config.timing.cutoff
   const today = day().set({ hour: cutoff, minute: 0, second: 0 })
 
@@ -94,3 +95,39 @@ describe('Order does not ship', () => {
   })
 })
 
+describe('Overlaps', () => {
+  // TODO: day of the week affects the results (because Oxwash doesn't deliver on weekends)
+  // at 3 days we don't overlap with the end
+  // at 5 days we don't overlap with the cleaners
+  // at 9 (on friday) - 6 (on sunday) days we don't overlap with the completed order
+  const range = (date) =>
+    timing.range({ startDate: date, rentalLength: 'short' })
+
+  it.each([
+    [1, -2, -8],
+    [1, 8, 9],
+  ])(
+    'Range edge should overlap with date=%j but not with date=%j',
+    (dow, shouldOverlap, notOverlap) => {
+      const date = day().set({ day: dow })
+      shouldOverlap = date.add({ day: shouldOverlap })
+      notOverlap = date.add({ day: notOverlap })
+      expect(timing.overlap(shouldOverlap, range(date))).toBe(true)
+      expect(timing.overlap(notOverlap, range(date))).toBe(false)
+    }
+  )
+
+  it.each([
+    [1, -10, -11],
+    [1, 11, 12],
+  ])(
+    'Range edge should overlap with range=%j but not with range=%j',
+    (dow, shouldOverlap, notOverlap) => {
+      const date = day().set({ day: dow })
+      shouldOverlap = date.add({ day: shouldOverlap })
+      notOverlap = date.add({ day: notOverlap })
+      expect(timing.overlap(range(shouldOverlap), range(date))).toBe(true)
+      expect(timing.overlap(range(notOverlap), range(date))).toBe(false)
+    }
+  )
+})

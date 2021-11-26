@@ -1,5 +1,6 @@
 /**
  * @group lib
+ * @group shipping/timing
  */
 'use strict'
 const MockDate = require('mockdate')
