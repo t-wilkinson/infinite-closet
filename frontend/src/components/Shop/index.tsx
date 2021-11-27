@@ -12,6 +12,8 @@ import ProductDetails from './ProductDetails'
 import ProductRentHeaders from './ProductRentHeaders'
 import ProductRentContents from './ProductRentContents'
 
+import Reviews from './Reviews'
+
 export const Shop = ({ data }) => {
   const dispatch = useDispatch()
 
@@ -24,10 +26,15 @@ export const Shop = ({ data }) => {
   }, [])
 
   return (
-    <div className="px-4 xl:px:0 sm:flex-row flex-col w-full max-w-screen-xl mb-8">
-      <ProductImages images={data.product.images} />
-      <div className="w-4" />
-      <Product data={data} />
+    <div className="w-full items-center">
+      <div className="px-4 xl:px:0 sm:flex-row flex-col w-full max-w-screen-xl mb-8">
+        <ProductImages images={data.product.images} />
+        <div className="w-4" />
+        <Product data={data} />
+      </div>
+      <div className="w-full items-center py-8">
+        <Reviews slug={data.product.slug} />
+      </div>
     </div>
   )
 }

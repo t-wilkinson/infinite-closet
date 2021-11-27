@@ -4,6 +4,7 @@ const { colors } = require(`tailwindcss/defaultTheme`)
 const palette = {
   pri1: '#ad9253',
   pri2: '#e7ddcb',
+  pri3: '#f9f4eb',
   sec1: '#39603d',
   sec2: '#a3bcb6',
   black: '#000000',
@@ -59,6 +60,7 @@ module.exports = {
         pri: {
           default: palette.pri1,
           light: palette.pri2,
+          white: palette.pri3,
         },
         sec: {
           default: palette.sec1,

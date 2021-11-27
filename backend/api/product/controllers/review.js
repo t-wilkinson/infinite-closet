@@ -20,8 +20,8 @@ module.exports = {
     const { slug } = ctx.params
     const product = await strapi.query('product').findOne({ slug }, [])
     const reviews = await strapi
-      .query('product')
-      .find({ product: product.id }, [])
+      .query('review')
+      .find({ product: product.id }, ['user', 'images'])
     ctx.send({
       reviews,
       fit: strapi.services.review.fit(reviews),

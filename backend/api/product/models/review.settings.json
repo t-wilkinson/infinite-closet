@@ -14,15 +14,19 @@
     "user": {
       "plugin": "users-permissions",
       "model": "user",
-      "required": true
+      "required": false
     },
     "product": {
       "model": "product",
-      "required": true
+      "required": false
     },
     "fit": {
       "type": "enumeration",
-      "enum": ["small", "true", "large"]
+      "enum": [
+        "small",
+        "true",
+        "large"
+      ]
     },
     "rating": {
       "type": "integer",
@@ -38,9 +42,15 @@
       "required": true
     },
     "images": {
-      "model": "file",
+      "collection": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images",
+        "videos"
+      ],
       "plugin": "upload",
-      "allowedTypes": ["images", "videos"]
+      "required": false,
+      "pluginOptions": {}
     }
   }
 }
