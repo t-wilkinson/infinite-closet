@@ -98,6 +98,9 @@
     },
     "dateOfBirth": {
       "type": "string"
+    },
+    "age": {
+      "type": "string"
     }
   }
 }

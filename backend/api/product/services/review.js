@@ -7,7 +7,7 @@ async function userReviews(user) {
 }
 
 async function productReviews(product) {
-  return await strapi.query('review').find({ product: toId(product) }, [])
+  return await strapi.query('review').find({ 'order.product': toId(product) }, [])
 }
 
 /**
@@ -36,7 +36,7 @@ function canReview(productId, userReviews, orderedProducts) {
 
 async function addReview(user, review, productId) {
   const userId = toId(user)
-  const orderedProducts = await strapi.query('order').find({ user: toId(user) })
+  const orderedProducts = await strapi.query('order', 'orders').find({ user: toId(user) })
   const userCanReview = canReview(
     productId,
     await userReviews(user),

@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 
-import Review from './Review'
+import Review, { Rating } from './Review'
 
 const Reviews = ({ slug }) => {
   const [data, setData] =
@@ -20,9 +20,11 @@ const Reviews = ({ slug }) => {
   }
 
   return (
-    <div className="w-full items-center">
-      <Overview {...data} />
-      <div className="max-w-screen-md w-full mt-4 space-x-4">
+    <div className="w-full items-center bg-pri-white">
+      <div className="w-full items-center">
+        <Overview {...data} />
+      </div>
+      <div className="max-w-screen-md w-full my-12 space-x-4">
         {data.reviews.map((review) => (
           <Review key={review.id} {...review} />
         ))}
@@ -33,10 +35,23 @@ const Reviews = ({ slug }) => {
 
 const Overview = ({ fit, rating, reviews }) => {
   return (
-    <div className="w-full bg-sec-light h-32 p-8">
-      <div>reviews={reviews.length}</div>
-      <div>fit={fit}</div>
-      <div>rating={rating}</div>
+    <div className="w-full mt-8 mb-12 items-center">
+      <div className="items-center">
+        <span className="font-bold text-2xl">Reviews</span>
+        <span className="text-base">
+          {reviews.length} {reviews.length === 1 ? 'Review' : 'Reviews'}
+        </span>
+      </div>
+      <div className="w-full max-w-screen-sm justify-between flex-row items-center">
+        <div className="items-center space-y-2">
+          <span>Rating:</span>
+          <Rating rating={rating} />
+        </div>
+        <div className="space-y-2 items-center">
+          <span>Fit:</span>
+          <span className="font-bold text-lg">{fit}</span>
+        </div>
+      </div>
     </div>
   )
 }

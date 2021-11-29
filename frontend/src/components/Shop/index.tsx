@@ -32,7 +32,7 @@ export const Shop = ({ data }) => {
         <div className="w-4" />
         <Product data={data} />
       </div>
-      <div className="w-full items-center py-8">
+      <div className="w-full items-center">
         <Reviews slug={data.product.slug} />
       </div>
     </div>

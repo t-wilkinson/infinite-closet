@@ -15,12 +15,15 @@ const Review = ({
   message,
   created_at,
 }) => {
-
   return (
-    <div className="bg-white p-4 border border-gray-light rounded-sm relative flex-row justify-between">
-      <div className="space-y-3">
+    <div className="bg-white p-4 border border-gray-light rounded-sm relative flex-row justify-between h-80">
+      <div className="w-32">
+        <SideInfo user={user} fit={fit} />
+      </div>
+      {/* <div className="w-px bg-pri-light mx-4" /> */}
+      <div className="space-y-3 flex-grow ml-8">
         <div className="flex-row space-x-4">
-          <Rating rating={2.5} />
+          <Rating rating={rating} />
           <span className="text-sm text-gray">
             {dayjs(created_at).format('DD-MMM-YYYY')}
           </span>
@@ -41,14 +44,55 @@ const Review = ({
   )
 }
 
-const Rating = ({ rating }) => {
-  const nIcons = (n, icon, className = '') =>
+const subObj = (obj: object, keys: string[]) =>
+  Object.fromEntries(Object.entries(obj).filter(([k]) => keys.includes(k)))
+
+const SideInfo = ({ user, fit }) => {
+  const userInfoKeys = [
+    'chestSize',
+    'hipsSize',
+    'dressSize',
+    'height',
+    'weight',
+  ]
+
+  return (
+    <div>
+      <span className="font-bold text-lg">
+        {user.firstName} {user.lastName}
+      </span>
+      <div className="w-full h-px bg-pri-light my-2" />
+      <tbody>
+        <Row label="fit" value={fit} />
+        {Object.entries(subObj(user, userInfoKeys)).map(([k, v]) => (
+          <Row label={k} value={v} />
+        ))}
+      </tbody>
+    </div>
+  )
+}
+
+const keyToTh = (key = '') =>
+  key.charAt(0).toUpperCase() +
+  key.slice(1).replace(/([A-Z])/g, (m) => ' ' + m.toLowerCase())
+const Row = ({ label, value }) =>
+  !value ? null : (
+    <tr>
+      <th className="font-bold text-sm text-left w-24">{keyToTh(label)}:</th>
+      <td>{value}</td>
+    </tr>
+  )
+
+export const Rating = ({
+  rating,
+  fillColor = 'text-sec',
+  emptyColor = 'text-gray-light',
+}) => {
+  const nIcons = (n: number, icon: any, className = '') =>
     n > 0 && Array(n).fill(<Icon icon={icon} size={18} className={className} />)
   const numFullStars = Math.floor(rating)
   const useHalfStar = rating < 5 && rating % 1
   const numEmptyStars = Math.floor((useHalfStar ? 5 : 4) - rating)
-  const fillColor = 'text-sec'
-  const emptyColor = 'text-gray-light'
 
   return (
     <div className="flex-row space-x-1">
