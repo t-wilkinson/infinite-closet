@@ -1,6 +1,7 @@
 /**
  * @group lib
  * @group shipping/timing
+ * @group shipping/timing/hived
  */
 'use strict'
 const MockDate = require('mockdate')
@@ -70,11 +71,11 @@ describe('Order ships (when ordered before cutoff time)', () => {
 })
 
 describe('Order ships (when ordered after cutoff time)', () => {
-  it.skip('in one day when order starts in two days', () => {
+  it.skip('has one day shipping when order starts in two days', () => {
     afterCutoff(2, 'one')
   })
 
-  it('in two days when order starts in three days', () => {
+  it('has two day shipping when order starts in three days', () => {
     afterCutoff(3, 'two')
   })
 })

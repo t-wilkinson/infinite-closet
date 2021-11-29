@@ -9,7 +9,7 @@ const f = {}
 f.user = require('./factory')
 // const nodemailerMock = require('nodemailer-mock')
 
-describe('Default User methods', () => {
+describe.skip('Default User methods', () => {
   let user
 
   beforeAll(async () => {
@@ -21,7 +21,7 @@ describe('Default User methods', () => {
     expect(user !== null).toBe(true)
   })
 
-  it.skip('should login user and return jwt token', (done) => {
+  it('should login user and return jwt token', (done) => {
     const jwt = strapi.plugins['users-permissions'].services.jwt.issue({
       id: user.id,
     })
@@ -48,7 +48,7 @@ describe('Default User methods', () => {
       .catch(done)
   })
 
-  it.skip('should return users data for authenticated user', async () => {
+  it('should return users data for authenticated user', async () => {
     const jwt = strapi.plugins['users-permissions'].services.jwt.issue({
       id: user.id,
     })
@@ -68,7 +68,7 @@ describe('Default User methods', () => {
       })
   })
 
-  it.skip('should allow register users ', (done) => {
+  it('should allow register users ', (done) => {
     request(strapi.server) // app server is and instance of Class: http.Server
       .post('/auth/local/register')
       .set('accept', 'application/json')
@@ -106,7 +106,7 @@ describe.skip('Confirmation User methods', () => {
     })
   })
 
-  it.skip('unconfirmed user should not login', async () => {
+  it('unconfirmed user should not login', async () => {
     await request(strapi.server) // app server is and instance of Class: http.Server
       .post('/auth/local')
       .set('accept', 'application/json')
@@ -123,8 +123,6 @@ describe.skip('Confirmation User methods', () => {
         )
       })
   })
-
-  // it("registartion of new user should send email", async () => {});
 
   it('should register, send email with confirmation link, link should confirm account', async () => {
     const userData = f.user.mock()

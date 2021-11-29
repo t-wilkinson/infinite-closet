@@ -1,5 +1,5 @@
 'use strict'
-const {day} = require('../../../../utils')
+const { day } = require('../../../../utils')
 const config = require('./config')
 
 const HOURS_IN_DAY = 24
@@ -58,26 +58,22 @@ function range({ startDate, shippingDate, rentalLength, created_at }) {
  * @returns {ShippingClass}
  */
 function shippingClass(earliestDeliveryDate, startsOn) {
-  earliestDeliveryDate = day(earliestDeliveryDate || undefined) // Want to convert null to undefined
-  startsOn = day(startsOn)
+  earliestDeliveryDate = day(earliestDeliveryDate) // Want to convert null to undefined
+  startsOn = day(startsOn).set({hour: 0})
 
   if (!earliestDeliveryDate) {
     return undefined
   }
-  if (
+  const arrivesWithClass = (shippingClass) =>
     startsOn
-      .utc()
-      .isSameOrAfter(arrival(earliestDeliveryDate, 'two').utc(), 'day')
-  ) {
+      .isSameOrAfter(arrival(earliestDeliveryDate, shippingClass), 'day')
+
+  if (arrivesWithClass('two')) {
     return 'two'
-  } else if (
-    startsOn
-      .utc()
-      .isSameOrAfter(arrival(earliestDeliveryDate, 'one').utc(), 'day')
-  ) {
+  } else if (arrivesWithClass('one')) {
     return 'one'
   } else {
-    return undefined
+    return
   }
 }
 

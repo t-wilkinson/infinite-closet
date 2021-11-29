@@ -31,7 +31,9 @@ dayjs.tz.setDefault('Europe/London')
  * @param {DateLike} date - Returns dayjs object in Europe/London timezone
  */
 function day(date) {
-  if (dayjs.isDayjs(date)) {
+  if (!date) {
+    return dayjs.tz(date)
+  } else if (dayjs.isDayjs(date)) {
     return date
   } else {
     return dayjs.tz(date)
