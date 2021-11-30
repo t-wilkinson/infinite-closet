@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 import { getURL } from '@/utils/api'
 import dayjs from 'dayjs'
-import { Icon } from '@/components'
+import { Icons} from '@/components'
 import { iconStarFill, iconStarHalf } from '@/Icons'
 
 const Review = ({
@@ -16,7 +16,7 @@ const Review = ({
   created_at,
 }) => {
   return (
-    <div className="bg-white p-4 border border-gray-light rounded-sm relative flex-row justify-between h-80">
+    <article className="flex bg-white p-4 border border-gray-light rounded-sm relative flex-row justify-between h-80">
       <div className="w-32">
         <SideInfo user={user} fit={fit} />
       </div>
@@ -40,7 +40,7 @@ const Review = ({
           />
         )}
       </div>
-    </div>
+    </article>
   )
 }
 
@@ -57,7 +57,7 @@ const SideInfo = ({ user, fit }) => {
   ]
 
   return (
-    <div>
+    <aside className="flex flex-col">
       <span className="font-bold text-lg">
         {user.firstName} {user.lastName}
       </span>
@@ -68,7 +68,7 @@ const SideInfo = ({ user, fit }) => {
           <Row label={k} value={v} />
         ))}
       </tbody>
-    </div>
+    </aside>
   )
 }
 
@@ -88,22 +88,20 @@ export const Rating = ({
   fillColor = 'text-sec',
   emptyColor = 'text-gray-light',
 }) => {
-  const nIcons = (n: number, icon: any, className = '') =>
-    n > 0 && Array(n).fill(<Icon icon={icon} size={18} className={className} />)
   const numFullStars = Math.floor(rating)
   const useHalfStar = rating < 5 && rating % 1
   const numEmptyStars = Math.floor((useHalfStar ? 5 : 4) - rating)
 
   return (
     <div className="flex-row space-x-1">
-      {nIcons(numFullStars, iconStarFill, fillColor)}
+      <Icons n={numFullStars} icon={iconStarFill} className={fillColor} />
       {useHalfStar ? (
         <div className="relative">
-          {nIcons(1, iconStarFill, emptyColor)}
-          {nIcons(1, iconStarHalf, `absolute left-0 ${fillColor}`)}
+          <Icons n={1} icon={iconStarFill} className={emptyColor} />
+          <Icons n={1} icon={iconStarHalf} className={ `absolute left-0 ${fillColor}`} />
         </div>
       ) : null}
-      {nIcons(numEmptyStars, iconStarFill, emptyColor)}
+        <Icons n={numEmptyStars} icon={iconStarFill} className={emptyColor} />
     </div>
   )
 }

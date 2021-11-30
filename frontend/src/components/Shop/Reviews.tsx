@@ -20,7 +20,7 @@ const Reviews = ({ slug }) => {
   }
 
   return (
-    <div className="w-full items-center bg-pri-white">
+    <section className="flex flex-col w-full items-center bg-pri-white">
       <div className="w-full items-center">
         <Overview {...data} />
       </div>
@@ -29,7 +29,7 @@ const Reviews = ({ slug }) => {
           <Review key={review.id} {...review} />
         ))}
       </div>
-    </div>
+    </section>
   )
 }
 
@@ -37,7 +37,7 @@ const Overview = ({ fit, rating, reviews }) => {
   return (
     <div className="w-full mt-8 mb-12 items-center">
       <div className="items-center">
-        <span className="font-bold text-2xl">Reviews</span>
+        <h3 className="font-bold text-2xl">Reviews</h3>
         <span className="text-base">
           {reviews.length} {reviews.length === 1 ? 'Review' : 'Reviews'}
         </span>

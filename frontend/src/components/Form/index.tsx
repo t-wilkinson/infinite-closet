@@ -159,7 +159,7 @@ export const Warning = ({ children }) => (
 export const Form = ({
   onSubmit = (..._: any[]) => {},
   className = '',
-  children,
+  children=null,
   ...props
 }) => (
   <div className={`items-center ${className}`}>
@@ -260,7 +260,7 @@ export const Dropdown = ({
   ...props
 }: {
   value: string
-  onChange: (value: string) => {}
+  onChange: (value: string) => void
   values: { key: string; label: string }[]
 }) => {
   const [dropdown, setDropdown] = React.useState(false)
