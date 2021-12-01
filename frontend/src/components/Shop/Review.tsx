@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 import { getURL } from '@/utils/api'
 import dayjs from 'dayjs'
-import { Icons} from '@/components'
+import { Icons } from '@/components'
 import { iconStarFill, iconStarHalf } from '@/Icons'
 
 const Review = ({
@@ -63,12 +63,12 @@ const SideInfo = ({ user, fit }) => {
       </span>
       <div className="w-full h-px bg-pri-light my-2" />
       <table>
-      <tbody>
-        <Row label="fit" value={fit} />
-        {Object.entries(subObj(user, userInfoKeys)).map(([k, v]) => (
-          <Row key={k} label={k} value={v} />
-        ))}
-      </tbody>
+        <tbody>
+          <Row label="fit" value={fit} />
+          {Object.entries(subObj(user, userInfoKeys)).map(([k, v]) => (
+            <Row key={k} label={k} value={v} />
+          ))}
+        </tbody>
       </table>
     </aside>
   )
@@ -90,22 +90,30 @@ export const Rating = ({
   fillColor = 'text-sec',
   emptyColor = 'text-gray-light',
 }) => {
-  const numFullStars = Math.floor(rating)
-  const useHalfStar = rating < 5 && rating % 1
-  const numEmptyStars = Math.floor((useHalfStar ? 5 : 4) - rating)
+  const numStars = getNumStars(rating)
 
   return (
     <div className="flex-row space-x-1">
-      <Icons n={numFullStars} icon={iconStarFill} className={fillColor} />
-      {useHalfStar ? (
+      <Icons n={numStars.full} icon={iconStarFill} className={fillColor} />
+      {numStars.useHalf ? (
         <div className="relative">
           <Icons n={1} icon={iconStarFill} className={emptyColor} />
-          <Icons n={1} icon={iconStarHalf} className={ `absolute left-0 ${fillColor}`} />
+          <Icons
+            n={1}
+            icon={iconStarHalf}
+            className={`absolute left-0 ${fillColor}`}
+          />
         </div>
       ) : null}
-        <Icons n={numEmptyStars} icon={iconStarFill} className={emptyColor} />
+      <Icons n={numStars.empty} icon={iconStarFill} className={emptyColor} />
     </div>
   )
 }
+
+const getNumStars = (rating) => ({
+  full: Math.floor(rating),
+  useHalf: rating < 5 && rating % 1,
+  empty: Math.floor(5 - rating),
+})
 
 export default Review

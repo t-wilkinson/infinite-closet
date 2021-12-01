@@ -2,21 +2,23 @@
 
 const { toId } = require('../../../utils')
 
-async function getUserReviews({ user, product }) {
+async function getUserReviews({ product, user }) {
   return await strapi
     .query('review')
-    .find({ 'order.product': product, 'order.user': user }, [])
+    .find({ 'order.product': toId(product), 'order.user': toId(user) }, [])
 }
 
-async function getUserOrders({ user, product }) {
-  return await strapi.query('order', 'orders').find({ product, user }, [])
+async function getUserOrders({ product, user }) {
+  return await strapi
+    .query('order', 'orders')
+    .find({ product: toId(product), user: toId(user) }, [])
 }
 
 /**
  * Users existing reviews/orders pertaining to a certain product.id
  * limit whether or not they can review
  */
-function canUserReview({ reviews, orders }) {
+function _canUserReview({ reviews, orders }) {
   // Can't review same product more than once
   if (reviews.length > 0) {
     return false
@@ -28,6 +30,20 @@ function canUserReview({ reviews, orders }) {
   }
 
   return true
+}
+
+async function canUserReview({ product, user }) {
+  if (!product || !user) {
+    return false
+  }
+
+  const orders = await getUserOrders({ product, user })
+  const reviews = await getUserReviews({ product, user })
+  if (_canUserReview({ orders, reviews })) {
+    return orders[0]
+  } else {
+    return false
+  }
 }
 
 function canReview(productId, userReviews, orderedProducts) {
@@ -45,31 +61,25 @@ function canReview(productId, userReviews, orderedProducts) {
   return canUserReview({ reviews: productReviews, orders: relevantProducts })
 }
 
-async function addReview(review, order, images) {
-  const userCanReview = canUserReview({
-    orders: await getUserOrders(order),
-    reviews: await getUserReviews(order),
-  })
+async function addReview({ product, user, review, images }) {
+  const userCanReview = await canUserReview({ product, user })
 
   if (userCanReview) {
-    const imageIds = await Promise.all(Object.values(images).map(async (image) => {
-      const upload = await strapi.plugins.upload.services.upload.upload({
-        data:{},
-        files: {
-          path: image.path,
-          name: image.name,
-          type: image.type,
-          size: image.size,
-        },
-      })
-      return upload.id
-    }))
-    console.log(imageIds)
+    const order = userCanReview
+    const uploads = await strapi.plugins.upload.services.upload.upload({
+      data: {},
+      files: Object.values(images).map((image) => ({
+        path: image.path,
+        name: image.name,
+        type: image.type,
+        size: image.size,
+      })),
+    })
 
-    await strapi.query('review').create({
+    return await strapi.query('review').create({
       ...review,
       order: order.id,
-      images: imageIds,
+      images: uploads,
     })
   } else {
     throw new Error('User is unable to review.')

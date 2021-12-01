@@ -1,5 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
@@ -42,11 +43,10 @@ export const OrderItem = ({item}) => {
 
   return (
     <div
-      className={`flex-row items-center border p-4 rounded-sm relative bg-white my-2
+      className={`relative flex-row items-center border p-4 rounded-sm relative bg-white my-2
         ${order.available <= 0 ? 'border-warning' : 'border-gray'}
         `}
     >
-      <AddReview order={order} />
       <div className="h-32 w-32 relative mr-4">
         <Image
           src={getURL(order.product.images[0].url)}
@@ -70,6 +70,9 @@ export const OrderItem = ({item}) => {
         </span>
         <span className="text-pri">{statuses[order.status]}</span>
       </div>
+      <Link href={`/review/${order.product.slug}`}>
+        <a className="absolute right-0 m-2 p-2 bg-pri text-white rounded-sm">Review product</a>
+      </Link>
     </div>
   )
 }

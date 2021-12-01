@@ -14,7 +14,7 @@ const fitValues = [
   { key: 'long', label: 'long' },
 ]
 
-const AddReview = ({ order }) => {
+const AddReview = ({ productSlug, onSubmit}) => {
   const [state, setState] = React.useState<boolean>(false)
   const fields = useFields({
     heading: {
@@ -31,7 +31,7 @@ const AddReview = ({ order }) => {
     images: { label: 'Add a photo or video', default: [] },
   })
 
-  const onSubmit = async (e) => {
+  const _onSubmit = async (e) => {
     const form = e.target
     const formData = new FormData()
     const cleaned = cleanFields(fields)
@@ -46,34 +46,30 @@ const AddReview = ({ order }) => {
     }
 
     axios
-      .post(`/products/${order.id}/reviews`, formData, {
+      .post(`/products/${productSlug}/reviews`, formData, {
         withCredentials: true,
       })
-      .then((res) => console.log(res))
+      .then(res => res.data.review)
+      .then((review) => onSubmit(review))
       .catch((err) => console.error(err))
   }
 
   return (
-    <div>
-      <button onClick={() => setState(!state)}>toggle</button>
-      <Popup state={state} setState={setState}>
-        <Form onSubmit={onSubmit} className="overflow-y-auto">
-          <FormHeader label="How was your experience?" />
-          <div className="mt-2 mb-4">
-            <Rating {...fields.rating} />
-          </div>
-          <Input {...fields.heading} />
-          <Dropdown {...fields.fit} values={fitValues} />
-          <ImageUpload {...fields.images} />
-          <TextArea {...fields.message} />
-          <Submit>Submit</Submit>
-        </Form>
-      </Popup>
-    </div>
+    <Form onSubmit={_onSubmit} className="overflow-y-auto w-full">
+      <FormHeader label="How was your experience?" />
+      <div className="mt-2 mb-4">
+        <Rating {...fields.rating} />
+      </div>
+      <Input {...fields.heading} />
+      <Dropdown {...fields.fit} values={fitValues} />
+      <ImageUpload {...fields.images} />
+      <TextArea {...fields.message} />
+      <Submit>Submit</Submit>
+    </Form>
   )
 }
 
-const Rating = ({ label, value, onChange }) => {
+const Rating = ({ label, value, onChange, fillColor='text-sec', emptyColor='text-gray-light'}) => {
   const [hover, setHover] = React.useState<number | null>(null)
 
   if (isNaN(value)) {
@@ -95,14 +91,14 @@ const Rating = ({ label, value, onChange }) => {
           onClick={(i) => onChange(i)}
           n={value}
           icon={iconStarFill}
-          className="text-sec cursor-pointer"
+          className={`${fillColor} cursor-pointer`}
         />
         <Icons
           onMouseEnter={(i) => setHover(value + i)}
           onClick={(i) => onChange(value + i)}
           n={5 - value}
           icon={iconStarFill}
-          className="text-gray-light hover:text-sec cursor-pointer"
+          className={`${emptyColor} hover:text-sec cursor-pointer`}
         />
       </div>
     </div>
@@ -115,7 +111,8 @@ const ImageUpload = ({ label, onChange, value }) => {
       let urls = Array.from(e.target.files).map((file: Blob) =>
         URL.createObjectURL(file)
       )
-      onChange(value.concat(urls))
+      const uniqueUrls = Array.from(new Set(value.concat(urls)))
+      onChange(uniqueUrls)
     }
   }
 
@@ -124,14 +121,15 @@ const ImageUpload = ({ label, onChange, value }) => {
       <h3 className="font-bold text-lg">{label}</h3>
       <div className="flex-row w-full flex-wrap">
         {value.map((imgUrl: string) => (
-          <UploadedImageWrapper>
+          <UploadedImageWrapper key={imgUrl}>
             <button
               className="absolute top-0 right-0 m-2 z-10 bg-white rounded-full items-center justify-center p-1"
               onClick={() => onChange(value.filter((v) => v !== imgUrl))}
+              type="button"
             >
               <Icon icon={iconClose} size={12} />
             </button>
-            <Image key={imgUrl} src={imgUrl} layout="fill" />
+            <Image src={imgUrl} layout="fill" objectFit="cover" />
           </UploadedImageWrapper>
         ))}
         <UploadedImageWrapper>

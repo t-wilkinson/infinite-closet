@@ -399,18 +399,20 @@ export const Dropdown = ({
         `}
         style={{ bottom: 9, maxHeight: 256 }}
       >
-        {values.map((value) => (
+        {values.map((v) => (
           <button
-            key={value.key}
+            key={v.key}
             tabIndex={0}
             aria-label="Dropdown sizes"
             onClick={() => {
               setDropdown(false)
-              onChange(value.key)
+              onChange(v.key)
             }}
-            className="flex cursor-pointer bg-white px-2 hover:bg-gray-light"
+            className={`flex cursor-pointer bg-white px-2 hover:bg-gray-light
+              ${v.key === value ? 'bg-gray-light' : ''}
+            `}
           >
-            {value.label}
+            {v.label}
           </button>
         ))}
       </div>

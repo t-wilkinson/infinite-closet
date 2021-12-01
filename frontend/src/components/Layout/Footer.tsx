@@ -185,7 +185,7 @@ const Waitlist = () => {
       <div className="flex-row space-x-4 w-full">
         <Input
           {...fields.footerEmail}
-          after={<Button className="h-full">Join</Button>}
+          after={<Button className="h-full rounded-none">Join</Button>}
         />
       </div>
       <h3 className="font-bold text-sm -mt-1 text-white">

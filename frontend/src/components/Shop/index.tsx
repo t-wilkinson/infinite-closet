@@ -32,9 +32,11 @@ export const Shop = ({ data }) => {
         <div className="w-4" />
         <Product data={data} />
       </div>
+      {process.env.NODE_ENV !== 'production' &&
       <div className="w-full items-center">
         <Reviews slug={data.product.slug} />
       </div>
+      }
     </div>
   )
 }
