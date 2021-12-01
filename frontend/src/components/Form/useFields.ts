@@ -54,6 +54,8 @@ export const validate = (
 
     // prettier-ignore
     switch (type) {
+      case 'enum': return props[0].split(',').includes(value) || `Value must be one of ${props[0]}`
+      case 'between': return RegExp(`${props[0]}-${props[1]}`).test(value) || `Value must be between ${props[0]} and ${props[1]}`
       case 'email': return /^.+@.+\..+$/.test(value)            || `Please enter a valid ${field.toLowerCase()}`
       case 'required': return Boolean(value)                    || `Missing ${field.toLowerCase()}`
       case 'decimal': return /^\d*\.?\d{0,2}$/.test(value)      || `${field} must be a number`

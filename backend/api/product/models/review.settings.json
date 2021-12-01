@@ -11,14 +11,10 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "user": {
-      "plugin": "users-permissions",
-      "model": "user",
-      "required": true
-    },
-    "product": {
-      "model": "product",
-      "required": true
+    "order": {
+      "model": "order",
+      "plugin": "orders",
+      "required": false
     },
     "fit": {
       "type": "enumeration",
@@ -38,9 +34,12 @@
       "required": true
     },
     "images": {
-      "model": "file",
+      "collection": "file",
+      "via": "related",
+      "allowedTypes": ["images", "videos"],
       "plugin": "upload",
-      "allowedTypes": ["images", "videos"]
+      "required": false,
+      "pluginOptions": {}
     }
   }
 }

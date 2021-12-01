@@ -78,13 +78,13 @@ export const Divider = ({
   border = 'border-gray-light',
 }) => visible && <div className={`${border} border-b-2 w-full ${className}`} />
 
-interface Icon {
+type Icon = {
   name?: string
   icon: object
   className?: string
   size?: number
   style?: object
-}
+} & unknown
 
 export const Icon = ({
   icon,
@@ -105,6 +105,42 @@ export const Icon = ({
     </div>
   )
 }
+
+export const Icons = ({
+  n,
+  icon,
+  className = '',
+  onClick=() => {},
+  onMouseEnter=() => {},
+  onMouseLeave=() => {},
+  ...props
+}: {
+  n: number
+  icon: React.ReactElement
+  className?: string
+  onClick?: (_: number) => void
+  onMouseEnter?: (_: number) => void
+  onMouseLeave?: (_: number) => void
+} & unknown) => (
+  <>
+    {n > 0
+      ? Array(n)
+          .fill(0)
+          .map((_, i) => (
+            <Icon
+              key={Math.random()}
+              onMouseEnter={() => onMouseEnter(i + 1)}
+              onMouseLeave={() => onMouseLeave(i + 1)}
+              onClick={() => onClick(i + 1)}
+              icon={icon}
+              size={18}
+              className={className}
+              {...props}
+            />
+          ))
+      : null}
+  </>
+)
 
 export const ScrollUp = () => (
   <button

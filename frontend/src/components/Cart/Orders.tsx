@@ -12,6 +12,7 @@ import { fmtPrice } from '@/utils/helpers'
 import { getURL } from '@/utils/api'
 import { useDispatch, useSelector } from '@/utils/store'
 import { rentalLengths } from '@/utils/constants'
+import AddReview from '@/Shop/AddReview'
 
 export const Orders = () => {
   const dispatch = useDispatch()
@@ -24,7 +25,7 @@ export const Orders = () => {
   return (
     <div className="">
       {cart.map((item) => (
-        <OrderItem key={item.order.id} dispatch={dispatch} item={item} />
+        <OrderItem key={item.order.id} item={item} />
       ))}
     </div>
   )
@@ -45,6 +46,7 @@ export const OrderItem = ({item}) => {
         ${order.available <= 0 ? 'border-warning' : 'border-gray'}
         `}
     >
+      <AddReview order={order} />
       <div className="h-32 w-32 relative mr-4">
         <Image
           src={getURL(order.product.images[0].url)}

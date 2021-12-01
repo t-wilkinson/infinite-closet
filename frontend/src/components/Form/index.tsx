@@ -64,6 +64,7 @@ export const Input = ({
   children = null,
   className = '',
   disabled = false,
+  placeholder='',
   ...props
 }) => {
   const [changed, setChanged] = React.useState(false)
@@ -93,13 +94,13 @@ export const Input = ({
     >
       <label
         htmlFor={field}
-        className={`rounded-sm border-sec absolute z-10 left-0 px-2 transform duration-200 pointer-events-none w-full h-full flex items-center overflow-hidden
+        className={`rounded-sm border-sec absolute z-10 left-0 px-2 transform duration-200 pointer-events-none w-full flex items-center overflow-hidden
           ${focused ? 'text-sec' : 'text-gray'}
           `}
         style={{
           ...(focused || value
             ? { transform: 'translate(-5%, -50%) scale(0.9)' }
-            : { transform: 'translate(-0px, -0px) ' }),
+            : { transform: 'translate(-0px, 100%) ' }),
         }}
       >
         <span
@@ -131,10 +132,110 @@ export const Input = ({
           {...props}
           disabled={disabled}
           className={`p-2 py-3 w-full h-full outline-none `}
+          placeholder={focused ? placeholder : ''}
           id={field}
           name={field}
           type={type}
           value={value}
+          onChange={onChange_}
+          // Only show outline when navigating by keyboard
+          onMouseDown={() => setMouse(true)}
+          onMouseUp={() => setMouse(false)}
+          onFocus={() => !mouse && setFocus(true)}
+          onBlur={() => setFocus(false)}
+        />
+        {children}
+        {after && <div>{after}</div>}
+      </div>
+    </div>
+  )
+}
+
+export const TextArea = ({
+  label,
+  onChange,
+  value,
+  field = label,
+  constraints = '',
+  type = 'text',
+  before = null,
+  after = null,
+  children = null,
+  className = '',
+  disabled = false,
+  placeholder='',
+  ...props
+}) => {
+  const [changed, setChanged] = React.useState(false)
+  const [focus, setFocus] = React.useState(false)
+  // Only show outline when navigating by keyboard
+  const [focused, setFocused] = React.useState(false)
+  const [mouse, setMouse] = React.useState(false)
+  const onChange_ = (e) => {
+    setChanged(true)
+    onChange(e.target.value)
+  }
+  const validations = validate(label, value, constraints)
+  const required = /required/.test(constraints)
+
+  return (
+    <div
+      className={`relative my-2 w-full
+        ${className}
+        ${focus ? 'outline-black' : ''}
+        `}
+      onFocus={() => {
+        setFocused(true)
+      }}
+      onBlur={() => {
+        setFocused(false)
+      }}
+    >
+      <label
+        htmlFor={field}
+        className={`rounded-sm border-sec absolute z-10 left-0 px-2 transform duration-200 pointer-events-none w-full flex items-center overflow-hidden
+          ${focused ? 'text-sec' : 'text-gray'}
+          `}
+        style={{
+          ...(focused || value
+            ? { transform: 'translate(-5%, -50%) scale(0.9)' }
+            : { transform: 'translate(-0px, 100%) ' }),
+        }}
+      >
+        <span
+          className={`px-1 leading-none
+         ${disabled ? 'bg-gray-light' : 'bg-white'} `}
+        >
+          {changed && validations.length ? (
+            <Warning>{validations[0]}</Warning>
+          ) : (
+            <>
+              {label}
+              {required ? <span className="text-base">*</span> : null}
+            </>
+          )}
+        </span>
+      </label>
+
+      <div
+        className={`w-full h-full flex-row justify-between items-center border rounded-sm transform duration-200
+          ${disabled ? 'bg-gray-light' : 'bg-white'}
+          ${focused ? 'border-sec' : ''}
+          ${
+            changed && validations.length > 0 ? 'border-warning' : 'border-gray'
+          }
+          `}
+      >
+        {before && <div>{before}</div>}
+        <textarea
+          {...props}
+          disabled={disabled}
+          className="p-2 py-3 w-full h-full outline-none"
+          placeholder={focused ? placeholder : ''}
+          id={field}
+          name={field}
+          value={value}
+          rows={5}
           onChange={onChange_}
           // Only show outline when navigating by keyboard
           onMouseDown={() => setMouse(true)}
@@ -159,7 +260,7 @@ export const Warning = ({ children }) => (
 export const Form = ({
   onSubmit = (..._: any[]) => {},
   className = '',
-  children,
+  children=null,
   ...props
 }) => (
   <div className={`items-center ${className}`}>
@@ -178,7 +279,7 @@ export const Form = ({
 
 export const FormHeader = ({ label }) => (
   <>
-    <span className="text-center font-subheader-light text-3xl mb-4">
+    <span className="text-center font-bold text-2xl mb-4">
       {label}
     </span>
   </>
@@ -189,7 +290,7 @@ export const Submit = ({
   children = 'Submit' as any,
   disabled = false,
   className = '',
-  onSubmit = (..._: any) => {},
+  onSubmit = () => {},
   type = 'primary',
 }) => (
   <button
@@ -260,7 +361,7 @@ export const Dropdown = ({
   ...props
 }: {
   value: string
-  onChange: (value: string) => {}
+  onChange: (value: string) => void
   values: { key: string; label: string }[]
 }) => {
   const [dropdown, setDropdown] = React.useState(false)

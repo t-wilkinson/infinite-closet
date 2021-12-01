@@ -2,50 +2,73 @@
 
 const { toId } = require('../../../utils')
 
-async function userReviews(user) {
-  return await strapi.query('review').find({ user: toId(user) }, [])
+async function getUserReviews({ user, product }) {
+  return await strapi
+    .query('review')
+    .find({ 'order.product': product, 'order.user': user }, [])
 }
 
-async function productReviews(product) {
-  return await strapi.query('review').find({ product: toId(product) }, [])
+async function getUserOrders({ user, product }) {
+  return await strapi.query('order', 'orders').find({ product, user }, [])
 }
 
 /**
- * Users are limited in what products they can review
+ * Users existing reviews/orders pertaining to a certain product.id
+ * limit whether or not they can review
  */
-function canReview(productId, userReviews, orderedProducts) {
-  const filterProducts = (objects, id) =>
-    objects.filter((obj) => toId(obj.product) === id)
-
+function canUserReview({ reviews, orders }) {
   // Can't review same product more than once
-  const productReviews = filterProducts(userReviews, productId)
-  if (productReviews.length > 0) {
+  if (reviews.length > 0) {
     return false
   }
 
   // User can only review products they have ordered
-  const relevantProducts = orderedProducts.filter(
-    (product) => toId(product) === productId
-  )
-  if (relevantProducts.length === 0) {
+  if (orders.length === 0) {
     return false
   }
 
   return true
 }
 
-async function addReview(user, review, productId) {
-  const userId = toId(user)
-  const orderedProducts = await strapi.query('order').find({ user: toId(user) })
-  const userCanReview = canReview(
-    productId,
-    await userReviews(user),
-    orderedProducts
+function canReview(productId, userReviews, orderedProducts) {
+  const filterProducts = (objects, id) =>
+    objects.filter((obj) => toId(obj.product) === id)
+
+  // Can't review same product more than once
+  const productReviews = filterProducts(userReviews, productId)
+
+  // User can only review products they have ordered
+  const relevantProducts = orderedProducts.filter(
+    (product) => toId(product) === productId
   )
+
+  return canUserReview({ reviews: productReviews, orders: relevantProducts })
+}
+
+async function addReview(review, order) {
+  const userCanReview = canUserReview({
+    orders: await getUserOrders(order),
+    reviews: await getUserReviews(order),
+  })
+
+  //uploading it directly to upload services.
+  /*
+  await strapi.plugins.upload.services.upload.upload({
+      data:{}, //mandatory declare the data(can be empty), otherwise it will give you an undefined error.
+    files: {
+      path: filePath,
+      name: fileName,
+      type: mime.lookup(filePath), // mime type of the file
+      size: stats.size,
+    },
+  });
+  */
+
   if (userCanReview) {
     await strapi.query('review').create({
       ...review,
-      user: userId,
+      order: order.id,
+      // images: ,
     })
   } else {
     throw new Error('User is unable to review.')
@@ -86,11 +109,9 @@ function fit(reviews) {
 }
 
 module.exports = {
-  userReviews,
+  canUserReview,
   canReview,
   addReview,
-
-  productReviews,
   rating,
   fit,
 }
