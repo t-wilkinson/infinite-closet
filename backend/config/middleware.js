@@ -13,5 +13,9 @@ module.exports = {
         'https://admin.' + process.env.FRONTEND_DOMAIN,
       ],
     },
+    body: {
+      enabled: true,
+      multipart: true,
+    }
   },
 }

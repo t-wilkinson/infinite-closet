@@ -15,7 +15,7 @@ const Reviews = ({ slug }) => {
       .catch((err) => console.error(err))
   }, [])
 
-  if (!data) {
+  if (!data || data?.reviews?.length === 0) {
     return null
   }
 

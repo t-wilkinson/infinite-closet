@@ -110,17 +110,17 @@ export const Icons = ({
   n,
   icon,
   className = '',
-  onClick,
+  onClick=() => {},
   onMouseEnter=() => {},
   onMouseLeave=() => {},
   ...props
 }: {
   n: number
   icon: React.ReactElement
-  className: string
-  onClick: (_: number) => void
-  onMouseEnter: (_: number) => void
-  onMouseLeave: (_: number) => void
+  className?: string
+  onClick?: (_: number) => void
+  onMouseEnter?: (_: number) => void
+  onMouseLeave?: (_: number) => void
 } & unknown) => (
   <>
     {n > 0
@@ -128,7 +128,7 @@ export const Icons = ({
           .fill(0)
           .map((_, i) => (
             <Icon
-              key={i}
+              key={Math.random()}
               onMouseEnter={() => onMouseEnter(i + 1)}
               onMouseLeave={() => onMouseLeave(i + 1)}
               onClick={() => onClick(i + 1)}

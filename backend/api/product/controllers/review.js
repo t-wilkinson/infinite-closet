@@ -2,16 +2,22 @@
 
 module.exports = {
   async add(ctx) {
-    const { user } = ctx.state
-    const { slug } = ctx.params
-    const { review } = ctx.body
+    const { order_id } = ctx.params
+    const review = ctx.request.body
+    console.log(ctx.request.files)
 
     try {
-      const product = await strapi.query('product').findOne({ slug }, [])
-      await strapi.services.review.addReview(user, review, product.id)
+      const order = await strapi
+        .query('order', 'orders')
+        .findOne({ id: order_id }, [])
+      if (!order) {
+        throw new Error("Order doesn't exist")
+      }
+
+      await strapi.services.review.addReview(review, order)
       return ctx.send({})
     } catch (e) {
-      strapi.log.error('Failed to add product review.', e.stack)
+      strapi.log.error('Failed to add product review:', e.stack)
       return ctx.send({}, 404)
     }
   },
@@ -21,7 +27,7 @@ module.exports = {
     const product = await strapi.query('product').findOne({ slug }, [])
     const reviews = await strapi
       .query('review')
-      .find({ 'order.product': product.id }, ['user', 'images'])
+      .find({ 'order.product': product.id }, ['order', 'images'])
     ctx.send({
       reviews,
       fit: strapi.services.review.fit(reviews),

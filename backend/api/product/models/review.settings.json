@@ -11,11 +11,6 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "user": {
-      "plugin": "users-permissions",
-      "model": "user",
-      "required": false
-    },
     "order": {
       "model": "order",
       "plugin": "orders",

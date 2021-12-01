@@ -9,7 +9,7 @@ import { iconStarFill, iconStarHalf } from '@/Icons'
 const Review = ({
   fit,
   rating,
-  user,
+  order,
   images,
   heading,
   message,
@@ -18,7 +18,7 @@ const Review = ({
   return (
     <article className="flex bg-white p-4 border border-gray-light rounded-sm relative flex-row justify-between h-80">
       <div className="w-32">
-        <SideInfo user={user} fit={fit} />
+        <SideInfo user={order.user} fit={fit} />
       </div>
       {/* <div className="w-px bg-pri-light mx-4" /> */}
       <div className="space-y-3 flex-grow ml-8">
@@ -62,12 +62,14 @@ const SideInfo = ({ user, fit }) => {
         {user.firstName} {user.lastName}
       </span>
       <div className="w-full h-px bg-pri-light my-2" />
+      <table>
       <tbody>
         <Row label="fit" value={fit} />
         {Object.entries(subObj(user, userInfoKeys)).map(([k, v]) => (
-          <Row label={k} value={v} />
+          <Row key={k} label={k} value={v} />
         ))}
       </tbody>
+      </table>
     </aside>
   )
 }

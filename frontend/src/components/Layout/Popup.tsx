@@ -18,7 +18,7 @@ const Popup = ({children, state=false, setState}) => {
     }}
   >
     <div
-      className="bg-gray-light border-gray border w-96"
+      className="bg-white border-gray border w-96"
       style={{ maxHeight: 600 }}
     >
       <button onClick={() => setState(false)} className="place-self-end">

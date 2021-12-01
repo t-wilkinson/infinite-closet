@@ -46,7 +46,7 @@ export const OrderItem = ({item}) => {
         ${order.available <= 0 ? 'border-warning' : 'border-gray'}
         `}
     >
-      <AddReview />
+      <AddReview order={order} />
       <div className="h-32 w-32 relative mr-4">
         <Image
           src={getURL(order.product.images[0].url)}
@@ -70,7 +70,6 @@ export const OrderItem = ({item}) => {
         </span>
         <span className="text-pri">{statuses[order.status]}</span>
       </div>
-      <AddReview />
     </div>
   )
 }
