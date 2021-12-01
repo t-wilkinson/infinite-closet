@@ -3,7 +3,7 @@ import Image from 'next/image'
 import axios from 'axios'
 
 import Form, { Submit, TextArea, Input, Dropdown, FormHeader } from '@/Form'
-import useFields from '@/Form/useFields'
+import useFields, {cleanFields} from '@/Form/useFields'
 import Popup from '@/Layout/Popup'
 import { Icon, Icons } from '@/components'
 import { iconClose, iconPlus, iconStarFill } from '@/Icons'
@@ -33,12 +33,16 @@ const AddReview = ({ order }) => {
 
   const onSubmit = async (e) => {
     const form = e.target
-    const formData = new FormData(form)
+    const formData = new FormData()
+    const cleaned = cleanFields(fields)
+    formData.append('heading', cleaned.heading)
+    formData.append('message', cleaned.message)
+    formData.append('fit', cleaned.fit)
+    formData.append('rating', cleaned.rating)
+
     const images = form.elements['images'].files
     for (let i = 0; i < images.length; i++) {
-      // for (const file of form.elements['images'].files) {
-      // console.log(form.elements['images'].files[i])
-      formData.append('files[]', form.elements['images'].files[i])
+      formData.append(images[i].name, images[i])
     }
 
     axios

@@ -45,30 +45,31 @@ function canReview(productId, userReviews, orderedProducts) {
   return canUserReview({ reviews: productReviews, orders: relevantProducts })
 }
 
-async function addReview(review, order) {
+async function addReview(review, order, images) {
   const userCanReview = canUserReview({
     orders: await getUserOrders(order),
     reviews: await getUserReviews(order),
   })
 
-  //uploading it directly to upload services.
-  /*
-  await strapi.plugins.upload.services.upload.upload({
-      data:{}, //mandatory declare the data(can be empty), otherwise it will give you an undefined error.
-    files: {
-      path: filePath,
-      name: fileName,
-      type: mime.lookup(filePath), // mime type of the file
-      size: stats.size,
-    },
-  });
-  */
-
   if (userCanReview) {
+    const imageIds = await Promise.all(Object.values(images).map(async (image) => {
+      const upload = await strapi.plugins.upload.services.upload.upload({
+        data:{},
+        files: {
+          path: image.path,
+          name: image.name,
+          type: image.type,
+          size: image.size,
+        },
+      })
+      return upload.id
+    }))
+    console.log(imageIds)
+
     await strapi.query('review').create({
       ...review,
       order: order.id,
-      // images: ,
+      images: imageIds,
     })
   } else {
     throw new Error('User is unable to review.')

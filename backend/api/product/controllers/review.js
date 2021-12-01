@@ -4,7 +4,6 @@ module.exports = {
   async add(ctx) {
     const { order_id } = ctx.params
     const review = ctx.request.body
-    console.log(ctx.request.files)
 
     try {
       const order = await strapi
@@ -14,7 +13,7 @@ module.exports = {
         throw new Error("Order doesn't exist")
       }
 
-      await strapi.services.review.addReview(review, order)
+      await strapi.services.review.addReview(review, order, ctx.request.files)
       return ctx.send({})
     } catch (e) {
       strapi.log.error('Failed to add product review:', e.stack)
