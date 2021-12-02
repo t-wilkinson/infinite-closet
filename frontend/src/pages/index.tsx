@@ -8,9 +8,9 @@ import { FacebookMessenger, Button } from '@/components'
 import Layout from '@/Layout'
 import { StrapiProduct } from '@/utils/models'
 
-import whyRentPic from '@/media/home/why-rent.png'
-import formalClothingPic from '@/media/home/formal-clothing.png'
-import sustainableFashionRentalPic from '@/media/home/sustainable-fashion-rental.png'
+// import whyRentPic from '@/media/home/why-rent.png'
+// import formalClothingPic from '@/media/home/formal-clothing.png'
+// import sustainableFashionRentalPic from '@/media/home/sustainable-fashion-rental.png'
 import holidaysTreatsPic from '@/media/home/holidays-treats.png'
 import reviewImage1 from  '@/media/home/review-image.jpg'
 import reviewImage2 from  '@/media/home/review-image-1.jpg'
@@ -53,15 +53,15 @@ const Introduction = () => (
       height: '70vh',
     }}
   >
-    <Image
-      priority={true}
-      src={sustainableFashionRentalPic}
-      placeholder="blur"
-      alt="Women enjoying stylish rental dresses"
-      layout="fill"
-      objectFit="cover"
-      objectPosition="center bottom"
-    />
+    {/* <Image */}
+    {/*   priority={true} */}
+    {/*   src={sustainableFashionRentalPic} */}
+    {/*   placeholder="blur" */}
+    {/*   alt="Women enjoying stylish rental dresses" */}
+    {/*   layout="fill" */}
+    {/*   objectFit="cover" */}
+    {/*   objectPosition="center bottom" */}
+    {/* /> */}
     <div
       className="absolute inset-0"
       style={{ backgroundColor: 'rgb(0 0 0 / 50%)' }}
@@ -153,14 +153,14 @@ const WhyRent = () => (
         minHeight: '300px',
       }}
     >
-      <Image
-        src={whyRentPic}
-        alt="Feel good"
-        layout="fill"
-        placeholder="blur"
-        objectFit="cover"
-        objectPosition="center"
-      />
+      {/* <Image */}
+      {/*   src={whyRentPic} */}
+      {/*   alt="Feel good" */}
+      {/*   layout="fill" */}
+      {/*   placeholder="blur" */}
+      {/*   objectFit="cover" */}
+      {/*   objectPosition="center" */}
+      {/* /> */}
       <div className="absolute mt-8 mr-8 right-0 left-0 md:m-0 items-end md:justify-center md:items-center top-0 bottom-0 text-white">
         <div className="md:transform md:translate-x-full">
           <Heading>Why Rent</Heading>
@@ -201,14 +201,14 @@ const WhyRentItem = ({ item }) => (
 )
 
 const productCategories = [
-  {
-    title: 'Oh My Gown',
-    text: 'The Formal Edit',
-    src: formalClothingPic,
-    alt: 'Pink dress for formal occasions',
-    href: '/products/clothing/gowns',
-    position: 'center 20%',
-  },
+  // {
+  //   title: 'Oh My Gown',
+  //   text: 'The Formal Edit',
+  //   src: formalClothingPic,
+  //   alt: 'Pink dress for formal occasions',
+  //   href: '/products/clothing/gowns',
+  //   position: 'center 20%',
+  // },
   {
     title: 'Our Holidays Treats',
     text: 'Sparkle season has arrived',
