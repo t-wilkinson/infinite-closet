@@ -443,7 +443,37 @@ const Review = ({ quote, name, image, smallPosition="center"}) => {
         </div>
       </div>
 
-      <div className="w-full md:hidden relative">
+      <div className="w-full sm:hidden relative">
+        <div className="w-full h-72 relative">
+          <Image
+            alt={name}
+            src={image}
+            layout="fill"
+            objectFit="cover"
+            objectPosition={smallPosition}
+            placeholder="blur"
+          />
+        </div>
+        <div className="h-full w-full relative transition-all duration-300">
+          <div className="absolute inset-0"
+            style={{ backgroundColor: '#DDDDDDAA', backdropFilter: 'blur(4px)' }}
+          />
+          <span
+            className="absolute top-0 left-0 ml-6 -mt-20 text-sec"
+            style={{ fontSize: '1000%' }}
+          >
+            &ldquo;
+          </span>
+          <div className="justify-center px-8 transition-all duration-300 relative z-10 mt-12">
+            <span className="text-sm sm:text-base">&emsp;{quote}</span>
+          </div>
+          <div className="absolute bottom-0 right-0 p-4 font-bold text-xl">
+            - {name}
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full hidden sm:flex md:hidden relative">
         <Image
           alt={name}
           src={image}
