@@ -82,8 +82,8 @@ const allowedPages = [
   '/user/profile',
   '/account/checkout/register',
   '/account/checkout/signin',
-  '/review/product/[slug]',
-  '/review/thankyou',
+  // '/review/product/[slug]',
+  // '/review/thankyou',
 ]
 
 const Wrapper = ({ router, children }) => {
