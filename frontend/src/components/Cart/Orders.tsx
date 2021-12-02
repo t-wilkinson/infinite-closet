@@ -70,7 +70,7 @@ export const OrderItem = ({item}) => {
         </span>
         <span className="text-pri">{statuses[order.status]}</span>
       </div>
-      <Link href={`/review/${order.product.slug}`}>
+      <Link href={`/review/product/${order.product.slug}`}>
         <a className="absolute right-0 m-2 p-2 bg-pri text-white rounded-sm">Review product</a>
       </Link>
     </div>

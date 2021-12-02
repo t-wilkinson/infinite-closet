@@ -82,7 +82,7 @@ const allowedPages = [
   '/user/profile',
   '/account/checkout/register',
   '/account/checkout/signin',
-  '/review/[slug]',
+  '/review/product/[slug]',
   '/review/thankyou',
 ]
 
