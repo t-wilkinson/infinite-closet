@@ -17,7 +17,7 @@ const fitValues = [
 const AddReview = ({ }) => {
   const [state, setState] = React.useState<any>({})
   const router = useRouter()
-  const productSlug = router?.query.slug
+  const productSlug = router.query.slug
 
   const fields = useFields({
     heading: {
