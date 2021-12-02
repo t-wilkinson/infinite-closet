@@ -255,7 +255,7 @@ export const TextArea = ({
 export const Warnings = ({ warnings, first}) =>
   warnings.slice(0, first ? 1 : undefined).map((warning) => <Warning key={warning}>{warning}</Warning>)
 
-export const Warning = ({ warnings=[], children }) => (
+export const Warning = ({ warnings=[], children=null }) => (
    (children || warnings.length > 0) && <span className="font-bold text-sm text-warning">
     {warnings.slice(0, 1)}{children}</span>
 )

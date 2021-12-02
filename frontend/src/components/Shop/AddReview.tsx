@@ -1,10 +1,10 @@
 import React from 'react'
 import Image from 'next/image'
 import axios from 'axios'
+import {useRouter} from 'next/router'
 
 import Form, { Warning, Submit, TextArea, Input, Dropdown, FormHeader } from '@/Form'
-import useFields, {isError, attachErrors, cleanFields, fieldErrors, validateErrors} from '@/Form/useFields'
-import Popup from '@/Layout/Popup'
+import useFields, {attachErrors, cleanFields, fieldErrors, validateErrors} from '@/Form/useFields'
 import { Icon, Icons } from '@/components'
 import { iconClose, iconPlus, iconStarFill } from '@/Icons'
 
@@ -14,8 +14,10 @@ const fitValues = [
   { key: 'long', label: 'long' },
 ]
 
-const AddReview = ({ productSlug, onSubmit}) => {
-  const [state, setState] = React.useState({})
+const AddReview = ({ }) => {
+  const [state, setState] = React.useState<any>({})
+  const router = useRouter()
+  const productSlug = router?.query.slug
 
   const fields = useFields({
     heading: {
@@ -62,7 +64,7 @@ const AddReview = ({ productSlug, onSubmit}) => {
         withCredentials: true,
       })
       .then(res => res.data.review)
-      .then((review) => onSubmit(review))
+      .then((review) => router.push('/review/thankyou'))
       .catch((err) => {
         setState({status: 'error', error: 'You cannot create review for this product.'})
       })
