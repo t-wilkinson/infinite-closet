@@ -5,11 +5,8 @@ f.designer = require('./designer-factory')
  * Default data that factory uses
  */
 const defaultData = {
-  name: 'Product 1',
-  slug: 'product-1',
   email: 'info+test@infinitecloset.co.uk',
   status: 'cart',
-  designer: f.designer.mock(),
   sizes: [
     {
       size: 'S',
@@ -38,8 +35,11 @@ const defaultData = {
  * Returns a mock updated with given data
  */
 const mock = (options = {}) => {
+  const suffix = Math.round(Math.random() * 10000).toString()
   return {
     ...defaultData,
+    name: `Product ${suffix}`,
+    slug: `product-${suffix}`,
     ...options,
   }
 }
@@ -50,7 +50,7 @@ const mock = (options = {}) => {
 const create = async (strapi, data = {}) => {
   const productData = mock(data)
   if (typeof productData.designer === 'object') {
-    const designer = await f.designer.create(productData.designer)
+    const designer = await f.designer.create(strapi, productData.designer)
     productData.designer = designer.id
   }
 

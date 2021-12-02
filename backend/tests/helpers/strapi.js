@@ -1,6 +1,7 @@
 'use strict'
 const Strapi = require('strapi')
 const http = require('http')
+const request = require('supertest')
 
 let instance
 jest.setTimeout(15000)
@@ -142,6 +143,29 @@ function parseCookies(req) {
   }, {})
 }
 
+function jsonRequest(url, data) {
+  return request(strapi.server)
+    .post(url)
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json')
+    .send(data)
+    .expect('Content-Type', /json/)
+}
+
+function jsonRequestAuth(url, data, user) {
+  const jwt = strapi.plugins['users-permissions'].services.jwt.issue({
+    id: user.id,
+  })
+
+  return request(strapi.server)
+    .post(url)
+    .set('Accept', 'application/json')
+    .set('Content-Type', 'application/json')
+    .send(data)
+    .set('Authorization', 'Bearer ' + jwt)
+    .expect('Content-Type', /json/)
+}
+
 module.exports = {
   setupStrapi,
   jwt,
@@ -151,4 +175,6 @@ module.exports = {
   getPluginStore,
   responseHasError,
   parseCookies,
+  jsonRequest,
+  jsonRequestAuth,
 }

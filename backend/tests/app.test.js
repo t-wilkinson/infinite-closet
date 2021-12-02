@@ -2,6 +2,7 @@
  * @group api
  * @group order
  * @group product
+ * @group product/review
  */
 'use strict'
 const fs = require('fs')
@@ -16,9 +17,11 @@ const sleep = (milliseconds) => {
 beforeAll(async () => {
   await setupStrapi() // singleton so it can be called many times
   await Promise.all([
+    strapi.query('review').delete(),
     strapi.query('designer').delete(),
     strapi.query('product').delete(),
     strapi.query('coupon').delete(),
+    strapi.query('order', 'orders').delete(),
     strapi.query('user', 'users-permissions').delete(),
   ])
 })
@@ -47,6 +50,6 @@ describe('Strapi in general', () => {
   })
 })
 
-require('./order')
+// require('./order')
 require('./product')
 // require('./user')

@@ -110,7 +110,7 @@ export const Rating = ({
   )
 }
 
-const getNumStars = (rating) => ({
+export const getNumStars = (rating) => ({
   full: Math.floor(rating),
   useHalf: rating < 5 && rating % 1,
   empty: Math.floor(5 - rating),

@@ -19,26 +19,20 @@ const mock = (data) => ({
 const mockMany = (...dataArray) => dataArray.map((data) => mock(data))
 
 describe('Ability to review', () => {
-  function canReview(product, productReviews, orderedProducts) {
-    return api.reviews.canReview(product,
-      mockMany(...productReviews.map(id => ({product: id}))),
-      orderedProducts
-    )
+  function canReview(reviews, orders) {
+    return api.reviews.canReview({reviews, orders})
   }
   it('can review product that they have ordered and not reviewed yet', () => {
-    expect(canReview(1, [], [1])).toBe(true)
-    // Should work even if they have reviewed other products
-    expect(canReview(1, [2], [1])).toBe(true)
+    expect(canReview([], [1])).toBe(true)
   })
 
   it('can\'t review product that they haven\'t ordered', () => {
-    expect(canReview(1, [], [])).toBe(false)
-    expect(canReview(1, [], [2])).toBe(false)
+    expect(canReview([], [])).toBe(false)
+    expect(canReview([1], [])).toBe(false)
   })
 
   it('can\'t review product that they have already reviewed', () => {
-    expect(canReview(1, [1], [1])).toBe(false)
-    expect(canReview(1, [1], [])).toBe(false)
+    expect(canReview([1], [1])).toBe(false)
   })
 })
 

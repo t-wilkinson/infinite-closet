@@ -1,0 +1,34 @@
+Content-Type: text/html; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+To: First Last <info+test5796@infinitecloset.co.uk>
+From: Infinite Closet Test <info+test@infinitecloset.co.uk>
+Subject: Thank you for your order
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@200;300&family=Cinzel&family=Lato:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      
+    </style>
+  </head>
+  <body
+    style="
+      width: 100% !important;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      margin: 0;
+      padding: 0;
+    "
+  >
+    <div style="width:100%;background:#efefef;padding-top:16px;padding-bottom:16px"><table class="" style="width:100%;border-collapse:collapse;max-width:700px;margin:0 auto"><tbody><tr class=""><td><table class="" style="width:100%;border-collapse:collapse"><tbody><tr class=""><td><img src="https://infinitecloset.co.uk/media/brand/logo-lockup-gray-transparent.png" style="object-fit:cover;outline:none;text-decoration:none;border:none;display:block;height:128px;width:256px"/></td><td style="font-size:20px;font-weight:700;text-align:right" class="">Checkout Confirmation</td></tr></tbody></table></td></tr><tr class="" style="width:100%;background:white"><td><div style="margin:16px"><table class="" style="width:100%;border-collapse:collapse"><tbody><tr><td><h3 style="margin:0">Hello ,</h3></td></tr><tr><td><span>Thank you for your order.</span></td></tr><tr><td><table class="" style="width:100%;border-collapse:collapse;margin-top:8px;margin-bottom:8px"><tbody><tr><td><div style="padding:8px;background-color:#efefef;margin-top:8px;margin-bottom:8px"><table class="" style="width:100%;border-collapse:collapse;margin-bottom:4px"><tbody><tr class=""><td style="width:104px;text-align:left" class=""><a href="https://undefined/shop/product-2/null"><img src="https://undefined/uploads/image-1" alt="Image 1" style="object-fit:contain;outline:none;text-decoration:none;border:none;display:block;width:96px;height:96px"/></a></td><td style="text-align:right" class=""><table class="" style="width:100%;border-collapse:collapse"><tbody><tr class=""><td><table class="" style="width:100%;border-collapse:collapse;margin-bottom:4px"><tbody><tr class=""><td style="text-align:left" class=""><table class="" style="width:100%;border-collapse:collapse"><tbody><tr class="" style="color:#5f6368"><td>Rental Start:</td></tr><tr class="" style="color:#39603d;font-weight:700"><td>Saturday, Dec 11</td></tr></tbody></table></td><td style="text-align:right" class=""><table class="" style="width:100%;border-collapse:collapse"><tbody><tr class="" style="color:#5f6368"><td>Rental End:</td></tr><tr class="" style="color:#39603d;font-weight:700"><td>Tuesday, Dec 14</td></tr></tbody></table></td></tr></tbody></table></td></tr><tr class=""><td><table class="" style="width:100%;border-collapse:collapse;margin-bottom:4px"><tbody><tr class=""><td style="text-align:left" class=""><span><span style="font-weight:700">S</span> Product-2 by <span style="font-weight:700"></span></span></td><td style="text-align:right" class=""><div style="font-weight:700">£10</div></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></div></td></tr></tbody></table></td></tr><tr><td><table class="" style="width:100%;border-collapse:collapse;margin-bottom:4px"><tbody><tr class=""><td style="text-align:left" class=""><span style="font-weight:700">Total</span></td><td style="text-align:right" class=""><span style="font-weight:700">£10.00</span></td></tr></tbody></table></td></tr><tr><td><span>We hope to see you again soon.</span></td></tr></tbody></table></div></td></tr><tr><td><table class="" style="width:100%;border-collapse:collapse;margin-top:16px;font-size:14px;color:#5f6368;text-align:center"><tbody><tr><td><a style="color:#3b82f6" href="https://infinitecloset.co.uk">https://InfiniteCloset.co.uk</a></td></tr></tbody></table></td></tr></tbody></table></div>
+  </body>
+</html>

@@ -18,7 +18,7 @@ async function getUserOrders({ product, user }) {
  * Users existing reviews/orders pertaining to a certain product.id
  * limit whether or not they can review
  */
-function _canUserReview({ reviews, orders }) {
+function canReview({ reviews, orders }) {
   // Can't review same product more than once
   if (reviews.length > 0) {
     return false
@@ -39,29 +39,14 @@ async function canUserReview({ product, user }) {
 
   const orders = await getUserOrders({ product, user })
   const reviews = await getUserReviews({ product, user })
-  if (_canUserReview({ orders, reviews })) {
-    return orders[0]
+  if (canReview({ orders, reviews })) {
+    return orders[0] // Should only have one order
   } else {
     return false
   }
 }
 
-function canReview(productId, userReviews, orderedProducts) {
-  const filterProducts = (objects, id) =>
-    objects.filter((obj) => toId(obj.product) === id)
-
-  // Can't review same product more than once
-  const productReviews = filterProducts(userReviews, productId)
-
-  // User can only review products they have ordered
-  const relevantProducts = orderedProducts.filter(
-    (product) => toId(product) === productId
-  )
-
-  return canUserReview({ reviews: productReviews, orders: relevantProducts })
-}
-
-async function addReview({ product, user, review, images }) {
+async function addReview({ product, user, review, images=[] }) {
   const userCanReview = await canUserReview({ product, user })
 
   if (userCanReview) {
