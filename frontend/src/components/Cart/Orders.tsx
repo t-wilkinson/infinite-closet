@@ -13,7 +13,6 @@ import { fmtPrice } from '@/utils/helpers'
 import { getURL } from '@/utils/api'
 import { useDispatch, useSelector } from '@/utils/store'
 import { rentalLengths } from '@/utils/constants'
-import AddReview from '@/Shop/AddReview'
 
 export const Orders = () => {
   const dispatch = useDispatch()
@@ -70,7 +69,7 @@ export const OrderItem = ({item}) => {
         </span>
         <span className="text-pri">{statuses[order.status]}</span>
       </div>
-      <Link href={`/review/product/${order.product.slug}`}>
+      <Link href={`/review/${order.product.slug}`}>
         <a className="absolute right-0 m-2 p-2 bg-pri text-white rounded-sm">Review product</a>
       </Link>
     </div>

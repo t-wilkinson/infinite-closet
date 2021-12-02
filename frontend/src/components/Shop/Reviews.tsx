@@ -81,7 +81,7 @@ const AddReview = ({ productSlug }) => {
       className="max-w-screen-md flex flex-col items-center bg-white w-full p-4"
     >
       <h3 className="text-2xl">Share your experience</h3>
-      <Link href={`/review/product/${productSlug}`}>
+      <Link href={`/review/${productSlug}`}>
         <a className="bg-pri text-white p-2 m-2 mt-4 font-bold">Add a review</a>
       </Link>
     </section>
