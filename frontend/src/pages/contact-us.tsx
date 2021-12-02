@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 
 import { MarkdownWrapper, fetchMarkdown } from '@/Markdown'
-import useFields, { cleanFields, isValid } from '@/Form/useFields'
+import useFields, { cleanFields, isError } from '@/Form/useFields'
 import { Button } from '@/components'
 import { Input } from '@/Form'
 
@@ -41,7 +41,7 @@ export const Page = ({ data }) => {
           {Object.values(fields).map((field) => (
             <Input key={field.field} {...field} />
           ))}
-          <Button disabled={!isValid(fields)} onClick={sendMessage}>
+          <Button disabled={!isError(fields)} onClick={sendMessage}>
             Contact Us
           </Button>
         </div>

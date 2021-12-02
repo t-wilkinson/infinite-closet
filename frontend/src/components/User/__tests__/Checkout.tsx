@@ -5,7 +5,7 @@ import * as t from '@/utils/test'
 import mockUser from '../__mocks__/user'
 import { mockCart } from '@/User/__mocks__/order'
 
-describe('Tests', () => {
+describe.skip('Tests', () => {
   beforeEach(() => {
     let store = {
       cart: mockCart,

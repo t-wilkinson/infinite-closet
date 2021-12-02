@@ -9,6 +9,8 @@ export type Field = {
   onChange: (value: any) => void
   placeholder: string
   default: string
+  errors: FieldError[]
+  setErrors: (value: FieldError[]) => void
 }
 
 export type Fields = {
@@ -26,6 +28,8 @@ export type FieldsConfig = {
   }
 }
 
+export type FieldErrors = { [field: string]: FieldError[] }
+export type FieldError = string
 export type Valid = true | string
 
 export type Coupon = {

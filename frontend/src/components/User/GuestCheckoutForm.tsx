@@ -6,7 +6,7 @@ dayjs.extend(utc)
 
 import { useSelector } from '@/utils/store'
 import { Submit, Input } from '@/Form'
-import { cleanFields, isValid } from '@/Form/useFields'
+import { cleanFields, isError } from '@/Form/useFields'
 import { cardStyle, Authorise } from '@/User/Payment'
 import { StrapiCoupon } from '@/utils/models'
 import { Password } from '@/Form'
@@ -88,7 +88,7 @@ export const CheckoutForm = ({ onCheckout }) => {
             disabled={
               !state.authorised ||
               ['error', 'processing'].includes(state.status) ||
-              !isValid(address) ||
+              !isError(address) ||
               cart.every(isOrderInvalid)
             }
           >

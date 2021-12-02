@@ -2,10 +2,10 @@ import React from 'react'
 
 import { toTitleCase } from '@/utils/helpers'
 
-import { FieldsConfig, Field, Fields, Valid, DateOfBirthField } from './types'
+import { FieldsConfig, Field, Fields, FieldError, FieldErrors, Valid, DateOfBirthField } from './types'
 
 export const toDate = ({ day, month, year }: DateOfBirthField) => {
-  const norm = (field) => field.value.trim()
+  const norm = (field: Field) => field.value.trim()
   return new Date(`${norm(year)}-${norm(month)}-${norm(day)}`)
 }
 
@@ -20,10 +20,23 @@ export const changedFields = (fields: Fields) =>
     return acc
   }, {})
 
-export const validateField = (field: Field) =>
+// TODO: should I make these use setErrors() instead?
+export const validateErrors = (fieldErrors: FieldErrors) =>
+  Object.values(fieldErrors).every((errors: FieldError[]) => errors.length === 0)
+
+export const fieldErrors = (fields: Fields): FieldErrors =>
+  Object.fromEntries(Object.entries(fields).map(([k, field]) => [k, fieldError(field)]))
+
+export const fieldError = (field: Field): FieldError[] =>
   validate(field.field, field.value, field.constraints)
 
-export const isValid = (fields: Fields, include?: string[]): boolean => {
+export const attachErrors = (fields: Fields, fieldErrors: FieldErrors) => {
+  for (const field in fields) {
+    fields[field].setErrors(fieldErrors[field])
+  }
+}
+
+export const isError = (fields: Fields, include?: string[]): boolean => {
   return Object.entries(fields)
     .filter(([field, _]) => (include ? include.includes(field) : true))
     .map(([_, field]) => validate(field.label, field.value, field.constraints))
@@ -47,15 +60,15 @@ export const validate = (
   field: string,
   value: string,
   constraints: string
-): Valid[] => {
-  const isValid = (value: string, constraint: string): Valid => {
+): FieldError[] => {
+  const isError = (value: string, constraint: string): Valid => {
     constraint = constraint.replace(/<space>/g, ' ')
     const [type, ...props] = constraint.split(':')
 
     // prettier-ignore
     switch (type) {
       case 'enum': return props[0].split(',').includes(value) || `Value must be one of ${props[0]}`
-      case 'between': return RegExp(`${props[0]}-${props[1]}`).test(value) || `Value must be between ${props[0]} and ${props[1]}`
+      case 'between': return RegExp(`[${props[0]}-${props[1]}]`).test(value) || `Value must be between ${props[0]} and ${props[1]}`
       case 'email': return /^.+@.+\..+$/.test(value)            || `Please enter a valid ${field.toLowerCase()}`
       case 'required': return Boolean(value)                    || `Missing ${field.toLowerCase()}`
       case 'decimal': return /^\d*\.?\d{0,2}$/.test(value)      || `${field} must be a number`
@@ -77,13 +90,13 @@ export const validate = (
   )
   return constraints
     .split(' ')
-    .map((constraint) => isValid(value, constraint))
+    .map((constraint) => isError(value, constraint))
     .filter((v) => v !== true)
 }
 
+// TODO: This would probably work better as a class
 type UseField = (field: string, config: FieldsConfig['number']) => Field
 export const useField: UseField = (field, config) => {
-  const [state, setState] = React.useState(config.default ?? '')
   config = Object.assign(
     {
       label: toTitleCase(field),
@@ -95,6 +108,9 @@ export const useField: UseField = (field, config) => {
     },
     config
   )
+
+  const [state, setState] = React.useState(config.default)
+  const [errors, setErrors] = React.useState([])
 
   return {
     field,
@@ -108,6 +124,8 @@ export const useField: UseField = (field, config) => {
       setState(value)
       config.onChange(value)
     },
+    errors,
+    setErrors,
   }
 }
 

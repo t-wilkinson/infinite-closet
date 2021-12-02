@@ -1,8 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
+import dayjs from 'dayjs'
 
 import { getURL } from '@/utils/api'
-import dayjs from 'dayjs'
 import { Icons } from '@/components'
 import { iconStarFill, iconStarHalf } from '@/Icons'
 
@@ -112,7 +112,7 @@ export const Rating = ({
 
 export const getNumStars = (rating) => ({
   full: Math.floor(rating),
-  useHalf: rating < 5 && rating % 1,
+  useHalf: Boolean(rating < 5 && rating % 1),
   empty: Math.floor(5 - rating),
 })
 

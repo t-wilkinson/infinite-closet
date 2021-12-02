@@ -94,9 +94,11 @@ export const Input = ({
     >
       <label
         htmlFor={field}
-        className={`rounded-sm border-sec absolute z-10 left-0 px-2 transform duration-200 pointer-events-none w-full flex items-center overflow-hidden
+        className={`rounded-sm border-sec absolute z-10 left-0 px-2
+          transform duration-200 pointer-events-none w-full flex
+          items-center overflow-hidden
           ${focused ? 'text-sec' : 'text-gray'}
-          `}
+        `}
         style={{
           ...(focused || value
             ? { transform: 'translate(-5%, -50%) scale(0.9)' }
@@ -250,11 +252,12 @@ export const TextArea = ({
   )
 }
 
-export const Warnings = ({ warnings }) =>
-  warnings.map((warning) => <Warning key={warning}>{warning}</Warning>)
+export const Warnings = ({ warnings, first}) =>
+  warnings.slice(0, first ? 1 : undefined).map((warning) => <Warning key={warning}>{warning}</Warning>)
 
-export const Warning = ({ children }) => (
-  <span className="font-bold text-sm text-warning">{children}</span>
+export const Warning = ({ warnings=[], children }) => (
+   (children || warnings.length > 0) && <span className="font-bold text-sm text-warning">
+    {warnings.slice(0, 1)}{children}</span>
 )
 
 export const Form = ({
@@ -404,6 +407,7 @@ export const Dropdown = ({
             key={v.key}
             tabIndex={0}
             aria-label="Dropdown sizes"
+            type="button"
             onClick={() => {
               setDropdown(false)
               onChange(v.key)

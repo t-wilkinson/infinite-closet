@@ -113,6 +113,7 @@ export const Icons = ({
   onClick=() => {},
   onMouseEnter=() => {},
   onMouseLeave=() => {},
+  size=18,
   ...props
 }: {
   n: number
@@ -121,6 +122,7 @@ export const Icons = ({
   onClick?: (_: number) => void
   onMouseEnter?: (_: number) => void
   onMouseLeave?: (_: number) => void
+  size?: number
 } & unknown) => (
   <>
     {n > 0
@@ -133,7 +135,7 @@ export const Icons = ({
               onMouseLeave={() => onMouseLeave(i + 1)}
               onClick={() => onClick(i + 1)}
               icon={icon}
-              size={18}
+              size={size}
               className={className}
               {...props}
             />

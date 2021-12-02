@@ -6,6 +6,9 @@ module.exports = {
     const { user } = ctx.state
     let review = ctx.request.body
     const product = await strapi.query('product').findOne({ slug }, [])
+    if (isNaN(review.rating) || review.rating < 0 || review.rating > 5) {
+      return ctx.send({error: 'Rating must be between 1-5'}, 404)
+    }
 
     try {
       review = await strapi.services.review.addReview({

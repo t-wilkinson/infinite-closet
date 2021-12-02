@@ -24,10 +24,9 @@ export const order: StrapiOrder = {
 }
 
 export const cartItem: StrapiCartItem = {
-  ...order,
-  itemInsurance: false,
+  order,
   valid: true,
-  price: 100,
+  totalPrice: 100,
   available: 1,
 }
 

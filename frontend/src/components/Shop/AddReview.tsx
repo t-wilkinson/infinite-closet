@@ -2,8 +2,8 @@ import React from 'react'
 import Image from 'next/image'
 import axios from 'axios'
 
-import Form, { Submit, TextArea, Input, Dropdown, FormHeader } from '@/Form'
-import useFields, {cleanFields} from '@/Form/useFields'
+import Form, { Warning, Submit, TextArea, Input, Dropdown, FormHeader } from '@/Form'
+import useFields, {isError, attachErrors, cleanFields, fieldErrors, validateErrors} from '@/Form/useFields'
 import Popup from '@/Layout/Popup'
 import { Icon, Icons } from '@/components'
 import { iconClose, iconPlus, iconStarFill } from '@/Icons'
@@ -15,19 +15,23 @@ const fitValues = [
 ]
 
 const AddReview = ({ productSlug, onSubmit}) => {
-  const [state, setState] = React.useState<boolean>(false)
+  const [state, setState] = React.useState({})
+
   const fields = useFields({
     heading: {
       label: 'Headline',
       placeholder: 'What is most important to know?',
+      constraints: 'required',
     },
-    message: { label: 'Review', placeholder: 'What did you like or dislike?' },
+    message: {
+      label: 'Review', placeholder: 'What did you like or dislike?',
+    },
     fit: {
       label: 'How true was the fit?',
-      constraints: 'enum:short,true,long',
+      constraints: 'enum:short,true,long required',
       default: 'true',
     },
-    rating: { label: 'Rating', constraints: 'between:0:5', default: 0 },
+    rating: { label: 'Rating', constraints: 'between:1:5 required', default: null },
     images: { label: 'Add a photo or video', default: [] },
   })
 
@@ -40,6 +44,14 @@ const AddReview = ({ productSlug, onSubmit}) => {
     formData.append('fit', cleaned.fit)
     formData.append('rating', cleaned.rating)
 
+    const errors = fieldErrors(fields)
+    const valid = validateErrors(errors)
+    attachErrors(fields, errors)
+    if (!valid) {
+      setState({status: 'error'})
+      return
+    }
+
     const images = form.elements['images'].files
     for (let i = 0; i < images.length; i++) {
       formData.append(images[i].name, images[i])
@@ -51,19 +63,25 @@ const AddReview = ({ productSlug, onSubmit}) => {
       })
       .then(res => res.data.review)
       .then((review) => onSubmit(review))
-      .catch((err) => console.error(err))
+      .catch((err) => {
+        setState({status: 'error', error: 'You cannot create review for this product.'})
+      })
   }
 
   return (
     <Form onSubmit={_onSubmit} className="overflow-y-auto w-full">
       <FormHeader label="How was your experience?" />
       <div className="mt-2 mb-4">
+        <Warning warnings={fields.rating.errors} />
         <Rating {...fields.rating} />
       </div>
+      <Warning warnings={fields.heading.errors} />
       <Input {...fields.heading} />
+      <Warning warnings={fields.fit.errors} />
       <Dropdown {...fields.fit} values={fitValues} />
       <ImageUpload {...fields.images} />
       <TextArea {...fields.message} />
+      {state.status && state.error && <Warning>{state.error}</Warning>}
       <Submit>Submit</Submit>
     </Form>
   )
@@ -72,19 +90,19 @@ const AddReview = ({ productSlug, onSubmit}) => {
 const Rating = ({ label, value, onChange, fillColor='text-sec', emptyColor='text-gray-light'}) => {
   const [hover, setHover] = React.useState<number | null>(null)
 
-  if (isNaN(value)) {
-    onChange(0)
+  if (isNaN(value) || !value) {
+    onChange(null)
   } else if (value > 5) {
     onChange(5)
-  } else if (value < 0) {
-    onChange(0)
+  } else if (value < 1) {
+    onChange(1)
   }
 
-  value = hover || value
+  value = hover || value || 0
 
   return (
     <div className="items-center">
-      <label className="text-lg">{label}</label>
+      <label className="text-lg">{label}*</label>
       <div className="flex-row space-x-1" onMouseLeave={() => setHover(null)}>
         <Icons
           onMouseEnter={(i) => setHover(i)}
@@ -92,6 +110,7 @@ const Rating = ({ label, value, onChange, fillColor='text-sec', emptyColor='text
           n={value}
           icon={iconStarFill}
           className={`${fillColor} cursor-pointer`}
+          size={24}
         />
         <Icons
           onMouseEnter={(i) => setHover(value + i)}
@@ -99,6 +118,7 @@ const Rating = ({ label, value, onChange, fillColor='text-sec', emptyColor='text
           n={5 - value}
           icon={iconStarFill}
           className={`${emptyColor} hover:text-sec cursor-pointer`}
+          size={24}
         />
       </div>
     </div>

@@ -5,7 +5,7 @@ import Register from '../Register'
 import * as t from '@/utils/test'
 import mockUser from '@/User/__mocks__/user'
 
-describe('User', () => {
+describe.skip('User', () => {
   it('can sign in ', async () => {
     const scope = nock(t.api)
       .post('/auth/local', {

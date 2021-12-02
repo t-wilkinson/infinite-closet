@@ -9,12 +9,11 @@ export const Page = () => {
   const slug = router.query.slug
 
   const onSubmit = (review) => {
-    console.log(review)
     router.push('/review/thankyou')
   }
 
   return <Layout title="Review Your Purchases">
-    <section className="max-w-screen-md w-full">
+    <section className="max-w-screen-lg w-full">
       <AddReview productSlug={slug} onSubmit={onSubmit} />
     </section>
   </Layout>

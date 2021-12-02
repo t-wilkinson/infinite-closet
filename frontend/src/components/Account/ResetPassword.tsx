@@ -7,7 +7,7 @@ import useAnalytics from '@/utils/useAnalytics'
 import { useDispatch } from '@/utils/store'
 import { Warnings, Password, FormHeader, OR } from '@/Form'
 import { Button } from '@/components'
-import useFields, { isValid, cleanFields } from '@/Form/useFields'
+import useFields, { isError, cleanFields } from '@/Form/useFields'
 import { userActions } from '@/User/slice'
 
 export const ResetPassword = () => {
@@ -56,7 +56,7 @@ export const ResetPassword = () => {
       <FormHeader label="Reset password" />
       <Warnings warnings={warnings} />
       <Password {...fields.password} />
-      <Button onClick={onSubmit} disabled={!isValid(fields)}>
+      <Button onClick={onSubmit} disabled={!isError(fields)}>
         Password Reset
       </Button>
 

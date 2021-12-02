@@ -13,7 +13,7 @@ const mockAddress = {
   mobileNumber: mockUser.phoneNumber,
 }
 
-describe('<AddAddress />', () => {
+describe.skip('<AddAddress />', () => {
   const onSubmit = jest.fn()
 
   it('can be added', async () => {

@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 import useAnalytics from '@/utils/useAnalytics'
 import { Input, Warnings, FormHeader, OR } from '@/Form'
-import useFields, { isValid, cleanFields } from '@/Form/useFields'
+import useFields, { isError, cleanFields } from '@/Form/useFields'
 import { Button } from '@/components'
 
 type Status = 'success' | 'in-fields' | 'server-error'
@@ -54,7 +54,7 @@ export const ForgotPassword = () => {
       {status === 'server-error' && <Warnings warnings={warnings} />}
       <Input {...fields.email} />
       <Button
-        disabled={!isValid(fields) || status === 'success'}
+        disabled={!isError(fields) || status === 'success'}
         onClick={onSubmit}
       >
         Request Password Reset

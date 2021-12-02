@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 import Review, { Rating } from './Review'
 
-const Reviews = ({ slug }) => {
+const Reviews = ({slug}) => {
   const [data, setData] =
     React.useState<{ reviews: any[]; fit: string; rating: number, canReview: boolean }>()
 
@@ -16,6 +16,10 @@ const Reviews = ({ slug }) => {
       .catch((err) => console.error(err))
   }, [])
 
+  return <ReviewsContent data={data} slug={slug} />
+}
+
+export const ReviewsContent = ({ slug, data }) => {
   if (!data) {
     return null
   }
@@ -46,7 +50,10 @@ const Reviews = ({ slug }) => {
 
 const Overview = ({ fit, rating, reviews }) => {
   return (
-    <section className="flex flex-col w-full mt-8 mb-12 items-center bg-light">
+    <section
+      className="flex flex-col w-full mt-8 mb-12 items-center bg-light"
+      data-testid="overview"
+    >
       <div className="items-center">
         <h3 className="font-bold text-2xl">Reviews</h3>
         <span className="text-base">
@@ -69,7 +76,10 @@ const Overview = ({ fit, rating, reviews }) => {
 
 const AddReview = ({ productSlug }) => {
   return (
-    <section className="max-w-screen-md flex flex-col items-center bg-white w-full p-4">
+    <section
+      data-testid="add-review"
+      className="max-w-screen-md flex flex-col items-center bg-white w-full p-4"
+    >
       <h3 className="text-2xl">Share your experience</h3>
       <Link href={`/review/${productSlug}`}>
         <a className="bg-pri text-white p-2 m-2 mt-4 font-bold">Add a review</a>

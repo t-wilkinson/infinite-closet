@@ -14,7 +14,7 @@ dayjs.extend(isSameOrBefore)
 import useAnalytics from '@/utils/useAnalytics'
 import { useSelector } from '@/utils/store'
 import { Input } from '@/Form'
-import useFields, { cleanFields, isValid } from '@/Form/useFields'
+import useFields, { cleanFields, isError } from '@/Form/useFields'
 import '@/User/CheckoutForm.module.css'
 import { Button, Hover, Icon } from '@/components'
 import { PaymentCard, PaymentWrapper } from '@/Form/Payments'
@@ -626,7 +626,7 @@ const Submit = ({ fields, guests }) => {
         <Button
           onClick={onSubmit}
           disabled={
-            !isValid(fields) ||
+            !isError(fields) ||
             ['disabled', 'processing', 'succeeded'].includes(
               state.paymentStatus
             )
