@@ -367,6 +367,7 @@ const reviews = [
       I hate spending loads of money on a dress only to wear it once so this was a perfect solution. I fell in love with a stunning Rat & Boa dress but wasn't sure what size to get so emailed the team and they were friendly and helpful.
       I got the perfect size, the perfect dress, and for such an amazing price. Can't wait to order again!`,
     name: 'Rachel Benson',
+    smallPosition: 'bottom center',
     image: reviewImage2,
   },
   {
@@ -385,7 +386,7 @@ const UserReviews = () => {
       <div className="relative mt-6">
         <TrustPilotReviews />
       </div>
-      <div className="px-8 w-full lg:justify-center overflow-x-auto flex-row space-x-4 mt-16 mb-8 h-128">
+      <div className="px-8 w-full lg:justify-center overflow-x-auto md:flex-row space-y-4 md:space-y-0 md:space-x-4 mt-16 mb-8 md:h-128">
         {reviews.map((review) => (
           <Review key={review.name} {...review} />
         ))}
@@ -394,45 +395,82 @@ const UserReviews = () => {
   )
 }
 
-const Review = ({ quote, name, image }) => {
+const Review = ({ quote, name, image, smallPosition="center"}) => {
   const [hover, setHover] = React.useState(null)
 
   return (
-    <div
-      className="w-1/3 relative"
-      onMouseOver={() => setHover(true)}
-      onMouseOut={() => setHover(false)}
-    >
-      <Image
-        alt={name}
-        src={image}
-        layout="fill"
-        objectFit="cover"
-        objectPosition="center"
-        placeholder="blur"
-      />
+    <>
       <div
-        className={`absolute inset-0 justify-center px-8 transition-all duration-300
-        ${hover ? 'opacity-100' : 'opacity-0'}
-        `}
-        style={{
-          ...(hover
-            ? { backgroundColor: '#DDDDDDAA', backdropFilter: 'blur(4px)' }
-            : {}),
-        }}
+        className="w-1/3 relative hidden md:flex"
+        onMouseOver={() => setHover(true)}
+        onMouseOut={() => setHover(false)}
       >
-        <span
-          className="absolute top-0 -ml-4 -mt-8 text-sec"
-          style={{ fontSize: '1000%' }}
-        >
-          &ldquo;
-        </span>
-        <span className="text-lg">&emsp;{quote}</span>
-        <div className="absolute bottom-0 right-0 p-4 font-bold text-xl">
-          - {name}
+        <Image
+          alt={name}
+          src={image}
+          layout="fill"
+          objectFit="cover"
+          objectPosition="center"
+          placeholder="blur"
+        />
+        <div className={`h-full w-full relative transition-all duration-300
+          ${hover ? 'opacity-100' : 'opacity-0'}
+          `}>
+          <div className={`absolute inset-0
+            `}
+            style={{
+              ...(hover
+                ? { backgroundColor: '#DDDDDDAA', backdropFilter: 'blur(4px)' }
+                : {}),
+            }}
+          />
+          <span
+            className="absolute top-0 left-0 ml-6 -mt-8 text-sec"
+            style={{ fontSize: '1000%' }}
+          >
+            &ldquo;
+          </span>
+          <div className="absolute bottom-0 right-0 p-4 font-bold text-xl">
+            - {name}
+          </div>
+          <div
+            className={`justify-center px-4 lg:px-8 transition-all duration-300 relative z-10 mt-20 lg:mt-24
+              ${hover ? 'opacity-100' : 'opacity-0'}
+              `}
+          >
+            <span className="text-sm lg:text-base">&emsp;{quote}</span>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div className="w-full md:hidden relative">
+        <Image
+          alt={name}
+          src={image}
+          layout="fill"
+          objectFit="cover"
+          objectPosition={smallPosition}
+          placeholder="blur"
+        />
+        <div className="mt-48 h-full w-full relative transition-all duration-300">
+          <div className="absolute inset-0"
+            style={{ backgroundColor: '#DDDDDDAA', backdropFilter: 'blur(4px)' }}
+          />
+          <span
+            className="absolute top-0 left-0 ml-6 -mt-20 text-sec"
+            style={{ fontSize: '1000%' }}
+          >
+            &ldquo;
+          </span>
+          <div className="absolute bottom-0 right-0 p-4 font-bold text-xl">
+            - {name}
+          </div>
+          <div className="justify-center px-8 transition-all duration-300 relative z-10 mt-12 mb-16">
+            <span className="">&emsp;{quote}</span>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 
