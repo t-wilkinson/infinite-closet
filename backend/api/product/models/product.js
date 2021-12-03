@@ -22,12 +22,8 @@ async function addHiddenFields(data) {
       let slugs = new Set()
 
       for (const size of sizes) {
-        if (size.sizeRange) {
-          for (const value of strapi.services.size.range(size)) {
-            slugs.add(value)
-          }
-        } else {
-          slugs.add(size.size)
+        for (const value of strapi.services.size.sizes(size)) {
+          slugs.add(value)
         }
       }
 

@@ -102,17 +102,13 @@ async function availableSizes(knex, slugs) {
     )
 
   const sizeRanges = sizes.reduce((acc, size) => {
-    if (size.sizeRange) {
-      for (const value of strapi.services.size.range(size)) {
-        acc.add(value)
-      }
-    } else {
-      acc.add(size.size)
+    for (const value of strapi.services.size.sizes(size)) {
+      acc.add(value)
     }
     return acc
   }, new Set())
 
-  return Array.from(sizeRanges).map(strapi.services.size.normalize)
+  return Array.from(sizeRanges)
 }
 
 async function queryFilters(knex, _where) {

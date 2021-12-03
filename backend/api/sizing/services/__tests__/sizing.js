@@ -5,6 +5,10 @@
 const sizing = require('../size')
 
 describe('Size range', () => {
+  it('Should be empty when size has no value', () => {
+    expect(sizing.sizes({sizeRange: 'M'})).toEqual([])
+  })
+
   test.each([
     ['M', 'L', 'M'],
     ['M', undefined, 'M'],

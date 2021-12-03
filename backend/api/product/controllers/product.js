@@ -107,11 +107,11 @@ async function facebookCatalog(ctx) {
   for (const product of products) {
     // Each product variant such as different size should be considered seperate
     for (const size of product.sizes) {
-      for (const sizeItem of strapi.services.size.range(size)) {
+      for (const sizeItem of strapi.services.size.sizes(size)) {
         try {
           const row = toRow(
             product,
-            strapi.services.size.normalize(sizeItem),
+            sizeItem,
             size.quantity
           )
           rows.add(toCSVRow(row))
@@ -153,18 +153,17 @@ async function acsStockSetup(ctx) {
     ])
 
   function toRow(product, size, index) {
+    const range = strapi.services.size.range(size)
+    const categories = product.categories
+      .map((category) => category.name)
+
     return {
       product_sku: product.id,
-      unique_sku: `${product.id}_${index}`,
+      unique_sku: `IC-${product.id}_${index}-${range}`,
       name: product.name,
       designer: product.designer.name,
-      garment_type: product.categories
-        .map((category) => category.name)
-        .join(', '),
-      sizes: strapi.services.size
-        .range(size)
-        .map((s) => (s ? strapi.services.size.normalize(s) : ''))
-        .join(', '),
+      garment_type: categories.join(', '),
+      sizes: range,
       description: product.details,
     }
   }
