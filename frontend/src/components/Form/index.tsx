@@ -66,7 +66,7 @@ export const Input = ({
   disabled = false,
   placeholder='',
   errors,
-  setError,
+  setErrors,
   ...props
 }) => {
   const [changed, setChanged] = React.useState(false)

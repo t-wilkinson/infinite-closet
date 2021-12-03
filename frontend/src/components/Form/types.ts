@@ -17,15 +17,17 @@ export type Fields = {
   [field: string]: Field
 }
 
+export type FieldConfig = {
+  default?: any
+  constraints?: string
+  label?: string
+  onChange?: (value: string) => void
+  type?: string
+  placeholder?: string
+}
+
 export type FieldsConfig = {
-  [field: string]: {
-    default?: any
-    constraints?: string
-    label?: string
-    onChange?: (value: string) => void
-    type?: string
-    placeholder?: string
-  }
+  [field: string]: FieldConfig
 }
 
 export type FieldErrors = { [field: string]: FieldError[] }

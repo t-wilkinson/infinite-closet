@@ -3,8 +3,9 @@ import Image from 'next/image'
 import axios from 'axios'
 import {useRouter} from 'next/router'
 
-import Form, { Warning, Submit, TextArea, Input, Dropdown, FormHeader } from '@/Form'
-import useFields, {updateErrors, cleanFields, } from '@/Form/useFields'
+import Form, { Warning, Submit, Input, FormHeader } from '@/Form/index_'
+// import useFields, {updateErrors, cleanFields, } from '@/Form/useFields'
+import { UseFields } from '@/Form/useFields_'
 import { Icon, Icons } from '@/components'
 import { iconClose, iconPlus, iconStarFill } from '@/Icons'
 
@@ -19,7 +20,7 @@ const AddReview = ({ }) => {
   const router = useRouter()
   const productSlug = router.query.slug
 
-  const fields = useFields({
+  const fields = new UseFields({
     heading: {
       label: 'Headline',
       placeholder: 'What is most important to know?',
@@ -40,13 +41,13 @@ const AddReview = ({ }) => {
   const _onSubmit = async (e) => {
     const form = e.target
     const formData = new FormData()
-    const cleaned = cleanFields(fields)
+    const cleaned = fields.clean()
     formData.append('heading', cleaned.heading)
     formData.append('message', cleaned.message)
     formData.append('fit', cleaned.fit)
     formData.append('rating', cleaned.rating)
 
-    if (!updateErrors(fields)) {
+    if (!fields.updateErrors()) {
       setState({status: 'error'})
       return
     }
@@ -69,18 +70,16 @@ const AddReview = ({ }) => {
 
   return (
     <Form onSubmit={_onSubmit} className="overflow-y-auto w-full">
-      <FormHeader label="How was your experience?" />
-      <div className="mt-2 mb-4">
-        <Warning warnings={fields.rating.errors} />
-        <Rating {...fields.rating} />
-      </div>
-      <Warning warnings={fields.heading.errors} />
+      {/* <FormHeader label="How was your experience?" /> */}
+      {/* <div className="mt-2 mb-4"> */}
+      {/*   <Warning warnings={fields.rating.errors} /> */}
+      {/*   <Rating {...fields.rating} /> */}
+      {/* </div> */}
       <Input {...fields.heading} />
-      <Warning warnings={fields.fit.errors} />
       <Dropdown {...fields.fit} values={fitValues} />
-      <ImageUpload {...fields.images} />
-      <TextArea {...fields.message} />
-      {state.status && state.error && <Warning>{state.error}</Warning>}
+      {/* <ImageUpload {...fields.images} /> */}
+      {/* <TextArea {...fields.message} /> */}
+      {/* {state.status && state.error && <Warning>{state.error}</Warning>} */}
       <Submit>Submit</Submit>
     </Form>
   )
@@ -175,3 +174,4 @@ const UploadedImageWrapper = ({ children }) => (
 )
 
 export default AddReview
+

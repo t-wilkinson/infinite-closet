@@ -2,13 +2,23 @@ import React from 'react'
 
 import { toTitleCase } from '@/utils/helpers'
 
-import { FieldsConfig, Field, Fields, FieldError, FieldErrors, Valid, DateOfBirthField } from './types'
+import {
+  FieldsConfig,
+  Field,
+  Fields,
+  FieldConfig,
+  FieldError,
+  FieldErrors,
+  Valid,
+  DateOfBirthField,
+} from './types'
 
 export const toDate = ({ day, month, year }: DateOfBirthField) => {
   const norm = (field: Field) => field.value.trim()
   return new Date(`${norm(year)}-${norm(month)}-${norm(day)}`)
 }
 
+// Detect when fields changed
 export const fieldChanged = (field: Field) => field.default !== field.value
 export const fieldsChanged = (fields: Fields) =>
   Object.values(fields).map(fieldChanged)
@@ -20,15 +30,13 @@ export const changedFields = (fields: Fields) =>
     return acc
   }, {})
 
-// TODO: should I make these use setErrors() instead?
-export const validateErrors = (fieldErrors: FieldErrors) =>
-  Object.values(fieldErrors).every((errors: FieldError[]) => errors.length === 0)
-
-export const fieldErrors = (fields: Fields): FieldErrors =>
-  Object.fromEntries(Object.entries(fields).map(([k, field]) => [k, fieldError(field)]))
-
+// Return failures to meet field contraints
 export const fieldError = (field: Field): FieldError[] =>
   validate(field.field, field.value, field.constraints)
+export const fieldErrors = (fields: Fields): FieldErrors =>
+  Object.fromEntries(
+    Object.entries(fields).map(([k, field]) => [k, fieldError(field)])
+  )
 
 export const attachErrors = (fields: Fields, fieldErrors: FieldErrors) => {
   for (const field in fields) {
@@ -36,6 +44,10 @@ export const attachErrors = (fields: Fields, fieldErrors: FieldErrors) => {
   }
 }
 
+export const hasErrors = (fieldErrors: FieldErrors): boolean =>
+  Object.values(fieldErrors).every(
+    (errors: FieldError[]) => errors.length === 0
+  )
 export const isError = (fields: Fields, include?: string[]): boolean => {
   return Object.entries(fields)
     .filter(([field, _]) => (include ? include.includes(field) : true))
@@ -43,11 +55,18 @@ export const isError = (fields: Fields, include?: string[]): boolean => {
     .every((v) => v.length === 0)
 }
 
+// Attaches any field errors and returns true if there are any errors
+export const updateErrors = (fields: Fields): boolean => {
+  const errors = fieldErrors(fields)
+  attachErrors(fields, errors)
+  return hasErrors(errors)
+}
+
+// Clean fields
 export const cleanField = (field: Field): Field['value'] => {
   if (typeof field.value === 'string') return field.value.trim()
   else return field.value
 }
-
 export const cleanFields = (fields: Fields): { [field: string]: any } => {
   return Object.entries(fields).reduce((acc, [k, field]) => {
     acc[k] = cleanField(field)
@@ -55,7 +74,7 @@ export const cleanFields = (fields: Fields): { [field: string]: any } => {
   }, {})
 }
 
-// TODO: this should be an object of functions
+// TODO: should this be an object of functions?
 export const validate = (
   field: string,
   value: string,
@@ -84,18 +103,14 @@ export const validate = (
     }
   }
 
-  constraints = constraints.replace(
-    'password',
-    'min-width:8 max-width:30 contains:~!@#$%^*-_=+[{]}/;,.?'
-  )
   return constraints
     .split(' ')
     .map((constraint) => isError(value, constraint))
-    .filter((v) => v !== true)
+    .filter((v) => v !== true) as FieldError[]
 }
 
 // TODO: This would probably work better as a class
-type UseField = (field: string, config: FieldsConfig['number']) => Field
+type UseField = (field: string, config: FieldConfig) => Field
 export const useField: UseField = (field, config) => {
   config = Object.assign(
     {
@@ -111,6 +126,10 @@ export const useField: UseField = (field, config) => {
 
   const [state, setState] = React.useState(config.default)
   const [errors, setErrors] = React.useState([])
+  config.constraints = config.constraints.replace(
+    'password',
+    'min-width:8 max-width:30 contains:~!@#$%^*-_=+[{]}/;,.?'
+  )
 
   return {
     field,
@@ -131,10 +150,14 @@ export const useField: UseField = (field, config) => {
 
 type UseFields = (config: FieldsConfig) => Fields
 export const useFields: UseFields = (config) => {
-  const fields = Object.entries(config).reduce((acc, [field, fieldConfig]) => {
-    acc[field] = useField(field, fieldConfig)
-    return acc
-  }, {})
+  const fields: Fields = Object.entries(config).reduce(
+    (acc, [field, fieldConfig]) => {
+      acc[field] = useField(field, fieldConfig)
+      return acc
+    },
+    {}
+  )
+  fields.submit = useField('submit', {})
 
   return fields
 }
