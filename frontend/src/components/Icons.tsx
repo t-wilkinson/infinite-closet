@@ -279,3 +279,11 @@ export const iconTiktok = (
     <path d="M38.4,21.68V16c-2.66,0-4.69-.71-6-2.09a8.9,8.9,0,0,1-2.13-5.64V7.86L24.9,7.73s0,.23,0,.54V30.8a5,5,0,1,1-3.24-5.61v-5.5a10.64,10.64,0,0,0-1.7-.14A10.36,10.36,0,1,0,30.32,29.91a10.56,10.56,0,0,0-.08-1.27V19.49A14.48,14.48,0,0,0,38.4,21.68Z" />
   </svg>
 )
+export const iconLoading = (
+<svg viewBox="0 0 98.354 98.354">
+  <g transform="translate(-26.546 -68.072)" fill="none" stroke="#fff" strokeLinecap="round" strokeLinejoin="round" strokeWidth="7.9375">
+    <circle cx="75.723" cy="117.25" r="45.208" strokeOpacity=".2758" />
+    <path d="m107.69 149.22a45.208 45.208 0 0 1-49.268 9.8 45.208 45.208 0 0 1-27.908-41.767"/>
+  </g>
+</svg>
+      )

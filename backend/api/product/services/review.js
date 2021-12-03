@@ -11,7 +11,7 @@ async function getUserReviews({ product, user }) {
 async function getUserOrders({ product, user }) {
   return await strapi
     .query('order', 'orders')
-    .find({ product: toId(product), user: toId(user) }, [])
+    .find({ product: toId(product), user: toId(user), status: 'completed'}, [])
 }
 
 /**

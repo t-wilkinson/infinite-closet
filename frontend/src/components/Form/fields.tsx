@@ -8,23 +8,21 @@ import {
   Valid,
 } from './types'
 
-class UseField {
-  field: string
+export class UseField {
+  name: string
   label: string
   value: any
   default: any
   constraints: string
   placeholder: string
-  type: string
-  onChange: (value: string) => void
+  setValue: (value: string) => void
   errors: string[]
-  setErrors: (errors: string[]) => void
+  setErrors: (...errors: (string | string[])[]) => void
 
   constructor(field: string, config: FieldConfig) {
     config = Object.assign(
       {
         label: toTitleCase(field),
-        type: 'text',
         constraints: '',
         onChange: () => {},
         default: '',
@@ -40,26 +38,27 @@ class UseField {
     const [state, setState] = React.useState(config.default)
     const [errors, setErrors] = React.useState([])
 
-    this.field = field
+    this.name = field
     this.label = config.label
-    this.type = config.type
     this.value = state
     this.default = config.default
     this.constraints = config.constraints
     this.placeholder = config.placeholder
-    this.onChange = (value: string) => {
+    this.setValue = (value: string) => {
       setState(value)
       config.onChange(value)
     }
     this.errors = errors
-    this.setErrors = setErrors
+    this.setErrors = (...errors) => {
+      setErrors(errors.flat())
+    }
   }
 
   getErrors(): FieldError[] {
     const isError = (value: string, constraint: string): Valid => {
       constraint = constraint.replace(/<space>/g, ' ')
       const [type, ...props] = constraint.split(':')
-      const field = this.field
+      const field = this.name
 
       // prettier-ignore
       switch (type) {
@@ -115,7 +114,7 @@ export class UseFields {
       },
       {}
     )
-    fields.submit = new UseField('submit', {})
+    fields.form = new UseField('form', {})
 
     this.fields = fields
     for (const field in fields) {

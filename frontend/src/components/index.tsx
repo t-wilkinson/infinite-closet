@@ -120,8 +120,8 @@ export const Icons = ({
   icon: React.ReactElement
   className?: string
   onClick?: (_: number) => void
-  onMouseEnter?: (_: number) => void
-  onMouseLeave?: (_: number) => void
+  onMouseEnter?: (i: number) => void
+  onMouseLeave?: (i: number) => void
   size?: number
 } & unknown) => (
   <>
