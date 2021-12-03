@@ -29,11 +29,12 @@ module.exports = {
     return sizes(order).includes(size)
   },
 
+  // TODO: should probably use underlying sizes function
   // {size: S, sizeRange: _2XL} -> S-2XL
   range({size: start, sizeRange: end}) {
     if (!start) {
       return undefined
-    } else if (!end) {
+    } else if (!end || start === end) {
       return normalize(start)
     } else {
       return `${normalize(start)}-${normalize(end)}`
