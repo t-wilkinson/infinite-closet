@@ -105,7 +105,7 @@ export async function getServerSideProps({ params }) {
   } catch (e) {
     return {
       props: {
-        data: { error: e.response.status },
+        data: { error: e.response?.status || null },
       },
     }
   }
