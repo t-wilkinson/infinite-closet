@@ -25,7 +25,11 @@ async function shopItem(ctx) {
   const slug = ctx.params.slug
   const product = await strapi
     .query('product')
-    .findOne({ published_at_null: false, slug }, ['designer', 'images', 'sizes'])
+    .findOne({ published_at_null: false, slug }, [
+      'designer',
+      'images',
+      'sizes',
+    ])
 
   for (const [key, size] of Object.entries(product.sizes)) {
     product.sizes[key].size = strapi.services.size.normalize(size.size)
@@ -34,15 +38,20 @@ async function shopItem(ctx) {
   ctx.send(product)
 }
 
-function toCSVRow(row, columns) {
-  return Object.entries(row)
-    .sort(([k1], [k2]) => columns.indexOf(k1) - columns.indexOf(k2)) // make sure rows align with columns
-    .map(([, v]) =>
+function toCSV(values) {
+  return values
+    .map((v) =>
       v === undefined || v === null
         ? '""'
         : `"${v.toString().trim().replace(/\n/g, '\t').replace(/"/g, '""')}"`
     )
     .join(',')
+}
+
+function sortRow(row, columns) {
+  return Object.entries(row)
+    .sort(([k1], [k2]) => columns.indexOf(k1) - columns.indexOf(k2)) // make sure rows align with columns
+    .map(([, v]) => v)
 }
 
 async function facebookCatalog(ctx) {
@@ -109,12 +118,8 @@ async function facebookCatalog(ctx) {
     for (const size of product.sizes) {
       for (const sizeItem of strapi.services.size.sizes(size)) {
         try {
-          const row = toRow(
-            product,
-            sizeItem,
-            size.quantity
-          )
-          rows.add(toCSVRow(row, columns))
+          const row = toRow(product, sizeItem, size.quantity)
+          rows.add(toCSV(sortRow(row, columns)))
         } catch (e) {
           strapi.log.error('facebook-catalog %o', e)
         }
@@ -128,7 +133,7 @@ async function facebookCatalog(ctx) {
   })
 
   // Add columns to the top
-  rows = [toCSVRow(columns), ...rows]
+  rows = [toCSV(columns), ...rows]
   ctx.send(rows.join('\n'))
 }
 
@@ -154,8 +159,7 @@ async function acsStockSetup(ctx) {
 
   function toRow(product, size, index) {
     const range = strapi.services.size.range(size)
-    const categories = product.categories
-      .map((category) => category.name)
+    const categories = product.categories.map((category) => category.name)
 
     return {
       product_sku: product.id,
@@ -174,7 +178,7 @@ async function acsStockSetup(ctx) {
       for (let i = 1; i <= size.quantity; i++) {
         try {
           const row = toRow(product, size, i)
-          rows.add(toCSVRow(row, columns))
+          rows.add(toCSV(sortRow(row, columns)))
         } catch (e) {
           strapi.log.error('acs-stock-setup %o', e)
         }
@@ -188,7 +192,7 @@ async function acsStockSetup(ctx) {
   })
 
   // Put columns at the top
-  rows = [toCSVRow(columns), ...rows]
+  rows = [toCSV(columns), ...rows]
   ctx.send(rows.join('\n'))
 }
 
