@@ -34,10 +34,10 @@ async function shopItem(ctx) {
   ctx.send(product)
 }
 
-// TODO: should take columns and sort
-function toCSVRow(row) {
-  return Object.values(row)
-    .map((v) =>
+function toCSVRow(row, columns) {
+  return Object.entries(row)
+    .sort(([k1], [k2]) => columns.indexOf(k1) - columns.indexOf(k2)) // make sure rows align with columns
+    .map(([, v]) =>
       v === undefined || v === null
         ? '""'
         : `"${v.toString().trim().replace(/\n/g, '\t').replace(/"/g, '""')}"`
@@ -114,7 +114,7 @@ async function facebookCatalog(ctx) {
             sizeItem,
             size.quantity
           )
-          rows.add(toCSVRow(row))
+          rows.add(toCSVRow(row, columns))
         } catch (e) {
           strapi.log.error('facebook-catalog %o', e)
         }
@@ -174,7 +174,7 @@ async function acsStockSetup(ctx) {
       for (let i = 1; i <= size.quantity; i++) {
         try {
           const row = toRow(product, size, i)
-          rows.add(toCSVRow(row))
+          rows.add(toCSVRow(row, columns))
         } catch (e) {
           strapi.log.error('acs-stock-setup %o', e)
         }
