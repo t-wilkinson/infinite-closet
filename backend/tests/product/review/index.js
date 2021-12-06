@@ -3,8 +3,6 @@
  * @group product/review
  */
 'use strict'
-// const request = require('supertest')
-// const { day } = require('../../../utils')
 const {
   jsonRequestAuth,
   jsonRequest,
@@ -19,19 +17,11 @@ f.review = require('./factory')
 describe('Add review', () => {
   beforeAll(async () => {
     await grantPrivileges(1, ['permissions.application.controllers.review.add'])
-
-    // let product = await f.product.create(strapi)
-    // user = await f.user.create(strapi)
-    // order = await f.order.create(strapi, {
-    //   product: product.id,
-    //   user: user.id,
-    //   status: 'completed',
-    // })
   })
 
   it('can add review completed order when has not created review yet', async () => {
     let review = f.review.mock()
-    const order = await f.order.create(strapi, {status: 'completed'})
+    const order = await f.order.create(strapi, { status: 'completed' })
     await jsonRequestAuth(`/products/${order.product.slug}/reviews`, {
       body: review,
       user: order.user,
@@ -42,8 +32,8 @@ describe('Add review', () => {
 
   it('should not create multiple reviews for the same order', async () => {
     let review = f.review.mock()
-    const order = await f.order.create(strapi, {status: 'completed'})
-    const {product, user} = order
+    const order = await f.order.create(strapi, { status: 'completed' })
+    const { product, user } = order
     await jsonRequestAuth(`/products/${product.slug}/reviews`, {
       body: review,
       user,
@@ -88,13 +78,8 @@ describe('Product reviews', () => {
   it("shouldn't show orders that don't have reviews", async () => {
     const product = await f.product.create(strapi)
     const review = await f.review.create(strapi)
-    await f.order.create(strapi, {
-      product: product.id,
-      review: review.id,
-    })
-    await f.order.create(strapi, {
-      product: product.id,
-    })
+    await f.order.create(strapi, { product: product.id, review: review.id })
+    await f.order.create(strapi, { product: product.id })
 
     await jsonRequest(`/products/${product.slug}/reviews`, {
       method: 'GET',

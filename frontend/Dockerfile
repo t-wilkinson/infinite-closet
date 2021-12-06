@@ -23,7 +23,7 @@ ARG NEXT_PUBLIC_FRONTEND
 ARG NEXT_PUBLIC_BACKEND
 ARG NEXT_PUBLIC_FIREBASE_CONFIG
 ARG NEXT_PUBLIC_STRIPE_KEY
-RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
+RUN yarn build && yarn add sharp && yarn install --production --ignore-scripts --prefer-offline
 
 FROM node:14-alpine AS production-runner
 WORKDIR /app

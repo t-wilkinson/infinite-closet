@@ -58,23 +58,24 @@ export class UseField<Value> {
     const isError = (value: Value, constraint: string): Valid => {
       constraint = constraint.replace(/<space>/g, ' ')
       const [operation, ...props] = constraint.split(':')
-      const field = this.name
+      const label = this.label.toLowerCase()
+      const label_ = label.charAt(0).toUpperCase() + label.slice(1)
       const v = value.toString()
 
       // prettier-ignore
       switch (operation) {
-        case 'enum': return props[0].split(',').includes(v) || `v must be one of ${props[0]}`
-        case 'between': return RegExp(`[${props[0]}-${props[1]}]`).test(v) || `v must be between ${props[0]} and ${props[1]}`
-        case 'email': return /^.+@.+\..+$/.test(v)            || `Please enter a valid ${field.toLowerCase()}`
-        case 'required': return Boolean(v)                    || `Missing ${field.toLowerCase()}`
-        case 'decimal': return /^\d*\.?\d{0,2}$/.test(v)      || `${field} must be a number`
-        case 'integer': return /^\d*$/.test(v)                || `${field} must be a number`
-        case 'number': return /^\d*\.?\d*$/.test(v)           || `${field} must be a number`
-        case 'max-width': return value && v.length <= Number(props[0]) || `${field} must be at most ${props[0]} characters long`
-        case 'min-width': return value && v.length >= Number(props[0]) || `${field} must be at least ${props[0]} characters long`
-        case 'regex': return RegExp(props[0]).test(v)         || `${field} does not have the correct format`
-        case 'contains': return RegExp(`[${props[0].replace(']', '\\]')}]`).test(v)           || `${field} must contain one of ${props[0].split('').join(' ')}`
-        case '!contains': return !RegExp(`[${props[0].replace(']', '\\]')}]`).test(v)           || `${field} must not contain any of ${props[0].split('').join(' ')}`
+        case 'enum': return props[0].split(',').includes(v) || `Value must be one of ${props[0]}`
+        case 'between': return RegExp(`[${props[0]}-${props[1]}]`).test(v) || `Value must be between ${props[0]} and ${props[1]}`
+        case 'email': return /^.+@.+\..+$/.test(v)            || `Please enter a valid ${label}`
+        case 'required': return Boolean(v)                    || `Missing ${label}`
+        case 'decimal': return /^\d*\.?\d{0,2}$/.test(v)      || `${label_} must be a number`
+        case 'integer': return /^\d*$/.test(v)                || `${label_} must be a number`
+        case 'number': return /^\d*\.?\d*$/.test(v)           || `${label_} must be a number`
+        case 'max-width': return value && v.length <= Number(props[0]) || `${label_} must be at most ${props[0]} characters long`
+        case 'min-width': return value && v.length >= Number(props[0]) || `${label_} must be at least ${props[0]} characters long`
+        case 'regex': return RegExp(props[0]).test(v)         || `${label_} does not have the correct format`
+        case 'contains': return RegExp(`[${props[0].replace(']', '\\]')}]`).test(v)           || `${label} must contain one of ${props[0].split('').join(' ')}`
+        case '!contains': return !RegExp(`[${props[0].replace(']', '\\]')}]`).test(v)           || `${label} must not contain any of ${props[0].split('').join(' ')}`
         case '': return true
         default: return true
       }
@@ -105,7 +106,7 @@ type Fields = {
 
 export class UseFields {
   [field: string]: any
-  form: UseField<any>
+  form: UseField<'success' | 'submitting' | 'error' | null>
   fields: Fields
 
   constructor(config: FieldsConfig) {
@@ -116,12 +117,16 @@ export class UseFields {
       },
       {}
     )
-    fields.form = useField('form', {})
 
     this.fields = fields
     for (const field in fields) {
       this[field] = fields[field]
     }
+    this.form = useField('form', {})
+  }
+
+  [Symbol.iterator]() {
+    return Object.values(this.fields)
   }
 
   getErrors(): FieldErrors {
@@ -130,14 +135,14 @@ export class UseFields {
     )
   }
 
-  hasErrors(fieldErrors: FieldErrors | undefined): boolean {
+  hasErrors(fieldErrors?: FieldErrors): boolean {
     if (!fieldErrors) {
       return Object.entries(this.fields)
         .map(([_, field]) => field.getErrors())
-        .every((v) => v.length === 0)
+        .some((v) => v.length !== 0)
     } else {
-      return Object.values(fieldErrors).every(
-        (errors: FieldError[]) => errors.length === 0
+      return Object.values(fieldErrors).some(
+        (errors: FieldError[]) => errors.length !== 0
       )
     }
   }
@@ -148,10 +153,11 @@ export class UseFields {
     }
   }
 
-  updateErrors(): boolean {
+  // Returns true if fields don't have errors
+  update(): boolean {
     const fieldErrors = this.getErrors()
     this.attachErrors(fieldErrors)
-    return this.hasErrors(fieldErrors)
+    return !this.hasErrors(fieldErrors)
   }
 
   clearErrors() {
@@ -168,8 +174,10 @@ export class UseFields {
   }
 }
 
-export const useFields = (config: FieldsConfig): UseFields => new UseFields(config)
-export const useField = (name: string, config: FieldConfig): UseField<any> => new UseField(name, config)
+export const useFields = (config: FieldsConfig): UseFields =>
+  new UseFields(config)
+export const useField = (name: string, config: FieldConfig): UseField<any> =>
+  new UseField(name, config)
 export const useDateOfBirth = (): UseFields =>
   useFields({
     day: { label: 'DD', constraints: 'integer' },

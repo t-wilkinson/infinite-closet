@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 
 import {
+  useFields,
   Form,
   Dropdown,
   Submit,
@@ -12,7 +13,6 @@ import {
   ImageUpload,
   Textarea,
 } from '@/Form/index_'
-import { useFields } from '@/Form/fields'
 
 const fitValues = [
   { key: 'short', label: 'short' },
@@ -23,6 +23,16 @@ const fitValues = [
 const AddReview = ({}) => {
   const router = useRouter()
   const productSlug = router.query.slug
+  const [canReview, setCanReview] = React.useState(null)
+
+  React.useEffect(() => {
+    axios.get(`/products/${productSlug}/reviews/can-review`, {
+      withCredentials: true
+    })
+      .then(res => res.data)
+      .then(res => setCanReview(res.canReview))
+      .catch(() => setCanReview(false))
+  }, [])
 
   const fields = useFields({
     heading: {
@@ -48,11 +58,13 @@ const AddReview = ({}) => {
     // submit: { label: 'Submit' },
   })
 
-  const onSubmitInternal = async (e: React.SyntheticEvent) => {
-    if (fields.form.value === 'submitting') {
-      return
+  React.useEffect(() => {
+    if (canReview === false) {
+      fields.form.setErrors('You cannot create a review for this product')
     }
+  }, [canReview])
 
+  const onSubmitInternal = async (e: React.SyntheticEvent) => {
     const form = e.target
     const formData = new FormData()
     const cleaned = fields.clean()
@@ -60,11 +72,6 @@ const AddReview = ({}) => {
     formData.append('message', cleaned.message)
     formData.append('fit', cleaned.fit)
     formData.append('rating', cleaned.rating)
-
-    const valid = fields.updateErrors()
-    if (!valid) {
-      return
-    }
 
     const images = form.elements['images'].files
     for (let i = 0; i < images.length; i++) {
@@ -84,9 +91,9 @@ const AddReview = ({}) => {
 
   return (
     <Form
-      field={fields.form}
+      fields={fields}
       onSubmit={onSubmitInternal}
-      className="overflow-y-auto w-full"
+      className="overflow-y-auto w-full max-w-md"
     >
       <FormHeader label="How was your experience?" />
       <Rating field={fields.rating} />

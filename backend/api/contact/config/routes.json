@@ -25,6 +25,14 @@
         "policies": []
       }
     },
+    {
+      "method": "POST",
+      "path": "/chat/contact",
+      "handler": "mail.contact",
+      "config": {
+        "policies": []
+      }
+    },
 
     {
       "method": "POST",

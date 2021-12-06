@@ -2,15 +2,9 @@ import React from 'react'
 import axios from 'axios'
 
 import { MarkdownWrapper, fetchMarkdown } from '@/Markdown'
-import useFields, { cleanFields, isError } from '@/Form/useFields'
-import { Button } from '@/components'
-import { Input } from '@/Form'
-
-type Status = 'progress' | 'processing' | 'success' | 'error'
+import { useFields, Form, Submit, Input } from '@/Form/index_'
 
 export const Page = ({ data }) => {
-  const [status, setStatus] = React.useState<Status>('progress')
-
   const fields = useFields({
     firstName: { constraints: 'required' },
     lastName: { constraints: 'required' },
@@ -19,33 +13,30 @@ export const Page = ({ data }) => {
     message: { constraints: 'required' },
   })
 
-  const sendMessage = () => {
-    const cleaned = cleanFields(fields)
-    axios
-      .post('/chat/contact', cleaned)
-      .then(() => setStatus('success'))
-      .catch((err) => console.error(err))
+  const sendMessage = async () => {
+    const cleaned = fields.clean()
+    return axios.post('/chat/contact', cleaned).catch(() => {
+      throw 'Unable to send your message, please try again later.'
+    })
   }
 
   return (
     <MarkdownWrapper {...data}>
-      <form className="w-full relative" onSubmit={(e) => e.preventDefault()}>
+      <Form fields={fields} className="w-full relative" onSubmit={sendMessage}>
         <div className="w-full relative items-stretch">
-          {status === 'success' ? (
+          {fields.form.value === 'success' ? (
             <div className="absolute inset-0 bg-white border border-gray z-20 justify-center items-center">
               <span className="text-lg font-bold">
                 We have recieved your request.
               </span>
             </div>
           ) : null}
-          {Object.values(fields).map((field) => (
-            <Input key={field.field} {...field} />
+          {Object.values(fields.fields).map((field) => (
+            <Input key={field.name} field={field} />
           ))}
-          <Button disabled={!isError(fields)} onClick={sendMessage}>
-            Contact Us
-          </Button>
+          <Submit field={fields.form}>Contact Us</Submit>
         </div>
-      </form>
+      </Form>
     </MarkdownWrapper>
   )
 }

@@ -1,6 +1,18 @@
 'use strict'
 
 module.exports = {
+  async canReview(ctx) {
+    const { user } = ctx.state
+    const { slug } = ctx.params
+    try {
+      const product = await strapi.query('product').findOne({ slug }, [])
+      const canReview = await strapi.services.review.canUserReview({product, user})
+      return ctx.send({canReview})
+    } catch (e) {
+      return ctx.send({canReview: false, error: e.message})
+    }
+  },
+
   async add(ctx) {
     const { slug } = ctx.params
     const { user } = ctx.state

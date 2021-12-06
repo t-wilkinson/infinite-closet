@@ -2,11 +2,11 @@ import React from 'react'
 
 import { Icon } from '@/components'
 import { iconLoading } from '@/components/Icons'
-import { UseField } from './fields'
 
 import { DateOfBirthField } from './types'
 import Warning from './Warning'
 import Input from './Input'
+import { UseFields } from './fields'
 
 export * from './Input'
 export * from './Password'
@@ -16,6 +16,7 @@ export * from './Coupon'
 export * from './Warning'
 export * from './Rating'
 export * from './ImageUpload'
+export * from './fields'
 
 export const OR = () => (
   <div className="flex-row items-center">
@@ -37,36 +38,52 @@ export const DateOfBirth = ({ day, month, year }: DateOfBirthField) => (
 )
 
 export const Form = ({
-  field,
+  fields,
   onSubmit = () => null,
-  className = '',
+  className = 'max-w-md',
+  outerClassName = '',
   children = null,
   ...props
 }: {
-  field: UseField
-  onSubmit: (..._: any[]) => Promise<any> | null
+  fields: UseFields
+  onSubmit: (..._: any[]) => Promise<any> | null | void
   className: string
+  outerClassName?: string
   children: React.ReactNode
-}) => (
-  <div className={`items-center ${className}`}>
-    <form
-      className="w-full max-w-sm relative"
-      onSubmit={(e) => {
-        e.preventDefault()
-        field.setValue('submitting')
-        onSubmit(e)
-          .then(() => field.setValue('success'))
-          .catch((err) => {
-            field.setValue('error')
-            field.setErrors(err.message || err)
-          })
-      }}
-      {...props}
-    >
-      <div className="w-full p-6 bg-white rounded-lg">{children}</div>
-    </form>
-  </div>
-)
+}) => {
+  const form = fields.form
+  return (
+    <div className={`items-center w-full ${outerClassName}`}>
+      <form
+        className={`w-full relative ${className}`}
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (form.value === 'submitting') {
+            return
+          }
+          form.setValue('submitting')
+
+          const valid = fields.update()
+          if (!valid) {
+            form.setValue('error')
+            return
+          }
+
+          const res = onSubmit(e) || Promise.resolve()
+          res
+            .then(() => form.setValue('success'))
+            .catch((err) => {
+              form.setValue('error')
+              form.setErrors(err.message || err)
+            })
+        }}
+        {...props}
+      >
+        <div className="w-full p-6 bg-white rounded-lg">{children}</div>
+      </form>
+    </div>
+  )
+}
 
 export const FormHeader = ({ label }) => (
   <>
