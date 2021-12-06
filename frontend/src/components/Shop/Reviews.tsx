@@ -2,11 +2,13 @@ import React from 'react'
 import axios from 'axios'
 import Link from 'next/link'
 
+import {StrapiOrder} from '@/utils/models'
+
 import Review, { Rating } from './Review'
 
 const Reviews = ({slug}) => {
   const [data, setData] =
-    React.useState<{ reviews: any[]; fit: string; rating: number, canReview: boolean }>()
+    React.useState<{ orders: StrapiOrder[]; fit: string; rating: number, canReview: boolean }>()
 
   React.useEffect(() => {
     axios
@@ -24,7 +26,7 @@ export const ReviewsContent = ({ slug, data }) => {
     return null
   }
 
-  if (data.reviews?.length === 0) {
+  if (data.orders?.length === 0) {
     return data.canReview ? (
       <div className="w-full items-center py-4">
         <div className="w-full h-px bg-gray-light mb-4" />
@@ -40,15 +42,15 @@ export const ReviewsContent = ({ slug, data }) => {
       </div>
       {data.canReview && <AddReview productSlug={slug} />}
       <div className="max-w-screen-md w-full my-12 space-y-4">
-        {data.reviews.map((review) => (
-          <Review key={review.id} {...review} />
+        {data.orders.map((order: StrapiOrder) => (
+          <Review key={order.id} {...order} />
         ))}
       </div>
     </section>
   )
 }
 
-const Overview = ({ fit, rating, reviews }) => {
+const Overview = ({ fit, rating, orders }) => {
   return (
     <section
       className="flex flex-col w-full mt-8 mb-12 items-center bg-light"
@@ -57,7 +59,7 @@ const Overview = ({ fit, rating, reviews }) => {
       <div className="items-center">
         <h3 className="font-bold text-2xl">Reviews</h3>
         <span className="text-base">
-          {reviews.length} {reviews.length === 1 ? 'Review' : 'Reviews'}
+          {orders.length} {orders.length === 1 ? 'Review' : 'Reviews'}
         </span>
       </div>
       <div className="w-full max-w-screen-sm justify-between flex-row items-center">

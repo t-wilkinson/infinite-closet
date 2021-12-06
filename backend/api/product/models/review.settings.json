@@ -11,11 +11,6 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "order": {
-      "model": "order",
-      "plugin": "orders",
-      "required": false
-    },
     "fit": {
       "type": "enumeration",
       "enum": ["small", "true", "large"]

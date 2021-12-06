@@ -3,10 +3,10 @@
  */
 export interface StrapiSize {
   id: string;
-  size?: "XXS" | "XS" | "S" | "M" | "L" | "XL" | "_2XL" | "_3XL" | "_4XL" | "_5XL" | "_6XL" | "ONESIZE";
-  sizeRange?: "XS" | "S" | "M" | "L" | "XL" | "_2XL" | "_3XL" | "_4XL" | "_5XL" | "_6XL";
+  size?: "XXS" | "XS" | "S" | "M" | "L" | "XL" | "_2XL" | "ONESIZE";
+  sizeRange?: "XS" | "S" | "M" | "L" | "XL" | "_2XL";
   quantity: number;
-  units?: "cm";
+  units?: "cm" | "inches";
   hips?: number;
   waist?: number;
   bust?: number;

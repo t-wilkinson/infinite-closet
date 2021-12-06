@@ -1,6 +1,4 @@
 import { StrapiAddress } from './address';
-import { StrapiEvents } from './events';
-import { StrapiOrder } from './order';
 import { StrapiRole } from './role';
 
 /**
@@ -22,7 +20,6 @@ export interface StrapiUser {
   lastName?: string;
   phoneNumber?: string;
   addresses: StrapiAddress[];
-  orders: StrapiOrder[];
   chestSize?: string;
   hipsSize?: string;
   waistSize?: string;
@@ -30,7 +27,7 @@ export interface StrapiUser {
   height?: string;
   weight?: string;
   dateOfBirth?: string;
-  event?: StrapiEvents;
+  age?: string;
   created_by: string;
   updated_at: string;
   published_at: string;

@@ -7,7 +7,7 @@ module.exports = {
     let review = ctx.request.body
     const product = await strapi.query('product').findOne({ slug }, [])
     if (isNaN(review.rating) || review.rating < 0 || review.rating > 5) {
-      return ctx.send({error: 'Rating must be between 1-5'}, 404)
+      return ctx.send({ error: 'Rating must be between 1-5' }, 404)
     }
 
     try {
@@ -28,17 +28,18 @@ module.exports = {
     const { slug } = ctx.params
     const { user } = ctx.state
     const product = await strapi.query('product').findOne({ slug }, [])
-    const reviews = await strapi
-      .query('review')
-      .find({ 'order.product': product.id }, [
-        'order',
-        'order.product',
-        'order.user',
-        'images',
+    const orders = await strapi
+      .query('order', 'orders')
+      .find({ product: product.id, review_null: false }, [
+        'product',
+        'user',
+        'review',
+        'review.images',
       ])
 
+    const reviews = strapi.services.review.orderReviews(orders)
     ctx.send({
-      reviews,
+      orders,
       fit: strapi.services.review.fit(reviews),
       rating: strapi.services.review.rating(reviews),
       canReview: await strapi.services.review.canUserReview({ product, user }),

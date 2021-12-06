@@ -143,26 +143,43 @@ function parseCookies(req) {
   }, {})
 }
 
-function jsonRequest(url, data) {
-  return request(strapi.server)
-    .post(url)
+function requestMethod(url, method) {
+  let req = request(strapi.server)
+  switch (method) {
+    case 'POST':
+      req = req.post(url)
+      break
+    case 'GET':
+      req = req.get(url)
+      break
+    case 'PUT':
+      req = req.put(url)
+      break
+    case 'DELETE':
+      req = req.delete(url)
+      break
+  }
+  return req
+}
+
+function jsonRequest(url, { body, method = 'POST' }) {
+  return requestMethod(url, method)
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json')
-    .send(data)
+    .send(body)
     .expect('Content-Type', /json/)
 }
 
-function jsonRequestAuth(url, data, user) {
+function jsonRequestAuth(url, { body, user, method = 'POST' }) {
   const jwt = strapi.plugins['users-permissions'].services.jwt.issue({
     id: user.id,
   })
 
-  return request(strapi.server)
-    .post(url)
+  return requestMethod(url, method)
     .set('Accept', 'application/json')
     .set('Content-Type', 'application/json')
-    .send(data)
     .set('Authorization', 'Bearer ' + jwt)
+    .send(body)
     .expect('Content-Type', /json/)
 }
 

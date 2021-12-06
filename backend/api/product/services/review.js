@@ -2,34 +2,33 @@
 
 const { toId } = require('../../../utils')
 
-async function getUserReviews({ product, user }) {
-  return await strapi
-    .query('review')
-    .find({ 'order.product': toId(product), 'order.user': toId(user) }, [])
-}
-
-async function getUserOrders({ product, user }) {
-  return await strapi
-    .query('order', 'orders')
-    .find({ product: toId(product), user: toId(user), status: 'completed'}, [])
-}
-
 /**
- * Users existing reviews/orders pertaining to a certain product.id
+ * A users existing orders and reviews of a product
  * limit whether or not they can review
  */
-function canReview({ reviews, orders }) {
-  // Can't review same product more than once
-  if (reviews.length > 0) {
-    return false
-  }
-
+function canReview(orders) {
   // User can only review products they have ordered
   if (orders.length === 0) {
     return false
   }
 
+  const reviews = orderReviews(orders)
+  // Can't review same product more than once
+  if (reviews.length > 0) {
+    return false
+  }
+
   return true
+}
+
+function orderReviews(orders) {
+  return orders.map(order => order.review).filter(v => v)
+}
+
+async function getUserOrders({ product, user }) {
+  return await strapi
+    .query('order', 'orders')
+    .find({ product: toId(product), user: toId(user), status: 'completed'}, ['review'])
 }
 
 async function canUserReview({ product, user }) {
@@ -38,8 +37,8 @@ async function canUserReview({ product, user }) {
   }
 
   const orders = await getUserOrders({ product, user })
-  const reviews = await getUserReviews({ product, user })
-  if (canReview({ orders, reviews })) {
+  strapi.log.debug('review orders', orders)
+  if (canReview(orders)) {
     return orders[0] // Should only have one order
   } else {
     return false
@@ -61,11 +60,12 @@ async function addReview({ product, user, review, images=[] }) {
       })),
     })
 
-    return await strapi.query('review').create({
+    review = await strapi.query('review').create({
       ...review,
-      order: order.id,
       images: uploads,
     })
+    await strapi.query('order', 'orders').update({id: order.id}, {review: review.id})
+    return review
   } else {
     throw new Error('User is unable to review.')
   }
@@ -105,6 +105,7 @@ function fit(reviews) {
 }
 
 module.exports = {
+  orderReviews,
   canUserReview,
   canReview,
   addReview,

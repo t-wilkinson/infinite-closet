@@ -74,10 +74,6 @@
     "addresses": {
       "collection": "address"
     },
-    "orders": {
-      "plugin": "orders",
-      "collection": "order"
-    },
     "chestSize": {
       "type": "string"
     },

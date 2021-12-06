@@ -10,8 +10,9 @@ import {
   FormHeader,
   Rating,
   ImageUpload,
+  Textarea,
 } from '@/Form/index_'
-import { UseFields } from '@/Form/fields'
+import { useFields } from '@/Form/fields'
 
 const fitValues = [
   { key: 'short', label: 'short' },
@@ -23,7 +24,7 @@ const AddReview = ({}) => {
   const router = useRouter()
   const productSlug = router.query.slug
 
-  const fields = new UseFields({
+  const fields = useFields({
     heading: {
       label: 'Headline',
       placeholder: 'What is most important to know?',
@@ -44,6 +45,7 @@ const AddReview = ({}) => {
       default: null,
     },
     images: { label: 'Add a photo or video', default: [] },
+    // submit: { label: 'Submit' },
   })
 
   const onSubmitInternal = async (e: React.SyntheticEvent) => {
@@ -91,7 +93,7 @@ const AddReview = ({}) => {
       <Input field={fields.heading} />
       <Dropdown field={fields.fit} values={fitValues} />
       <ImageUpload field={fields.images} />
-      <Input type="textarea" field={fields.message} rows={5} />
+      <Textarea field={fields.message} rows={5} />
       <Submit field={fields.form}>Submit</Submit>
     </Form>
   )

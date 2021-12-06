@@ -7,18 +7,13 @@ import { Icons } from '@/components'
 import { iconStarFill, iconStarHalf } from '@/Icons'
 
 const Review = ({
-  fit,
-  rating,
-  order,
-  images,
-  heading,
-  message,
-  created_at,
+  user,
+  review: { fit, rating, images, heading, message, created_at },
 }) => {
   return (
     <article className="flex bg-white p-4 border border-gray-light rounded-sm relative flex-row justify-between h-80">
       <div className="w-32">
-        <SideInfo user={order.user} fit={fit} />
+        <SideInfo user={user} fit={fit} />
       </div>
       {/* <div className="w-px bg-pri-light mx-4" /> */}
       <div className="space-y-3 flex-grow ml-8">
@@ -110,7 +105,7 @@ export const Rating = ({
   )
 }
 
-export const getNumStars = (rating) => ({
+export const getNumStars = (rating: number) => ({
   full: Math.floor(rating),
   useHalf: Boolean(rating < 5 && rating % 1),
   empty: Math.floor(5 - rating),

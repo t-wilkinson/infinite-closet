@@ -26,6 +26,16 @@
       "default": "cart",
       "required": true
     },
+    "product": {
+      "model": "product"
+    },
+    "user": {
+      "plugin": "users-permissions",
+      "model": "user"
+    },
+    "review": {
+      "model": "review"
+    },
     "details": {
       "type": "string",
       "unique": false
@@ -45,10 +55,7 @@
     },
     "rentalLength": {
       "type": "enumeration",
-      "enum": [
-        "short",
-        "long"
-      ]
+      "enum": ["short", "long"]
     },
     "address": {
       "model": "address"
@@ -61,13 +68,6 @@
     },
     "shipment": {
       "type": "string"
-    },
-    "product": {
-      "model": "product"
-    },
-    "user": {
-      "plugin": "users-permissions",
-      "model": "user"
     },
     "insurance": {
       "type": "boolean",

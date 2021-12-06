@@ -1,7 +1,8 @@
 import React from 'react'
 import Warning from './Warning'
 
-export const Input = ({
+const InputWrapper = ({
+  tag: Tag='input',
   field,
   type = 'text',
   before = null,
@@ -80,11 +81,7 @@ export const Input = ({
         `}
       >
         {before && <div>{before}</div>}
-        {type === 'textarea' ? (
-          <textarea {...inputProps} />
-        ) : (
-          <input {...inputProps} />
-        )}
+        <Tag {...inputProps} />
         {children}
         {after && <div>{after}</div>}
       </div>
@@ -92,5 +89,10 @@ export const Input = ({
     </div>
   )
 }
+
+export const Input = (props) =>
+  <InputWrapper {...props} tag="input" />
+
+export const Textarea = (props) => <InputWrapper {...props} tag="textarea" />
 
 export default Input

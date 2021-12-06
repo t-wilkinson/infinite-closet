@@ -10,6 +10,8 @@ export interface StrapiDesigner {
   products: StrapiProduct[];
   notes?: string;
   description?: string;
+  oneSizeStart?: "XXS" | "XS" | "S" | "M" | "L" | "XL" | "_2XL";
+  oneSizeEnd?: "XS" | "S" | "M" | "L" | "XL" | "_2XL";
   created_by: string;
   updated_at: string;
   published_at: string;

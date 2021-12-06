@@ -1,3 +1,7 @@
+const f = {}
+f.product = require('../product/factory')
+f.user = require('../user/factory')
+
 /**
  * Default data that factory use
  */
@@ -21,7 +25,17 @@ const mock = (options = {}) => {
  * Creates new product in strapi database, first calling mock() on `data`
  */
 const create = async (strapi, data={}) => {
-  return await strapi.query('order', 'orders').create(mock(data))
+  let options = {}
+  if (data.user === undefined) {
+    const user = await f.user.create(strapi)
+    options.user = user.id
+  }
+  if (data.product === undefined) {
+    const product = await f.product.create(strapi)
+    options.product = product.id
+  }
+  const orderData = mock({...data, ...options})
+  return await strapi.query('order', 'orders').create(orderData)
 }
 
 module.exports = {
