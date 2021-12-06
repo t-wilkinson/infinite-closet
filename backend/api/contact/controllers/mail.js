@@ -5,10 +5,13 @@ module.exports = {
   async mailingList(ctx) {
     const body = ctx.request.body
 
-    strapi.services.mailchimp.transactional.template('welcome-to-the-fashion-revolution', {
-      subject: 'Welcome to the fashion revolution',
-      to: { name: body.name, email: body.email },
-    })
+    strapi.services.mailchimp.transactional.template(
+      'welcome-to-the-fashion-revolution',
+      {
+        subject: 'Welcome to the fashion revolution',
+        to: { name: body.name, email: body.email },
+      }
+    )
 
     const { firstName, lastName } = splitName(body.name)
     strapi.query('contact').create({
@@ -26,21 +29,19 @@ module.exports = {
   async contact(ctx) {
     const body = ctx.request.body
 
+    const { firstName, lastName } = splitName(body.name)
     await strapi.plugins['email'].services.email.send({
       template: 'contact-us',
-      to: {
-        name: `${body.firstName} ${body.lastName}`,
-        email: 'info@infinitecloset.co.uk',
-      },
-      subject: `[Contact] ${body.firstName} ${body.lastName}`,
+      to: { name: body.name, email: 'info@infinitecloset.co.uk' },
+      subject: `[Contact] ${body.name}`,
       data: body,
     })
 
     await strapi.query('contact').create({
       email: body.emailAddress,
-      firstName: body.firstname,
-      lastName: body.lastName,
       phoneNumber: body.phoneNumber,
+      firstName,
+      lastName,
     })
 
     ctx.send({})

@@ -4,7 +4,7 @@ import {Icon} from '@/components'
 import {iconClose, iconPlus} from '@/components/Icons'
 
 export const ImageUpload = ({ field }) => {
-  const onImageChange = (e) => {
+  const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       let urls = Array.from(e.target.files).map((file: Blob) =>
         URL.createObjectURL(file)

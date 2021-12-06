@@ -8,6 +8,26 @@ import {
   Valid,
 } from './types'
 
+const autocompleteNames = {
+  name: 'name',
+  email: 'email',
+  emailAddress: 'email',
+  firstName: 'given-name',
+  lastName: 'family-name',
+  nickName: 'nickname',
+  username: 'username',
+  newPassword: 'new-password',
+  currentPassword: 'current-password',
+  address: 'street-address',
+  streetAddress: 'street-address',
+  country: 'country',
+  postcode: 'postal-code',
+  countryName: 'country-name',
+  addressLine1: 'address-line1',
+  addressLine2: 'address-line2',
+  addressLine3: 'address-line3',
+}
+
 export class UseField<Value> {
   name: string
   label: string
@@ -18,6 +38,7 @@ export class UseField<Value> {
   setValue: (value: string) => void
   errors: string[]
   setErrors: (...errors: (string | string[])[]) => void
+  autocomplete: string
 
   constructor(name: string, config: FieldConfig) {
     config = Object.assign(
@@ -27,6 +48,7 @@ export class UseField<Value> {
         onChange: () => {},
         default: '',
         placeholder: '',
+        autocomplete: autocompleteNames[name] || 'on',
       },
       config
     )
@@ -180,7 +202,7 @@ export const useField = (name: string, config: FieldConfig): UseField<any> =>
   new UseField(name, config)
 export const useDateOfBirth = (): UseFields =>
   useFields({
-    day: { label: 'DD', constraints: 'integer' },
-    month: { label: 'MM', constraints: 'integer' },
-    year: { label: 'YYYY', constraints: 'integer' },
+    day: { label: 'DD', constraints: 'integer', autocomplete: 'bday-day', },
+    month: { label: 'MM', constraints: 'integer', autocomplete: 'bday-month',  },
+    year: { label: 'YYYY', constraints: 'integer', autocomplete: 'bday-year',   },
   })

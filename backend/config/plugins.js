@@ -14,9 +14,9 @@ module.exports = ({ env }) => ({
       subject: 'info@infinitecloset.co.uk',
     },
     settings: {
-      from: 'Infinite Closet <info@infinitecloset.co.uk>',
-      replyTo: 'Infinite Closet <info@infinitecloset.co.uk>',
-      testAddress: 'info+test@infinitecloset.co.uk',
+      from: {name: 'Infinite Closet', email: 'info@infinitecloset.co.uk'},
+      replyTo: {name: 'Infinite Closet', email: 'info@infinitecloset.co.uk'},
+      testAddress: {name: 'Infinite Closet', email: 'info+test@infinitecloset.co.uk'},
       subject: 'Infinite Closet',
     },
   },

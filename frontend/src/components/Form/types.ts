@@ -17,14 +17,15 @@ export type Fields = {
   [field: string]: Field
 }
 
-export type FieldConfig = {
-  default?: any
-  constraints?: string
-  label?: string
-  onChange?: (value: string) => void
-  type?: string
-  placeholder?: string
-}
+export type FieldConfig = Partial<{
+  default: any
+  constraints: string
+  label: string
+  onChange: (value: string) => void
+  type: string
+  placeholder: string
+  autocomplete: string
+}>
 
 export type FieldsConfig = {
   [field: string]: FieldConfig

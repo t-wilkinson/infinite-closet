@@ -5,7 +5,7 @@
   "manifest_version": 2,
   "theme_color": "#ad9253",
   "background_color": "#ad9253",
-  "display": "fullscreen",
+  "display": "browser",
   "orientation": "portrait",
   "scope": "/",
   "start_url": "/",

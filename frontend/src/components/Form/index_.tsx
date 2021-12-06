@@ -39,6 +39,7 @@ export const DateOfBirth = ({ day, month, year }: DateOfBirthField) => (
 
 export const Form = ({
   fields,
+  Success = null,
   onSubmit = () => null,
   className = 'max-w-md',
   outerClassName = '',
@@ -46,12 +47,21 @@ export const Form = ({
   ...props
 }: {
   fields: UseFields
+  Success?: React.FunctionComponent
   onSubmit: (..._: any[]) => Promise<any> | null | void
   className: string
   outerClassName?: string
   children: React.ReactNode
 }) => {
   const form = fields.form
+  if (fields.form.value === 'success') {
+    return (
+      <div className={`items-center justify-center relative w-full h-128 ${outerClassName}`}>
+          <Success />
+      </div>
+    )
+  }
+
   return (
     <div className={`items-center w-full ${outerClassName}`}>
       <form
@@ -92,12 +102,12 @@ export const FormHeader = ({ label }) => (
 )
 
 export const Submit = ({
+  field,
   children = 'Submit' as any,
   disabled = false,
   className = '',
   onSubmit = () => {},
   type = 'primary',
-  field,
 }) => {
   disabled = disabled || field.value === 'submitting'
   return (

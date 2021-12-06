@@ -23,11 +23,12 @@ const InputWrapper = ({
     disabled: disabled,
     className: `p-2 py-3 w-full h-full outline-none `,
     placeholder: focused ? field.placeholder : '',
-    id: field,
-    name: field,
+    id: field.name,
+    name: field.name,
     type: field.type,
     value: field.value,
-    onChange: (e: React.SyntheticEvent) => {
+    autoComplete: field.autocomplete,
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       setChanged(true)
       field.setValue(e.target.value)
     },
@@ -90,9 +91,9 @@ const InputWrapper = ({
   )
 }
 
-export const Input = (props) =>
+export const Input = (props: any) =>
   <InputWrapper {...props} tag="input" />
 
-export const Textarea = (props) => <InputWrapper {...props} tag="textarea" />
+export const Textarea = (props: any) => <InputWrapper {...props} tag="textarea" />
 
 export default Input

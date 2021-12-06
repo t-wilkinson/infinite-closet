@@ -64,7 +64,7 @@ const AddReview = ({}) => {
     }
   }, [canReview])
 
-  const onSubmitInternal = async (e: React.SyntheticEvent) => {
+  const onSubmitInternal = async (e: React.FormEvent) => {
     const form = e.target
     const formData = new FormData()
     const cleaned = fields.clean()

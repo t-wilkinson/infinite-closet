@@ -2,12 +2,11 @@ import React from 'react'
 import axios from 'axios'
 
 import { MarkdownWrapper, fetchMarkdown } from '@/Markdown'
-import { useFields, Form, Submit, Input } from '@/Form/index_'
+import { useFields, Form, Input, Submit } from '@/Form/index_'
 
 export const Page = ({ data }) => {
   const fields = useFields({
-    firstName: { constraints: 'required' },
-    lastName: { constraints: 'required' },
+    name: { constraints: 'required' },
     emailAddress: { constraints: 'required email' },
     phoneNumber: { constraints: 'phone' },
     message: { constraints: 'required' },
@@ -20,17 +19,21 @@ export const Page = ({ data }) => {
     })
   }
 
+  const Success = () => (
+    <div className="absolute inset-0 bg-white border border-gray z-20 justify-center items-center">
+      <span className="text-lg font-bold">We have recieved your request.</span>
+    </div>
+  )
+
   return (
     <MarkdownWrapper {...data}>
-      <Form fields={fields} className="w-full relative" onSubmit={sendMessage}>
+      <Form
+        fields={fields}
+        className="w-full relative"
+        onSubmit={sendMessage}
+        Success={Success}
+      >
         <div className="w-full relative items-stretch">
-          {fields.form.value === 'success' ? (
-            <div className="absolute inset-0 bg-white border border-gray z-20 justify-center items-center">
-              <span className="text-lg font-bold">
-                We have recieved your request.
-              </span>
-            </div>
-          ) : null}
           {Object.values(fields.fields).map((field) => (
             <Input key={field.name} field={field} />
           ))}

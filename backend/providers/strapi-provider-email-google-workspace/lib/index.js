@@ -2,13 +2,14 @@
  * Accept multiple formats for email address
  */
 function parseEmail(addr) {
-  // TODO: move this elseware
-  const toDev = (email) =>
-    email !== 'info@infinitecloset.co.uk'
+  const toDev = (email) => {
+    const res = email !== 'info@infinitecloset.co.uk'
       ? email
       : process.env.NODE_ENV === 'production'
       ? email
       : 'info+test@infinitecloset.co.uk'
+    return res
+  }
 
   switch (Object.prototype.toString.call(addr)) {
     case '[object Array]':
