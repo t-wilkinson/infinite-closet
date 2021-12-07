@@ -11,8 +11,8 @@ export const Dropdown = ({
   values,
   ...props
 }: {
-  field: UseField
-  values: { key: string; label: string }[]
+  field: UseField<string | number>
+  values: { key: string | number; label: string | number }[]
 }) => {
   const [dropdown, setDropdown] = React.useState(false)
 
@@ -36,7 +36,7 @@ export const Dropdown = ({
         <Input
           {...(props as any)}
           field={field}
-          value={values.find((v) => v.key === field.value)?.label || ''}
+          value={values.find((v) => v.key == field.value)?.label || ''}
           after={<Icon icon={iconDown} size={16} className="mt-1 mr-2" />}
           className="cursor-pointer"
         />

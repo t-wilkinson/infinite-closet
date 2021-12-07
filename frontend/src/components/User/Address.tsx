@@ -2,9 +2,8 @@ import React from 'react'
 import axios from 'axios'
 
 import { StrapiAddress } from '@/utils/models'
-import { Button, Icon } from '@/components'
-import { Input } from '@/Form'
-import { useFields, cleanFields } from '@/Form/useFields'
+import { Icon } from '@/components'
+import {Form, Input, Submit, useFields} from '@/Form/index_'
 import useAnalytics from '@/utils/useAnalytics'
 
 import { useSignin } from './'
@@ -53,7 +52,7 @@ export const Address = ({
   select,
   selected,
   userId,
-  fullName,
+  fullName='',
   addressLine1,
   addressLine2 = '',
   town,
@@ -108,9 +107,9 @@ export const Address = ({
 
 export const UpdateAddress = ({ dispatch, address }) => {
   const fields = useAddressFields(address)
-  const onSubmit = () => {
-    const cleaned = cleanFields(fields)
-    axios
+  const onSubmit = async () => {
+    const cleaned = fields.clean()
+    return axios
       .put(
         `/addresses/${address.id}`,
         {
@@ -121,7 +120,9 @@ export const UpdateAddress = ({ dispatch, address }) => {
       .then((res) =>
         dispatch({ type: 'set-addresses', payload: res.data.addresses })
       )
-      .catch((err) => console.error(err))
+      .catch(() => {
+        throw 'Unable to change address'
+      })
   }
 
   return <EditAddress onSubmit={onSubmit} fields={fields} />
@@ -135,9 +136,9 @@ export const AddAddress = ({ user, onSubmit }) => {
   const signin = useSignin()
   const analytics = useAnalytics()
 
-  const createAddress = () => {
-    const cleaned = cleanFields(fields)
-    axios
+  const createAddress = async () => {
+    const cleaned = fields.clean()
+    return axios
       .post(
         `/account/${user.id}/addresses`,
         {
@@ -152,7 +153,9 @@ export const AddAddress = ({ user, onSubmit }) => {
         onSubmit()
         signin()
       })
-      .catch((err) => console.error(err))
+      .catch(() => {
+        throw 'Unable to add address'
+      })
   }
 
   return <EditAddress onSubmit={createAddress} fields={fields} />
@@ -182,25 +185,23 @@ export const validatePostcode = async (value) => {
 
 export const EditAddress = ({ onSubmit, fields }) => {
   const [valid, setValid] = React.useState(true)
+  const onSubmitInternal = async () => {
+    return validatePostcode(fields.postcode.value)
+    .then(() => {
+      setValid(true)
+      return onSubmit()
+    })
+    .catch((err) => {
+      setValid(false)
+      throw err
+    })
+  }
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        validatePostcode(fields.postcode.value)
-          .then(() => {
-            setValid(true)
-            onSubmit()
-          })
-          .catch((err) => {
-            setValid(false)
-            console.error(err)
-          })
-      }}
-    >
+    <Form fields={fields} onSubmit={onSubmitInternal} className="max-w-lg">
       <div className="grid grid-flow-row grid-cols-2 w-full gap-x-4">
-        {Object.keys(fields).map((field) => (
-          <Input key={field} {...fields[field]} />
+        {Object.keys(fields.fields).map((field) => (
+          <Input key={field} field={fields[field]} />
         ))}
       </div>
       {!valid && (
@@ -209,10 +210,8 @@ export const EditAddress = ({ onSubmit, fields }) => {
         </span>
       )}
       <div className="w-full items-center">
-        <Button disabled={!valid} className="w-full">
-          Submit
-        </Button>
+        <Submit field={fields.form} className="w-full">Submit</Submit>
       </div>
-    </form>
+    </Form>
   )
 }

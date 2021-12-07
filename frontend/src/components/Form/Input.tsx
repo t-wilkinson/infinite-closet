@@ -10,6 +10,7 @@ const InputWrapper = ({
   children = null,
   className = '',
   disabled = false,
+  value=field.value,
   ...props
 }) => {
   const [changed, setChanged] = React.useState(false)
@@ -21,12 +22,12 @@ const InputWrapper = ({
   const inputProps = {
     ...props,
     disabled: disabled,
-    className: `p-2 py-3 w-full h-full outline-none `,
+    className: `p-2 py-3 w-full outline-none`,
     placeholder: focused ? field.placeholder : '',
     id: field.name,
     name: field.name,
     type: field.type,
-    value: field.value,
+    value: value || '',
     autoComplete: field.autocomplete,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       setChanged(true)
@@ -52,7 +53,7 @@ const InputWrapper = ({
         htmlFor={field}
         className={`rounded-sm border-sec absolute z-10 left-0 px-2
           transform duration-200 pointer-events-none w-full flex
-          items-center overflow-hidden
+          items-center
           ${focused ? 'text-sec' : 'text-gray'}
           `}
         style={{
@@ -71,7 +72,7 @@ const InputWrapper = ({
       </label>
 
       <div
-        className={`w-full h-full flex-row justify-between items-center border rounded-sm transform duration-200
+        className={`w-full flex-row justify-between items-center border rounded-sm transform duration-200
           ${disabled ? 'bg-gray-light' : 'bg-white'}
           ${focused ? 'border-sec' : ''}
           ${

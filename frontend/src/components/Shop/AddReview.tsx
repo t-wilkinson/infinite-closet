@@ -55,7 +55,6 @@ const AddReview = ({}) => {
       default: null,
     },
     images: { label: 'Add a photo or video', default: [] },
-    // submit: { label: 'Submit' },
   })
 
   React.useEffect(() => {

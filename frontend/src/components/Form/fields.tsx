@@ -8,16 +8,19 @@ import {
   Valid,
 } from './types'
 
-const autocompleteNames = {
+const autocompleteValues = {
   name: 'name',
-  email: 'email',
-  emailAddress: 'email',
+  fullName: 'name',
   firstName: 'given-name',
   lastName: 'family-name',
   nickName: 'nickname',
+
+  email: 'email',
+  emailAddress: 'email',
   username: 'username',
   newPassword: 'new-password',
   currentPassword: 'current-password',
+
   address: 'street-address',
   streetAddress: 'street-address',
   country: 'country',
@@ -26,6 +29,15 @@ const autocompleteNames = {
   addressLine1: 'address-line1',
   addressLine2: 'address-line2',
   addressLine3: 'address-line3',
+
+  town: 'address-level2',
+  city: 'address-level2',
+  state: 'address-level1',
+  province: 'address-level1',
+
+  bday: 'bday-day',
+  bmonth: 'bday-month',
+  byear: 'bday-year',
 }
 
 export class UseField<Value> {
@@ -41,6 +53,7 @@ export class UseField<Value> {
   autocomplete: string
 
   constructor(name: string, config: FieldConfig) {
+    Object.keys(config).forEach(key => config[key] === undefined && delete config[key])
     config = Object.assign(
       {
         label: toTitleCase(name),
@@ -48,7 +61,7 @@ export class UseField<Value> {
         onChange: () => {},
         default: '',
         placeholder: '',
-        autocomplete: autocompleteNames[name] || 'on',
+        autocomplete: autocompleteValues[name] || 'on',
       },
       config
     )
@@ -82,7 +95,7 @@ export class UseField<Value> {
       const [operation, ...props] = constraint.split(':')
       const label = this.label.toLowerCase()
       const label_ = label.charAt(0).toUpperCase() + label.slice(1)
-      const v = value.toString()
+      const v = (value || '').toString()
 
       // prettier-ignore
       switch (operation) {
@@ -194,15 +207,24 @@ export class UseFields {
       return acc
     }, {})
   }
+
+  changed() {
+    const cleaned = this.clean()
+    let changed = {}
+    for (const field in cleaned) {
+      if (cleaned[field] !== this.fields[field].default) {
+        changed[field] = cleaned[field]
+      }
+    }
+    return changed
+  }
+
+  // merge(fields: UseFields) {
+  //   this.fields = {...this.fields, ...fields.fields}
+  // }
 }
 
 export const useFields = (config: FieldsConfig): UseFields =>
   new UseFields(config)
 export const useField = (name: string, config: FieldConfig): UseField<any> =>
   new UseField(name, config)
-export const useDateOfBirth = (): UseFields =>
-  useFields({
-    day: { label: 'DD', constraints: 'integer', autocomplete: 'bday-day', },
-    month: { label: 'MM', constraints: 'integer', autocomplete: 'bday-month',  },
-    year: { label: 'YYYY', constraints: 'integer', autocomplete: 'bday-year',   },
-  })

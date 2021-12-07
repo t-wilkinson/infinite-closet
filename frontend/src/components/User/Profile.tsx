@@ -1,22 +1,21 @@
 import React from 'react'
 import axios from 'axios'
+import dayjs from 'dayjs'
 
 import useAnalytics from '@/utils/useAnalytics'
-import { Input, Password, Dropdown } from '@/Form'
-import { Field as FieldType } from '@/Form/types'
-import useFields, {
-  cleanFields,
-  changedFields,
-  fieldsChanged,
-} from '@/Form/useFields'
-import { Button, Divider } from '@/components'
+import { useFields, Form, Input, Dropdown, Submit, dobFields, DateOfBirth, toDate} from '@/Form/index_'
+import { UseField, UseFields } from '@/Form/types'
+import { Divider } from '@/components'
 import { Size } from '@/Products/types'
 import * as sizing from '@/utils/sizing'
 import { useSelector } from '@/utils/store'
 import { SizeChartPopup } from '@/Shop/Size'
+import { StrapiUser } from '@/utils/models'
 
 import { useSignin } from './'
-import { AddAddress } from './Address'
+// import { AddAddress } from './Address'
+
+type Status = 'changed' | 'error'
 
 export const Profile = () => {
   const user = useSelector((state) => state.user.data)
@@ -24,7 +23,7 @@ export const Profile = () => {
   const signin = useSignin()
 
   React.useEffect(() => {
-    signin().catch((err) => {
+    signin().catch(() => {
       setStatus('error')
     })
     document.getElementById('_app').scrollTo({ top: 0 })
@@ -50,49 +49,59 @@ export const Profile = () => {
   )
 }
 
-const updateUser = (user, fields, setStatus, analytics) => {
-  const changed = changedFields(fields)
-  const cleaned = cleanFields(changed)
-  axios
-    .put(`/users/${user.id}`, cleaned, {
-      withCredentials: true,
-    })
-    .then((res) => setStatus('changed'))
+const updateUser = async (
+  user: StrapiUser,
+  fields: UseFields,
+  setStatus: (status: Status) => void,
+  analytics: any
+) => {
+  const cleaned = fields.changed()
+  const dateOfBirth = fields.bday && fields.bmonth && fields.byear
+    ? toDate({bday: fields.bday, bmonth: fields.bmonth, byear: fields.byear})
+    : undefined
+
+  return axios
+    .put(`/users/${user.id}`, {
+      ...cleaned,
+      dateOfBirth
+    }, { withCredentials: true })
+    .then(() => setStatus('changed'))
     .then(() =>
       analytics.logEvent('update_details', {
         user: user.email,
         fields: cleaned,
       })
     )
-    .catch((err) => {
+    .catch(() => {
       setStatus('error')
-      console.error(err)
+      throw 'Unable to update details'
     })
 }
 
 const AccountDetails = ({ setStatus, user }) => {
   const analytics = useAnalytics()
+  const dateOfBirth = dayjs(user.dateOfBirth)
   const fields = useFields({
-    firstName: { default: user.firstName || '' },
-    lastName: { default: user.lastName || '' },
-    email: { default: user.email || '' },
-    phoneNumber: {
-      default: user.phoneNumber || '',
-      label: 'Mobile Phone Number',
-    },
-    dateOfBirth: { default: user.dateOfBirth || '', label: 'Date of Birth' },
+    firstName: { default: user.firstName },
+    lastName: { default: user.lastName },
+    email: { default: user.email },
+    phoneNumber: { default: user.phoneNumber },
+    bday: {...dobFields.bday, default: dateOfBirth.date()},
+    bmonth: {...dobFields.bmonth, default: dateOfBirth.month() + 1},
+    byear: {...dobFields.byear, default: dateOfBirth.year()},
   })
+  const onSubmit = () => updateUser(user, fields, setStatus, analytics)
 
   return (
-    <Fieldset name="Account Details">
-      <Field disabled={true} {...fields.email} />
-      <Field {...fields.phoneNumber} />
-      <Field {...fields.firstName} />
-      <Field {...fields.lastName} />
-      <Field {...fields.dateOfBirth} />
+    <Fieldset fields={fields} onSubmit={onSubmit} name="Account Details">
+      <Field disabled={true} field={fields.email} />
+      <Field field={fields.phoneNumber} />
+      <Field field={fields.firstName} />
+      <Field field={fields.lastName} />
+      <DateOfBirth bday={fields.bday} bmonth={fields.bmonth} byear={fields.byear} />
       <SubmitFields
-        onSubmit={() => updateUser(user, fields, setStatus, analytics)}
-        disabled={fieldsChanged(fields).length === 0}
+        field={fields.form}
+        disabled={Object.values(fields.changed()).length === 0}
       />
     </Fieldset>
   )
@@ -128,81 +137,79 @@ const FitsAndPreferences = ({ user, setStatus }) => {
     hipsSize: { default: user.hipsSize, label: 'Hips Size (cm)' },
     dressSize: { default: user.dressSize, label: 'Dress Size (cm)' },
   })
+  const onSubmit = () => updateUser(user, fields, setStatus, analytics)
 
   return (
-    <Fieldset name="Fits & Preferences">
-      <Dropdown {...fields.height} values={heights} />
-      <Field {...fields.weight} />
-      <Dropdown {...fields.chestSize} values={toSizes(75, 125)} />
-      <Dropdown {...fields.hipsSize} values={toSizes(80, 125)} />
-      <Dropdown {...fields.waistSize} values={toSizes(60, 95)} />
+    <Fieldset onSubmit={onSubmit} fields={fields} name="Fits & Preferences">
+      <Dropdown field={fields.height} values={heights} />
+      <Field field={fields.weight} />
+      <Dropdown field={fields.chestSize} values={toSizes(75, 125)} />
+      <Dropdown field={fields.hipsSize} values={toSizes(80, 125)} />
+      <Dropdown field={fields.waistSize} values={toSizes(60, 95)} />
       <Dropdown
-        {...fields.dressSize}
+        field={fields.dressSize}
         values={Size.map((size) => ({
           label: size,
           key: sizing.unnormalize(size),
         }))}
       />
 
-      <div className="relative z-20 py-2">
-        <button onClick={() => setChartOpen(() => true)}>
+      <div className="relative py-2">
+        <button onClick={() => setChartOpen(() => true)} type="button">
           <span className="underline">Size Chart</span>
         </button>
         <SizeChartPopup state={chartOpen} setState={setChartOpen} />
       </div>
 
       <SubmitFields
-        onSubmit={() => updateUser(user, fields, setStatus, analytics)}
-        disabled={fieldsChanged(fields).length === 0}
+        field={fields.form}
+        disabled={Object.values(fields.changed()).length === 0}
       />
     </Fieldset>
   )
 }
 
-const ResetPassword = ({ user, setStatus }) => {
-  const fields = useFields({
-    currentPassword: {},
-    password: { constraints: 'password' },
-    confirmPassword: { constraints: 'password' },
-  })
+// const ResetPassword = ({ user, setStatus }) => {
+//   const fields = useFields({
+//     currentPassword: {},
+//     password: { constraints: 'password' },
+//     confirmPassword: { constraints: 'password' },
+//   })
 
-  const onSubmit = () => {}
+//   const onSubmit = () => {}
 
-  return (
-    <Fieldset name="Reset Password">
-      <Field {...fields.currentPassword} type="password" />
-      <Password className="col-start-1" {...fields.password} />
-      <Password {...fields.confirmPassword} />
-      <SubmitFields
-        onSubmit={onSubmit}
-        disabled={fields.password.value !== fields.confirmPassword.value}
-      />
-    </Fieldset>
-  )
-}
+//   return (
+//     <Fieldset name="Reset Password">
+//       <Field {...fields.currentPassword} type="password" />
+//       <Password className="col-start-1" {...fields.password} />
+//       <Password {...fields.confirmPassword} />
+//       <SubmitFields
+//         field={fields.form}
+//         onSubmit={onSubmit}
+//         disabled={fields.password.value !== fields.confirmPassword.value}
+//       />
+//     </Fieldset>
+//   )
+// }
 
-const Addresses = ({ user, setStatus }) => {
-  return (
-    <>
-      <AddAddress user={user} onSubmit={() => {}} />
-    </>
-  )
-}
+// const Addresses = ({ user, setStatus }) => {
+//   return (
+//     <>
+//       <AddAddress user={user} onSubmit={() => {}} />
+//     </>
+//   )
+// }
 
-const SubmitFields = ({ onSubmit, disabled }) => (
-  <>
-    {/* <div className="w-full col-span-full" /> */}
-
-    <div className="w-full mt-3 col-start-1">
-      <Button disabled={disabled} onClick={onSubmit}>
-        Save Changes
-      </Button>
-    </div>
-  </>
+const SubmitFields = ({ field, disabled }) => (
+  <div className="w-full mt-3 col-start-1">
+    <Submit field={field} disabled={disabled}>
+      Save Changes
+    </Submit>
+  </div>
 )
 
-const Fieldset = ({ name, children }) => (
-  <div className="my-4">
+const Fieldset = ({ name, children, onSubmit, fields }) => (
+  <Form fields={fields} className="my-4" onSubmit={onSubmit}>
     <span className="text-gray font-bold">{name}</span>
     <Divider className="my-2" />
     <fieldset
@@ -211,14 +218,17 @@ const Fieldset = ({ name, children }) => (
     >
       {children}
     </fieldset>
-  </div>
+  </Form>
 )
 
 const Field = ({
   className = '',
+  field,
   ...props
-}: FieldType & { disabled?: boolean; className?: string }) => (
-  <Input {...props} className={className} />
-)
+}: {
+  disabled?: boolean
+  className?: string
+  field: UseField<any>
+}) => <Input {...props} field={field} className={className} />
 
 export default Profile

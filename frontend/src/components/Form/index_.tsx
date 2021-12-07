@@ -3,11 +3,10 @@ import React from 'react'
 import { Icon } from '@/components'
 import { iconLoading } from '@/components/Icons'
 
-import { DateOfBirthField } from './types'
 import Warning from './Warning'
-import Input from './Input'
 import { UseFields } from './fields'
 
+export * from './DateOfBirth'
 export * from './Input'
 export * from './Password'
 export * from './Dropdown'
@@ -26,17 +25,6 @@ export const OR = () => (
   </div>
 )
 
-export const DateOfBirth = ({ day, month, year }: DateOfBirthField) => (
-  <fieldset className="mt-2">
-    <legend>Date Of Birth</legend>
-    <div className="flex flex-row space-x-4">
-      <Input {...day} />
-      <Input {...month} />
-      <Input {...year} />
-    </div>
-  </fieldset>
-)
-
 export const Form = ({
   fields,
   Success = null,
@@ -49,12 +37,12 @@ export const Form = ({
   fields: UseFields
   Success?: React.FunctionComponent
   onSubmit: (..._: any[]) => Promise<any> | null | void
-  className: string
+  className?: string
   outerClassName?: string
   children: React.ReactNode
 }) => {
   const form = fields.form
-  if (fields.form.value === 'success') {
+  if (fields.form.value === 'success' && Success) {
     return (
       <div className={`items-center justify-center relative w-full h-128 ${outerClassName}`}>
           <Success />
@@ -65,7 +53,7 @@ export const Form = ({
   return (
     <div className={`items-center w-full ${outerClassName}`}>
       <form
-        className={`w-full relative ${className}`}
+        className={`relative w-full ${className}`}
         onSubmit={(e) => {
           e.preventDefault()
           if (form.value === 'submitting') {
@@ -81,7 +69,10 @@ export const Form = ({
 
           const res = onSubmit(e) || Promise.resolve()
           res
-            .then(() => form.setValue('success'))
+            .then(() => {
+              form.setValue('success')
+              form.setErrors()
+            })
             .catch((err) => {
               form.setValue('error')
               form.setErrors(err.message || err)
@@ -106,7 +97,6 @@ export const Submit = ({
   children = 'Submit' as any,
   disabled = false,
   className = '',
-  onSubmit = () => {},
   type = 'primary',
 }) => {
   disabled = disabled || field.value === 'submitting'
@@ -126,8 +116,8 @@ export const Submit = ({
         ${className}
         `}
         type="submit"
-        onClick={onSubmit}
         disabled={disabled}
+        onClick={() => {}}
       >
         {field.value === 'submitting' && (
           <Icon

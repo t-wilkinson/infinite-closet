@@ -308,7 +308,7 @@ const Address = ({ state, user, dispatch }) => (
     />
     {state.popup === 'address' && (
       <div className="fixed inset-0 z-30 bg-black bg-opacity-50 items-center justify-center">
-        <div className="w-full max-w-sm w-full p-6 bg-white rounded-lg relative">
+        <div className="w-full max-w-md w-full p-6 bg-white rounded-lg relative">
           <div className="w-full items-center">
             <span className="font-bold text-3xl mt-2">Add Address</span>
           </div>
