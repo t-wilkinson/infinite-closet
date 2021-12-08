@@ -11,9 +11,10 @@ export type FieldConfig<Value=FieldValue> = Partial<{
   placeholder: string
   autocomplete: string
   errorMessage: string    // Provide custom error messages
+  changed: (field: UseField<Value>) => [boolean, Value?]
 }>
 
-export type FieldsConfig<Keys> = {
+export type FieldsConfig<Keys=any> = {
   [field in keyof Keys]: FieldConfig<Keys[field]>
 }
 

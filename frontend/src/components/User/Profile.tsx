@@ -71,15 +71,17 @@ const useUpdateUser = () => {
   const updateUser = async (
     user: StrapiUser,
     fields: UseFields,
-    setStatus: (status: Status) => void
+    setStatus: (status: Status) => void,
+    dobField?: any,
   ) => {
     const cleaned = fields.changed()
-    const dateOfBirth =
-      fields.get('bday') && fields.get('bmonth') && fields.get('byear')
+    const dateOfBirth = dobField
+        &&
+      dobField.get('bday') && dobField.get('bmonth') && dobField.get('byear')
         ? toDate({
-            bday: fields.get('bday'),
-            bmonth: fields.get('bmonth'),
-            byear: fields.get('byear'),
+            bday: dobField.get('bday'),
+            bmonth: dobField.get('bmonth'),
+            byear: dobField.get('byear'),
           })
         : undefined
     return axios
@@ -114,6 +116,8 @@ const AccountDetails = ({ setStatus, user }) => {
     lastName: { default: user.lastName },
     email: { default: user.email },
     phoneNumber: { default: user.phoneNumber },
+  })
+  const dobField = useFields({
     bday: { ...dobFields.bday, default: dateOfBirth.date() },
     bmonth: { ...dobFields.bmonth, default: dateOfBirth.month() + 1 },
     byear: { ...dobFields.byear, default: dateOfBirth.year() },
@@ -123,7 +127,7 @@ const AccountDetails = ({ setStatus, user }) => {
   return (
     <Fieldset
       fields={fields}
-      onSubmit={() => updateUser(user, fields, setStatus)}
+      onSubmit={() => updateUser(user, fields, setStatus, dobField)}
       name="Account Details"
     >
       <Field disabled={true} field={fields.get('email')} />
@@ -131,18 +135,13 @@ const AccountDetails = ({ setStatus, user }) => {
       <Field field={fields.get('firstName')} />
       <Field field={fields.get('lastName')} />
       <DateOfBirth
-        bday={fields.get('bday')}
-        bmonth={fields.get('bmonth')}
-        byear={fields.get('byear')}
+        bday={dobField.get('bday')}
+        bmonth={dobField.get('bmonth')}
+        byear={dobField.get('byear')}
       />
       <SubmitFields
         field={fields.form}
-        disabled={
-          Object.values(fields.changed()).length > 3 ||
-          (['bday', 'bmonth', 'byear'] as const).some((f) =>
-            isNaN(fields.value(f) as number)
-          )
-        }
+        disabled={Object.values(fields.changed()).length === 0 && Object.values(dobField.changed()).length === 0}
       />
     </Fieldset>
   )
@@ -252,7 +251,7 @@ const SubmitFields = ({ field, disabled }) => (
   </div>
 )
 
-const Fieldset = ({ name, children, onSubmit, fields }) => (
+const Fieldset = ({ name, children, onSubmit, fields}) => (
   <Form fields={fields} className="my-4" onSubmit={onSubmit} resubmit>
     <span className="text-gray font-bold">{name}</span>
     <Divider className="my-2" />
