@@ -11,6 +11,7 @@ export interface StrapiSizeChart {
   L?: string;
   XL?: string;
   _2XL?: string;
+  created_at: string;
   created_by: string;
   updated_at: string;
   published_at: string;

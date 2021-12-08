@@ -12,6 +12,7 @@ export interface StrapiSize {
   bust?: number;
   armpitWidth?: number;
   lengthFromShoulder?: number;
+  created_at: string;
   created_by: string;
   updated_at: string;
   published_at: string;

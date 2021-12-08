@@ -11,6 +11,7 @@ export interface StrapiBlog {
   image?: StrapiFile;
   subtitle?: string;
   thumbnail?: StrapiFile;
+  created_at: string;
   created_by: string;
   updated_at: string;
   published_at: string;

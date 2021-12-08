@@ -9,6 +9,7 @@ export interface StrapiCoupon {
   context?: "checkout" | "launch-party";
   maxUses: number;
   expiration?: Date;
+  created_at: string;
   created_by: string;
   updated_at: string;
   published_at: string;

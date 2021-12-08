@@ -10,6 +10,7 @@ export interface StrapiReview {
   heading: string;
   message: string;
   images: StrapiFile[];
+  created_at: string;
   created_by: string;
   updated_at: string;
   published_at: string;

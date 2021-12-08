@@ -28,6 +28,7 @@ export interface StrapiUser {
   weight?: string;
   dateOfBirth?: string;
   age?: string;
+  created_at: string;
   created_by: string;
   updated_at: string;
   published_at: string;

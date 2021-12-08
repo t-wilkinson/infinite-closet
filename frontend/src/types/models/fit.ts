@@ -1,12 +1,12 @@
 /**
- * Model definition for Category
+ * Model definition for Fit
  */
-export interface StrapiCategory {
+export interface StrapiFit {
   id: string;
   name: string;
   slug: string;
   value?: string;
-  categories: StrapiCategory[];
+  created_at: string;
   created_by: string;
   updated_at: string;
   published_at: string;

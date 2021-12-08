@@ -12,6 +12,7 @@ export interface StrapiDesigner {
   description?: string;
   oneSizeStart?: "XXS" | "XS" | "S" | "M" | "L" | "XL" | "_2XL";
   oneSizeEnd?: "XS" | "S" | "M" | "L" | "XL" | "_2XL";
+  created_at: string;
   created_by: string;
   updated_at: string;
   published_at: string;

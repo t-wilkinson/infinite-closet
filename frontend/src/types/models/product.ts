@@ -44,6 +44,7 @@ export interface StrapiProduct {
   materials_?: string;
   metals_?: string;
   sizes_?: string;
+  created_at: string;
   created_by: string;
   updated_at: string;
   published_at: string;

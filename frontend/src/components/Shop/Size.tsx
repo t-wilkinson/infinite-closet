@@ -2,10 +2,9 @@ import React from 'react'
 
 import axios from '@/utils/axios'
 import { Size } from '@/Products/types'
-import { Icon } from '@/components'
-import { iconClose } from '@/components/Icons'
+import { Icon, iconClose } from '@/Icons'
 import { toTitleCase } from '@/utils/helpers'
-import { StrapiProduct, StrapiSizeChart, StrapiSize } from '@/utils/models'
+import { StrapiProduct, StrapiSizeChart, StrapiSize } from '@/types/models'
 import * as sizing from '@/utils/sizing'
 import {SizeChart as SizeChartType} from '@/types'
 

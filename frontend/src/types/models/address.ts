@@ -11,6 +11,7 @@ export interface StrapiAddress {
   postcode: string;
   mobileNumber?: string;
   deliveryInstructions?: string;
+  created_at: string;
   created_by: string;
   updated_at: string;
   published_at: string;

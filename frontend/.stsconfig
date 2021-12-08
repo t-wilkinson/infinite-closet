@@ -20,7 +20,7 @@ module.exports = {
     'extensions/users-permissions/models/',
   ].map((v) => '../backend/' + v),
   inputGroup: '../backend/components/',
-  output: './src/utils/models/',
+  output: './src/types/models/',
   interfaceName: (name) => `Strapi${titleCase(name)}`,
 
   // optional
