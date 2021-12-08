@@ -1,6 +1,3 @@
-/* macro I used to move all icons to their own file, keep for now just incase
-0/icon"ayiwbct(default $dVa(:let @a=@a . '.tsx':vs %:h/aP:wq
-*/
 
 export * from "./iconCheck"
 export * from "./iconClock"
@@ -100,3 +97,6 @@ export const Icons = ({
       : null}
   </>
 )
+/* macro I used to move all icons to their own file, keep for now just incase
+0/icon"ayiwbct(default $dVa(:let @a=@a . '.tsx':vs %:h/aP:wq
+*/

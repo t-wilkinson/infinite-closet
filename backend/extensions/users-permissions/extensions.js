@@ -15,7 +15,7 @@ const permissions = {
 
 const Auth = {
   normalize(value) {
-    return value
+    return (value || '')
       .toLowerCase()
       .replace(/ /g, '-')
       .replace(/[^a-z-]/g, '')

@@ -20,7 +20,7 @@ export const CouponCode = ({
   context: StrapiCoupon['context']
   price: number
   setCoupon: (coupon: Coupon) => void
-  field: UseField<Coupon>
+  field: UseField<string>
 }) => {
   const [status, setStatus] = React.useState<CouponStatus>()
 

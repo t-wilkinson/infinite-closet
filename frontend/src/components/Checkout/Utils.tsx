@@ -18,9 +18,9 @@ export const Summary = ({
 }: {
   userId?: string
   summary: any
-  couponCode: UseField<Coupon>
   setCoupon: (coupon: Coupon) => void
   coupon: Coupon
+  couponCode: UseField<string>
 }) => {
   if (!summary) {
     return null
@@ -135,6 +135,16 @@ export const useCheckoutSuccess = (form: UseField) => {
   }
 }
 
+export const toContact = ({email, address}: {
+  email: string
+  address: {fullName: string}
+}) =>
+  ({
+  email,
+  fullName: address.fullName,
+  nickName: address.fullName.split(' ')[0],
+})
+
 export const useCheckout = (form: UseField) => {
   const cart = useSelector((state) => state.cart.checkoutCart)
   const elements = Stripe.useElements()
@@ -142,13 +152,8 @@ export const useCheckout = (form: UseField) => {
   const onCheckoutSuccess = useCheckoutSuccess(form)
 
   const checkout = async ({ address, billing, email, couponCode }) => {
-    const contact = {
-      email,
-      fullName: address.fullName,
-      nickName: address.fullName.split(' ')[0],
-    }
-
-    await validatePostcode(address.postcode)
+    const contact = toContact({email, address})
+    return validatePostcode(address.postcode)
       .then(() =>
         stripe.createPaymentMethod({
           type: 'card',
@@ -159,7 +164,7 @@ export const useCheckout = (form: UseField) => {
 
       .then((res) => {
         if (res.error) {
-          return Promise.reject(res.error)
+          throw res.error
         } else {
           return axios.post('/orders/checkout', {
             contact,
@@ -176,10 +181,13 @@ export const useCheckout = (form: UseField) => {
 
       .then(onCheckoutSuccess)
 
-      .catch(() => {
-        throw 'We ran into an issue processing your payment. Please try again later.'
+      .catch((error) => {
+        if (error.message) {
+          throw error.message
+        } else {
+          throw 'We ran into an issue processing your payment. Please try again later.'
+        }
       })
-    return { contact }
   }
 
   return checkout

@@ -24,21 +24,21 @@ interface Register {
 }
 
 export const useRegisterUser = ({
-  onError = console.error,
+  onError = (..._: any[]) => {},
   onSubmit = () => {},
 } = {}) => {
   const dispatch = useDispatch()
   const analytics = useAnalytics()
 
-  const registerUser = (fields: { [key: string]: any }) => {
-    axios
+  const registerUser = async (fields: { [key: string]: any }) => {
+    return axios
       .post(
         '/auth/local/register',
         {
-          firstName: fields.firstName,
-          lastName: fields.lastName,
-          email: fields.email,
-          password: fields.password,
+          firstName: fields.firstName || null,
+          lastName: fields.lastName || null,
+          email: fields.email || null,
+          password: fields.password || null,
           subscribed: fields.mailingList ? 'mailinglist' : '',
         },
         { withCredentials: true }
@@ -53,11 +53,11 @@ export const useRegisterUser = ({
       })
       .catch((err) => {
         try {
-          onError(err.response.data.data[0].messages.map((v) => v.message))
-          throw err.response.data.data[0].messages.map((v) => v.message)
+          onError(err.response.data.data[0].messages.map((v: any) => v.message))
+          throw err.response.data.data[0].messages.map((v: any) => v.message)
         } catch {
-          onError(['Encountered unkown error'])
-          throw 'Encountered unkown error'
+          onError(['Unable to register'])
+          throw 'Unable to register'
         }
       })
   }

@@ -39,7 +39,7 @@ const reducer = (state: typeof initialState, action: any) => {
   const def = (key: string) => ({ ...state, [key]: action.payload })
   // prettier-ignore
   switch (action.type) {
-    case 'correct-coupon': return def('coupon')
+    case 'select-coupon': return def('coupon')
 
     case 'edit-payment': return { ...state, popup: 'payment' }
     case 'edit-address': return { ...state, popup: 'address' }
@@ -212,11 +212,11 @@ const Checkout = ({ fetchCart, analytics }) => {
           <Summary
             userId={user.id}
             summary={summary}
+            couponCode={fields.get('couponCode')}
             setCoupon={(coupon: Coupon) =>
-              dispatch({ type: 'correct-coupon', payload: coupon })
+              dispatch({ type: 'select-coupon', payload: coupon })
             }
             coupon={state.coupon}
-            couponCode={fields.get('couponCode')}
           />
         </SideItem>
       </div>

@@ -57,34 +57,7 @@ const App = ({ router, Component, pageProps }) => {
 }
 export default App
 
-const allowedPages = [
-  '/',
-  '/404',
-  '/about-us',
-  '/account/forgot-password',
-  '/account/register',
-  '/account/reset-password',
-  '/account/signin',
-  '/blogs',
-  '/blogs/[slug]',
-  '/contact-us',
-  '/designers',
-  '/designers/[slug]',
-  '/faqs',
-  '/launch-party',
-  '/privacy',
-  '/products/[...slug]',
-  '/size-charts',
-  '/shop/[designer]/[item]',
-  '/terms-and-conditions',
-  '/user/checkout',
-  '/user/order-history',
-  '/user/profile',
-  '/account/checkout/register',
-  '/account/checkout/signin',
-  '/review/[slug]',
-  '/review/thankyou',
-]
+const blockedPages = [ ]
 
 const Wrapper = ({ router, children }) => {
   // useSaveScrollPos()
@@ -256,7 +229,7 @@ const Wrapper = ({ router, children }) => {
   }, [])
 
   if (
-    !allowedPages.includes(router.pathname) &&
+    blockedPages.includes(router.pathname) &&
     process.env.NODE_ENV === 'production'
   ) {
     children = <FourOFour />

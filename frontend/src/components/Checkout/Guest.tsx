@@ -6,7 +6,7 @@ dayjs.extend(utc)
 
 import { CartUtils } from '@/Cart/slice'
 import { useRegisterUser } from '@/Account/Register'
-import { Summary } from '@/Checkout/Utils'
+import { Summary, toContact } from '@/Checkout/Utils'
 import { useCheckout, useFetchCart } from '@/Checkout/Utils'
 import {
   useFields,
@@ -40,7 +40,7 @@ const reducer = (state: typeof initialState, action: any) => {
   const def = (key: string) => ({ ...state, [key]: action.payload })
   // prettier-ignore
   switch (action.type) {
-    case 'correct-coupon': return def('coupon')
+    case 'select-coupon': return def('coupon')
     case 'set-payment-method': return def('paymentMethod')
     case 'register-error': return {...state,  registerError: true, error: action.payload}
     case 'change-contact': return {...state, contact: action.payload}
@@ -123,7 +123,6 @@ const Checkout = () => {
 
   const onCheckout = (contact: State['contact']) => {
     rootDispatch(CartUtils.set([]))
-    fields.get('couponCode').setValue(null)
     fetchCart()
     dispatch({ type: 'change-contact', payload: contact })
     analytics.logEvent('purchase', {
@@ -138,7 +137,7 @@ const Checkout = () => {
       md:flex-row space-y-4 md:space-y-0 md:space-x-4
       "
     >
-      {state.status === 'success' ? (
+      {fields.form.value === 'success' ? (
         <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-16 pb-16">
           <span className="font-bold text-xl flex flex-col items-center">
             Thank you for your purchase!
@@ -146,7 +145,7 @@ const Checkout = () => {
           {state.registerError && (
             <div className="my-4">
               <span>We could not create an account for you.</span>
-              <Warning warnings={state.error || []} />
+              <Warning warnings={[state.registerError] || []} />
             </div>
           )}
         </div>
@@ -187,14 +186,14 @@ const CheckoutForm = ({ onCheckout }) => {
   const address = React.useContext(AddressContext)
   const dispatch = React.useContext(DispatchContext)
   const checkout = useCheckout(fields.form)
-  const registerUser = useRegisterUser({
-    onError: (err: any) => dispatch({ type: 'register-error', payload: err }),
-  })
+  const registerUser = useRegisterUser()
 
   const onSubmit = async () => {
     const cleanedFields = fields.clean()
     const cleanedAddress = address.clean()
-    const { contact } = await checkout({
+    const contact = toContact({email: cleanedFields.email, address: cleanedAddress})
+
+    await checkout({
       address: cleanedAddress,
       billing: {
         name: cleanedFields.billingName,
@@ -203,14 +202,16 @@ const CheckoutForm = ({ onCheckout }) => {
       couponCode: cleanedFields.couponCode,
     })
     await onCheckout({ contact })
+
     if (cleanedFields.password) {
-      registerUser({
+      await registerUser({
         email: contact.email,
         firstName: contact.fullName.split(' ')[0],
-        lastName: contact.fullName.split(' ')[1],
+        lastName: contact.fullName.split(' ').slice(1).join(' '),
         password: cleanedFields.password,
       })
     }
+    fields.get('couponCode').setValue(null)
   }
 
   return (
@@ -230,10 +231,10 @@ const CheckoutForm = ({ onCheckout }) => {
         <SideItem label="Summary">
           <Summary
             summary={summary}
-            setCoupon={(coupon: Coupon) => {
-              dispatch({ type: 'correct-coupon', payload: coupon })
-            }}
             couponCode={fields.get('couponCode')}
+            setCoupon={(coupon: Coupon) => {
+              dispatch({ type: 'select-coupon', payload: coupon })
+            }}
             coupon={state.coupon}
           />
         </SideItem>
@@ -280,11 +281,11 @@ const Address = ({
   address: AddressFields
 }) => {
   return (
-    <div className="grid grid-flow-row grid-cols-2 w-full gap-y-2 gap-x-4">
+    <div className="grid grid-flow-row grid-cols-2 w-full gap-y-3 gap-x-4 pt-2">
+      <Input field={email} />
       {address.map((field) => (
         <Input key={field.name} field={field} />
       ))}
-      <Input field={email} />
     </div>
   )
 }

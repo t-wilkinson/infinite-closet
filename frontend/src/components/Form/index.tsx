@@ -90,7 +90,6 @@ export const Form = ({
           err ||
           "Looks like something's not working... Please try again later"
       )
-      console.error(err)
     })
   }
 

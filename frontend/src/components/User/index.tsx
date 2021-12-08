@@ -3,12 +3,12 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 
-import { useSelector, useDispatch } from '@/utils/store'
+import { useDispatch } from '@/utils/store'
 import { userActions } from '@/User/slice'
 import { useProtected } from '@/User/Protected'
-import { CartUtils } from '@/Cart/slice'
+import {CartUtils} from '@/Cart/slice'
 
-const signin = (dispatch, cart) =>
+const signin = (dispatch: any) =>
   axios
     .post('/account/signin', {}, { withCredentials: true })
     .then((res) => {
@@ -30,8 +30,7 @@ const signin = (dispatch, cart) =>
 
 export const useSignin = () => {
   const dispatch = useDispatch()
-  const cart = useSelector((state) => state.cart.checkoutCart)
-  return () => signin(dispatch, cart)
+  return () => signin(dispatch)
 }
 
 export const User = ({ children }) => {
@@ -58,13 +57,13 @@ const SideMenu = () => {
   const router = useRouter()
 
   const signout = () => {
-    router.push('/')
     axios
       .post('/account/signout', {}, { withCredentials: true })
       .then(() => {
+        router.push('/')
         dispatch(userActions.signout())
-          .then(() => dispatch(CartUtils.count()))
-          .then(() => dispatch(CartUtils.view()))
+        dispatch(CartUtils.count())
+        dispatch(CartUtils.view())
       })
       .catch((err) => console.error(err))
   }

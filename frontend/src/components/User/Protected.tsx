@@ -1,10 +1,12 @@
+import {useRouter} from 'next/router'
 import { useSelector } from '@/utils/store'
 
 export const useProtected = () => {
   const user = useSelector((state) => state.user.data)
+  const router = useRouter()
 
   if (user === null) {
-    window.location.pathname = '/account/signin'
+    router.push('/account/signin')
     return
   }
 
