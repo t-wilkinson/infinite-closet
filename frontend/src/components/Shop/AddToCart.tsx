@@ -8,7 +8,7 @@ import { CartUtils } from '@/Cart/slice'
 import { Form, Submit, useFields, Warning } from '@/Form'
 import { Icon, iconDate } from '@/components/Icons'
 import { Size } from '@/Products/types'
-import { rentalLengths } from '@/utils/constants'
+import { rentalLengths } from '@/utils/config'
 import { useDispatch, useSelector } from '@/utils/store'
 
 import { SizeChartPopup, SizeSelector } from './Size'

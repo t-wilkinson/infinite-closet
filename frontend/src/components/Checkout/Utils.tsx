@@ -28,7 +28,7 @@ export const Summary = ({
   }
 
   return (
-    <div className="">
+    <div>
       <div className="w-full my-2">
         <CouponCode
           price={summary.preDiscount}

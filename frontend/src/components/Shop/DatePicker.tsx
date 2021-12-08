@@ -12,7 +12,7 @@ import { iconLeft, iconClose, iconRight } from '@/components/Icons'
 import * as sizing from '@/utils/sizing'
 import useDays from '@/utils/useDays'
 import { Size } from '@/Products/types'
-import { rentalLengths } from '@/utils/constants'
+import { rentalLengths } from '@/utils/config'
 
 dayjs.extend(isSameOrAfter)
 dayjs.extend(isBetween)

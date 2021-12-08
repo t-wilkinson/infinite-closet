@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import axios from '@/utils/axios'
-import { routes } from '@/utils/constants'
+import { routes } from '@/utils/config'
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon, Divider } from '@/components'
 import { toRows } from '@/Layout/Navbar'

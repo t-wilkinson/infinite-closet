@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 import axios from '@/utils/axios'
 import { StrapiCategory } from '@/types/models'
-import { routes } from '@/utils/constants'
+import { routes } from '@/utils/config'
 
 // TODO: use nextjs caching
 const myLoader = ({ src, width, quality }) => {

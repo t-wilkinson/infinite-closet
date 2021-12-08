@@ -12,7 +12,7 @@ import { CartUtils } from '@/Cart/slice'
 import { fmtPrice } from '@/utils/helpers'
 import { getURL } from '@/utils/axios'
 import { useDispatch, useSelector } from '@/utils/store'
-import { rentalLengths } from '@/utils/constants'
+import { rentalLengths } from '@/utils/config'
 
 export const Orders = () => {
   const dispatch = useDispatch()

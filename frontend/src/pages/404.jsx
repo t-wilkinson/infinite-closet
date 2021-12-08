@@ -3,13 +3,16 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { Divider, Icon } from '@/components'
-import { socialMediaLinks } from '@/utils/constants'
+import { Divider } from '@/components'
+import { socialMediaLinks } from '@/utils/config'
 import Header from '@/Layout/Header'
-import { iconInstagram } from '@/components/Icons'
-import { iconFacebook } from '@/components/Icons'
-import { iconTwitter } from '@/components/Icons'
-import { iconTiktok } from '@/components/Icons'
+import {
+  Icon,
+  iconInstagram,
+  iconFacebook,
+  iconTwitter,
+  iconTiktok,
+} from '@/Icons'
 
 const Page = () => {
   return (
