@@ -115,7 +115,7 @@ async function summary({ cart, user, couponCode }) {
     couponCode,
   })
 
-  if (discountPrice > preDiscountPrice) {
+  if (discountPrice > preDiscountPrice && cart.length > 0) {
     throw new Error('Discount cannot be larger than pre-discount price.')
   }
 
@@ -125,7 +125,7 @@ async function summary({ cart, user, couponCode }) {
     subtotal: productPrice,
     shipping: shippingPrice,
     insurance: insurancePrice,
-    discount: discountPrice,
+    discount: cart.length > 0 ? discountPrice : 0,
     coupon,
     total,
     amount: strapi.services.price.toAmount(total),
