@@ -145,7 +145,9 @@ async function existingCoupons(user, code) {
   }
 
   return (
-    await strapi.query('order', 'orders').find({ user: toId(user), 'coupon.code': code })
+    await strapi
+      .query('order', 'orders')
+      .find({ user: toId(user), 'coupon.code': code })
   ).map((order) => order.coupon)
 }
 

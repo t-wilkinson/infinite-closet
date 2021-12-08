@@ -43,8 +43,10 @@ export default {
           `/orders/cart/summary`,
           { orders },
         )
+          .catch(() => undefined)
       } else {
         data = await axios.post(`/orders/cart/summary`, { orders }, {withCredentials: false})
+          .catch(() => undefined)
       }
       return data
     }

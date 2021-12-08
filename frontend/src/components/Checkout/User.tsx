@@ -1,6 +1,7 @@
 import React from 'react'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import { useRouter } from 'next/router'
 dayjs.extend(utc)
 
 import axios from '@/utils/axios'
@@ -115,7 +116,8 @@ export const CheckoutWrapper = ({}) => {
       })
     }
 
-    axios.get<any>('/account/payment-methods')
+    axios
+      .get<any>('/account/payment-methods')
       .then((data) => {
         dispatch({
           type: 'set-payment-methods',
@@ -147,6 +149,7 @@ export const CheckoutWrapper = ({}) => {
 }
 
 const Checkout = ({ fetchCart, analytics }) => {
+  const router = useRouter()
   const dispatch = React.useContext(DispatchContext)
   const state = React.useContext(StateContext)
   const fields = React.useContext(FieldsContext)
@@ -227,7 +230,12 @@ const Checkout = ({ fetchCart, analytics }) => {
           </div>
         </Wrapper>
       ) : (
-        <Form className="w-full space-y-4" fields={fields} onSubmit={checkout}>
+        <Form
+          className="w-full space-y-4"
+          fields={fields}
+          onSubmit={checkout}
+          redirect="/checkout/thankyou"
+        >
           <Cart />
           <PaymentRequestForm
             setVisible={setVisible}
@@ -240,6 +248,7 @@ const Checkout = ({ fetchCart, analytics }) => {
                 user: user?.email,
                 type: 'checkout',
               })
+              router.push('/checkout/thankyou')
             }}
           />
           {isVisible && <OR />}

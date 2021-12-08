@@ -1,15 +1,13 @@
 'use strict'
 
 async function getUserOrders(user, status) {
-  const orders = await strapi
-    .query('order', 'orders')
-    .find(
-      {
-        user: user.id,
-        ...(Array.isArray(status) ? { status_in: status } : { status: status }),
-      },
-      ['product', 'product.sizes', 'product.designer', 'product.images', 'review']
-    )
+  const orders = await strapi.query('order', 'orders').find(
+    {
+      user: user.id,
+      ...(Array.isArray(status) ? { status_in: status } : { status: status }),
+    },
+    ['product', 'product.sizes', 'product.designer', 'product.images', 'review']
+  )
   return orders
 }
 
@@ -49,11 +47,15 @@ module.exports = {
     const cart = await strapi.plugins['orders'].services.cart.createValidCart(
       orders
     )
-    const summary = await strapi.plugins['orders'].services.price.summary({
-      cart,
-      user,
-    })
-    ctx.send(summary)
+    try {
+      const summary = await strapi.plugins['orders'].services.price.summary({
+        cart,
+        user,
+      })
+      ctx.send(summary)
+    } catch (e) {
+      ctx.send({ error: e }, 404)
+    }
   },
 
   async getUserOrders(ctx) {
@@ -93,7 +95,13 @@ module.exports = {
 
   async viewUserOrderHistory(ctx) {
     const user = ctx.state.user
-    const orders = await getUserOrders(user, ['planning', 'shipping', 'cleaning', 'completed', 'error'])
+    const orders = await getUserOrders(user, [
+      'planning',
+      'shipping',
+      'cleaning',
+      'completed',
+      'error',
+    ])
     const cart = await strapi.plugins['orders'].services.cart.create(orders)
     ctx.send(cart)
   },

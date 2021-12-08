@@ -1,6 +1,7 @@
 import React from 'react'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import { useRouter } from 'next/router'
 import { CardElement } from '@stripe/react-stripe-js'
 dayjs.extend(utc)
 
@@ -115,6 +116,7 @@ const Checkout = () => {
   const state = React.useContext(StateContext)
   const dispatch = React.useContext(DispatchContext)
   const fields = React.useContext(FieldsContext)
+  const router = useRouter()
 
   const cartCount = useSelector((state) => state.cart.count)
   const analytics = useAnalytics()
@@ -173,6 +175,7 @@ const Checkout = () => {
                 user: 'guest',
                 type: 'checkout',
               })
+              router.push('/checkout/thankyou')
             }}
             couponCode={fields.get('couponCode').clean() as string}
           />
@@ -197,7 +200,10 @@ const CheckoutForm = ({ onCheckout }) => {
   const onSubmit = async () => {
     const cleanedFields = fields.clean()
     const cleanedAddress = address.clean()
-    const contact = toContact({email: cleanedFields.email, address: cleanedAddress})
+    const contact = toContact({
+      email: cleanedFields.email,
+      address: cleanedAddress,
+    })
 
     await checkout({
       address: cleanedAddress,
@@ -226,6 +232,7 @@ const CheckoutForm = ({ onCheckout }) => {
         onSubmit={onSubmit}
         fields={[fields, address]}
         className="max-w-screen-sm space-y-8"
+        redirect="/checkout/thankyou"
       >
         <SideItem label="Address">
           <Address address={address} email={fields.get('email')} />
@@ -251,10 +258,7 @@ const CheckoutForm = ({ onCheckout }) => {
           <Password field={fields.get('password')} />
         </div>
         <div className="mt-4 w-full">
-          <Submit
-            field={fields.form}
-            disabled={cart.every(isOrderInvalid)}
-          >
+          <Submit field={fields.form} disabled={cart.every(isOrderInvalid)}>
             {cart.every(isOrderInvalid)
               ? 'No Available Items'
               : cart.some(isOrderInvalid)
