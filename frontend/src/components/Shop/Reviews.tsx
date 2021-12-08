@@ -2,7 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 
 import axios from '@/utils/axios'
-import { StrapiOrder } from '@/utils/models'
+import { StrapiOrder } from '@/types/models'
 
 import Review, { Rating } from './Review'
 

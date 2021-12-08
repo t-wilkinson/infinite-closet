@@ -1,6 +1,6 @@
 import * as storage from '@/utils/storage'
 import axios from '@/utils/axios'
-import { StrapiUser, StrapiOrder } from '@/utils/models'
+import { StrapiUser, StrapiOrder } from '@/types/models'
 
 import { Cart, Orders } from './types'
 

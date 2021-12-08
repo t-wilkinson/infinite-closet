@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 import axios from '@/utils/axios'
-import { StrapiDesigner } from '@/utils/models'
+import { StrapiDesigner } from '@/types/models'
 import Layout from '@/Layout'
 
 type Name = { name: string }

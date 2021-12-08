@@ -1,4 +1,4 @@
-import {StrapiCoupon} from '@/utils/models'
+import {StrapiCoupon} from '@/types/models'
 
 export interface Summary {
     preDiscount: number,

@@ -13,7 +13,7 @@ import {
   ImageUpload,
   Textarea,
 } from '@/Form'
-import {StrapiReview} from '@/utils/models'
+import {StrapiReview} from '@/types/models'
 
 const fitValues = [
   { key: 'short', label: 'short' },

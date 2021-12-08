@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 
 import axios from '@/utils/axios'
 import { RootState } from '@/utils/store'
-import { StrapiOrder } from '@/utils/models'
+import { StrapiOrder } from '@/types/models'
 import {Summary} from '@/types'
 
 import * as helpers from './helpers'

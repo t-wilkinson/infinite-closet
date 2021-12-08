@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 import { getURL } from '@/utils/axios'
 import { Icon } from '@/components'
-import { StrapiFile } from '@/utils/models'
+import { StrapiFile } from '@/types/models'
 import { iconLeft, iconDown, iconUp, iconRight } from '@/components/Icons'
 
 type Action =

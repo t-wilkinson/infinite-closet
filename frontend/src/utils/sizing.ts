@@ -1,4 +1,4 @@
-import { StrapiSize } from '@/utils/models'
+import { StrapiSize } from '@/types/models'
 import { _Size, Size } from '@/Products/types'
 
 export const normalize = (size: string) => size?.replace('_', '')

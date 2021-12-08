@@ -5,7 +5,7 @@ import { Divider } from '@/components'
 import Layout from '@/Layout'
 import Markdown from '@/Markdown'
 import { Product } from '@/Products/ProductItems'
-import { StrapiProduct, StrapiDesigner } from '@/utils/models'
+import { StrapiProduct, StrapiDesigner } from '@/types/models'
 
 export const Page = ({ data }) => {
   const designer = data.designer

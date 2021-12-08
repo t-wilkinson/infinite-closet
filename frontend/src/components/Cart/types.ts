@@ -1,4 +1,4 @@
-import { StrapiOrder } from '@/utils/models'
+import { StrapiOrder } from '@/types/models'
 
 export interface State {
   orderHistory?: Cart

@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import axios from '@/utils/axios'
-import { StrapiCategory } from '@/utils/models'
+import { StrapiCategory } from '@/types/models'
 import { routes } from '@/utils/constants'
 
 // TODO: use nextjs caching

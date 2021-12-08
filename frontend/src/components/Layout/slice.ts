@@ -11,7 +11,7 @@ import {
   StrapiCategory,
   StrapiMaterial,
   StrapiMetal,
-} from '@/utils/models'
+} from '@/types/models'
 import { Size } from '@/Products/types'
 
 import { CookieConsent } from './types'

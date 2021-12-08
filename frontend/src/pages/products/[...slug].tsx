@@ -12,7 +12,7 @@ import { productsActions } from '@/Products/slice'
 import { QUERY_LIMIT } from '@/Products/constants'
 import Layout from '@/Layout'
 import * as sizing from '@/utils/sizing'
-import { StrapiSize } from '@/utils/models'
+import { StrapiSize } from '@/types/models'
 
 export const Page = ({ data }) => {
   const router = useRouter()

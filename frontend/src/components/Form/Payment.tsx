@@ -6,7 +6,7 @@ import { Warning, Input, useFields, Submit, Form } from '@/Form'
 import { Icon, iconClose, iconCheck } from '@/Icons'
 import { useSignin } from '@/User'
 import { BlueLink } from '@/components'
-import { StrapiUser } from '@/utils/models'
+import { StrapiUser } from '@/types/models'
 import useAnalytics from '@/utils/useAnalytics'
 
 export * from './PaymentWrapper'

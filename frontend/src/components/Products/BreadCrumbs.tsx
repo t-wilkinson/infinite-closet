@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { StrapiCategory } from '@/utils/models'
+import { StrapiCategory } from '@/types/models'
 import { useSelector } from '@/utils/store'
 import { capitalize } from '@/utils/helpers'
 

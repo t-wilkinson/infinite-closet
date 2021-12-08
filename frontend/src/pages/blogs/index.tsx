@@ -4,7 +4,7 @@ import Image from 'next/image'
 import dayjs from 'dayjs'
 
 import axios, { getURL } from '@/utils/axios'
-import { StrapiBlog } from '@/utils/models'
+import { StrapiBlog } from '@/types/models'
 import { readingTime } from '@/Markdown'
 import Layout from '@/Layout'
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { StrapiColor } from '@/utils/models'
+import { StrapiColor } from '@/types/models'
 import { Icon, Tooltip } from '@/components'
 import { iconCheck } from '@/components/Icons'
 

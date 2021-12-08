@@ -20,7 +20,7 @@ import { Size } from '@/Products/types'
 import * as sizing from '@/utils/sizing'
 import { useSelector } from '@/utils/store'
 import { SizeChartPopup } from '@/Shop/Size'
-import { StrapiUser } from '@/utils/models'
+import { StrapiUser } from '@/types/models'
 
 import { useSignin } from './'
 

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import axios from '@/utils/axios'
-import { StrapiUser } from '@/utils/models'
+import { StrapiUser } from '@/types/models'
 import { useDispatch } from '@/utils/store'
 import { userActions } from '@/User/slice'
 import { useProtected } from '@/User/Protected'

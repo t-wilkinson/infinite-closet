@@ -1,4 +1,4 @@
-import { StrapiOrder } from '@/utils/models'
+import { StrapiOrder } from '@/types/models'
 import { StrapiCartItem } from '../Cart'
 import { product } from '@/Products/__mocks__/product'
 

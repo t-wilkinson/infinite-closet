@@ -7,7 +7,7 @@ import { Button } from '@/components'
 import Shop from '@/Shop'
 import Layout from '@/Layout'
 import useData from '@/Layout/useData'
-import { StrapiProduct } from '@/utils/models'
+import { StrapiProduct } from '@/types/models'
 import useAnalytics from '@/utils/useAnalytics'
 
 export const Page = ({ data }) => {

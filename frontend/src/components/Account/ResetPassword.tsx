@@ -7,7 +7,7 @@ import useAnalytics from '@/utils/useAnalytics'
 import { useDispatch } from '@/utils/store'
 import { userActions } from '@/User/slice'
 import { useFields, Form, Submit, Password, FormHeader, OR } from '@/Form'
-import { StrapiUser } from '@/utils/models'
+import { StrapiUser } from '@/types/models'
 
 export const ResetPassword = () => {
   const fields = useFields({

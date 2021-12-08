@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Product } from '@/Products/ProductItems'
 import { FacebookMessenger, Button } from '@/components'
 import Layout from '@/Layout'
-import { StrapiProduct } from '@/utils/models'
+import { StrapiProduct } from '@/types/models'
 import axios from '@/utils/axios'
 
 import whyRentPic from '@/media/home/why-rent.png'

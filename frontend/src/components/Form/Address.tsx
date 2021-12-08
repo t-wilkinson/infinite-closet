@@ -4,7 +4,7 @@ import axios from '@/utils/axios'
 import { useFields, Form, Input, Submit, UseFields } from '@/Form'
 import { useSignin } from '@/User'
 import { Icon, iconClose } from '@/Icons'
-import { StrapiAddress } from '@/utils/models'
+import { StrapiAddress } from '@/types/models'
 import useAnalytics from '@/utils/useAnalytics'
 
 export type AddressFields = UseFields<{

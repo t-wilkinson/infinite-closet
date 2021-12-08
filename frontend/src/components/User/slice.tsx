@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '@/utils/store'
-import { StrapiUser } from '@/utils/models'
+import { StrapiUser } from '@/types/models'
 
 interface State {
   data?: null | StrapiUser

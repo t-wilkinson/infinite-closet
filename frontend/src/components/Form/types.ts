@@ -1,4 +1,4 @@
-import { StrapiCoupon } from '@/utils/models'
+import { StrapiCoupon } from '@/types/models'
 import {UseField} from './fields'
 export {UseField, UseFields} from './fields'
 

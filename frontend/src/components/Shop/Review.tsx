@@ -3,7 +3,7 @@ import Image from 'next/image'
 import dayjs from 'dayjs'
 
 import { getURL } from '@/utils/axios'
-import { StrapiOrder } from '@/utils/models'
+import { StrapiOrder } from '@/types/models'
 import { Icons } from '@/Icons'
 import { iconStarFill, iconStarHalf } from '@/Icons'
 

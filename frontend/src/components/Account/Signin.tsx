@@ -16,7 +16,7 @@ import {
 } from '@/Form'
 import { userActions } from '@/User/slice'
 import { BlueLink } from '@/components'
-import { StrapiUser } from '@/utils/models'
+import { StrapiUser } from '@/types/models'
 
 export const Signin = ({ onSubmit = () => {} }) => {
   const fields = useFields({
