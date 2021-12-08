@@ -6,12 +6,12 @@ import timezone from 'dayjs/plugin/timezone'
 import isBetween from 'dayjs/plugin/isBetween'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
-import {StrapiProduct, StrapiOrder} from '@/utils/models'
+import { StrapiProduct, StrapiOrder } from '@/utils/models'
 import { Icon } from '@/components'
 import { iconLeft, iconClose, iconRight } from '@/components/Icons'
 import * as sizing from '@/utils/sizing'
 import useDays from '@/utils/useDays'
-import {Size} from '@/Products/types'
+import { Size } from '@/Products/types'
 import { rentalLengths } from '@/utils/constants'
 
 dayjs.extend(isSameOrAfter)
@@ -55,7 +55,7 @@ export const DatePicker = ({
       <div className="absolute inset-0" onClick={() => setVisible(false)} />
       <div className="relative bg-white p-6">
         <div className="self-end pb-4">
-          <button onClick={() => setVisible(false)}>
+          <button onClick={() => setVisible(false)} type="button">
             <Icon icon={iconClose} size={16} />
           </button>
         </div>
@@ -101,6 +101,7 @@ const Date = ({
       <div className="flex-row items-center justify-between w-full">
         {date.isSameOrAfter(dayjs()) ? (
           <button
+            type="button"
             onClick={() => {
               setHover(null)
               setDate((d) => d.subtract(1, 'month'))
@@ -115,6 +116,7 @@ const Date = ({
         )}
         <span>{date.format('MMMM YYYY')}</span>
         <button
+          type="button"
           onClick={() => {
             setHover(null)
             setDate((d) => d.add(1, 'month'))
@@ -195,7 +197,7 @@ const Days = ({
       .catch((err) => console.error(err))
   }, [date])
 
-  const isBetween = (currentDate, date) => {
+  const isBetween = (currentDate: Dayjs, date: Dayjs) => {
     return (
       date &&
       currentDate.isBetween(date, date.add(rentalDays, 'day'), 'day', '[)')
@@ -212,6 +214,7 @@ const Days = ({
               <button
                 key={date.day()}
                 aria-label="Date"
+                type="button"
                 onMouseEnter={() => {
                   if (valid[date.toJSON()]) setHover(date)
                   else setHover(undefined)

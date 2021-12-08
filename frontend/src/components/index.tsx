@@ -2,7 +2,8 @@
 /* Components that are used everywhere */
 import React from 'react'
 import Link from 'next/link'
-import { iconUp } from '@/Icons'
+import { Icon, iconUp } from '@/Icons'
+export { Icon, Icons } from '@/Icons'
 
 export const FacebookMessenger = () => (
   <>
@@ -49,10 +50,12 @@ export const Button = ({
   children,
   role = 'primary' as 'primary' | 'secondary' | 'cta',
   className = '',
+  type = 'button',
   ...props
 }) => (
   <button
     onClick={onClick}
+    type={type as 'button' | 'submit'}
     className={`
       p-3 transition duration-200
       ${className}
@@ -77,72 +80,6 @@ export const Divider = ({
   className = '',
   border = 'border-gray-light',
 }) => visible && <div className={`${border} border-b-2 w-full ${className}`} />
-
-type Icon = {
-  name?: string
-  icon: object
-  className?: string
-  size?: number
-  style?: object
-} & unknown
-
-export const Icon = ({
-  icon,
-  className = '',
-  size = undefined,
-  style = {},
-  ...props
-}: Icon) => {
-  const sizes = size ? { width: size, height: size } : {}
-
-  return (
-    <div
-      className={`fill-current ${className}`}
-      style={{ ...style, ...sizes }}
-      {...props}
-    >
-      {icon}
-    </div>
-  )
-}
-
-export const Icons = ({
-  n,
-  icon,
-  className = '',
-  onClick=() => {},
-  onMouseEnter=() => {},
-  onMouseLeave=() => {},
-  size=18,
-  ...props
-}: {
-  n: number
-  icon: React.ReactElement
-  className?: string
-  onClick?: (_: number) => void
-  onMouseEnter?: (i: number) => void
-  onMouseLeave?: (i: number) => void
-  size?: number
-} & unknown) => (
-  <>
-    {n > 0
-      ? Array(n)
-          .fill(0)
-          .map((_, i) => (
-            <Icon
-              key={Math.random()}
-              onMouseEnter={() => onMouseEnter(i + 1)}
-              onMouseLeave={() => onMouseLeave(i + 1)}
-              onClick={() => onClick(i + 1)}
-              icon={icon}
-              size={size}
-              className={className}
-              {...props}
-            />
-          ))
-      : null}
-  </>
-)
 
 export const ScrollUp = () => (
   <button

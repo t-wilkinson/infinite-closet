@@ -1,35 +1,20 @@
 import { StrapiCoupon } from '@/utils/models'
 import {UseField} from './fields'
 export {UseField, UseFields} from './fields'
-// export type Field = {
-//   field: string
-//   label: string
-//   type: string
-//   value: any
-//   constraints: string
-//   onChange: (value: any) => void
-//   placeholder: string
-//   default: string
-//   errors: FieldError[]
-//   setErrors: (value: FieldError[]) => void
-// }
 
-// export type Fields = {
-//   [field: string]: Field
-// }
-
-export type FieldConfig = Partial<{
+export type FieldConfig<Value=FieldValue> = Partial<{
   default: any
   constraints: string
   label: string
-  onChange: (value: string) => void
+  onChange: (value: Value) => void
   type: string
   placeholder: string
   autocomplete: string
+  errorMessage: string    // Provide custom error messages
 }>
 
-export type FieldsConfig = {
-  [field: string]: FieldConfig
+export type FieldsConfig<Keys> = {
+  [field in keyof Keys]: FieldConfig<Keys[field]>
 }
 
 export type FieldErrors = { [field: string]: FieldError[] }
@@ -40,10 +25,13 @@ export type Coupon = {
   valid: boolean
   coupon: StrapiCoupon
   price: number
+  discount: number
 }
 
+export type FieldValue = number | string | boolean
+
 export type DateOfBirthFields = {
-  bday: UseField<number>
-  bmonth: UseField<number>
-  byear: UseField<number>
+  bday: UseField<FieldValue>
+  bmonth: UseField<FieldValue>
+  byear: UseField<FieldValue>
 }

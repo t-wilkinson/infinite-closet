@@ -27,7 +27,10 @@ module.exports = {
       template: 'order-leaving',
       to: user.email,
       bcc:
-        process.env.NODE_ENV === 'production' ? ['battersea@oxwash.com'] : [],
+        process.env.NODE_ENV === 'production' ? [
+          'battersea@oxwash.com',
+          'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
+        ] : [],
       subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
       data: { ...cartItem, firstName: user.firstName },
     })
@@ -85,10 +88,7 @@ module.exports = {
       to: { name: contact.fullName, email: contact.email },
       bcc:
         process.env.NODE_ENV === 'production'
-          ? [
-            'info@infinitecloset.co.uk',
-            'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
-          ]
+          ? ['info@infinitecloset.co.uk']
           : [],
       subject: 'Thank you for your order',
       data: {

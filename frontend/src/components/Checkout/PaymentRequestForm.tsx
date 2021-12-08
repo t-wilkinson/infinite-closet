@@ -2,69 +2,10 @@ import React from 'react'
 import axios from 'axios'
 import { useStripe } from '@stripe/react-stripe-js'
 
-import { useSelector, useDispatch } from '@/utils/store'
-import { validatePostcode } from '@/User/Address'
-import { cleanField } from '@/Form/useFields'
-import { CouponCode } from '@/Form'
-import { CartUtils } from '@/Cart/slice'
-import { fmtPrice } from '@/utils/helpers'
+import { validatePostcode } from '@/Form/Address'
+import { useSelector} from '@/utils/store'
 
-export const Summary = ({
-  userId = undefined,
-  summary,
-  couponCode,
-  setCoupon,
-  coupon,
-}) => {
-  if (!summary) {
-    return <div />
-  }
-
-  return (
-    <div>
-      <CouponCode
-        price={summary.preDiscount}
-        user={userId}
-        context="checkout"
-        setCoupon={setCoupon}
-        field={couponCode}
-      />
-      <Price label="Subtotal" price={summary.subtotal} />
-      <Price label="Insurance" price={summary.insurance} />
-      <Price label="Shipping" price={summary.shipping} />
-      <Price
-        negative
-        label="Discount"
-        price={summary.discount + (coupon?.discount || 0)}
-      />
-      <div className="h-px bg-pri my-1" />
-      <Price
-        label="Total"
-        price={summary.total - (coupon?.discount || 0)}
-        className="font-bold"
-      />
-    </div>
-  )
-}
-
-const Price = ({ negative = false, label, price, className = '' }) => (
-  <div className={`flex-row justify-between ${className}`}>
-    <span>{label}</span>
-    <span>
-      {negative && '-'} {fmtPrice(price)}
-    </span>
-  </div>
-)
-
-export const useFetchCart = () => {
-  const rootDispatch = useDispatch()
-
-  return () => {
-    rootDispatch(CartUtils.view()).then(() => rootDispatch(CartUtils.summary()))
-  }
-}
-
-export const PaymentRequest = ({
+export const PaymentRequestForm = ({
   onCheckout,
   dispatch,
   children = null,
@@ -80,7 +21,7 @@ export const PaymentRequest = ({
 
   // Create/Update paymentintent
   React.useEffect(() => {
-    const cleanedCouponCode = cleanField(couponCode)
+    const cleanedCouponCode = couponCode.clean()
     if (paymentIntent) {
       axios
         .put(`/orders/checkout/payment-intents/${paymentIntent.id}`, {
@@ -234,7 +175,7 @@ const PaymentRequestContainer = ({
               axios.post('/orders/checkout-request', {
                 contact: info.contact,
                 address: info.address,
-                couponCode: cleanField(couponCode),
+                couponCode: couponCode.clean(),
                 orders: cart.map((item) => item.order),
                 paymentIntent: paymentIntent.id,
                 paymentMethod: ev.paymentMethod.id,
@@ -304,9 +245,7 @@ const PaymentRequestContainer = ({
   }, [paymentRequest, paymentIntent])
 
   return (
-    <>
-      <PaymentRequestButton paymentRequest={paymentRequest} stripe={stripe} />
-    </>
+    <PaymentRequestButton paymentRequest={paymentRequest} stripe={stripe} />
   )
 }
 
@@ -327,3 +266,5 @@ const PaymentRequestButton = ({ paymentRequest, stripe }) => {
   }, [buttonContainer, stripe, paymentRequest])
   return <div ref={buttonContainer} />
 }
+
+export default PaymentRequestForm

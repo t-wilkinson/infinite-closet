@@ -11,11 +11,13 @@ export const Account = ({ title = 'Infinite Closet', children }) => {
       <Head>
         <title>{title}</title>
       </Head>
-      <div className="items-center mt-3">
+      <div className="items-center mt-3 mb-2">
         <LargeHeaderLogo router={router} />
       </div>
-      <main className="bg-gray-light h-full flex-shrink flex-grow pt-16">
+      <main className="bg-gray-light h-full flex-shrink flex-grow flex-col items-center pt-16">
+        <div className="w-full max-w-md p-4">
         {children}
+        </div>
       </main>
     </>
   )

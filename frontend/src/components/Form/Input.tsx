@@ -1,5 +1,20 @@
 import React from 'react'
+
 import Warning from './Warning'
+import {UseField} from './types'
+
+export type Input = {
+  field: UseField<any>
+  tag?: string
+  type?: string
+  before?: React.ReactNode
+  after?: React.ReactNode
+  children?: React.ReactNode
+  disabled?: boolean
+  value?: any
+  className?: string
+  [x: string]: any // React.HTMLProps<HTMLInputElement>
+}
 
 const InputWrapper = ({
   tag: Tag='input',
@@ -10,9 +25,9 @@ const InputWrapper = ({
   children = null,
   className = '',
   disabled = false,
-  value=field.value,
+  value=field?.value,
   ...props
-}) => {
+}: Input) => {
   const [changed, setChanged] = React.useState(false)
   const [focus, setFocus] = React.useState(false)
   // Only show outline when navigating by keyboard
@@ -21,13 +36,13 @@ const InputWrapper = ({
   const required = /required/.test(field.constraints)
   const inputProps = {
     ...props,
-    disabled: disabled,
-    className: `p-2 py-3 w-full outline-none`,
+    disabled,
+    type,
+    value: value || '',
+    className: `px-2 py-3 w-full outline-none`,
     placeholder: focused ? field.placeholder : '',
     id: field.name,
     name: field.name,
-    type: field.type,
-    value: value || '',
     autoComplete: field.autocomplete,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
       setChanged(true)
@@ -42,17 +57,18 @@ const InputWrapper = ({
 
   return (
     <div
-      className={`relative my-2 w-full
+      className={`relative w-full
         ${className}
         ${focus ? 'outline-black' : ''}
-        `}
+      `}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
     >
       <label
-        htmlFor={field}
-        className={`rounded-sm border-sec absolute z-10 left-0 px-2
+        htmlFor={field.name}
+        className={`rounded-sm border-sec
           transform duration-200 pointer-events-none w-full flex
+          absolute z-10 left-0 px-2 text-base
           items-center
           ${focused ? 'text-sec' : 'text-gray'}
           `}
@@ -92,9 +108,9 @@ const InputWrapper = ({
   )
 }
 
-export const Input = (props: any) =>
+export const Input = (props: Input) =>
   <InputWrapper {...props} tag="input" />
 
-export const Textarea = (props: any) => <InputWrapper {...props} tag="textarea" />
+export const Textarea = (props: Input) => <InputWrapper {...props} tag="textarea" />
 
 export default Input

@@ -10,6 +10,7 @@ const palette = {
   black: '#000000',
   white: '#ffffff',
   red: '#ff3f22',
+  red1: '#f99889',
 }
 
 module.exports = {
@@ -73,7 +74,10 @@ module.exports = {
           dark: '#505050',
         },
         fg: palette.black,
-        warning: palette.red,
+        warning: {
+          light: palette.red1,
+          default: palette.red,
+        },
         blue: colors.blue,
       },
       container: {

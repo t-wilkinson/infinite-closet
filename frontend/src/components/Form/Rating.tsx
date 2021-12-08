@@ -1,9 +1,8 @@
 import React from 'react'
 
-import {Icons} from '@/components'
+import {Icons, iconStarFill} from '@/Icons'
 
 import Warning from './Warning'
-import {iconStarFill} from '@/components/Icons'
 
 export const Rating = ({
   field,

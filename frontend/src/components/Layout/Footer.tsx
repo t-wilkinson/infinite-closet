@@ -2,9 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import axios from 'axios'
 
-import useFields, { cleanFields } from '@/Form/useFields'
-import { Input } from '@/Form'
-import { Button, Icon } from '@/components'
+import { useFields, Form, Input, Submit, } from '@/Form'
+import { Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
 import { iconInstagram } from '@/components/Icons'
 import { iconFacebook } from '@/components/Icons'
@@ -131,67 +130,44 @@ const FooterLink = ({ href, label }) => (
   </Link>
 )
 
-type Status = 'None' | 'Error' | 'Submitted' | 'Submitting'
-
 const Waitlist = () => {
-  const [status, setStatus] = React.useState<Status>('None')
   const fields = useFields({
     footerEmail: {
       constraints: 'email',
       label: 'Email Address',
+      autocomplete: 'email',
     },
   })
 
-  const onSubmit = (e) => {
-    e.preventDefault()
-    const cleaned = cleanFields(fields)
-    axios
+  const onSubmit = async () => {
+    const cleaned = fields.clean()
+    return axios
       .post('/account/mailing-list', {
         email: cleaned.footerEmail,
       })
-      .then(() => setStatus('Submitted'))
       .catch(() => {
-        setStatus('Error')
+        fields.form.setErrors('Couldn\'t send you an email. Try again?')
       })
   }
 
-  const messages = {
-    Submitted: (
-      <div className="flex-row items-center content-center p-2 m-4">
-        <span>Thanks for submitting!</span>
-      </div>
-    ),
-    Submitting: (
-      <div className="flex-row items-center content-center p-2 m-4">
-        <span>Submitting...</span>
-      </div>
-    ),
-  }
+  const Success = () => <span className="text-base">Thanks for submitting!</span>
 
   return (
-    <form
+    <Form
       className="w-full flex flex-col items-stretch relative text-sm text-black mb-5"
+      successClassName="bg-white"
+      fields={fields}
       onSubmit={onSubmit}
+      Success={Success}
     >
-      {status === 'Submitting' || status === 'Submitted' ? (
-        <div className="absolute inset-0 bg-white z-20 items-center justify-center font-bold rounded-sm border border-gray">
-          {messages[status]}
-        </div>
-      ) : status === 'Error' ? (
-        <div className="text-warning">
-          Couldn't send you an email. Try again?
-        </div>
-      ) : null}
-      <div className="flex-row space-x-4 w-full">
-        <Input
-          {...fields.footerEmail}
-          after={<Button className="h-full rounded-none">Join</Button>}
-        />
-      </div>
+      <Input
+        field={fields.get('footerEmail')}
+        after={<Submit field={fields.form} className="h-full rounded-none">Join</Submit>}
+      />
       <h3 className="font-bold text-sm -mt-1 text-white">
         Get 10% off your first rental
       </h3>
-    </form>
+    </Form>
   )
 }
 

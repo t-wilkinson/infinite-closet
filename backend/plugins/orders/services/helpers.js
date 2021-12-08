@@ -211,6 +211,7 @@ async function onCheckout({
         .create({ ...mergeParams, ...address })
       break
     case 'string':
+    case 'number':
       address = await strapi
         .query('address')
         .update({ id: address }, mergeParams)

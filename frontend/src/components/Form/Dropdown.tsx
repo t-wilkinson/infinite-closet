@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { UseField } from '@/Form/fields'
+import { FieldValue, UseField } from '@/Form'
 import { iconDown } from '@/components/Icons'
 import { Icon } from '@/components'
 
@@ -11,8 +11,9 @@ export const Dropdown = ({
   values,
   ...props
 }: {
-  field: UseField<string | number>
-  values: { key: string | number; label: string | number }[]
+  field: UseField
+  values: { key: FieldValue; label: FieldValue}[]
+  [x: string]: any
 }) => {
   const [dropdown, setDropdown] = React.useState(false)
 
@@ -34,11 +35,11 @@ export const Dropdown = ({
         }}
       >
         <Input
-          {...(props as any)}
+          {...props}
+          className="cursor-pointer"
           field={field}
           value={values.find((v) => v.key == field.value)?.label || ''}
           after={<Icon icon={iconDown} size={16} className="mt-1 mr-2" />}
-          className="cursor-pointer"
         />
         <div className="absolute inset-0 cursor-pointer" />
       </div>

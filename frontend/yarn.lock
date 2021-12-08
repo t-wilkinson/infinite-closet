@@ -2246,6 +2246,11 @@
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.0.tgz#7036640b4e21cc2f259ae826ce843d277dad8cff"
   integrity sha512-RJJrrySY7A8havqpGObOB4W92QXKJo63/jFLLgpvOtsGUqbQZ9Sbgl35KMm1DjC6j7AvmmU2bIno+3IyEaemaw==
 
+"@types/stripe-v3@^3.1.26":
+  version "3.1.26"
+  resolved "https://registry.yarnpkg.com/@types/stripe-v3/-/stripe-v3-3.1.26.tgz#c3c8cf5713af9a3dda0f96766eb64c150dc35799"
+  integrity sha512-c3cI1OzDJ2L1MYm8WvRfpTAojm8O3WyJDEq90py8d2zQJy+sY4ducdQztmZ5ykrRhCPNQJIBHzpEPLl5nCZfSQ==
+
 "@types/stylelint@^13.13.0":
   version "13.13.1"
   resolved "https://registry.yarnpkg.com/@types/stylelint/-/stylelint-13.13.1.tgz#c7534ccf35efc019f29d883e2655c651dc3c9b7b"

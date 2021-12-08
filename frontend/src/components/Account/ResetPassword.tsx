@@ -5,10 +5,8 @@ import { useRouter } from 'next/router'
 
 import useAnalytics from '@/utils/useAnalytics'
 import { useDispatch } from '@/utils/store'
-import { Warnings, Password, FormHeader, OR } from '@/Form'
-import { Button } from '@/components'
-import useFields, { isError, cleanFields } from '@/Form/useFields'
 import { userActions } from '@/User/slice'
+import { useFields, Form, Submit, Password, FormHeader, OR } from '@/Form'
 
 export const ResetPassword = () => {
   const fields = useFields({
@@ -17,12 +15,11 @@ export const ResetPassword = () => {
   const router = useRouter()
   const dispatch = useDispatch()
   const analytics = useAnalytics()
-  const [warnings, setWarnings] = React.useState<string[]>([])
   const code = router.query.code
 
-  const onSubmit = () => {
-    const cleaned = cleanFields(fields)
-    axios
+  const onSubmit = async () => {
+    const cleaned = fields.clean()
+    return axios
       .post(
         '/auth/reset-password',
         {
@@ -42,23 +39,22 @@ export const ResetPassword = () => {
       })
       .catch((err) => {
         if (err.response.data.data) {
-          console.error(err.response.data.data[0].messages)
-          setWarnings(err.response.data.data[0].messages.map((v) => v.message))
+          throw err.response.data.data[0].messages.map((v) => v.message)
         } else {
-          console.error(err)
-          setWarnings(['Could not change password'])
+          throw 'Unable to change password'
         }
       })
   }
 
   return (
-    <>
+    <Form
+      fields={fields}
+      onSubmit={onSubmit}
+      className="max-w-lg p-4 bg-white rounded-md"
+    >
       <FormHeader label="Reset password" />
-      <Warnings warnings={warnings} />
-      <Password {...fields.password} />
-      <Button onClick={onSubmit} disabled={!isError(fields)}>
-        Password Reset
-      </Button>
+      <Password field={fields.get('password')} />
+      <Submit field={fields.form}>Password Reset</Submit>
 
       <OR />
 
@@ -69,7 +65,7 @@ export const ResetPassword = () => {
           </span>
         </a>
       </Link>
-    </>
+    </Form>
   )
 }
 

@@ -1,7 +1,7 @@
 import React from 'react'
 
-import UserCheckout from '@/User/Checkout'
-import GuestCheckout from '@/User/GuestCheckout'
+import UserCheckout from '@/Checkout/User'
+import GuestCheckout from '@/Checkout/Guest'
 import Layout from '@/Layout'
 import { useSelector } from '@/utils/store'
 import { FacebookMessenger } from '@/components'

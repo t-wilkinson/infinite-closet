@@ -3,8 +3,15 @@ import Link from 'next/link'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 
-import { Submit, Input, Warnings, Password, FormHeader, Checkbox } from '@/Form'
-import useFields, { isError, cleanFields } from '@/Form/useFields'
+import {
+  useFields,
+  Form,
+  Submit,
+  Input,
+  Password,
+  FormHeader,
+  Checkbox,
+} from '@/Form'
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { userActions } from '@/User/slice'
@@ -23,7 +30,7 @@ export const useRegisterUser = ({
   const dispatch = useDispatch()
   const analytics = useAnalytics()
 
-  const registerUser = (fields) => {
+  const registerUser = (fields: { [key: string]: any }) => {
     axios
       .post(
         '/auth/local/register',
@@ -42,21 +49,22 @@ export const useRegisterUser = ({
           type: 'account.register',
           user: fields.email,
         })
-        onSubmit()
+        return onSubmit()
       })
       .catch((err) => {
         try {
-          console.error(err.response.data.data[0].messages)
           onError(err.response.data.data[0].messages.map((v) => v.message))
+          throw err.response.data.data[0].messages.map((v) => v.message)
         } catch {
           onError(['Encountered unkown error'])
+          throw 'Encountered unkown error'
         }
       })
   }
   return registerUser
 }
 
-export const RegisterForm = ({
+export const Register = ({
   email,
   firstName,
   lastName,
@@ -72,36 +80,23 @@ export const RegisterForm = ({
     },
     password: { constraints: 'required password' },
     mailingList: { label: 'I want to receive exclusive offers' },
-  })
-  const [warnings, setWarnings] = React.useState<string[]>([])
-  const registerUser = useRegisterUser({ onError: setWarnings, onSubmit })
+  } as const)
+  const registerUser = useRegisterUser({ onSubmit })
 
   return (
-    <>
-      <Warnings warnings={warnings} />
-      <div className="w-full flex-row space-x-2">
-        <Input {...fields.firstName} />
-        <Input {...fields.lastName} />
-      </div>
-      <Input {...fields.email} />
-      <Password {...fields.password} />
-      <Checkbox {...fields.mailingList} className="mt-2 mb-4" />
-      <Submit
-        onSubmit={() => registerUser(cleanFields(fields))}
-        disabled={!isError(fields)}
-      >
-        Register
-      </Submit>
-    </>
-  )
-}
-
-export const Register = (props: Register) => {
-  return (
-    <>
+    <Form fields={fields} onSubmit={() => registerUser(fields.clean())}
+      className="max-w-lg p-4 bg-white rounded-md"
+    >
       <FormHeader label="Join Us for Free" />
-      <RegisterForm {...props} />
-    </>
+      <div className="w-full flex-row space-x-2">
+        <Input field={fields.get('firstName')} />
+        <Input field={fields.get('lastName')} />
+      </div>
+      <Input field={fields.get('email')} />
+      <Password field={fields.get('password')} />
+      <Checkbox field={fields.get('mailingList')} className="mt-2 mb-4" />
+      <Submit field={fields.form}>Register</Submit>
+    </Form>
   )
 }
 

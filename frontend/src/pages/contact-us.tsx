@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 
 import { MarkdownWrapper, fetchMarkdown } from '@/Markdown'
-import { useFields, Form, Input, Submit } from '@/Form/index_'
+import { useFields, Form, Input, Submit } from '@/Form'
 
 export const Page = ({ data }) => {
   const fields = useFields({
@@ -29,16 +29,14 @@ export const Page = ({ data }) => {
     <MarkdownWrapper {...data}>
       <Form
         fields={fields}
-        className="w-full relative"
+        className="w-full relative flex-col flex items-stretch"
         onSubmit={sendMessage}
         Success={Success}
       >
-        <div className="w-full relative items-stretch">
-          {Object.values(fields.fields).map((field) => (
-            <Input key={field.name} field={field} />
-          ))}
-          <Submit field={fields.form}>Contact Us</Submit>
-        </div>
+        {Object.values(fields.fields).map((field) => (
+        <Input key={field.name} field={field} />
+        ))}
+        <Submit field={fields.form}>Contact Us</Submit>
       </Form>
     </MarkdownWrapper>
   )

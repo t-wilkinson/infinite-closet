@@ -1,16 +1,28 @@
 import React from 'react'
 import axios from 'axios'
-import Link from 'next/link'
 
 import useAnalytics from '@/utils/useAnalytics'
-import { Input, Warnings, FormHeader, OR } from '@/Form'
-import useFields, { isError, cleanFields } from '@/Form/useFields'
-import { Button } from '@/components'
+import { BlueLink } from '@/components'
+import {
+  useFields,
+  UseFields,
+  Submit,
+  Form,
+  Input,
+  FormHeader,
+  OR,
+} from '@/Form'
+import { Analytics } from '@/utils/useAnalytics'
 
-type Status = 'success' | 'in-fields' | 'server-error'
+type RequestChangePasswordFields = UseFields<{
+  email: string
+}>
 
-export const requestChangePassword = async (fields, analytics) => {
-  const cleaned = cleanFields(fields)
+export const requestChangePassword = async (
+  fields: RequestChangePasswordFields,
+  analytics: Analytics
+) => {
+  const cleaned = fields.clean()
   return await axios
     .post(
       '/auth/forgot-password',
@@ -19,7 +31,7 @@ export const requestChangePassword = async (fields, analytics) => {
       },
       { withCredentials: true }
     )
-    .then((res) =>
+    .then(() =>
       analytics.logEvent('form_submit', {
         type: 'account.forgot-password',
         user: cleaned.email,
@@ -28,53 +40,40 @@ export const requestChangePassword = async (fields, analytics) => {
 }
 
 export const ForgotPassword = () => {
-  const fields = useFields({
+  const fields = useFields<{ email: string }>({
     email: { constraints: 'required email', label: 'Email Address' },
   })
-  const [warnings, setWarnings] = React.useState<string[]>([])
-  const [status, setStatus] = React.useState<Status>('in-fields')
   const analytics = useAnalytics()
 
-  const onSubmit = () => {
-    requestChangePassword(fields, analytics)
-      .then(() => {
-        setStatus('success')
-      })
-      .catch((err) => {
-        setStatus('server-error')
-        console.error(err.response.data.data[0].messages)
-        setWarnings(err.response.data.data[0].messages.map((v) => v.message))
-      })
+  const onSubmit = async () => {
+    return requestChangePassword(fields, analytics).catch((err) => {
+      try {
+        throw err.response.data.data[0].messages.map((v: any) => v.message)
+      } catch {
+        throw 'Unable to change password'
+      }
+    })
   }
 
+  const Success = () => (
+    <div className="z-10 absolute inset-0 justify-center items-center bg-white border-gray border rounded-md">
+      <span className="text-lg">Please check your email</span>
+    </div>
+  )
+
   return (
-    <>
+    <Form
+      fields={fields}
+      onSubmit={onSubmit}
+      Success={Success}
+      className="max-w-lg p-4 bg-white rounded-md"
+    >
       <FormHeader label="Forgot password?" />
-
-      {status === 'server-error' && <Warnings warnings={warnings} />}
-      <Input {...fields.email} />
-      <Button
-        disabled={!isError(fields) || status === 'success'}
-        onClick={onSubmit}
-      >
-        Request Password Reset
-      </Button>
-
+      <Input field={fields.get('email')} />
+      <Submit field={fields.form}>Request Password Reset</Submit>
       <OR />
-
-      <Link href="/account/register">
-        <a>
-          <span className="cursor-pointer text-blue-500">
-            Create a new Account
-          </span>
-        </a>
-      </Link>
-      {status === 'success' && (
-        <div className="z-10 absolute inset-0 justify-center items-center bg-white border-gray border rounded-md">
-          <span className="text-lg">Please check your email</span>
-        </div>
-      )}
-    </>
+      <BlueLink href="/account/register" label="Create a new Account" />
+    </Form>
   )
 }
 export default ForgotPassword

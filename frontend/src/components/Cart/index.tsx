@@ -11,7 +11,7 @@ dayjs.extend(timezone)
 import useAnalytics from '@/utils/useAnalytics'
 import { fmtPrice } from '@/utils/helpers'
 import { getURL } from '@/utils/api'
-import { Checkbox } from '@/Form/'
+import { Checkbox } from '@/Form'
 import { Icon, Hover } from '@/components'
 import { rentalLengths } from '@/utils/constants'
 import * as sizing from '@/utils/sizing'
@@ -50,7 +50,6 @@ export const CartItem = ({
   const analytics = useAnalytics()
   const dispatch = useDispatch()
 
-  const [selectedDate, selectDate] = React.useState()
   const [visible, setVisible] = React.useState(false)
 
   const toggleInsurance = (id: string) => {
@@ -81,7 +80,7 @@ export const CartItem = ({
       <DatePicker
         size={order.size}
         product={product}
-        selectedDate={selectedDate}
+        selectedDate={dayjs(order.startDate)}
         selectDate={(date) => changeDate(order.id, date)}
         visible={visible}
         setVisible={(visible) => setVisible(visible)}
@@ -92,6 +91,7 @@ export const CartItem = ({
         onClick={removeItem}
         aria-label="Remove checkout item"
         className="absolute top-0 right-0 m-2 cursor-pointer"
+        type="button"
       >
         <div className="p-1">
           <Icon icon={iconClose} size={16} />
@@ -125,7 +125,9 @@ export const CartItem = ({
               </a>
             </Link>
           </span>
-          <button onClick={() => setVisible(!visible)}>
+          <button onClick={() => setVisible(!visible)}
+            type="button"
+          >
             <div className="flex flex-row items-center">
               <span className={`underline ${valid ? '' : 'text-warning'}`}>
                 {startDate} - {endDate}

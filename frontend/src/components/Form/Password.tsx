@@ -5,8 +5,9 @@ import {iconEye, iconEyeHidden} from '@/components/Icons'
 
 import Input from './Input'
 
-export const Password = (props) => {
+export const Password = (props: Input) => {
   const [passwordVisible, setPasswordVisible] = React.useState<boolean>(false)
+
   return (
     <Input
       {...props}

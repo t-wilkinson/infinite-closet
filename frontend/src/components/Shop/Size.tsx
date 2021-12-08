@@ -21,6 +21,7 @@ export const SizeSelector = ({ product, size: currentSize, onChange }: SizeSelec
       key={size}
       tabIndex={0}
       aria-label="Dropdown sizes"
+      type="button"
       onClick={() => {
         onChange(size)
       }}
@@ -228,7 +229,7 @@ export const SizeChartPopup = ({
           className="bg-gray-light border-gray border w-96"
           style={{ maxHeight: 600 }}
         >
-          <button onClick={() => setState(false)} className="place-self-end">
+          <button onClick={() => setState(false)} className="place-self-end" type="button">
             <div className="p-4 pb-2">
               <Icon icon={iconClose} size={16} />
             </div>

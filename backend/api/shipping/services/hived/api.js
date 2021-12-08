@@ -15,8 +15,8 @@ async function fetchApi(url, method, body = {}) {
       method === 'GET'
         ? undefined
         : JSON.stringify({
-          fields: body,
-        }),
+            fields: body,
+          }),
   }).then((res) => res.json())
 }
 
@@ -53,8 +53,15 @@ module.exports = {
     fetchApi(`${config.parcels}/${shipment}`, 'GET').then(
       (res) => res.Tracking_ID_Complete === 'COMPLETE'
     ),
-  verify: (postcode) =>
-    fetchApi(config.postcodes, 'POST', { Recipient_Postcode: postcode })
-      .then((res) => res.fields.Address_in_Delivery_Area === 'Valid')
-      .catch(() => false),
+  verify: (postcode) => {
+    if (process.env.NODE_ENV === 'production') {
+      return fetchApi(config.postcodes, 'POST', {
+        Recipient_Postcode: postcode,
+      })
+        .then((res) => res.fields.Address_in_Delivery_Area === 'Valid')
+        .catch(() => false)
+    } else {
+      return true
+    }
+  },
 }

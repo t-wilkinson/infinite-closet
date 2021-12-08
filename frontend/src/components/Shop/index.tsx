@@ -3,14 +3,12 @@ import Link from 'next/link'
 
 import { Divider } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
-import * as sizing from '@/utils/sizing'
-import { Size } from '@/Products/types'
 
 import { shopActions } from './slice'
 import ProductImages from './ProductImages'
 import ProductDetails from './ProductDetails'
 import ProductRentHeaders from './ProductRentHeaders'
-import ProductRentContents from './ProductRentContents'
+import AddToCart from './AddToCart'
 
 import Reviews from './Reviews'
 
@@ -20,7 +18,6 @@ export const Shop = ({ data }) => {
   React.useEffect(() => {
     // Don't save selected date
     // Maybe should use react state instead
-    dispatch(shopActions.selectDate(undefined))
     dispatch(shopActions.hideDate())
     dispatch(shopActions.changeRentType('OneTime'))
   }, [])
@@ -42,16 +39,6 @@ export const Shop = ({ data }) => {
 const Product = ({ data }) => {
   const { product } = data
   const state = useSelector((state) => state.shop)
-  const dispatch = useDispatch()
-  const user = useSelector((state) => state.user.data)
-
-  React.useEffect(() => {
-    if (user?.dressSize) {
-      dispatch(shopActions.changeSize(user.dressSize as Size))
-    } else if (!sizing.get(product.sizes, state.size) && product.sizes[0]) {
-      dispatch(shopActions.changeSize(product.sizes[0].size))
-    }
-  }, [user])
 
   return (
     <div className="w-full sm:w-1/2 sm:max-w-md">
@@ -71,7 +58,7 @@ const Product = ({ data }) => {
       )}
       <Divider className="mb-4" />
       <ProductRentHeaders product={product} state={state} />
-      <ProductRentContents product={product} />
+      <AddToCart product={product} />
       <div className="mb-4" />
       <div className="my-4">
         <ProductDetails state={state} product={product} />

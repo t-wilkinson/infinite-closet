@@ -1,24 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Dayjs } from 'dayjs' // TODO: hopefully this tree shakes
 
 import { RootState } from '@/utils/store'
 
-import { Size } from '@/Products/types'
-import { RentType, OneTime, Membership } from './types'
+import { RentType, Membership } from './types'
 
 export interface State {
   rentType: RentType
-  oneTime: OneTime
   membership: Membership
   dateVisible: boolean
   details?: string
-  size?: Size
-  selectedDate?: Dayjs
 }
 
 const initialState: State = {
   rentType: 'OneTime',
-  oneTime: 'short',
   membership: 'Short',
   dateVisible: false,
   details: 'details',
@@ -34,17 +28,7 @@ export const shopSlice = createSlice({
     changeMembership(state, { payload }: PayloadAction<Membership>) {
       state.membership = payload
     },
-    changeOneTime(state, { payload }: PayloadAction<OneTime>) {
-      state.oneTime = payload
-    },
 
-    changeSize(state, { payload }: PayloadAction<Size>) {
-      state.size = payload
-    },
-
-    selectDate(state, { payload }: PayloadAction<Dayjs>) {
-      state.selectedDate = payload
-    },
     setDateVisibility(state, { payload }: PayloadAction<boolean>) {
       state.dateVisible = payload
     },

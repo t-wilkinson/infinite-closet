@@ -1,12 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 
-import { DateOfBirth, Input, OR } from '@/Form'
-import useFields, {
-  useDateOfBirth,
-  toDate,
-  cleanFields,
-} from '@/Form/useFields'
+import { useFields, toDate, dobFields, Form, DateOfBirth, Input, OR, Submit} from '@/Form'
 import { useDispatch } from '@/utils/store'
 import { accountActions } from '@/Account/slice'
 import { Button } from '@/components'
@@ -17,22 +12,27 @@ export const Email = () => {
     name: { constraints: 'required' },
     email: { constraints: 'required' },
   })
-  const dateOfBirth = useDateOfBirth()
-  const [status, setStatus] = React.useState(null)
-  const joinMailingList = () => {
-    const cleaned = cleanFields(fields)
-    axios
+  const dob = useFields(dobFields)
+  const joinMailingList = async () => {
+    const cleaned = fields.clean()
+    return axios
       .post('/account/mailing-list', {
         name: cleaned.name,
         email: cleaned.email,
-        dateOfBirth: toDate(dateOfBirth).toJSON(),
+        dateOfBirth: toDate({bday: dob.get('bday'), bmonth: dob.get('bmonth'), byear: dob.get('byear')}),
       })
-      .catch((err) => console.error(err))
+      .catch(() => {
+        throw 'Unable to add you to mailing list'
+      })
   }
 
   return (
     <>
-      <div className="relative">
+      <Form
+        fields={fields}
+          onSubmit={joinMailingList}
+        Success={() => <Submitted dispatch={dispatch} fields={fields} /> }
+      >
         <span className="text-center font-bold text-2xl mb-1">
           Get 10% Off Your First Rental
         </span>
@@ -41,24 +41,11 @@ export const Email = () => {
           birthday rewards and style inspiration.
         </span>
         <div className="mt-4" />
-        <Input {...fields.name} />
-        <Input {...fields.email} />
-        <DateOfBirth {...dateOfBirth} />
-        <Button
-          disabled={status === 'submitted'}
-          className="mt-2"
-          onClick={(e) => {
-            e.preventDefault()
-            setStatus('submitted')
-            joinMailingList()
-          }}
-        >
-          Join the Mailing List
-        </Button>
-        {status === 'submitted' && (
-          <Submitted dispatch={dispatch} fields={fields} />
-        )}
-      </div>
+        <Input field={fields.get('name')} />
+        <Input field={fields.get('email')} />
+        <DateOfBirth bday={dob.get('bday')} bmonth={dob.get('bmonth')} byear={dob.get('byear')} />
+        <Submit field={fields.form}>Join the Mailing List</Submit>
+      </Form>
       <OR />
       <span>
         New to Infinite closet?{' '}

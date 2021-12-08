@@ -1,27 +1,39 @@
+import React from 'react'
+
 import { Icon } from '@/components'
 import { iconCheck } from '@/components/Icons'
+import { UseField, FieldValue } from './types'
 
 import Warning from './Warning'
 
 export const Checkbox = ({
-  field,
+  field = {} as UseField<boolean>,
   color = undefined,
   children = undefined,
   className = 'flex-wrap',
   size = 20,
+
+  onChange = (_: any) => {},
+  value = false,
+  label = '' as string,
+  labelClassName = '',
 }) => {
-  const value = field.value || false
+  label = field.label || label
+  value = field.value || value
+  onChange = field.setValue || onChange
 
   return (
     <button
-      onClick={() => field.setValue(!value)}
+      onClick={() => onChange(!value)}
+      type="button"
       aria-label={`Toggle ${field.label} checkbox`}
     >
       <input
         className="hidden"
         type="checkbox"
-        checked={value}
+        checked={Boolean(value)}
         readOnly={true}
+        onChange={onChange}
       />
       <div className={`flex-row items-center ${className}`}>
         <div
@@ -33,11 +45,34 @@ export const Checkbox = ({
           )}
         </div>
         &nbsp;&nbsp;
-        <span className="inline">{field.label}</span>
+        <span className={`inline ${labelClassName}`}>{label}</span>
         {children}
       </div>
       <Warning warnings={field.errors} />
     </button>
+  )
+}
+
+export const Toggle = ({
+  values,
+  field,
+}: {
+  values: { key: string; label: string }[]
+  field: UseField<FieldValue>
+}) => {
+  return (
+    <>
+      {values.map((v) => (
+        <Checkbox
+          key={v.key}
+          value={field.value === v.key}
+          onChange={() => field.setValue(v.key)}
+          label={field.label}
+        >
+          <span>&nbsp;&nbsp;{v.label}</span>
+        </Checkbox>
+      ))}
+    </>
   )
 }
 

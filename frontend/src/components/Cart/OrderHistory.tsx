@@ -31,8 +31,8 @@ export const Orders = () => {
   )
 }
 
-export const OrderItem = ({item}) => {
-  const {order} = item
+export const OrderItem = ({ item }) => {
+  const { order } = item
   const date = dayjs(order.startDate).tz('Europe/London') // order.startDate is utc
   const startDate = date.format('ddd, MMM D')
   const endDate = date
@@ -67,11 +67,15 @@ export const OrderItem = ({item}) => {
         <span>
           <Bold>{fmtPrice(item.totalPrice)}</Bold>
         </span>
-        <span className="text-pri">{statuses[order.status]}</span>
+        <span className={`${order.status === 'error' ? 'text-warning' : 'text-pri'}`}>{statuses[order.status]}</span>
       </div>
+      {!order.review && order.status === 'completed' &&
       <Link href={`/review/${order.product.slug}`}>
-        <a className="absolute right-0 m-2 p-2 bg-pri text-white rounded-sm">Review product</a>
+        <a className="absolute right-0 m-2 p-3 bg-pri hover:bg-sec transition-all duration-300 text-white rounded-sm font-bold text-sm">
+          Review product
+        </a>
       </Link>
+      }
     </div>
   )
 }
@@ -81,6 +85,7 @@ const statuses = {
   shipping: 'In use',
   cleaning: 'Completed',
   completed: 'Completed',
+  error: 'Error',
 }
 
 export default Orders

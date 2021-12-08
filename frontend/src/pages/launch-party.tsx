@@ -198,27 +198,11 @@ const LaunchPartyFormWrapper = () => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const [guests, setGuests] = React.useState<string[]>([])
   const fields = useFields({
-    firstName: {
-      constraints: 'required',
-      default: !user ? '' : user.firstName,
-    },
-    lastName: {
-      constraints: 'required',
-      default: !user ? '' : user.lastName,
-    },
-    email: {
-      constraints: 'required email',
-      default: !user ? '' : user.email,
-    },
-    phoneNumber: {
-      constraints: 'phonenumber',
-      default: !user ? '' : user.phoneNumber,
-    },
-    donation: {
-      label: '',
-      constraints: 'decimal',
-      default: 0,
-    },
+    firstName: { constraints: 'required', default: user?.firstName },
+    lastName: { constraints: 'required', default: user?.lastName },
+    email: { constraints: 'required email', default: user?.email },
+    phoneNumber: { constraints: 'phonenumber', default: user?.phoneNumber },
+    donation: { label: '', constraints: 'decimal', default: 0 },
     promoCode: {},
   })
 
@@ -400,7 +384,7 @@ const PromoCode = ({ fields }) => {
     </button>
   )
   const onKeyDown = (e) => {
-    if (e.keyCode === 13) {
+    if (e.keyCode === 'enter') {
       e.preventDefault()
       checkPromo()
     }

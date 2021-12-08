@@ -3,8 +3,7 @@ import debounce from 'lodash/debounce'
 
 import { Icon } from '@/components'
 import { useSelector } from '@/utils/store'
-import useFields from '@/Form/useFields'
-import { Input, Checkbox } from '@/Form'
+import { useFields, Input, Checkbox } from '@/Form'
 import { SizeChartPopup } from '@/Shop/Size'
 
 import Color from './Color'
@@ -44,13 +43,13 @@ export const FilterItems: FilterItems = {
       []
     )
 
-    const form = useFields({
+    const fields = useFields<{ search: string }>({
       search: {
         label: 'Designer Names',
         onChange: (value) => debounceMatches(value, designers),
       },
     })
-    const useMatches = matches.length > 0 || form.search.value
+    const useMatches = matches.length > 0 || fields.get('search').value
     const matchedIndexes = useMatches
       ? matches
       : designers.map((_: unknown, i: number) => i)
@@ -63,11 +62,12 @@ export const FilterItems: FilterItems = {
     return (
       <>
         <div className="h-64 justify-start">
-          <Input {...form.search} className="w-full">
-            <div className="justify-center pr-2 pointer-events-none h-full bg-white">
-              <Icon icon={iconSearch} size={20} />
-            </div>
-          </Input>
+          <Input
+            field={fields.get('search')}
+            className="w-full"
+            after={<Icon icon={iconSearch} size={20} className="mr-2" />}
+          />
+          <div className="h-3" />
           <div className="h-full space-y justify-start overflow-y-scroll">
             {sortedMatchedIndexes.map((index: number) => {
               let { slug, name } = designers[index]
@@ -75,14 +75,13 @@ export const FilterItems: FilterItems = {
                 <Checkbox
                   size={14}
                   key={slug}
-                  onChange={() => panel.toggle(slug)}
+                  onChange={() => {
+                    panel.toggle(slug)
+                  }}
                   value={panel.values.includes(slug)}
                   className="flex-no-wrap"
-                  label={
-                    <span className="whitespace-no-wrap">
-                      {toTitleCase(name)}
-                    </span>
-                  }
+                  labelClassName="whitespace-no-wrap"
+                  label={toTitleCase(name)}
                 />
               )
             })}
@@ -236,14 +235,10 @@ async function fuzzySearch(search: string, values: string[]) {
 
 const FilterCheckboxes = ({ panel, data, sort = true }) => {
   data = sort
-    ? data?.sort((v1, v2) =>
+    ? data?.sort((v1: { slug: string }, v2: { slug: string }) =>
         v1.slug === v2.slug ? 0 : v1.slug > v2.slug ? 1 : -1
       )
     : data
-
-  // if (data.length === 0) {
-  //   return <span>No available filters</span>
-  // }
 
   return data?.map((v: { slug: string; name: string }) => (
     <div key={v.slug} className="py-0.5">
@@ -251,7 +246,8 @@ const FilterCheckboxes = ({ panel, data, sort = true }) => {
         size={14}
         onChange={() => panel.toggle(v.slug)}
         value={panel.values.includes(v.slug)}
-        label={<span className="whitespace-no-wrap">{v.name}</span>}
+        labelClassName="whitespace-no-wrap"
+        label={v.name}
       />
     </div>
   ))

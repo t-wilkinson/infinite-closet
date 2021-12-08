@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 
-import Form from '@/Form'
+import {FormWrapper} from '@/Form'
 import Register, { AlreadyHaveAccount } from '@/Account/Register'
 import Account from '@/Account'
 import { useSelector } from '@/utils/store'
@@ -19,17 +19,15 @@ export const Page = () => {
 
   return (
     <Account>
-      <Form>
-        <Register
-          onSubmit={() => {
-            redir ? router.push(redir) : router.back()
-          }}
-        />
-      </Form>
+      <Register
+        onSubmit={() => {
+          redir ? router.push(redir) : router.back()
+        }}
+      />
       <div className="h-4" />
-      <Form>
+      <FormWrapper>
         <AlreadyHaveAccount />
-      </Form>
+      </FormWrapper>
     </Account>
   )
 }

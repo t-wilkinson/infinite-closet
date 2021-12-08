@@ -12,7 +12,7 @@ import {
   Rating,
   ImageUpload,
   Textarea,
-} from '@/Form/index_'
+} from '@/Form'
 
 const fitValues = [
   { key: 'short', label: 'short' },
@@ -26,11 +26,12 @@ const AddReview = ({}) => {
   const [canReview, setCanReview] = React.useState(null)
 
   React.useEffect(() => {
-    axios.get(`/products/${productSlug}/reviews/can-review`, {
-      withCredentials: true
-    })
-      .then(res => res.data)
-      .then(res => setCanReview(res.canReview))
+    axios
+      .get(`/products/${productSlug}/reviews/can-review`, {
+        withCredentials: true,
+      })
+      .then((res) => res.data)
+      .then((res) => setCanReview(res.canReview))
       .catch(() => setCanReview(false))
   }, [])
 
@@ -64,7 +65,7 @@ const AddReview = ({}) => {
   }, [canReview])
 
   const onSubmitInternal = async (e: React.FormEvent) => {
-    const form = e.target
+    const form = e.target as HTMLFormElement
     const formData = new FormData()
     const cleaned = fields.clean()
     formData.append('heading', cleaned.heading)
@@ -82,7 +83,6 @@ const AddReview = ({}) => {
         withCredentials: true,
       })
       .then((res) => res.data.review)
-      .then(() => router.push('/review/thankyou'))
       .catch(() => {
         throw 'You cannot create a review for this product'
       })
@@ -92,14 +92,15 @@ const AddReview = ({}) => {
     <Form
       fields={fields}
       onSubmit={onSubmitInternal}
-      className="overflow-y-auto w-full max-w-md"
+      className="overflow-y-auto w-full max-w-md mb-16"
+      redirect="/review/thankyou"
     >
       <FormHeader label="How was your experience?" />
-      <Rating field={fields.rating} />
-      <Input field={fields.heading} />
-      <Dropdown field={fields.fit} values={fitValues} />
-      <ImageUpload field={fields.images} />
-      <Textarea field={fields.message} rows={5} />
+      <Rating field={fields.get('rating')} />
+      <Input field={fields.get('heading')} />
+      <Dropdown field={fields.get('fit')} values={fitValues} />
+      <ImageUpload field={fields.get('images')} />
+      <Textarea field={fields.get('message')} rows={5} />
       <Submit field={fields.form}>Submit</Submit>
     </Form>
   )

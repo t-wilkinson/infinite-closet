@@ -5,24 +5,25 @@ import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
 import Cart from '@/Cart'
+import { CartItem } from '@/Cart/types'
 import { CartUtils } from '@/Cart/slice'
-import { OR } from '@/Form'
-import { PaymentWrapper } from '@/Form/Payments'
-import useFields, { cleanFields } from '@/Form/useFields'
-import { Button, BlueLink, Icon } from '@/components'
+import { useFields, OR, Coupon, UseFields, Form, Submit } from '@/Form'
+import { Addresses, AddAddress } from '@/Form/Address'
+import {
+  PaymentWrapper,
+  PaymentMethods,
+  AddPaymentMethodFormWrapper,
+} from '@/Form/Payment'
+import { Icon, iconClose } from '@/Icons'
+import { BlueLink } from '@/components'
 import { fetchAPI } from '@/utils/api'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
-import { StrapiCoupon } from '@/utils/models'
 
-import { Summary, useFetchCart } from './CheckoutUtils'
-import { PaymentMethods, AddPaymentMethodFormWrapper } from './Payment'
-import { Addresses, AddAddress } from './Address'
-import { PaymentRequest } from './CheckoutUtils'
-import { iconClose } from '@/components/Icons'
+import { Summary, useFetchCart } from './Utils'
+import PaymentRequestForm from './PaymentRequestForm'
 
 type Popup = 'none' | 'address' | 'payment'
-type Status = null | 'checking-out' | 'error' | 'success'
 
 const initialState = {
   paymentMethod: undefined,
@@ -31,21 +32,14 @@ const initialState = {
   addresses: [],
   popup: 'none' as Popup,
   error: undefined,
-  status: null as Status,
   coupon: undefined,
 }
 
-const reducer = (state, action) => {
-  const def = (key) => ({ ...state, [key]: action.payload })
+const reducer = (state: typeof initialState, action: any) => {
+  const def = (key: string) => ({ ...state, [key]: action.payload })
   // prettier-ignore
   switch (action.type) {
     case 'correct-coupon': return def('coupon')
-    case 'clear-coupon': return {...state, coupon: undefined,}
-
-    case 'status-clear': return {...state, status: null, error: ''}
-    case 'status-processing': return {...state, status: 'processing'}
-    case 'status-success': return {...state, status: 'success'}
-    case 'status-error': return {...state, status: 'error', error: action.payload}
 
     case 'edit-payment': return { ...state, popup: 'payment' }
     case 'edit-address': return { ...state, popup: 'address' }
@@ -53,9 +47,6 @@ const reducer = (state, action) => {
 
     case 'choose-address': return def('address')
     case 'set-addresses': return def('addresses')
-
-    case 'authorise': return {...state, authorised: true}
-    case 'un-authorise': return {...state, authorised: false}
 
     case 'choose-payment-method': return { ...state, paymentMethod: action.payload }
     case 'add-payment-method': return { ...state, paymentMethods: [...state.paymentMethods, action.payload], }
@@ -84,7 +75,11 @@ const reducer = (state, action) => {
 
 const StateContext = React.createContext(null)
 const DispatchContext = React.createContext(null)
-const FieldsContext = React.createContext(null)
+const FieldsContext = React.createContext<
+  UseFields<{
+    couponCode: Coupon
+  }>
+>(null)
 
 export const CheckoutWrapper = ({}) => {
   const user = useSelector((state) => state.user.data)
@@ -93,7 +88,7 @@ export const CheckoutWrapper = ({}) => {
   const analytics = useAnalytics()
   const cart = useSelector((state) => state.cart.checkoutCart)
   const fields = useFields({
-    couponCode: {},
+    couponCode: { autocomplete: 'off' },
   })
   const fetchCart = useFetchCart()
 
@@ -162,10 +157,9 @@ const Checkout = ({ fetchCart, analytics }) => {
   const summary = useSelector((state) => state.cart.checkoutSummary)
   const [isVisible, setVisible] = React.useState(false)
 
-  const checkout = () => {
-    dispatch({ type: 'status-processing' })
-    const cleanedFields = cleanFields(fields)
-    axios
+  const checkout = async () => {
+    const cleanedFields = fields.clean()
+    return axios
       .post(
         `/orders/checkout/${user.id}`,
         {
@@ -183,17 +177,23 @@ const Checkout = ({ fetchCart, analytics }) => {
       )
       .then(() => {
         fetchCart()
-        dispatch({ type: 'status-success' })
         analytics.logEvent('purchase', {
           user: user?.email,
           type: 'checkout',
         })
       })
-      .catch((err) => {
-        console.error(err)
-        dispatch({ type: 'status-error', payload: "Can't process order" })
+      .catch(() => {
+        throw 'Unable to process order, please try again later'
       })
   }
+
+  const Wrapper = ({ children }) => (
+    <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
+      <span className="font-bold text-xl flex flex-col items-center">
+        {children}
+      </span>
+    </div>
+  )
 
   return (
     <div
@@ -212,42 +212,36 @@ const Checkout = ({ fetchCart, analytics }) => {
           <Summary
             userId={user.id}
             summary={summary}
-            setCoupon={(coupon: StrapiCoupon) =>
+            setCoupon={(coupon: Coupon) =>
               dispatch({ type: 'correct-coupon', payload: coupon })
             }
             coupon={state.coupon}
-            couponCode={fields.couponCode}
+            couponCode={fields.get('couponCode')}
           />
         </SideItem>
       </div>
-      {state.status === 'success' ? (
-        <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
-          <span className="font-bold text-xl flex flex-col items-center">
-            Thank you for your purchase!
-          </span>
-        </div>
+      {fields.form.value === 'success' ? (
+        <Wrapper>Thank you for your purchase!</Wrapper>
       ) : cartCount === 0 ? (
-        <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
-          <span className="font-bold text-xl flex flex-col items-center">
-            <div>
-              <BlueLink
-                href="/products/clothing"
-                label="Would you like to browse our collection?"
-              />
-            </div>
-          </span>
-        </div>
+        <Wrapper>
+          <div>
+            <BlueLink
+              href="/products/clothing"
+              label="Would you like to browse our collection?"
+            />
+          </div>
+        </Wrapper>
       ) : (
-        <div className="w-full space-y-4">
+        <Form className="w-full space-y-4" fields={fields} onSubmit={checkout}>
           <Cart />
-          <PaymentRequest
+          <PaymentRequestForm
             setVisible={setVisible}
-            couponCode={fields.couponCode}
+            couponCode={fields.get('couponCode')}
             coupon={state.coupon}
             dispatch={dispatch}
             onCheckout={() => {
               fetchCart()
-              dispatch({ type: 'status-success' })
+              fields.form.setValue('success')
               analytics.logEvent('purchase', {
                 user: user?.email,
                 type: 'checkout',
@@ -255,8 +249,8 @@ const Checkout = ({ fetchCart, analytics }) => {
             }}
           />
           {isVisible && <OR />}
-          <Button
-            onClick={checkout}
+          <Submit
+            field={fields.form}
             disabled={
               !(state.paymentMethod && state.address) ||
               ['checking-out'].includes(state.status) ||
@@ -267,25 +261,19 @@ const Checkout = ({ fetchCart, analytics }) => {
               ? 'Please Select an Address'
               : !state.paymentMethod
               ? 'Please Select a Payment Method'
-              : state.status === 'checking-out'
-              ? 'Checkout Out...'
-              : state.status === 'error'
-              ? 'Oops... We ran into an issue'
-              : state.status === 'success'
-              ? 'Successfully Checked Out'
               : cart.every(isOrderInvalid)
               ? 'No Available Items'
               : cart.some(isOrderInvalid)
               ? 'Checkout Available Items'
               : 'Secure Checkout'}
-          </Button>
-        </div>
+          </Submit>
+        </Form>
       )}
     </div>
   )
 }
 
-const isOrderInvalid = (order) => !order.valid
+const isOrderInvalid = (order: CartItem) => !order.valid
 
 const SideItem = ({ label, children, user, protect = false }) =>
   protect && !user ? null : (
@@ -304,7 +292,7 @@ const Address = ({ state, user, dispatch }) => (
       userId={user.id}
       addresses={user.addresses}
       state={state}
-      select={(id) => dispatch({ type: 'choose-address', payload: id })}
+      select={(id: number) => dispatch({ type: 'choose-address', payload: id })}
     />
     {state.popup === 'address' && (
       <div className="fixed inset-0 z-30 bg-black bg-opacity-50 items-center justify-center">
@@ -349,6 +337,7 @@ const Payment = ({ state, user, dispatch }) => (
     />
     <button
       className="flex p-2 bg-white rounded-sm border border-gray justify-center"
+      type="button"
       onClick={() => dispatch({ type: 'edit-payment' })}
     >
       <span className="inline">Add Payment</span>

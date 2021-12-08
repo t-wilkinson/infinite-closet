@@ -1,10 +1,10 @@
 import React from 'react'
 import axios from 'axios'
 
-import { StrapiCoupon } from '@/utils/models'
+import {StrapiCoupon} from '@/utils/models'
 
-import {UseField} from './fields'
-import { Coupon } from './types'
+import {Coupon} from './types'
+import { UseField} from './fields'
 import Input from './Input'
 
 type CouponStatus = undefined | 'success' | 'failure'
@@ -20,10 +20,9 @@ export const CouponCode = ({
   context: StrapiCoupon['context']
   price: number
   setCoupon: (coupon: Coupon) => void
-  field: UseField
+  field: UseField<Coupon>
 }) => {
   const [status, setStatus] = React.useState<CouponStatus>()
-  const [message, setMessage] = React.useState<string>()
 
   const checkPromo = async () => {
     const code = field.clean()
@@ -41,13 +40,13 @@ export const CouponCode = ({
           setStatus('success')
         } else {
           setStatus('failure')
-          setMessage('Could not find coupon code')
+          field.setErrors('Could not find coupon code')
         }
       })
       .catch((err) => {
         if (err.valid === false) {
           setStatus('failure')
-          setMessage(err.reason)
+          field.setErrors(err.reason)
         }
       })
   }
@@ -56,8 +55,8 @@ export const CouponCode = ({
     return (
       <Input
         field={field}
-        onKeyDown={(e) => {
-          if (e.keyCode === 13) {
+        onKeyDown={(e: React.KeyboardEvent) => {
+          if (e.key === 'Enter') {
             e.preventDefault()
             checkPromo()
           }
@@ -82,13 +81,14 @@ export const CouponCode = ({
   } else {
     return (
       <span className="text-warning w-full p-2 mb-2 bg-gray-light">
-        {message === 'not-found'
+        {field.errors[0] === 'not-found'
           ? `Unable to find promo code matching ${field.value}.`
-          : message === 'maxed-out'
+          : field.errors[0] === 'maxed-out'
           ? 'You have already used this coupon.'
           : `Unable to find promo code matching ${field.value}.`}{' '}
         <button
           className="underline text-black"
+          type="button"
           onClick={() => {
             field.setValue('')
             setStatus(undefined)
@@ -100,4 +100,3 @@ export const CouponCode = ({
     )
   }
 }
-

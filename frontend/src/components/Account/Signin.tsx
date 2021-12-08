@@ -5,9 +5,17 @@ import { useRouter } from 'next/router'
 
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
-import { Submit, Input, OR, Warnings, Password, FormHeader } from '@/Form'
-import useFields, { isError, cleanFields } from '@/Form/useFields'
+import {
+  useFields,
+  Form,
+  Submit,
+  Input,
+  OR,
+  Password,
+  FormHeader,
+} from '@/Form'
 import { userActions } from '@/User/slice'
+import { BlueLink } from '@/components'
 
 export const Signin = ({ onSubmit = () => {} }) => {
   const fields = useFields({
@@ -16,11 +24,10 @@ export const Signin = ({ onSubmit = () => {} }) => {
   })
   const dispatch = useDispatch()
   const analytics = useAnalytics()
-  const [warnings, setWarnings] = React.useState<string[]>([])
 
-  const signinUser = () => {
-    const cleaned = cleanFields(fields)
-    axios
+  const signinUser = async () => {
+    const cleaned = fields.clean()
+    return axios
       .post(
         '/auth/local',
         {
@@ -35,42 +42,30 @@ export const Signin = ({ onSubmit = () => {} }) => {
           type: 'account.signin',
           user: cleaned.email,
         })
-        onSubmit()
+        return onSubmit()
       })
-      .catch((err) => {
-        try {
-          console.error(err.response.data.data[0].messages)
-          // setWarnings(err.response.data.data[0].messages.map((v) => v.message))
-          setWarnings(['Email or password invalid.'])
-        } catch {
-          console.error('Unknown error: ' + err)
-          setWarnings(['Somethings not right... Try again?'])
-        }
+      .catch(() => {
+        throw 'Email or password invalid'
       })
   }
 
   return (
-    <>
+    <Form
+      fields={fields}
+      onSubmit={signinUser}
+      className="max-w-lg px-4 py-4 bg-white rounded-md"
+    >
       <FormHeader label="Sign In" />
-      <Warnings warnings={warnings} />
-      <Input {...fields.email} />
-      <Password {...fields.password} />
-      <Submit onSubmit={signinUser} disabled={!isError(fields)}>
-        Sign In
-      </Submit>
+      <Input field={fields.get('email')} />
+      <Password field={fields.get('password')} />
+      <Submit field={fields.form}>Sign In</Submit>
 
       <OR />
 
       <div className="inline-block">
-        <Link href="/account/forgot-password">
-          <a>
-            <span className="cursor-pointer text-blue-500">
-              Forgot Password?
-            </span>
-          </a>
-        </Link>
+        <BlueLink href="/account/forgot-password" label="Forgot Password?" />
       </div>
-    </>
+    </Form>
   )
 }
 

@@ -3,8 +3,18 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 
 import useAnalytics from '@/utils/useAnalytics'
-import { useFields, Form, Input, Dropdown, Submit, dobFields, DateOfBirth, toDate} from '@/Form/index_'
-import { UseField, UseFields } from '@/Form/types'
+import {
+  DateOfBirth,
+  Dropdown,
+  Form,
+  Input,
+  Submit,
+  UseField,
+  UseFields,
+  dobFields,
+  toDate,
+  useFields,
+} from '@/Form'
 import { Divider } from '@/components'
 import { Size } from '@/Products/types'
 import * as sizing from '@/utils/sizing'
@@ -13,7 +23,6 @@ import { SizeChartPopup } from '@/Shop/Size'
 import { StrapiUser } from '@/utils/models'
 
 import { useSignin } from './'
-// import { AddAddress } from './Address'
 
 type Status = 'changed' | 'error'
 
@@ -32,11 +41,17 @@ export const Profile = () => {
   return (
     <div className="">
       {status === 'changed' ? (
-        <div className="w-full max-w-screen-sm h-12 mb-2 bg-sec-light justify-center items-center text-black font-bold rounded-sm">
+        <div
+          className="w-full max-w-screen-sm justify-center items-center rounded-sm
+         h-12 mb-2 bg-sec-light text-black font-bold "
+        >
           <span className="">Your changes were saved</span>
         </div>
       ) : status === 'error' ? (
-        <div className="w-full max-w-screen-sm h-12 mb-2 bg-sec-light justify-center items-center text-black font-bold rounded-sm">
+        <div
+          className="w-full max-w-screen-sm justify-center items-center rounded-sm
+          h-12 mb-2 bg-warning-light text-black font-bold"
+        >
           <span className="">Unable to make changes</span>
         </div>
       ) : null}
@@ -49,59 +64,86 @@ export const Profile = () => {
   )
 }
 
-const updateUser = async (
-  user: StrapiUser,
-  fields: UseFields,
-  setStatus: (status: Status) => void,
-  analytics: any
-) => {
-  const cleaned = fields.changed()
-  const dateOfBirth = fields.bday && fields.bmonth && fields.byear
-    ? toDate({bday: fields.bday, bmonth: fields.bmonth, byear: fields.byear})
-    : undefined
+const useUpdateUser = () => {
+  const analytics = useAnalytics()
+  const signin = useSignin()
 
-  return axios
-    .put(`/users/${user.id}`, {
-      ...cleaned,
-      dateOfBirth
-    }, { withCredentials: true })
-    .then(() => setStatus('changed'))
-    .then(() =>
-      analytics.logEvent('update_details', {
-        user: user.email,
-        fields: cleaned,
+  const updateUser = async (
+    user: StrapiUser,
+    fields: UseFields,
+    setStatus: (status: Status) => void
+  ) => {
+    const cleaned = fields.changed()
+    const dateOfBirth =
+      fields.get('bday') && fields.get('bmonth') && fields.get('byear')
+        ? toDate({
+            bday: fields.get('bday'),
+            bmonth: fields.get('bmonth'),
+            byear: fields.get('byear'),
+          })
+        : undefined
+    return axios
+      .put(
+        `/users/${user.id}`,
+        {
+          ...cleaned,
+          dateOfBirth,
+        },
+        { withCredentials: true }
+      )
+      .then(() => setStatus('changed'))
+      .then(() =>
+        analytics.logEvent('update_details', {
+          user: user.email,
+          fields: cleaned,
+        })
+      )
+      .then(() => signin())
+      .catch(() => {
+        setStatus('error')
+        throw 'Unable to update details'
       })
-    )
-    .catch(() => {
-      setStatus('error')
-      throw 'Unable to update details'
-    })
+  }
+
+  return updateUser
 }
 
 const AccountDetails = ({ setStatus, user }) => {
-  const analytics = useAnalytics()
   const dateOfBirth = dayjs(user.dateOfBirth)
   const fields = useFields({
     firstName: { default: user.firstName },
     lastName: { default: user.lastName },
     email: { default: user.email },
     phoneNumber: { default: user.phoneNumber },
-    bday: {...dobFields.bday, default: dateOfBirth.date()},
-    bmonth: {...dobFields.bmonth, default: dateOfBirth.month() + 1},
-    byear: {...dobFields.byear, default: dateOfBirth.year()},
+    bday: { ...dobFields.bday, default: dateOfBirth.date() },
+    bmonth: { ...dobFields.bmonth, default: dateOfBirth.month() + 1 },
+    byear: { ...dobFields.byear, default: dateOfBirth.year() },
   })
-  const onSubmit = () => updateUser(user, fields, setStatus, analytics)
+  const updateUser = useUpdateUser()
 
   return (
-    <Fieldset fields={fields} onSubmit={onSubmit} name="Account Details">
-      <Field disabled={true} field={fields.email} />
-      <Field field={fields.phoneNumber} />
-      <Field field={fields.firstName} />
-      <Field field={fields.lastName} />
-      <DateOfBirth bday={fields.bday} bmonth={fields.bmonth} byear={fields.byear} />
+    <Fieldset
+      fields={fields}
+      onSubmit={() => updateUser(user, fields, setStatus)}
+      name="Account Details"
+    >
+      <Field disabled={true} field={fields.get('email')} />
+      <Field field={fields.get('phoneNumber')} />
+      <Field field={fields.get('firstName')} />
+      <Field field={fields.get('lastName')} />
+      <DateOfBirth
+        bday={fields.get('bday')}
+        bmonth={fields.get('bmonth')}
+        byear={fields.get('byear')}
+      />
       <SubmitFields
         field={fields.form}
-        disabled={Object.values(fields.changed()).length === 0}
+        disabled={
+          Object.values(fields.changed()).length > 3 ||
+          (['bday', 'bmonth', 'byear'] as const).some((f) =>
+            isNaN(fields.value(f) as number)
+          )
+        }
       />
     </Fieldset>
   )
@@ -127,7 +169,6 @@ const heights = [4, 5, 6]
   .slice(5, -6)
 
 const FitsAndPreferences = ({ user, setStatus }) => {
-  const analytics = useAnalytics()
   const [chartOpen, setChartOpen] = React.useState(false)
   const fields = useFields({
     height: { default: user.height },
@@ -137,17 +178,21 @@ const FitsAndPreferences = ({ user, setStatus }) => {
     hipsSize: { default: user.hipsSize, label: 'Hips Size (cm)' },
     dressSize: { default: user.dressSize, label: 'Dress Size (cm)' },
   })
-  const onSubmit = () => updateUser(user, fields, setStatus, analytics)
+  const updateUser = useUpdateUser()
 
   return (
-    <Fieldset onSubmit={onSubmit} fields={fields} name="Fits & Preferences">
-      <Dropdown field={fields.height} values={heights} />
-      <Field field={fields.weight} />
-      <Dropdown field={fields.chestSize} values={toSizes(75, 125)} />
-      <Dropdown field={fields.hipsSize} values={toSizes(80, 125)} />
-      <Dropdown field={fields.waistSize} values={toSizes(60, 95)} />
+    <Fieldset
+      onSubmit={() => updateUser(user, fields, setStatus)}
+      fields={fields}
+      name="Fits & Preferences"
+    >
+      <Dropdown field={fields.get('height')} values={heights} />
+      <Field field={fields.get('weight')} />
+      <Dropdown field={fields.get('chestSize')} values={toSizes(75, 125)} />
+      <Dropdown field={fields.get('hipsSize')} values={toSizes(80, 125)} />
+      <Dropdown field={fields.get('waistSize')} values={toSizes(60, 95)} />
       <Dropdown
-        field={fields.dressSize}
+        field={fields.get('dressSize')}
         values={Size.map((size) => ({
           label: size,
           key: sizing.unnormalize(size),
@@ -201,7 +246,7 @@ const FitsAndPreferences = ({ user, setStatus }) => {
 // }
 
 const SubmitFields = ({ field, disabled }) => (
-  <div className="w-full mt-3 col-start-1">
+  <div className="w-full col-start-1">
     <Submit field={field} disabled={disabled}>
       Save Changes
     </Submit>
@@ -209,11 +254,11 @@ const SubmitFields = ({ field, disabled }) => (
 )
 
 const Fieldset = ({ name, children, onSubmit, fields }) => (
-  <Form fields={fields} className="my-4" onSubmit={onSubmit}>
+  <Form fields={fields} className="my-4" onSubmit={onSubmit} resubmit>
     <span className="text-gray font-bold">{name}</span>
     <Divider className="my-2" />
     <fieldset
-      className="grid grid-cols-2 w-full gap-x-4 max-w-screen-sm"
+      className="grid grid-cols-2 w-full gap-y-4 gap-x-4 max-w-screen-sm"
       name={name}
     >
       {children}
@@ -226,9 +271,9 @@ const Field = ({
   field,
   ...props
 }: {
-  disabled?: boolean
   className?: string
   field: UseField<any>
+  [x: string]: any
 }) => <Input {...props} field={field} className={className} />
 
 export default Profile

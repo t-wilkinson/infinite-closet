@@ -2,17 +2,16 @@ import React from 'react'
 import axios from 'axios'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
-import { Input } from '@/Form'
-import { PaymentWrapper } from '@/Form/Payments'
-import { useFields, cleanFields } from '@/Form/useFields'
+import { Warning, Input, useFields, Submit, Form } from '@/Form'
+import { Icon, iconClose, iconCheck } from '@/Icons'
 import { useSignin } from '@/User'
-import {BlueLink, Button, Icon } from '@/components'
+import { BlueLink } from '@/components'
 import { fetchAPI } from '@/utils/api'
 import { StrapiUser } from '@/utils/models'
 import useAnalytics from '@/utils/useAnalytics'
 
-import './CheckoutForm.module.css'
-import { iconClose, iconCheck } from '@/components/Icons'
+export * from './PaymentWrapper'
+// import './CheckoutForm.module.css'
 
 const toTitleCase = (string: string) =>
   string.charAt(0).toUpperCase() + string.slice(1)
@@ -20,7 +19,7 @@ const toTitleCase = (string: string) =>
 export const PaymentMethods = ({ user, state, dispatch }) => {
   return (
     <div className="space-y-4">
-      {state.paymentMethods.map((paymentMethod) => (
+      {state.paymentMethods.map((paymentMethod: any) => (
         <PaymentMethod
           key={paymentMethod.id}
           state={state}
@@ -54,6 +53,7 @@ export const PaymentMethod = ({
   return (
     <div className="relative">
       <button
+        type="button"
         className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
       ${id === state.paymentMethod ? 'border-black' : ''}
       `}
@@ -114,13 +114,7 @@ type AddPaymentMethod = {
 }
 
 export const AddPaymentMethod = ({ user, state, dispatch }) => (
-  <PaymentWrapper>
-    <AddPaymentMethodFormWrapper
-      user={user}
-      state={state}
-      dispatch={dispatch}
-    />
-  </PaymentWrapper>
+  <AddPaymentMethodFormWrapper user={user} state={state} dispatch={dispatch} />
 )
 
 export const AddPaymentMethodFormWrapper = ({ user, state, dispatch }) => {
@@ -168,41 +162,50 @@ const AddPaymentMethodHeader = ({ onClose }) => (
   </>
 )
 
-export const Authorise = ({ setAuthorisation, authorised }) => (
+export const Authorize = ({ field }) => (
   <button
-    onClick={() => setAuthorisation(!authorised)}
+    onClick={() => field.setValue(!field.value)}
     aria-label="Authorize Infinite Closet to handle card details"
+    type="button"
+    className="flex flex-col"
   >
-    <div className="flex-row items-center">
+    <div className="flex flex-row items-center">
       <div className="items-center justify-center w-5 h-5 bg-white border border-black rounded-sm mr-4">
-        {authorised && <Icon icon={iconCheck} className="w-3 h-3" />}
+        {field.value && <Icon icon={iconCheck} className="w-3 h-3" />}
       </div>
       <span className="w-full text-left">
         I authorise Infinite Closet to send instructions to the financial
         institution that issued my card to take payments from my card account in
-        accordance with the {' '}
-        <BlueLink href="/terms-and-conditions" label="terms and conditions" />
-        .
+        accordance with the{' '}
+        <BlueLink href="/terms-and-conditions" label="terms and conditions" />.
       </span>
     </div>
+    <Warning warnings={field.errors} />
   </button>
 )
 
 export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
   const [succeeded, setSucceeded] = React.useState(false)
-  const [error, setError] = React.useState(null)
   const [processing, setProcessing] = React.useState(false)
   const [disabled, setDisabled] = React.useState(true)
   const [clientSecret, setClientSecret] = React.useState('')
-  const [authorised, setAuthorisation] = React.useState(false)
   const stripe = useStripe()
   const elements = useElements()
   const analytics = useAnalytics()
-  const fields = useFields({
-    name: {
+
+  const fields = useFields<{
+    authorized: boolean
+    billingName: string
+  }>({
+    authorized: {
+      constraints: 'selected',
+      default: false,
+      errorMessage: 'Please authorise us to use this payment method',
+    },
+    billingName: {
       label: 'Billing Name',
       constraints: 'required',
-      default: `${user.firstName} ${user.lastName}`,
+      default: `${user.firstName || ''} ${user.lastName || ''}`,
     },
   })
 
@@ -215,31 +218,30 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
     }
   }, [user])
 
-  const handleChange = async (event) => {
+  const handleChange = async (event: any) => {
     setDisabled(event.empty)
-    setError(event.error ? event.error.message : '')
+    fields.form.setErrors(event.error ? event.error.message : '')
   }
 
-  const addPaymentMethod = async (e) => {
-    const cleaned = cleanFields(fields)
+  const addPaymentMethod = async (e: React.SyntheticEvent) => {
+    const cleaned = fields.clean()
     e.preventDefault()
     setProcessing(true)
     const payload = await stripe.confirmCardSetup(clientSecret, {
       payment_method: {
         card: elements.getElement(CardElement),
         billing_details: {
-          name: cleaned.name,
-          email: user.email,
-          phone: user.phoneNumber,
+          name: cleaned.billingName || undefined,
+          email: user.email || undefined,
+          phone: user.phoneNumber || undefined,
         },
       },
     })
 
     if (payload.error) {
-      setError(`Payment failed ${payload.error.message}`)
       setProcessing(false)
+      throw `Payment failed ${payload.error.message}`
     } else {
-      setError(null)
       setProcessing(false)
       setSucceeded(true)
       analytics.logEvent('add_payment_info', {
@@ -251,15 +253,16 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-30 bg-black bg-opacity-50 items-center justify-center">
-      <form
+      <Form
         id="payment-form"
+        fields={fields}
         className="w-full max-w-sm w-full p-6 bg-white rounded-lg relative"
-        onSubmit={(e) => e.preventDefault()}
+        onSubmit={addPaymentMethod}
       >
         <AddPaymentMethodHeader onClose={onClose} />
 
-        <Input {...fields.name} />
-        <div className="my-8 border border-gray rounded-sm p-4">
+        <Input field={fields.get('billingName')} />
+        <div className="my-4 border border-gray rounded-sm p-4">
           <CardElement
             id="card-element"
             options={cardStyle}
@@ -268,35 +271,17 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
         </div>
 
         <div className="mb-4">
-          <Authorise
-            setAuthorisation={setAuthorisation}
-            authorised={authorised}
-          />
+          <Authorize field={fields.get('authorized')} />
         </div>
 
-        <div className="w-full items-center">
-          <Button
-            className="w-full"
-            disabled={processing || disabled || succeeded || !authorised}
-            onClick={addPaymentMethod}
-          >
-            {processing ? (
-              <div className="spinner w-full" id="spinner">
-                ...
-              </div>
-            ) : (
-              'Submit'
-            )}
-          </Button>
-        </div>
-
-        {/* Show any error that happens when processing the payment */}
-        {error && (
-          <div className="text-error" role="alert">
-            {error}
-          </div>
-        )}
-      </form>
+        <Submit
+          className="w-full"
+          field={fields.form}
+          disabled={processing || disabled || succeeded}
+        >
+          Submit
+        </Submit>
+      </Form>
     </div>
   )
 }

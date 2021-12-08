@@ -1,7 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 
-import Form from '@/Form'
 import { accountActions } from '@/Account/slice'
 import { useDispatch } from '@/utils/store'
 import { Icon } from '@/components'
@@ -32,17 +31,15 @@ export const Popup = ({ popup }) => {
     `}
       onClick={() => dispatch(accountActions.hidePopup())}
     >
-      <Form onClick={(e) => e.stopPropagation()}>
-        <button
-          className="absolute top-0 right-0 m-4 z-20"
-          onClick={() => dispatch(accountActions.hidePopup())}
-          type="button"
-        >
-          <Icon icon={iconClose} size={20} />
-        </button>
-        <div className="h-3" />
-        <PopupForm />
-      </Form>
+      <button
+        className="absolute top-0 right-0 m-4 z-20"
+        onClick={() => dispatch(accountActions.hidePopup())}
+        type="button"
+      >
+        <Icon icon={iconClose} size={20} />
+      </button>
+      <div className="h-3" />
+      <PopupForm />
     </div>
   )
 }

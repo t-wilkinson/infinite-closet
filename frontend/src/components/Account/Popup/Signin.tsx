@@ -4,7 +4,7 @@ import Signin from '@/Account/Signin'
 import { useDispatch } from '@/utils/store'
 import { accountActions } from '@/Account/slice'
 
-export const Page = () => {
+export const PopupSignin = () => {
   const dispatch = useDispatch()
 
   return (
@@ -27,4 +27,4 @@ export const Page = () => {
   )
 }
 
-export default Page
+export default PopupSignin

@@ -1,34 +1,65 @@
 import React from 'react'
 import axios from 'axios'
 
+import { useFields, Form, Input, Submit, UseFields } from '@/Form'
+import { useSignin } from '@/User'
+import { Icon, iconClose } from '@/Icons'
 import { StrapiAddress } from '@/utils/models'
-import { Icon } from '@/components'
-import {Form, Input, Submit, useFields} from '@/Form/index_'
 import useAnalytics from '@/utils/useAnalytics'
 
-import { useSignin } from './'
-import { iconClose } from '@/components/Icons'
+export type AddressFields = UseFields<{
+  fullName: string
+  mobileNumber: string
+  addressLine1: string
+  addressLine2: string
+  town: string
+  postcode: string
+}>
 
-export const useAddressFields = (address: Partial<StrapiAddress> = {}) => {
-  const str = (field: string) =>
+export const useAddressFields = (
+  address: Partial<StrapiAddress> = {}
+): AddressFields => {
+  const def = (field: string) =>
     typeof address[field] === 'string' ? address[field] : ''
   const fields = useFields({
-    fullName: { constraints: 'required', default: str('fullName') },
-    mobileNumber: { constraints: 'required', default: str('phoneNumber') },
+    fullName: { constraints: 'required', default: def('fullName') },
+    mobileNumber: { constraints: 'required', default: def('phoneNumber') },
     addressLine1: {
       constraints: 'required',
       label: 'Street Address',
-      default: str('addressLine1'),
+      default: def('addressLine1'),
     },
     addressLine2: {
       constraints: '',
       label: 'Apt, Suit, etc.',
-      default: str('addressLine2'),
+      default: def('addressLine2'),
     },
-    town: { constraints: 'required', default: str('town') },
-    postcode: { constraints: 'required', default: str('postcode') },
+    town: { constraints: 'required', default: def('town') },
+    postcode: { constraints: 'required', default: def('postcode') },
   })
   return fields
+}
+
+export const validatePostcode = async (value: string) => {
+  if (
+    process.env.NODE_ENV === 'test' ||
+    process.env.NODE_ENV === 'production'
+  ) {
+    return axios
+      .get(`/addresses/verify/${value}`)
+      .then((res) => {
+        if (res.data.valid) {
+          return
+        } else {
+          throw new Error('Postcode not served')
+        }
+      })
+      .catch((err) => {
+        throw err
+      })
+  } else {
+    return
+  }
 }
 
 export const Addresses = ({ userId, addresses, state, select }) => {
@@ -52,7 +83,7 @@ export const Address = ({
   select,
   selected,
   userId,
-  fullName='',
+  fullName = '',
   addressLine1,
   addressLine2 = '',
   town,
@@ -161,57 +192,33 @@ export const AddAddress = ({ user, onSubmit }) => {
   return <EditAddress onSubmit={createAddress} fields={fields} />
 }
 
-export const validatePostcode = async (value) => {
-  if (
-    process.env.NODE_ENV === 'test' ||
-    process.env.NODE_ENV === 'production'
-  ) {
-    return axios
-      .get(`/addresses/verify/${value}`)
-      .then((res) => {
-        if (res.data.valid) {
-          return
-        } else {
-          throw new Error('Postcode not served')
-        }
-      })
-      .catch((err) => {
-        throw err
-      })
-  } else {
-    return
-  }
-}
-
-export const EditAddress = ({ onSubmit, fields }) => {
-  const [valid, setValid] = React.useState(true)
+export const EditAddress = ({
+  onSubmit,
+  fields,
+}: {
+  onSubmit: () => void
+  fields: AddressFields
+}) => {
   const onSubmitInternal = async () => {
-    return validatePostcode(fields.postcode.value)
-    .then(() => {
-      setValid(true)
-      return onSubmit()
-    })
-    .catch((err) => {
-      setValid(false)
-      throw err
-    })
+    return validatePostcode(fields.value('postcode'))
+      .then(() => {
+        return onSubmit()
+      })
+      .catch(() => {
+        throw 'Sorry, we do not currently serve this location.'
+      })
   }
 
   return (
     <Form fields={fields} onSubmit={onSubmitInternal} className="max-w-lg">
-      <div className="grid grid-flow-row grid-cols-2 w-full gap-x-4">
-        {Object.keys(fields.fields).map((field) => (
-          <Input key={field} field={fields[field]} />
+      <div className="grid grid-flow-row grid-cols-2 w-full gap-x-4 gap-y-4">
+        {Object.values(fields.fields).map((field) => (
+          <Input key={field.name} field={field} />
         ))}
       </div>
-      {!valid && (
-        <span className="text-warning mb-2 inline-block">
-          Sorry, we do not currently serve this location.
-        </span>
-      )}
-      <div className="w-full items-center">
-        <Submit field={fields.form} className="w-full">Submit</Submit>
-      </div>
+      <Submit field={fields.form} className="w-full">
+        Submit
+      </Submit>
     </Form>
   )
 }

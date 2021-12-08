@@ -36,6 +36,7 @@ async function validateAddress(address) {
     return false
   }
   const valid = await api.verify(address.postcode)
+
   return (
     valid &&
     ['addressLine1', 'town', 'postcode', 'email'].every(

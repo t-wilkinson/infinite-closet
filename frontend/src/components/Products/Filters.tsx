@@ -99,8 +99,8 @@ const FilterWrapper = ({ selectFilter, filter }) => {
 
 const FilterFooter = () => {
   const dispatch = useDispatch()
-  const router = useRouter()
-  const panel = useSelector((state) => productsSelectors.panelSelector(state))
+  useRouter()
+  useSelector((state) => productsSelectors.panelSelector(state))
   // const applyFilterPanel = () => {
   //   dispatch(productsActions.closePanel())
 
