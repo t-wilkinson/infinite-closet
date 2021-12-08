@@ -41,7 +41,8 @@ export const useRegisterUser = ({
           email: fields.email || null,
           password: fields.password || null,
           subscribed: fields.mailingList ? 'mailinglist' : '',
-        }
+        },
+        {withCredentials: false}
       )
       .then((data) => {
         dispatch(userActions.signin(data.user))

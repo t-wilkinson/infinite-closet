@@ -7,7 +7,7 @@ import useAnalytics from '@/utils/useAnalytics'
 import { useDispatch } from '@/utils/store'
 import { userActions } from '@/User/slice'
 import { useFields, Form, Submit, Password, FormHeader, OR } from '@/Form'
-import {StrapiUser} from '@/utils/models'
+import { StrapiUser } from '@/utils/models'
 
 export const ResetPassword = () => {
   const fields = useFields({
@@ -21,12 +21,15 @@ export const ResetPassword = () => {
   const onSubmit = async () => {
     const cleaned = fields.clean()
     return axios
-    .post<{user: StrapiUser}>(
+      .post<{ user: StrapiUser }>(
         '/auth/reset-password',
         {
           code,
           password: cleaned.password,
           passwordConfirmation: cleaned.password,
+        },
+        {
+          withCredentials: false,
         }
       )
       .then((data) => {

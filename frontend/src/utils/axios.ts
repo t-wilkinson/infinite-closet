@@ -35,11 +35,4 @@ export function getURL(url: string) {
   return `${process.env.NEXT_PUBLIC_BACKEND}${url}`
 }
 
-export async function fetchAPI(path: string) {
-  const { data } = await axios.get(path, {
-    withCredentials: true,
-  })
-  return data
-}
-
 export default axios

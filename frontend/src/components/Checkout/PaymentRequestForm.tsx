@@ -31,6 +31,11 @@ export const PaymentRequestForm = ({
 
   // Create/Update paymentintent
   React.useEffect(() => {
+    if (cart.length === 0) {
+      setPaymentIntent(null)
+      return
+    }
+
     if (paymentIntent) {
       axios
         .put(`/orders/checkout/payment-intents/${paymentIntent.id}`, {

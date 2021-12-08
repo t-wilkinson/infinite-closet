@@ -16,7 +16,7 @@ import {
 } from '@/Form'
 import { userActions } from '@/User/slice'
 import { BlueLink } from '@/components'
-import {StrapiUser} from '@/utils/models'
+import { StrapiUser } from '@/utils/models'
 
 export const Signin = ({ onSubmit = () => {} }) => {
   const fields = useFields({
@@ -29,12 +29,13 @@ export const Signin = ({ onSubmit = () => {} }) => {
   const signinUser = async () => {
     const cleaned = fields.clean()
     return axios
-        .post<{user?: StrapiUser}>(
+      .post<{ user?: StrapiUser }>(
         '/auth/local',
         {
           identifier: cleaned.email,
           password: cleaned.password,
-        }
+        },
+        { withCredentials: false }
       )
       .then((data) => {
         dispatch(userActions.signin(data.user))

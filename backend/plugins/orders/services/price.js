@@ -1,5 +1,5 @@
 'use strict'
-const { day } = require('../../../utils')
+const { day, toId } = require('../../../utils')
 
 const INSURANCE_PRICE = 5
 const OG_USER_DISCOUNT_FLAT = 5
@@ -50,7 +50,7 @@ async function userDiscount(user) {
   // Users that signed up before prelaunch (2021-07-20)
   const isOgUser = await strapi.query('user', 'users-permissions').findOne(
     {
-      id: user,
+      id: toId(user),
       created_at_lt: day('2021-07-20').toJSON(),
     },
     []
@@ -58,7 +58,7 @@ async function userDiscount(user) {
 
   const hasOrderedBefore = await strapi.query('order', 'orders').findOne(
     {
-      user,
+      user: toId(user),
       status_in: ['planning', 'shipping', 'cleaning', 'completed'],
       shippingDate_gt: day('2021-07-30').toJSON(), // When the discount is first applied
     },
@@ -145,7 +145,7 @@ async function existingCoupons(user, code) {
   }
 
   return (
-    await strapi.query('order', 'orders').find({ user, 'coupon.code': code })
+    await strapi.query('order', 'orders').find({ user: toId(user), 'coupon.code': code })
   ).map((order) => order.coupon)
 }
 
