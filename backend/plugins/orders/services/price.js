@@ -126,7 +126,7 @@ async function summary({ cart, user, couponCode }) {
     shipping: shippingPrice,
     insurance: insurancePrice,
     discount: cart.length > 0 ? discountPrice : 0,
-    coupon,
+    coupon: cart.length > 0 ? coupon : undefined,
     total,
     amount: strapi.services.price.toAmount(total),
   }
