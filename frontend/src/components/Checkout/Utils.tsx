@@ -1,13 +1,14 @@
 import React from 'react'
-import axios from 'axios'
 import * as Stripe from '@stripe/react-stripe-js'
 
+import axios from '@/utils/axios'
 import { CartUtils } from '@/Cart/slice'
 import { CouponCode, UseField, Coupon } from '@/Form'
 import { validatePostcode } from '@/Form/Address'
 import { fmtPrice } from '@/utils/helpers'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
+import {Contact} from '@/types'
 
 export const Summary = ({
   userId = undefined,
@@ -113,8 +114,8 @@ function handleStripeJsResult(
       .post('/orders/checkout', {
         paymentIntent: result.paymentIntent.id,
         ...body,
-      })
-      .then((res) => handleServerResponse(res.data, stripe, form))
+      }, {withCredentials: false})
+      .then((data) => handleServerResponse(data, stripe, form))
   }
 }
 
@@ -135,10 +136,7 @@ export const useCheckoutSuccess = (form: UseField) => {
   }
 }
 
-export const toContact = ({email, address}: {
-  email: string
-  address: {fullName: string}
-}) =>
+export const toContact = ({email, address}: Contact) =>
   ({
   email,
   fullName: address.fullName,
@@ -172,15 +170,12 @@ export const useCheckout = (form: UseField) => {
             paymentMethod: res.paymentMethod.id,
             orders: cart.map((item) => item.order),
             couponCode,
-          })
+          }, {withCredentials: false})
         }
       })
 
-      .then((res) => res.data)
       .then((res) => handleServerResponse(res, stripe, form))
-
       .then(onCheckoutSuccess)
-
       .catch((error) => {
         if (error.message) {
           throw error.message

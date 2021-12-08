@@ -1,7 +1,7 @@
 import React from 'react'
-import axios from 'axios'
 import dayjs from 'dayjs'
 
+import axios from '@/utils/axios'
 import useAnalytics from '@/utils/useAnalytics'
 import {
   DateOfBirth,
@@ -83,13 +83,12 @@ const useUpdateUser = () => {
           })
         : undefined
     return axios
-      .put(
+        .put<void>(
         `/users/${user.id}`,
         {
           ...cleaned,
           dateOfBirth,
-        },
-        { withCredentials: true }
+        }
       )
       .then(() => setStatus('changed'))
       .then(() =>

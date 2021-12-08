@@ -1,9 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { RootState } from '@/utils/store'
+import {Summary} from '@/types'
 
 import CartUtils from './utils'
-import { State } from './types'
+import { State, Cart } from './types'
 
 export { CartUtils }
 
@@ -20,28 +21,28 @@ export const slice = createSlice({
   initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(CartUtils.summary.fulfilled, (state, action) => {
+    builder.addCase(CartUtils.summary.fulfilled, (state, action: PayloadAction<Summary>) => {
       state.checkoutSummary = action.payload
     })
-    builder.addCase(CartUtils.insert.fulfilled, (state, action) => {
+    builder.addCase(CartUtils.insert.fulfilled, (state, action: PayloadAction<Cart>) => {
       state.checkoutCart = action.payload
       state.count = Object.values(action.payload).length
     })
-    builder.addCase(CartUtils.view.fulfilled, (state, action) => {
+    builder.addCase(CartUtils.view.fulfilled, (state, action: PayloadAction<Cart>) => {
       state.checkoutCart = action.payload
       state.count = Object.values(action.payload).length
     })
-    builder.addCase(CartUtils.history.fulfilled, (state, action) => {
+    builder.addCase(CartUtils.history.fulfilled, (state, action: PayloadAction<Cart>) => {
       state.orderHistory = action.payload
       state.count = Object.values(action.payload).length
     })
-    builder.addCase(CartUtils.count.fulfilled, (state, action) => {
+    builder.addCase(CartUtils.count.fulfilled, (state, action: PayloadAction<number>) => {
       state.count = action.payload
     })
     builder.addCase(CartUtils.remove.fulfilled, (state) => {
       state.count = state.count - 1
     })
-    builder.addCase(CartUtils.add.fulfilled, (state, action) => {
+    builder.addCase(CartUtils.add.fulfilled, (state, action: PayloadAction<Cart>) => {
       state.checkoutCart = action.payload
       state.count = state.count + 1
     })

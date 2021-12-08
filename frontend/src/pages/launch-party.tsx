@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import axios from 'axios'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -11,6 +10,7 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 dayjs.extend(isSameOrBefore)
 
+import axios from '@/utils/axios'
 import useAnalytics from '@/utils/useAnalytics'
 import { useSelector } from '@/utils/store'
 import { Input } from '@/Form'

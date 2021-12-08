@@ -1,11 +1,11 @@
 import React from 'react'
-import axios from 'axios'
 import dayjs, { Dayjs } from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import timezone from 'dayjs/plugin/timezone'
 import isBetween from 'dayjs/plugin/isBetween'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
+import axios from '@/utils/axios'
 import { StrapiProduct, StrapiOrder } from '@/utils/models'
 import { Icon } from '@/components'
 import { iconLeft, iconClose, iconRight } from '@/components/Icons'
@@ -187,13 +187,17 @@ const Days = ({
 
     // TODO: should not refetch everytime new date overed over
     axios
-      .post('/orders/dates/valid', {
-        dates: validDays,
-        product: product.id,
-        size: (sizing.get(product.sizes, size) || product.sizes[0]).size,
-        rentalLength,
-      })
-      .then((res) => setValid((valid) => ({ ...valid, ...res.data.valid })))
+      .post(
+        '/orders/dates/valid',
+        {
+          dates: validDays,
+          product: product.id,
+          size: (sizing.get(product.sizes, size) || product.sizes[0]).size,
+          rentalLength,
+        },
+        { withCredentials: false }
+      )
+      .then((data) => setValid((valid) => ({ ...valid, ...data.valid })))
       .catch((err) => console.error(err))
   }, [date])
 

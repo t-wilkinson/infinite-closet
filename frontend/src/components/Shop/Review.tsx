@@ -2,14 +2,14 @@ import React from 'react'
 import Image from 'next/image'
 import dayjs from 'dayjs'
 
-import {StrapiOrder} from '@/utils/models'
-import { getURL } from '@/utils/api'
-import { Icons } from '@/components'
+import { getURL } from '@/utils/axios'
+import { StrapiOrder } from '@/utils/models'
+import { Icons } from '@/Icons'
 import { iconStarFill, iconStarHalf } from '@/Icons'
 
 const Review = ({
   user,
-  review: { fit, rating, images, heading, message, published_at },
+  review: { fit, rating, images, heading, message, created_at },
 }: StrapiOrder) => {
   return (
     <article className="flex bg-white p-4 border border-gray-light rounded-sm relative flex-row justify-between h-80">
@@ -21,7 +21,7 @@ const Review = ({
         <div className="flex-row space-x-4">
           <Rating rating={rating} />
           <span className="text-sm text-gray">
-            {dayjs(published_at).format('DD-MMM-YYYY')}
+            {dayjs(created_at).format('DD-MMM-YYYY')}
           </span>
         </div>
         <strong className="text-2xl font-bold pt-1">{heading}</strong>

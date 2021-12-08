@@ -1,6 +1,6 @@
 import React from 'react'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import Layout from '@/Layout'
 import { SizeChart } from '@/Shop/Size'
 
@@ -9,8 +9,7 @@ export const Page = () => {
 
   React.useEffect(() => {
     axios
-      .get('/size-chart')
-      .then((res) => res.data)
+      .get('/size-chart', { withCredentials: false })
       .then(setSizeChart)
       .catch((err) => console.error(err))
   }, [])

@@ -50,7 +50,7 @@ const reducer = (state: typeof initialState, action: any) => {
 
 type Fields = UseFields<{
   email: string
-  couponCode: Coupon | null
+  couponCode: string
   billingName: string
   password: string
   authorized: boolean
@@ -165,10 +165,16 @@ const Checkout = () => {
           <Cart />
           <PaymentRequestForm
             setVisible={setVisible}
-            couponCode={fields.get('couponCode')}
             coupon={state.coupon}
-            dispatch={dispatch}
-            onCheckout={onCheckout}
+            form={fields.form}
+            onCheckout={() => {
+              fetchCart()
+              analytics.logEvent('purchase', {
+                user: 'guest',
+                type: 'checkout',
+              })
+            }}
+            couponCode={fields.get('couponCode').clean() as string}
           />
           {isVisible && <OR />}
           <CheckoutForm onCheckout={onCheckout} />

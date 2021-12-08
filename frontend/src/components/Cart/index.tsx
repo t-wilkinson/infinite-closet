@@ -8,9 +8,9 @@ import timezone from 'dayjs/plugin/timezone'
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
+import { getURL } from '@/utils/axios'
 import useAnalytics from '@/utils/useAnalytics'
 import { fmtPrice } from '@/utils/helpers'
-import { getURL } from '@/utils/api'
 import { Checkbox } from '@/Form'
 import { Icon, Hover } from '@/components'
 import { rentalLengths } from '@/utils/constants'
@@ -125,9 +125,7 @@ export const CartItem = ({
               </a>
             </Link>
           </span>
-          <button onClick={() => setVisible(!visible)}
-            type="button"
-          >
+          <button onClick={() => setVisible(!visible)} type="button">
             <div className="flex flex-row items-center">
               <span className={`underline ${valid ? '' : 'text-warning'}`}>
                 {startDate} - {endDate}

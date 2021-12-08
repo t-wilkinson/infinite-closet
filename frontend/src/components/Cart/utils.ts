@@ -1,8 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import { RootState } from '@/utils/store'
 import { StrapiOrder } from '@/utils/models'
+import {Summary} from '@/types'
 
 import * as helpers from './helpers'
 import { Orders, Cart } from './types'
@@ -31,26 +32,21 @@ export default {
       return orders
     }
   ),
-  summary: createAsyncThunk<Cart, void>(
+  summary: createAsyncThunk<Summary, void>(
     'cart/summary',
     async (_, { getState }) => {
       const user = getUser(getState)
       const orders = await helpers.getOrders(user)
-      let res: unknown & { data: Cart }
+      let data: Summary
       if (user) {
-        res = await axios.post(
+        data = await axios.post<Summary>(
           `/orders/cart/summary`,
           { orders },
-          {
-            withCredentials: true,
-          }
         )
       } else {
-        res = await axios.post(`/orders/cart/summary`, {
-          orders,
-        })
+        data = await axios.post(`/orders/cart/summary`, { orders }, {withCredentials: false})
       }
-      return res.data
+      return data
     }
   ),
   count: createAsyncThunk<number, void>(
@@ -58,7 +54,7 @@ export default {
     async (_, { getState }) => {
       const user = getUser(getState)
       if (user) {
-        return await axios.get('/orders/cart/count', { withCredentials: true })
+        return await axios.get<number>('/orders/cart/count')
       } else {
         const orders = helpers.getGuestOrders()
         return orders.length
@@ -81,9 +77,9 @@ export default {
     async (order, { getState }) => {
       const user = getUser(getState)
       if (user) {
-        await axios.put(`/orders/${order.id}`, order, { withCredentials: true })
+        await axios.put<void>(`/orders/${order.id}`, order)
       } else {
-        await axios.put(`/orders/${order.id}`, order)
+        await axios.put<void>(`/orders/${order.id}`, order, {withCredentials: false})
         const orders = helpers.getGuestOrders()
         const index = orders.findIndex((v: StrapiOrder) => v.id === order.id)
         orders[index] = { ...orders[index], ...order }
@@ -96,9 +92,9 @@ export default {
     async (order, { getState }) => {
       const user = getUser(getState)
       if (user) {
-        await axios.post('/orders', order, { withCredentials: true })
+        await axios.post<void>('/orders', order)
       } else {
-        order = await axios.post('/orders', order).then((res) => res.data)
+        order = await axios.post<StrapiOrder>('/orders', order, {withCredentials: false})
         const orders = [...helpers.getGuestOrders(), order as StrapiOrder]
         helpers.setGuestOrders(orders)
       }
@@ -130,11 +126,7 @@ export default {
     async (id, { getState }) => {
       const user = getUser(getState)
       if (user) {
-        await axios.put(
-          `/orders/${id}`,
-          { id, status: 'dropped' },
-          { withCredentials: true }
-        )
+        await axios.put<void>(`/orders/${id}`, { id, status: 'dropped' })
       } else {
         const orders = helpers.getGuestOrders()
         const filtered = orders.filter((order: StrapiOrder) => order.id !== id)

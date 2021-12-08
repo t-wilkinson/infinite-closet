@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 
-import { getURL } from '@/utils/api'
+import { getURL } from '@/utils/axios'
 import { Icon } from '@/components'
 import { StrapiFile } from '@/utils/models'
 import { iconLeft, iconDown, iconUp, iconRight } from '@/components/Icons'

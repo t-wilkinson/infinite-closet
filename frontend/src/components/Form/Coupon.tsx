@@ -1,10 +1,10 @@
 import React from 'react'
-import axios from 'axios'
 
-import {StrapiCoupon} from '@/utils/models'
+import axios from '@/utils/axios'
+import { StrapiCoupon } from '@/utils/models'
 
-import {Coupon} from './types'
-import { UseField} from './fields'
+import { Coupon } from './types'
+import { UseField } from './fields'
 import Input from './Input'
 
 type CouponStatus = undefined | 'success' | 'failure'
@@ -27,13 +27,12 @@ export const CouponCode = ({
   const checkPromo = async () => {
     const code = field.clean()
     return axios
-      .post(`/coupons/discount`, {
+      .post<Coupon>(`/coupons/discount`, {
         user,
         code,
         context,
         price,
       })
-      .then((res) => res.data)
       .then((coupon) => {
         if (coupon.valid) {
           setCoupon(coupon)

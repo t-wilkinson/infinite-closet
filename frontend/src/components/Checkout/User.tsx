@@ -1,9 +1,9 @@
 import React from 'react'
-import axios from 'axios'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
+import axios from '@/utils/axios'
 import Cart from '@/Cart'
 import { CartItem } from '@/Cart/types'
 import { CartUtils } from '@/Cart/slice'
@@ -16,7 +16,6 @@ import {
 } from '@/Form/Payment'
 import { Icon, iconClose } from '@/Icons'
 import { BlueLink } from '@/components'
-import { fetchAPI } from '@/utils/api'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
@@ -77,7 +76,7 @@ const StateContext = React.createContext(null)
 const DispatchContext = React.createContext(null)
 const FieldsContext = React.createContext<
   UseFields<{
-    couponCode: Coupon
+    couponCode: string
   }>
 >(null)
 
@@ -116,16 +115,16 @@ export const CheckoutWrapper = ({}) => {
       })
     }
 
-    fetchAPI('/account/payment-methods')
-      .then((res) => {
+    axios.get<any>('/account/payment-methods')
+      .then((data) => {
         dispatch({
           type: 'set-payment-methods',
-          payload: res.paymentMethods,
+          payload: data.paymentMethods,
         })
-        if (res.paymentMethods?.[0]?.id) {
+        if (data.paymentMethods?.[0]?.id) {
           dispatch({
             type: 'choose-payment-method',
-            payload: res.paymentMethods[0].id,
+            payload: data.paymentMethods[0].id,
           })
         }
       })
@@ -160,21 +159,17 @@ const Checkout = ({ fetchCart, analytics }) => {
   const checkout = async () => {
     const cleanedFields = fields.clean()
     return axios
-      .post(
-        `/orders/checkout/${user.id}`,
-        {
-          contact: {
-            fullName: `${user.firstName} ${user.lastName}`,
-            nickName: user.firstName,
-            email: user.email,
-          },
-          address: state.address,
-          paymentMethod: state.paymentMethod,
-          orders: cart.map((item) => item.order),
-          couponCode: cleanedFields.couponCode,
+      .post<void>(`/orders/checkout/${user.id}`, {
+        contact: {
+          fullName: `${user.firstName} ${user.lastName}`,
+          nickName: user.firstName,
+          email: user.email,
         },
-        { withCredentials: true }
-      )
+        address: state.address,
+        paymentMethod: state.paymentMethod,
+        orders: cart.map((item) => item.order),
+        couponCode: cleanedFields.couponCode,
+      })
       .then(() => {
         fetchCart()
         analytics.logEvent('purchase', {
@@ -236,12 +231,11 @@ const Checkout = ({ fetchCart, analytics }) => {
           <Cart />
           <PaymentRequestForm
             setVisible={setVisible}
-            couponCode={fields.get('couponCode')}
+            couponCode={fields.get('couponCode').clean()}
             coupon={state.coupon}
-            dispatch={dispatch}
+            form={fields.form}
             onCheckout={() => {
               fetchCart()
-              fields.form.setValue('success')
               analytics.logEvent('purchase', {
                 user: user?.email,
                 type: 'checkout',

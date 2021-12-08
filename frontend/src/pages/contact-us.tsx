@@ -1,6 +1,6 @@
 import React from 'react'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import { MarkdownWrapper, fetchMarkdown } from '@/Markdown'
 import { useFields, Form, Input, Submit } from '@/Form'
 
@@ -14,7 +14,7 @@ export const Page = ({ data }) => {
 
   const sendMessage = async () => {
     const cleaned = fields.clean()
-    return axios.post('/chat/contact', cleaned).catch(() => {
+    return axios.post('/chat/contact', cleaned, {withCredentials: false}).catch(() => {
       throw 'Unable to send your message, please try again later.'
     })
   }

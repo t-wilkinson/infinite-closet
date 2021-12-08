@@ -1,8 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
-import axios from 'axios'
 import { useRouter } from 'next/router'
 
+import axios from '@/utils/axios'
 import {
   useFields,
   Form,
@@ -15,6 +15,7 @@ import {
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { userActions } from '@/User/slice'
+import {StrapiUser} from '@/utils/models'
 
 interface Register {
   email?: string
@@ -32,7 +33,7 @@ export const useRegisterUser = ({
 
   const registerUser = async (fields: { [key: string]: any }) => {
     return axios
-      .post(
+    .post<{user: StrapiUser}>(
         '/auth/local/register',
         {
           firstName: fields.firstName || null,
@@ -40,11 +41,10 @@ export const useRegisterUser = ({
           email: fields.email || null,
           password: fields.password || null,
           subscribed: fields.mailingList ? 'mailinglist' : '',
-        },
-        { withCredentials: true }
+        }
       )
-      .then((res) => {
-        dispatch(userActions.signin(res.data.user))
+      .then((data) => {
+        dispatch(userActions.signin(data.user))
         analytics.logEvent('form_submit', {
           type: 'account.register',
           user: fields.email,
@@ -84,7 +84,9 @@ export const Register = ({
   const registerUser = useRegisterUser({ onSubmit })
 
   return (
-    <Form fields={fields} onSubmit={() => registerUser(fields.clean())}
+    <Form
+      fields={fields}
+      onSubmit={() => registerUser(fields.clean())}
       className="max-w-lg p-4 bg-white rounded-md"
     >
       <FormHeader label="Join Us for Free" />

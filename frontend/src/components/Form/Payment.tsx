@@ -1,12 +1,11 @@
 import React from 'react'
-import axios from 'axios'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
+import axios from '@/utils/axios'
 import { Warning, Input, useFields, Submit, Form } from '@/Form'
 import { Icon, iconClose, iconCheck } from '@/Icons'
 import { useSignin } from '@/User'
 import { BlueLink } from '@/components'
-import { fetchAPI } from '@/utils/api'
 import { StrapiUser } from '@/utils/models'
 import useAnalytics from '@/utils/useAnalytics'
 
@@ -43,9 +42,7 @@ export const PaymentMethod = ({
 
   const removePaymentMethod = () => {
     axios
-      .delete(`/account/${userId}/payment-methods/${id}`, {
-        withCredentials: true,
-      })
+      .delete<void>(`/account/${userId}/payment-methods/${id}`)
       .then(() => signin())
       .catch((err) => console.error(err))
   }
@@ -125,11 +122,11 @@ export const AddPaymentMethodFormWrapper = ({ user, state, dispatch }) => {
       payload: setupIntent.payment_method,
     })
 
-    fetchAPI('/account/payment-methods')
-      .then((res) => {
+    axios.get('/account/payment-methods')
+      .then((paymentMethods) => {
         dispatch({
           type: 'set-payment-methods',
-          payload: res.paymentMethods,
+          payload: paymentMethods,
         })
       })
       .catch((err) => console.error(err))
@@ -212,8 +209,8 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
   React.useEffect(() => {
     if (user) {
       axios
-        .post('/account/wallet', {}, { withCredentials: true })
-        .then((res) => setClientSecret(res.data.clientSecret))
+        .post<{clientSecret: string}>('/account/wallet', {})
+        .then((data) => setClientSecret(data.clientSecret))
         .catch((err) => console.error(err))
     }
   }, [user])

@@ -1,6 +1,6 @@
 import React from 'react'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import useAnalytics from '@/utils/useAnalytics'
 import {
   useFields,
@@ -43,11 +43,15 @@ const WaitlistForm = ({}) => {
     )?.label
 
     return axios
-      .post('/account/waitlist', {
-        ...cleaned,
-        subscribe: cleaned.subscribe,
-        marketing: marketing,
-      })
+      .post<void>(
+        '/account/waitlist',
+        {
+          ...cleaned,
+          subscribe: cleaned.subscribe,
+          marketing: marketing,
+        },
+        { withCredentials: false }
+      )
       .then(() => {
         analytics.logEvent('form_submit', {
           type: 'waitlist',

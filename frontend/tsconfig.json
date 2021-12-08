@@ -2,9 +2,12 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/components/*", "src/*", "public/*"],
-      "*": ["types/*.d.ts"]
+      "@/*": ["src/components/*", "src/*", "public/*"]
     },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types/"
+    ],
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext", "es2019"],
     "allowJs": true,

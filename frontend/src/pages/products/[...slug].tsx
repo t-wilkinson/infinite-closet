@@ -1,8 +1,8 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import qs from 'qs'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import useData from '@/Layout/useData'
 import { useDispatch } from '@/utils/store'
 import { Filters, Filter, ProductRoutes, SortBy } from '@/Products/types'
@@ -72,9 +72,10 @@ export async function getServerSideProps({ params, query }) {
     categories: query.slug,
   })
 
-  const { products, count, filters, categories } = await axios
-    .get(`/products/filters?${_paging}&${_where}&${_filters}`)
-    .then((res) => res.data)
+  const { products, count, filters, categories } = await axios.get(
+    `/products/filters?${_paging}&${_where}&${_filters}`,
+    { withCredentials: false }
+  )
 
   for (const product of products) {
     for (const [key, size] of Object.entries(product.sizes as StrapiSize[])) {

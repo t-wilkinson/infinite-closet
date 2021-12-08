@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -7,6 +6,7 @@ import { Product } from '@/Products/ProductItems'
 import { FacebookMessenger, Button } from '@/components'
 import Layout from '@/Layout'
 import { StrapiProduct } from '@/utils/models'
+import axios from '@/utils/axios'
 
 import whyRentPic from '@/media/home/why-rent.png'
 import formalClothingPic from '@/media/home/formal-clothing.png'
@@ -505,20 +505,20 @@ const Review = ({ quote, name, image, smallPosition="center"}) => {
 }
 
 export async function getStaticProps() {
-  let products = [
+  const productSlugs = [
     'greta-outer-space-dress',
     'illegal-halter',
     'polka-blue-dots',
     'simone-night-fall',
   ]
-  products = await axios
-    .get(`/products?slug_in=${products.join('&slug_in=')}`)
-    .then((res) => res.data)
+  const products = await axios
+    .get<StrapiProduct[]>(`/products?slug_in=${productSlugs.join('&slug_in=')}`, {withCredentials: false})
     .then((res) =>
       res.sort(
-        (p1, p2) => products.indexOf(p1.slug) - products.indexOf(p2.slug)
+        (p1, p2) => productSlugs.indexOf(p1.slug) - productSlugs.indexOf(p2.slug)
       )
     )
+    .catch(() => [])
   return {
     props: {
       products,

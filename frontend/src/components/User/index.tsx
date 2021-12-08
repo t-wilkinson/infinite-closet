@@ -3,21 +3,22 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 
+import { StrapiUser } from '@/utils/models'
 import { useDispatch } from '@/utils/store'
 import { userActions } from '@/User/slice'
 import { useProtected } from '@/User/Protected'
-import {CartUtils} from '@/Cart/slice'
+import { CartUtils } from '@/Cart/slice'
 
 const signin = (dispatch: any) =>
   axios
-    .post('/account/signin', {}, { withCredentials: true })
-    .then((res) => {
-      if (res.data.user) {
+    .post<{ user?: StrapiUser }>('/account/signin', {})
+    .then((data) => {
+      if (data.user) {
         // loggedIn tracks if the user has logged into the web site
         window.localStorage.setItem('logged-in', 'true')
-        dispatch(userActions.signin(res.data.user))
+        dispatch(userActions.signin(data.user))
 
-        return res.data.user
+        return data.user
       } else {
         dispatch(userActions.signout())
         throw new Error('User not found')
@@ -58,7 +59,7 @@ const SideMenu = () => {
 
   const signout = () => {
     axios
-      .post('/account/signout', {}, { withCredentials: true })
+      .post<void>('/account/signout', {})
       .then(() => {
         router.push('/')
         dispatch(userActions.signout())
@@ -73,7 +74,10 @@ const SideMenu = () => {
       <SideLink active={/profile/.test(router.pathname)} href="/user/profile">
         Profile
       </SideLink>
-      <SideLink active={/order-history/.test(router.pathname)} href="/user/order-history">
+      <SideLink
+        active={/order-history/.test(router.pathname)}
+        href="/user/order-history"
+      >
         Order history
       </SideLink>
       <SideButton onClick={signout}>Sign out</SideButton>

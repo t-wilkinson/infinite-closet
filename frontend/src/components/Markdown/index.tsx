@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
-import axios from 'axios'
 import gfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import dayjs from 'dayjs'
 import Link from 'next/link'
 
+import axios from '@/utils/axios'
 import Layout from '@/Layout'
 import { ScrollUp, Divider } from '@/components'
 
@@ -104,12 +104,15 @@ export const MarkdownWrapper = ({
 
 export const TableOfContents = () => {
   const [headings, setHeadings] = React.useState([])
-  const [selected, setSelected] = React.useState(null)
+  // const [selected, setSelected] = React.useState(null)
 
   React.useEffect(() => {
     const headings = []
 
-    const toc = (hier, heading) => {
+    const toc = (
+      hier: number,
+      heading: { tagName: string; innerText: string }
+    ) => {
       const lvl = Number(heading.tagName.match(/\d+/)[0]) - 1
       if (lvl === 2 && headings[hier]) {
         headings[hier].children.push(heading.innerText)
@@ -127,7 +130,7 @@ export const TableOfContents = () => {
     }
 
     Array.from(document.querySelectorAll('h2,h3')).reduce(
-      (hier, heading) => toc(hier, heading),
+      (hier, heading: HTMLHeadingElement) => toc(hier, heading),
       -1
     ),
       setHeadings(headings)
@@ -141,10 +144,10 @@ export const TableOfContents = () => {
     <div className="w-full sm:w-1/3 items-start p-4 space-y-2">
       <Divider />
       <nav className="flex flex-col items-center sm:items-start w-full space-y-2">
-        {headings.map(({ heading, children }) => (
+        {headings.map(({ heading }) => (
           <React.Fragment key={heading}>
             <Link href={`#${headingToID(heading)}`}>
-              <a onClick={() => setSelected(heading)}>
+              <a>
                 <span className="text-lg font-subheader hover:underline">
                   {heading}
                 </span>
@@ -192,7 +195,9 @@ export const fetchMarkdown =
     return {
       props: {
         data: {
-          ...(await axios.get(`${path}?slug=${slug}`)).data[0],
+          ...(
+            await axios.get(`${path}?slug=${slug}`, { withCredentials: false })
+          )[0],
         },
       },
     }

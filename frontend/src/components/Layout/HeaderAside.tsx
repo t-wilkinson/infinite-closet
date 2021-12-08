@@ -1,8 +1,8 @@
 import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import { routes } from '@/utils/constants'
 import { useDispatch, useSelector } from '@/utils/store'
 import { Icon, Divider } from '@/components'
@@ -21,8 +21,8 @@ const HeaderAside = () => {
 
   React.useEffect(() => {
     axios
-      .get('/products/routes')
-      .then((res) => setServerRoutes(res.data))
+      .get('/products/routes', { withCredentials: false })
+      .then((data) => setServerRoutes(data))
       .catch((err) => console.error(err))
   }, [])
 

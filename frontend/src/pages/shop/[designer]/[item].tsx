@@ -1,8 +1,8 @@
 import React from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import { Button } from '@/components'
 import Shop from '@/Shop'
 import Layout from '@/Layout'
@@ -94,8 +94,7 @@ const OpenGraph = (product: StrapiProduct) => {
 export async function getServerSideProps({ params }) {
   try {
     const product: StrapiProduct = await axios
-      .get(`/products/shop/${params.item}`)
-      .then((res) => res.data)
+      .get(`/products/shop/${params.item}`, {withCredentials: false})
 
     return {
       props: {

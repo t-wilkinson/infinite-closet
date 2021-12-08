@@ -1,6 +1,6 @@
 import React from 'react'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import { useDispatch } from '@/utils/store'
 import { accountActions } from '@/Account/slice'
 import * as storage from '@/utils/storage'
@@ -12,11 +12,11 @@ export const Banner = () => {
 
   React.useEffect(() => {
     axios
-      .get('/documents?slug=main-banner')
-      .then((res) => res.data?.[0])
-      .then((res) => {
+    .get('/documents?slug=main-banner', {withCredentials: false})
+      .then((data) => data?.[0])
+      .then((data) => {
         setLoaded(true)
-        setTimeout(() => setContent(res.content), 500)
+        setTimeout(() => setContent(data.content), 500)
       })
       .catch((e) => console.error(e))
   }, [])

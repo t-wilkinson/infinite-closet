@@ -21,6 +21,8 @@ export type FieldErrors = { [field: string]: FieldError[] }
 export type FieldError = string
 export type Valid = true | string
 
+export type UseFormField = UseField<'success' | 'submitting' | 'error' | null>
+
 export type Coupon = {
   valid: boolean
   coupon: StrapiCoupon

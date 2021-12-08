@@ -1,8 +1,8 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import { StrapiCategory } from '@/utils/models'
 import { routes } from '@/utils/constants'
 
@@ -20,8 +20,8 @@ export const NavBar = () => {
 
   React.useEffect(() => {
     axios
-      .get('/products/routes')
-      .then((res) => setServerRoutes(res.data))
+      .get('/products/routes', {withCredentials: false})
+      .then((data) => setServerRoutes(data))
       .catch((err) => console.error(err))
   }, [])
 

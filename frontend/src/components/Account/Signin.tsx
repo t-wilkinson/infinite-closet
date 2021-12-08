@@ -1,8 +1,8 @@
 import React from 'react'
-import axios from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
+import axios from '@/utils/axios'
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import {
@@ -16,6 +16,7 @@ import {
 } from '@/Form'
 import { userActions } from '@/User/slice'
 import { BlueLink } from '@/components'
+import {StrapiUser} from '@/utils/models'
 
 export const Signin = ({ onSubmit = () => {} }) => {
   const fields = useFields({
@@ -28,16 +29,15 @@ export const Signin = ({ onSubmit = () => {} }) => {
   const signinUser = async () => {
     const cleaned = fields.clean()
     return axios
-      .post(
+        .post<{user?: StrapiUser}>(
         '/auth/local',
         {
           identifier: cleaned.email,
           password: cleaned.password,
-        },
-        { withCredentials: true }
+        }
       )
-      .then((res) => {
-        dispatch(userActions.signin(res.data.user))
+      .then((data) => {
+        dispatch(userActions.signin(data.user))
         analytics.logEvent('form_submit', {
           type: 'account.signin',
           user: cleaned.email,

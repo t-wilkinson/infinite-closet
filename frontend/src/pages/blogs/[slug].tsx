@@ -3,9 +3,8 @@ import gfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import dayjs from 'dayjs'
 import Image from 'next/image'
-import axios from 'axios'
 
-import { getURL } from '@/utils/api'
+import axios, { getURL } from '@/utils/axios'
 import Layout from '@/Layout'
 import { ScrollUp } from '@/components'
 import { readingTime } from '@/Markdown'
@@ -108,7 +107,11 @@ const fetchMarkdown = async ({ query, resolvedUrl }) => {
   return {
     props: {
       data: {
-        ...(await axios.get(`/blogs?slug=${query.slug}`)).data[0],
+        ...(
+          await axios.get(`/blogs?slug=${query.slug}`, {
+            withCredentials: false,
+          })
+        )[0],
       },
     },
   }

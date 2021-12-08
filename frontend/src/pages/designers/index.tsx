@@ -1,8 +1,8 @@
 import React from 'react'
-import axios from 'axios'
 import Link from 'next/link'
 import Image from 'next/image'
 
+import axios from '@/utils/axios'
 import { StrapiDesigner } from '@/utils/models'
 import Layout from '@/Layout'
 
@@ -42,9 +42,8 @@ export const Page = () => {
 
   React.useEffect(() => {
     axios
-      .get('/designers')
-      .then((res) => res.data)
-      .then((designers: StrapiDesigner[]) => {
+      .get<StrapiDesigner[]>('/designers', { withCredentials: false })
+      .then((designers) => {
         setDesigners(groupAlphabetically(designers))
       })
       .catch((err) => console.error(err))

@@ -7,6 +7,7 @@ import {
   FieldErrors,
   Valid,
   FieldValue,
+  UseFormField
 } from './types'
 
 const autocompleteValues = {
@@ -179,7 +180,7 @@ type Fields<Keys> = {
 }
 
 export class UseFields<Keys = { [key: string]: any }> {
-  form: UseField<'success' | 'submitting' | 'error' | null>
+  form: UseFormField
   fields: Fields<Keys>
 
   constructor(config: FieldsConfig<Keys>) {

@@ -1,11 +1,11 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
 import { Provider } from 'react-redux'
-import axios from 'axios'
 import firebase from 'firebase/app'
 import 'firebase/analytics'
 import '@/styles/index.css'
 
+import axios from '@/utils/axios'
 import { accountActions } from '@/Account/slice'
 import { CartUtils } from '@/Cart/slice'
 import Banner from '@/Layout/Banner'
@@ -21,9 +21,6 @@ import useAnalytics from '@/utils/useAnalytics'
 const Popup = dynamic(() => import('@/Account/Popup'))
 const FourOFour = dynamic(() => import('@/pages/404'))
 const CookieConsent = dynamic(() => import('@/Layout/CookieConsent'))
-
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND
-axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 // TODO: fetch avaialable categories and similar for header etc.
 const App = ({ router, Component, pageProps }) => {
@@ -57,7 +54,7 @@ const App = ({ router, Component, pageProps }) => {
 }
 export default App
 
-const blockedPages = [ ]
+const blockedPages = []
 
 const Wrapper = ({ router, children }) => {
   // useSaveScrollPos()
@@ -77,18 +74,18 @@ const Wrapper = ({ router, children }) => {
     document.getElementById('_app').removeEventListener('scroll', showPopup)
   }
 
-  const handleRouteChange = (url) => {
-    window.gtag('config', '[Tracking ID]', {
+  const handleRouteChange = (url: string) => {
+    window?.gtag('config', '[Tracking ID]', {
       page_path: url,
-    });
-  };
+    })
+  }
 
   React.useEffect(() => {
-    router.events.on('routeChangeComplete', handleRouteChange);
+    router.events.on('routeChangeComplete', handleRouteChange)
     return () => {
-      router.events.off('routeChangeComplete', handleRouteChange);
-    };
-  }, [router.events]);
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [router.events])
 
   React.useEffect(() => {
     analytics.setCurrentScreen(router.asPath)
@@ -170,7 +167,9 @@ const Wrapper = ({ router, children }) => {
             delete cart[i]
           } else {
             await axios
-              .get(`/orders/${order.id}`, { withCredentials: true })
+              .get<StrapiOrder>(`/orders/${order.id}`, {
+                withCredentials: false,
+              })
               .catch((err) => {
                 if (err.response.status === 404) {
                   delete cart[i]

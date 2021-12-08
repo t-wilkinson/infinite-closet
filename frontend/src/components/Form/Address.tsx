@@ -1,6 +1,6 @@
 import React from 'react'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import { useFields, Form, Input, Submit, UseFields } from '@/Form'
 import { useSignin } from '@/User'
 import { Icon, iconClose } from '@/Icons'
@@ -40,15 +40,18 @@ export const useAddressFields = (
   return fields
 }
 
+// Fails if postcode is invalid for promise chaining
 export const validatePostcode = async (value: string) => {
   if (
     process.env.NODE_ENV === 'test' ||
     process.env.NODE_ENV === 'production'
   ) {
     return axios
-      .get(`/addresses/verify/${value}`)
-      .then((res) => {
-        if (res.data.valid) {
+      .get<{ valid: boolean }>(`/addresses/verify/${value}`, {
+        withCredentials: false,
+      })
+      .then((data) => {
+        if (data.valid) {
           return
         } else {
           throw new Error('Postcode not served')
@@ -93,7 +96,7 @@ export const Address = ({
 
   const removeAddress = () => {
     axios
-      .delete(`/account/${userId}/addresses/${id}`, { withCredentials: true })
+      .delete<void>(`/account/${userId}/addresses/${id}`)
       .then(() => signin())
       .catch((err) => console.error(err))
   }
@@ -141,15 +144,9 @@ export const UpdateAddress = ({ dispatch, address }) => {
   const onSubmit = async () => {
     const cleaned = fields.clean()
     return axios
-      .put(
-        `/addresses/${address.id}`,
-        {
-          ...cleaned,
-        },
-        { withCredentials: true }
-      )
-      .then((res) =>
-        dispatch({ type: 'set-addresses', payload: res.data.addresses })
+      .put<{ addresses: StrapiAddress[] }>(`/addresses/${address.id}`, cleaned)
+      .then((data) =>
+        dispatch({ type: 'set-addresses', payload: data.addresses })
       )
       .catch(() => {
         throw 'Unable to change address'
@@ -170,13 +167,7 @@ export const AddAddress = ({ user, onSubmit }) => {
   const createAddress = async () => {
     const cleaned = fields.clean()
     return axios
-      .post(
-        `/account/${user.id}/addresses`,
-        {
-          ...cleaned,
-        },
-        { withCredentials: true }
-      )
+      .post<void>(`/account/${user.id}/addresses`, cleaned)
       .then(() => {
         analytics.logEvent('add_shipping_info', {
           user: user.email,

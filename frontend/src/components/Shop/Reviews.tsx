@@ -1,19 +1,24 @@
 import React from 'react'
-import axios from 'axios'
 import Link from 'next/link'
 
-import {StrapiOrder} from '@/utils/models'
+import axios from '@/utils/axios'
+import { StrapiOrder } from '@/utils/models'
 
 import Review, { Rating } from './Review'
 
-const Reviews = ({slug}) => {
-  const [data, setData] =
-    React.useState<{ orders: StrapiOrder[]; fit: string; rating: number, canReview: boolean }>()
+type Reviews = {
+  orders: StrapiOrder[]
+  fit: string
+  rating: number
+  canReview: boolean
+}
+
+const Reviews = ({ slug }) => {
+  const [data, setData] = React.useState<Reviews>()
 
   React.useEffect(() => {
     axios
-      .get(`/products/${slug}/reviews`, { withCredentials: true })
-      .then((res) => res.data)
+      .get<Reviews>(`/products/${slug}/reviews`)
       .then((data) => setData(data))
       .catch((err) => console.error(err))
   }, [])

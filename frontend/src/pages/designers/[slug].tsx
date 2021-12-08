@@ -1,11 +1,11 @@
 import React from 'react'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import { Divider } from '@/components'
 import Layout from '@/Layout'
 import Markdown from '@/Markdown'
 import { Product } from '@/Products/ProductItems'
-import { StrapiProduct } from '@/utils/models'
+import { StrapiProduct, StrapiDesigner } from '@/utils/models'
 
 export const Page = ({ data }) => {
   const designer = data.designer
@@ -36,9 +36,11 @@ export default Page
 
 export const getServerSideProps = async ({ params }) => {
   const [designers] = await Promise.all([
-    axios.get(`/designers?slug=${params.slug}`),
+    axios.get<StrapiDesigner[]>(`/designers?slug=${params.slug}`, {
+      withCredentials: false,
+    }),
   ])
-  const designer = designers.data[0]
+  const designer = designers[0]
   for (const product of designer.products) {
     product.designer = { ...designer }
     delete product.designer.products

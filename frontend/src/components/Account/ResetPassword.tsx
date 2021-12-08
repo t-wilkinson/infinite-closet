@@ -1,12 +1,13 @@
 import React from 'react'
-import axios from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
+import axios from '@/utils/axios'
 import useAnalytics from '@/utils/useAnalytics'
 import { useDispatch } from '@/utils/store'
 import { userActions } from '@/User/slice'
 import { useFields, Form, Submit, Password, FormHeader, OR } from '@/Form'
+import {StrapiUser} from '@/utils/models'
 
 export const ResetPassword = () => {
   const fields = useFields({
@@ -20,17 +21,16 @@ export const ResetPassword = () => {
   const onSubmit = async () => {
     const cleaned = fields.clean()
     return axios
-      .post(
+    .post<{user: StrapiUser}>(
         '/auth/reset-password',
         {
           code,
           password: cleaned.password,
           passwordConfirmation: cleaned.password,
-        },
-        { withCredentials: true }
+        }
       )
-      .then((res) => {
-        dispatch(userActions.signin(res.data.user))
+      .then((data) => {
+        dispatch(userActions.signin(data.user))
         analytics.logEvent('form_submit', {
           type: 'account.reset-password',
           user: cleaned.email,
@@ -38,9 +38,9 @@ export const ResetPassword = () => {
         router.push('/')
       })
       .catch((err) => {
-        if (err.response.data.data) {
-          throw err.response.data.data[0].messages.map((v) => v.message)
-        } else {
+        try {
+          throw err.response.data.data[0].messages.map((v: any) => v.message)
+        } catch {
           throw 'Unable to change password'
         }
       })

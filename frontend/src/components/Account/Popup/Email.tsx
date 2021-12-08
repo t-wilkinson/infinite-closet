@@ -1,6 +1,6 @@
 import React from 'react'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import { useFields, toDate, dobFields, Form, DateOfBirth, Input, OR, Submit} from '@/Form'
 import { useDispatch } from '@/utils/store'
 import { accountActions } from '@/Account/slice'
@@ -20,7 +20,7 @@ export const Email = () => {
         name: cleaned.name,
         email: cleaned.email,
         dateOfBirth: toDate({bday: dob.get('bday'), bmonth: dob.get('bmonth'), byear: dob.get('byear')}),
-      })
+      }, {withCredentials: false})
       .catch(() => {
         throw 'Unable to add you to mailing list'
       })
@@ -49,13 +49,13 @@ export const Email = () => {
       <OR />
       <span>
         New to Infinite closet?{' '}
-        <button onClick={(e) => dispatch(accountActions.showPopup('register'))}>
+        <button onClick={() => dispatch(accountActions.showPopup('register'))}>
           <span className="cursor-pointer text-blue-500">Make an account</span>
         </button>
       </span>
       <span>
         Already a member?{' '}
-        <button onClick={(e) => dispatch(accountActions.showPopup('signin'))}>
+        <button onClick={() => dispatch(accountActions.showPopup('signin'))}>
           <span className="cursor-pointer text-blue-500">Sign In</span>
         </button>
       </span>

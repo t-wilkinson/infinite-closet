@@ -1,7 +1,7 @@
 import React from 'react'
-import axios from 'axios'
 import { useRouter } from 'next/router'
 
+import axios from '@/utils/axios'
 import {
   useFields,
   Form,
@@ -13,6 +13,7 @@ import {
   ImageUpload,
   Textarea,
 } from '@/Form'
+import {StrapiReview} from '@/utils/models'
 
 const fitValues = [
   { key: 'short', label: 'short' },
@@ -27,11 +28,8 @@ const AddReview = ({}) => {
 
   React.useEffect(() => {
     axios
-      .get(`/products/${productSlug}/reviews/can-review`, {
-        withCredentials: true,
-      })
-      .then((res) => res.data)
-      .then((res) => setCanReview(res.canReview))
+      .get<{canReview: boolean}>(`/products/${productSlug}/reviews/can-review`)
+      .then((data) => setCanReview(data.canReview))
       .catch(() => setCanReview(false))
   }, [])
 
@@ -79,10 +77,8 @@ const AddReview = ({}) => {
     }
 
     return axios
-      .post(`/products/${productSlug}/reviews`, formData, {
-        withCredentials: true,
-      })
-      .then((res) => res.data.review)
+      .post<{review: StrapiReview}>(`/products/${productSlug}/reviews`, formData)
+      .then((data) => data.review)
       .catch(() => {
         throw 'You cannot create a review for this product'
       })

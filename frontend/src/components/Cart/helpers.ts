@@ -1,7 +1,7 @@
-import axios from 'axios'
 import * as storage from '@/utils/storage'
-
+import axios from '@/utils/axios'
 import { StrapiUser, StrapiOrder } from '@/utils/models'
+
 import { Cart, Orders } from './types'
 
 export function getGuestOrders(): Orders {
@@ -25,10 +25,7 @@ export function getGuestOrders(): Orders {
 }
 
 export async function getUserOrders(user: StrapiUser): Promise<Orders> {
-  const res = await axios.get(`/orders/cart/${user.id}`, {
-    withCredentials: true,
-  })
-  return res.data
+  return await axios.get(`/orders/cart/${user.id}`)
 }
 
 export async function getOrders(user: StrapiUser): Promise<Orders> {
@@ -42,12 +39,8 @@ export async function getOrders(user: StrapiUser): Promise<Orders> {
 export async function setUserOrders(
   user: StrapiUser,
   orders: Orders | string[]
-) {
-  await axios.put(
-    `/orders/cart/${user.id}`,
-    { orders },
-    { withCredentials: true }
-  )
+): Promise<void> {
+  return await axios.put(`/orders/cart/${user.id}`, { orders })
 }
 
 export function setGuestOrders(orders: Orders) {
@@ -59,32 +52,24 @@ export async function setOrders(
   orders: Orders
 ): Promise<void> {
   if (user) {
-    setUserOrders(user, orders)
+    return setUserOrders(user, orders)
   } else {
-    setGuestOrders(orders)
+    return setGuestOrders(orders)
   }
 }
 
 export async function viewOrders(user: StrapiUser): Promise<Cart> {
-  let res: unknown & { data: Cart }
   if (user) {
-    res = await axios.get(`/orders/cart/view/${user.id}`, {
-      withCredentials: true,
-    })
+    return await axios.get(`/orders/cart/view/${user.id}`)
   } else {
     const orders = getGuestOrders()
-    res = await axios.post(`/orders/cart/view`, { orders })
+    return await axios.post(`/orders/cart/view`, { orders }, {withCredentials: false})
   }
-  return res.data
 }
 
 export async function orderHistory(user: StrapiUser): Promise<Cart> {
-  let res: unknown & { data: Cart }
   if (user) {
-    res = await axios.get(`/orders/cart/history/${user.id}`, {
-      withCredentials: true,
-    })
-    return res.data
+    return await axios.get(`/orders/cart/history/${user.id}`)
   } else {
     return []
   }

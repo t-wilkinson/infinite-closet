@@ -1,12 +1,13 @@
 import React from 'react'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import { Size } from '@/Products/types'
 import { Icon } from '@/components'
 import { iconClose } from '@/components/Icons'
 import { toTitleCase } from '@/utils/helpers'
 import { StrapiProduct, StrapiSizeChart, StrapiSize } from '@/utils/models'
 import * as sizing from '@/utils/sizing'
+import {SizeChart as SizeChartType} from '@/types'
 
 interface SizeSelector {
   product: StrapiProduct
@@ -186,12 +187,11 @@ export const SizeChartPopup = ({
   setState,
   product = undefined,
 }) => {
-  const [sizeChart, setSizeChart] = React.useState()
+  const [sizeChart, setSizeChart] = React.useState<SizeChartType>()
 
   React.useEffect(() => {
     axios
-      .get('/size-chart')
-      .then((res) => res.data)
+      .get<SizeChartType>('/size-chart', {withCredentials: false})
       .then(sizeChart => {
         if (!product?.designer?.oneSizeStart || !product?.designer?.oneSizeEnd) {
           return sizeChart
@@ -208,7 +208,7 @@ export const SizeChartPopup = ({
 
         return sizeChart
       })
-      .then(setSizeChart)
+      .then((sizeChart) => setSizeChart(sizeChart))
       .catch((err) => console.error(err))
   }, [])
 

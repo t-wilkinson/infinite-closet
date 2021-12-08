@@ -1,10 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
-import axios from 'axios'
 import Image from 'next/image'
 import dayjs from 'dayjs'
 
-import { getURL } from '@/utils/api'
+import axios, { getURL } from '@/utils/axios'
 import { StrapiBlog } from '@/utils/models'
 import { readingTime } from '@/Markdown'
 import Layout from '@/Layout'
@@ -29,7 +28,7 @@ export const Page = ({ blogs }) => {
                 <div className="w-48 h-48 relative">
                   <Image
                     src={getURL(
-                      (blog.thumbnail || blog.image).formats.small.url,
+                      (blog.thumbnail || blog.image).formats.small.url
                     )}
                     alt={blog.image.alternativeText}
                     layout="fill"
@@ -48,7 +47,7 @@ export default Page
 
 export async function getServerSideProps({}) {
   const [blogs] = await Promise.all([
-    axios.get('/blogs').then((res) => res.data),
+    axios.get('/blogs', { withCredentials: false }),
   ])
 
   return {

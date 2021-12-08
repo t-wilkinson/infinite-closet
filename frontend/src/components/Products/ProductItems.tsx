@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 import { Button } from '@/components'
 import useAnalytics from '@/utils/useAnalytics'
-import { getURL } from '@/utils/api'
+import { getURL } from '@/utils/axios'
 import { StrapiProduct, StrapiFile } from '@/utils/models'
 import { QUERY_LIMIT } from './constants'
 

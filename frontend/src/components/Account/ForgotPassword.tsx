@@ -1,6 +1,6 @@
 import React from 'react'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import useAnalytics from '@/utils/useAnalytics'
 import { BlueLink } from '@/components'
 import {
@@ -24,13 +24,7 @@ export const requestChangePassword = async (
 ) => {
   const cleaned = fields.clean()
   return await axios
-    .post(
-      '/auth/forgot-password',
-      {
-        email: cleaned.email,
-      },
-      { withCredentials: true }
-    )
+    .post<void>('/auth/forgot-password', { email: cleaned.email })
     .then(() =>
       analytics.logEvent('form_submit', {
         type: 'account.forgot-password',

@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
-import axios from 'axios'
 
+import axios from '@/utils/axios'
 import { useFields, Form, Input, Submit, } from '@/Form'
 import { Icon } from '@/components'
 import { socialMediaLinks } from '@/utils/constants'
@@ -142,9 +142,9 @@ const Waitlist = () => {
   const onSubmit = async () => {
     const cleaned = fields.clean()
     return axios
-      .post('/account/mailing-list', {
+      .post<void>('/account/mailing-list', {
         email: cleaned.footerEmail,
-      })
+      }, {withCredentials: false})
       .catch(() => {
         fields.form.setErrors('Couldn\'t send you an email. Try again?')
       })
