@@ -9,28 +9,50 @@ async function send(...props) {
     const email = Buffer.from(res, 'base64').toString('utf-8')
     const snapshots = './tests/__snapshots__/emails'
     if (!fs.existsSync(snapshots)) {
-      fs.mkdirSync(snapshots, {recursive: true})
+      fs.mkdirSync(snapshots, { recursive: true })
     }
     await fs.writeFileSync(`${snapshots}/${new Date().toISOString()}`, email)
   }
 }
-const unpackCartItem = (cartItem) => ({
-  cartItem,
-  order: cartItem.order,
-  user: cartItem.order.user,
-})
+
+function toEmailAddress({ fullName, name, firstName, lastName, email }) {
+  if (!email) {
+    throw new Error('Email must be defined')
+  }
+
+  name = fullName || name || [firstName, lastName].join(' ').trim()
+  return {
+    name,
+    email,
+  }
+}
+
+const unpackCartItem = (cartItem) =>
+  strapi.plugins['orders'].services.cart.unpackCartItem(cartItem)
 
 module.exports = {
   async orderLeaving(cartItem) {
     const { order, user } = unpackCartItem(cartItem)
     await send({
       template: 'order-leaving',
-      to: user.email,
+      to: toEmailAddress(user),
       bcc:
-        process.env.NODE_ENV === 'production' ? [
-          'battersea@oxwash.com',
-          'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
-        ] : [],
+        process.env.NODE_ENV === 'production'
+          ? [
+            'battersea@oxwash.com',
+            'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
+          ]
+          : [],
+      subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
+      data: { ...cartItem, firstName: user.firstName },
+    })
+  },
+
+  async trustPilot(cartItem) {
+    const { order, user } = unpackCartItem(cartItem)
+    await send({
+      template: 'order-leaving',
+      to: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
       subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
       data: { ...cartItem, firstName: user.firstName },
     })
@@ -40,7 +62,7 @@ module.exports = {
     const { order, user } = unpackCartItem(cartItem)
     await send({
       template: 'order-arriving',
-      to: user.email,
+      to: toEmailAddress(user),
       subject: `Your order of ${order.product.name} by ${order.product.designer.name} is arriving today`,
       data: {
         firstName: user.firstName,
@@ -70,10 +92,7 @@ module.exports = {
     const { order, user } = unpackCartItem(cartItem)
     await send({
       template: 'order-shipped',
-      to: {
-        name: `${user.firstName} ${user.lastName}`,
-        email: user.email,
-      },
+      to: toEmailAddress(user),
       subject: `Your order of ${order.product.name} by ${order.product.designer.name} has shipped!`,
       data: {
         firstName: user.firstName,
@@ -85,7 +104,7 @@ module.exports = {
   async checkout({ contact, cart, summary }) {
     await send({
       template: 'checkout',
-      to: { name: contact.fullName, email: contact.email },
+      to: toEmailAddress(contact),
       bcc:
         process.env.NODE_ENV === 'production'
           ? ['info@infinitecloset.co.uk']

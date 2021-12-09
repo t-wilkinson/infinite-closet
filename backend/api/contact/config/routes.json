@@ -16,6 +16,14 @@
         "policies": []
       }
     },
+    {
+      "method": "POST",
+      "path": "/emails/trust-pilot/:orderId",
+      "handler": "emails.trustPilot",
+      "config": {
+        "policies": []
+      }
+    },
 
     {
       "method": "POST",

@@ -3,6 +3,17 @@ const orderUtils = require('./order')
 const priceUtils = require('./price')
 
 /**
+ * @typedef CartItem
+ * @prop {object} order
+ * @prop {number} totalPrice
+ * @prop {number} shippingPrice
+ * @prop {number} insurancePrice
+ * @prop {number} productPrice
+ * @prop {DateRange} range
+ * @prop {ShippingClass} shippingClass
+ */
+
+/**
  * For each order, find the number of existing orders whose lifecycle overlaps
  * @param {Order[]} orders
  * @returns {object<string,number>}
@@ -51,6 +62,17 @@ async function createCartItem(order) {
       order.shippingDate,
       order.startDate
     ),
+  }
+}
+
+/**
+ * @param CartItem
+ */
+function unpackCartItem(cartItem) {
+  return {
+    cartItem,
+    order: cartItem.order,
+    user: cartItem.order.user,
   }
 }
 
@@ -111,6 +133,7 @@ function validOrders(cart) {
 module.exports = {
   create,
   createCartItem,
+  unpackCartItem,
   numAvailable,
 
   createValidCart,

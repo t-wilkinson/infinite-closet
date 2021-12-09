@@ -25,6 +25,10 @@ const Emails = () => {
           path={path("send-cleaners")}
           component={() => <SendEmail slug="order-cleaners" />}
         />
+        <Route
+          path={path("trust-pilot")}
+          component={() => <SendEmail slug="trust-pilot" />}
+        />
       </Switch>
     </Wrapper>
   );
