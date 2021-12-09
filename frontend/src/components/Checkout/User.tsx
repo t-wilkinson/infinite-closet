@@ -237,6 +237,7 @@ const Checkout = ({ fetchCart, analytics }) => {
           redirect="/checkout/thankyou"
         >
           <Cart />
+          {isVisible && <OR />}
           <PaymentRequestForm
             setVisible={setVisible}
             couponCode={fields.get('couponCode').clean()}
@@ -251,7 +252,6 @@ const Checkout = ({ fetchCart, analytics }) => {
               router.push('/checkout/thankyou')
             }}
           />
-          {isVisible && <OR />}
           <Submit
             field={fields.form}
             disabled={
