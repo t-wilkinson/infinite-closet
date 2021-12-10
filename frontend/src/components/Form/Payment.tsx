@@ -41,7 +41,9 @@ export const PaymentMethod = ({
 
   const removePaymentMethod = () => {
     axios
-      .delete<void>(`/account/${userId}/payment-methods/${id}`)
+      .delete<void>(`/account/${userId}/payment-methods/${id}`, {
+        withCredentials: true,
+      })
       .then(() => signin())
       .catch((err) => console.error(err))
   }
@@ -122,7 +124,7 @@ export const AddPaymentMethodFormWrapper = ({ user, state, dispatch }) => {
     })
 
     axios
-      .get('/account/payment-methods')
+      .get('/account/payment-methods', { withCredentials: true })
       .then((data) => {
         dispatch({
           type: 'set-payment-methods',
@@ -182,10 +184,7 @@ export const Authorize = ({ field }) => (
 )
 
 export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
-  const [succeeded, setSucceeded] = React.useState(false)
-  const [processing, setProcessing] = React.useState(false)
-  const [disabled, setDisabled] = React.useState(true)
-  const [clientSecret, setClientSecret] = React.useState('')
+  const [clientSecret, setClientSecret] = React.useState(undefined)
   const stripe = useStripe()
   const elements = useElements()
   const analytics = useAnalytics()
@@ -209,42 +208,43 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
   React.useEffect(() => {
     if (user) {
       axios
-        .post<{ clientSecret: string }>('/account/wallet', {})
+        .post<{ clientSecret: string }>(
+          '/account/wallet',
+          {},
+          { withCredentials: true }
+        )
         .then((data) => setClientSecret(data.clientSecret))
         .catch((err) => console.error(err))
     }
   }, [user])
 
   const handleChange = async (event: any) => {
-    setDisabled(event.empty)
     fields.form.setErrors(event.error ? event.error.message : '')
   }
 
-  const addPaymentMethod = async (e: React.SyntheticEvent) => {
+  const addPaymentMethod = async () => {
     const cleaned = fields.clean()
-    e.preventDefault()
-    setProcessing(true)
-    const payload = await stripe.confirmCardSetup(clientSecret, {
-      payment_method: {
-        card: elements.getElement(CardElement),
-        billing_details: {
-          name: cleaned.billingName || undefined,
-          email: user.email || undefined,
-          phone: user.phoneNumber || undefined,
+    try {
+      const payload = await stripe.confirmCardSetup(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+          billing_details: {
+            name: cleaned.billingName || undefined,
+            email: user.email || undefined,
+            phone: user.phoneNumber || undefined,
+          },
         },
-      },
-    })
-
-    if (payload.error) {
-      setProcessing(false)
-      throw `Payment failed ${payload.error.message}`
-    } else {
-      setProcessing(false)
-      setSucceeded(true)
-      analytics.logEvent('add_payment_info', {
-        user: user.email,
       })
-      onSubmit(payload.setupIntent)
+      if (payload.error) {
+        throw `Payment failed ${payload.error.message}`
+      } else {
+        analytics.logEvent('add_payment_info', {
+          user: user.email,
+        })
+        onSubmit(payload.setupIntent)
+      }
+    } catch (e) {
+      throw 'Something went wrong... Please try again later'
     }
   }
 
@@ -271,11 +271,7 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
           <Authorize field={fields.get('authorized')} />
         </div>
 
-        <Submit
-          className="w-full"
-          field={fields.form}
-          disabled={processing || disabled || succeeded}
-        >
+        <Submit className="w-full" field={fields.form}>
           Submit
         </Submit>
       </Form>
