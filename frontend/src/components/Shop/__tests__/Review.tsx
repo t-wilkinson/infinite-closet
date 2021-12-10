@@ -1,5 +1,5 @@
-import {getNumStars} from '../Review'
-import {ReviewsContent} from '../Reviews'
+import { getNumStars } from '../Review'
+import { ReviewsContent } from '../Reviews'
 import * as t from '@/utils/test'
 import mockUser from '@/User/__mocks__/user'
 
@@ -29,45 +29,45 @@ describe('Rating', () => {
   })
 })
 
-describe('Reviews', () => {
+describe('User can add review', () => {
   let defaultData = {
     fit: 'true',
     rating: 3,
-    reviews: [],
-    canReview: false,
   }
-  const mock = (obj) => ({...defaultData, ...obj})
-
-  it('shows <AddReview /> when user can review (and there are no reviews)', () => {
+  const mock = (obj) => ({ ...defaultData, ...obj })
+  const showsAddReview = ({ canReview, existingReview }) => {
     t.render(
-      <ReviewsContent slug="slug" data={mock({reviews: [], canReview: true})} />
+      <ReviewsContent
+        slug="slug"
+        data={mock({
+          orders: existingReview
+            ? [{ id: 1, review: { id: 1 }, user: mockUser }]
+            : [],
+          canReview,
+        })}
+      />
     )
-    const addReview = t.screen.getByTestId("add-review")
+    const addReview = t.screen.queryByTestId('add-review')
+    return addReview
+  }
+
+  it('shows AddReview when user can review (and there are no reviews)', () => {
+    const addReview = showsAddReview({canReview: true, existingReview: false})
     expect(addReview).toBeInTheDocument()
   })
 
-  it('shows <AddReview /> when user can review (and there are reviews)', () => {
-    t.render(
-      <ReviewsContent slug="slug" data={mock({reviews: [{id: 1, order: {user: mockUser}}], canReview: true})} />
-    )
-    const addReview = t.screen.getByTestId("add-review")
+  it('shows AddReview when user can review (and there are reviews)', () => {
+    const addReview = showsAddReview({canReview: true, existingReview: true})
     expect(addReview).toBeInTheDocument()
   })
 
-  it('does not show <AddReview /> when user can\'t review (and there are no reviews)', () => {
-    t.render(
-      <ReviewsContent slug="slug" data={mock({reviews: [], canReview: false})} />
-    )
-    const addReview = t.screen.queryByTestId("add-review")
+  it("does not show AddReview when user can't review (and there are no reviews)", () => {
+    const addReview = showsAddReview({canReview: false, existingReview: false})
     expect(addReview).not.toBeInTheDocument()
   })
 
-  it('does not show <AddReview /> when user can\'t review (and there are)', () => {
-    t.render(
-      <ReviewsContent slug="slug" data={mock({reviews: [{id: 1, order: {user: mockUser}}], canReview: false})} />
-    )
-    const addReview = t.screen.queryByTestId("add-review")
+  it("does not show AddReview when user can't review (and there are)", () => {
+    const addReview = showsAddReview({canReview: false, existingReview: true})
     expect(addReview).not.toBeInTheDocument()
   })
-
 })

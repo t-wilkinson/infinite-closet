@@ -90,6 +90,7 @@ const AddReview = ({}) => {
       onSubmit={onSubmitInternal}
       className="overflow-y-auto w-full max-w-md mb-16"
       redirect="/review/thankyou"
+      test-id="add-review"
     >
       <FormHeader label="How was your experience?" />
       <Rating field={fields.get('rating')} />

@@ -49,13 +49,7 @@ const reducer = (state: typeof initialState, action: any) => {
   }
 }
 
-type Fields = UseFields<{
-  email: string
-  couponCode: string
-  billingName: string
-  password: string
-  authorized: boolean
-}>
+type Fields = UseFields
 const StateContext = React.createContext(null)
 const DispatchContext = React.createContext(null)
 const FieldsContext = React.createContext<Fields>(null)

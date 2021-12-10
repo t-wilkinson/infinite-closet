@@ -33,7 +33,7 @@ export const Page = ({ data }) => {
         onSubmit={sendMessage}
         Success={Success}
       >
-        {Object.values(fields.fields).map((field) => (
+        {fields.map((field) => (
         <Input key={field.name} field={field} />
         ))}
         <Submit field={fields.form}>Contact Us</Submit>

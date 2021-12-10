@@ -203,7 +203,7 @@ export const EditAddress = ({
   return (
     <Form fields={fields} onSubmit={onSubmitInternal} className="max-w-lg">
       <div className="grid grid-flow-row grid-cols-2 w-full gap-x-4 gap-y-4">
-        {Object.values(fields.fields).map((field) => (
+        {fields.map((field) => (
           <Input key={field.name} field={field} />
         ))}
       </div>

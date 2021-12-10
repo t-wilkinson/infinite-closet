@@ -6,9 +6,9 @@ module.exports = {
     test: 'https://uat-partnerapis.acsclothing.co.uk/api/v1',
   },
   auth: {
-    accountCode: undefined,
-    username: undefined,
-    password: undefined,
+    accountCode: 'INFINITE',
+    username: 'infinitecloset',
+    password: 'UTz87asC3jnGrJnpXCkawWeZRcPQHFd3',
   },
 
   timing: {

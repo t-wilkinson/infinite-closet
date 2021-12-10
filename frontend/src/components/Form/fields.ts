@@ -7,7 +7,7 @@ import {
   FieldErrors,
   Valid,
   FieldValue,
-  UseFormField
+  UseFormField,
 } from './types'
 
 const autocompleteValues = {
@@ -92,7 +92,7 @@ export class UseField<Value = FieldValue> {
     this.errorMessage = config.errorMessage
     this.errors = errors
     this.setErrors = (...errors) => {
-      setErrors(errors.flat().filter(v=>v))
+      setErrors(errors.flat().filter((v) => v))
     }
     this.setError = this.setErrors
     this.clearErrors = () => this.setErrors()
@@ -130,13 +130,16 @@ export class UseField<Value = FieldValue> {
         case 'email': return err(/^.+@.+\..+$/.test(v) , `Please enter a valid ${label}`)
         case 'required': return err(Boolean(v) , `Missing ${label}`)
         case 'decimal': return err(/^\d*\.?\d{0,2}$/.test(v) , `${label_} must be a number`)
-        case 'integer': return err(/^\d*$/.test(v) , `${label_} must be a number`)
+        case 'integer': return err(/^-?\d*$/.test(v) , `${label_} must be a number`)
         case 'number': return err(/^\d*\.?\d*$/.test(v) , `${label_} must be a number`)
         case 'max-width': return err(
           v.length <= Number(props[0]) || (v.length === 0 && optional), `${label_} must be at most ${props[0]} characters long`)
         case 'min-width': return err(v.length >= Number(props[0]) || (v.length === 0 && optional), `${label_} must be at least ${props[0]} characters long`)
         case 'regex': return err(RegExp(props[0]).test(v) , `${label_} does not have the correct format`)
-        case 'contains': return err(RegExp(`[${props[0].replace(']', '\\]')}]`).test(v) || v.length === 0 && optional, `${label_} must contain one of ${props[0].split('').join(' ')}`)
+        case 'contains':
+          let search = props[0]
+          search = search.replace(']', '\\]')
+          return err(RegExp(`[${search}]`).test(v) || v.length === 0 && optional, `${label_} must contain one of ${props[0].split('').join(' ')}`)
         case '': return true
         default: return true
       }
@@ -163,7 +166,7 @@ export class UseField<Value = FieldValue> {
   }
 
   hasErrors(): boolean {
-    return this.getErrors().length === 0
+    return this.getErrors().length !== 0
   }
 
   clean(): Value {
@@ -193,9 +196,6 @@ export class UseFields<Keys = { [key: string]: any }> {
     )
 
     this.fields = fields
-    // for (const field in fields) {
-    //   this[field] = fields[field]
-    // }
     this.form = useField('form', {})
   }
 
@@ -207,14 +207,6 @@ export class UseFields<Keys = { [key: string]: any }> {
     return this.get(field).value
   }
 
-  [Symbol.iterator]() {
-    return Object.values(this.fields)
-  }
-
-  //   fields() {
-  //     return Object.values(this)
-  //   }
-
   getErrors(): FieldErrors {
     return Object.fromEntries(
       Object.entries(this.fields).map(
@@ -225,9 +217,9 @@ export class UseFields<Keys = { [key: string]: any }> {
 
   hasErrors(fieldErrors?: FieldErrors): boolean {
     if (!fieldErrors) {
-      return Object.entries(this.fields)
-        .map(([k, field]: [string, UseField<typeof k>]) => field.getErrors())
-        .some((v) => v.length !== 0)
+      return Object.values(this.fields).some((field: UseField) =>
+        field.hasErrors()
+      )
     } else {
       return Object.values(fieldErrors).some(
         (errors: FieldError[]) => errors.length !== 0
@@ -275,7 +267,7 @@ export class UseFields<Keys = { [key: string]: any }> {
     return changed
   }
 
-  map(fn: (value: UseField<any>, index: number) => any): UseField<any> {
+  map(fn: (value: UseField<any>, index: number) => any): any[] {
     return Object.values(this.fields).map(fn)
   }
 
@@ -288,7 +280,8 @@ export const useFields = <Keys>(
   config: FieldsConfig<Keys>
 ): UseFields<{
   // look at AddToCart
-  [key in keyof typeof config]: FieldValue // Keys[key] extends any ? Keys[key] : FieldValue // TODO: is this right
+  // [key in keyof typeof config]: FieldValue
+  [key in keyof typeof config]: Keys[key] extends unknown ? Keys[key] : FieldValue
 }> => new UseFields(config)
 export const useField = (name: string, config: FieldConfig): UseField<any> =>
   new UseField(name, config)
