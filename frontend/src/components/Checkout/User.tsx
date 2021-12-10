@@ -237,21 +237,6 @@ const Checkout = ({ fetchCart, analytics }) => {
           redirect="/checkout/thankyou"
         >
           <Cart />
-          {isVisible && <OR />}
-          <PaymentRequestForm
-            setVisible={setVisible}
-            couponCode={fields.get('couponCode').clean()}
-            coupon={state.coupon}
-            form={fields.form}
-            onCheckout={() => {
-              fetchCart()
-              analytics.logEvent('purchase', {
-                user: user?.email,
-                type: 'checkout',
-              })
-              router.push('/checkout/thankyou')
-            }}
-          />
           <Submit
             field={fields.form}
             disabled={
@@ -270,6 +255,21 @@ const Checkout = ({ fetchCart, analytics }) => {
               ? 'Checkout Available Items'
               : 'Secure Checkout'}
           </Submit>
+          {isVisible && <OR />}
+          <PaymentRequestForm
+            setVisible={setVisible}
+            couponCode={fields.get('couponCode').clean()}
+            coupon={state.coupon}
+            form={fields.form}
+            onCheckout={() => {
+              fetchCart()
+              analytics.logEvent('purchase', {
+                user: user?.email,
+                type: 'checkout',
+              })
+              router.push('/checkout/thankyou')
+            }}
+          />
         </Form>
       )}
     </div>

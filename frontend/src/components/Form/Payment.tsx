@@ -10,7 +10,6 @@ import { StrapiUser } from '@/types/models'
 import useAnalytics from '@/utils/useAnalytics'
 
 export * from './PaymentWrapper'
-// import './CheckoutForm.module.css'
 
 const toTitleCase = (string: string) =>
   string.charAt(0).toUpperCase() + string.slice(1)
@@ -122,11 +121,12 @@ export const AddPaymentMethodFormWrapper = ({ user, state, dispatch }) => {
       payload: setupIntent.payment_method,
     })
 
-    axios.get('/account/payment-methods')
-      .then((paymentMethods) => {
+    axios
+      .get('/account/payment-methods')
+      .then((data) => {
         dispatch({
           type: 'set-payment-methods',
-          payload: paymentMethods,
+          payload: data.paymentMethods,
         })
       })
       .catch((err) => console.error(err))
@@ -202,14 +202,14 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
     billingName: {
       label: 'Billing Name',
       constraints: 'required',
-      default: `${user.firstName || ''} ${user.lastName || ''}`,
+      default: [user.firstName, user.lastName].join(' ').trim(),
     },
   })
 
   React.useEffect(() => {
     if (user) {
       axios
-        .post<{clientSecret: string}>('/account/wallet', {})
+        .post<{ clientSecret: string }>('/account/wallet', {})
         .then((data) => setClientSecret(data.clientSecret))
         .catch((err) => console.error(err))
     }

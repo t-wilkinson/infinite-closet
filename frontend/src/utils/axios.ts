@@ -3,7 +3,7 @@ import Axios from 'axios'
 export const axios = Axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   },
   withCredentials: true,
 })

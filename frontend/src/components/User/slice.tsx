@@ -3,7 +3,7 @@ import { RootState } from '@/utils/store'
 import { StrapiUser } from '@/types/models'
 
 interface State {
-  data?: null | StrapiUser
+  data?: undefined | null | StrapiUser
 }
 
 const initialState: State = {}

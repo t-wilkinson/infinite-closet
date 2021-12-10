@@ -26,7 +26,6 @@ module.exports = {
     })
 
     ctx.send({
-      status: 200,
       clientSecret: intent.client_secret,
     })
   },

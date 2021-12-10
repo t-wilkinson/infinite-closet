@@ -42,27 +42,20 @@ export const useAddressFields = (
 
 // Fails if postcode is invalid for promise chaining
 export const validatePostcode = async (value: string) => {
-  if (
-    process.env.NODE_ENV === 'test' ||
-    process.env.NODE_ENV === 'production'
-  ) {
-    return axios
-      .get<{ valid: boolean }>(`/addresses/verify/${value}`, {
-        withCredentials: false,
-      })
-      .then((data) => {
-        if (data.valid) {
-          return
-        } else {
-          throw new Error('Postcode not served')
-        }
-      })
-      .catch((err) => {
-        throw err
-      })
-  } else {
-    return
-  }
+  return axios
+    .get<{ valid: boolean }>(`/addresses/verify/${value}`, {
+      withCredentials: false,
+    })
+    .then((data) => {
+      if (data.valid) {
+        return
+      } else {
+        throw new Error('Postcode not served')
+      }
+    })
+    .catch((err) => {
+      throw err
+    })
 }
 
 export const Addresses = ({ userId, addresses, state, select }) => {

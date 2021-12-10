@@ -54,7 +54,7 @@ module.exports = {
       (res) => res.Tracking_ID_Complete === 'COMPLETE'
     ),
   verify: (postcode) => {
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') {
       return fetchApi(config.postcodes, 'POST', {
         Recipient_Postcode: postcode,
       })
