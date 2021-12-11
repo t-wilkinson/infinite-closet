@@ -3,36 +3,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import axios from '@/utils/axios'
-import { StrapiUser } from '@/types/models'
 import { useDispatch } from '@/utils/store'
 import { userActions } from '@/User/slice'
 import { useProtected } from '@/User/Protected'
 import { CartUtils } from '@/Cart/slice'
-
-const signin = (dispatch: any) =>
-  axios
-    .post<{ user?: StrapiUser }>('/account/signin', {})
-    .then((data) => {
-      if (data.user) {
-        // loggedIn tracks if the user has logged into the web site
-        window.localStorage.setItem('logged-in', 'true')
-        dispatch(userActions.signin(data.user))
-
-        return data.user
-      } else {
-        dispatch(userActions.signout())
-        throw new Error('User not found')
-      }
-    })
-    .catch(() => {
-      dispatch(userActions.signout())
-      throw new Error('User not found')
-    })
-
-export const useSignin = () => {
-  const dispatch = useDispatch()
-  return () => signin(dispatch)
-}
 
 export const User = ({ children }) => {
   const user = useProtected()
@@ -58,10 +32,10 @@ const SideMenu = () => {
   const router = useRouter()
 
   const signout = () => {
+    router.push('/')
     axios
       .post<void>('/account/signout', {})
       .then(() => {
-        router.push('/')
         dispatch(userActions.signout())
         dispatch(CartUtils.count())
         dispatch(CartUtils.view())
@@ -92,7 +66,7 @@ const SideLink = ({ active, href, children }) => (
 )
 
 const SideButton = ({ onClick, children }) => (
-  <button onClick={onClick} className="hover:underline inline-block">
+  <button type="button" onClick={onClick} className="hover:underline inline-block">
     {children}
   </button>
 )

@@ -21,7 +21,6 @@ module.exports = {
 
   async attachSetupIntent(ctx) {
     const user = ctx.state.user
-    console.log(user)
     const intent = await stripe.setupIntents.create({
       customer: user.customer,
     })

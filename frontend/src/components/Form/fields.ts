@@ -240,19 +240,19 @@ export class UseFields<Keys = { [key: string]: any }> {
     return !this.hasErrors(fieldErrors)
   }
 
-  clearErrors() {
+  clearErrors(): void {
     for (const field in this.fields) {
       this.fields[field].setErrors([])
     }
   }
 
-  clean(): { [field: string]: UseField<any>['value'] } {
+  clean(): { [key in keyof Keys]: Keys[key] } {
     return Object.entries(this.fields).reduce(
       (acc, [k, field]: [string, UseField<Keys[typeof k]>]) => {
         acc[k] = field.clean()
         return acc
       },
-      {}
+      {} as any
     )
   }
 
@@ -276,12 +276,18 @@ export class UseFields<Keys = { [key: string]: any }> {
   // }
 }
 
-export const useFields = <Keys>(
-  config: FieldsConfig<Keys>
-): UseFields<{
-  // look at AddToCart
-  // [key in keyof typeof config]: FieldValue
-  [key in keyof typeof config]: Keys[key] extends unknown ? Keys[key] : FieldValue
-}> => new UseFields(config)
+type useFields<Keys> = UseFields<{ [key in keyof Keys]: Keys[key] }>
+//   Keys extends null
+// ? {[key in keyof typeof config]: FieldValue}
+// : {
+//   // look at AddToCart
+//   // [key in keyof typeof config]: FieldValue
+//   // [key in keyof typeof config]: Keys[key] extends unknown ? Keys[key] : FieldValue
+//   [key in keyof typeof config]: Keys[key]
+// }>
+
+export const useFields = <Keys>(config: FieldsConfig<Keys>): useFields<Keys> =>
+  new UseFields(config)
+// useFields<{[key in keyof Keys]: Keys[key] extends unknown ? FieldValue : Keys[key]
 export const useField = (name: string, config: FieldConfig): UseField<any> =>
   new UseField(name, config)

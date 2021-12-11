@@ -1,12 +1,10 @@
 import React from 'react'
 
 import axios from '@/utils/axios'
-import { Size } from '@/Products/types'
 import { Icon, iconClose } from '@/Icons'
 import { toTitleCase } from '@/utils/helpers'
-import { StrapiProduct, StrapiSizeChart, StrapiSize } from '@/types/models'
 import * as sizing from '@/utils/sizing'
-import {SizeChart as SizeChartType} from '@/types'
+import { Size, SizeChart as SizeChartType, StrapiProduct, StrapiSizeChart, StrapiSize } from '@/types'
 
 interface SizeSelector {
   product: StrapiProduct
@@ -14,26 +12,31 @@ interface SizeSelector {
   onChange: (size: Size) => void
 }
 
-export const SizeSelector = ({ product, size: currentSize, onChange }: SizeSelector) => {
-  return <>
-    {sizing.range(product.sizes).map((size: Size) => (
-    <button
-      key={size}
-      tabIndex={0}
-      aria-label="Dropdown sizes"
-      type="button"
-      onClick={() => {
-        onChange(size)
-      }}
-      className={`flex border border-gray-dark w-10 h-10 items-center justify-center cursor-pointer rounded-md
+export const SizeSelector = ({
+  product,
+  size: currentSize,
+  onChange,
+}: SizeSelector) => {
+  return (
+    <>
+      {sizing.range(product.sizes).map((size: Size) => (
+        <button
+          key={size}
+          tabIndex={0}
+          aria-label="Dropdown sizes"
+          type="button"
+          onClick={() => {
+            onChange(size)
+          }}
+          className={`flex border border-gray-dark w-10 h-10 items-center justify-center cursor-pointer rounded-md
         ${currentSize === size ? 'bg-pri-light font-bold' : ''}
       `}
-    >
-      {size}
-      </button>
-  ))
-    }
-  </>
+        >
+          {size}
+        </button>
+      ))}
+    </>
+  )
 }
 
 // export const _SizeSelector = ({ product, size, onChange }: SizeSelector) => {
@@ -81,7 +84,13 @@ export const SizeSelector = ({ product, size: currentSize, onChange }: SizeSelec
 //   )
 // }
 
-export const SizeChart = ({ sizeEnum, chart }: {sizeEnum: typeof Size, chart: StrapiSizeChart[]}) => {
+export const SizeChart = ({
+  sizeEnum,
+  chart,
+}: {
+  sizeEnum: typeof Size
+  chart: StrapiSizeChart[]
+}) => {
   return (
     <>
       <table className="table-fixed border border-gray-light">
@@ -131,9 +140,12 @@ const convertUnits = (size: number, from: Units, to: Units) => {
     return size
   }
   switch ([from, to].toString()) {
-    case 'inches,cm': return size * 2.54
-    case 'cm,inches': return size / 2.54
-    default: return undefined
+    case 'inches,cm':
+      return size * 2.54
+    case 'cm,inches':
+      return size / 2.54
+    default:
+      return undefined
   }
 }
 
@@ -190,9 +202,12 @@ export const SizeChartPopup = ({
 
   React.useEffect(() => {
     axios
-      .get<SizeChartType>('/size-chart', {withCredentials: false})
-      .then(sizeChart => {
-        if (!product?.designer?.oneSizeStart || !product?.designer?.oneSizeEnd) {
+      .get<SizeChartType>('/size-chart', { withCredentials: false })
+      .then((sizeChart) => {
+        if (
+          !product?.designer?.oneSizeStart ||
+          !product?.designer?.oneSizeEnd
+        ) {
           return sizeChart
         }
 
@@ -215,8 +230,9 @@ export const SizeChartPopup = ({
     return null
   } else {
     return (
-      <div className="fixed inset-0 grid place-items-center z-30"
-        style={{ backgroundColor: "#5f6368cc" }}
+      <div
+        className="fixed inset-0 grid place-items-center z-30"
+        style={{ backgroundColor: '#5f6368cc' }}
         onClick={(e) => {
           // @ts-ignore
           if (e.target === e.currentTarget) {
@@ -228,7 +244,11 @@ export const SizeChartPopup = ({
           className="bg-gray-light border-gray border w-96"
           style={{ maxHeight: 600 }}
         >
-          <button onClick={() => setState(false)} className="place-self-end" type="button">
+          <button
+            onClick={() => setState(false)}
+            className="place-self-end"
+            type="button"
+          >
             <div className="p-4 pb-2">
               <Icon icon={iconClose} size={16} />
             </div>
@@ -241,7 +261,7 @@ export const SizeChartPopup = ({
               {product && <SizeMeasurements {...sizeChart} product={product} />}
             </div>
           </div>
-          {product && <div className="pb-4" /> }
+          {product && <div className="pb-4" />}
         </div>
       </div>
     )

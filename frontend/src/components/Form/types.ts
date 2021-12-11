@@ -14,7 +14,7 @@ export type FieldConfig<Value=FieldValue> = Partial<{
   changed: (field: UseField<Value>) => [boolean, Value?]
 }>
 
-export type FieldsConfig<Keys=any> = {
+export type FieldsConfig<Keys> = {
   [field in keyof Keys]: FieldConfig<Keys[field]>
 }
 

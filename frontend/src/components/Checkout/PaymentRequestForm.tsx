@@ -188,9 +188,6 @@ const onPaymentMethod = async ({
         })
       )
       .then(() => onCheckout({ contact: info.contact }))
-      .catch((err) => {
-        throw err
-      })
   }
 
   if (paymentIntent.status === 'requires_action') {

@@ -2,26 +2,26 @@ import React from 'react'
 
 import axios from '@/utils/axios'
 import { useFields, Form, Input, Submit, UseFields } from '@/Form'
-import { useSignin } from '@/User'
+import useSignin from '@/User/useSignin'
 import { Icon, iconClose } from '@/Icons'
 import { StrapiAddress } from '@/types/models'
 import useAnalytics from '@/utils/useAnalytics'
 
-export type AddressFields = UseFields<{
+export interface AddressFields {
   fullName: string
   mobileNumber: string
   addressLine1: string
   addressLine2: string
   town: string
   postcode: string
-}>
+}
 
 export const useAddressFields = (
   address: Partial<StrapiAddress> = {}
-): AddressFields => {
+): UseFields<AddressFields> => {
   const def = (field: string) =>
     typeof address[field] === 'string' ? address[field] : ''
-  const fields = useFields({
+  const fields = useFields<AddressFields>({
     fullName: { constraints: 'required', default: def('fullName') },
     mobileNumber: { constraints: 'required', default: def('phoneNumber') },
     addressLine1: {
@@ -50,11 +50,12 @@ export const validatePostcode = async (value: string) => {
       if (data.valid) {
         return
       } else {
-        throw new Error('Postcode not served')
+        throw new Error('Sorry, we do not currently serve this location.')
       }
     })
     .catch((err) => {
-      throw err
+      console.error(err)
+      throw new Error('Sorry, we do not currently serve this location.')
     })
 }
 
@@ -181,15 +182,13 @@ export const EditAddress = ({
   fields,
 }: {
   onSubmit: () => void
-  fields: AddressFields
+  fields: UseFields<AddressFields>
 }) => {
   const onSubmitInternal = async () => {
+    // TODO: how to chain together to show error from validate vs onSubmit
     return validatePostcode(fields.value('postcode'))
       .then(() => {
         return onSubmit()
-      })
-      .catch(() => {
-        throw 'Sorry, we do not currently serve this location.'
       })
   }
 
@@ -200,9 +199,7 @@ export const EditAddress = ({
           <Input key={field.name} field={field} />
         ))}
       </div>
-      <Submit field={fields.form} className="w-full">
-        Submit
-      </Submit>
+      <Submit field={fields.form} className="w-full" />
     </Form>
   )
 }

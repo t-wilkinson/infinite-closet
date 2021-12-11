@@ -1,35 +1,39 @@
 import React from 'react'
 
-import { Icon } from '@/components'
-import { iconClose } from '@/components/Icons'
+import Modal from './Modal'
+import { Icon, iconClose } from '@/Icons'
 
-const Popup = ({children, state=false, setState}) => {
-  if (!state) {
+const Popup = ({
+  children,
+  header = undefined,
+  isOpen = true,
+  close = () => {},
+}) => {
+  if (!isOpen) {
     return null
   }
 
-  return <aside className="fixed inset-0 grid place-items-center z-30"
-    style={{ backgroundColor: "#5f6368cc" }}
-    onClick={(e) => {
-      // @ts-ignore
-      if (e.target === e.currentTarget) {
-        setState(false)
-      }
-    }}
-  >
-    <div
-      className="bg-white border-gray border w-96"
-      style={{ maxHeight: 600 }}
-    >
-      <button onClick={() => setState(false)} className="place-self-end">
-        <div className="p-4 pb-2">
+  return (
+    <Modal close={close}>
+      <div className="bg-white w-96 p-4 rounded-md" style={{ maxHeight: 600 }}>
+        <button
+          type="button"
+          onClick={() => close()}
+          className="place-self-end absolute pb-2 pl-2"
+        >
           <Icon icon={iconClose} size={16} />
-        </div>
-      </button>
-      {children}
-    </div>
-  </aside>
+        </button>
+        {header && (
+          <>
+            <h3 className="font-bold text-3xl mt-2 text-center">{header}</h3>
+            <div className="w-full h-px bg-pri mb-8 mt-1 rounded-full" />
+          </>
+        )}
+
+        {children}
+      </div>
+    </Modal>
+  )
 }
 
 export default Popup
-

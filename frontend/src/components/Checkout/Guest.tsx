@@ -2,7 +2,6 @@ import React from 'react'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import { useRouter } from 'next/router'
-import { CardElement } from '@stripe/react-stripe-js'
 dayjs.extend(utc)
 
 import { CartUtils } from '@/Cart/slice'
@@ -19,10 +18,9 @@ import {
   Coupon,
   Password,
   UseFields,
-  UseField,
 } from '@/Form'
 import { useAddressFields, AddressFields } from '@/Form/Address'
-import { PaymentWrapper, cardStyle, Authorize } from '@/Form/Payment'
+import { PaymentWrapper, Authorize, PaymentCard } from '@/Form/Payment'
 import { useSelector, useDispatch } from '@/utils/store'
 import { BlueLink } from '@/components'
 import useAnalytics from '@/utils/useAnalytics'
@@ -53,7 +51,7 @@ type Fields = UseFields
 const StateContext = React.createContext(null)
 const DispatchContext = React.createContext(null)
 const FieldsContext = React.createContext<Fields>(null)
-const AddressContext = React.createContext<AddressFields>(null)
+const AddressContext = React.createContext<UseFields<AddressFields>>(null)
 
 const CheckoutWrapper = () => {
   const [state, dispatch] = React.useReducer(reducer, initialState)
@@ -95,7 +93,13 @@ const CheckoutWrapper = () => {
           <FieldsContext.Provider value={fields}>
             <AddressContext.Provider value={address}>
               <PaymentWrapper>
-                <Checkout />
+                <div
+                  className="w-full justify-center max-w-screen-xl my-4 h-full
+                  md:flex-row space-y-4 md:space-y-0 md:space-x-4
+                  "
+                >
+                  <Checkout />
+                </div>
               </PaymentWrapper>
             </AddressContext.Provider>
           </FieldsContext.Provider>
@@ -127,58 +131,56 @@ const Checkout = () => {
     })
   }
 
-  return (
-    <div
-      className="w-full justify-center max-w-screen-xl my-4 h-full
-      md:flex-row space-y-4 md:space-y-0 md:space-x-4
-      "
-    >
-      {fields.form.value === 'success' ? (
-        <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-16 pb-16">
-          <span className="font-bold text-xl flex flex-col items-center">
-            Thank you for your purchase!
-          </span>
-          {state.registerError && (
-            <div className="my-4">
-              <span>We could not create an account for you.</span>
-              <Warning warnings={[state.registerError] || []} />
-            </div>
-          )}
-        </div>
-      ) : cartCount === 0 ? (
-        <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
-          <span className="font-bold text-xl flex flex-col items-center">
-            <div>
-              <BlueLink
-                href="/products/clothing"
-                label="Would you like to browse our collection?"
-              />
-            </div>
-          </span>
-        </div>
-      ) : (
-        <div className="w-full space-y-4">
-          <Cart />
-          <PaymentRequestForm
-            setVisible={setVisible}
-            coupon={state.coupon}
-            form={fields.form}
-            onCheckout={() => {
-              fetchCart()
-              analytics.logEvent('purchase', {
-                user: 'guest',
-                type: 'checkout',
-              })
-              router.push('/checkout/thankyou')
-            }}
-            couponCode={fields.get('couponCode').clean() as string}
-          />
-          {isVisible && <OR />}
-          <CheckoutForm onCheckout={onCheckout} />
-        </div>
-      )}
-    </div>
-  )
+  if (fields.form.value === 'success') {
+    return (
+      <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-16 pb-16">
+        <span className="font-bold text-xl flex flex-col items-center">
+          Thank you for your purchase!
+        </span>
+        {state.registerError && (
+          <div className="my-4">
+            <span>We could not create an account for you.</span>
+            <Warning warnings={[state.registerError] || []} />
+          </div>
+        )}
+      </div>
+    )
+  } else if (cartCount === 0) {
+    return (
+      <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
+        <span className="font-bold text-xl flex flex-col items-center">
+          <div>
+            <BlueLink
+              href="/products/clothing"
+              label="Would you like to browse our collection?"
+            />
+          </div>
+        </span>
+      </div>
+    )
+  } else {
+    return (
+      <div className="w-full space-y-4">
+        <Cart />
+        <PaymentRequestForm
+          setVisible={setVisible}
+          coupon={state.coupon}
+          form={fields.form}
+          onCheckout={() => {
+            fetchCart()
+            analytics.logEvent('purchase', {
+              user: 'guest',
+              type: 'checkout',
+            })
+            router.push('/checkout/thankyou')
+          }}
+          couponCode={fields.get('couponCode').clean() as string}
+        />
+        {isVisible && <OR />}
+        <CheckoutForm onCheckout={onCheckout} />
+      </div>
+    )
+  }
 }
 
 const CheckoutForm = ({ onCheckout }) => {
@@ -229,11 +231,17 @@ const CheckoutForm = ({ onCheckout }) => {
         redirect="/checkout/thankyou"
       >
         <SideItem label="Address">
-          <Address address={address} email={fields.get('email')} />
+          <div className="grid grid-flow-row grid-cols-2 w-full gap-y-3 gap-x-4 pt-2">
+            <Input field={fields.get('email')} />
+            {address.map((field) => (
+              <Input key={field.name} field={field} />
+            ))}
+          </div>
         </SideItem>
         <SideItem label="Payment Method">
           <Input field={fields.get('billingName')} />
-          <Payment fields={fields} />
+          <PaymentCard form={fields.form} />
+          <Authorize field={fields.get('authorized')} />
         </SideItem>
         <SideItem label="Summary">
           <Summary
@@ -268,53 +276,13 @@ const CheckoutForm = ({ onCheckout }) => {
 const isOrderInvalid = (order: { valid: boolean }) => !order.valid
 
 const SideItem = ({ label, children }) => (
-  <div>
-    <span className="font-bold text-lg">
+  <section className="flex flex-col">
+    <h3 className="font-bold text-lg">
       {label}
       <div className="w-full h-px bg-pri mt-2 mb-2" />
-    </span>
+    </h3>
     {children}
-  </div>
+  </section>
 )
-
-const Address = ({
-  email,
-  address,
-}: {
-  email: UseField<string>
-  address: AddressFields
-}) => {
-  return (
-    <div className="grid grid-flow-row grid-cols-2 w-full gap-y-3 gap-x-4 pt-2">
-      <Input field={email} />
-      {address.map((field) => (
-        <Input key={field.name} field={field} />
-      ))}
-    </div>
-  )
-}
-
-const Payment = ({ fields }: { fields: Fields }) => {
-  const handleChange = async (event: any) => {
-    if (event.error) {
-      fields.form.setErrors(event.error.message)
-    } else {
-      fields.form.setErrors()
-    }
-  }
-
-  return (
-    <>
-      <div className="mb-4 mt-2 border border-gray rounded-sm p-4">
-        <CardElement
-          id="card-element"
-          options={cardStyle}
-          onChange={handleChange}
-        />
-      </div>
-      <Authorize field={fields.get('authorized')} />
-    </>
-  )
-}
 
 export default CheckoutWrapper

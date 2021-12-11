@@ -2,6 +2,7 @@ import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit'
 
 import { RootState } from '@/utils/store'
 import {
+  Size,
   StrapiProduct,
   StrapiDesigner,
   StrapiColor,
@@ -11,8 +12,7 @@ import {
   StrapiCategory,
   StrapiMaterial,
   StrapiMetal,
-} from '@/types/models'
-import { Size } from '@/Products/types'
+} from '@/types'
 
 import { CookieConsent } from './types'
 

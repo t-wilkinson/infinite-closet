@@ -33,7 +33,13 @@ const AddReview = ({}) => {
       .catch(() => setCanReview(false))
   }, [])
 
-  const fields = useFields({
+  const fields = useFields<{
+    heading: string
+    message: string
+    fit: 'short' | 'true' | 'long'
+    rating: number
+    images: any[]
+  }>({
     heading: {
       label: 'Headline',
       placeholder: 'What is most important to know?',
@@ -98,7 +104,7 @@ const AddReview = ({}) => {
       <Dropdown field={fields.get('fit')} values={fitValues} />
       <ImageUpload field={fields.get('images')} />
       <Textarea field={fields.get('message')} rows={5} />
-      <Submit field={fields.form}>Submit</Submit>
+      <Submit field={fields.form} />
     </Form>
   )
 }

@@ -13,10 +13,11 @@ import { Addresses, AddAddress } from '@/Form/Address'
 import {
   PaymentWrapper,
   PaymentMethods,
-  AddPaymentMethodFormWrapper,
+  AddPaymentMethod,
 } from '@/Form/Payment'
-import { Icon, iconClose } from '@/Icons'
-import { BlueLink } from '@/components'
+import Popup from '@/Layout/Popup'
+// import { Icon, iconClose } from '@/Icons'
+import { BlueLink, Button } from '@/components'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
@@ -204,7 +205,12 @@ const Checkout = ({ fetchCart, analytics }) => {
           <Address user={user} state={state} dispatch={dispatch} />
         </SideItem>
         <SideItem label="Payment Methods" user={user} protect>
-          <Payment user={user} state={state} dispatch={dispatch} />
+          <Payment
+            form={fields.form}
+            user={user}
+            state={state}
+            dispatch={dispatch}
+          />
         </SideItem>
         <SideItem label="Summary" user={user}>
           <Summary
@@ -298,53 +304,49 @@ const Address = ({ state, user, dispatch }) => (
       select={(id: number) => dispatch({ type: 'choose-address', payload: id })}
     />
     {state.popup === 'address' && (
-      <div className="fixed inset-0 z-30 bg-black bg-opacity-50 items-center justify-center">
-        <div className="w-full max-w-md w-full p-6 bg-white rounded-lg relative">
-          <div className="w-full items-center">
-            <span className="font-bold text-3xl mt-2">Add Address</span>
-          </div>
-
-          <div className="w-full h-px bg-pri mb-6 mt-1 rounded-full" />
-
-          <button
-            className="absolute top-0 right-0 m-3"
-            type="button"
-            onClick={() => dispatch({ type: 'close-popup' })}
-          >
-            <Icon icon={iconClose} size={20} />
-          </button>
-          <AddAddress
-            user={user}
-            onSubmit={() => dispatch({ type: 'close-popup' })}
-          />
-        </div>
-      </div>
+      <Popup
+        isOpen={state.popup === 'address'}
+        header="Add Address"
+        close={() => dispatch({ type: 'close-popup' })}
+      >
+        <AddAddress
+          user={user}
+          onSubmit={() => dispatch({ type: 'close-popup' })}
+        />
+      </Popup>
     )}
     <div className="h-0" />
-    <button
-      className="flex p-2 bg-white rounded-sm border border-gray justify-center"
-      onClick={() => dispatch({ type: 'edit-address' })}
-    >
-      <span className="inline">Add Address</span>
-    </button>
+    <Button role="secondary" onClick={() => dispatch({ type: 'edit-address' })}>
+      Add Address
+    </Button>
   </>
 )
 
-const Payment = ({ state, user, dispatch }) => (
+const Payment = ({ form, state, user, dispatch }) => (
   <>
     <PaymentMethods user={user} dispatch={dispatch} state={state} />
-    <AddPaymentMethodFormWrapper
-      user={user}
-      state={state}
-      dispatch={dispatch}
-    />
-    <button
-      className="flex p-2 bg-white rounded-sm border border-gray justify-center"
-      type="button"
-      onClick={() => dispatch({ type: 'edit-payment' })}
-    >
-      <span className="inline">Add Payment</span>
-    </button>
+    {state.popup === 'payment' && (
+      <AddPaymentMethod
+        user={user}
+        form={form}
+        close={() => dispatch({ type: 'close-popup' })}
+        choosePaymentMethod={(paymentMethod) =>
+          dispatch({
+            type: 'choose-payment-method',
+            payload: paymentMethod,
+          })
+        }
+        setPaymentMethods={(paymentMethods) =>
+          dispatch({
+            type: 'set-payment-methods',
+            payload: paymentMethods,
+          })
+        }
+      />
+    )}
+    <Button role="secondary" onClick={() => dispatch({ type: 'edit-payment' })}>
+      Add Payment
+    </Button>
   </>
 )
 

@@ -59,13 +59,16 @@ export const Form = ({
 
   const onSubmitInternal = (e: React.SyntheticEvent) => {
     e.preventDefault()
+    ;(fields as UseFields[]).forEach((fields) => fields.clearErrors())
     const cantResubmit = form.value === 'success' && !resubmit
     if (form.value === 'submitting' || cantResubmit) {
       return
     }
     form.setValue('submitting')
 
-    const valid = (fields as UseFields[]).map((fields: UseFields) => fields.update()).every(v => v)
+    const valid = (fields as UseFields[])
+      .map((fields: UseFields) => fields.update())
+      .every((v) => v)
     if (!valid) {
       form.setValue('error')
       form.setErrors('Please ensure the form is filled out correctly')
@@ -74,23 +77,23 @@ export const Form = ({
 
     const res = onSubmit(e) || Promise.resolve()
     res
-    .then(() => {
-      form.setValue('success')
-      form.setErrors()
-      // @ts-ignore
-      document.activeElement?.blur()
-      if (redirect) {
-        router.push(redirect)
-      }
-    })
-    .catch((err) => {
-      form.setValue('error')
-      form.setErrors(
-        err.message ||
-          err ||
-          "Looks like something's not working... Please try again later"
-      )
-    })
+      .then(() => {
+        form.setValue('success')
+        form.setErrors()
+        // @ts-ignore
+        document.activeElement?.blur()
+        if (redirect) {
+          router.push(redirect)
+        }
+      })
+      .catch((err) => {
+        form.setValue('error')
+        form.setErrors(
+          err.message ||
+            err ||
+            "Looks like something's not working... Please try again later"
+        )
+      })
   }
 
   return (
@@ -151,7 +154,7 @@ export const Submit = ({
         {field.value === 'submitting' && (
           <Icon
             size={20}
-            className="animate-spin h-5 w-5 mr-3 ..."
+            className="animate-spin h-5 w-5 mr-3"
             icon={iconLoading}
           />
         )}

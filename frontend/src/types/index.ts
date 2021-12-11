@@ -1,3 +1,5 @@
 export * from './summary'
 export * from './size-chart'
 export * from './contact'
+export * from './size'
+export * from './models'

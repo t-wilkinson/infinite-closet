@@ -6,12 +6,11 @@ import isBetween from 'dayjs/plugin/isBetween'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
 import axios from '@/utils/axios'
-import { StrapiProduct, StrapiOrder } from '@/types/models'
 import { Icon } from '@/components'
-import { iconLeft, iconClose, iconRight } from '@/components/Icons'
+import { iconLeft, iconClose, iconRight } from '@/Icons'
 import * as sizing from '@/utils/sizing'
 import useDays from '@/utils/useDays'
-import { Size } from '@/Products/types'
+import { Size, StrapiProduct, StrapiOrder } from '@/types'
 import { rentalLengths } from '@/utils/config'
 
 dayjs.extend(isSameOrAfter)

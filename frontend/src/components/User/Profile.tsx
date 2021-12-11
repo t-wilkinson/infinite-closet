@@ -16,13 +16,12 @@ import {
   useFields,
 } from '@/Form'
 import { Divider } from '@/components'
-import { Size } from '@/Products/types'
+import { Size, StrapiUser} from '@/types'
 import * as sizing from '@/utils/sizing'
 import { useSelector } from '@/utils/store'
 import { SizeChartPopup } from '@/Shop/Size'
-import { StrapiUser } from '@/types/models'
 
-import { useSignin } from './'
+import useSignin from './useSignin'
 
 type Status = 'changed' | 'error'
 
@@ -72,12 +71,14 @@ const useUpdateUser = () => {
     user: StrapiUser,
     fields: UseFields,
     setStatus: (status: Status) => void,
-    dobField?: any,
+    dobField?: any
   ) => {
     const cleaned = fields.changed()
-    const dateOfBirth = dobField
-        &&
-      dobField.get('bday') && dobField.get('bmonth') && dobField.get('byear')
+    const dateOfBirth =
+      dobField &&
+      dobField.get('bday') &&
+      dobField.get('bmonth') &&
+      dobField.get('byear')
         ? toDate({
             bday: dobField.get('bday'),
             bmonth: dobField.get('bmonth'),
@@ -85,13 +86,10 @@ const useUpdateUser = () => {
           })
         : undefined
     return axios
-        .put<void>(
-        `/users/${user.id}`,
-        {
-          ...cleaned,
-          dateOfBirth,
-        }
-      )
+      .put<void>(`/users/${user.id}`, {
+        ...cleaned,
+        dateOfBirth,
+      })
       .then(() => setStatus('changed'))
       .then(() =>
         analytics.logEvent('update_details', {
@@ -117,7 +115,7 @@ const AccountDetails = ({ setStatus, user }) => {
     email: { default: user.email },
     phoneNumber: { default: user.phoneNumber },
   })
-  const dobField = useFields({
+  const dobField = useFields<{ bday: number; bmonth: number; byear: number }>({
     bday: { ...dobFields.bday, default: dateOfBirth.date() },
     bmonth: { ...dobFields.bmonth, default: dateOfBirth.month() + 1 },
     byear: { ...dobFields.byear, default: dateOfBirth.year() },
@@ -141,7 +139,10 @@ const AccountDetails = ({ setStatus, user }) => {
       />
       <SubmitFields
         field={fields.form}
-        disabled={Object.values(fields.changed()).length === 0 && Object.values(dobField.changed()).length === 0}
+        disabled={
+          Object.values(fields.changed()).length === 0 &&
+          Object.values(dobField.changed()).length === 0
+        }
       />
     </Fieldset>
   )
@@ -168,7 +169,14 @@ const heights = [4, 5, 6]
 
 const FitsAndPreferences = ({ user, setStatus }) => {
   const [chartOpen, setChartOpen] = React.useState(false)
-  const fields = useFields({
+  const fields = useFields<{
+    height: number
+    weight: number
+    chestSize: number
+    waistSize: number
+    hipsSize: number
+    dressSize: number
+  }>({
     height: { default: user.height },
     weight: { default: user.weight, label: 'Weight (kgs.)' },
     chestSize: { default: user.chestSize, label: 'Chest Size (cm)' },
@@ -235,14 +243,6 @@ const FitsAndPreferences = ({ user, setStatus }) => {
 //   )
 // }
 
-// const Addresses = ({ user, setStatus }) => {
-//   return (
-//     <>
-//       <AddAddress user={user} onSubmit={() => {}} />
-//     </>
-//   )
-// }
-
 const SubmitFields = ({ field, disabled }) => (
   <div className="w-full col-start-1">
     <Submit field={field} disabled={disabled}>
@@ -251,7 +251,7 @@ const SubmitFields = ({ field, disabled }) => (
   </div>
 )
 
-const Fieldset = ({ name, children, onSubmit, fields}) => (
+const Fieldset = ({ name, children, onSubmit, fields }) => (
   <Form fields={fields} className="my-4" onSubmit={onSubmit} resubmit>
     <span className="text-gray font-bold">{name}</span>
     <Divider className="my-2" />

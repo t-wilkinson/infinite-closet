@@ -178,9 +178,9 @@ export const useCheckout = (form: UseField) => {
       .then(onCheckoutSuccess)
       .catch((error) => {
         if (error.message) {
-          throw error.message
+          throw error
         } else {
-          throw 'We ran into an issue processing your payment. Please try again later.'
+          throw new Error('We ran into an issue processing your payment. Please try again later.')
         }
       })
   }

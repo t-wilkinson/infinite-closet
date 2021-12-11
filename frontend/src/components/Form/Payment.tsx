@@ -2,17 +2,53 @@ import React from 'react'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
 import axios from '@/utils/axios'
-import { Warning, Input, useFields, Submit, Form } from '@/Form'
+import { Warning, Input, useFields, Submit, Form, UseFormField } from '@/Form'
 import { Icon, iconClose, iconCheck } from '@/Icons'
-import { useSignin } from '@/User'
+import useSignin from '@/User/useSignin'
 import { BlueLink } from '@/components'
 import { StrapiUser } from '@/types/models'
 import useAnalytics from '@/utils/useAnalytics'
+import Popup from '@/Layout/Popup'
 
 export * from './PaymentWrapper'
 
 const toTitleCase = (string: string) =>
   string.charAt(0).toUpperCase() + string.slice(1)
+
+const cardStyle = {
+  style: {
+    base: {
+      color: '#000',
+      fontFamily: 'Arial, sans-serif',
+      fontSmoothing: 'antialiased',
+      fontSize: '16px',
+      '::placeholder': {
+        color: '#666',
+        // color: '#5f6368',
+      },
+    },
+    invalid: {
+      color: '#fa755a',
+      iconColor: '#fa755a',
+    },
+  },
+}
+
+export const PaymentCard = ({ form, className = '' }) => {
+  const onChange = async (event: any) => {
+    if (event.error) {
+      form.setErrors(event.error.message)
+    } else {
+      form.clearErrors()
+    }
+  }
+
+  return (
+    <div className={`border my-2 border-gray rounded-sm p-4 ${className}`}>
+      <CardElement id="card-element" options={cardStyle} onChange={onChange} />
+    </div>
+  )
+}
 
 export const PaymentMethods = ({ user, state, dispatch }) => {
   return (
@@ -33,17 +69,15 @@ export const PaymentMethods = ({ user, state, dispatch }) => {
 export const PaymentMethod = ({
   id,
   dispatch,
+  userId,
   state,
   card: { brand, exp_month, exp_year, last4 },
-  userId,
 }) => {
   const signin = useSignin()
 
   const removePaymentMethod = () => {
     axios
-      .delete<void>(`/account/${userId}/payment-methods/${id}`, {
-        withCredentials: true,
-      })
+      .delete<void>(`/account/${userId}/payment-methods/${id}`)
       .then(() => signin())
       .catch((err) => console.error(err))
   }
@@ -87,80 +121,6 @@ export const PaymentMethod = ({
   )
 }
 
-export const cardStyle = {
-  style: {
-    base: {
-      color: 'black',
-      fontFamily: 'Arial, sans-serif',
-      fontSmoothing: 'antialiased',
-      fontSize: '16px',
-      '::placeholder': {
-        color: '#666',
-      },
-    },
-    invalid: {
-      color: '#fa755a',
-      iconColor: '#fa755a',
-    },
-  },
-}
-
-type AddPaymentMethod = {
-  user: StrapiUser
-  state: any
-  dispatch: any
-}
-
-export const AddPaymentMethod = ({ user, state, dispatch }) => (
-  <AddPaymentMethodFormWrapper user={user} state={state} dispatch={dispatch} />
-)
-
-export const AddPaymentMethodFormWrapper = ({ user, state, dispatch }) => {
-  const onSubmit = (setupIntent: any) => {
-    dispatch({ type: 'close-popup' })
-    dispatch({
-      type: 'choose-payment-method',
-      payload: setupIntent.payment_method,
-    })
-
-    axios
-      .get('/account/payment-methods', { withCredentials: true })
-      .then((data) => {
-        dispatch({
-          type: 'set-payment-methods',
-          payload: data.paymentMethods,
-        })
-      })
-      .catch((err) => console.error(err))
-  }
-
-  const onClose = () => {
-    dispatch({ type: 'close-popup' })
-  }
-
-  if (state.popup !== 'payment') {
-    return <div />
-  }
-
-  return (
-    <AddPaymentMethodForm user={user} onSubmit={onSubmit} onClose={onClose} />
-  )
-}
-
-const AddPaymentMethodHeader = ({ onClose }) => (
-  <>
-    <div className="w-full items-center">
-      <span className="font-bold text-3xl mt-2">Add Payment Method</span>
-    </div>
-
-    <div className="w-full h-px bg-pri mb-6 mt-1 rounded-full" />
-
-    <button className="absolute top-0 right-0 m-3" onClick={onClose}>
-      <Icon icon={iconClose} size={20} />
-    </button>
-  </>
-)
-
 export const Authorize = ({ field }) => (
   <button
     onClick={() => field.setValue(!field.value)}
@@ -183,7 +143,21 @@ export const Authorize = ({ field }) => (
   </button>
 )
 
-export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
+type AddPaymentMethod = {
+  user: StrapiUser
+  close: () => {}
+  choosePaymentMethod: (paymentMethod: any) => {}
+  setPaymentMethods: (paymentMethods: any[]) => {}
+  form: UseFormField
+}
+
+export const AddPaymentMethod = ({
+  user,
+  close,
+  choosePaymentMethod,
+  setPaymentMethods,
+  form,
+}: AddPaymentMethod) => {
   const [clientSecret, setClientSecret] = React.useState(undefined)
   const stripe = useStripe()
   const elements = useElements()
@@ -208,18 +182,26 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
   React.useEffect(() => {
     if (user) {
       axios
-        .post<{ clientSecret: string }>(
-          '/account/wallet',
-          {},
-          { withCredentials: true }
-        )
+        .post<{ clientSecret: string }>('/account/wallet', {})
         .then((data) => setClientSecret(data.clientSecret))
-        .catch((err) => console.error(err))
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }, [user])
 
-  const handleChange = async (event: any) => {
-    fields.form.setErrors(event.error ? event.error.message : '')
+  const onSubmit = (setupIntent: any) => {
+    close()
+    choosePaymentMethod(setupIntent.payment_method)
+
+    axios
+      .get<{ paymentMethods: any[] }>('/account/payment-methods')
+      .then((data) => {
+        setPaymentMethods(data.paymentMethods)
+      })
+      .catch((err) => {
+        throw err
+      })
   }
 
   const addPaymentMethod = async () => {
@@ -236,7 +218,7 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
         },
       })
       if (payload.error) {
-        throw `Payment failed ${payload.error.message}`
+        throw payload.error
       } else {
         analytics.logEvent('add_payment_info', {
           user: user.email,
@@ -249,32 +231,18 @@ export const AddPaymentMethodForm = ({ user, onSubmit, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 z-30 bg-black bg-opacity-50 items-center justify-center">
+    <Popup close={close} header="Add Payment Method">
       <Form
         id="payment-form"
         fields={fields}
-        className="w-full max-w-sm w-full p-6 bg-white rounded-lg relative"
+        className="w-full max-w-sm w-full bg-white rounded-lg relative"
         onSubmit={addPaymentMethod}
       >
-        <AddPaymentMethodHeader onClose={onClose} />
-
         <Input field={fields.get('billingName')} />
-        <div className="my-4 border border-gray rounded-sm p-4">
-          <CardElement
-            id="card-element"
-            options={cardStyle}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="mb-4">
-          <Authorize field={fields.get('authorized')} />
-        </div>
-
-        <Submit className="w-full" field={fields.form}>
-          Submit
-        </Submit>
+        <PaymentCard form={form} />
+        <Authorize field={fields.get('authorized')} />
+        <Submit className="w-full" field={fields.form} />
       </Form>
-    </div>
+    </Popup>
   )
 }
