@@ -1,8 +1,5 @@
 import React from 'react'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
 import { useRouter } from 'next/router'
-dayjs.extend(utc)
 
 import { CartUtils } from '@/Cart/slice'
 import { useRegisterUser } from '@/Account/Register'

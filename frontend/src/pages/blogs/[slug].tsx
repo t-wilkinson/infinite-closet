@@ -1,10 +1,10 @@
 import ReactMarkdown from 'react-markdown'
 import gfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
-import dayjs from 'dayjs'
 import Image from 'next/image'
 
 import axios, { getURL } from '@/utils/axios'
+import dayjs, {createDateFormat} from '@/utils/dayjs'
 import Layout from '@/Layout'
 import { ScrollUp } from '@/components'
 import { readingTime } from '@/Markdown'
@@ -60,7 +60,8 @@ export const components = {
 
 const Blog = ({ published_at, updated_at, name, content, subtitle, image }) => {
   content = content.replace(/\|\n\n(\s*)\|/g, '|\n$1|') // remove extra new lines for markdown tables
-  updated_at = dayjs(updated_at).format('DD/MM/YY')
+  const fmtDate = createDateFormat('MM/DD/YY', {'en-gb': 'DD/MM/YY'})
+  updated_at = fmtDate(dayjs(updated_at))
   const [minutes] = readingTime(content)
 
   return (
@@ -103,7 +104,7 @@ export const Page = ({ data }) => {
   return <Blog {...data} name={data.title} />
 }
 
-const fetchMarkdown = async ({ query, resolvedUrl }) => {
+const fetchMarkdown = async ({ query }) => {
   return {
     props: {
       data: {

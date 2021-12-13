@@ -1,7 +1,7 @@
 import React from 'react'
-import dayjs from 'dayjs'
 
 import * as sizing from '@/utils/sizing'
+import { createDateFormat } from '@/utils/dayjs'
 import useAnalytics from '@/utils/useAnalytics'
 import { CartUtils } from '@/Cart/slice'
 import { Form, Submit, Warning } from '@/Form'
@@ -192,10 +192,7 @@ export const SelectRentalDate = ({
   selectedDate,
   setVisible,
 }) => {
-  const format = (date: Dayjs) =>
-    dayjs.locale() === 'en'
-      ? date.format('ddd M/D')
-      : date.format('ddd D/M')
+  const fmtDate = createDateFormat('ddd M/D', { 'en-gb': 'ddd D/M'})
   return (
     <SelectorItem
       label="Rental time"
@@ -216,9 +213,9 @@ export const SelectRentalDate = ({
           >
             <span>
               {selectedDate.value &&
-                format(selectedDate.value) +
+                fmtDate(selectedDate.value) +
                   ' - ' +
-                  format(selectedDate.value
+                  fmtDate(selectedDate.value
                     .add(rentalLengths[rentalLength.value] + 1, 'day'))
               }
             </span>

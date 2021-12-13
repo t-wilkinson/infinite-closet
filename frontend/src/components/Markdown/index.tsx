@@ -2,10 +2,10 @@ import React from 'react'
 import ReactMarkdown from 'react-markdown'
 import gfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
-import dayjs from 'dayjs'
 import Link from 'next/link'
 
 import axios from '@/utils/axios'
+import dayjs, {createDateFormat} from '@/utils/dayjs'
 import Layout from '@/Layout'
 import { ScrollUp, Divider } from '@/components'
 
@@ -78,7 +78,8 @@ export const MarkdownWrapper = ({
   content,
   children = null,
 }) => {
-  updated_at = dayjs(updated_at).format('DD/MM/YY')
+  const fmtDate = createDateFormat('MM/DD/YY', {'en-gb': 'DD/MM/YY'})
+  updated_at = fmtDate(dayjs(updated_at))
 
   return (
     <Layout title={name}>
