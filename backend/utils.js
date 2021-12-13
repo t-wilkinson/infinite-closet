@@ -149,5 +149,5 @@ module.exports = {
   generateAPI,
   splitName,
   day,
-  providerName: 'acs',
+  providerName: 'hived',
 }

@@ -43,6 +43,7 @@ async function createCartItem(order) {
   order = await strapi
     .query('order', 'orders')
     .findOne({ id: order.id }, [
+      'address',
       'product.sizes',
       'product.images',
       'product.designer',

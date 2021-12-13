@@ -19,56 +19,6 @@ async function notifyArrival(orders) {
   }
 }
 
-async function shipToCleaners(cartItem) {
-  const { order } = cartItem
-  strapi.log.info('cleaning order %o', order.id)
-  const shippingRequest = {
-    collection:
-      strapi.plugins['orders'].services.order.toShippingAddress(order),
-    recipient: 'oxwash',
-    shippingClass: 'two',
-    shipmentPrice: strapi.plugins['orders'].services.price.orderTotal(order),
-  }
-
-  await strapi
-    .query('order', 'orders')
-    .update({ id: order.id }, { status: 'cleaning' })
-  if (strapi.services.shipment.providerName !== 'acs') {
-    const id = await strapi.services.shipment.ship(shippingRequest)
-    await strapi
-      .query('order', 'orders')
-      .update({ id: order.id }, { shipment: id })
-  }
-  await strapi.services.template_email.orderLeaving(cartItem)
-}
-
-async function sendToCleaners(orders) {
-  for (const order of orders) {
-    const range = strapi.services.timing.range(order)
-    const date = day(range.end)
-    const today = day()
-    if (!date.isSame(today, 'day')) {
-      continue
-    }
-
-    const cartItem = await strapi.plugins[
-      'orders'
-    ].services.cart.createCartItem(order)
-
-    shipToCleaners(order).catch((err) =>
-      strapi.plugins['orders'].services.helpers.shippingFailure(cartItem, err)
-    )
-  }
-}
-
-async function shippingFailure(order, err) {
-  await strapi
-    .query('order', 'orders')
-    .update({ id: order.id }, { status: 'error', message: err })
-  await strapi.services.template_email.orderShippingFailure(order, err)
-  strapi.log.error('failed to ship order to client %o', err)
-}
-
 /**
  * Find orders that require manual action through the strapi plugin
  * and send an email reminder
@@ -87,56 +37,6 @@ async function notifyAction(orders) {
 
   const cart = await strapi.plugins['orders'].services.cart.create(orders)
   strapi.services.template_email.shippingAction(cart)
-}
-
-async function ship(order) {
-  if (order.status === 'shipping') {
-    throw new Error('Already shipping')
-  }
-
-  order = await strapi.query('order', 'orders').update(
-    { id: order.id },
-    {
-      status: 'shipping',
-      shippingDate: day().toJSON(),
-    }
-  )
-  order = await strapi
-    .query('order', 'orders')
-    .findOne({ id: order.id }, [
-      'address',
-      'product',
-      'user',
-      'product.designer',
-      'product.images',
-      'product.sizes',
-    ])
-  const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(
-    order
-  )
-
-  const shippingRequest = {
-    collection: 'infinitecloset',
-    recipient: strapi.plugins['orders'].services.order.toShippingAddress(order),
-    shippingClass: strapi.services.timing.shippingClass(
-      order.shippingDate,
-      order.startDate
-    ),
-    shipmentPrice: cartItem.totalPrice,
-    order,
-  }
-
-  await strapi.services.shipment
-    .ship(shippingRequest)
-    .then((res) =>
-      strapi
-        .query('order', 'orders')
-        .update({ id: order.id }, { shipment: res })
-    )
-    .catch((err) =>
-      strapi.plugins['orders'].services.helpers.shippingFailure(order, err)
-    )
-  return cartItem
 }
 
 /**
@@ -219,6 +119,9 @@ async function onCheckout({
       break
   }
 
+  await Promise.all(cart.map((cartItem) =>
+    strapi.query('order', 'orders').update({id: cartItem.order.id}, { address: address.id })))
+
   // Validate address
   const isAddressValid = await strapi.services.shipment.validateAddress(address)
   if (!isAddressValid) {
@@ -238,11 +141,14 @@ async function onCheckout({
   // acs expects orders asap
   if (strapi.services.shipment.providerName === 'acs') {
     const settled = await Promise.allSettled(
-      cart.map((cartItem) => ship(cartItem.order))
+      cart.map((cartItem) =>
+        strapi.plugins['orders'].services.ship.shipOrderToClient(cartItem.order)
+      )
     )
     const failed = settled.filter((res) => res.status === 'rejected')
     if (failed.length > 0) {
-      strapi.log.error('onCheckout: Failure to ship', failed)
+      strapi.log.error('onCheckout: Failed to ship', failed)
+      throw new Error('Failed to ship order')
     }
   }
 
@@ -255,10 +161,6 @@ async function onCheckout({
 
 module.exports = {
   onCheckout,
-  ship,
-  shipToCleaners,
-  sendToCleaners,
-  shippingFailure,
   notifyArrival,
   notifyAction,
 }

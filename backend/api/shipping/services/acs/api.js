@@ -1,6 +1,6 @@
 'use strict'
 const fetch = require('node-fetch')
-const crypto = require('crypto')
+// const crypto = require('crypto')
 const config = require('./config')
 const timing = require('../timing')
 const { formatAddress } = require('../shipment')
@@ -17,57 +17,75 @@ async function fetchApi(url, method, body = {}) {
   return fetch(`${endpoint}${url}`, {
     method,
     headers: {
-      Authorization: 'Basic ' + basicAuth,
+      Auth: `BasicAuth: ${config.auth.username},${config.auth.password}`,
+      Authorization: `Basic ${basicAuth}`,
+      // 'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
     body:
       method === 'GET'
         ? undefined
         : JSON.stringify({
-            fields: body,
-          }),
-  }).then((res) => res.json())
+          fields: body,
+        }),
+  }).then((res) => console.log(res))
+  // .then((res) => res.json())
 }
 
 module.exports = {
+  // TODO: accept multiple orders
   async ship({ recipient, shippingClass, shipmentPrice, order }) {
-    if (process.env.NODE_ENV !== 'production') {
-      return { id: crypto.randomBytes(16).toString('base64') }
-    }
+    // if (process.env.NODE_ENV !== 'production') {
+    //   return crypto.randomBytes(16).toString('base64')
+    // }
 
     const range = timing.range(order)
     const uniqueSKU = await strapi.plugins[
       'orders'
     ].services.order.acsUniqueSKU(order)
 
-    // TODO!: ItemLineID has to be unique per individual item
-    // we will find all existing orders with same product and size
-    // then add 1 + count for the next
     const body = Object.assign(
       {
         AccountCode: config.auth.accountCode,
         OrderNumber: order.id,
-        ItemLineID: uniqueSKU,
-        GarmentSKU: order.product.id,
-        ItemPrice: shipmentPrice,
+
         DeliveryService: config.shippingClasses[shippingClass],
         DeliveryAgent: config.deliveryAgent,
-        IsHire: true,
-        Measurement1: strapi.services.size.normalize(order.size),
-        Measurement2: strapi.services.size.normalize(order.size),
+        DeliverCharge: 0,
+        OrderCancelled: false,
 
         OrderDate: range.created.format('YYYY-MM-DD'),
         DispatchDate: range.shipped.format('YYYY-MM-DD'),
         DeliveryDate: range.start.format('YYYY-MM-DD'),
         EventDate: range.start.format('YYYY-MM-DD'),
         WarehouseReturnDate: range.cleaning.format('YYYY-MM-DD'), // day after the order should end
+
+        OrderItems: [
+          {
+            LineItemId: uniqueSKU,
+            GarmentSKU: order.product.id,
+            IsHire: true,
+            ItemPrice: shipmentPrice,
+            Measurement1: strapi.services.size.normalize(order.size),
+            Measurement2: strapi.services.size.normalize(order.size),
+          },
+        ],
       },
       formatAddress(config.addressFormats.recipient, recipient)
     )
 
-    const res = await fetchApi(`/orders/${body.OrderNumber}`, 'PUT', body)
+    const res = await fetchApi(
+      `/orders/${body.OrderNumber}`,
+      'PUT',
+      body
+    ).catch((err) => {
+      console.dir(err)
+      console.log(err.message)
+      throw err
+    })
     strapi.log.info('hived:ship %o', res)
-    return res.OrderNumber
+    throw new Error('TODO')
+    return body.OrderNumber
   },
   retrieve: () => {},
   complete: () => {},

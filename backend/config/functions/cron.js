@@ -9,6 +9,8 @@ module.exports = {
     }
 
     strapi.services.contact.updateContactList()
+    const helpers = strapi.plugins['orders'].services.helpers
+    const ship = strapi.plugins['orders'].services.ship
 
     const orders = await strapi
       .query('order', 'orders')
@@ -16,13 +18,15 @@ module.exports = {
         'product',
         'product.designer',
         'user',
+        'address',
+        'coupon',
       ])
     const filterOrders = (status) =>
       orders.filter((order) => order.status === status)
 
     const shippingOrders = filterOrders('shipping')
-    strapi.plugins['orders'].services.helpers.sendToCleaners(shippingOrders)
-    strapi.plugins['orders'].services.helpers.notifyArrival(shippingOrders)
+    ship.sendToCleaners(shippingOrders)
+    helpers.notifyArrival(shippingOrders)
 
     // Send user email if they are recieving order today
     if (strapi.services.shipment.providerName === 'acs') {
@@ -45,9 +49,10 @@ module.exports = {
       }
     }
 
+    const planningOrders = filterOrders('planning')
     if (strapi.services.shipment.providerName !== 'acs') {
-      const planningOrders = filterOrders('planning')
-      strapi.plugins['orders'].services.helpers.notifyAction(planningOrders)
+      ship.shipOrders(planningOrders)
+      helpers.notifyAction(planningOrders)
     }
   },
 }
