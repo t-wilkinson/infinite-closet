@@ -1,6 +1,8 @@
 'use strict'
-const timing = require('./hived/timing')
-const {day} = require('../../../utils')
+const { providerName, day } = require('../../../utils')
+const provider = require(`./${providerName}`)
+
+const HOURS_IN_DAY = 24
 
 /**
  * @typedef {(null|'one'|'two')} ShippingClass
@@ -27,8 +29,45 @@ const {day} = require('../../../utils')
  */
 
 /**
- * @file Core functions for manipulating date and time.
+ * Determine when an item will likely arrive, given shipping info
+ * @param {DateLike} sent - When the item is sent
+ * @param {ShippingClass} shippingClass
+ * @returns {DateLike} When item will arrive
  */
+function arrival(sent, shippingClass = 'one') {
+  sent = day(sent)
+  const hoursSendClient = provider.config.shippingClassHours[shippingClass]
+  const offset = sent.hour() >= provider.config.timing.cutoff ? HOURS_IN_DAY : 0
+  const arrives = sent
+    .add(hoursSendClient + offset, 'hours')
+    .hour(provider.config.timing.cutoff)
+  return arrives
+}
+
+/**
+ * Returns cheapest {@link ShippingClass} given time constraints on when it can leave and arrive.
+ * @param {DateLike=} earliestDeliveryDate
+ * @param {DateLike} startsOn
+ * @returns {ShippingClass}
+ */
+function shippingClass(earliestDeliveryDate, startsOn) {
+  earliestDeliveryDate = day(earliestDeliveryDate) // Want to convert null to undefined
+  startsOn = day(startsOn).set({ hour: 0 })
+
+  if (!earliestDeliveryDate) {
+    return undefined
+  }
+  const arrivesWithClass = (shippingClass) =>
+    startsOn.isSameOrAfter(arrival(earliestDeliveryDate, shippingClass), 'day')
+
+  if (arrivesWithClass('two')) {
+    return 'two'
+  } else if (arrivesWithClass('one')) {
+    return 'one'
+  } else {
+    return
+  }
+}
 
 /**
  * True if the value is a DateRange (has the keys that a DateRange has)
@@ -79,6 +118,18 @@ function overlap(date1, date2, granularity = 'day') {
 }
 
 /**
+ * Like {@link shippingClass} but returns hours shipping will take
+ * @returns {number}
+ */
+function shippingClassHours(earliestDeliveryDate, startsOn) {
+  return (
+    provider.config.shippingClassHours[
+      shippingClass(earliestDeliveryDate, startsOn)
+    ] || provider.config.shippingClassHours.two
+  )
+}
+
+/**
  * A date is valid if there is enough time for order to go through lifecycle
  * without letting the product available quantity be negative.
  * @param {DateLike} start - Start date of order
@@ -102,7 +153,7 @@ function valid(start, available, quantity, existing = 0) {
 
   start = day(start)
   const today = day()
-  let arrives = timing.arrival(today, 'one')
+  let arrives = arrival(today, 'one')
 
   if (shouldAddGracePeriod) {
     arrives = arrives.add(15, 'day')
@@ -114,4 +165,44 @@ function valid(start, available, quantity, existing = 0) {
   return enoughShippingTime && notTooFarInFuture
 }
 
-module.exports = { ...timing, valid, overlap }
+/**
+ * Expected/measured dates of each stage of an order
+ * @param {DateLike} startDate
+ * @param {DateLike=} shippingDate
+ * @param {RentalLength} rentalLength
+ * @param {DateLike=} created_at
+ * @returns {DateRange}
+ */
+function range({ startDate, shippingDate, rentalLength, created_at }) {
+  if (!startDate || !rentalLength) {
+    throw new Error('Must include startDate and rentalLength')
+  }
+
+  rentalLength = provider.config.rentalLengths[rentalLength]
+  const hoursSendClient = shippingClassHours(shippingDate, startDate)
+  const shipped = shippingDate
+    ? day(shippingDate)
+    : day(startDate).subtract(hoursSendClient, 'hours')
+
+  const created = created_at ? day(created_at) : undefined
+  const start = day(startDate)
+  const end = start.add(rentalLength, 'hours')
+  const cleaning = end.add(provider.config.timing.hoursSendCleaners, 'hours')
+  const completed = cleaning.add(
+    provider.config.timing.completionBufferHours +
+      provider.timing.cleaningDuration(cleaning),
+    'hours'
+  )
+
+  return { created, shipped, start, end, cleaning, completed }
+}
+
+module.exports = {
+  ...provider.timing,
+  arrival,
+  shippingClass,
+  shippingClassHours,
+  range,
+  valid,
+  overlap,
+}

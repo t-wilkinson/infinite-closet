@@ -25,7 +25,7 @@ module.exports = {
     strapi.plugins['orders'].services.helpers.notifyArrival(shippingOrders)
 
     // Send user email if they are recieving order today
-    if (strapi.services.shipment.provider === 'acs') {
+    if (strapi.services.shipment.providerName === 'acs') {
       const today = day().utc()
       const isToday = (date) => today.isSame(day(date).utc(), 'day')
       for (const order of orders) {
@@ -37,7 +37,7 @@ module.exports = {
       }
     }
 
-    if (strapi.services.shipment.provider !== 'acs') {
+    if (strapi.services.shipment.providerName !== 'acs') {
       const planningOrders = filterOrders('planning')
       strapi.plugins['orders'].services.helpers.notifyAction(planningOrders)
     }

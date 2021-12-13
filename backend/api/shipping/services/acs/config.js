@@ -1,21 +1,10 @@
 const HOURS_IN_DAY = 24
 
-module.exports = {
-  endpoint: {
-    live: 'https://partnerapis.acsclothing.co.uk/api/v1',
-    test: 'https://uat-partnerapis.acsclothing.co.uk/api/v1',
-  },
-  auth: {
-    accountCode: 'INFINITE',
-    username: 'infinitecloset',
-    password: 'UTz87asC3jnGrJnpXCkawWeZRcPQHFd3',
-  },
-
+const publicConfig = {
   timing: {
     cutoff: 12,
-    hoursSendCleaners: 1 * HOURS_IN_DAY, // 2 day shipping
-    hoursToClean: 1 * HOURS_IN_DAY, // oxwash takes 24 hours to clean
-    restockHours: 1 * HOURS_IN_DAY,
+    hoursSendCleaners: 1 * HOURS_IN_DAY,
+    hoursToClean: 1 * HOURS_IN_DAY,
     completionBufferHours: 1 * HOURS_IN_DAY, // buffer some time for order completion in case anything goes wrong
   },
 
@@ -25,11 +14,11 @@ module.exports = {
   },
 
   shippingClasses: {
-    one: '24 Hour',
-    two: '2-Day',
+    one: '24',
+    two: '48',
   },
 
-  shippingClassesHours: {
+  shippingClassHours: {
     one: 1 * HOURS_IN_DAY,
     two: 2 * HOURS_IN_DAY,
   },
@@ -46,5 +35,22 @@ module.exports = {
       postcode: 'Delivery_Postcode',
       deliveryInstructions: 'Comment',
     },
+  },
+}
+
+module.exports = {
+  ...publicConfig,
+
+  endpoint: {
+    live: 'https://partnerapis.acsclothing.co.uk/api/v1',
+    test: 'https://uat-partnerapis.acsclothing.co.uk/api/v1',
+  },
+
+  deliveryAgent: 'RM',
+
+  auth: {
+    accountCode: 'INFINITE',
+    username: 'infinitecloset',
+    password: 'UTz87asC3jnGrJnpXCkawWeZRcPQHFd3',
   },
 }

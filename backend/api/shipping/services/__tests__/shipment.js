@@ -1,10 +1,39 @@
 /**
  * @group lib
  */
-const config = require('../config')
+'use strict'
+
+const acsConfig = require('../acs/config')
+const hivedConfig = require('../hived/config')
 const { formatAddress } = require('../shipment')
 
-describe('Format addresses', () => {
+it('Formats acs addresses', () => {
+  const address = {
+    name: 'Infinite Closet',
+    email: 'info@infinitecloset.co.uk',
+    phone: '1234567890',
+    address: ['Address 1', 'Address 2', 'Address 3'],
+    town: 'Town',
+    postcode: 'Postcode',
+    deliveryInstructions: 'Delivery instructions',
+  }
+
+  const res = formatAddress(acsConfig.addressFormats.recipient, address)
+  expect(res).toMatchObject({
+    FirstName: 'Infinite',
+    LastName: 'Closet',
+    Email: 'info@infinitecloset.co.uk',
+    MobilePhone: '1234567890',
+    Delivery_Address1: 'Address 1',
+    Delivery_Address2: 'Address 2',
+    Delivery_Address3: 'Address 3',
+    Delivery_City: 'Town',
+    Delivery_Postcode: 'Postcode',
+    Comment: 'Delivery instructions',
+  })
+})
+
+describe('Format hived addresses', () => {
   const address = {
     name: 'Infinite Closet',
     email: 'info@infinitecloset.co.uk',
@@ -16,7 +45,7 @@ describe('Format addresses', () => {
   }
 
   it('correctly formats sender', () => {
-    const res = formatAddress(config.addressFormats.sender, address)
+    const res = formatAddress(hivedConfig.addressFormats.sender, address)
     expect(res).toMatchObject({
       Sender: 'Infinite Closet',
       Sender_Address_Line_1: 'Address 1',
@@ -28,7 +57,7 @@ describe('Format addresses', () => {
   })
 
   it('correctly formats collection', () => {
-    const res = formatAddress(config.addressFormats.collection, address)
+    const res = formatAddress(hivedConfig.addressFormats.collection, address)
     expect(res).toMatchObject({
       Collection_Contact_Name: 'Infinite Closet',
       Collection_Email_Address: 'info@infinitecloset.co.uk',
@@ -43,7 +72,7 @@ describe('Format addresses', () => {
   })
 
   it('correctly formats recipients', () => {
-    const res = formatAddress(config.addressFormats.recipient, address)
+    const res = formatAddress(hivedConfig.addressFormats.recipient, address)
     expect(res).toMatchObject({
       Recipient: 'Infinite Closet',
       Recipient_Email_Address: 'info@infinitecloset.co.uk',

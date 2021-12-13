@@ -1,6 +1,6 @@
 'use strict'
 
-const {toId} = require('../../../utils')
+const { toId } = require('../../../utils')
 
 // An array because it can be used in strapi filter
 const inProgress = ['planning', 'shipping', 'cleaning']
@@ -119,6 +119,19 @@ async function totalAvailable(order, orders) {
   return quantity - overlaps
 }
 
+function toAcsUniqueSKU({ product, size }, existing = 0) {
+  return `IC-${toId(product)}_${existing + 1}-${size}`
+}
+
+async function acsUniqueSKU(order) {
+  const orders = await strapi.query('order', 'orders').find({
+    product: toId(order.product),
+    size: order.size,
+    status: strapi.plugins['orders'].services.order.inProgress,
+  })
+  return toAcsUniqueSKU(order, orders.length)
+}
+
 module.exports = {
   inProgress,
   productQuantity,
@@ -127,4 +140,6 @@ module.exports = {
   totalOverlaps,
   relevantOrders,
   totalAvailable,
+  toAcsUniqueSKU,
+  acsUniqueSKU,
 }

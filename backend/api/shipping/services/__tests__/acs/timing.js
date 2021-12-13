@@ -1,19 +1,18 @@
 /**
  * @group lib
+ * @group shipping/timing
+ * @group shipping/timing/acs
  */
 'use strict'
-const MockDate = require('mockdate')
-const timing = require('../timing')
-const config = require('../config')
-const {day} = require('../../../../../utils')
+const timing = require('../../timing')
+const config = require('../../acs/config')
+const { providerName } = require('../../shipment')
+const { day } = require('../../../../../utils')
+const { afterCutoff, beforeCutoff, overlapDateEdge, overlapRangeEdge } = require('../utils')(config)
 
-const withinDate = (date, fn) => {
-  MockDate.set(day().set(date).toDate())
-  fn()
-  MockDate.reset()
-}
+const describeIf = providerName === 'acs' ? describe : describe.skip
 
-describe('timing timing', () => {
+describeIf('timing timing', () => {
   const cutoff = config.timing.cutoff
   const today = day().set({ hour: cutoff, minute: 0, second: 0 })
 
@@ -26,7 +25,7 @@ describe('timing timing', () => {
   })
 })
 
-describe('Order arrives', () => {
+describeIf('Order arrives', () => {
   let today = day()
 
   it('after it is sent', () => {
@@ -41,24 +40,7 @@ describe('Order arrives', () => {
   })
 })
 
-function cutoffShippingClass(cutoffOffset, daysToStart, expectedClass) {
-  withinDate({ hour: config.timing.cutoff + cutoffOffset }, () => {
-    let orderedOn = day()
-    let startsOn = orderedOn.add(daysToStart, 'days')
-    const shippingClass = timing.shippingClass(orderedOn, startsOn)
-    expect(shippingClass).toBe(expectedClass)
-  })
-}
-
-function beforeCutoff(daysToStart, shippingClass) {
-  cutoffShippingClass(-1, daysToStart, shippingClass)
-}
-
-function afterCutoff(daysToStart, shippingClass) {
-  cutoffShippingClass(1, daysToStart, shippingClass)
-}
-
-describe('Order ships (when ordered before cutoff time)', () => {
+describeIf('Order ships (when ordered before cutoff time)', () => {
   it('in one day when order starts in one day', () => {
     beforeCutoff(1, 'one')
   })
@@ -68,7 +50,7 @@ describe('Order ships (when ordered before cutoff time)', () => {
   })
 })
 
-describe('Order ships (when ordered after cutoff time)', () => {
+describeIf('Order ships (when ordered after cutoff time)', () => {
   it.skip('in one day when order starts in two days', () => {
     afterCutoff(2, 'one')
   })
@@ -78,7 +60,7 @@ describe('Order ships (when ordered after cutoff time)', () => {
   })
 })
 
-describe('Order does not ship', () => {
+describeIf('Order does not ship', () => {
   it('when order started yesterday', () => {
     beforeCutoff(-1, undefined)
     afterCutoff(-1, undefined)
@@ -92,4 +74,31 @@ describe('Order does not ship', () => {
   it.skip('when order starts in one day', () => {
     afterCutoff(1, undefined)
   })
+})
+
+describeIf('Overlaps', () => {
+  // TODO: day of the week affects the results (because Oxwash doesn't deliver on weekends)
+  // at 3 days we don't overlap with the end
+  // at 5 days we don't overlap with the cleaners
+  // at 9 (on friday) - 6 (on sunday) days we don't overlap with the completed order
+
+  it.each([
+    [1, -2, -8],
+    [1, 8, 9],
+  ])(
+    'Range edge should overlap with date=%j but not with date=%j',
+    (dow, shouldOverlap, notOverlap) => {
+      overlapDateEdge(dow, shouldOverlap, notOverlap)
+    }
+  )
+
+  it.each([
+    [1, -10, -11],
+    [1, 11, 12],
+  ])(
+    'Range edge should overlap with range=%j but not with range=%j',
+    (dow, shouldOverlap, notOverlap) => {
+      overlapRangeEdge(dow, shouldOverlap, notOverlap)
+    }
+  )
 })

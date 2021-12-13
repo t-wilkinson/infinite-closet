@@ -65,7 +65,7 @@ async function fromId(data, name, plugin) {
   if (typeof data === 'object') {
     return data
   }
-  return await strapi.query(name, plugin).findOne({id: data})
+  return await strapi.query(name, plugin).findOne({ id: data })
 }
 
 // TODO: might not need this
@@ -149,4 +149,5 @@ module.exports = {
   generateAPI,
   splitName,
   day,
+  providerName: 'acs',
 }

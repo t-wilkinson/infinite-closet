@@ -2,7 +2,7 @@
 const fetch = require('node-fetch')
 const crypto = require('crypto')
 const config = require('./config')
-const { formatAddress } = require('./shipment')
+const { formatAddress } = require('../shipment')
 
 async function fetchApi(url, method, body = {}) {
   return fetch(url, {

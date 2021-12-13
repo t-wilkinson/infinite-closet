@@ -185,7 +185,7 @@ export const AddPaymentMethod = ({
         .post<{ clientSecret: string }>('/account/wallet', {})
         .then((data) => setClientSecret(data.clientSecret))
         .catch((err) => {
-          console.log(err)
+          console.error(err)
         })
     }
   }, [user])

@@ -163,7 +163,10 @@ async function acsStockSetup(ctx) {
 
     return {
       product_sku: product.id,
-      unique_sku: `IC-${product.id}_${index}-${range}`,
+      unique_sku: strapi.plugins['orders'].services.order.toAcsUniqueSKU(
+        { product, size: range },
+        index
+      ),
       name: product.name,
       designer: product.designer.name,
       garment_type: categories.join(', '),
@@ -175,7 +178,7 @@ async function acsStockSetup(ctx) {
   let rows = new Set()
   for (const product of products) {
     for (const size of product.sizes) {
-      for (let i = 1; i <= size.quantity; i++) {
+      for (let i = 0; i < size.quantity; i++) {
         try {
           const row = toRow(product, size, i)
           rows.add(toCSV(sortRow(row, columns)))

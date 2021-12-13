@@ -2,8 +2,8 @@
 const fetch = require('node-fetch')
 const crypto = require('crypto')
 const config = require('./config')
-const timing = require('./timing')
-const { formatAddress } = require('./shipment')
+const timing = require('../timing')
+const { formatAddress } = require('../shipment')
 const { postcodeValidator } = require('postcode-validator')
 
 async function fetchApi(url, method, body = {}) {
@@ -24,8 +24,8 @@ async function fetchApi(url, method, body = {}) {
       method === 'GET'
         ? undefined
         : JSON.stringify({
-          fields: body,
-        }),
+            fields: body,
+          }),
   }).then((res) => res.json())
 }
 
@@ -36,17 +36,22 @@ module.exports = {
     }
 
     const range = timing.range(order)
+    const uniqueSKU = await strapi.plugins[
+      'orders'
+    ].services.order.acsUniqueSKU(order)
 
+    // TODO!: ItemLineID has to be unique per individual item
+    // we will find all existing orders with same product and size
+    // then add 1 + count for the next
     const body = Object.assign(
       {
         AccountCode: config.auth.accountCode,
         OrderNumber: order.id,
-        ItemLineID: undefined,
-        GarmentSKU: undefined,
+        ItemLineID: uniqueSKU,
+        GarmentSKU: order.product.id,
         ItemPrice: shipmentPrice,
         DeliveryService: config.shippingClasses[shippingClass],
-        DeliveryAgent: undefined,
-        DeliveryCharge: 0,
+        DeliveryAgent: config.deliveryAgent,
         IsHire: true,
         Measurement1: strapi.services.size.normalize(order.size),
         Measurement2: strapi.services.size.normalize(order.size),
@@ -54,7 +59,7 @@ module.exports = {
         OrderDate: range.created.format('YYYY-MM-DD'),
         DispatchDate: range.shipped.format('YYYY-MM-DD'),
         DeliveryDate: range.start.format('YYYY-MM-DD'),
-        EventDate: range.start.format('YYYY-MM-DD'), // TODO: what is the difference between this and DeliveryDate?
+        EventDate: range.start.format('YYYY-MM-DD'),
         WarehouseReturnDate: range.cleaning.format('YYYY-MM-DD'), // day after the order should end
       },
       formatAddress(config.addressFormats.recipient, recipient)

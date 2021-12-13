@@ -4,18 +4,15 @@
  * @group shipping/timing/hived
  */
 'use strict'
-const MockDate = require('mockdate')
-const timing = { ...require('../timing'), ...require('../../timing') }
-const config = require('../config')
+const timing = require('../../timing')
+const config = require('../../hived/config')
+const { providerName } = require('../../shipment')
 const { day } = require('../../../../../utils')
+const { afterCutoff, beforeCutoff, overlapDateEdge, overlapRangeEdge } = require('../utils')(config)
 
-const withinDate = (date, fn) => {
-  MockDate.set(day().set(date).toJSON())
-  fn()
-  MockDate.reset()
-}
+const describeIf = providerName === 'hived' ? describe : describe.skip
 
-describe('Order arrives', () => {
+describeIf('Order arrives', () => {
   const cutoff = config.timing.cutoff
   const today = day().set({ hour: cutoff, minute: 0, second: 0 })
 
@@ -28,7 +25,7 @@ describe('Order arrives', () => {
   })
 })
 
-describe('Order arrives', () => {
+describeIf('Order arrives', () => {
   let today = day()
 
   it('after it is sent', () => {
@@ -43,24 +40,7 @@ describe('Order arrives', () => {
   })
 })
 
-function cutoffShippingClass(cutoffOffset, daysToStart, expectedClass) {
-  withinDate({ hour: config.timing.cutoff + cutoffOffset }, () => {
-    let orderedOn = day()
-    let startsOn = orderedOn.add(daysToStart, 'days')
-    const shippingClass = timing.shippingClass(orderedOn, startsOn)
-    expect(shippingClass).toBe(expectedClass)
-  })
-}
-
-function beforeCutoff(daysToStart, shippingClass) {
-  cutoffShippingClass(-1, daysToStart, shippingClass)
-}
-
-function afterCutoff(daysToStart, shippingClass) {
-  cutoffShippingClass(1, daysToStart, shippingClass)
-}
-
-describe('Order ships (when ordered before cutoff time)', () => {
+describeIf('Order ships (when ordered before cutoff time)', () => {
   it('in one day when order starts in one day', () => {
     beforeCutoff(1, 'one')
   })
@@ -70,7 +50,7 @@ describe('Order ships (when ordered before cutoff time)', () => {
   })
 })
 
-describe('Order ships (when ordered after cutoff time)', () => {
+describeIf('Order ships (when ordered after cutoff time)', () => {
   it.skip('has one day shipping when order starts in two days', () => {
     afterCutoff(2, 'one')
   })
@@ -80,7 +60,7 @@ describe('Order ships (when ordered after cutoff time)', () => {
   })
 })
 
-describe('Order does not ship', () => {
+describeIf('Order does not ship', () => {
   it('when order started yesterday', () => {
     beforeCutoff(-1, undefined)
     afterCutoff(-1, undefined)
@@ -96,13 +76,11 @@ describe('Order does not ship', () => {
   })
 })
 
-describe('Overlaps', () => {
+describeIf('Overlaps', () => {
   // TODO: day of the week affects the results (because Oxwash doesn't deliver on weekends)
   // at 3 days we don't overlap with the end
   // at 5 days we don't overlap with the cleaners
   // at 9 (on friday) - 6 (on sunday) days we don't overlap with the completed order
-  const range = (date) =>
-    timing.range({ startDate: date, rentalLength: 'short' })
 
   it.each([
     [1, -2, -8],
@@ -110,11 +88,7 @@ describe('Overlaps', () => {
   ])(
     'Range edge should overlap with date=%j but not with date=%j',
     (dow, shouldOverlap, notOverlap) => {
-      const date = day().set({ day: dow })
-      shouldOverlap = date.add({ day: shouldOverlap })
-      notOverlap = date.add({ day: notOverlap })
-      expect(timing.overlap(shouldOverlap, range(date))).toBe(true)
-      expect(timing.overlap(notOverlap, range(date))).toBe(false)
+      overlapDateEdge(dow, shouldOverlap, notOverlap)
     }
   )
 
@@ -124,11 +98,7 @@ describe('Overlaps', () => {
   ])(
     'Range edge should overlap with range=%j but not with range=%j',
     (dow, shouldOverlap, notOverlap) => {
-      const date = day().set({ day: dow })
-      shouldOverlap = date.add({ day: shouldOverlap })
-      notOverlap = date.add({ day: notOverlap })
-      expect(timing.overlap(range(shouldOverlap), range(date))).toBe(true)
-      expect(timing.overlap(range(notOverlap), range(date))).toBe(false)
+      overlapRangeEdge(dow, shouldOverlap, notOverlap)
     }
   )
 })

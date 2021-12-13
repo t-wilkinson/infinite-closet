@@ -37,6 +37,7 @@ export const Summary = ({
   if (!summary) {
     return null
   }
+  const discount = summary.discount + (coupon?.discount || 0)
 
   return (
     <article className="flex flex-col">
@@ -52,11 +53,7 @@ export const Summary = ({
       <Price label="Subtotal" price={summary.subtotal} />
       <Price label="Insurance" price={summary.insurance} />
       <Price label="Shipping" price={summary.shipping} />
-      <Price
-        negative
-        label="Discount"
-        price={summary.discount + (coupon?.discount || 0)}
-      />
+      {discount > 0 && <Price negative label="Discount" price={discount} />}
       <div className="h-px bg-pri my-1" />
       <Price
         label="Total"

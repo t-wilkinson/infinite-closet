@@ -49,7 +49,7 @@ async function sendToCleaners(orders) {
       .update({ id: order.id }, { status: 'cleaning' })
       .then(() => {
         // acs automatically handles cleaning
-        if (strapi.services.shipment.provider !== 'acs') {
+        if (strapi.services.shipment.providerName !== 'acs') {
           shipToCleaners(order)
         }
       })
@@ -235,7 +235,7 @@ async function onCheckout({
   })
 
   // acs expects orders asap
-  if (strapi.services.shipment.provider === 'acs') {
+  if (strapi.services.shipment.providerName === 'acs') {
     const settled = await Promise.allSettled(
       cart.map((cartItem) =>
         strapi.plugins['orders'].services.helpers.ship(cartItem.order)
