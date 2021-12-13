@@ -78,7 +78,7 @@ export const MarkdownWrapper = ({
   content,
   children = null,
 }) => {
-  updated_at = dayjs(updated_at).format('MM/DD/YY')
+  updated_at = dayjs(updated_at).format('DD/MM/YY')
 
   return (
     <Layout title={name}>

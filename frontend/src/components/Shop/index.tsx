@@ -3,12 +3,15 @@ import Link from 'next/link'
 
 import { Divider } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
+import {useFields} from '@/Form'
+import { Dayjs, Size } from '@/types'
 
 import { shopActions } from './slice'
 import ProductImages from './ProductImages'
 import ProductDetails from './ProductDetails'
-import ProductRentHeaders from './ProductRentHeaders'
+import OrderOptions from './OrderOptions'
 import AddToCart from './AddToCart'
+import { RentType, RentalLength } from './types'
 
 import Reviews from './Reviews'
 
@@ -19,7 +22,6 @@ export const Shop = ({ data }) => {
     // Don't save selected date
     // Maybe should use react state instead
     dispatch(shopActions.hideDate())
-    dispatch(shopActions.changeRentType('OneTime'))
   }, [])
 
   return (
@@ -36,9 +38,26 @@ export const Shop = ({ data }) => {
   )
 }
 
+interface Fields {
+  size: Size
+  selectedDate: Dayjs
+  rentalLength: RentalLength
+  rentType: RentType
+}
+
 const Product = ({ data }) => {
   const { product } = data
   const state = useSelector((state) => state.shop)
+  const fields = useFields<Fields>({
+    size: { constraints: 'required' },
+    selectedDate: {
+      label: 'Rental Date',
+      constraints: 'required',
+      default: null,
+    },
+    rentalLength: { constraints: 'required', default: 'short' },
+    rentType: { default: 'OneTime' },
+  })
 
   return (
     <div className="w-full sm:w-1/2 sm:max-w-md">
@@ -57,8 +76,8 @@ const Product = ({ data }) => {
         </span>
       )}
       <Divider className="mb-4" />
-      <ProductRentHeaders product={product} state={state} />
-      <AddToCart product={product} />
+      <OrderOptions fields={fields} product={product} />
+      <AddToCart fields={fields} product={product} />
       <div className="mb-4" />
       <div className="my-4">
         <ProductDetails state={state} product={product} />

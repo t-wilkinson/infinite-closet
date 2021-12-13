@@ -1,45 +1,41 @@
 import React from 'react'
 
-import { useDispatch } from '@/utils/store'
-
-import { shopActions } from './slice'
 import { RentType } from './types'
 
-export const ProductRentHeaders = ({ product, state }) => {
-  const dispatch = useDispatch()
-
+export const OrderOptions = ({ product, fields }) => {
   return (
-    <div className="flex-row border-gray border rounded-md divide-x divide-gray overflow-hidden">
-      {Object.keys(productRentHeaders).map((rentType: RentType, i: number) => {
+    <section className="flex-row border-gray border rounded-md divide-x divide-gray overflow-hidden">
+      {Object.keys(orderOptions).map((rentType: RentType) => {
         return (
           <button
             key={rentType}
             style={{ flex: 1 }}
-            onClick={() => dispatch(shopActions.changeRentType(rentType))}
+            type="button"
+            onClick={() => fields.setValue('rentType', rentType)}
           >
             <div
               className={`flex-grow p-2 h-full
-                ${rentType === state.rentType ? 'bg-pri-light' : ''}
+                ${rentType === fields.value('rentType') ? 'bg-pri-light' : ''}
                 `}
             >
               <div className="flex-grow items-center justify-between">
-                {productRentHeaders[rentType]({ product, state })}
+                {orderOptions[rentType]({ product, fields })}
               </div>
             </div>
           </button>
         )
       })}
-    </div>
+    </section>
   )
 }
 
-const productRentHeaders = {
-  OneTime: ({ product, state }) => (
+const orderOptions = {
+  OneTime: ({ product, fields }) => (
     <>
       <span className="text-sm font-bold text-center">One-time rental</span>
       <span className="font-bold">
         £
-        {(state.oneTime === 'short'
+        {(fields.value('rentalLength') === 'short'
           ? product.shortRentalPrice
           : product.longRentalPrice) || '-'}
       </span>
@@ -53,4 +49,4 @@ const productRentHeaders = {
   Purchase: () => <span className="text-sm text-gray font-bold">Purchase</span>,
 }
 
-export default ProductRentHeaders
+export default OrderOptions

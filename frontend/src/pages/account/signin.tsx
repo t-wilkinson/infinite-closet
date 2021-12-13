@@ -29,7 +29,7 @@ export const Page = () => {
         }}
       />
       <div className="h-4" />
-      <FormWrapper className="">
+      <FormWrapper>
         <CreateAnAccount />
       </FormWrapper>
     </Account>

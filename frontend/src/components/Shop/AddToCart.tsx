@@ -1,32 +1,27 @@
 import React from 'react'
-import { useRouter } from 'next/router'
-import { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 
 import * as sizing from '@/utils/sizing'
 import useAnalytics from '@/utils/useAnalytics'
 import { CartUtils } from '@/Cart/slice'
-import { Form, Submit, useFields, Warning } from '@/Form'
+import { Form, Submit, Warning } from '@/Form'
 import { Icon, iconDate } from '@/Icons'
-import { Size } from '@/types'
+import { Dayjs, Size } from '@/types'
 import { rentalLengths } from '@/utils/config'
 import { useDispatch, useSelector } from '@/utils/store'
 
 import { SizeChartPopup, SizeSelector } from './Size'
 import { shopActions } from './slice'
 import DatePicker from './DatePicker'
-import { RentalLength } from './types'
 
-export const AddToCart = ({ product }) => {
-  const router = useRouter()
-  const rentType = useSelector((state) => state.shop.rentType)
+export const AddToCart = ({ fields, product }) => {
   const user = useSelector((state) => state.user.data)
-
-  const Contents = productRentContents[rentType]
+  const Contents = productRentContents[fields.value('rentType')]
   const dispatch = useDispatch()
 
   return (
     <Contents
-      router={router}
+      fields={fields}
       user={user}
       product={product}
       dispatch={dispatch}
@@ -35,23 +30,10 @@ export const AddToCart = ({ product }) => {
 }
 
 export const productRentContents = {
-  OneTime: ({ user, dispatch, product, router }) => {
+  OneTime: ({ user, dispatch, product, fields }) => {
     const [chartOpen, setChartOpen] = React.useState<boolean>(false)
     const state = useSelector((state) => state.shop)
     const analytics = useAnalytics()
-    const fields = useFields<{
-      size: Size
-      selectedDate: Dayjs
-      rentalLength: RentalLength
-    }>({
-      size: { constraints: 'required' },
-      selectedDate: {
-        label: 'Rental Date',
-        constraints: 'required',
-        default: null,
-      },
-      rentalLength: { constraints: 'required', default: 'short' },
-    })
 
     React.useEffect(() => {
       const hasSize = (size: Size) => sizing.get(product.sizes, size)
@@ -210,6 +192,10 @@ export const SelectRentalDate = ({
   selectedDate,
   setVisible,
 }) => {
+  const format = (date: Dayjs) =>
+    dayjs.locale() === 'en'
+      ? date.format('ddd M/D')
+      : date.format('ddd D/M')
   return (
     <SelectorItem
       label="Rental time"
@@ -230,11 +216,11 @@ export const SelectRentalDate = ({
           >
             <span>
               {selectedDate.value &&
-                selectedDate.value.format('ddd M/D') +
+                format(selectedDate.value) +
                   ' - ' +
-                  selectedDate.value
-                    .add(rentalLengths[rentalLength.value] + 1, 'day')
-                    .format('ddd M/D')}
+                  format(selectedDate.value
+                    .add(rentalLengths[rentalLength.value] + 1, 'day'))
+              }
             </span>
             <Icon className="text-gray" icon={iconDate} size={24} />
           </button>

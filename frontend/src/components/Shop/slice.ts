@@ -2,18 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { RootState } from '@/utils/store'
 
-import { RentType, Membership } from './types'
-
 export interface State {
-  rentType: RentType
-  membership: Membership
   dateVisible: boolean
   details?: string
 }
 
 const initialState: State = {
-  rentType: 'OneTime',
-  membership: 'Short',
   dateVisible: false,
   details: 'details',
 }
@@ -22,13 +16,6 @@ export const shopSlice = createSlice({
   name: 'SHOP',
   initialState,
   reducers: {
-    changeRentType(state, { payload }: PayloadAction<RentType>) {
-      state.rentType = payload
-    },
-    changeMembership(state, { payload }: PayloadAction<Membership>) {
-      state.membership = payload
-    },
-
     setDateVisibility(state, { payload }: PayloadAction<boolean>) {
       state.dateVisible = payload
     },

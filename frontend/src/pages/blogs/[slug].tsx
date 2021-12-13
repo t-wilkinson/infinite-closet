@@ -60,7 +60,7 @@ export const components = {
 
 const Blog = ({ published_at, updated_at, name, content, subtitle, image }) => {
   content = content.replace(/\|\n\n(\s*)\|/g, '|\n$1|') // remove extra new lines for markdown tables
-  updated_at = dayjs(updated_at).format('MM/DD/YY')
+  updated_at = dayjs(updated_at).format('DD/MM/YY')
   const [minutes] = readingTime(content)
 
   return (

@@ -203,6 +203,10 @@ export class UseFields<Keys = { [key: string]: any }> {
     return this.fields[field]
   }
 
+  setValue(field: keyof Keys, value: Keys[typeof field]): void {
+    this.get(field).setValue(value)
+  }
+
   value(field: keyof Keys): Keys[typeof field] {
     return this.get(field).value
   }
