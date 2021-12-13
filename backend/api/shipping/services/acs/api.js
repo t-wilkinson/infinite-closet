@@ -67,7 +67,7 @@ module.exports = {
 
     const res = await fetchApi(`/orders/${body.OrderNumber}`, 'PUT', body)
     strapi.log.info('hived:ship %o', res)
-    return res
+    return res.OrderNumber
   },
   retrieve: () => {},
   complete: () => {},

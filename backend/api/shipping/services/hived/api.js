@@ -43,9 +43,9 @@ module.exports = {
     if (process.env.NODE_ENV === 'production') {
       const res = await fetchApi(config.parcels, 'POST', body)
       strapi.log.info('hived:ship %o', res)
-      return res
+      return res.id
     } else {
-      return { id: crypto.randomBytes(16).toString('base64') }
+      return crypto.randomBytes(16).toString('base64')
     }
   },
   retrieve: (shipment) => fetchApi(`${config.parcels}/${shipment}`, 'GET'),

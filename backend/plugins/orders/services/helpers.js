@@ -19,7 +19,9 @@ async function notifyArrival(orders) {
   }
 }
 
-async function shipToCleaners(order) {
+async function shipToCleaners(cartItem) {
+  const { order } = cartItem
+  strapi.log.info('cleaning order %o', order.id)
   const shippingRequest = {
     collection:
       strapi.plugins['orders'].services.order.toShippingAddress(order),
@@ -27,7 +29,17 @@ async function shipToCleaners(order) {
     shippingClass: 'two',
     shipmentPrice: strapi.plugins['orders'].services.price.orderTotal(order),
   }
-  await strapi.services.shipment.ship(shippingRequest)
+
+  await strapi
+    .query('order', 'orders')
+    .update({ id: order.id }, { status: 'cleaning' })
+  if (strapi.services.shipment.providerName !== 'acs') {
+    const id = await strapi.services.shipment.ship(shippingRequest)
+    await strapi
+      .query('order', 'orders')
+      .update({ id: order.id }, { shipment: id })
+  }
+  await strapi.services.template_email.orderLeaving(cartItem)
 }
 
 async function sendToCleaners(orders) {
@@ -43,20 +55,9 @@ async function sendToCleaners(orders) {
       'orders'
     ].services.cart.createCartItem(order)
 
-    strapi.log.info('cleaning order %o', order.id)
-    strapi
-      .query('order', 'orders')
-      .update({ id: order.id }, { status: 'cleaning' })
-      .then(() => {
-        // acs automatically handles cleaning
-        if (strapi.services.shipment.providerName !== 'acs') {
-          shipToCleaners(order)
-        }
-      })
-      .then(() => strapi.services.template_email.orderLeaving(cartItem))
-      .catch((err) =>
-        strapi.plugins['orders'].services.helpers.shippingFailure(cartItem, err)
-      )
+    shipToCleaners(order).catch((err) =>
+      strapi.plugins['orders'].services.helpers.shippingFailure(cartItem, err)
+    )
   }
 }
 
@@ -130,7 +131,7 @@ async function ship(order) {
     .then((res) =>
       strapi
         .query('order', 'orders')
-        .update({ id: order.id }, { shipment: res.id })
+        .update({ id: order.id }, { shipment: res })
     )
     .catch((err) =>
       strapi.plugins['orders'].services.helpers.shippingFailure(order, err)
@@ -237,9 +238,7 @@ async function onCheckout({
   // acs expects orders asap
   if (strapi.services.shipment.providerName === 'acs') {
     const settled = await Promise.allSettled(
-      cart.map((cartItem) =>
-        strapi.plugins['orders'].services.helpers.ship(cartItem.order)
-      )
+      cart.map((cartItem) => ship(cartItem.order))
     )
     const failed = settled.filter((res) => res.status === 'rejected')
     if (failed.length > 0) {
@@ -257,6 +256,7 @@ async function onCheckout({
 module.exports = {
   onCheckout,
   ship,
+  shipToCleaners,
   sendToCleaners,
   shippingFailure,
   notifyArrival,

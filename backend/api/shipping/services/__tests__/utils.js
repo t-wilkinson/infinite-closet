@@ -25,30 +25,122 @@ function afterCutoff(config, daysToStart, shippingClass) {
   cutoffShippingClass(config, 1, daysToStart, shippingClass)
 }
 
-function overlapDateEdge(dow, shouldOverlap, notOverlap) {
-  const range = (date) =>
-    timing.range({ startDate: date, rentalLength: 'short' })
-  const date = day().set({ day: dow })
-  shouldOverlap = date.add({ day: shouldOverlap })
-  notOverlap = date.add({ day: notOverlap })
-  expect(timing.overlap(shouldOverlap, range(date))).toBe(true)
-  expect(timing.overlap(notOverlap, range(date))).toBe(false)
+function findOverlapEdge(edge, shouldOverlap, notOverlap, overlap) {
+  // TODO: find which one is defined and apply func until it succeeds
+  // decrease shouldOverlap until overlaps
+  const maxIter = 15
+  if (
+    shouldOverlap > notOverlap &&
+    edge.shouldOverlap === true &&
+    edge.notOverlap === true
+  ) {
+    for (
+      let notOverlap = shouldOverlap;
+      notOverlap > shouldOverlap - maxIter;
+      notOverlap--
+    ) {
+      if (overlap(shouldOverlap, notOverlap)) {
+        // expect({shouldOverlap, notOverlap}).toMatchObject({
+        console.log('should be', {
+          shouldOverlap: notOverlap + 1,
+          notOverlap,
+        })
+        break
+      }
+    }
+  } else if (
+    shouldOverlap > notOverlap &&
+    edge.shouldOverlap === false &&
+    edge.notOverlap === false
+  ) {
+    for (
+      let shouldOverlap = notOverlap;
+      shouldOverlap < notOverlap + maxIter;
+      shouldOverlap++
+    ) {
+      if (overlap(shouldOverlap, notOverlap)) {
+        console.log('should be', {
+          shouldOverlap,
+          notOverlap: shouldOverlap - 1,
+        })
+        break
+      }
+    }
+  } else if (
+    shouldOverlap < notOverlap &&
+    edge.shouldOverlap === true &&
+    edge.notOverlap === true
+  ) {
+    for (
+      let notOverlap = shouldOverlap;
+      notOverlap < shouldOverlap + maxIter;
+      notOverlap++
+    ) {
+      if (overlap(shouldOverlap, notOverlap)) {
+        console.log('should be', {
+          shouldOverlap: notOverlap - 1,
+          notOverlap,
+        })
+        break
+      }
+    }
+  } else if (
+    shouldOverlap < notOverlap &&
+    edge.shouldOverlap === false &&
+    edge.notOverlap === false
+  ) {
+    for (
+      let shouldOverlap = notOverlap;
+      shouldOverlap > notOverlap - maxIter;
+      shouldOverlap--
+    ) {
+      if (overlap(shouldOverlap, notOverlap)) {
+        console.log('should be', {
+          shouldOverlap,
+          notOverlap: shouldOverlap + 1,
+        })
+        break
+      }
+    }
+  } else {
+    console.log('Unexpected values for edge')
+  }
 }
 
-function overlapRangeEdge(dow, shouldOverlap, notOverlap) {
-  const range = (date) =>
-    timing.range({ startDate: date, rentalLength: 'short' })
-  const date = day().set({ day: dow })
+const range = (date, rentalLength = 'short') =>
+  timing.range({ startDate: date, rentalLength })
+
+function overlapEdge(dow, shouldOverlap, notOverlap, transform) {
+  const date = day().set({ day: dow, hour: 0 })
   shouldOverlap = date.add({ day: shouldOverlap })
   notOverlap = date.add({ day: notOverlap })
-  expect(timing.overlap(range(shouldOverlap), range(date))).toBe(true)
-  expect(timing.overlap(range(notOverlap), range(date))).toBe(false)
+  return {
+    shouldOverlap: timing.overlap(transform(shouldOverlap), range(date)),
+    notOverlap: timing.overlap(transform(notOverlap), range(date)),
+  }
+}
+
+function isEdge({ shouldOverlap, notOverlap }) {
+  return shouldOverlap && !notOverlap
+}
+
+function expectOverlapEdge(dow, shouldOverlap, notOverlap, transform) {
+  const edge = overlapEdge(dow, shouldOverlap, notOverlap, transform)
+
+  if (!isEdge(edge)) {
+    findOverlapEdge(edge, shouldOverlap, notOverlap, (s, n) =>
+      isEdge(overlapEdge(dow, s, n, transform))
+    )
+  }
+
+  expect(edge.shouldOverlap).toBe(true)
+  expect(edge.notOverlap).toBe(false)
 }
 
 module.exports = (config) => {
   return {
-    overlapDateEdge,
-    overlapRangeEdge,
+    overlapDateEdge: (...props) => expectOverlapEdge(...props, (x) => x),
+    overlapRangeEdge: (...props) => expectOverlapEdge(...props, range),
     afterCutoff: (...props) => afterCutoff(config, ...props),
     beforeCutoff: (...props) => beforeCutoff(config, ...props),
   }

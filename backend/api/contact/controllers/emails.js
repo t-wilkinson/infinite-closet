@@ -23,21 +23,10 @@ module.exports = {
   async sendToCleaners(ctx) {
     const { orderId } = ctx.params
     const { cartItem, order } = await getCartItem(orderId)
-    const shippingRequest = {
-      collection:
-        strapi.plugins['orders'].services.order.toShippingAddress(order),
-      recipient: 'oxwash',
-      shippingClass: 'two',
-      shipmentPrice: strapi.plugins['orders'].services.price.orderTotal(order),
-    }
 
     // Ship order and send email to client
-    strapi.log.info('cleaning order %o', order.id)
-    strapi
-      .query('order', 'orders')
-      .update({ id: order.id }, { status: 'cleaning' })
-      .then(() => strapi.services.shipment.ship(shippingRequest))
-      .then(() => strapi.services.template_email.orderLeaving(cartItem))
+    strapi.plugins['orders'].services.helpers
+      .shipToCleaners(cartItem)
       .catch((err) =>
         strapi.plugins['orders'].services.helpers.shippingFailure(order, err)
       )

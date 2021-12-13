@@ -7,6 +7,8 @@ import { Icon, iconClose } from '@/Icons'
 import { StrapiAddress } from '@/types/models'
 import useAnalytics from '@/utils/useAnalytics'
 
+const toFullName = ({firstName, lastName}) => [firstName, lastName].join(' ').trim()
+
 export interface AddressFields {
   fullName: string
   mobileNumber: string
@@ -99,16 +101,16 @@ export const Address = ({
     <div className="relative">
       <button
         className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
-    ${id === selected ? 'border-black' : ''}
-    `}
+          ${id === selected ? 'border-black' : ''}
+        `}
         aria-label={`Choose address with name of ${fullName} in ${addressLine1} ${town} ${postcode}`}
         onClick={() => select(id)}
       >
         <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
           <div
             className={`w-3 h-3 rounded-full
-          ${id === selected ? 'bg-pri' : ''}
-  `}
+              ${id === selected ? 'bg-pri' : ''}
+            `}
           />
         </div>
 
@@ -152,7 +154,7 @@ export const UpdateAddress = ({ dispatch, address }) => {
 
 export const AddAddress = ({ user, onSubmit }) => {
   const fields = useAddressFields({
-    fullName: `${user.firstName} ${user.lastName}`,
+    fullName: toFullName(user),
     mobileNumber: user.phoneNumber,
   })
   const signin = useSignin()
@@ -186,10 +188,9 @@ export const EditAddress = ({
 }) => {
   const onSubmitInternal = async () => {
     // TODO: how to chain together to show error from validate vs onSubmit
-    return validatePostcode(fields.value('postcode'))
-      .then(() => {
-        return onSubmit()
-      })
+    return validatePostcode(fields.value('postcode')).then(() => {
+      return onSubmit()
+    })
   }
 
   return (

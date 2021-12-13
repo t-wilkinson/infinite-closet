@@ -108,7 +108,7 @@ export const CheckoutWrapper = ({}) => {
       type: 'set-addresses',
       payload: user.addresses,
     })
-    if (user.addresses && user.addresses[0] && user.addresses[0].id) {
+    if (user.addresses?.[0]?.id) {
       dispatch({
         type: 'choose-address',
         payload: user.addresses[0].id,
@@ -195,9 +195,7 @@ const Checkout = ({ fetchCart, analytics }) => {
       })
   }
 
-  if (fields.form.value === 'success') {
-    return <BodyWrapper>Thank you for your purchase!</BodyWrapper>
-  } else if (cartCount === 0) {
+  if (cartCount === 0) {
     return (
       <BodyWrapper>
         <BlueLink
