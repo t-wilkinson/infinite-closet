@@ -1,13 +1,19 @@
 import React from 'react'
 
 import axios from '@/utils/axios'
-import { StrapiCoupon } from '@/types/models'
+import { StrapiCoupon } from '@/types'
 
-import { Coupon } from './types'
 import { UseField } from './fields'
 import Input from './Input'
 
 type CouponStatus = undefined | 'success' | 'failure'
+
+export interface Coupon {
+  valid: boolean
+  coupon: StrapiCoupon
+  price: number
+  discount: number
+}
 
 export const CouponCode = ({
   user,

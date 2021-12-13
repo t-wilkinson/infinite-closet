@@ -5,8 +5,9 @@ import axios from '@/utils/axios'
 import { validatePostcode } from '@/Form/Address'
 import { useSelector } from '@/utils/store'
 import { UseFormField, Coupon } from '@/Form'
-import { Contact } from '@/types'
 import { CartItem } from '@/Cart/types'
+
+import { Contact } from './Utils'
 
 export const PaymentRequestForm = ({
   form,

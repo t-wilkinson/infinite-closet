@@ -1,14 +1,25 @@
 import React from 'react'
 import * as Stripe from '@stripe/react-stripe-js'
 
-import axios from '@/utils/axios'
 import { CartUtils } from '@/Cart/slice'
+import { CartItem } from '@/Cart/types'
 import { CouponCode, UseField, Coupon } from '@/Form'
 import { validatePostcode } from '@/Form/Address'
+import axios from '@/utils/axios'
 import { fmtPrice } from '@/utils/helpers'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
-import {Contact} from '@/types'
+
+export interface Contact {
+  email: string
+  address: { fullName: string; nickName?: string }
+}
+
+export const toContact = ({ email, address }: Contact) => ({
+  email,
+  fullName: address.fullName,
+  nickName: address.fullName.split(' ')[0],
+})
 
 export const Summary = ({
   userId = undefined,
@@ -28,7 +39,7 @@ export const Summary = ({
   }
 
   return (
-    <div>
+    <article className="flex flex-col">
       <div className="w-full my-2">
         <CouponCode
           price={summary.preDiscount}
@@ -52,7 +63,7 @@ export const Summary = ({
         price={summary.total - (coupon?.discount || 0)}
         className="font-bold"
       />
-    </div>
+    </article>
   )
 }
 
@@ -74,9 +85,15 @@ export const useFetchCart = () => {
 }
 
 function handleServerResponse(
-  response: {status: string; requires_action?: boolean; payment_intent_client_secret?: string; error?: string; body: object},
+  response: {
+    status: string
+    requires_action?: boolean
+    payment_intent_client_secret?: string
+    error?: string
+    body: object
+  },
   stripe: any,
-  form: UseField,
+  form: UseField
 ) {
   if (response.error) {
     // Show error from server on payment form
@@ -99,10 +116,10 @@ function handleServerResponse(
 }
 
 function handleStripeJsResult(
-  result: {paymentIntent?: any; error?: string},
+  result: { paymentIntent?: any; error?: string },
   stripe: any,
   form: UseField,
-  body: object,
+  body: object
 ) {
   if (result.error) {
     form.setValue('success')
@@ -111,15 +128,19 @@ function handleStripeJsResult(
     // The card action has been handled
     // The PaymentIntent can be confirmed again on the server
     axios
-      .post('/orders/checkout', {
-        paymentIntent: result.paymentIntent.id,
-        ...body,
-      }, {withCredentials: false})
+      .post(
+        '/orders/checkout',
+        {
+          paymentIntent: result.paymentIntent.id,
+          ...body,
+        },
+        { withCredentials: false }
+      )
       .then((data) => handleServerResponse(data, stripe, form))
   }
 }
 
-export const useCheckoutSuccess = (form: UseField) => {
+const useGuestCheckoutSuccess = () => {
   const analytics = useAnalytics()
   const fetchCart = useFetchCart()
   const rootDispatch = useDispatch()
@@ -127,8 +148,6 @@ export const useCheckoutSuccess = (form: UseField) => {
   return () => {
     rootDispatch(CartUtils.set([]))
     fetchCart()
-    form.setValue('success')
-    form.clearErrors()
     analytics.logEvent('purchase', {
       user: 'guest',
       type: 'checkout',
@@ -136,21 +155,14 @@ export const useCheckoutSuccess = (form: UseField) => {
   }
 }
 
-export const toContact = ({email, address}: Contact) =>
-  ({
-  email,
-  fullName: address.fullName,
-  nickName: address.fullName.split(' ')[0],
-})
-
-export const useCheckout = (form: UseField) => {
+export const useGuestCheckout = () => {
   const cart = useSelector((state) => state.cart.checkoutCart)
   const elements = Stripe.useElements()
   const stripe = Stripe.useStripe()
-  const onCheckoutSuccess = useCheckoutSuccess(form)
+  const onCheckoutSuccess = useGuestCheckoutSuccess()
 
-  const checkout = async ({ address, billing, email, couponCode }) => {
-    const contact = toContact({email, address})
+  const checkout = async ({ form, address, billing, email, couponCode }) => {
+    const contact = toContact({ email, address })
     return validatePostcode(address.postcode)
       .then(() =>
         stripe.createPaymentMethod({
@@ -164,13 +176,17 @@ export const useCheckout = (form: UseField) => {
         if (res.error) {
           throw res.error
         } else {
-          return axios.post('/orders/checkout', {
-            contact,
-            address,
-            paymentMethod: res.paymentMethod.id,
-            orders: cart.map((item) => item.order),
-            couponCode,
-          }, {withCredentials: false})
+          return axios.post(
+            '/orders/checkout',
+            {
+              contact,
+              address,
+              paymentMethod: res.paymentMethod.id,
+              orders: cart.map((item) => item.order),
+              couponCode,
+            },
+            { withCredentials: false }
+          )
         }
       })
 
@@ -180,10 +196,20 @@ export const useCheckout = (form: UseField) => {
         if (error.message) {
           throw error
         } else {
-          throw new Error('We ran into an issue processing your payment. Please try again later.')
+          throw new Error(
+            'We ran into an issue processing your payment. Please try again later.'
+          )
         }
       })
   }
 
   return checkout
 }
+
+export const BodyWrapper = ({ children }) => (
+  <section className="w-full items-center h-full justify-start bg-white rounded-sm pt-32 pb-16">
+    <h3 className="font-bold text-xl flex flex-col items-center">{children}</h3>
+  </section>
+)
+
+export const isOrderInvalid = (order: CartItem) => !order.valid

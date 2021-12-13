@@ -12,7 +12,7 @@ export const Dropdown = ({
   ...props
 }: {
   field: UseField
-  values: { key: FieldValue; label: FieldValue}[]
+  values: { key: FieldValue; label: FieldValue }[]
   [x: string]: any
 }) => {
   const [dropdown, setDropdown] = React.useState(false)
@@ -52,6 +52,7 @@ export const Dropdown = ({
       >
         {values.map((v) => (
           <button
+            // @ts-ignore
             key={v.key}
             tabIndex={0}
             aria-label="Dropdown sizes"

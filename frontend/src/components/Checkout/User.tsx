@@ -6,7 +6,6 @@ dayjs.extend(utc)
 
 import axios from '@/utils/axios'
 import Cart from '@/Cart'
-import { CartItem } from '@/Cart/types'
 import { CartUtils } from '@/Cart/slice'
 import { useFields, OR, Coupon, UseFields, Form, Submit } from '@/Form'
 import { Addresses, AddAddress } from '@/Form/Address'
@@ -16,12 +15,11 @@ import {
   AddPaymentMethod,
 } from '@/Form/Payment'
 import Popup from '@/Layout/Popup'
-// import { Icon, iconClose } from '@/Icons'
 import { BlueLink, Button } from '@/components'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
-import { Summary, useFetchCart } from './Utils'
+import { isOrderInvalid, BodyWrapper, Summary, useFetchCart } from './Utils'
 import PaymentRequestForm from './PaymentRequestForm'
 
 type Popup = 'none' | 'address' | 'payment'
@@ -74,13 +72,12 @@ const reducer = (state: typeof initialState, action: any) => {
   }
 }
 
+type Fields = {
+  couponCode: string
+}
 const StateContext = React.createContext(null)
 const DispatchContext = React.createContext(null)
-const FieldsContext = React.createContext<
-  UseFields<{
-    couponCode: string
-  }>
->(null)
+const FieldsContext = React.createContext<UseFields<Fields>>(null)
 
 export const CheckoutWrapper = ({}) => {
   const user = useSelector((state) => state.user.data)
@@ -88,10 +85,11 @@ export const CheckoutWrapper = ({}) => {
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
   const cart = useSelector((state) => state.cart.checkoutCart)
-  const fields = useFields({
+  const fields = useFields<Fields>({
     couponCode: { autocomplete: 'off' },
   })
   const fetchCart = useFetchCart()
+  const summary = useSelector((state) => state.cart.checkoutSummary)
 
   React.useEffect(() => {
     analytics.logEvent('view_cart', {
@@ -140,7 +138,20 @@ export const CheckoutWrapper = ({}) => {
         <DispatchContext.Provider value={dispatch}>
           <FieldsContext.Provider value={fields}>
             <PaymentWrapper>
-              <Checkout fetchCart={fetchCart} analytics={analytics} />
+              <section
+                className="w-full justify-center max-w-screen-xl my-4 h-full
+                md:flex-row space-y-4 md:space-y-0 md:space-x-4
+                "
+              >
+                <SideBar
+                  user={user}
+                  state={state}
+                  summary={summary}
+                  fields={fields}
+                  dispatch={dispatch}
+                />
+                <Checkout fetchCart={fetchCart} analytics={analytics} />
+              </section>
             </PaymentWrapper>
           </FieldsContext.Provider>
         </DispatchContext.Provider>
@@ -151,13 +162,11 @@ export const CheckoutWrapper = ({}) => {
 
 const Checkout = ({ fetchCart, analytics }) => {
   const router = useRouter()
-  const dispatch = React.useContext(DispatchContext)
   const state = React.useContext(StateContext)
   const fields = React.useContext(FieldsContext)
+  const user = useSelector((state) => state.user.data)
   const cartCount = useSelector((state) => state.cart.count)
   const cart = useSelector((state) => state.cart.checkoutCart)
-  const user = useSelector((state) => state.user.data)
-  const summary = useSelector((state) => state.cart.checkoutSummary)
   const [isVisible, setVisible] = React.useState(false)
 
   const checkout = async () => {
@@ -186,113 +195,100 @@ const Checkout = ({ fetchCart, analytics }) => {
       })
   }
 
-  const Wrapper = ({ children }) => (
-    <div className="w-full items-center h-full justify-start bg-white rounded-sm pt-32">
-      <span className="font-bold text-xl flex flex-col items-center">
-        {children}
-      </span>
-    </div>
-  )
-
-  return (
-    <div
-      className="w-full justify-center max-w-screen-xl my-4 h-full
-      md:flex-row space-y-4 md:space-y-0 md:space-x-4
-      "
-    >
-      <div className="md:w-2/5 space-y-4">
-        <SideItem label="Addresses" user={user} protect>
-          <Address user={user} state={state} dispatch={dispatch} />
-        </SideItem>
-        <SideItem label="Payment Methods" user={user} protect>
-          <Payment
-            form={fields.form}
-            user={user}
-            state={state}
-            dispatch={dispatch}
-          />
-        </SideItem>
-        <SideItem label="Summary" user={user}>
-          <Summary
-            userId={user.id}
-            summary={summary}
-            couponCode={fields.get('couponCode')}
-            setCoupon={(coupon: Coupon) =>
-              dispatch({ type: 'select-coupon', payload: coupon })
-            }
-            coupon={state.coupon}
-          />
-        </SideItem>
-      </div>
-      {fields.form.value === 'success' ? (
-        <Wrapper>Thank you for your purchase!</Wrapper>
-      ) : cartCount === 0 ? (
-        <Wrapper>
-          <div>
-            <BlueLink
-              href="/products/clothing"
-              label="Would you like to browse our collection?"
-            />
-          </div>
-        </Wrapper>
-      ) : (
-        <Form
-          className="w-full space-y-4"
-          fields={fields}
-          onSubmit={checkout}
-          redirect="/checkout/thankyou"
+  if (fields.form.value === 'success') {
+    return <BodyWrapper>Thank you for your purchase!</BodyWrapper>
+  } else if (cartCount === 0) {
+    return (
+      <BodyWrapper>
+        <BlueLink
+          href="/products/clothing"
+          label="Would you like to browse our collection?"
+        />
+      </BodyWrapper>
+    )
+  } else {
+    return (
+      <Form
+        className="w-full space-y-4"
+        fields={fields}
+        onSubmit={checkout}
+        redirect="/checkout/thankyou"
+      >
+        <Cart />
+        <Submit
+          field={fields.form}
+          disabled={
+            !(state.paymentMethod && state.address) ||
+            ['checking-out'].includes(state.status) ||
+            cart.every(isOrderInvalid)
+          }
         >
-          <Cart />
-          <Submit
-            field={fields.form}
-            disabled={
-              !(state.paymentMethod && state.address) ||
-              ['checking-out'].includes(state.status) ||
-              cart.every(isOrderInvalid)
-            }
-          >
-            {!state.address
-              ? 'Please Select an Address'
-              : !state.paymentMethod
-              ? 'Please Select a Payment Method'
-              : cart.every(isOrderInvalid)
-              ? 'No Available Items'
-              : cart.some(isOrderInvalid)
-              ? 'Checkout Available Items'
-              : 'Secure Checkout'}
-          </Submit>
-          {isVisible && <OR />}
-          <PaymentRequestForm
-            setVisible={setVisible}
-            couponCode={fields.get('couponCode').clean()}
-            coupon={state.coupon}
-            form={fields.form}
-            onCheckout={() => {
-              fetchCart()
-              analytics.logEvent('purchase', {
-                user: user?.email,
-                type: 'checkout',
-              })
-              router.push('/checkout/thankyou')
-            }}
-          />
-        </Form>
-      )}
-    </div>
-  )
+          {!state.address
+            ? 'Please Select an Address'
+            : !state.paymentMethod
+            ? 'Please Select a Payment Method'
+            : cart.every(isOrderInvalid)
+            ? 'No Available Items'
+            : cart.some(isOrderInvalid)
+            ? 'Checkout Available Items'
+            : 'Secure Checkout'}
+        </Submit>
+        {isVisible && <OR />}
+        <PaymentRequestForm
+          setVisible={setVisible}
+          couponCode={fields.get('couponCode').clean()}
+          coupon={state.coupon}
+          form={fields.form}
+          onCheckout={() => {
+            fetchCart()
+            analytics.logEvent('purchase', {
+              user: user?.email,
+              type: 'checkout',
+            })
+            router.push('/checkout/thankyou')
+          }}
+        />
+      </Form>
+    )
+  }
 }
 
-const isOrderInvalid = (order: CartItem) => !order.valid
+const SideBar = ({ user, state, summary, fields, dispatch }) => (
+  <aside className="md:w-2/5 space-y-4">
+    <SideItem label="Addresses" user={user} protect>
+      <Address user={user} state={state} dispatch={dispatch} />
+    </SideItem>
+    <SideItem label="Payment Methods" user={user} protect>
+      <Payment
+        form={fields.form}
+        user={user}
+        state={state}
+        dispatch={dispatch}
+      />
+    </SideItem>
+    <SideItem label="Summary" user={user}>
+      <Summary
+        userId={user.id}
+        summary={summary}
+        couponCode={fields.get('couponCode')}
+        setCoupon={(coupon: Coupon) =>
+          dispatch({ type: 'select-coupon', payload: coupon })
+        }
+        coupon={state.coupon}
+      />
+    </SideItem>
+  </aside>
+)
 
 const SideItem = ({ label, children, user, protect = false }) =>
   protect && !user ? null : (
-    <div className="space-y-2 bg-white p-3 rounded-sm relative">
-      <span className="font-bold text-lg my-2">
+    <section className="space-y-2 bg-white p-3 rounded-sm relative">
+      <h3 className="font-bold text-lg my-2">
         {label}
         <div className="w-full h-px bg-pri mt-2 -mb-2" />
-      </span>
+      </h3>
       {children}
-    </div>
+    </section>
   )
 
 const Address = ({ state, user, dispatch }) => (

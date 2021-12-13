@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "gift_cards",
+  "info": {
+    "name": "Gift Card",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "amount": {
+      "type": "decimal",
+      "required": true,
+      "min": 0
+    },
+    "code": {
+      "type": "uid",
+      "required": true
+    },
+    "used": {
+      "type": "boolean",
+      "default": false
+    },
+    "purchases": {
+      "type": "component",
+      "repeatable": true,
+      "component": "custom.purchase"
+    }
+  }
+}

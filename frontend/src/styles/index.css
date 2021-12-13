@@ -25,6 +25,7 @@ details summary::-webkit-details-marker {
 
 div,
 section,
+article,
 aside,
 main {
   display: flex;

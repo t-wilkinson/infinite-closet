@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_custom_purchases",
+  "info": {
+    "name": "Purchase",
+    "icon": "money-check-alt"
+  },
+  "options": {},
+  "attributes": {
+    "order": {
+      "plugin": "orders",
+      "model": "order"
+    },
+    "amount": {
+      "type": "decimal"
+    }
+  }
+}
