@@ -2,6 +2,14 @@
 const { sanitizeEntity } = require('strapi-utils')
 const Auth = require('../../../extensions/users-permissions/extensions').Auth
 
+function fail(ctx, reason, code) {
+  if (process.env.NODE_ENV === 'production') {
+    return ctx.send({}, code)
+  } else {
+    return ctx.send(reason, code)
+  }
+}
+
 module.exports = {
   async signin(ctx) {
     if (ctx.state.user) {
@@ -13,7 +21,7 @@ module.exports = {
       })
     }
 
-    const hasHeader = ctx.request && ctx.request.header
+    const hasHeader = ctx.request?.header
     if (hasHeader && !ctx.request.header.authorization) {
       const token = ctx.cookies.get('token')
       if (token) {
@@ -21,37 +29,37 @@ module.exports = {
       }
     }
 
-    if (hasHeader && ctx.request.header.authorization) {
-      try {
-        const { id } = await strapi.plugins[
-          'users-permissions'
-        ].services.jwt.getToken(ctx)
-
-        if (id === undefined) {
-          return ctx.send({ status: 401 })
-        }
-
-        // fetch authenticated user
-        ctx.state.user = await strapi.plugins[
-          'users-permissions'
-        ].services.user.fetchAuthenticatedUser(id)
-      } catch (err) {
-        return ctx.send({ status: 401 })
-      }
-
-      if (!ctx.state.user) {
-        return ctx.send({ status: 401 })
-      }
-
-      return ctx.send({
-        user: sanitizeEntity(ctx.state.user, {
-          model: strapi.query('user', 'users-permissions').model,
-        }),
-        status: 200,
-      })
-    } else {
-      ctx.send({ status: 401 })
+    if (!(hasHeader && ctx.request.header.authorization)) {
+      return fail(ctx, 'Could not find authorization token', 401)
     }
+
+    try {
+      const { id } = await strapi.plugins[
+        'users-permissions'
+      ].services.jwt.getToken(ctx)
+
+      if (id === undefined) {
+        return fail(ctx, 'Could not find token', 401)
+      }
+
+      // fetch authenticated user
+      ctx.state.user = await strapi.plugins[
+        'users-permissions'
+      ].services.user.fetchAuthenticatedUser(id)
+    } catch (err) {
+      return fail(ctx, err.message, 401)
+    }
+
+    if (!ctx.state.user) {
+      return fail(ctx, 'User does not exist', 401)
+    }
+
+    return ctx.send({
+      user: sanitizeEntity(ctx.state.user, {
+        model: strapi.query('user', 'users-permissions').model,
+      }),
+      status: 200,
+    })
   },
 
   async signout(ctx) {

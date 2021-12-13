@@ -14,7 +14,6 @@ const signin = (dispatch: any) =>
 
         return data.user
       } else {
-        dispatch(userActions.signout())
         throw new Error('User not found')
       }
     })
@@ -27,6 +26,5 @@ export const useSignin = () => {
   const dispatch = useDispatch()
   return () => signin(dispatch)
 }
-
 
 export default useSignin

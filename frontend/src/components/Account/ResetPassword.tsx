@@ -10,7 +10,9 @@ import { useFields, Form, Submit, Password, FormHeader, OR } from '@/Form'
 import { StrapiUser } from '@/types/models'
 
 export const ResetPassword = () => {
-  const fields = useFields({
+  const fields = useFields<{
+    password: string
+  }>({
     password: { constraints: 'required password', label: 'Password' },
   })
   const router = useRouter()
@@ -21,22 +23,15 @@ export const ResetPassword = () => {
   const onSubmit = async () => {
     const cleaned = fields.clean()
     return axios
-      .post<{ user: StrapiUser }>(
-        '/auth/reset-password',
-        {
-          code,
-          password: cleaned.password,
-          passwordConfirmation: cleaned.password,
-        },
-        {
-          withCredentials: false,
-        }
-      )
+      .post<{ user: StrapiUser }>('/auth/reset-password', {
+        code,
+        password: cleaned.password,
+        passwordConfirmation: cleaned.password,
+      })
       .then((data) => {
         dispatch(userActions.signin(data.user))
         analytics.logEvent('form_submit', {
           type: 'account.reset-password',
-          user: cleaned.email,
         })
         router.push('/')
       })

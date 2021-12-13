@@ -150,41 +150,21 @@ const Wrapper = ({ router, children }) => {
     }
 
     // Attach guest cart to current user cart
+    let cart = storage.get('cart') || []
     if (user) {
-      // TODO:
-      let cart = storage.get('cart') || []
-      if (!Array.isArray(cart)) {
-        storage.set('cart', [])
-        cart = []
-      }
-      storage.set('cart', [])
-      dispatch(CartUtils.insert(cart))
+      dispatch(CartUtils.insert(cart)).then(() => storage.set('cart', []))
     } else {
-      let cart = storage.get('cart') || []
-      Promise.allSettled(
-        cart.map(async (order: StrapiOrder, i: number) => {
-          if (!order.id) {
-            delete cart[i]
-          } else {
-            await axios
-              .get<StrapiOrder>(`/orders/${order.id}`, {
-                withCredentials: false,
-              })
-              .catch((err) => {
-                if (err.response.status === 404) {
-                  delete cart[i]
-                }
-              })
-          }
-        })
-      ).then(() => {
-        storage.set(
-          'cart',
-          cart.filter((v: StrapiOrder) => v)
-        )
-        dispatch(CartUtils.get())
-        dispatch(CartUtils.view())
-      })
+      for (const i in cart) {
+        if (!cart[i].id) {
+          delete cart[i]
+        }
+      }
+      storage.set(
+        'cart',
+        cart.filter((v: StrapiOrder) => v)
+      )
+      dispatch(CartUtils.get())
+      dispatch(CartUtils.view())
     }
   }, [user])
 

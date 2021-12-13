@@ -29,14 +29,10 @@ export const Signin = ({ onSubmit = () => {} }) => {
   const signinUser = async () => {
     const cleaned = fields.clean()
     return axios
-      .post<{ user?: StrapiUser }>(
-        '/auth/local',
-        {
-          identifier: cleaned.email,
-          password: cleaned.password,
-        },
-        { withCredentials: false }
-      )
+      .post<{ user?: StrapiUser }>('/auth/local', {
+        identifier: cleaned.email,
+        password: cleaned.password,
+      })
       .then((data) => {
         dispatch(userActions.signin(data.user))
         analytics.logEvent('form_submit', {

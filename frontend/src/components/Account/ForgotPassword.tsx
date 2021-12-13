@@ -24,7 +24,11 @@ export const requestChangePassword = async (
 ) => {
   const cleaned = fields.clean()
   return await axios
-    .post<void>('/auth/forgot-password', { email: cleaned.email }, {withCredentials: false})
+    .post<void>(
+      '/auth/forgot-password',
+      { email: cleaned.email },
+      { withCredentials: false }
+    )
     .then(() =>
       analytics.logEvent('form_submit', {
         type: 'account.forgot-password',
