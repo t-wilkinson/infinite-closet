@@ -170,7 +170,7 @@ export const AddAddress = ({ user, onSubmit }) => {
         signin()
       })
       .catch(() => {
-        throw 'Unable to add address'
+        throw new Error('Unable to add address')
       })
   }
 

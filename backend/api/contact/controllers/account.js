@@ -2,11 +2,11 @@
 const { sanitizeEntity } = require('strapi-utils')
 const Auth = require('../../../extensions/users-permissions/extensions').Auth
 
-function fail(ctx, reason, code) {
+function unauthorized(ctx, reason) {
   if (process.env.NODE_ENV === 'production') {
-    return ctx.send({}, code)
+    return ctx.unauthorized(null)
   } else {
-    return ctx.send(reason, code)
+    return ctx.unauthorized(reason)
   }
 }
 
@@ -30,7 +30,7 @@ module.exports = {
     }
 
     if (!(hasHeader && ctx.request.header.authorization)) {
-      return fail(ctx, 'Could not find authorization token', 401)
+      return unauthorized(ctx, 'Could not find authorization token')
     }
 
     try {
@@ -39,7 +39,7 @@ module.exports = {
       ].services.jwt.getToken(ctx)
 
       if (id === undefined) {
-        return fail(ctx, 'Could not find token', 401)
+        return unauthorized(ctx, 'Could not find token')
       }
 
       // fetch authenticated user
@@ -47,11 +47,11 @@ module.exports = {
         'users-permissions'
       ].services.user.fetchAuthenticatedUser(id)
     } catch (err) {
-      return fail(ctx, err.message, 401)
+      return unauthorized(ctx, err.message)
     }
 
     if (!ctx.state.user) {
-      return fail(ctx, 'User does not exist', 401)
+      return unauthorized(ctx, 'User does not exist')
     }
 
     return ctx.send({

@@ -19,7 +19,18 @@ axios.interceptors.response.use(
     //   title: 'Error',
     //   message,
     // });
-    return Promise.reject(error)
+
+    let data = error.response?.data
+    try {
+      data.messages = data.message
+        ?.map(({ messages }) => messages)
+        .flat()
+        .filter((v: any) => v)
+        .map(({ message }) => message)
+    } catch (e) {
+      console.error('axios', e)
+    }
+    return Promise.reject(data)
   }
 )
 

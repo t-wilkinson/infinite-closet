@@ -1,7 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 
-import {FormWrapper} from '@/Form'
+import { FormWrapper } from '@/Form'
 import Register, { AlreadyHaveAccount } from '@/Account/Register'
 import Account from '@/Account'
 import { useSelector } from '@/utils/store'
@@ -21,7 +21,11 @@ export const Page = () => {
     <Account>
       <Register
         onSubmit={() => {
-          redir ? router.push(redir) : router.back()
+          redir
+            ? router.push(redir)
+            : /signin/.test(document.referrer)
+            ? router.push('/')
+            : router.back()
         }}
       />
       <div className="h-4" />

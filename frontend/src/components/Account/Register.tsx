@@ -15,7 +15,7 @@ import {
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { userActions } from '@/User/slice'
-import {StrapiUser} from '@/types/models'
+import { StrapiUser } from '@/types'
 
 interface Register {
   email?: string
@@ -33,16 +33,13 @@ export const useRegisterUser = ({
 
   const registerUser = async (fields: { [key: string]: any }) => {
     return axios
-    .post<{user: StrapiUser}>(
-        '/auth/local/register',
-        {
-          firstName: fields.firstName || null,
-          lastName: fields.lastName || null,
-          email: fields.email || null,
-          password: fields.password || null,
-          subscribed: fields.mailingList ? 'mailinglist' : '',
-        }
-      )
+      .post<{ user: StrapiUser }>('/auth/local/register', {
+        firstName: fields.firstName || null,
+        lastName: fields.lastName || null,
+        email: fields.email || null,
+        password: fields.password || null,
+        subscribed: fields.mailingList ? 'mailinglist' : '',
+      })
       .then((data) => {
         dispatch(userActions.signin(data.user))
         analytics.logEvent('form_submit', {
@@ -52,13 +49,8 @@ export const useRegisterUser = ({
         return onSubmit()
       })
       .catch((err) => {
-        try {
-          onError(err.response.data.data[0].messages.map((v: any) => v.message))
-          throw err.response.data.data[0].messages.map((v: any) => v.message)
-        } catch {
-          onError(['Unable to register'])
-          throw 'Unable to register'
-        }
+        onError(err.messages || 'Unable to register')
+        throw err.messages || 'Unable to register'
       })
   }
   return registerUser
@@ -70,7 +62,13 @@ export const Register = ({
   lastName,
   onSubmit = () => {},
 }: Register) => {
-  const fields = useFields({
+  const fields = useFields<{
+    firstName: string
+    lastName: string
+    email: string
+    password: string
+    mailingList: boolean
+  }>({
     firstName: { constraints: 'required', default: firstName },
     lastName: { constraints: '', label: 'Last Name', default: lastName },
     email: {

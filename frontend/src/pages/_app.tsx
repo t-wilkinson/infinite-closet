@@ -5,7 +5,6 @@ import firebase from 'firebase/app'
 import 'firebase/analytics'
 import '@/styles/index.css'
 
-import axios from '@/utils/axios'
 import { accountActions } from '@/Account/slice'
 import { CartUtils } from '@/Cart/slice'
 import Banner from '@/Layout/Banner'
@@ -13,7 +12,6 @@ import SkipLink from '@/Layout/SkipLink'
 import { layoutActions, layoutSelectors } from '@/Layout/slice'
 import useSignin from '@/User/useSignin'
 import { browserIs } from '@/utils/helpers'
-import { StrapiOrder } from '@/types/models'
 import * as storage from '@/utils/storage'
 import store, { useDispatch, useSelector } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
@@ -111,60 +109,15 @@ const Wrapper = ({ router, children }) => {
   }, [user])
 
   React.useEffect(() => {
-    // for every order in local storage attached to user -> move cart to backend
-    // guest -> do nothing
-
-    if (!storage.get('reset-cart')) {
-      storage.set('reset-cart', true)
-      let cart = storage.get('cart')
-      if (
-        ['[object Array]', '[object Object]'].includes(
-          Object.prototype.toString.call(cart)
-        )
-      ) {
-        storage.set('cart', [])
-        cart = Object.values(cart)
-        cart.forEach((order: StrapiOrder) => {
-          const valid = [
-            'status',
-            'size',
-            'product',
-            'startDate',
-            'rentalLength',
-          ].every((x) => order[x])
-          const getId = (key: string) =>
-            order[key].id ? order[key].id : order[key]
-          if (valid) {
-            const product = getId('product')
-            dispatch(
-              CartUtils.add({
-                ...order,
-                product,
-              })
-            )
-          }
-        })
-      } else {
-        storage.set('cart', [])
-      }
+    let cart = storage.get('cart')
+    if (!Array.isArray(cart)) {
+      storage.set('cart', [])
+      cart = []
     }
 
     // Attach guest cart to current user cart
-    let cart = storage.get('cart') || []
     if (user) {
       dispatch(CartUtils.insert(cart)).then(() => storage.set('cart', []))
-    } else {
-      for (const i in cart) {
-        if (!cart[i].id) {
-          delete cart[i]
-        }
-      }
-      storage.set(
-        'cart',
-        cart.filter((v: StrapiOrder) => v)
-      )
-      dispatch(CartUtils.get())
-      dispatch(CartUtils.view())
     }
   }, [user])
 
@@ -202,13 +155,13 @@ const Wrapper = ({ router, children }) => {
   }, [consent.statistics])
 
   React.useEffect(() => {
-    if (router && router.pathname === '/launch-party') {
+    if (router?.pathname === '/launch-party') {
       router.push('/')
     }
   }, [])
 
   if (
-    blockedPages.includes(router.pathname) &&
+    blockedPages.includes(router?.pathname) &&
     process.env.NODE_ENV === 'production'
   ) {
     children = <FourOFour />

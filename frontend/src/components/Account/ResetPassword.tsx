@@ -36,11 +36,7 @@ export const ResetPassword = () => {
         router.push('/')
       })
       .catch((err) => {
-        try {
-          throw err.response.data.data[0].messages.map((v: any) => v.message)
-        } catch {
-          throw 'Unable to change password'
-        }
+        throw err.messages || 'Unable to reset password.'
       })
   }
 

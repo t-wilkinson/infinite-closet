@@ -21,7 +21,11 @@ export const Page = () => {
     <Account>
       <Signin
         onSubmit={() => {
-          redir ? router.push(redir) : router.back()
+          redir
+            ? router.push(redir)
+            : /register/.test(document.referrer)
+            ? router.push('/')
+            : router.back()
         }}
       />
       <div className="h-4" />
