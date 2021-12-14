@@ -1,6 +1,5 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import qs from 'qs'
 
 import axios from '@/utils/axios'
 import useData from '@/Layout/useData'
@@ -59,22 +58,18 @@ export async function getServerSideProps({ params, query }) {
 
   const page = query.page > 0 ? query.page : 1
   const sort = sortData[query.sort]?.value ?? sortData.Alphabetical.value
-
-  const _paging = str({
-    sort,
-    start: (page - 1) * QUERY_LIMIT,
-    limit: QUERY_LIMIT,
-  })
-  const _filters = Filter.map((filter) => str({ [filter]: query[filter] }))
-    .filter((v) => v)
-    .join('&')
-  const _where = str({
-    categories: query.slug,
-  })
-
   const { products, count, filters, categories } = await axios.get(
-    `/products/filters?${_paging}&${_where}&${_filters}`,
-    { withCredentials: false }
+    `/products/filters`,
+    {
+      params: {
+        sort,
+        start: (page - 1) * QUERY_LIMIT,
+        limit: QUERY_LIMIT,
+        categories: query.slug,
+        ...Filter.reduce((acc, filter) => (acc[filter] = query[filter], acc), {})
+      },
+      withCredentials: false,
+    }
   )
 
   for (const product of products) {
@@ -95,6 +90,3 @@ export async function getServerSideProps({ params, query }) {
     },
   }
 }
-
-const str = (props: object) =>
-  qs.stringify(props, { encode: false, indices: false, allowDots: true })

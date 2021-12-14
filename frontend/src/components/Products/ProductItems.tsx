@@ -3,13 +3,13 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 
+import { getURL } from '@/utils/axios'
 import { Button } from '@/components'
 import useAnalytics from '@/utils/useAnalytics'
-import { getURL } from '@/utils/axios'
-import { StrapiProduct, StrapiFile } from '@/types/models'
-import { QUERY_LIMIT } from './constants'
-
+import { StrapiProduct, StrapiFile } from '@/types'
 import * as sizing from '@/utils/sizing'
+
+import { QUERY_LIMIT } from './constants'
 
 export const ProductItems = ({ data, loading }) => {
   const router = useRouter()

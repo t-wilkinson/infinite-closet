@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import qs from 'qs'
 
 import { Divider } from '@/components'
 import { Icon } from '@/components'
@@ -115,9 +114,7 @@ const details = [
             imageURL={product.images[0].url}
           />,
         ].map((share, i) => (
-          <div key={i} className="w-16 h-8 relative cursor-pointer">
-            {share}
-          </div>
+          <div key={i}>{share}</div>
         ))}
       </div>
     ),
@@ -145,9 +142,11 @@ interface SharePinterestConfig {
 const share = {
   Facebook: ({ url, description }: ShareFacebookConfig) => {
     const analytics = useAnalytics()
+
     return (
       <a
         target="_blank"
+        className="relative w-16 h-8 cursor-pointer"
         rel="noreferrer"
         onClick={() =>
           analytics.logEvent('share', {
@@ -156,14 +155,14 @@ const share = {
         }
         href={
           'https://www.facebook.com/sharer/sharer.php?' +
-          qs.stringify({
+          new URLSearchParams({
             u: url,
-            quote: description,
+            quote: description || '',
             app_id: process.env.NEXT_PUBLIC_FACEBOOK_APP_ID,
             redirect_uri: url,
             display: 'popup',
             kid_directed_site: '0',
-          })
+          }).toString()
         }
       >
         <Image
@@ -180,6 +179,7 @@ const share = {
     const analytics = useAnalytics()
     return (
       <a
+        className="relative w-16 h-8 cursor-pointer"
         target="_blank"
         rel="noreferrer"
         onClick={() =>
@@ -189,11 +189,11 @@ const share = {
         }
         href={
           'http://pinterest.com/pin/create/button/?' +
-          qs.stringify({
+          new URLSearchParams({
             url,
-            description,
+            description: description || '',
             media: process.env.NEXT_PUBLIC_BACKEND + imageURL,
-          })
+          }).toString()
         }
       >
         <Image

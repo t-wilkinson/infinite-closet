@@ -116,7 +116,9 @@ async function queryFilters(knex, _where) {
     .select('products.*')
     .from('products')
     .whereNotNull('products.published_at')
-    .whereRaw(...strapi.services.product.toRawSQL({ categories: _where.categories }))
+    .whereRaw(
+      ...strapi.services.product.toRawSQL({ categories: _where.categories })
+    )
 
   // slugs contain only filters that match product categories
   // get all filters that match these slugs
