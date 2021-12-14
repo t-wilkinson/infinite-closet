@@ -16,7 +16,8 @@ import {
   useFields,
 } from '@/Form'
 import { Divider } from '@/components'
-import { Size, StrapiUser} from '@/types'
+import { Size } from '@/types'
+import { StrapiUser} from '@/types/models'
 import * as sizing from '@/utils/sizing'
 import { useSelector } from '@/utils/store'
 import { SizeChartPopup } from '@/Shop/Size'

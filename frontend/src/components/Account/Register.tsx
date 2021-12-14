@@ -15,7 +15,7 @@ import {
 import { useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { userActions } from '@/User/slice'
-import { StrapiUser } from '@/types'
+import { StrapiUser } from '@/types/models'
 
 interface Register {
   email?: string

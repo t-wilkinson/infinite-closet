@@ -4,7 +4,8 @@ import axios from '@/utils/axios'
 import { Icon, iconClose } from '@/Icons'
 import { toTitleCase } from '@/utils/helpers'
 import * as sizing from '@/utils/sizing'
-import { Size, SizeChart as SizeChartType, StrapiProduct, StrapiSizeChart, StrapiSize } from '@/types'
+import { Size, SizeChart as SizeChartType } from '@/types'
+import { StrapiProduct, StrapiSizeChart, StrapiSize } from '@/types/models'
 
 interface SizeSelector {
   product: StrapiProduct

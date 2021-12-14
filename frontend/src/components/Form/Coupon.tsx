@@ -1,7 +1,7 @@
 import React from 'react'
 
 import axios from '@/utils/axios'
-import { StrapiCoupon } from '@/types'
+import { StrapiCoupon } from '@/types/models'
 
 import { UseField } from './fields'
 import Input from './Input'

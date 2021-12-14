@@ -1,17 +1,17 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 
-import axios from '@/utils/axios'
-import useData from '@/Layout/useData'
-import { useDispatch } from '@/utils/store'
-import { Filters, Filter, ProductRoutes, SortBy } from '@/Products/types'
-import Products from '@/Products'
-import { sortData } from '@/Products/constants'
-import { productsActions } from '@/Products/slice'
-import { QUERY_LIMIT } from '@/Products/constants'
 import Layout from '@/Layout'
-import * as sizing from '@/utils/sizing'
+import useData from '@/Layout/useData'
 import { StrapiSize } from '@/types/models'
+import axios from '@/utils/axios'
+import * as sizing from '@/utils/sizing'
+import { useDispatch } from '@/utils/store'
+
+import Products from '@/Products'
+import { sortData, QUERY_LIMIT } from '@/Products/constants'
+import { productsActions } from '@/Products/slice'
+import { Filters, Filter, ProductRoutes, SortBy } from '@/Products/types'
 
 export const Page = ({ data }) => {
   const router = useRouter()
