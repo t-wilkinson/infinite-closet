@@ -234,6 +234,7 @@ const CheckoutForm = ({ onCheckout }) => {
       fields={[fields, address]}
       className="max-w-screen-sm space-y-8"
       redirect="/checkout/thankyou"
+      notify
     >
       <SideItem label="Address">
         <div className="grid grid-flow-row grid-cols-2 w-full gap-y-3 gap-x-4 pt-2">

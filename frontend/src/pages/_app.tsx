@@ -2,7 +2,9 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import { Provider } from 'react-redux'
 import firebase from 'firebase/app'
+import { ToastContainer } from 'react-toastify'
 import 'firebase/analytics'
+import 'react-toastify/dist/ReactToastify.css'
 import '@/styles/index.css'
 
 import { accountActions } from '@/Account/slice'
@@ -176,6 +178,7 @@ const Wrapper = ({ router, children }) => {
         ${headerOpen ? 'overflow-hidden' : 'overflow-y-auto'}
       `}
       >
+        <ToastContainer />
         <SkipLink />
         <Popup popup={popup} />
         <Banner />

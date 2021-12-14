@@ -211,6 +211,7 @@ const Checkout = ({ fetchCart, analytics }) => {
         fields={fields}
         onSubmit={checkout}
         redirect="/checkout/thankyou"
+        notify
       >
         <Cart />
         <Submit

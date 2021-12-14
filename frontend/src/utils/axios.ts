@@ -13,13 +13,6 @@ axios.interceptors.response.use(
     return response.data
   },
   (error) => {
-    // const message = error.response?.data?.message || error.message;
-    // useNotificationStore.getState().addNotification({
-    //   type: 'error',
-    //   title: 'Error',
-    //   message,
-    // });
-
     let data = error.response?.data
     try {
       data.messages = data.message

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
 
 import { Icon } from '@/components'
 import { iconLoading } from '@/components/Icons'
@@ -38,8 +39,10 @@ export const Form = ({
   children = null,
   resubmit = false,
   redirect,
+  notify = false,
   ...props
 }: {
+  notify?: boolean
   redirect?: string
   fields: UseFields | UseFields[]
   Success?: React.FunctionComponent
@@ -79,7 +82,7 @@ export const Form = ({
     res
       .then(() => {
         form.setValue('success')
-        form.setErrors()
+        form.clearErrors()
         // @ts-ignore
         document.activeElement?.blur()
         if (redirect) {
@@ -87,12 +90,19 @@ export const Form = ({
         }
       })
       .catch((err) => {
+        const error =
+          err?.message ||
+          err ||
+          "Looks like something's not working... Please try again later"
         form.setValue('error')
-        form.setErrors(
-          err.message ||
-            err ||
-            "Looks like something's not working... Please try again later"
-        )
+        if (notify) {
+          toast.error(error, {
+            hideProgressBar: true,
+            closeButton: false,
+          })
+        } else {
+          form.setErrors(error)
+        }
       })
   }
 
