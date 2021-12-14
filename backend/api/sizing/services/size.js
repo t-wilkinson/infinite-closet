@@ -32,12 +32,13 @@ module.exports = {
   // TODO: should probably use underlying sizes function
   // {size: S, sizeRange: _2XL} -> S-2XL
   range({size: start, sizeRange: end}) {
-    if (!start) {
+    const s = sizes({size: start, sizeRange: end})
+    if (s.length === 0) {
       return undefined
-    } else if (!end || start === end) {
-      return normalize(start)
+    } else if (s.length === 1) {
+      return s.at(0)
     } else {
-      return `${normalize(start)}-${normalize(end)}`
+      return `${s.at(0)}-${s.at(-1)}`
     }
   }
 }

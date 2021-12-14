@@ -23,7 +23,7 @@ module.exports = {
       subscribed: body.subscribe || false,
     })
 
-    ctx.send({})
+    ctx.send(null)
   },
 
   async contact(ctx) {
@@ -44,6 +44,6 @@ module.exports = {
       lastName,
     })
 
-    ctx.send({})
+    ctx.send(null)
   },
 }

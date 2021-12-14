@@ -10,9 +10,7 @@ export const rentalLengths = {
   long: 8 - 1,
 }
 
-// TODO: instead of `type`, look at key in data objects
-// TODO: more dynamic href
-const routes = [
+export const routes = [
   {
     label: 'How It Works',
     value: 'howitworks',
@@ -118,5 +116,4 @@ const routes = [
   },
 ] as const
 
-export { routes }
 export type Routes = typeof routes

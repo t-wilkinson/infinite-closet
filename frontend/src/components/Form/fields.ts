@@ -262,7 +262,7 @@ export class UseFields<Keys = { [key: string]: any }> {
 
   changed() {
     const cleaned = this.clean()
-    let changed = {}
+    let changed: { [key in keyof Keys]?: Keys[key] } = {}
     for (const field in cleaned) {
       if (cleaned[field] != this.fields[field].default) {
         changed[field] = cleaned[field]
@@ -274,10 +274,6 @@ export class UseFields<Keys = { [key: string]: any }> {
   map(fn: (value: UseField<any>, index: number) => any): any[] {
     return Object.values(this.fields).map(fn)
   }
-
-  // TODO: somehow merge multiple UseFields
-  // merge(fields: UseFields) {
-  // }
 }
 
 type useFields<Keys> = UseFields<{ [key in keyof Keys]: Keys[key] }>

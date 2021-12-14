@@ -1,5 +1,3 @@
-// TODO: refactor
-/* Components that are used everywhere */
 import React from 'react'
 import Link from 'next/link'
 import { Icon, iconUp } from '@/Icons'

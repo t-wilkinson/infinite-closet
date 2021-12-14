@@ -5,7 +5,8 @@
 
 const acsConfig = require('../acs/config')
 const hivedConfig = require('../hived/config')
-const { formatAddress } = require('../shipment')
+const { formatAddress: acsFormatAddress } = require('../acs/api')
+const { formatAddress: hivedFormatAddress } = require('../hived/api')
 
 it('Formats acs addresses', () => {
   const address = {
@@ -18,7 +19,7 @@ it('Formats acs addresses', () => {
     deliveryInstructions: 'Delivery instructions',
   }
 
-  const res = formatAddress(acsConfig.addressFormats.recipient, address)
+  const res = acsFormatAddress(acsConfig.addressFormats.recipient, address)
   expect(res).toMatchObject({
     FirstName: 'Infinite',
     LastName: 'Closet',
@@ -45,7 +46,7 @@ describe('Format hived addresses', () => {
   }
 
   it('correctly formats sender', () => {
-    const res = formatAddress(hivedConfig.addressFormats.sender, address)
+    const res = hivedFormatAddress(hivedConfig.addressFormats.sender, address)
     expect(res).toMatchObject({
       Sender: 'Infinite Closet',
       Sender_Address_Line_1: 'Address 1',
@@ -57,7 +58,7 @@ describe('Format hived addresses', () => {
   })
 
   it('correctly formats collection', () => {
-    const res = formatAddress(hivedConfig.addressFormats.collection, address)
+    const res = hivedFormatAddress(hivedConfig.addressFormats.collection, address)
     expect(res).toMatchObject({
       Collection_Contact_Name: 'Infinite Closet',
       Collection_Email_Address: 'info@infinitecloset.co.uk',
@@ -72,7 +73,7 @@ describe('Format hived addresses', () => {
   })
 
   it('correctly formats recipients', () => {
-    const res = formatAddress(hivedConfig.addressFormats.recipient, address)
+    const res = hivedFormatAddress(hivedConfig.addressFormats.recipient, address)
     expect(res).toMatchObject({
       Recipient: 'Infinite Closet',
       Recipient_Email_Address: 'info@infinitecloset.co.uk',

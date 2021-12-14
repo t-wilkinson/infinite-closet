@@ -43,7 +43,6 @@ function partitionObject(object, predicate) {
  * Search for products in database matching `_where`
  */
 async function findProducts(knex, _where, _paging) {
-  // TODO: handle paging in SQL
   let sort = _paging.sort.split(':')
   sort[0] = `products."${sort[0]}"`
   sort = sort.join(' ')
@@ -181,7 +180,6 @@ const DEFAULT_PAGE_NUMBER = 0
 const DEFAULT_PAGE_SIZE = 20
 
 module.exports = {
-  // TODO: there are plenty of ways to speed this up when it bottlenecks
   async query(ctx) {
     const query = ctx.query
     const [_paging, _where] = partitionObject(query, (k) =>

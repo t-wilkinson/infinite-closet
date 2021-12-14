@@ -47,7 +47,6 @@ describe.skip('<Cart />', () => {
     //     const item = renderCartItem({ value: false })
     //     const toggleInsurance = t.screen.getByLabelText(/insurance/i)
     //     t.userEvent.click(toggleInsurance)
-    // TODO: hangs
     //     expect(item.toggleInsurance).toBeCalledTimes(1)
     //     // expect(t.screen.getByRole(/checkbox/i)).toHaveAttribute(
     //     //   'checked'

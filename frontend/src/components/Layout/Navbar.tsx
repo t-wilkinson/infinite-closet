@@ -187,7 +187,6 @@ const rowToHref = (column, row) => ({
           : null,
     })
 
-// TODO: the logic is kind of a mess
 export const toRows = (column, serverRoutes) => {
   const defaultRoutes = serverRoutes.routes?.[column.value]?.categories || []
   const serverRows =

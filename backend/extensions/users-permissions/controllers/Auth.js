@@ -389,7 +389,6 @@ module.exports = {
       );
     } else {
       // generate username from name until it is unique
-      // TODO: there are some ways to make this more efficient
       do {
         params.username = extensions.normalize(params.firstName) + '-' + extensions.normalize(params.lastName) + '-' + extensions.nDigit(6);
       } while (await strapi.query('user', 'users-permissions').findOne({ username: params.username }));

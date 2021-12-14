@@ -5,15 +5,12 @@ const { generateAPI } = require('../../../utils')
 module.exports = {
   ...generateAPI('order', 'orders'),
 
-  // TODO: remove this, use PUT instead
   async complete(ctx) {
     const { order_id } = ctx.params
-    const res = await strapi
+    await strapi
       .query('order', 'orders')
       .update({ id: order_id }, { status: 'completed' })
-    ctx.send({
-      order: res,
-    })
+    ctx.send(null)
   },
 
   // TODO: should check if product.sizes includes order.size
@@ -35,14 +32,14 @@ module.exports = {
       rentalLength: body.rentalLength,
     })
 
-    ctx.send(order)
+    ctx.send(strapi.plugins['orders'].services.cart.sanitizeOrder(order))
   },
 
   async ship(ctx) {
     const { order_id } = ctx.params
     let order = await strapi.query('order', 'orders').findOne({ id: order_id })
     if (!order) {
-      return ctx.send({}, 404)
+      return ctx.send(null, 404)
     }
 
     try {
@@ -51,7 +48,7 @@ module.exports = {
       ].services.ship.shipOrderToClient(order)
       await strapi.services.template_email.orderShipped(cartItem)
       const { order } = cartItem
-      return ctx.send({ order })
+      return ctx.send({ order: strapi.plugins['orders'].services.cart.sanitizeOrder(order) })
     } catch (e) {
       return ctx.send({ message: e.message }, 400)
     }

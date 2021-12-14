@@ -157,7 +157,7 @@
       }
     },
     {
-      "method": "POST",
+      "method": "PUT",
       "path": "/complete/:order_id",
       "handler": "order.complete",
       "config": {

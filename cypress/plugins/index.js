@@ -44,7 +44,6 @@ module.exports = (on, config) => {
       return null
     },
 
-    // TODO: helper function to create test product
     // async 'db:products:test'() {
     //   await db('DELETE FROM "products" WHERE slug=test')
     //   await db('INSERT INTO "products"')

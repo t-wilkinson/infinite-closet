@@ -15,16 +15,11 @@ export const DateOfBirth = ({ bday, bmonth, byear }: DateOfBirthFields) => (
   </fieldset>
 )
 
-// const changed = (field): [boolean, number?] => {
-//   const clean = field.clean()
-//   if (clean != field.default + (field.name === 'bmonth' ? 1 : 0)) {
-//     return [true, clean]
-//   } else {
-//     return [false]
-//   }
-// }
-
-export const dobFields: FieldsConfig = {
+export const dobFields: FieldsConfig<{
+  bday: number
+  bmonth: number
+  byear: number
+}>= {
   bday: { label: 'DD', constraints: 'integer', autocomplete: 'bday-day', },
   bmonth: { label: 'MM', constraints: 'integer', autocomplete: 'bday-month', },
   byear: { label: 'YYYY', constraints: 'integer', autocomplete: 'bday-year', },
@@ -47,19 +42,3 @@ export const toDate = ({ bday, bmonth, byear }: DateOfBirthFields): string | voi
     return date.toJSON()
   }
 }
-
-// export const dobChangedFields = ({dob, bday, bmonth, byear}: DateOfBirthFields & {dob: any}) => {
-//   const dobKeys = ['byear', 'bmonth', 'bday'] as const
-//   const dobFieldEq = (key: any, field: any) =>
-//        dateOfBirth.get(key) + (key === 'month' ? 1 : 0) !== fields.value(field)
-//       ? field
-//       : undefined
-//   const dobChangedFields = dob.isValid()
-//     ? [dobFieldEq('year', 'byear'), dobFieldEq('month', 'bmonth'), dobFieldEq('date', 'bday'), ].filter(v => v)
-//     : dobKeys.every((f) => isNaN(dobField.value(f) as number))
-//     ? ['byear', 'bmonth', 'bday']
-//     : []
-// }
-
-// TODO:
-// extend UseFields to take sub UseFields and operates as expected

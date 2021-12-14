@@ -33,7 +33,6 @@ it.todo('Payment')
 
 //     const cardElement = component.container.querySelector('#card-element')
 //     t.userEvent.click(cardElement)
-//     // TODO: handleChange is not called
 //     const typeCard = (field: string) => t.userEvent.keyboard(mockCard[field])
 //     typeCard('number')
 //     typeCard('expiration')
@@ -42,7 +41,6 @@ it.todo('Payment')
 
 //     // const submitButton = t.screen.getByText(/submit/i)
 
-//     // TODO: why is it still disabled?
 //     // expect(submitButton).toHaveAttribute('disabled')
 
 //     //     t.fireEvent.click(submitButton)

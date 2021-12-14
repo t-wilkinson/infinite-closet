@@ -14,7 +14,6 @@ module.exports = {
   async signin(ctx) {
     if (ctx.state.user) {
       return ctx.send({
-        status: 200,
         user: sanitizeEntity(ctx.state.user, {
           model: strapi.query('user', 'users-permissions').model,
         }),
@@ -87,9 +86,10 @@ module.exports = {
       .update({ id: user.id }, { addresses })
 
     return ctx.send({
-      // TODO: I think it best to handle similar actions like this (return the updated user)
       addresses: user.addresses,
-      user,
+      user: sanitizeEntity(user, {
+        model: strapi.query('user', 'users-permissions').model,
+      }),
     })
   },
 }

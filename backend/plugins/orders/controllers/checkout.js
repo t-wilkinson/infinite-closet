@@ -46,7 +46,7 @@ module.exports = {
     const body = ctx.request.body
     const { paymentMethod, summary, cart } = await prepareCheckout(body, user)
     if (cart.length === 0 || summary.amount < 100) {
-      return ctx.send({}, 404)
+      return ctx.send(null, 404)
     }
 
     // Charge user and checkout order
@@ -77,7 +77,7 @@ module.exports = {
     const body = { ...(ctx.request.body.body || {}), ...ctx.request.body }
     const { paymentMethod, summary, cart } = await prepareCheckout(body)
     if (cart.length === 0 || summary.amount < 100) {
-      return ctx.send({})
+      return ctx.send(null)
     }
 
     try {
@@ -118,7 +118,7 @@ module.exports = {
     const { paymentMethod, paymentIntent, summary, cart } =
       await prepareCheckout(body)
     if (cart.length === 0 || summary.amount < 100) {
-      return ctx.send()
+      return ctx.send(null)
     }
 
     try {
@@ -132,7 +132,7 @@ module.exports = {
         paymentMethod,
         paymentIntent,
       })
-      return ctx.send({})
+      return ctx.send(null)
     } catch (e) {
       strapi.log.error('PaymentRequest paymentIntent did not succeed', {
         cart,

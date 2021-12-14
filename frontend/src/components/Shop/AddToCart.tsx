@@ -249,7 +249,6 @@ const RadioButton = ({ field, value }) => (
         `}
       />
     </div>
-    {/* TODO: dynamic from server */}
     <span>{{ short: 4, long: 8 }[value]}-day rental</span>
   </button>
 )

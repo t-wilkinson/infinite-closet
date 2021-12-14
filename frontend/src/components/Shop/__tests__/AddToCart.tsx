@@ -39,7 +39,6 @@ it.todo('AddToCart')
 
 // describe.skip('Add to cart', () => {
 //   const render = (initialState: object) => {
-//     // TODO: this does not work
 //     return t.render(<ProductRentContents product={mockProduct} />, {
 //       initialState,
 //     })

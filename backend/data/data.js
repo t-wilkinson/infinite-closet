@@ -6,7 +6,7 @@ module.exports = {
     occasions: 'occasion',
     styles: 'style',
     weather: 'weather',
-    sizes: 'size', // TODO: need to attach more data here like the correct model (custom.sizes)
+    sizes: 'size',
     materials: 'material',
     metals: 'metal',
   },

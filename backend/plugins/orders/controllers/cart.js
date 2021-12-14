@@ -38,7 +38,7 @@ module.exports = {
       .query('user', 'users-permissions')
       .update({ id: user.id }, { orders })
 
-    ctx.send()
+    ctx.send(null)
   },
 
   async priceSummary(ctx) {
@@ -52,23 +52,23 @@ module.exports = {
         cart,
         user,
       })
-      ctx.send(summary)
+      ctx.send(strapi.services.price.sanitizeSummary(summary))
     } catch (e) {
-      ctx.send({ error: e }, 404)
+      ctx.send(null, 404)
     }
   },
 
   async getUserOrders(ctx) {
     const user = ctx.state.user
     const orders = await getUserOrders(user, 'cart')
-    ctx.send(orders)
+    ctx.send(strapi.plugins['orders'].services.cart.sanitizeOrders(orders))
   },
 
   async viewUserCart(ctx) {
     const user = ctx.state.user
     const orders = await getUserOrders(user, 'cart')
     const cart = await strapi.plugins['orders'].services.cart.create(orders)
-    ctx.send(cart)
+    ctx.send(strapi.plugins['orders'].services.cart.sanitizeCart(cart))
   },
 
   async viewGuestCart(ctx) {
@@ -90,7 +90,7 @@ module.exports = {
     )
 
     const cart = await strapi.plugins['orders'].services.cart.create(orders)
-    ctx.send(cart)
+    ctx.send(strapi.plugins['orders'].services.cart.sanitizeCart(cart))
   },
 
   async viewUserOrderHistory(ctx) {
@@ -103,6 +103,6 @@ module.exports = {
       'error',
     ])
     const cart = await strapi.plugins['orders'].services.cart.create(orders)
-    ctx.send(cart)
+    ctx.send(strapi.plugins['orders'].services.cart.sanitizeCart(cart))
   },
 }

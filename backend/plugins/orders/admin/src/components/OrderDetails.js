@@ -27,14 +27,12 @@ export const OrderAction = {
 
     const complete = () => {
       fetch(strapi.backendURL + `/orders/complete/${order.id}`, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify({
-          order,
-        }),
+        body: JSON.stringify({}),
       })
         .then(() => getOrders())
         .catch((err) => console.error(err));

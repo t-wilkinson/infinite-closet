@@ -187,7 +187,6 @@ export const EditAddress = ({
   fields: UseFields<AddressFields>
 }) => {
   const onSubmitInternal = async () => {
-    // TODO: how to chain together to show error from validate vs onSubmit
     return validatePostcode(fields.value('postcode')).then(() => {
       return onSubmit()
     })

@@ -7,7 +7,8 @@
  *
  ********************  IMPORTANT ********************/
 
-const {day} = require('../../../utils')
+const { sanitizeEntity } = require('strapi-utils')
+const { day } = require('../../../utils')
 const SMALLEST_CURRENCY_UNIT = 100
 
 // Services like stripe expect no decimal points, and to be in units of smallest currency
@@ -86,6 +87,13 @@ async function summary({ price, context, code, existingCoupons }) {
   }
 }
 
+function sanitizeSummary(summary) {
+  return {
+    ...summary,
+    coupon: sanitizeEntity(summary.coupon, { model: strapi.query('coupon').model }),
+  }
+}
+
 module.exports = {
   toAmount,
   toPrice,
@@ -93,5 +101,6 @@ module.exports = {
   availableCoupon,
   discount,
   summary,
+  sanitizeSummary,
   valid,
 }

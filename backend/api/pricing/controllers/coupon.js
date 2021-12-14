@@ -19,7 +19,7 @@ async function discount(ctx) {
     existingCoupons,
   })
 
-  ctx.send(summary)
+  ctx.send(strapi.services.price.sanitizeSummary(summary))
 }
 
 module.exports = {

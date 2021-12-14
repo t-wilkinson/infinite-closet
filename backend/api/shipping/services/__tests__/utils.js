@@ -26,8 +26,6 @@ function afterCutoff(config, daysToStart, shippingClass) {
 }
 
 function findOverlapEdge(edge, shouldOverlap, notOverlap, overlap) {
-  // TODO: find which one is defined and apply func until it succeeds
-  // decrease shouldOverlap until overlaps
   const maxIter = 15
   if (
     shouldOverlap > notOverlap &&
@@ -40,8 +38,7 @@ function findOverlapEdge(edge, shouldOverlap, notOverlap, overlap) {
       notOverlap--
     ) {
       if (overlap(shouldOverlap, notOverlap)) {
-        // expect({shouldOverlap, notOverlap}).toMatchObject({
-        console.log('should be', {
+        expect({shouldOverlap, notOverlap}).toMatchObject({
           shouldOverlap: notOverlap + 1,
           notOverlap,
         })
@@ -59,7 +56,7 @@ function findOverlapEdge(edge, shouldOverlap, notOverlap, overlap) {
       shouldOverlap++
     ) {
       if (overlap(shouldOverlap, notOverlap)) {
-        console.log('should be', {
+        expect({shouldOverlap, notOverlap}).toMatchObject({
           shouldOverlap,
           notOverlap: shouldOverlap - 1,
         })
@@ -77,7 +74,7 @@ function findOverlapEdge(edge, shouldOverlap, notOverlap, overlap) {
       notOverlap++
     ) {
       if (overlap(shouldOverlap, notOverlap)) {
-        console.log('should be', {
+        expect({shouldOverlap, notOverlap}).toMatchObject({
           shouldOverlap: notOverlap - 1,
           notOverlap,
         })
@@ -95,7 +92,7 @@ function findOverlapEdge(edge, shouldOverlap, notOverlap, overlap) {
       shouldOverlap--
     ) {
       if (overlap(shouldOverlap, notOverlap)) {
-        console.log('should be', {
+        expect({shouldOverlap, notOverlap}).toMatchObject({
           shouldOverlap,
           notOverlap: shouldOverlap + 1,
         })
@@ -103,7 +100,7 @@ function findOverlapEdge(edge, shouldOverlap, notOverlap, overlap) {
       }
     }
   } else {
-    console.log('Unexpected values for edge')
+    throw new Error(`Unexpected values shouldOverlap=${shouldOverlap} and notOverlap=${notOverlap}`)
   }
 }
 

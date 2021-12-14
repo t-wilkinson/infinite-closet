@@ -62,7 +62,6 @@ module.exports = {
       existingCoupons: [],
     })
 
-    // TODO: clean this
     ctx.send({ ...summary, price: summary.total })
   },
 
@@ -70,7 +69,7 @@ module.exports = {
     const body = ctx.request.body
     const ticketPrice = getTicketPrice()
     if (ticketPrice === -1) {
-      return ctx.send()
+      return ctx.send(null)
     }
 
     const summary = await strapi.services.price.summary({

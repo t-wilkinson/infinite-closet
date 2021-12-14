@@ -5,8 +5,6 @@
 //   return acc
 // }, {})
 
-// TODO: create an order on startup. Store order in global state.
-
 context.skip('Checkout', () => {
   before(() => {})
   it('Guest can checkout', () => {

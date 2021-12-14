@@ -32,7 +32,7 @@ module.exports = {
       return ctx.send({ review })
     } catch (e) {
       strapi.log.error('Failed to add product review:', e.stack)
-      return ctx.send({}, 404)
+      return ctx.send(null, 404)
     }
   },
 

@@ -1,6 +1,7 @@
 'use strict'
 const orderUtils = require('./order')
 const priceUtils = require('./price')
+const { sanitizeEntity } = require('strapi-utils')
 
 /**
  * @typedef CartItem
@@ -131,6 +132,23 @@ function validOrders(cart) {
   return orders(validItems(cart))
 }
 
+function sanitizeOrder(order) {
+  return sanitizeEntity(order, {
+    model: strapi.query('order', 'orders').model,
+  })
+}
+
+function sanitizeOrders(orders) {
+  return orders.map(sanitizeOrder)
+}
+
+function sanitizeCart(cart) {
+  return cart.map((cartItem) => ({
+    ...cartItem,
+    order: sanitizeOrder(cartItem.order),
+  }))
+}
+
 module.exports = {
   create,
   createCartItem,
@@ -141,4 +159,8 @@ module.exports = {
   validItems,
   validOrders,
   orders,
+
+  sanitizeOrder,
+  sanitizeCart,
+  sanitizeOrders,
 }

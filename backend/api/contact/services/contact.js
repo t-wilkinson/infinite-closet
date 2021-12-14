@@ -25,7 +25,6 @@ function laterDate(d1, d2) {
 
 /**
  * Merge mailchimp and local contacts list
- * TODO: speedup
  */
 async function updateContactList() {
   const { members } = await strapi.services.mailchimp.marketing.lists.getListMembersInfo(

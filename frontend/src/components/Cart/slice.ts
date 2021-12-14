@@ -8,7 +8,6 @@ import { State, Cart } from './types'
 
 export { CartUtils }
 
-// TODO: store cart here for caching
 const initialState: State = {
   checkoutCart: [],
   orderHistory: [],

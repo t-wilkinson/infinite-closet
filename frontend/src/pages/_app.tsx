@@ -20,7 +20,6 @@ const Popup = dynamic(() => import('@/Account/Popup'))
 const FourOFour = dynamic(() => import('@/pages/404'))
 const CookieConsent = dynamic(() => import('@/Layout/CookieConsent'))
 
-// TODO: fetch avaialable categories and similar for header etc.
 const App = ({ router, Component, pageProps }) => {
   React.useEffect(() => {
     const sheet = document.styleSheets[1]

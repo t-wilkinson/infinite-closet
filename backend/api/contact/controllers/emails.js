@@ -36,20 +36,20 @@ module.exports = {
       .catch((err) =>
         strapi.plugins['orders'].services.ship.shippingFailure(order, err)
       )
-    return ctx.send({})
+    return ctx.send(null)
   },
 
   async orderLeaving(ctx) {
     const { orderId } = ctx.params
     const { cartItem } = await getCartItem(orderId)
     strapi.services.template_email.orderLeaving(cartItem)
-    return ctx.send({})
+    return ctx.send(null)
   },
 
   async trustPilot(ctx) {
     const { orderId } = ctx.params
     const { cartItem } = await getCartItem(orderId)
     strapi.services.template_email.trustPilot(cartItem)
-    return ctx.send({})
+    return ctx.send(null)
   },
 }

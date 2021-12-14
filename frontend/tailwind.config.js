@@ -87,7 +87,6 @@ module.exports = {
           md: '2rem',
         },
       },
-      // TODO: font fall backs. optimize font loading. etc.
       fontFamily: {
         header: 'Cinzel, serif',
         subheader: 'Barlow, sans-serif',
