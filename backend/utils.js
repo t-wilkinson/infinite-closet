@@ -183,5 +183,5 @@ module.exports = {
   splitName,
   day,
   formatAddress,
-  providerName: 'hived',
+  providerName: 'acs',
 }

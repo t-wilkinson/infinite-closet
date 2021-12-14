@@ -11,14 +11,14 @@ async function fetchApi(url, method, body = {}) {
   const basicAuth = Buffer.from(
     `${config.auth.username}:${config.auth.password}`
   ).toString('base64')
-  const endpoint =
-    process.env.NODE_ENV === 'production'
-      ? config.endpoint.live
-      : config.endpoint.test
+  const endpoint = config.endpoint.live
+    // process.env.NODE_ENV === 'production'
+    //   ? config.endpoint.live
+    //   : config.endpoint.test
   return fetch(`${endpoint}${url}`, {
     method,
     headers: {
-      Auth: `BasicAuth: ${config.auth.username}, ${config.auth.password}`,
+      Auth: `BasicAuth: ${config.auth.username},${config.auth.password}`,
       Authorization: `Basic ${basicAuth}`,
       // 'Accept': 'application/json',
       'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ async function fetchApi(url, method, body = {}) {
         : JSON.stringify({
             fields: body,
           }),
-  }).then((res) => console.log(res))
+  })
   // .then((res) => res.json())
 }
 
@@ -38,12 +38,10 @@ module.exports = {
 
   // TODO: accept multiple orders
   async ship({ recipient, shippingClass, shipmentPrice, order }) {
-    // if (process.env.NODE_ENV !== 'production') {
-    //   return crypto.randomBytes(16).toString('base64')
-    // }
     console.log('ship')
 
-    const range = timing.range(order)
+    // TODO!
+    const range = timing.range({...order, startDate: '2050-01-01', shippingDate: undefined})
     const uniqueSKU = await strapi.plugins[
       'orders'
     ].services.order.acsUniqueSKU(order)
@@ -51,11 +49,11 @@ module.exports = {
     const body = Object.assign(
       {
         AccountCode: config.auth.accountCode,
-        OrderNumber: order.id,
+        OrderNumber: `IC-${order.id}`,
 
         DeliveryService: config.shippingClasses[shippingClass],
         DeliveryAgent: config.deliveryAgent,
-        DeliverCharge: 0,
+        DeliveryCharge: 0,
         OrderCancelled: false,
 
         OrderDate: range.created.format('YYYY-MM-DD'),
@@ -67,22 +65,33 @@ module.exports = {
         OrderItems: [
           {
             LineItemId: uniqueSKU,
-            GarmentSKU: order.product.id,
+            GarmentSKU: uniqueSKU, //`IC-${order.product.id}`,
             IsHire: true,
             ItemPrice: shipmentPrice,
-            Measurement1: strapi.services.size.normalize(order.size),
-            Measurement2: strapi.services.size.normalize(order.size),
+            Measurement1: 'ALL', //strapi.services.size.normalize(order.size),
+            Measurement2: 'ALL', // strapi.services.size.normalize(order.size),
           },
         ],
       },
       formatAddress(config, 'recipient', recipient)
     )
+    console.log(body)
 
     const res = await fetchApi(`/orders/${body.OrderNumber}`, 'PUT', body)
       .then((res) => {
         console.log(res)
+        console.log('res')
+        if (!res.ok) {
+          return res.text()
+        } else {
+          return res.json()
+        }
+      })
+      .then(res => {
+        console.log(res)
       })
       .catch((err) => {
+        console.log('err')
         console.dir(err)
         console.log(err.message)
         throw err
