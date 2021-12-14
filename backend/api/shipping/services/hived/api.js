@@ -2,42 +2,7 @@
 const fetch = require('node-fetch')
 const crypto = require('crypto')
 const config = require('./config')
-const { splitName } = require('../../../../utils')
-
-/**
- * Format address according to specification
- * @param {Object} format - Mapping of address fields to api fields
- * @param {Address} addr
- * @returns {Object} Address with fields set by specification
- */
-function formatAddress(format, addr) {
-  if (typeof addr === 'string') {
-    return formatAddress(format, config.addresses[addr])
-  }
-
-  return Object.entries(addr).reduce((acc, [key, value]) => {
-    if (!value || !format[key]) {
-      return acc
-    }
-
-    if (key === 'address') {
-      for (const i in format.address) {
-        if (format.address[i] && value[i]) {
-          acc[format.address[i]] = value[i]
-        }
-      }
-
-      // In case format requires seperate field for first and last name
-    } else if (key === 'name' && Array.isArray(format[key])) {
-      const { firstName, lastName } = splitName(value)
-      acc[format.name[0]] = firstName
-      acc[format.name[1]] = lastName
-    } else {
-      acc[format[key]] = value
-    }
-    return acc
-  }, {})
-}
+const { formatAddress } = require('../../../../utils')
 
 async function fetchApi(url, method, body = {}) {
   return fetch(url, {
@@ -58,7 +23,7 @@ async function fetchApi(url, method, body = {}) {
 module.exports = {
   formatAddress,
   async ship({
-    sender = config.addresses.infinitecloset,
+    sender = 'infinitecloset',
     collection,
     recipient,
     shippingClass,
@@ -70,9 +35,9 @@ module.exports = {
         Sender: 'Infinite Closet',
         Value_GBP: shipmentPrice,
       },
-      formatAddress(config.addressFormats.sender, sender),
-      formatAddress(config.addressFormats.recipient, recipient),
-      formatAddress(config.addressFormats.collection, collection)
+      formatAddress(config, 'sender', sender),
+      formatAddress(config, 'recipient', recipient),
+      formatAddress(config, 'collection', collection)
     )
 
     strapi.log.info('ship %o', body)

@@ -3,43 +3,9 @@ const fetch = require('node-fetch')
 // const crypto = require('crypto')
 const config = require('./config')
 const timing = require('../timing')
-const { splitName } = require('../../../../utils')
+const { formatAddress } = require('../../../../utils')
 const { postcodeValidator } = require('postcode-validator')
 
-/**
- * Format address according to specification
- * @param {Object} format - Mapping of address fields to api fields
- * @param {Address} addr
- * @returns {Object} Address with fields set by specification
- */
-function formatAddress(format, addr) {
-  if (typeof addr === 'string') {
-    return formatAddress(format, config.addresses[addr])
-  }
-
-  return Object.entries(addr).reduce((acc, [key, value]) => {
-    if (!value || !format[key]) {
-      return acc
-    }
-
-    if (key === 'address') {
-      for (const i in format.address) {
-        if (format.address[i] && value[i]) {
-          acc[format.address[i]] = value[i]
-        }
-      }
-
-      // In case format requires seperate field for first and last name
-    } else if (key === 'name' && Array.isArray(format[key])) {
-      const { firstName, lastName } = splitName(value)
-      acc[format.name[0]] = firstName
-      acc[format.name[1]] = lastName
-    } else {
-      acc[format[key]] = value
-    }
-    return acc
-  }, {})
-}
 
 async function fetchApi(url, method, body = {}) {
   const basicAuth = Buffer.from(
@@ -52,7 +18,7 @@ async function fetchApi(url, method, body = {}) {
   return fetch(`${endpoint}${url}`, {
     method,
     headers: {
-      Auth: `BasicAuth: ${config.auth.username},${config.auth.password}`,
+      Auth: `BasicAuth: ${config.auth.username}, ${config.auth.password}`,
       Authorization: `Basic ${basicAuth}`,
       // 'Accept': 'application/json',
       'Content-Type': 'application/json',
@@ -61,8 +27,8 @@ async function fetchApi(url, method, body = {}) {
       method === 'GET'
         ? undefined
         : JSON.stringify({
-          fields: body,
-        }),
+            fields: body,
+          }),
   }).then((res) => console.log(res))
   // .then((res) => res.json())
 }
@@ -75,6 +41,7 @@ module.exports = {
     // if (process.env.NODE_ENV !== 'production') {
     //   return crypto.randomBytes(16).toString('base64')
     // }
+    console.log('ship')
 
     const range = timing.range(order)
     const uniqueSKU = await strapi.plugins[
@@ -108,18 +75,18 @@ module.exports = {
           },
         ],
       },
-      formatAddress(config.addressFormats.recipient, recipient)
+      formatAddress(config, 'recipient', recipient)
     )
 
-    const res = await fetchApi(
-      `/orders/${body.OrderNumber}`,
-      'PUT',
-      body
-    ).catch((err) => {
-      console.dir(err)
-      console.log(err.message)
-      throw err
-    })
+    const res = await fetchApi(`/orders/${body.OrderNumber}`, 'PUT', body)
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.dir(err)
+        console.log(err.message)
+        throw err
+      })
     strapi.log.info('hived:ship %o', res)
     throw new Error('TODO')
     return body.OrderNumber
