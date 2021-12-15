@@ -20,4 +20,4 @@
     - create a uid
 - summary()
     - should also use gift cards
-
+- purchase()

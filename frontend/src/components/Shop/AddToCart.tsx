@@ -87,7 +87,7 @@ export const productRentContents = {
       <Form
         fields={fields}
         onSubmit={addToCart}
-        redirect={user ? '/user/checkout' : '/account/checkout/register'}
+        redirect={user ? '/buy' : '/account/checkout/register'}
       >
         <DatePicker
           size={fields.value('size')}
@@ -120,7 +120,7 @@ export const productRentContents = {
         />
 
         <Submit
-          field={fields.form}
+          form={fields.form}
           className="my-2 self-center rounded-sm w-full"
           disabled={fields.form.value === 'success'}
         >

@@ -210,11 +210,12 @@ const Checkout = ({ fetchCart, analytics }) => {
         className="w-full space-y-4"
         fields={fields}
         onSubmit={checkout}
-        redirect="/checkout/thankyou"
+        redirect="/buy/thankyou"
+        notify
       >
         <Cart />
         <Submit
-          field={fields.form}
+          form={fields.form}
           disabled={
             !(state.paymentMethod && state.address) ||
             ['checking-out'].includes(state.status) ||
@@ -243,7 +244,7 @@ const Checkout = ({ fetchCart, analytics }) => {
               user: user?.email,
               type: 'checkout',
             })
-            router.push('/checkout/thankyou')
+            router.push('/buy/thankyou')
           }}
         />
       </Form>

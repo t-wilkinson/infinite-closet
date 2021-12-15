@@ -139,7 +139,7 @@ const AccountDetails = ({ setStatus, user }) => {
         byear={dobField.get('byear')}
       />
       <SubmitFields
-        field={fields.form}
+        form={fields.form}
         disabled={
           Object.values(fields.changed()).length === 0 &&
           Object.values(dobField.changed()).length === 0
@@ -214,7 +214,7 @@ const FitsAndPreferences = ({ user, setStatus }) => {
       </div>
 
       <SubmitFields
-        field={fields.form}
+        form={fields.form}
         disabled={Object.values(fields.changed()).length === 0}
       />
     </Fieldset>
@@ -236,7 +236,7 @@ const FitsAndPreferences = ({ user, setStatus }) => {
 //       <Password className="col-start-1" {...fields.password} />
 //       <Password {...fields.confirmPassword} />
 //       <SubmitFields
-//         field={fields.form}
+//         form={fields.form}
 //         onSubmit={onSubmit}
 //         disabled={fields.password.value !== fields.confirmPassword.value}
 //       />
@@ -244,9 +244,9 @@ const FitsAndPreferences = ({ user, setStatus }) => {
 //   )
 // }
 
-const SubmitFields = ({ field, disabled }) => (
+const SubmitFields = ({ form, disabled }) => (
   <div className="w-full col-start-1">
-    <Submit field={field} disabled={disabled}>
+    <Submit form={form} disabled={disabled}>
       Save Changes
     </Submit>
   </div>

@@ -43,7 +43,7 @@ const HeaderAside = () => {
           {user ? (
             <>
               <AsideLink href="/user/profile" label="My Account" />
-              <AsideLink href="/user/checkout" label="Checkout" />
+              <AsideLink href="/buy" label="Checkout" />
             </>
           ) : (
             <>

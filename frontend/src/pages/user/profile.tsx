@@ -1,3 +1,5 @@
+import React from 'react'
+
 import Profile from '@/User/Profile'
 import User from '@/User'
 import Layout from '@/Layout'

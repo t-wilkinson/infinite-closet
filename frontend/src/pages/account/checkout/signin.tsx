@@ -1,5 +1,4 @@
 import React from 'react'
-import { useRouter } from 'next/router'
 import Link from 'next/link'
 
 import Account from '@/Account'
@@ -8,15 +7,13 @@ import { FormWrapper } from '@/Form'
 import Signin from '@/Account/Signin'
 
 export const Page = () => {
-  const router = useRouter()
-
   return (
     <Account>
-      <Signin onSubmit={() => router.push('/user/checkout')} />
+      <Signin redirect="/buy" />
       <div className="h-4" />
       <FormWrapper>
         <span>
-          <BlueLink href="/user/checkout" label="Continue to checkout" />
+          <BlueLink href="/buy" label="Continue to checkout" />
         </span>
         <span>
           New to Infinite Closet?{' '}

@@ -79,7 +79,7 @@ const Account = ({ user }) => {
       <div className="flex-row items-center">
         <IconLink href="/user/profile" size={18} icon={iconUser} />
         {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
-        <IconLink href="/user/checkout" size={18} icon={iconShoppingBag}>
+        <IconLink href="/buy" size={18} icon={iconShoppingBag}>
           {count > 0 && (
             <span className="absolute right-0 bottom-0 text-xs bg-sec-light rounded-full px-1">
               {count}
@@ -91,7 +91,7 @@ const Account = ({ user }) => {
   } else {
     return (
       <div className="flex-row items-center space-x-3">
-        <IconLink href="/user/checkout" size={18} icon={iconShoppingBag}>
+        <IconLink href="/buy" size={18} icon={iconShoppingBag}>
           {count > 0 && (
             <span className="absolute right-0 bottom-0 text-xs bg-sec-light rounded-full px-1">
               {count}
@@ -109,7 +109,7 @@ const Account = ({ user }) => {
           </a>
         </Link>
         {/* <IconLink href="/user/saved" size={18} name="heart" /> */}
-        {/* <IconLink href="/user/checkout" size={18} name="shopping-bag" /> */}
+        {/* <IconLink href="/buy" size={18} name="shopping-bag" /> */}
       </div>
     )
   }

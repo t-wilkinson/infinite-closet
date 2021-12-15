@@ -44,7 +44,7 @@ export const Email = () => {
         <Input field={fields.get('name')} />
         <Input field={fields.get('email')} />
         <DateOfBirth bday={dob.get('bday')} bmonth={dob.get('bmonth')} byear={dob.get('byear')} />
-        <Submit field={fields.form}>Join the Mailing List</Submit>
+        <Submit form={fields.form}>Join the Mailing List</Submit>
       </Form>
       <OR />
       <span>

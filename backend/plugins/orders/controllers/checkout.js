@@ -2,31 +2,6 @@
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 /**
- * Convert request body to more useful information
- * @returns - {summary, cart, paymentIntent, paymentMethod}
- */
-async function prepareCheckout(body, user = null) {
-  const cart = await strapi.plugins['orders'].services.cart.createValidCart(
-    body.orders
-  )
-
-  const summary = await strapi.plugins['orders'].services.price.summary({
-    cart,
-    user,
-    couponCode: body.couponCode,
-  })
-
-  let paymentIntent, paymentMethod
-  if (body.paymentIntent) {
-    paymentIntent = await stripe.paymentIntents.retrieve(body.paymentIntent)
-  }
-  if (body.paymentMethod) {
-    paymentMethod = await stripe.paymentMethods.retrieve(body.paymentMethod)
-  }
-  return { summary, cart, paymentIntent, paymentMethod }
-}
-
-/**
  * Each cart item has an associated paymentIntent,
  * which we need to check is valid before shipping order.
  */
@@ -44,7 +19,9 @@ module.exports = {
   async checkoutUser(ctx) {
     const user = ctx.state.user
     const body = ctx.request.body
-    const { paymentMethod, summary, cart } = await prepareCheckout(body, user)
+    const { paymentMethod, summary, cart } = await strapi.plugins[
+      'orders'
+    ].services.helpers.prepareCheckout(body, user)
     if (cart.length === 0 || summary.amount < 100) {
       return ctx.send(null, 404)
     }
@@ -75,7 +52,9 @@ module.exports = {
 
   async checkoutGuest(ctx) {
     const body = { ...(ctx.request.body.body || {}), ...ctx.request.body }
-    const { paymentMethod, summary, cart } = await prepareCheckout(body)
+    const { paymentMethod, summary, cart } = await strapi.plugins[
+      'orders'
+    ].services.helpers.prepareCheckout(body)
     if (cart.length === 0 || summary.amount < 100) {
       return ctx.send(null)
     }
@@ -116,7 +95,7 @@ module.exports = {
   async checkoutRequest(ctx) {
     const body = ctx.request.body
     const { paymentMethod, paymentIntent, summary, cart } =
-      await prepareCheckout(body)
+      await strapi.plugins['orders'].services.helpers.prepareCheckout(body)
     if (cart.length === 0 || summary.amount < 100) {
       return ctx.send(null)
     }

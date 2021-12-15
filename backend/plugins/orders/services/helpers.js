@@ -1,5 +1,6 @@
 'use strict'
 
+const stripe = require('stripe')(process.env.STRIPE_KEY)
 const { day } = require('../../../utils')
 
 async function notifyArrival(orders) {
@@ -89,6 +90,31 @@ async function toPlanning({
  */
 
 /**
+ * Convert request body to more useful information
+ * @returns - {summary, cart, paymentIntent, paymentMethod}
+ */
+async function prepareCheckout(body, user = null) {
+  const cart = await strapi.plugins['orders'].services.cart.createValidCart(
+    body.orders
+  )
+
+  const summary = await strapi.plugins['orders'].services.price.summary({
+    cart,
+    user,
+    couponCode: body.couponCode,
+  })
+
+  let paymentIntent, paymentMethod
+  if (body.paymentIntent) {
+    paymentIntent = await stripe.paymentIntents.retrieve(body.paymentIntent)
+  }
+  if (body.paymentMethod) {
+    paymentMethod = await stripe.paymentMethods.retrieve(body.paymentMethod)
+  }
+  return { summary, cart, paymentIntent, paymentMethod }
+}
+
+/**
  * Core function used by all checkout methods which handles administrative tasks
  * On checkout, we need to:
  *  - Validate address
@@ -119,8 +145,13 @@ async function onCheckout({
       break
   }
 
-  await Promise.all(cart.map((cartItem) =>
-    strapi.query('order', 'orders').update({id: cartItem.order.id}, { address: address.id })))
+  await Promise.all(
+    cart.map((cartItem) =>
+      strapi
+        .query('order', 'orders')
+        .update({ id: cartItem.order.id }, { address: address.id })
+    )
+  )
 
   // Validate address
   const isAddressValid = await strapi.services.shipment.validateAddress(address)
@@ -132,9 +163,9 @@ async function onCheckout({
   await toPlanning({
     cart,
     contact,
-    paymentIntent,
     summary,
     address,
+    paymentIntent,
     paymentMethod,
   })
 
@@ -162,6 +193,7 @@ async function onCheckout({
 
 module.exports = {
   onCheckout,
+  prepareCheckout,
   notifyArrival,
   notifyAction,
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
 
 import { Icon } from '@/components'
 import { iconLoading } from '@/components/Icons'
@@ -13,6 +14,7 @@ export * from './DateOfBirth'
 export * from './Dropdown'
 export * from './ImageUpload'
 export * from './Input'
+export * from './Money'
 export * from './Password'
 export * from './Rating'
 export * from './Warning'
@@ -38,8 +40,10 @@ export const Form = ({
   children = null,
   resubmit = false,
   redirect,
+  notify = false,
   ...props
 }: {
+  notify?: boolean
   redirect?: string
   fields: UseFields | UseFields[]
   Success?: React.FunctionComponent
@@ -49,7 +53,7 @@ export const Form = ({
   successClassName?: string
   children: React.ReactNode
   resubmit?: boolean
-  [x: string]: any
+  // [x: string]: any
 }) => {
   if (!Array.isArray(fields)) {
     fields = [fields]
@@ -79,7 +83,7 @@ export const Form = ({
     res
       .then(() => {
         form.setValue('success')
-        form.setErrors()
+        form.clearErrors()
         // @ts-ignore
         document.activeElement?.blur()
         if (redirect) {
@@ -87,12 +91,19 @@ export const Form = ({
         }
       })
       .catch((err) => {
+        const error =
+          err?.message ||
+          err ||
+          "Looks like something's not working... Please try again later"
         form.setValue('error')
-        form.setErrors(
-          err.message ||
-            err ||
-            "Looks like something's not working... Please try again later"
-        )
+        if (notify) {
+          toast.error(error, {
+            hideProgressBar: true,
+            closeButton: false,
+          })
+        } else {
+          form.setErrors(error)
+        }
       })
   }
 
@@ -125,13 +136,13 @@ export const FormHeader = ({ label }) => (
 )
 
 export const Submit = ({
-  field,
+  form,
   children = 'Submit' as any,
   disabled = false,
   className = '',
   type = 'primary',
 }) => {
-  disabled = disabled || field.value === 'submitting'
+  disabled = disabled || form.value === 'submitting'
   return (
     <>
       <button
@@ -151,7 +162,7 @@ export const Submit = ({
         disabled={disabled}
         onClick={() => {}}
       >
-        {field.value === 'submitting' && (
+        {form.value === 'submitting' && (
           <Icon
             size={20}
             className="animate-spin h-5 w-5 mr-3"
@@ -160,7 +171,7 @@ export const Submit = ({
         )}
         {children}
       </button>
-      <Warning warnings={field.errors} />
+      <Warning warnings={form.errors} />
     </>
   )
 }

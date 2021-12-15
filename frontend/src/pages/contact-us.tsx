@@ -36,7 +36,7 @@ export const Page = ({ data }) => {
         {fields.map((field) => (
         <Input key={field.name} field={field} />
         ))}
-        <Submit field={fields.form}>Contact Us</Submit>
+        <Submit form={fields.form}>Contact Us</Submit>
       </Form>
     </MarkdownWrapper>
   )

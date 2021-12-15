@@ -48,7 +48,7 @@ export const ResetPassword = () => {
     >
       <FormHeader label="Reset password" />
       <Password field={fields.get('password')} />
-      <Submit field={fields.form}>Password Reset</Submit>
+      <Submit form={fields.form}>Password Reset</Submit>
 
       <OR />
 

@@ -162,7 +162,7 @@ const Waitlist = () => {
     >
       <Input
         field={fields.get('footerEmail')}
-        after={<Submit field={fields.form} className="h-full rounded-none">Join</Submit>}
+        after={<Submit form={fields.form} className="h-full rounded-none">Join</Submit>}
       />
       <h3 className="font-bold text-sm -mt-1 text-white">
         Get 10% off your first rental

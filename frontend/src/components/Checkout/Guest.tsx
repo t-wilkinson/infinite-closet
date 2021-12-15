@@ -175,7 +175,7 @@ const Checkout = () => {
               user: 'guest',
               type: 'checkout',
             })
-            router.push('/checkout/thankyou')
+            router.push('/buy/thankyou')
           }}
           couponCode={fields.get('couponCode').clean() as string}
         />
@@ -233,7 +233,8 @@ const CheckoutForm = ({ onCheckout }) => {
       onSubmit={onSubmit}
       fields={[fields, address]}
       className="max-w-screen-sm space-y-8"
-      redirect="/checkout/thankyou"
+      redirect="/buy/thankyou"
+      notify
     >
       <SideItem label="Address">
         <div className="grid grid-flow-row grid-cols-2 w-full gap-y-3 gap-x-4 pt-2">
@@ -265,7 +266,7 @@ const CheckoutForm = ({ onCheckout }) => {
         <Password field={fields.get('password')} />
       </div>
       <div className="mt-4 w-full">
-        <Submit field={fields.form} disabled={cart.every(isOrderInvalid)}>
+        <Submit form={fields.form} disabled={cart.every(isOrderInvalid)}>
           {cart.every(isOrderInvalid)
             ? 'No Available Items'
             : cart.some(isOrderInvalid)

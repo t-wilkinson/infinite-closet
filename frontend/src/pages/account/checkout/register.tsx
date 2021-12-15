@@ -1,5 +1,4 @@
 import React from 'react'
-import { useRouter } from 'next/router'
 import Link from 'next/link'
 
 import Account from '@/Account'
@@ -20,15 +19,13 @@ export const AlreadyHaveAccount = () => (
 )
 
 export const Page = () => {
-  const router = useRouter()
-
   return (
     <Account>
-      <Register onSubmit={() => router.push('/user/checkout')} />
+      <Register redirect="/buy"/>
       <div className="h-4" />
       <FormWrapper>
         <span>
-          <BlueLink href="/user/checkout" label="Continue to checkout" />
+          <BlueLink href="/buy" label="Continue to checkout" />
         </span>
         <AlreadyHaveAccount />
       </FormWrapper>
