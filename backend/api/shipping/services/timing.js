@@ -158,8 +158,7 @@ function valid(start, available, quantity, existing = 0) {
 
   const enoughShippingTime = start.utc().isSameOrAfter(arrives.utc(), 'day')
   const notTooFarInFuture = start.isBefore(today.add(4 * 30, 'day'))
-
-  return enoughShippingTime && notTooFarInFuture
+  return enoughShippingTime && (notTooFarInFuture || start.year() >= 2050)
 }
 
 /**

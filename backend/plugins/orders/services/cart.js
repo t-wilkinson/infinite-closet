@@ -2,6 +2,7 @@
 const orderUtils = require('./order')
 const priceUtils = require('./price')
 const { sanitizeEntity } = require('strapi-utils')
+const { toId } = require('../../../utils')
 
 /**
  * @typedef CartItem
@@ -48,7 +49,7 @@ async function createCartItem(order) {
       'product.sizes',
       'product.images',
       'product.designer',
-      ...(order.user ? ['user'] : []),
+      ...(order.user ? ['user'] : []), // TODO: can we just include the user?
     ])
   order.product.sizes = await strapi
     .query('product')
@@ -83,7 +84,7 @@ async function createAvailableCartItem(numAvailableOrders, order) {
   const key = strapi.services.product.toKey(order)
 
   const existingOrders = await strapi.query('order', 'orders').count({
-    product: order.product.id || order.product,
+    product: toId(order.product),
     size: order.size,
     status_in: orderUtils.inProgress,
   })

@@ -63,7 +63,7 @@ async function toPlanning({
           paymentMethod: paymentMethod
             ? paymentMethod.id
             : paymentMethod || null,
-          /* TODO!: status: 'planning', */
+          status: 'planning',
           coupon: summary.coupon ? summary.coupon.id : null,
           charge: strapi.services.price.toAmount(
             strapi.plugins['orders'].services.price.orderTotal(order)
@@ -176,7 +176,6 @@ async function onCheckout({
         strapi.plugins['orders'].services.ship.shipOrderToClient(cartItem.order)
       )
     )
-    console.log(settled)
     const failed = settled.filter((res) => res.status === 'rejected')
     if (failed.length > 0) {
       strapi.log.error('onCheckout: Failed to ship', failed)

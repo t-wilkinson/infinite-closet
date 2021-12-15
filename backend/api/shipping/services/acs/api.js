@@ -6,19 +6,19 @@ const timing = require('../timing')
 const { formatAddress } = require('../../../../utils')
 const { postcodeValidator } = require('postcode-validator')
 
-
 async function fetchApi(url, method, body = {}) {
   const basicAuth = Buffer.from(
     `${config.auth.username}:${config.auth.password}`
   ).toString('base64')
+  // TODO!
   const endpoint = config.endpoint.live
-    // process.env.NODE_ENV === 'production'
-    //   ? config.endpoint.live
-    //   : config.endpoint.test
+  // process.env.NODE_ENV === 'production'
+  //   ? config.endpoint.live
+  //   : config.endpoint.test
   return fetch(`${endpoint}${url}`, {
     method,
     headers: {
-      Auth: `BasicAuth: ${config.auth.username},${config.auth.password}`,
+      Auth: `Basic Auth: ${config.auth.username}, ${config.auth.password}`,
       Authorization: `Basic ${basicAuth}`,
       // 'Accept': 'application/json',
       'Content-Type': 'application/json',
@@ -38,13 +38,12 @@ module.exports = {
 
   // TODO: accept multiple orders
   async ship({ recipient, shippingClass, shipmentPrice, order }) {
-    console.log('ship')
-
+    const range = timing.range(order)
+    // const uniqueSKU = await strapi.plugins[
+    //   'orders'
+    // ].services.order.acsUniqueSKU(order)
     // TODO!
-    const range = timing.range({...order, startDate: '2050-01-01', shippingDate: undefined})
-    const uniqueSKU = await strapi.plugins[
-      'orders'
-    ].services.order.acsUniqueSKU(order)
+    const uniqueSKU = 'IC-122_1-L'
 
     const body = Object.assign(
       {
@@ -64,8 +63,8 @@ module.exports = {
 
         OrderItems: [
           {
-            LineItemId: uniqueSKU,
-            GarmentSKU: uniqueSKU, //`IC-${order.product.id}`,
+            LineItemId: uniqueSKU, // should be unique per item in the array
+            GarmentSKU: uniqueSKU,
             IsHire: true,
             ItemPrice: shipmentPrice,
             Measurement1: 'ALL', //strapi.services.size.normalize(order.size),
@@ -75,28 +74,22 @@ module.exports = {
       },
       formatAddress(config, 'recipient', recipient)
     )
-    console.log(body)
+    console.log('acs api', body)
 
     const res = await fetchApi(`/orders/${body.OrderNumber}`, 'PUT', body)
       .then((res) => {
-        console.log(res)
-        console.log('res')
+        console.log(res.status, res.url)
         if (!res.ok) {
+          console.log('not ok')
           return res.text()
         } else {
           return res.json()
         }
       })
-      .then(res => {
+      .then((res) => {
         console.log(res)
       })
-      .catch((err) => {
-        console.log('err')
-        console.dir(err)
-        console.log(err.message)
-        throw err
-      })
-    strapi.log.info('hived:ship %o', res)
+    strapi.log.info('ship %o', res)
     throw new Error('TODO')
     return body.OrderNumber
   },

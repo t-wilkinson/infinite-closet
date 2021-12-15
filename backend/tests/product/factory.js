@@ -49,7 +49,10 @@ const mock = (options = {}) => {
  */
 const create = async (strapi, data = {}) => {
   const productData = mock(data)
-  if (typeof productData.designer === 'object') {
+  if (!productData.designer) {
+    const designer = await f.designer.create(strapi)
+    productData.designer = designer.id
+  } else if (typeof productData.designer === 'object') {
     const designer = await f.designer.create(strapi, productData.designer)
     productData.designer = designer.id
   }

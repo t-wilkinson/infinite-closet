@@ -45,7 +45,7 @@ async function sendToCleaners(orders) {
 async function shippingFailure(order, err) {
   await strapi
     .query('order', 'orders')
-    .update({ id: order.id }, { /* TODO!: status: 'error', */message: err })
+    .update({ id: order.id }, { status: 'error', message: err })
   await strapi.services.template_email.orderShippingFailure(order, err)
   strapi.log.error('failed to ship order to client %o', err)
 }
@@ -70,7 +70,7 @@ async function shipCartItemToClient(cartItem) {
         .query('order', 'orders')
         .update(
           { id: order.id },
-          { shipment: res, /* TODO!: status: 'shipping', */ shippingDate: day().toJSON() }
+          { shipment: res, status: 'shipping', shippingDate: day().toJSON() }
         )
     )
 }

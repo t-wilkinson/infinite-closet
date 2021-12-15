@@ -27,7 +27,7 @@ describe.only('On checkout', () => {
     const user = await f.user.create(strapi)
     const order = await f.order.create(strapi, {
       user: user.id,
-      startDate: day({ year: 2050, day: 1, month: 1 }).format('YYYY-MM-DD'),
+      startDate: day({ year: 2050, date: 1, month: 1 }).format('YYYY-MM-DD'),
     })
     const contact = {
       fullName: `${user.firstName} ${user.lastName}`,
@@ -48,7 +48,7 @@ describe.only('On checkout', () => {
         town: 'Town',
         postcode: 'EC2A 3QF',
       },
-      ...checkoutData
+      ...checkoutData,
     })
   })
 })
