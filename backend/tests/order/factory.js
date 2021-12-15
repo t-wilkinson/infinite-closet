@@ -24,7 +24,7 @@ const mock = (options = {}) => {
 /**
  * Creates new product in strapi database, first calling mock() on `data`
  */
-const create = async (strapi, data={}) => {
+const create = async (strapi, data = {}) => {
   let options = {}
   if (data.user === undefined) {
     const user = await f.user.create(strapi)
@@ -34,7 +34,7 @@ const create = async (strapi, data={}) => {
     const product = await f.product.create(strapi)
     options.product = product.id
   }
-  const orderData = mock({...data, ...options})
+  const orderData = mock({ ...data, ...options })
   return await strapi.query('order', 'orders').create(orderData)
 }
 
@@ -43,4 +43,3 @@ module.exports = {
   create,
   defaultData,
 }
-

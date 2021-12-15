@@ -22,6 +22,37 @@ f.designer = require('../product/designer-factory')
 //     .expect('Content-Type', /json/)
 // }
 
+describe.only('On checkout', () => {
+  it('works', async () => {
+    const user = await f.user.create(strapi)
+    const order = await f.order.create(strapi, {
+      user: user.id,
+      startDate: day({ year: 2050, day: 1, month: 1 }).format('YYYY-MM-DD'),
+    })
+    const contact = {
+      fullName: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+    }
+
+    const checkoutData = await strapi.plugins[
+      'orders'
+    ].services.helpers.prepareCheckout({
+      user,
+      orders: [order],
+    })
+
+    await strapi.plugins['orders'].services.helpers.onCheckout({
+      contact,
+      address: {
+        addressLine1: 'Address Line 1',
+        town: 'Town',
+        postcode: 'EC2A 3QF',
+      },
+      ...checkoutData
+    })
+  })
+})
+
 describe('Checkout', () => {
   let designer
 
@@ -48,7 +79,7 @@ describe('Checkout', () => {
       designer: designer.id,
     })
     let orderData = f.order.mock({
-      startDate: day().add({day: 10}).format('YYYY-MM-DD')
+      startDate: day().add({ day: 10 }).format('YYYY-MM-DD'),
     })
     const userData = f.user.mock()
     const contact = {

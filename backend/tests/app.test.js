@@ -1,6 +1,7 @@
 /**
  * @group api
  * @group order
+ * @group order/checkout
  * @group product
  * @group product/review
  */
@@ -50,6 +51,6 @@ describe('Strapi in general', () => {
   })
 })
 
-// require('./order')
-require('./product')
+require('./order')
+// require('./product')
 // require('./user')
