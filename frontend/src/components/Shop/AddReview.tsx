@@ -104,7 +104,7 @@ const AddReview = ({}) => {
       <Dropdown field={fields.get('fit')} values={fitValues} />
       <ImageUpload field={fields.get('images')} />
       <Textarea field={fields.get('message')} rows={5} />
-      <Submit field={fields.form} />
+      <Submit form={fields.form} />
     </Form>
   )
 }

@@ -53,7 +53,9 @@ const App = ({ router, Component, pageProps }) => {
 }
 export default App
 
-const blockedPages = []
+const blockedPages = [
+  'buy/giftcard'
+]
 
 const Wrapper = ({ router, children }) => {
   // useSaveScrollPos()

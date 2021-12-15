@@ -64,7 +64,7 @@ export const ForgotPassword = () => {
     >
       <FormHeader label="Forgot password?" />
       <Input field={fields.get('email')} />
-      <Submit field={fields.form}>Request Password Reset</Submit>
+      <Submit form={fields.form}>Request Password Reset</Submit>
       <OR />
       <BlueLink href="/account/register" label="Create a new Account" />
     </Form>

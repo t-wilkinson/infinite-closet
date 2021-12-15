@@ -241,7 +241,7 @@ export const AddPaymentMethod = ({
         <Input field={fields.get('billingName')} />
         <PaymentCard form={form} />
         <Authorize field={fields.get('authorized')} />
-        <Submit className="w-full" field={fields.form} />
+        <Submit className="w-full" form={fields.form} />
       </Form>
     </Popup>
   )

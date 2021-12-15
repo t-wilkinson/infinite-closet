@@ -14,6 +14,7 @@ export * from './DateOfBirth'
 export * from './Dropdown'
 export * from './ImageUpload'
 export * from './Input'
+export * from './Money'
 export * from './Password'
 export * from './Rating'
 export * from './Warning'
@@ -52,7 +53,7 @@ export const Form = ({
   successClassName?: string
   children: React.ReactNode
   resubmit?: boolean
-  [x: string]: any
+  // [x: string]: any
 }) => {
   if (!Array.isArray(fields)) {
     fields = [fields]
@@ -135,13 +136,13 @@ export const FormHeader = ({ label }) => (
 )
 
 export const Submit = ({
-  field,
+  form,
   children = 'Submit' as any,
   disabled = false,
   className = '',
   type = 'primary',
 }) => {
-  disabled = disabled || field.value === 'submitting'
+  disabled = disabled || form.value === 'submitting'
   return (
     <>
       <button
@@ -161,7 +162,7 @@ export const Submit = ({
         disabled={disabled}
         onClick={() => {}}
       >
-        {field.value === 'submitting' && (
+        {form.value === 'submitting' && (
           <Icon
             size={20}
             className="animate-spin h-5 w-5 mr-3"
@@ -170,7 +171,7 @@ export const Submit = ({
         )}
         {children}
       </button>
-      <Warning warnings={field.errors} />
+      <Warning warnings={form.errors} />
     </>
   )
 }

@@ -18,7 +18,13 @@ import { userActions } from '@/User/slice'
 import { BlueLink } from '@/components'
 import { StrapiUser } from '@/types/models'
 
-export const Signin = ({ onSubmit = () => {} }) => {
+export const Signin = ({
+  onSubmit = () => {},
+  redirect,
+}: {
+  onSubmit?: () => void
+  redirect?: string
+}) => {
   const fields = useFields({
     email: { constraints: 'required email', label: 'Email Address' },
     password: { constraints: 'required', label: 'Password' },
@@ -51,11 +57,12 @@ export const Signin = ({ onSubmit = () => {} }) => {
       fields={fields}
       onSubmit={signinUser}
       className="max-w-lg px-4 py-4 bg-white rounded-md"
+      redirect={redirect}
     >
       <FormHeader label="Sign In" />
       <Input field={fields.get('email')} />
       <Password field={fields.get('password')} />
-      <Submit field={fields.form}>Sign In</Submit>
+      <Submit form={fields.form}>Sign In</Submit>
 
       <OR />
 

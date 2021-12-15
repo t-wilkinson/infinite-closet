@@ -199,7 +199,7 @@ export const EditAddress = ({
           <Input key={field.name} field={field} />
         ))}
       </div>
-      <Submit field={fields.form} className="w-full" />
+      <Submit form={fields.form} className="w-full" />
     </Form>
   )
 }

@@ -17,17 +17,13 @@ import useAnalytics from '@/utils/useAnalytics'
 import { userActions } from '@/User/slice'
 import { StrapiUser } from '@/types/models'
 
-interface Register {
-  email?: string
-  firstName?: string
-  lastName?: string
-  onSubmit?: () => void
-}
-
 export const useRegisterUser = ({
-  onError = (..._: any[]) => {},
+  onError = () => {},
   onSubmit = () => {},
-} = {}) => {
+}: {
+  onError?: (..._: any[]) => void
+  onSubmit?: () => void
+}={}) => {
   const dispatch = useDispatch()
   const analytics = useAnalytics()
 
@@ -56,11 +52,20 @@ export const useRegisterUser = ({
   return registerUser
 }
 
+interface Register {
+  email?: string
+  firstName?: string
+  lastName?: string
+  onSubmit?: () => void
+  redirect?: string
+}
+
 export const Register = ({
   email,
   firstName,
   lastName,
   onSubmit = () => {},
+  redirect,
 }: Register) => {
   const fields = useFields<{
     firstName: string
@@ -86,6 +91,7 @@ export const Register = ({
       fields={fields}
       onSubmit={() => registerUser(fields.clean())}
       className="max-w-lg p-4 bg-white rounded-md"
+      redirect={redirect}
     >
       <FormHeader label="Join Us for Free" />
       <div className="w-full flex-row space-x-2">
@@ -95,7 +101,7 @@ export const Register = ({
       <Input field={fields.get('email')} />
       <Password field={fields.get('password')} />
       <Checkbox field={fields.get('mailingList')} className="mt-2 mb-4" />
-      <Submit field={fields.form}>Register</Submit>
+      <Submit form={fields.form}>Register</Submit>
     </Form>
   )
 }

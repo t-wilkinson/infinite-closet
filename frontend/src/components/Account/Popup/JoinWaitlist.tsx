@@ -86,7 +86,7 @@ const WaitlistForm = ({}) => {
       </div>
       <BlueLink href="/privacy" label="View terms" />
 
-      <Submit field={fields.form}>Join</Submit>
+      <Submit form={fields.form}>Join</Submit>
     </Form>
   )
 }

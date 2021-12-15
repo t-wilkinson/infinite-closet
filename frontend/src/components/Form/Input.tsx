@@ -88,7 +88,8 @@ const InputWrapper = ({
       </label>
 
       <div
-        className={`w-full flex-row justify-between items-center border rounded-sm transform duration-200
+        className={`w-full flex-row justify-between items-center border
+          rounded-sm transform duration-200
           ${disabled ? 'bg-gray-light' : 'bg-white'}
           ${focused ? 'border-sec' : ''}
           ${
@@ -98,10 +99,10 @@ const InputWrapper = ({
           }
         `}
       >
-        {before && <div>{before}</div>}
+        {before}
         <Tag {...inputProps} />
         {children}
-        {after && <div>{after}</div>}
+        {after}
       </div>
       <Warning warnings={field.errors} />
     </div>
