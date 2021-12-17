@@ -70,7 +70,7 @@ module.exports = async () => {
   await registerRoles()
 
   if (process.env.NODE_ENV !== 'production') {
-    await setDefaultPermissions()
+    // await setDefaultPermissions()
   }
 }
 

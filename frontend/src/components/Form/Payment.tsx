@@ -246,3 +246,66 @@ export const AddPaymentMethod = ({
     </Popup>
   )
 }
+
+export const usePaymentElement = ({ form }: { form: UseFormField }) => {
+  const stripe = useStripe()
+  const elements = useElements()
+
+  React.useEffect(() => {
+    if (!stripe) {
+      return
+    }
+
+    const clientSecret = new URLSearchParams(window.location.search).get(
+      'payment_intent_client_secret'
+    )
+
+    if (!clientSecret) {
+      return
+    }
+
+    stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
+      switch (paymentIntent.status) {
+        case 'succeeded':
+          form.setValue('success')
+          break
+        case 'processing':
+          form.setValue('submitting')
+          break
+        case 'requires_payment_method':
+          form.setValue('error')
+          form.setError('Your payment was not successful, please try again.')
+          break
+        default:
+          form.setValue('error')
+          form.setError('Something went wrong.')
+          break
+      }
+    })
+  }, [stripe])
+
+  const handleSubmit = async () => {
+    if (!stripe || !elements) {
+      return
+    }
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: window.location.href,
+      },
+    })
+
+    if (error) {
+      if (error.type === 'card_error' || error.type === 'validation_error') {
+        throw new Error(error.message)
+      } else {
+        throw new Error('An unexpected error occured.')
+      }
+    }
+  }
+
+  return {
+    onSubmit: handleSubmit,
+  }
+}

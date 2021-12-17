@@ -203,10 +203,4 @@ export const useGuestCheckout = () => {
   return checkout
 }
 
-export const BodyWrapper = ({ children }) => (
-  <section className="w-full items-center h-full justify-start bg-white rounded-sm pt-32 pb-16">
-    <h3 className="font-bold text-xl flex flex-col items-center">{children}</h3>
-  </section>
-)
-
 export const isOrderInvalid = (order: CartItem) => !order.valid

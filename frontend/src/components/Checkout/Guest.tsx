@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import { CartUtils } from '@/Cart/slice'
 import { useRegisterUser } from '@/Account/Register'
 import {
-  BodyWrapper,
   Summary,
   toContact,
   useGuestCheckout,
@@ -21,6 +20,7 @@ import {
   Coupon,
   Password,
   UseFields,
+  BodyWrapper,
 } from '@/Form'
 import { useAddressFields, AddressFields } from '@/Form/Address'
 import { PaymentWrapper, Authorize, PaymentCard } from '@/Form/Payment'
@@ -142,24 +142,30 @@ const Checkout = () => {
 
   if (fields.form.value === 'success') {
     return (
-      <BodyWrapper>
-        Thank you for your purchase!
-        {state.registerError && (
-          <div className="mt-16 text-base font-normal">
-            <span>We were unable to create an account for you.</span>
-            <Warning warnings={[state.registerError] || []} />
-          </div>
-        )}
-      </BodyWrapper>
+      <BodyWrapper
+        label={
+          <>
+            Thank you for your purchase!
+            {state.registerError && (
+              <div className="mt-16 text-base font-normal">
+                <span>We were unable to create an account for you.</span>
+                <Warning warnings={[state.registerError] || []} />
+              </div>
+            )}
+          </>
+        }
+      />
     )
   } else if (cartCount === 0) {
     return (
-      <BodyWrapper>
-        <BlueLink
-          href="/products/clothing"
-          label="Would you like to browse our collection?"
-        />
-      </BodyWrapper>
+      <BodyWrapper
+        label={
+          <BlueLink
+            href="/products/clothing"
+            label="Would you like to browse our collection?"
+          />
+        }
+      />
     )
   } else {
     return (
@@ -266,7 +272,12 @@ const CheckoutForm = ({ onCheckout }) => {
         <Password field={fields.get('password')} />
       </div>
       <div className="mt-4 w-full">
-        <Submit form={fields.form} disabled={cart.every(isOrderInvalid)}>
+        <Submit
+          form={fields.form}
+          disabled={
+            cart.every(isOrderInvalid) || fields.form.value === 'success'
+          }
+        >
           {cart.every(isOrderInvalid)
             ? 'No Available Items'
             : cart.some(isOrderInvalid)

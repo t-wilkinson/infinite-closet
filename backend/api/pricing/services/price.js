@@ -8,7 +8,6 @@
  ********************  IMPORTANT ********************/
 
 const { sanitizeEntity } = require('strapi-utils')
-const { day } = require('../../../utils')
 const SMALLEST_CURRENCY_UNIT = 100
 
 // Services like stripe expect no decimal points, and to be in units of smallest currency
@@ -30,56 +29,17 @@ function discount(coupon, price) {
 }
 
 /**
- * Is coupon valid given existing uses of that coupon code?
- * @param {Coupon} coupon - Supplied coupon, the database object
- * @param {Coupon[]=[]} existingCoupons - List of existing coupons with same code that are related to current discount transaction. Ex. the coupons attached to orders of current user.
- */
-function valid(coupon, existingCoupons = []) {
-  if (!coupon) {
-    return false
-  }
-
-  const expires = day(coupon.expiration)
-  if (coupon.expiration && day().isAfter(expires, 'day')) {
-    return false
-  }
-
-  const existingCouponCount = existingCoupons.reduce(
-    (n, x) => n + (x.code === coupon.code),
-    0
-  )
-  const couponMaxedOut = coupon.maxUses <= existingCouponCount
-  if (couponMaxedOut) {
-    return false
-  }
-
-  return true
-}
-
-/**
- * Find coupon matching code
- */
-async function availableCoupon(context, code) {
-  if (typeof code !== 'string') {
-    return null
-  }
-  return await strapi
-    .query('coupon')
-    .findOne({ context, code: code.toUpperCase() })
-}
-
-/**
  * Price summary including discount, subtotal, etc.
  */
-async function summary({ price, context, code, existingCoupons }) {
-  const coupon = await availableCoupon(context, code)
-  const isValid = valid(coupon, existingCoupons)
+async function summary({ price, context, couponCode, existingCoupons }) {
+  const coupon = await strapi.services.coupon.availableCoupon(context, couponCode)
+  const isValid = strapi.services.coupon.valid(coupon, existingCoupons)
   const discountPrice = isValid ? discount(coupon, price) : 0
   const total = price - discountPrice
 
   return {
-    discount: discountPrice,
     valid: isValid,
+    discount: discountPrice,
     coupon,
     subtotal: price,
     total,
@@ -90,7 +50,9 @@ async function summary({ price, context, code, existingCoupons }) {
 function sanitizeSummary(summary) {
   return {
     ...summary,
-    coupon: sanitizeEntity(summary.coupon, { model: strapi.query('coupon').model }),
+    coupon: sanitizeEntity(summary.coupon, {
+      model: strapi.query('coupon').model,
+    }),
   }
 }
 
@@ -98,9 +60,7 @@ module.exports = {
   toAmount,
   toPrice,
 
-  availableCoupon,
   discount,
   summary,
   sanitizeSummary,
-  valid,
 }

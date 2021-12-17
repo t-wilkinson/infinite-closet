@@ -18,6 +18,7 @@
     },
     "code": {
       "type": "uid",
+      "unique": true,
       "required": true,
       "private": true
     },
@@ -29,6 +30,11 @@
       "type": "component",
       "repeatable": true,
       "component": "custom.purchase"
+    },
+    "paymentIntent": {
+      "type": "string",
+      "unique": true,
+      "required": true
     },
     "owner": {
       "plugin": "users-permissions",

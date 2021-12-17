@@ -87,7 +87,7 @@ async function applyDiscounts({ user, preDiscountPrice, couponCode }) {
   const { coupon, discount } = await strapi.services.price.summary({
     price: preDiscountPrice,
     existingCoupons: await existingCoupons(user, couponCode),
-    code: couponCode,
+    couponCode,
     context: 'checkout',
   })
 

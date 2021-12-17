@@ -13,15 +13,6 @@ f.order = require('./factory')
 f.user = require('../user/factory')
 f.designer = require('../product/designer-factory')
 
-// function jsonRequest(url, data) {
-//   return this
-//     .post(url)
-//     .set('Accept', 'application/json')
-//     .set('Content-Type', 'application/json')
-//     .send(data)
-//     .expect('Content-Type', /json/)
-// }
-
 describe.only('On checkout', () => {
   it('works', async () => {
     const user = await f.user.create(strapi)

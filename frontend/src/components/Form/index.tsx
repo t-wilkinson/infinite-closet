@@ -47,13 +47,13 @@ export const Form = ({
   redirect?: string
   fields: UseFields | UseFields[]
   Success?: React.FunctionComponent
-  onSubmit: (..._: any[]) => Promise<any> | void
+  onSubmit: (e: React.FormEvent) => Promise<any> | void
   className?: string
   outerClassName?: string
   successClassName?: string
   children: React.ReactNode
   resubmit?: boolean
-  // [x: string]: any
+  id?: string
 }) => {
   if (!Array.isArray(fields)) {
     fields = [fields]
@@ -175,5 +175,19 @@ export const Submit = ({
     </>
   )
 }
+
+export const Fieldset = ({ label, className = 'my-2', children }) => (
+  <fieldset className={`flex flex-col ${className}`}>
+    <h3 className="font-bold text-lg mb-2">{label}</h3>
+    {children}
+  </fieldset>
+)
+
+export const BodyWrapper = ({ label, children=null }) => (
+  <section className="w-full items-center h-full justify-start bg-white rounded-sm pt-32 pb-16">
+    <h3 className="font-bold text-xl flex flex-col items-center">{label}</h3>
+    {children}
+  </section>
+)
 
 export default Form

@@ -22,7 +22,8 @@ export type FieldErrors = { [field: string]: FieldError[] }
 export type FieldError = string
 export type Valid = true | string
 
-export type UseFormField = UseField<'success' | 'submitting' | 'error' | null>
+export type FormStatus = 'success' | 'submitting' | 'error' | null
+export type UseFormField = UseField<FormStatus>
 
 export type FieldValue = number | string | boolean
 

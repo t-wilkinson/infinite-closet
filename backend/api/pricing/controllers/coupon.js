@@ -13,7 +13,7 @@ async function discount(ctx) {
   }
 
   const summary = await strapi.services.price.summary({
-    code,
+    couponCode: code,
     price,
     context,
     existingCoupons,

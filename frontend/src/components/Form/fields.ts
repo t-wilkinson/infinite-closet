@@ -8,6 +8,7 @@ import {
   Valid,
   FieldValue,
   UseFormField,
+  FormStatus,
 } from './types'
 
 const autocompleteValues = {
@@ -132,6 +133,8 @@ export class UseField<Value = FieldValue> {
         case 'decimal': return err(/^\d*\.?\d{0,2}$/.test(v) , `${label_} must be a number`)
         case 'integer': return err(/^-?\d*$/.test(v) , `${label_} must be a number`)
         case 'number': return err(/^\d*\.?\d*$/.test(v) , `${label_} must be a number`)
+        case 'min': return err(value > props[0], `${label_} must be be greater than ${props[0]}`)
+        case 'max': return err(value < props[0], `${label_} must be be smaller than ${props[0]}`)
         case 'max-width': return err(
           v.length <= Number(props[0]) || (v.length === 0 && optional), `${label_} must be at most ${props[0]} characters long`)
         case 'min-width': return err(v.length >= Number(props[0]) || (v.length === 0 && optional), `${label_} must be at least ${props[0]} characters long`)
@@ -185,6 +188,7 @@ type Fields<Keys> = {
 export class UseFields<Keys = { [key: string]: any }> {
   form: UseFormField
   fields: Fields<Keys>
+  status: FormStatus
 
   constructor(config: FieldsConfig<Keys>) {
     const fields: Fields<Keys> = Object.entries(config).reduce(
@@ -197,6 +201,23 @@ export class UseFields<Keys = { [key: string]: any }> {
 
     this.fields = fields
     this.form = useField('form', {})
+    this.status = this.form.value
+  }
+
+  setStatus(status: FormStatus): void {
+    this.form.setValue(status)
+  }
+
+  setError(error: string): void {
+    this.setErrors(error)
+  }
+
+  setErrors(...errors: (string | string[])[]): void {
+    errors = errors.flat().filter((v) => v)
+    if (errors.length > 0) {
+      this.setStatus('error')
+    }
+    this.form.setErrors(...errors)
   }
 
   get(field: keyof Keys): UseField<Keys[typeof field]> {

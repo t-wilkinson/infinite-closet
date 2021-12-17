@@ -11,6 +11,9 @@ const palette = {
   white: '#ffffff',
   red: '#ff3f22',
   red1: '#f99889',
+  grayLight: '#efefef',
+  grayDefault: '#5f6368',
+  grayDark: '#505050',
 }
 
 module.exports = {
@@ -24,6 +27,9 @@ module.exports = {
     extend: {
       screens: {
         xs: '360px',
+      },
+      borderRadius: {
+        m: '0.30rem',
       },
       height: {
         '80vh': '80vh',
@@ -69,9 +75,9 @@ module.exports = {
         },
         gray: {
           ...colors.gray,
-          light: '#efefef',
-          default: '#5f6368',
-          dark: '#505050',
+          light: palette.grayLight,
+          default: palette.grayDefault,
+          dark: palette.grayDark,
         },
         fg: palette.black,
         warning: {

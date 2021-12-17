@@ -13,7 +13,7 @@ type RecursivePartial<T> = {
 export type PartialState = RecursivePartial<State>
 
 function render(
-  ui: React.ReactElement<any>,
+  ui: React.ReactElement<any> | React.FunctionComponent,
   {
     initialState = {},
     store = configureStore({ ...storeOptions, preloadedState: initialState }),

@@ -184,4 +184,5 @@ module.exports = {
   day,
   formatAddress,
   providerName: 'hived',
+  secureKey: process.env.SECURE_KEY || 'Jle5GXz+MBiQbW2GVCjzZtwzQsen60/dipwsRJV+xio='
 }

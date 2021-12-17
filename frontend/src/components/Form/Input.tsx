@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Warning from './Warning'
-import {UseField} from './types'
+import { UseField } from './types'
 
 export type Input = {
   field: UseField<any>
@@ -13,11 +13,27 @@ export type Input = {
   disabled?: boolean
   value?: any
   className?: string
-  [x: string]: any // React.HTMLProps<HTMLInputElement>
-}
+} & React.HTMLProps<HTMLInputElement>
+
+export const getInputProps = (
+  field: UseField,
+  { value = field?.value, onChange = () => {}}: {
+    value?: Input['value']
+    onChange?: Input['onChange']
+  } = {}
+) => ({
+  value: value || '',
+  id: field.name,
+  name: field.name,
+  autoComplete: field.autocomplete,
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e)
+    field.setValue(e.target.value)
+  },
+})
 
 const InputWrapper = ({
-  tag: Tag='input',
+  tag = 'input',
   field,
   type = 'text',
   before = null,
@@ -25,7 +41,7 @@ const InputWrapper = ({
   children = null,
   className = '',
   disabled = false,
-  value=field?.value,
+  value = field?.value,
   ...props
 }: Input) => {
   const [changed, setChanged] = React.useState(false)
@@ -36,59 +52,53 @@ const InputWrapper = ({
   const required = /required/.test(field.constraints)
   const inputProps = {
     ...props,
+    ...getInputProps(field, { value, onChange: () => setChanged(true) }),
+    className: `px-2 py-3 w-full outline-none`,
     disabled,
     type,
-    value: value || '',
-    className: `px-2 py-3 w-full outline-none`,
     placeholder: focused ? field.placeholder : '',
-    id: field.name,
-    name: field.name,
-    autoComplete: field.autocomplete,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-      setChanged(true)
-      field.setValue(e.target.value)
-    },
     // Only show outline when navigating by keyboard
     onMouseDown: () => setMouse(true),
     onMouseUp: () => setMouse(false),
     onFocus: () => !mouse && setFocus(true),
     onBlur: () => setFocus(false),
   }
+  const Tag = tag as any
 
   return (
     <div
-      className={`relative w-full
+      className={`relative flex-row
         ${className}
         ${focus ? 'outline-black' : ''}
       `}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
     >
-      <label
-        htmlFor={field.name}
-        className={`rounded-sm border-sec
-          transform duration-200 pointer-events-none w-full flex
-          absolute z-10 left-0 px-2 text-base
-          items-center
-          ${focused ? 'text-sec' : 'text-gray'}
-          `}
-        style={{
-          ...(focused || field.value
-            ? { transform: 'translate(-5%, -50%) scale(0.9)' }
-            : { transform: 'translate(-0px, 100%) ' }),
-        }}
+      <Label
+        field={field}
+        focused={focused}
+        disabled={disabled}
+        required={required}
+      />
+      <InnerWrapper
+        disabled={disabled}
+        focused={focused}
+        changed={changed}
+        field={field}
       >
-        <span
-          className={`px-1 leading-none
-            ${disabled ? 'bg-gray-light' : 'bg-white'} `}
-        >
-          {field.label}
-          {required ? <span className="text-base">*</span> : null}
-        </span>
-      </label>
+        {before}
+        <Tag {...inputProps} />
+        {children}
+        {after}
+      </InnerWrapper>
+      <Warning warnings={field.errors} />
+    </div>
+  )
+}
 
-      <div
-        className={`w-full flex-row justify-between items-center border
+const InnerWrapper = ({ children, disabled, focused, changed, field }) => (
+  <div
+    className={`w-full flex-row justify-between items-center border
           rounded-sm transform duration-200
           ${disabled ? 'bg-gray-light' : 'bg-white'}
           ${focused ? 'border-sec' : ''}
@@ -98,20 +108,40 @@ const InputWrapper = ({
               : 'border-gray'
           }
         `}
-      >
-        {before}
-        <Tag {...inputProps} />
-        {children}
-        {after}
-      </div>
-      <Warning warnings={field.errors} />
-    </div>
-  )
-}
+  >
+    {children}
+  </div>
+)
 
-export const Input = (props: Input) =>
-  <InputWrapper {...props} tag="input" />
+const Label = ({ field, focused, disabled, required }) => (
+  <label
+    htmlFor={field.name}
+    className={`rounded-sm border-sec
+    transform duration-200 pointer-events-none w-full flex
+    absolute z-10 left-0 px-2 text-base
+    items-center
+    ${focused ? 'text-sec' : 'text-gray'}
+    `}
+    style={{
+      ...(focused || field.value
+        ? { transform: 'translate(-5%, -50%) scale(0.9)' }
+        : { transform: 'translate(-0px, 100%) ' }),
+    }}
+  >
+    <span
+      className={`px-1 leading-none
+      ${disabled ? 'bg-gray-light' : 'bg-white'} `}
+    >
+      {field.label}
+      {required ? <span className="text-base">*</span> : null}
+    </span>
+  </label>
+)
 
-export const Textarea = (props: Input) => <InputWrapper {...props} tag="textarea" />
+export const Input = (props: Input) => <InputWrapper {...props} tag="input" />
+
+export const Textarea = (props: Input) => (
+  <InputWrapper {...props} tag="textarea" />
+)
 
 export default Input

@@ -7,7 +7,15 @@ dayjs.extend(utc)
 import axios from '@/utils/axios'
 import Cart from '@/Cart'
 import { CartUtils } from '@/Cart/slice'
-import { useFields, OR, Coupon, UseFields, Form, Submit } from '@/Form'
+import {
+  useFields,
+  OR,
+  Coupon,
+  UseFields,
+  Form,
+  Submit,
+  BodyWrapper,
+} from '@/Form'
 import { Addresses, AddAddress } from '@/Form/Address'
 import {
   PaymentWrapper,
@@ -19,7 +27,7 @@ import { BlueLink, Button } from '@/components'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
-import { isOrderInvalid, BodyWrapper, Summary, useFetchCart } from './Utils'
+import { isOrderInvalid, Summary, useFetchCart } from './Utils'
 import PaymentRequestForm from './PaymentRequestForm'
 
 type Popup = 'none' | 'address' | 'payment'
@@ -197,12 +205,14 @@ const Checkout = ({ fetchCart, analytics }) => {
 
   if (cartCount === 0) {
     return (
-      <BodyWrapper>
-        <BlueLink
-          href="/products/clothing"
-          label="Would you like to browse our collection?"
-        />
-      </BodyWrapper>
+      <BodyWrapper
+        label={
+          <BlueLink
+            href="/products/clothing"
+            label="Would you like to browse our collection?"
+          />
+        }
+      />
     )
   } else {
     return (
@@ -218,6 +228,7 @@ const Checkout = ({ fetchCart, analytics }) => {
           form={fields.form}
           disabled={
             !(state.paymentMethod && state.address) ||
+            fields.form.value === 'success' ||
             ['checking-out'].includes(state.status) ||
             cart.every(isOrderInvalid)
           }

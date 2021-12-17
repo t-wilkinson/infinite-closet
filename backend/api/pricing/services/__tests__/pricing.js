@@ -3,7 +3,8 @@
  */
 'use strict'
 const priceApi = require('../price')
-const {day} = require('../../../../utils')
+const couponApi = require('../coupon')
+const { day } = require('../../../../utils')
 
 const defaultData = {
   type: 'amount_off',
@@ -13,7 +14,7 @@ const defaultData = {
   context: 'checkout',
 }
 
-const mockCoupon = (data) => ({...defaultData, ...data})
+const mockCoupon = (data) => ({ ...defaultData, ...data })
 
 describe('Currency', () => {
   it('Should convert price -> amount', () => {
@@ -42,32 +43,31 @@ describe('Coupon', () => {
     expect(discount).toBe(20)
   })
 
-  it('shouldn\'t max out without existing coupons', () => {
+  it("shouldn't max out without existing coupons", () => {
     const coupon = mockCoupon()
-    const valid = priceApi.valid(coupon, [])
+    const valid = couponApi.valid(coupon, [])
     expect(valid).toBeTruthy()
   })
 
   it('should max out with existing coupons', () => {
     const coupon = mockCoupon()
-    const valid = priceApi.valid(coupon, [coupon])
+    const valid = couponApi.valid(coupon, [coupon])
     expect(valid).toBeFalsy()
   })
 
-  it('should expire on expiration date', () => {
+  it('should expire day after expiration date', () => {
     const coupon = mockCoupon({
-      expiration: day(),
+      expiration: day().subtract({ days: 1 }),
     })
-    const valid = priceApi.valid(coupon, [])
+    const valid = couponApi.valid(coupon, [])
     expect(valid).toBeFalsy()
   })
 
-  it('shouldn\'t expire before expiration date', () => {
+  it("shouldn't expire before expiration date", () => {
     const coupon = mockCoupon({
-      expiration: day({day: 1}),
+      expiration: day({ day: 1 }),
     })
-    const valid = priceApi.valid(coupon, [])
+    const valid = couponApi.valid(coupon, [])
     expect(valid).toBeFalsy()
   })
 })
-

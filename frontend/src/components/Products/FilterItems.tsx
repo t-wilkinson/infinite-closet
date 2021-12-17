@@ -64,7 +64,6 @@ export const FilterItems: FilterItems = {
         <div className="h-64 justify-start">
           <Input
             field={fields.get('search')}
-            className="w-full"
             after={<Icon icon={iconSearch} size={20} className="mr-2" />}
           />
           <div className="h-3" />

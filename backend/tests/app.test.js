@@ -4,9 +4,11 @@
  * @group order/checkout
  * @group product
  * @group product/review
+ * @group buy
+ * @gropu buy/giftcard
  */
 'use strict'
-const fs = require('fs')
+// const fs = require('fs')
 const { setupStrapi } = require('./helpers/strapi')
 
 jest.setTimeout(15000)
@@ -22,6 +24,7 @@ beforeAll(async () => {
     strapi.query('designer').delete(),
     strapi.query('product').delete(),
     strapi.query('coupon').delete(),
+    strapi.query('gift-card').delete(),
     strapi.query('order', 'orders').delete(),
     strapi.query('user', 'users-permissions').delete(),
   ])
@@ -51,6 +54,7 @@ describe('Strapi in general', () => {
   })
 })
 
-require('./order')
+// require('./order')
+require('./buy')
 // require('./product')
 // require('./user')

@@ -36,7 +36,7 @@ export const Dropdown = ({
       >
         <Input
           {...props}
-          className="cursor-pointer"
+          className="cursor-pointer w-full"
           field={field}
           value={values.find((v) => v.key == field.value)?.label || null}
           after={<Icon icon={iconDown} size={16} className="mt-1 mr-2" />}
