@@ -6,12 +6,12 @@ async function send(...props) {
 
   // If testing save email to file
   if (process.env.NODE_ENV === 'test') {
-    const email = Buffer.from(res, 'base64').toString('utf-8')
-    const snapshots = './tests/__snapshots__/emails'
-    if (!fs.existsSync(snapshots)) {
-      fs.mkdirSync(snapshots, { recursive: true })
-    }
-    await fs.writeFileSync(`${snapshots}/${new Date().toISOString()}`, email)
+    // const email = Buffer.from(res, 'base64').toString('utf-8')
+    // const snapshots = './tests/__snapshots__/emails'
+    // if (!fs.existsSync(snapshots)) {
+    //   fs.mkdirSync(snapshots, { recursive: true })
+    // }
+    // await fs.writeFileSync(`${snapshots}/${new Date().toISOString()}`, email)
   }
 }
 

@@ -22,13 +22,8 @@ async function fetchApi(url, method, body = {}) {
 
 module.exports = {
   formatAddress,
-  async ship({
-    sender = 'infinitecloset',
-    collection,
-    recipient,
-    shippingClass,
-    shipmentPrice,
-  }) {
+  async ship({ sender = 'infinitecloset', collection, recipient, cartItem }) {
+    const { shippingClass, shipmentPrice } = cartItem
     const body = Object.assign(
       {
         Shipping_Class: config.shippingClasses[shippingClass],
@@ -55,7 +50,10 @@ module.exports = {
       (res) => res.Tracking_ID_Complete === 'COMPLETE'
     ),
   verify: (postcode) => {
-    if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') {
+    if (
+      process.env.NODE_ENV === 'production' ||
+      process.env.NODE_ENV === 'test'
+    ) {
       return fetchApi(config.postcodes, 'POST', {
         Recipient_Postcode: postcode,
       })
