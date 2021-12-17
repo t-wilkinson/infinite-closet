@@ -2,10 +2,8 @@
 const fetch = require('node-fetch')
 // const crypto = require('crypto')
 const config = require('./config')
-const timing = require('../timing')
 const { formatAddress } = require('../../../../utils')
 const { postcodeValidator } = require('postcode-validator')
-
 
 async function fetchApi(url, method, body = {}) {
   const basicAuth = Buffer.from(
@@ -15,35 +13,22 @@ async function fetchApi(url, method, body = {}) {
     process.env.NODE_ENV === 'production'
       ? config.endpoint.live
       : config.endpoint.test
-  return fetch(`${endpoint}${url}`, {
+  return await fetch(`${endpoint}${url}`, {
     method,
     headers: {
-      Auth: `BasicAuth: ${config.auth.username}, ${config.auth.password}`,
       Authorization: `Basic ${basicAuth}`,
-      // 'Accept': 'application/json',
       'Content-Type': 'application/json',
     },
-    body:
-      method === 'GET'
-        ? undefined
-        : JSON.stringify({
-            fields: body,
-          }),
-  }).then((res) => console.log(res))
-  // .then((res) => res.json())
+    body: method === 'GET' ? undefined : JSON.stringify(body),
+  })
 }
 
 module.exports = {
   formatAddress,
 
   // TODO: accept multiple orders
-  async ship({ recipient, shippingClass, shipmentPrice, order }) {
-    // if (process.env.NODE_ENV !== 'production') {
-    //   return crypto.randomBytes(16).toString('base64')
-    // }
-    console.log('ship')
-
-    const range = timing.range(order)
+  async ship({ recipient, cartItem }) {
+    const { order, range, totalPrice, shippingClass } = cartItem
     const uniqueSKU = await strapi.plugins[
       'orders'
     ].services.order.acsUniqueSKU(order)
@@ -51,11 +36,11 @@ module.exports = {
     const body = Object.assign(
       {
         AccountCode: config.auth.accountCode,
-        OrderNumber: order.id,
+        OrderNumber: `IC-${order.id}`,
 
         DeliveryService: config.shippingClasses[shippingClass],
         DeliveryAgent: config.deliveryAgent,
-        DeliverCharge: 0,
+        DeliveryCharge: 0,
         OrderCancelled: false,
 
         OrderDate: range.created.format('YYYY-MM-DD'),
@@ -66,12 +51,12 @@ module.exports = {
 
         OrderItems: [
           {
-            LineItemId: uniqueSKU,
-            GarmentSKU: order.product.id,
+            LineItemId: uniqueSKU, // should be unique per item in the array
+            GarmentSKU: uniqueSKU,
             IsHire: true,
-            ItemPrice: shipmentPrice,
-            Measurement1: strapi.services.size.normalize(order.size),
-            Measurement2: strapi.services.size.normalize(order.size),
+            ItemPrice: totalPrice,
+            Measurement1: 'ALL', //strapi.services.size.normalize(order.size),
+            Measurement2: 'ALL', // strapi.services.size.normalize(order.size),
           },
         ],
       },
@@ -79,16 +64,19 @@ module.exports = {
     )
 
     const res = await fetchApi(`/orders/${body.OrderNumber}`, 'PUT', body)
-      .then((res) => {
-        console.log(res)
+      .then(async (res) => {
+        if (!res.ok) {
+          throw new Error(await res.text())
+        } else {
+          return await res.json()
+        }
       })
       .catch((err) => {
-        console.dir(err)
-        console.log(err.message)
-        throw err
+        strapi.log.error('ship', err)
+        throw new Error('Failed to ship order')
       })
-    strapi.log.info('hived:ship %o', res)
-    throw new Error('TODO')
+
+    strapi.log.info('ship', res)
     return body.OrderNumber
   },
   retrieve: () => {},

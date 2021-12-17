@@ -1,6 +1,6 @@
 'use strict'
 const { providerName } = require('../../../utils')
-const provider = require(`./${providerName}`)
+const api = require(`./${providerName}/api`)
 
 /**
  * Be clear about who our shipping provider is
@@ -36,7 +36,7 @@ async function validateAddress(address) {
   if (!address) {
     return false
   }
-  const valid = await provider.api.verify(address.postcode)
+  const valid = await api.verify(address.postcode)
 
   return (
     valid &&
@@ -48,6 +48,6 @@ async function validateAddress(address) {
 
 module.exports = {
   providerName,
-  ...provider.api,
+  ...api,
   validateAddress,
 }

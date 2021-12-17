@@ -51,12 +51,9 @@ function arrival(sent, shippingClass = 'one') {
  * @returns {ShippingClass}
  */
 function shippingClass(earliestDeliveryDate, startsOn) {
-  earliestDeliveryDate = day(earliestDeliveryDate) // Want to convert null to undefined
+  earliestDeliveryDate = day(earliestDeliveryDate || undefined) // Want to convert null to undefined
   startsOn = day(startsOn).set({ hour: 0 })
 
-  if (!earliestDeliveryDate) {
-    return undefined
-  }
   const arrivesWithClass = (shippingClass) =>
     startsOn.isSameOrAfter(arrival(earliestDeliveryDate, shippingClass), 'day')
 
@@ -161,24 +158,23 @@ function valid(start, available, quantity, existing = 0) {
 
   const enoughShippingTime = start.utc().isSameOrAfter(arrives.utc(), 'day')
   const notTooFarInFuture = start.isBefore(today.add(4 * 30, 'day'))
-
-  return enoughShippingTime && notTooFarInFuture
+  return enoughShippingTime && (notTooFarInFuture || start.year() >= 2050)
 }
 
 /**
  * Expected/measured dates of each stage of an order
  * @param {DateLike} startDate
- * @param {DateLike=} shippingDate
  * @param {RentalLength} rentalLength
+ * @param {DateLike=} shippingDate
  * @param {DateLike=} created_at
  * @returns {DateRange}
  */
-function range({ startDate, shippingDate, rentalLength, created_at }) {
+function range({ startDate, rentalLength, shippingDate, created_at }) {
+  rentalLength = provider.config.rentalLengths[rentalLength]
   if (!startDate || !rentalLength) {
     throw new Error('Must include startDate and rentalLength')
   }
 
-  rentalLength = provider.config.rentalLengths[rentalLength]
   const hoursSendClient = shippingClassHours(shippingDate, startDate)
   const shipped = shippingDate
     ? day(shippingDate)

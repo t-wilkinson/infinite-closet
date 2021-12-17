@@ -9,8 +9,7 @@ async function shipToCleaners(cartItem) {
     collection:
       strapi.plugins['orders'].services.order.toShippingAddress(order),
     recipient: 'oxwash',
-    shippingClass: 'two',
-    shipmentPrice: strapi.plugins['orders'].services.price.orderTotal(order),
+    cartItem,
   }
 
   await strapi
@@ -55,12 +54,7 @@ async function shipCartItemToClient(cartItem) {
   const shippingRequest = {
     collection: 'infinitecloset',
     recipient: strapi.plugins['orders'].services.order.toShippingAddress(order),
-    shippingClass: strapi.services.timing.shippingClass(
-      order.shippingDate,
-      order.startDate
-    ),
-    shipmentPrice: cartItem.totalPrice,
-    order,
+    cartItem,
   }
 
   await strapi.services.shipment
