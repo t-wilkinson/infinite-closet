@@ -71,7 +71,7 @@ const CheckoutWrapper = () => {
     discountCode: { autocomplete: 'off' },
     email: { constraints: 'email required string' },
     billingName: { constraints: 'required string' },
-    password: { constraints: 'optional-password' },
+    password: { constraints: 'optional-password', autocomplete: 'off' },
     authorized: {
       constraints: 'selected',
       default: false,
@@ -226,8 +226,8 @@ const CheckoutForm = ({ onCheckout }) => {
     if (cleanedFields.password) {
       await registerUser({
         email: contact.email,
-        firstName: contact.fullName.split(' ')[0],
-        lastName: contact.fullName.split(' ').slice(1).join(' '),
+        firstName: contact.fullName.split(' ')[0] || undefined,
+        lastName: contact.fullName.split(' ').slice(1).join(' ').trim() || undefined,
         password: cleanedFields.password,
       })
     }

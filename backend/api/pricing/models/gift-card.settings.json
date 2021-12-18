@@ -19,7 +19,7 @@
     "code": {
       "type": "uid",
       "unique": true,
-      "required": true,
+      "required": false,
       "private": true
     },
     "paymentIntent": {

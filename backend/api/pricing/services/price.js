@@ -18,17 +18,21 @@ const toPrice = (amount) => amount / SMALLEST_CURRENCY_UNIT
  * Calculate the discount given the coupon and price
  */
 async function discount({ price, context, discountCode, existingCoupons }) {
-  const giftCard = await strapi.services.giftcard.availableGiftCard(
+  let giftCard = await strapi.services.giftcard.availableGiftCard(
     discountCode
   )
   const isGiftCardValid = await strapi.services.giftcard.valid(giftCard)
-  const giftCardDiscount = await strapi.services.coupon.discount(
+  let giftCardDiscount = await strapi.services.giftcard.discount(
     price,
-    coupon,
-    isCouponValid
+    giftCard,
+    isGiftCardValid
   )
+  if (!isGiftCardValid) {
+    giftCardDiscount = 0
+    giftCard = null
+  }
 
-  const coupon = await strapi.services.coupon.availableCoupon(
+  let coupon = await strapi.services.coupon.availableCoupon(
     discountCode,
     context
   )
@@ -36,11 +40,15 @@ async function discount({ price, context, discountCode, existingCoupons }) {
     coupon,
     existingCoupons
   )
-  const couponDiscount = await strapi.services.giftcard.discount(
+  let couponDiscount = await strapi.services.coupon.discount(
     price,
-    giftCard,
-    isGiftCardValid
+    coupon,
+    isCouponValid
   )
+  if (!isGiftCardValid) {
+    couponDiscount = 0
+    coupon = null
+  }
 
   return {
     discountPrice: giftCardDiscount + couponDiscount,

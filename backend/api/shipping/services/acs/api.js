@@ -1,6 +1,5 @@
 'use strict'
 const fetch = require('node-fetch')
-// const crypto = require('crypto')
 const config = require('./config')
 const { formatAddress } = require('../../../../utils')
 const { postcodeValidator } = require('postcode-validator')
@@ -66,17 +65,17 @@ module.exports = {
     const res = await fetchApi(`/orders/${body.OrderNumber}`, 'PUT', body)
       .then(async (res) => {
         if (!res.ok) {
-          throw new Error(await res.text())
+          throw new Error('Request failed')
         } else {
           return await res.json()
         }
       })
       .catch((err) => {
-        strapi.log.error('ship', err)
+        strapi.log.error('ship %o', err.stack)
         throw new Error('Failed to ship order')
       })
 
-    strapi.log.info('ship', res)
+    strapi.log.info('ship %o', res)
     return body.OrderNumber
   },
   retrieve: () => {},

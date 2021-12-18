@@ -11,7 +11,7 @@ import Layout from '@/Layout'
 export const Page = ({ blogs }) => {
   return (
     <Layout title="Blogs" className="py-8 space-y-4">
-      {blogs.map((blog: StrapiBlog) => {
+      {blogs.sort((b1, b2) => Number(b2.id) - Number(b1.id)).map((blog: StrapiBlog) => {
         const [minutes] = readingTime(blog.content)
         return (
           <Link key={blog.id} href={`/blogs/${blog.slug}`}>

@@ -100,7 +100,7 @@ const Account = ({ user }) => {
         </IconLink>
         <Link href="/account/signin">
           <a>
-            <span className="">Sign in</span>
+            <span>Sign in</span>
           </a>
         </Link>
         <Link href="/account/register">

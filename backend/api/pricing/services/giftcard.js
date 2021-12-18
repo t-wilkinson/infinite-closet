@@ -13,6 +13,10 @@ function generateCode(clientSecret) {
   return bs58.encode(d)
 }
 
+function generateRandomCode() {
+  return generateCode(crypto.randomUUID())
+}
+
 function fromPaymentIntent(paymentIntent) {
   return {
     id: paymentIntent.id,
@@ -29,10 +33,10 @@ function paymentIntentValid(paymentIntent) {
 }
 
 async function create({ user = undefined, value }) {
-  const code = generateCode(crypto.randomUUID())
+  const code = generateRandomCode()
   const giftCard = await strapi.query('gift-card').create({
     code,
-    user,
+    owner: user,
     value,
   })
   return giftCard
@@ -52,7 +56,7 @@ async function add({ user, paymentIntent }) {
   const { id, value } = fromPaymentIntent(paymentIntent)
   const giftCard = await strapi.query('gift-card').create({
     code,
-    user,
+    owner: user,
     paymentIntent: id,
     value,
   })
@@ -120,11 +124,13 @@ async function discount(price, giftCard, valid = true) {
     return 0
   }
 
-  return Math.min(await valueLeft(giftCard), price)
+  const value = await valueLeft(giftCard)
+  return Math.min(value, price)
 }
 
 module.exports = {
-  generateCode,
+  // generateCode,
+  generateRandomCode,
   valid,
   availableGiftCard,
   add,

@@ -175,7 +175,7 @@ const Checkout = ({ fetchCart, analytics }) => {
     return axios
       .post<void>(`/orders/checkout/${user.id}`, {
         contact: {
-          fullName: `${user.firstName} ${user.lastName}`,
+          fullName: [user.firstName, user.lastName].join(' ').trim(),
           nickName: user.firstName,
           email: user.email,
         },

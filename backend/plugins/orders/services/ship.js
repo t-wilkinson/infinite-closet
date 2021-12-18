@@ -46,7 +46,7 @@ async function shippingFailure(order, err) {
     .query('order', 'orders')
     .update({ id: order.id }, { status: 'error', message: err })
   await strapi.services.template_email.orderShippingFailure(order, err)
-  strapi.log.error('failed to ship order to client %o', err)
+  strapi.log.error('Failed to ship order to client %o', err.stack)
 }
 
 async function shipCartItemToClient(cartItem) {

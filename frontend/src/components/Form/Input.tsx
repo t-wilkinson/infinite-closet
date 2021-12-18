@@ -67,7 +67,7 @@ const InputWrapper = ({
 
   return (
     <div
-      className={`relative flex-row
+      className={`relative flex-col
         ${className}
         ${focus ? 'outline-black' : ''}
       `}

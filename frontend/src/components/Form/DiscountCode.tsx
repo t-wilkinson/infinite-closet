@@ -52,6 +52,7 @@ export const DiscountCode = ({
     return (
       <Input
         field={discountCode}
+        className="w-full"
         onKeyDown={(e: React.KeyboardEvent) => {
           if (e.key === 'Enter') {
             e.preventDefault()
@@ -79,15 +80,16 @@ export const DiscountCode = ({
     return (
       <span className="text-warning w-full p-2 mb-2 bg-gray-light">
         {discountCode.errors[0] === 'not-found'
-          ? `Unable to find promo code matching ${discountCode.value}.`
+          ? `Unable to find code matching ${discountCode.value}.`
           : discountCode.errors[0] === 'maxed-out'
-          ? 'You have already used this coupon.'
-          : `Unable to find promo code matching ${discountCode.value}.`}{' '}
+          ? 'This code is maxed out.'
+          : `Unable to find code matching ${discountCode.value}.`}{' '}
         <button
           className="underline text-black"
           type="button"
           onClick={() => {
             discountCode.setValue('')
+            discountCode.clearErrors()
             setStatus(undefined)
           }}
         >

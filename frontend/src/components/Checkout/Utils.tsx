@@ -1,8 +1,8 @@
 import React from 'react'
 import * as Stripe from '@stripe/react-stripe-js'
 
-import {CartUtils} from '@/Cart/slice'
-import {CartItem} from '@/Cart/types'
+import { CartUtils } from '@/Cart/slice'
+import { CartItem } from '@/Cart/types'
 import { DiscountCode, UseField, Coupon } from '@/Form'
 import { validatePostcode } from '@/Form/Address'
 import axios from '@/utils/axios'
@@ -81,6 +81,68 @@ export const useFetchCart = () => {
   }
 }
 
+export const useGuestCheckout = () => {
+  const cart = useSelector((state) => state.cart.checkoutCart)
+  const elements = Stripe.useElements()
+  const stripe = Stripe.useStripe()
+  const analytics = useAnalytics()
+  const fetchCart = useFetchCart()
+  const rootDispatch = useDispatch()
+
+  const checkout = async ({ form, address, billing, email, discountCode }) => {
+    const contact = toContact({ email, address })
+    return validatePostcode(address.postcode)
+      .then(() =>
+        stripe.createPaymentMethod({
+          type: 'card',
+          card: elements.getElement(Stripe.CardElement),
+          billing_details: { name: billing.name, email },
+        })
+      )
+
+      .then((res) => {
+        if (res.error) {
+          throw res.error
+        } else {
+          return axios.post(
+            '/orders/checkout',
+            {
+              contact,
+              address,
+              paymentMethod: res.paymentMethod.id,
+              orders: cart.map((item) => item.order),
+              discountCode,
+            },
+            { withCredentials: false }
+          )
+        }
+      })
+
+      .then((res) => handleServerResponse(res, stripe, form))
+
+      .then(() => {
+        rootDispatch(CartUtils.set([]))
+        fetchCart()
+        analytics.logEvent('purchase', {
+          user: 'guest',
+          type: 'checkout',
+        })
+      })
+
+      .catch((error) => {
+        if (error.message) {
+          throw error
+        } else {
+          throw new Error(
+            'We ran into an issue processing your payment. Please try again later.'
+          )
+        }
+      })
+  }
+
+  return checkout
+}
+
 function handleServerResponse(
   response: {
     status: string
@@ -135,72 +197,6 @@ function handleStripeJsResult(
       )
       .then((data) => handleServerResponse(data, stripe, form))
   }
-}
-
-const useGuestCheckoutSuccess = () => {
-  const analytics = useAnalytics()
-  const fetchCart = useFetchCart()
-  const rootDispatch = useDispatch()
-
-  return () => {
-    rootDispatch(CartUtils.set([]))
-    fetchCart()
-    analytics.logEvent('purchase', {
-      user: 'guest',
-      type: 'checkout',
-    })
-  }
-}
-
-export const useGuestCheckout = () => {
-  const cart = useSelector((state) => state.cart.checkoutCart)
-  const elements = Stripe.useElements()
-  const stripe = Stripe.useStripe()
-  const onCheckoutSuccess = useGuestCheckoutSuccess()
-
-  const checkout = async ({ form, address, billing, email, discountCode }) => {
-    const contact = toContact({ email, address })
-    return validatePostcode(address.postcode)
-      .then(() =>
-        stripe.createPaymentMethod({
-          type: 'card',
-          card: elements.getElement(Stripe.CardElement),
-          billing_details: { name: billing.name, email },
-        })
-      )
-
-      .then((res) => {
-        if (res.error) {
-          throw res.error
-        } else {
-          return axios.post(
-            '/orders/checkout',
-            {
-              contact,
-              address,
-              paymentMethod: res.paymentMethod.id,
-              orders: cart.map((item) => item.order),
-              discountCode,
-            },
-            { withCredentials: false }
-          )
-        }
-      })
-
-      .then((res) => handleServerResponse(res, stripe, form))
-      .then(onCheckoutSuccess)
-      .catch((error) => {
-        if (error.message) {
-          throw error
-        } else {
-          throw new Error(
-            'We ran into an issue processing your payment. Please try again later.'
-          )
-        }
-      })
-  }
-
-  return checkout
 }
 
 export const isOrderInvalid = (order: CartItem) => !order.valid

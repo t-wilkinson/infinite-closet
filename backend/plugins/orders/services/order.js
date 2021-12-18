@@ -3,7 +3,7 @@
 const { toId } = require('../../../utils')
 
 // An array because it can be used in strapi filter
-const inProgress = ['planning', 'shipping', 'cleaning']
+const inProgress = ['planning', 'shipping', 'cleaning', 'error']
 
 /**
  * Represent individual product

@@ -71,7 +71,7 @@ export const PaymentRequestForm = ({
 
   // Create paymentRequest
   React.useEffect(() => {
-    if (!stripe || !summary) return
+    if (!stripe || !accurateSummary) return
     const pr = stripe.paymentRequest({
       country: 'GB',
       currency: 'gbp',
@@ -105,7 +105,7 @@ export const PaymentRequestForm = ({
         setPaymentRequest(pr)
       }
     })
-  }, [stripe, summary])
+  }, [stripe, accurateSummary])
 
   React.useEffect(() => {
     if (paymentRequest) {
@@ -261,7 +261,7 @@ const paymentRequestCheckout = async ({ev, discountCode, cart, paymentIntent, on
     contact: {
       email: ev.payerEmail,
       fullName: ev.payerName,
-      nickName: ev.payerName.split(' ')[0],
+      nickName: ev.payerName.split(' ')[0] || undefined,
     },
   }
 
