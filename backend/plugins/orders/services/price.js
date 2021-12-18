@@ -29,7 +29,7 @@ function orderPrice(order) {
 /**
  * Sum all the sub-prices of an order
  */
-function orderTotal(order) {
+function orderPriceTotal(order) {
   return Object.values(orderPrice(order)).reduce(
     (total, price) => total + price,
     0
@@ -83,41 +83,44 @@ async function getDiscountPrice(price, user) {
   }
 }
 
-async function applyDiscounts({ user, preDiscountPrice, couponCode }) {
-  const { coupon, discount } = await strapi.services.price.summary({
-    price: preDiscountPrice,
-    existingCoupons: await existingCoupons(user, couponCode),
-    couponCode,
-    context: 'checkout',
-  })
+async function applyDiscounts({ user, preDiscountPrice, discountCode }) {
+  const { coupon, giftCard, discount, giftCardDiscount, couponDiscount } =
+    await strapi.services.price.summary({
+      price: preDiscountPrice,
+      existingCoupons: await existingCoupons(user, discountCode),
+      discountCode,
+      context: 'checkout',
+    })
 
   const discountPrice =
     discount + (await getDiscountPrice(preDiscountPrice, user))
-  return { coupon, discountPrice }
+  return { coupon, giftCard, discountPrice, giftCardDiscount, couponDiscount }
 }
 
 /**
  * Calculates purchase summary of cart including discounts, promo codes, etc.
- * Uses `user` and `couponCode` to apply potential discounts.
+ * Uses `user` and `discountCode` to apply potential discounts.
  * @param {object} obj
  * @param {Cart} obj.cart
  * @param {User|string} obj.user
- * @param {string=} obj.couponCode
+ * @param {string=} obj.discountCode
  */
-async function summary({ cart, user, couponCode }) {
-  user = user?.id || user
+async function summary({ cart, user, discountCode }) {
+  user = toId(user)
   const { productPrice, insurancePrice, shippingPrice } = cartPrice(cart)
 
   const preDiscountPrice = productPrice + insurancePrice + shippingPrice
-  let { coupon, discountPrice } = await applyDiscounts({
-    user,
-    preDiscountPrice,
-    couponCode,
-  })
+  let { coupon, giftCard, discountPrice, couponDiscount, giftCardDiscount } =
+    await applyDiscounts({
+      user,
+      preDiscountPrice,
+      discountCode,
+    })
 
   if (cart.length === 0) {
     discountPrice = 0
     coupon = undefined
+    giftCard = undefined
   }
 
   if (discountPrice > preDiscountPrice) {
@@ -127,11 +130,14 @@ async function summary({ cart, user, couponCode }) {
   const total = preDiscountPrice - discountPrice
   return {
     preDiscount: preDiscountPrice,
+    couponDiscount,
+    giftCardDiscount,
     subtotal: productPrice,
     shipping: shippingPrice,
     insurance: insurancePrice,
     discount: discountPrice,
     coupon,
+    giftCard,
     total,
     amount: strapi.services.price.toAmount(total),
   }
@@ -159,6 +165,6 @@ async function existingCoupons(user, code) {
 module.exports = {
   summary,
   orderPrice,
-  orderTotal,
+  orderPriceTotal,
   existingCoupons,
 }

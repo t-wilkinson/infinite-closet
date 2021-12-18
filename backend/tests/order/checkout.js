@@ -27,7 +27,7 @@ describe.only('On checkout', () => {
 
     const checkoutData = await strapi.plugins[
       'orders'
-    ].services.helpers.prepareCheckout({
+    ].services.helpers.prepareCheckoutData({
       user,
       orders: [order],
     })

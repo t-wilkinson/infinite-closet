@@ -5,7 +5,8 @@
  * @group product
  * @group product/review
  * @group buy
- * @gropu buy/giftcard
+ * @group buy/giftcard
+ * @group buy/summary
  */
 'use strict'
 // const fs = require('fs')

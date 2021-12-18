@@ -37,7 +37,7 @@ module.exports = {
     )
 
     try {
-      const giftcard = await strapi.services.giftcard.generate({
+      const giftcard = await strapi.services.giftcard.add({
         user,
         paymentIntent,
       })

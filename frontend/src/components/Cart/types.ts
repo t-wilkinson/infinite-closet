@@ -1,8 +1,9 @@
+import { Summary } from '@/types'
 import { StrapiOrder } from '@/types/models'
 
 export interface State {
   orderHistory?: Cart
-  checkoutSummary?: any
+  checkoutSummary?: Summary
   checkoutCart?: Cart
   count?: number
 }

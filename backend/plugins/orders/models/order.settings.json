@@ -76,9 +76,6 @@
     "coupon": {
       "model": "coupon"
     },
-    "charge": {
-      "type": "decimal"
-    },
     "fullName": {
       "type": "string"
     },
@@ -87,6 +84,13 @@
     },
     "email": {
       "type": "string"
+    },
+    "charge": {
+      "type": "decimal"
+    },
+    "giftCardDiscount": {
+      "type": "decimal",
+      "default": 0
     }
   }
 }

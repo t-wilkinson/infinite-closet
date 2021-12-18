@@ -64,10 +64,13 @@ async function toPlanning({
             ? paymentMethod.id
             : paymentMethod || null,
           status: 'planning',
-          coupon: summary.coupon ? summary.coupon.id : null,
-          charge: strapi.services.price.toAmount(
-            strapi.plugins['orders'].services.price.orderTotal(order)
+          charge: strapi.services.price.toPrice(
+            strapi.plugins['orders'].services.price.orderPriceTotal(order)
           ),
+          giftCard: summary.giftCard ? summary.giftCard.id : null,
+          giftCardDiscount: summary.giftCardDiscount,
+          coupon: summary.coupon ? summary.coupon.id : null,
+          // couponDiscount: summary.couponDiscount,
           fullName: contact.fullName,
           nickName: contact.nickName,
           email: contact.email,
@@ -93,7 +96,7 @@ async function toPlanning({
  * Convert request body to more useful information
  * @returns - {summary, cart, paymentIntent, paymentMethod}
  */
-async function prepareCheckout(body, user = null) {
+async function prepareCheckoutData(body, user = null) {
   const cart = await strapi.plugins['orders'].services.cart.createValidCart(
     body.orders
   )
@@ -101,7 +104,7 @@ async function prepareCheckout(body, user = null) {
   const summary = await strapi.plugins['orders'].services.price.summary({
     cart,
     user,
-    couponCode: body.couponCode,
+    discountCode: body.discountCode,
   })
 
   let paymentIntent, paymentMethod
@@ -111,7 +114,14 @@ async function prepareCheckout(body, user = null) {
   if (body.paymentMethod) {
     paymentMethod = await stripe.paymentMethods.retrieve(body.paymentMethod)
   }
-  return { summary, cart, paymentIntent, paymentMethod }
+  return {
+    address: body.address,
+    contact: body.contact,
+    summary,
+    cart,
+    paymentIntent,
+    paymentMethod,
+  }
 }
 
 /**
@@ -192,7 +202,7 @@ async function onCheckout({
 
 module.exports = {
   onCheckout,
-  prepareCheckout,
+  prepareCheckoutData,
   notifyArrival,
   notifyAction,
 }

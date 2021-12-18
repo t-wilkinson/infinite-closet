@@ -19,44 +19,51 @@ module.exports = {
   async checkoutUser(ctx) {
     const user = ctx.state.user
     const body = ctx.request.body
-    const { paymentMethod, summary, cart } = await strapi.plugins[
+    const data = await strapi.plugins[
       'orders'
-    ].services.helpers.prepareCheckout(body, user)
-    if (cart.length === 0 || summary.amount < 100) {
-      return ctx.send(null, 404)
+    ].services.helpers.prepareCheckoutData(body, user)
+    if (data.cart.length === 0) {
+      return ctx.badRequest('Cart is empty or has no valid items to checkout.')
+    }
+
+    if (!data.paymentIntent && data.summary.amount < 50) {
+      await strapi.plugins['orders'].services.helpers.onCheckout(data)
+      return ctx.send(null)
     }
 
     // Charge user and checkout order
     try {
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: summary.amount,
+        amount: data.summary.amount,
         currency: 'gbp',
         customer: user.customer,
-        payment_method: paymentMethod.id,
+        payment_method: data.paymentMethod.id,
         off_session: false,
         confirm: true,
       })
       await strapi.plugins['orders'].services.helpers.onCheckout({
-        ...body,
-        summary,
-        cart,
-        paymentMethod,
+        ...data,
         paymentIntent,
       })
-      ctx.send({ status: 'success' })
+      ctx.send(null)
     } catch (e) {
       strapi.log.error('checkoutUser error', e.stack)
-      ctx.send({ status: 'error', error: e.message }, 404)
+      ctx.badRequest('Payment failed')
     }
   },
 
   async checkoutGuest(ctx) {
     const body = { ...(ctx.request.body.body || {}), ...ctx.request.body }
-    const { paymentMethod, summary, cart } = await strapi.plugins[
+    const data = await strapi.plugins[
       'orders'
-    ].services.helpers.prepareCheckout(body)
-    if (cart.length === 0 || summary.amount < 100) {
-      return ctx.send(null)
+    ].services.helpers.prepareCheckoutData(body)
+    if (data.cart.length === 0) {
+      return ctx.badRequest('Cart is empty or has no valid items to checkout.')
+    }
+
+    if (!data.paymentIntent && data.summary.amount < 50) {
+      await strapi.plugins['orders'].services.helpers.onCheckout(data)
+      return ctx.send({ status: 'no-charge' })
     }
 
     try {
@@ -64,7 +71,7 @@ module.exports = {
       if (body.paymentMethod) {
         intent = await stripe.paymentIntents.create({
           payment_method: body.paymentMethod,
-          amount: summary.amount,
+          amount: data.summary.amount,
           currency: 'gbp',
           confirm: true,
           confirmation_method: 'manual',
@@ -77,45 +84,42 @@ module.exports = {
 
       if (response.success) {
         await strapi.plugins['orders'].services.helpers.onCheckout({
-          ...body,
-          summary,
-          cart,
-          paymentMethod,
+          ...data,
           paymentIntent: intent,
         })
       }
       return ctx.send({ ...response, body })
     } catch (e) {
       strapi.log.error('checkoutGuest error', e.stack)
-      return ctx.send({ error: 'Could not process payment', body }, 400)
+      return ctx.badRequest({ error: 'Could not process payment', body })
     }
   },
 
   // Through apple pay
   async checkoutRequest(ctx) {
     const body = ctx.request.body
-    const { paymentMethod, paymentIntent, summary, cart } =
-      await strapi.plugins['orders'].services.helpers.prepareCheckout(body)
-    if (cart.length === 0 || summary.amount < 100) {
+    const data = await strapi.plugins[
+      'orders'
+    ].services.helpers.prepareCheckoutData(body)
+    if (data.cart.length === 0) {
+      return ctx.badRequest('Cart is empty or has no valid items to checkout.')
+    }
+
+    if (!data.paymentIntent && data.summary.amount < 50) {
+      await strapi.plugins['orders'].services.helpers.onCheckout(data)
       return ctx.send(null)
     }
 
     try {
-      if (!validPaymentIntent(cart, paymentIntent)) {
+      if (!validPaymentIntent(data.cart, data.paymentIntent)) {
         throw new Error('Payment intent invalid')
       }
-      await strapi.plugins['orders'].services.helpers.onCheckout({
-        ...body,
-        summary,
-        cart,
-        paymentMethod,
-        paymentIntent,
-      })
+      await strapi.plugins['orders'].services.helpers.onCheckout(data)
       return ctx.send(null)
     } catch (e) {
       strapi.log.error('PaymentRequest paymentIntent did not succeed', {
-        cart,
-        paymentIntent: paymentIntent.id,
+        cart: data.cart,
+        paymentIntent: data.paymentIntent.id,
         error: e,
       })
       return ctx.send({ error: 'PaymentIntent invalid' }, 400)
@@ -123,15 +127,21 @@ module.exports = {
   },
 
   async updatePaymentIntent(ctx) {
+    const { user } = ctx.state
     const body = ctx.request.body
     const { id } = ctx.params
     const cart = await strapi.plugins['orders'].services.cart.create(
       body.orders
     )
     const summary = await strapi.plugins['orders'].services.price.summary({
+      user,
       cart,
-      couponCode: body.couponCode,
+      discountCode: body.discountCode,
     })
+
+    if (summary.total < 1) {
+      return ctx.send(null)
+    }
 
     const paymentIntent = await stripe.paymentIntents.update(id, {
       ...body.data,
@@ -142,27 +152,29 @@ module.exports = {
   },
 
   async createPaymentIntent(ctx) {
-    const { couponCode, orders } = ctx.request.body
+    const { user } = ctx.state
+    const { discountCode, orders } = ctx.request.body
     const cart = await strapi.plugins['orders'].services.cart.create(orders)
     const summary = await strapi.plugins['orders'].services.price.summary({
+      user,
       cart,
-      couponCode,
+      discountCode,
     })
 
-    if (summary.total < 1) {
-      ctx.send({ error: 'Total too small' }, 404)
-    } else {
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: summary.amount,
-        currency: 'gbp',
-      })
-      orders.map((order) =>
-        strapi
-          .query('order', 'orders')
-          .update({ id: order.id }, { paymentIntent: paymentIntent.id })
-      )
-      ctx.send(paymentIntent)
+    if (summary.amount < 50) {
+      return ctx.send(null)
     }
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: summary.amount,
+      currency: 'gbp',
+    })
+    orders.map((order) =>
+      strapi
+        .query('order', 'orders')
+        .update({ id: order.id }, { paymentIntent: paymentIntent.id })
+    )
+    ctx.send(paymentIntent)
   },
 }
 

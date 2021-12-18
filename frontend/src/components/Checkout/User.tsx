@@ -7,15 +7,8 @@ dayjs.extend(utc)
 import axios from '@/utils/axios'
 import Cart from '@/Cart'
 import { CartUtils } from '@/Cart/slice'
-import {
-  useFields,
-  OR,
-  Coupon,
-  UseFields,
-  Form,
-  Submit,
-  BodyWrapper,
-} from '@/Form'
+import { Summary } from '@/types'
+import { useFields, OR, UseFields, Form, Submit, BodyWrapper } from '@/Form'
 import { Addresses, AddAddress } from '@/Form/Address'
 import {
   PaymentWrapper,
@@ -27,7 +20,7 @@ import { BlueLink, Button } from '@/components'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
-import { isOrderInvalid, Summary, useFetchCart } from './Utils'
+import { isOrderInvalid, CheckoutSummary, useFetchCart } from './Utils'
 import PaymentRequestForm from './PaymentRequestForm'
 
 type Popup = 'none' | 'address' | 'payment'
@@ -39,14 +32,14 @@ const initialState = {
   addresses: [],
   popup: 'none' as Popup,
   error: undefined,
-  coupon: undefined,
+  summary: undefined,
 }
 
 const reducer = (state: typeof initialState, action: any) => {
   const def = (key: string) => ({ ...state, [key]: action.payload })
   // prettier-ignore
   switch (action.type) {
-    case 'select-coupon': return def('coupon')
+    case 'add-summary': return def('summary')
 
     case 'edit-payment': return { ...state, popup: 'payment' }
     case 'edit-address': return { ...state, popup: 'address' }
@@ -81,7 +74,7 @@ const reducer = (state: typeof initialState, action: any) => {
 }
 
 type Fields = {
-  couponCode: string
+  discountCode: string
 }
 const StateContext = React.createContext(null)
 const DispatchContext = React.createContext(null)
@@ -94,7 +87,7 @@ export const CheckoutWrapper = ({}) => {
   const analytics = useAnalytics()
   const cart = useSelector((state) => state.cart.checkoutCart)
   const fields = useFields<Fields>({
-    couponCode: { autocomplete: 'off' },
+    discountCode: { autocomplete: 'off' },
   })
   const fetchCart = useFetchCart()
   const summary = useSelector((state) => state.cart.checkoutSummary)
@@ -189,7 +182,7 @@ const Checkout = ({ fetchCart, analytics }) => {
         address: state.address,
         paymentMethod: state.paymentMethod,
         orders: cart.map((item) => item.order),
-        couponCode: cleanedFields.couponCode,
+        discountCode: cleanedFields.discountCode,
       })
       .then(() => {
         fetchCart()
@@ -246,8 +239,8 @@ const Checkout = ({ fetchCart, analytics }) => {
         {isVisible && <OR />}
         <PaymentRequestForm
           setVisible={setVisible}
-          couponCode={fields.get('couponCode').clean()}
-          coupon={state.coupon}
+          discountCode={fields.get('discountCode').clean()}
+          accurateSummary={state.summary}
           form={fields.form}
           onCheckout={() => {
             fetchCart()
@@ -277,14 +270,14 @@ const SideBar = ({ user, state, summary, fields, dispatch }) => (
       />
     </SideItem>
     <SideItem label="Summary" user={user}>
-      <Summary
+      <CheckoutSummary
         userId={user.id}
         summary={summary}
-        couponCode={fields.get('couponCode')}
-        setCoupon={(coupon: Coupon) =>
-          dispatch({ type: 'select-coupon', payload: coupon })
+        discountCode={fields.get('discountCode')}
+        accurateSummary={state.summary}
+        setAccurateSummary={(summary: Summary) =>
+          dispatch({ type: 'add-summary', payload: summary })
         }
-        coupon={state.coupon}
       />
     </SideItem>
   </aside>

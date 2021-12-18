@@ -5,13 +5,28 @@ const { day } = require('../../../utils')
 /**
  * Find coupon matching code
  */
-async function availableCoupon(context, code) {
+async function availableCoupon(code, context = 'checkout') {
   if (typeof code !== 'string') {
     return null
   }
   return await strapi
     .query('coupon')
     .findOne({ context, code: code.toUpperCase() })
+}
+
+function discount(price, coupon, valid = true) {
+  if (!valid) {
+    return 0
+  }
+
+  switch (coupon.type) {
+    case 'percent_off':
+      return price * (coupon.amount / 100)
+    case 'amount_off':
+      return coupon.amount
+    default:
+      return 0
+  }
 }
 
 /**
@@ -44,4 +59,5 @@ function valid(coupon, existingCoupons = []) {
 module.exports = {
   availableCoupon,
   valid,
+  discount,
 }

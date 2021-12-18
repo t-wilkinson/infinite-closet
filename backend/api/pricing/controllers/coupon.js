@@ -1,19 +1,19 @@
 'use strict'
 
 async function discount(ctx) {
-  const { code, context, price } = ctx.request.body
+  const { discountCode, context, price } = ctx.request.body
   const user = ctx.state.user
   let existingCoupons
   if (user) {
     existingCoupons = await strapi.plugins[
       'orders'
-    ].services.price.existingCoupons(user, code)
+    ].services.price.existingCoupons(user, discountCode)
   } else {
     existingCoupons = []
   }
 
   const summary = await strapi.services.price.summary({
-    couponCode: code,
+    discountCode,
     price,
     context,
     existingCoupons,

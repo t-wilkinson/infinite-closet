@@ -11,7 +11,7 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "amount": {
+    "value": {
       "type": "decimal",
       "required": true,
       "min": 0
@@ -22,19 +22,10 @@
       "required": true,
       "private": true
     },
-    "used": {
-      "type": "boolean",
-      "default": false
-    },
-    "purchases": {
-      "type": "component",
-      "repeatable": true,
-      "component": "custom.purchase"
-    },
     "paymentIntent": {
       "type": "string",
       "unique": true,
-      "required": true
+      "required": false
     },
     "owner": {
       "plugin": "users-permissions",

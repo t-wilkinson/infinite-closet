@@ -2,64 +2,56 @@ import React from 'react'
 
 import axios from '@/utils/axios'
 import { StrapiCoupon } from '@/types/models'
+import { Summary } from '@/types'
 
 import { UseField } from './fields'
 import Input from './Input'
 
 type CouponStatus = undefined | 'success' | 'failure'
 
-export interface Coupon {
-  valid: boolean
-  coupon: StrapiCoupon
-  price: number
-  discount: number
-}
-
-export const CouponCode = ({
+export const DiscountCode = ({
   user,
   context,
   price,
-  setCoupon,
-  field,
+  setSummary,
+  discountCode,
 }: {
   user?: string
   context: StrapiCoupon['context']
   price: number
-  setCoupon: (coupon: Coupon) => void
-  field: UseField<string>
+  setSummary: (summary: Summary) => void
+  discountCode: UseField<string>
 }) => {
   const [status, setStatus] = React.useState<CouponStatus>()
 
   const checkPromo = async () => {
-    const code = field.clean()
+    const cleaned = discountCode.clean()
     return axios
-      .post<Coupon>(`/coupons/discount`, {
+      .post<Summary>(`/coupons/discount`, {
         user,
-        code,
+        discountCode: cleaned,
         context,
         price,
       })
-      .then((coupon) => {
-        if (coupon.valid) {
-          setCoupon(coupon)
+      .then((summary) => {
+        if (summary.coupon || summary.giftCard) {
+          setSummary(summary)
           setStatus('success')
         } else {
           setStatus('failure')
-          field.setErrors('Could not find coupon code')
+          discountCode.setErrors('Could not find coupon code')
         }
       })
-      .catch((err) => {
-        if (err.valid === false) {
-          setStatus('failure')
-          field.setErrors(err.reason)
-        }
+      .catch(() => {
+        setStatus('failure')
+        discountCode.setError('Encountered unknown error')
       })
   }
 
   if (status === undefined) {
     return (
       <Input
-        field={field}
+        field={discountCode}
         onKeyDown={(e: React.KeyboardEvent) => {
           if (e.key === 'Enter') {
             e.preventDefault()
@@ -86,16 +78,16 @@ export const CouponCode = ({
   } else {
     return (
       <span className="text-warning w-full p-2 mb-2 bg-gray-light">
-        {field.errors[0] === 'not-found'
-          ? `Unable to find promo code matching ${field.value}.`
-          : field.errors[0] === 'maxed-out'
+        {discountCode.errors[0] === 'not-found'
+          ? `Unable to find promo code matching ${discountCode.value}.`
+          : discountCode.errors[0] === 'maxed-out'
           ? 'You have already used this coupon.'
-          : `Unable to find promo code matching ${field.value}.`}{' '}
+          : `Unable to find promo code matching ${discountCode.value}.`}{' '}
         <button
           className="underline text-black"
           type="button"
           onClick={() => {
-            field.setValue('')
+            discountCode.setValue('')
             setStatus(undefined)
           }}
         >

@@ -1,9 +1,9 @@
 import React from 'react'
 import * as Stripe from '@stripe/react-stripe-js'
 
-import { CartUtils } from '@/Cart/slice'
-import { CartItem } from '@/Cart/types'
-import { CouponCode, UseField, Coupon } from '@/Form'
+import {CartUtils} from '@/Cart/slice'
+import {CartItem} from '@/Cart/types'
+import { DiscountCode, UseField, Coupon } from '@/Form'
 import { validatePostcode } from '@/Form/Address'
 import axios from '@/utils/axios'
 import { fmtPrice } from '@/utils/helpers'
@@ -21,33 +21,33 @@ export const toContact = ({ email, address }: Contact) => ({
   nickName: address.fullName.split(' ')[0],
 })
 
-export const Summary = ({
+export const CheckoutSummary = ({
   userId = undefined,
   summary,
-  couponCode,
-  setCoupon,
-  coupon,
+  discountCode,
+  accurateSummary, // Represents rate-limited summary
+  setAccurateSummary,
 }: {
   userId?: string
   summary: any
-  setCoupon: (coupon: Coupon) => void
-  coupon: Coupon
-  couponCode: UseField<string>
+  discountCode: UseField<string>
+  accurateSummary: Coupon
+  setAccurateSummary: (coupon: Coupon) => void
 }) => {
   if (!summary) {
     return null
   }
-  const discount = summary.discount + (coupon?.discount || 0)
+  const discount = summary.discount + (accurateSummary?.discount || 0)
 
   return (
     <article className="flex flex-col">
       <div className="w-full my-2">
-        <CouponCode
+        <DiscountCode
           price={summary.preDiscount}
           user={userId}
           context="checkout"
-          setCoupon={setCoupon}
-          field={couponCode}
+          setSummary={setAccurateSummary}
+          discountCode={discountCode}
         />
       </div>
       <Price label="Subtotal" price={summary.subtotal} />
@@ -57,7 +57,7 @@ export const Summary = ({
       <div className="h-px bg-pri my-1" />
       <Price
         label="Total"
-        price={summary.total - (coupon?.discount || 0)}
+        price={summary.total - (accurateSummary?.discount || 0)}
         className="font-bold"
       />
     </article>
@@ -158,7 +158,7 @@ export const useGuestCheckout = () => {
   const stripe = Stripe.useStripe()
   const onCheckoutSuccess = useGuestCheckoutSuccess()
 
-  const checkout = async ({ form, address, billing, email, couponCode }) => {
+  const checkout = async ({ form, address, billing, email, discountCode }) => {
     const contact = toContact({ email, address })
     return validatePostcode(address.postcode)
       .then(() =>
@@ -180,7 +180,7 @@ export const useGuestCheckout = () => {
               address,
               paymentMethod: res.paymentMethod.id,
               orders: cart.map((item) => item.order),
-              couponCode,
+              discountCode,
             },
             { withCredentials: false }
           )

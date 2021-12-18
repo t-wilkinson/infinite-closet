@@ -1,10 +1,11 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 
+import { Summary } from '@/types'
 import { CartUtils } from '@/Cart/slice'
 import { useRegisterUser } from '@/Account/Register'
 import {
-  Summary,
+  CheckoutSummary,
   toContact,
   useGuestCheckout,
   useFetchCart,
@@ -17,7 +18,6 @@ import {
   Form,
   Submit,
   Input,
-  Coupon,
   Password,
   UseFields,
   BodyWrapper,
@@ -32,7 +32,7 @@ import Cart from '@/Cart'
 
 const initialState = {
   error: undefined,
-  coupon: undefined,
+  summary: undefined,
   contact: undefined as { email: string; fullName: string; nickName: string },
   registerError: false,
 }
@@ -42,7 +42,7 @@ const reducer = (state: typeof initialState, action: any) => {
   const def = (key: string) => ({ ...state, [key]: action.payload })
   // prettier-ignore
   switch (action.type) {
-    case 'select-coupon': return def('coupon')
+    case 'add-summary': return def('summary')
     case 'set-payment-method': return def('paymentMethod')
     case 'register-error': return {...state,  registerError: true, error: action.payload}
     case 'change-contact': return {...state, contact: action.payload}
@@ -51,7 +51,7 @@ const reducer = (state: typeof initialState, action: any) => {
 }
 
 type Fields = {
-  couponCode: string
+  discountCode: string
   email: string
   billingName: string
   password: string
@@ -68,7 +68,7 @@ const CheckoutWrapper = () => {
   const analytics = useAnalytics()
   const cart = useSelector((state) => state.cart.checkoutCart)
   const fields = useFields<Fields>({
-    couponCode: { autocomplete: 'off' },
+    discountCode: { autocomplete: 'off' },
     email: { constraints: 'email required string' },
     billingName: { constraints: 'required string' },
     password: { constraints: 'optional-password' },
@@ -173,7 +173,7 @@ const Checkout = () => {
         <Cart />
         <PaymentRequestForm
           setVisible={setVisible}
-          coupon={state.coupon}
+          accurateSummary={state.summary}
           form={fields.form}
           onCheckout={() => {
             fetchCart()
@@ -183,7 +183,7 @@ const Checkout = () => {
             })
             router.push('/buy/thankyou')
           }}
-          couponCode={fields.get('couponCode').clean() as string}
+          discountCode={fields.get('discountCode').clean() as string}
         />
         {isVisible && <OR />}
         <div className="py-8 -mx-4 px-4 sm:mx-0 sm:px-0 bg-white items-center ">
@@ -219,7 +219,7 @@ const CheckoutForm = ({ onCheckout }) => {
         name: cleanedFields.billingName,
       },
       email: cleanedFields.email,
-      couponCode: cleanedFields.couponCode,
+      discountCode: cleanedFields.discountCode,
     })
     await onCheckout({ contact })
 
@@ -231,7 +231,7 @@ const CheckoutForm = ({ onCheckout }) => {
         password: cleanedFields.password,
       })
     }
-    fields.get('couponCode').setValue(null)
+    fields.get('discountCode').setValue(null)
   }
 
   return (
@@ -256,13 +256,13 @@ const CheckoutForm = ({ onCheckout }) => {
         <Authorize field={fields.get('authorized')} />
       </SideItem>
       <SideItem label="Summary">
-        <Summary
+        <CheckoutSummary
           summary={summary}
-          couponCode={fields.get('couponCode')}
-          setCoupon={(coupon: Coupon) => {
-            dispatch({ type: 'select-coupon', payload: coupon })
+          setAccurateSummary={(summary: Summary) => {
+            dispatch({ type: 'add-summary', payload: summary })
           }}
-          coupon={state.coupon}
+          accurateSummary={state.summary}
+          discountCode={fields.get('discountCode') as any}
         />
       </SideItem>
       <div className="p-8 bg-gray-light">

@@ -17,32 +17,61 @@ const toPrice = (amount) => amount / SMALLEST_CURRENCY_UNIT
 /**
  * Calculate the discount given the coupon and price
  */
-function discount(coupon, price) {
-  switch (coupon.type) {
-    case 'percent_off':
-      return price * (coupon.amount / 100)
-    case 'amount_off':
-      return coupon.amount
-    default:
-      return 0
+async function discount({ price, context, discountCode, existingCoupons }) {
+  const giftCard = await strapi.services.giftcard.availableGiftCard(
+    discountCode
+  )
+  const isGiftCardValid = await strapi.services.giftcard.valid(giftCard)
+  const giftCardDiscount = await strapi.services.coupon.discount(
+    price,
+    coupon,
+    isCouponValid
+  )
+
+  const coupon = await strapi.services.coupon.availableCoupon(
+    discountCode,
+    context
+  )
+  const isCouponValid = await strapi.services.coupon.valid(
+    coupon,
+    existingCoupons
+  )
+  const couponDiscount = await strapi.services.giftcard.discount(
+    price,
+    giftCard,
+    isGiftCardValid
+  )
+
+  return {
+    discountPrice: giftCardDiscount + couponDiscount,
+    giftCardDiscount,
+    couponDiscount,
+    giftCard,
+    coupon,
   }
 }
 
 /**
  * Price summary including discount, subtotal, etc.
  */
-async function summary({ price, context, couponCode, existingCoupons }) {
-  const coupon = await strapi.services.coupon.availableCoupon(context, couponCode)
-  const isValid = strapi.services.coupon.valid(coupon, existingCoupons)
-  const discountPrice = isValid ? discount(coupon, price) : 0
+async function summary({ price, context, discountCode, existingCoupons }) {
+  const { discountPrice, giftCardDiscount, couponDiscount, coupon, giftCard } =
+    await discount({
+      price,
+      context,
+      discountCode,
+      existingCoupons,
+    })
   const total = price - discountPrice
 
   return {
-    valid: isValid,
+    giftCardDiscount,
+    couponDiscount,
     discount: discountPrice,
     coupon,
     subtotal: price,
     total,
+    giftCard,
     amount: toAmount(total),
   }
 }
@@ -50,6 +79,9 @@ async function summary({ price, context, couponCode, existingCoupons }) {
 function sanitizeSummary(summary) {
   return {
     ...summary,
+    giftCard: sanitizeEntity(summary.giftCard, {
+      model: strapi.query('gift-card').model,
+    }),
     coupon: sanitizeEntity(summary.coupon, {
       model: strapi.query('coupon').model,
     }),
@@ -59,8 +91,6 @@ function sanitizeSummary(summary) {
 module.exports = {
   toAmount,
   toPrice,
-
-  discount,
   summary,
   sanitizeSummary,
 }

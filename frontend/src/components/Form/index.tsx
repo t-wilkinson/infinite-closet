@@ -9,7 +9,7 @@ import Warning from './Warning'
 import { UseFields } from './fields'
 
 export * from './Checkbox'
-export * from './Coupon'
+export * from './DiscountCode'
 export * from './DateOfBirth'
 export * from './Dropdown'
 export * from './ImageUpload'

@@ -21,6 +21,7 @@ interface GiftCardFields {
   amount: number
 }
 
+const GIFT_CARD_CODE_LENGTH = 6
 const amounts = [10, 25, 50]
 
 export const GiftCardWrapper = ({ data }) => {
@@ -108,7 +109,7 @@ const GiftCard = ({ fields }: { fields: UseFields<GiftCardFields> }) => {
   }, [fields.status, stripe])
 
   if (fields.status === 'success' && giftcard) {
-    const code = giftcard.code.slice(0, 6)
+    const code = giftcard.code.slice(0, GIFT_CARD_CODE_LENGTH)
 
     return (
       <BodyWrapper label="Successfully purchased gift card">
