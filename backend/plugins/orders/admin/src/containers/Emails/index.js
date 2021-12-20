@@ -8,6 +8,7 @@ import styled from "styled-components";
 
 import Wrapper from "./Wrapper";
 import pluginId from "../../pluginId";
+import { emails } from '../../config'
 
 const Emails = () => {
   // const location = useLocation();
@@ -17,18 +18,9 @@ const Emails = () => {
   return (
     <Wrapper>
       <Switch>
-        <Route
-          path={path("rental-ending")}
-          component={() => <SendEmail slug="order-leaving" />}
-        />
-        <Route
-          path={path("send-cleaners")}
-          component={() => <SendEmail slug="order-cleaners" />}
-        />
-        <Route
-          path={path("trust-pilot")}
-          component={() => <SendEmail slug="trust-pilot" />}
-        />
+        {emails.map((email) =>
+        <Route path={path(email.slug)} component={() => <SendEmail slug={email.route} />} />
+        )}
       </Switch>
     </Wrapper>
   );
@@ -50,11 +42,8 @@ const SendEmail = ({ slug }) => {
         if (!res.ok) {
           throw new Error(res.message);
         } else {
-          return res.json();
+          setStatus({ code: "success", message: "Successfully sent mail" });
         }
-      })
-      .then((res) => {
-        setStatus({ code: "success", message: "Successfully sent mail" });
       })
       .catch((err) => {
         setStatus({

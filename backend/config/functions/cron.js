@@ -40,10 +40,7 @@ module.exports = {
               strapi.services.template_email.orderShipped(cartItem)
             )
             .catch((err) =>
-              strapi.log.error(
-                'cron failed to send user shipping email %o',
-                err
-              )
+              strapi.plugins['orders'].services.ship.shippingFailure(order, err)
             )
         }
       }

@@ -16,7 +16,7 @@ async function notifyArrival(orders) {
     const cartItem = await strapi.plugins[
       'orders'
     ].services.cart.createCartItem(order)
-    strapi.services.template_email.orderArriving(cartItem)
+    strapi.services.template_email.orderStarting(cartItem)
   }
 }
 

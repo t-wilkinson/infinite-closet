@@ -25,31 +25,45 @@ async function getCartItem(orderId) {
   }
 }
 
-module.exports = {
-  async sendToCleaners(ctx) {
-    const { orderId } = ctx.params
-    const { cartItem, order } = await getCartItem(orderId)
-
-    // Ship order and send email to client
-    strapi.plugins['orders'].services.ship
-      .shipCartItemToClient(cartItem)
-      .catch((err) =>
-        strapi.plugins['orders'].services.ship.shippingFailure(order, err)
-      )
-    return ctx.send(null)
-  },
-
-  async orderLeaving(ctx) {
+async function defaultCartItemEmail(ctx, email) {
+  try {
     const { orderId } = ctx.params
     const { cartItem } = await getCartItem(orderId)
-    strapi.services.template_email.orderLeaving(cartItem)
+    await strapi.services.template_email[email](cartItem)
     return ctx.send(null)
+  } catch (e) {
+    strapi.log.error('Failed to send email', e.stack)
+    return ctx.badRequest(e.message)
+  }
+}
+
+module.exports = {
+  async orderShipped(ctx) {
+    await defaultCartItemEmail(ctx, 'orderShipped')
   },
+
+  async orderStarting(ctx) {
+    await defaultCartItemEmail(ctx, 'orderStarting')
+  },
+
+  async orderEnding(ctx) {
+    await defaultCartItemEmail(ctx, 'orderEnding')
+  },
+
+  //   async sendToCleaners(ctx) {
+  //     const { orderId } = ctx.params
+  //     const { cartItem, order } = await getCartItem(orderId)
+
+  //     // Ship order and send email to client
+  //     strapi.plugins['orders'].services.ship
+  //       .shipCartItemToClient(cartItem)
+  //       .catch((err) =>
+  //         strapi.plugins['orders'].services.ship.shippingFailure(order, err)
+  //       )
+  //     return ctx.send(null)
+  //   },
 
   async trustPilot(ctx) {
-    const { orderId } = ctx.params
-    const { cartItem } = await getCartItem(orderId)
-    strapi.services.template_email.trustPilot(cartItem)
-    return ctx.send(null)
+    await defaultCartItemEmail(ctx, 'trustPilot')
   },
 }

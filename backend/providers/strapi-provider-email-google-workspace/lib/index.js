@@ -47,9 +47,20 @@ const kebabize = (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
+const hasMoreThanAscii = (str) => [...str].some(char => char.charCodeAt(0) > 127)
+
 function makeBody(options) {
-  const toEmailField = (f) =>
-    options[f] ? `${kebabize(f)}: ${options[f]}\n` : ''
+  const toEmailField = (f) => {
+    let value = options[f]
+    if (!value) {
+      return ''
+    }
+
+    if (hasMoreThanAscii(value)) {
+      value = `=?utf-8?B?${Buffer.from(value, 'utf8').toString('base64')}?=`
+    }
+    return `${kebabize(f)}: ${value}\n`
+  }
 
   var str = [
     'Content-Type: text/html; charset="UTF-8"\n',

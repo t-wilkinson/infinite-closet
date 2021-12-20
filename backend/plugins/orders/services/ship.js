@@ -21,7 +21,7 @@ async function shipToCleaners(cartItem) {
       .query('order', 'orders')
       .update({ id: order.id }, { shipment: id })
   }
-  await strapi.services.template_email.orderLeaving(cartItem)
+  await strapi.services.template_email.orderEnding(cartItem)
 }
 
 async function sendToCleaners(orders) {
@@ -51,6 +51,10 @@ async function shippingFailure(order, err) {
 
 async function shipCartItemToClient(cartItem) {
   const { order } = cartItem
+  if (order.status === 'shipping') {
+    throw new Error('Already shipping')
+  }
+
   const shippingRequest = {
     collection: 'infinitecloset',
     recipient: strapi.plugins['orders'].services.order.toShippingAddress(order),
@@ -74,15 +78,11 @@ async function shipOrderToClient(order) {
     throw new Error('Already shipping')
   }
 
-  order = await strapi
-    .query('order', 'orders')
-    .findOne({ id: order.id }, ['address', 'product', 'user', 'product.sizes'])
-
   const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(
     order
   )
   await shipCartItemToClient(cartItem).catch((err) =>
-    shippingFailure(order, err)
+    shippingFailure(cartItem.order, err)
   )
   return cartItem
 }

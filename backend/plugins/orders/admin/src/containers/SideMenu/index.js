@@ -2,6 +2,7 @@ import React from "react";
 import Wrapper from "./Wrapper";
 import { LeftMenuList } from "strapi-helper-plugin";
 import pluginId from "../../pluginId";
+import { emails } from '../../config';
 
 const SideMenu = () => {
   const emailLink = ({ slug, title }) => ({
@@ -21,10 +22,7 @@ const SideMenu = () => {
     {
       title: "Emails",
       name: "emails",
-      links: [
-        { title: "Rental ending", slug: "rental-ending" },
-        { title: "Send to cleaners", slug: "send-cleaners" },
-      ].map(emailLink),
+      links: emails.map(emailLink),
     },
   ];
 

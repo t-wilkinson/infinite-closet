@@ -31,51 +31,21 @@ const unpackCartItem = (cartItem) =>
   strapi.plugins['orders'].services.cart.unpackCartItem(cartItem)
 
 module.exports = {
-  async orderLeaving(cartItem) {
-    const { order, user } = unpackCartItem(cartItem)
+  async checkout({ contact, cart, summary }) {
     await send({
-      template: 'order-leaving',
-      to: toEmailAddress(user),
+      template: 'checkout',
+      to: toEmailAddress(contact),
       bcc:
         process.env.NODE_ENV === 'production'
-          ? [
-            'battersea@oxwash.com',
-            'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
-          ]
+          ? ['info@infinitecloset.co.uk']
           : [],
-      subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
-      data: { ...cartItem, firstName: user.firstName },
-    })
-  },
-
-  async trustPilot(cartItem) {
-    const { order, user } = unpackCartItem(cartItem)
-    await send({
-      template: 'order-leaving',
-      to: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
-      subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
-      data: { ...cartItem, firstName: user.firstName },
-    })
-  },
-
-  async orderArriving(cartItem) {
-    const { order, user } = unpackCartItem(cartItem)
-    await send({
-      template: 'order-arriving',
-      to: toEmailAddress(user),
-      subject: `Your order of ${order.product.name} by ${order.product.designer.name} is arriving today`,
+      subject: 'Thank you for your order',
       data: {
-        firstName: user.firstName,
+        cart,
+        name: contact.fullName,
+        firstName: contact.nickName,
+        totalPrice: summary.total,
       },
-    })
-  },
-
-  async orderShippingFailure(order, err) {
-    await send({
-      template: 'order-shipping-failure',
-      to: 'info@infinitecloset.co.uk',
-      subject: 'Failed to ship order',
-      data: { order, error: err },
     })
   },
 
@@ -101,21 +71,51 @@ module.exports = {
     })
   },
 
-  async checkout({ contact, cart, summary }) {
+  async orderStarting(cartItem) {
+    const { order, user } = unpackCartItem(cartItem)
     await send({
-      template: 'checkout',
-      to: toEmailAddress(contact),
+      template: 'order-arriving',
+      to: toEmailAddress(user),
+      subject: `Your order of ${order.product.name} by ${order.product.designer.name} is arriving today`,
+      data: {
+        firstName: user.firstName,
+      },
+    })
+  },
+
+  async orderEnding(cartItem) {
+    const { order, user } = unpackCartItem(cartItem)
+    await send({
+      template: 'order-leaving',
+      to: toEmailAddress(user),
       bcc:
         process.env.NODE_ENV === 'production'
-          ? ['info@infinitecloset.co.uk']
+          ? [
+            'battersea@oxwash.com',
+            'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
+          ]
           : [],
-      subject: 'Thank you for your order',
-      data: {
-        cart,
-        name: contact.fullName,
-        firstName: contact.nickName,
-        totalPrice: summary.total,
-      },
+      subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
+      data: { ...cartItem, firstName: user.firstName },
+    })
+  },
+
+  async trustPilot(cartItem) {
+    const { order, user } = unpackCartItem(cartItem)
+    await send({
+      template: 'trust-pilot',
+      to: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
+      subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
+      data: { ...cartItem, firstName: user.firstName },
+    })
+  },
+
+  async orderShippingFailure(order, err) {
+    await send({
+      template: 'order-shipping-failure',
+      to: 'info@infinitecloset.co.uk',
+      subject: 'Failed to ship order',
+      data: { order, error: err },
     })
   },
 }

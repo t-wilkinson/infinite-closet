@@ -2,16 +2,24 @@
   "routes": [
     {
       "method": "POST",
-      "path": "/emails/order-leaving/:orderId",
-      "handler": "emails.orderLeaving",
+      "path": "/emails/rental-shipped/:orderId",
+      "handler": "emails.orderShipped",
       "config": {
         "policies": []
       }
     },
     {
       "method": "POST",
-      "path": "/emails/order-cleaners/:orderId",
-      "handler": "emails.sendToCleaners",
+      "path": "/emails/rental-start/:orderId",
+      "handler": "emails.orderStarting",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/emails/rental-ending/:orderId",
+      "handler": "emails.orderEnding",
       "config": {
         "policies": []
       }

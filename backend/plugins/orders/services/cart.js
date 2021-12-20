@@ -44,12 +44,12 @@ async function createCartItem(order) {
   // TODO: speed this up
   order = await strapi
     .query('order', 'orders')
-    .findOne({ id: order.id }, [
+    .findOne({ id: toId(order) }, [
       'address',
       'product.sizes',
       'product.images',
       'product.designer',
-      ...(order.user ? ['user'] : []), // TODO: can we just include the user?
+      'user',
     ])
   order.product.sizes = await strapi
     .query('product')
