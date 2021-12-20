@@ -21,7 +21,6 @@ interface GiftCardFields {
   amount: number
 }
 
-const GIFT_CARD_CODE_LENGTH = 6
 const amounts = [10, 25, 50]
 
 export const GiftCardWrapper = ({ data }) => {
@@ -109,8 +108,6 @@ const GiftCard = ({ fields }: { fields: UseFields<GiftCardFields> }) => {
   }, [fields.status, stripe])
 
   if (fields.status === 'success' && giftcard) {
-    const code = giftcard.code.slice(0, GIFT_CARD_CODE_LENGTH)
-
     return (
       <BodyWrapper label="Successfully purchased gift card">
         Purchased gift card for ${giftcard.amount}.
@@ -120,13 +117,13 @@ const GiftCard = ({ fields }: { fields: UseFields<GiftCardFields> }) => {
             type="button"
             className="bg-gray-light p-2 rounded-m m-2 select-all"
             onClick={() => {
-              navigator.clipboard?.writeText(code).then(
+              navigator.clipboard?.writeText(giftcard.code).then(
                 () => toast.success('Successfully copied gift card code to clipboard.'),
                 () => toast.error('Could not copy gift card code to clipboard.')
               )
             }}
           >
-            {code}
+            {giftcard.code}
           </button>
           .
         </span>

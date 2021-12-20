@@ -4,13 +4,11 @@ const bs58 = require('bs58')
 const { secureKey, toId } = require('../../../utils')
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
-const GIFT_CARD_CODE_LENGTH = 6
-
 function generateCode(clientSecret) {
   const hmac = crypto.createHmac('sha256', secureKey)
   hmac.update(clientSecret)
   const d = hmac.digest()
-  return bs58.encode(d)
+  return bs58.encode(d).slice(0, 8)
 }
 
 function generateRandomCode() {
@@ -63,25 +61,13 @@ async function add({ user, paymentIntent }) {
   return giftCard
 }
 
-/**
- * User is expected to have the first 6 letters of the code
- */
 async function availableGiftCard(code) {
-  if (
-    typeof code !== 'string' ||
-    !code ||
-    code.length < GIFT_CARD_CODE_LENGTH
-  ) {
+  if ( typeof code !== 'string' || !code) {
     return null
   }
 
-  const giftCard = await strapi
-    .query('gift-card')
-    .model.query((qb) => {
-      qb.where('code', 'like', `${code}%`)
-    })
-    .fetch()
-  return giftCard.toJSON()
+  const giftCard = await strapi.query('gift-card').findOne({ code })
+  return giftCard
 }
 
 async function valid(giftCard) {
