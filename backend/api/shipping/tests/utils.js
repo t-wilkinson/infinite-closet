@@ -1,8 +1,10 @@
-const timing = require('../timing')
-const { day } = require('../../../../utils')
+const timing = require('../services/timing')
+const { day } = require('../../../utils')
 const MockDate = require('mockdate')
 
-it.todo('utils')
+describe.skip('Utils', () => {
+  it('works', () => {})
+})
 
 const withinDate = (date, fn) => {
   MockDate.set(day().set(date).toJSON())

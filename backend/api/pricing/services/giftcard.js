@@ -115,7 +115,7 @@ async function discount(price, giftCard, valid = true) {
 }
 
 module.exports = {
-  // generateCode,
+  generateCode,
   generateRandomCode,
   valid,
   availableGiftCard,

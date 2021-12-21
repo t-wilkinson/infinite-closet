@@ -4,7 +4,7 @@
  */
 'use strict'
 const api = {}
-api.reviews = require('../review')
+api.reviews = require('../services/review')
 
 const mock = (data) => ({
   user: 1,

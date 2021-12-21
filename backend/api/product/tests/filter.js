@@ -5,7 +5,7 @@
  */
 'use strict'
 const api = {}
-api.filter = require('../product')
+api.filter = require('../services/product')
 
 it('creates raw sql', () => {
   const where = {

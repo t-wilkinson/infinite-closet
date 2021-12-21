@@ -2,7 +2,7 @@
  * @group lib
  */
 'use strict'
-const sizing = require('../size')
+const sizing = require('../services/size')
 
 describe('Size range', () => {
   it('Should be empty when size has no value', () => {

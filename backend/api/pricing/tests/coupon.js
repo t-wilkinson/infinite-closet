@@ -3,8 +3,8 @@
  * @group pricing/coupon
  */
 'use strict'
-const couponApi = require('../coupon')
-const { day } = require('../../../../utils')
+const couponApi = require('../services/coupon')
+const { day } = require('../../../utils')
 
 const defaultData = {
   type: 'amount_off',
@@ -19,13 +19,13 @@ const mockCoupon = (data) => ({ ...defaultData, ...data })
 describe('Coupon', () => {
   it('should calculate percent off', () => {
     const coupon = mockCoupon({ type: 'percent_off', amount: 10 })
-    const discount = couponApi.discount(coupon, 100)
+    const discount = couponApi.discount(100, coupon)
     expect(discount).toBe(10)
   })
 
   it('should calculate amount off', () => {
     const coupon = mockCoupon({ type: 'amount_off', amount: 20 })
-    const discount = couponApi.discount(coupon, 100)
+    const discount = couponApi.discount(100, coupon)
     expect(discount).toBe(20)
   })
 

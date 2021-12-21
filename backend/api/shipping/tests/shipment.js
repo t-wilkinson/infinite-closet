@@ -3,9 +3,9 @@
  */
 'use strict'
 
-const { formatAddress } = require('../../../../utils')
-const acsConfig = require('../acs/config')
-const hivedConfig = require('../hived/config')
+const { formatAddress } = require('../../../utils')
+const acsConfig = require('../services/acs/config')
+const hivedConfig = require('../services/hived/config')
 
 it('Formats acs addresses', () => {
   const address = {

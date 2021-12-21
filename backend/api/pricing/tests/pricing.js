@@ -3,7 +3,7 @@
  * @group pricing
  */
 'use strict'
-const priceApi = require('../price')
+const priceApi = require('../services/price')
 
 describe('Currency', () => {
   it('Should convert price -> amount', () => {

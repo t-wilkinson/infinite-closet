@@ -27,8 +27,7 @@ var _Between2 = _interopRequireDefault(_Between);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = function (_ref) {
-  var data = _ref.data,
-      cart = _ref.cart;
+  var data = _ref.data;
 
   return _react2.default.createElement(
     _layout2.default,
@@ -48,7 +47,7 @@ exports.default = function (_ref) {
     _react2.default.createElement(
       _Grid2.default,
       { style: { marginTop: 8, marginBottom: 8 } },
-      (data.cart || cart || data.data.cart).map(function (item, i) {
+      data.cart.map(function (item, i) {
         return _react2.default.createElement(_Order2.default, Object.assign({ key: i }, item));
       })
     ),

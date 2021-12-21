@@ -18,5 +18,6 @@ SELECT 'DELETE FROM "' || name || '";' FROM sqlite_master WHERE type = 'table';
 .output
 .read wipe.sql
 SQL
+        rm wipe.sql
     fi
 fi
