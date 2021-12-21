@@ -4,7 +4,6 @@ const { day } = require('../../../utils')
 
 async function shipToCleaners(cartItem) {
   const { order } = cartItem
-  strapi.log.info('cleaning order %o', order.id)
   const shippingRequest = {
     collection:
       strapi.plugins['orders'].services.order.toShippingAddress(order),
@@ -12,19 +11,13 @@ async function shipToCleaners(cartItem) {
     cartItem,
   }
 
+  const id = await strapi.services.shipment.ship(shippingRequest)
   await strapi
     .query('order', 'orders')
-    .update({ id: order.id }, { status: 'cleaning' })
-  if (strapi.services.shipment.providerName !== 'acs') {
-    const id = await strapi.services.shipment.ship(shippingRequest)
-    await strapi
-      .query('order', 'orders')
-      .update({ id: order.id }, { shipment: id })
-  }
-  await strapi.services.template_email.orderEnding(cartItem)
+    .update({ id: order.id }, { shipment: id })
 }
 
-async function sendToCleaners(orders) {
+async function ordersEnding(orders) {
   for (const order of orders) {
     const range = strapi.services.timing.range(order)
     const date = day(range.end)
@@ -37,7 +30,13 @@ async function sendToCleaners(orders) {
       'orders'
     ].services.cart.createCartItem(order)
 
-    shipToCleaners(order).catch((err) => shippingFailure(cartItem, err))
+    await strapi
+      .query('order', 'orders')
+      .update({ id: order.id }, { status: 'cleaning' })
+    if (strapi.services.shipment.providerName !== 'acs') {
+      await shipToCleaners(order).catch((err) => shippingFailure(cartItem, err))
+    }
+    await strapi.services.template_email.orderEnding(cartItem)
   }
 }
 
@@ -100,7 +99,7 @@ async function shipOrders(orders) {
 
 module.exports = {
   shipToCleaners,
-  sendToCleaners,
+  ordersEnding,
   shippingFailure,
   shipCartItemToClient,
   shipOrderToClient,

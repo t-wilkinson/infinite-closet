@@ -25,7 +25,7 @@ module.exports = {
       orders.filter((order) => order.status === status)
 
     const shippingOrders = filterOrders('shipping')
-    ship.sendToCleaners(shippingOrders)
+    ship.ordersEnding(shippingOrders)
     helpers.notifyArrival(shippingOrders)
 
     // Send user email if they are recieving order today

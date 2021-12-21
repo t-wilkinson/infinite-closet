@@ -92,6 +92,7 @@ const statuses = {
   cleaning: 'Completed',
   completed: 'Completed',
   error: 'Error',
+  delayed: 'Delayed',
 }
 
 export default Orders

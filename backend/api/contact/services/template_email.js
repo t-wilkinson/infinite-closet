@@ -101,11 +101,10 @@ module.exports = {
   },
 
   async trustPilot(cartItem) {
-    const { order, user } = unpackCartItem(cartItem)
+    const { user } = unpackCartItem(cartItem)
     await send({
       template: 'trust-pilot',
       to: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
-      subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
       data: { ...cartItem, firstName: user.firstName },
     })
   },
