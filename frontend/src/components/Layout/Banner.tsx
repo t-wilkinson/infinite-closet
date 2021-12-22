@@ -1,9 +1,11 @@
 import React from 'react'
+import dynamic from 'next/dynamic'
 
 import axios from '@/utils/axios'
 import { useDispatch } from '@/utils/store'
 import { accountActions } from '@/Account/slice'
 import * as storage from '@/utils/storage'
+const Markdown = dynamic(() => import('@/Markdown'))
 
 export const Banner = () => {
   const dispatch = useDispatch()
@@ -37,7 +39,7 @@ export const Banner = () => {
           storage.session.set('popup-form', true)
         }}
       >
-        {content}
+        <Markdown content={content} />
       </button>
     </div>
   )

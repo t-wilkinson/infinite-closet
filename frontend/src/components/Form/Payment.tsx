@@ -11,6 +11,7 @@ import useAnalytics from '@/utils/useAnalytics'
 import Popup from '@/Layout/Popup'
 
 export * from './PaymentWrapper'
+export * from './GiftCard'
 
 const toTitleCase = (string: string) =>
   string.charAt(0).toUpperCase() + string.slice(1)

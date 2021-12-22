@@ -1,146 +1,65 @@
 import React from 'react'
-import { loadStripe } from '@stripe/stripe-js'
-import { Elements, PaymentElement, useStripe } from '@stripe/react-stripe-js'
-const promise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY)
-import { toast } from 'react-toastify'
 
 import axios from '@/utils/axios'
-import {
-  Form,
-  Submit,
-  Fieldset,
-  MoneyAmounts,
-  useFields,
-  UseFields,
-  BodyWrapper,
-} from '@/Form'
-import { usePaymentElement } from '@/Form/Payment'
+import { GiftCard, useGiftCardFields } from '@/Form/Payment'
 import { StrapiGiftCard } from '@/types/models'
+import { fmtPrice } from '@/utils/helpers'
+import { CopyToClipboard } from '@/components'
 
-interface GiftCardFields {
-  amount: number
-}
+type GiftCardValues = (StrapiGiftCard & { valueLeft: number })[]
 
-const amounts = [10, 25, 50]
+const Heading = ({ children }) => (
+  <h2 className="mt-8 font-bold text-3xl">{children}</h2>
+)
 
 export const GiftCardWrapper = ({ data }) => {
-  const clientSecret: string = data.paymentIntent?.client_secret
-  const [paymentIntent, setPaymentIntent] = React.useState(data.paymentIntent)
-  const fields = useFields<GiftCardFields>({
-    amount: { constraints: 'min:0 number', default: amounts[0] },
-  })
+  const [giftCards, setGiftCards] = React.useState<GiftCardValues>([])
+  const giftCardFields = useGiftCardFields()
 
   React.useEffect(() => {
-    const amount = fields.value('amount')
-    if (isNaN(amount) || amount <= 0) {
-      return
-    }
-
     axios
-      .put(
-        `/giftcards/payment-intent/${paymentIntent.id}`,
-        {
-          amount,
-        },
-        { withCredentials: false }
-      )
-      .then((paymentIntent) => {
-        setPaymentIntent(paymentIntent)
-      })
-      .catch(() => {
-        fields.setStatus('error')
-        fields.setError('An unexpected error occured.')
-      })
-  }, [fields.fields.amount.value])
-
-  const options = {
-    clientSecret,
-    appearance: {
-      theme: 'stripe',
-      fonts: ['Lato'],
-      variables: {
-        colorPrimary: '#ad9253',
-        colorText: '#000000',
-        borderRadius: '0.125rem',
-        borderColor: '#5f6368',
-      },
-    },
-  } as any
+      .get<GiftCardValues>('/giftcards')
+      .then((giftCards) => setGiftCards(giftCards))
+      .catch(() => setGiftCards([]))
+  }, [])
 
   return (
-    <Elements stripe={promise} options={options}>
-      <GiftCard fields={fields} />
-    </Elements>
+    <div className="mb-8 max-w-screen-sm w-full">
+      {giftCards?.length > 0 ? (
+        <>
+          <Heading>Your gift cards</Heading>
+          <GiftCards giftCards={giftCards} />
+        </>
+      ) : null}
+      <Heading>Purchase a gift card</Heading>
+      <GiftCard fields={giftCardFields} paymentIntent={data.paymentIntent} />
+    </div>
   )
 }
 
-const GiftCard = ({ fields }: { fields: UseFields<GiftCardFields> }) => {
-  const payment = usePaymentElement({
-    form: fields.form,
-  })
-  const [giftcard, setGiftcard] = React.useState<StrapiGiftCard>(null)
-  const stripe = useStripe()
+const Price = ({ price }) => (
+  <span className="font-bold">{fmtPrice(price)}</span>
+)
 
-  const onSubmit = () => {
-    payment.onSubmit()
-  }
-
-  React.useEffect(() => {
-    if (fields.status !== 'success' || !stripe) {
-      return
-    }
-
-    const paymentIntent = new URLSearchParams(window.location.search).get(
-      'payment_intent'
-    )
-
-    if (!paymentIntent) {
-      return
-    }
-
-    axios
-      .post('/giftcards', {
-        paymentIntent,
-      })
-      .then((giftcard) => {
-        setGiftcard(giftcard)
-      })
-  }, [fields.status, stripe])
-
-  if (fields.status === 'success' && giftcard) {
-    return (
-      <BodyWrapper label="Successfully purchased gift card">
-        Purchased gift card for ${giftcard.amount}.
-        <span>
-          Please save the code
-          <button
-            type="button"
-            className="bg-gray-light p-2 rounded-m m-2 select-all"
-            onClick={() => {
-              navigator.clipboard?.writeText(giftcard.code).then(
-                () => toast.success('Successfully copied gift card code to clipboard.'),
-                () => toast.error('Could not copy gift card code to clipboard.')
-              )
-            }}
-          >
-            {giftcard.code}
-          </button>
-          .
-        </span>
-      </BodyWrapper>
-    )
-  }
-
+const GiftCards = ({ giftCards }: { giftCards: GiftCardValues }) => {
   return (
-    <Form onSubmit={onSubmit} fields={fields}>
-      <Fieldset label="Amount">
-        <MoneyAmounts field={fields.get('amount')} amounts={amounts} />
-      </Fieldset>
-      <Fieldset label="Billing">
-        <PaymentElement id="payment-element" />
-      </Fieldset>
-      <Submit form={fields.form} disabled={fields.form.value === 'success'} />
-    </Form>
+    <div className="">
+      {giftCards.map((giftCard) => (
+        <div
+          key={giftCard.id}
+          className="flex-row justify-between items-center"
+        >
+          <span>
+            <Price price={giftCard.valueLeft} /> left (
+            <span className="text-gray">
+              <Price price={giftCard.value} /> original value
+            </span>
+            ).
+          </span>
+          <CopyToClipboard value={giftCard.code} message="gift card code" />
+        </div>
+      ))}
+    </div>
   )
 }
 

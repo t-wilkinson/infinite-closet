@@ -48,6 +48,9 @@ const SideMenu = () => {
       <SideLink active={/profile/.test(router.pathname)} href="/user/profile">
         Profile
       </SideLink>
+      <SideLink active={/giftcard/.test(router.pathname)} href="/buy/giftcard">
+        Gift cards
+      </SideLink>
       <SideLink
         active={/order-history/.test(router.pathname)}
         href="/user/order-history"

@@ -54,7 +54,6 @@ const App = ({ router, Component, pageProps }) => {
 export default App
 
 const blockedPages = [
-  'buy/giftcard'
 ]
 
 const Wrapper = ({ router, children }) => {

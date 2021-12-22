@@ -1,5 +1,6 @@
 import { StrapiAddress } from './address';
 import { StrapiCoupon } from './coupon';
+import { StrapiGiftCard } from './gift-card';
 import { StrapiProduct } from './product';
 import { StrapiReview } from './review';
 import { StrapiUser } from './user';
@@ -9,7 +10,7 @@ import { StrapiUser } from './user';
  */
 export interface StrapiOrder {
   id: string;
-  status: "cart" | "list" | "planning" | "shipping" | "cleaning" | "completed" | "dropped" | "error";
+  status: "delayed" | "cart" | "list" | "planning" | "shipping" | "cleaning" | "completed" | "dropped" | "error";
   product?: StrapiProduct;
   user?: StrapiUser;
   review?: StrapiReview;
@@ -24,11 +25,13 @@ export interface StrapiOrder {
   paymentIntent?: string;
   shipment?: string;
   insurance?: boolean;
+  giftCard?: StrapiGiftCard;
   coupon?: StrapiCoupon;
-  charge?: number;
   fullName?: string;
   nickName?: string;
   email?: string;
+  charge?: number;
+  giftCardDiscount?: number;
   created_at: string;
   created_by: string;
   updated_at: string;

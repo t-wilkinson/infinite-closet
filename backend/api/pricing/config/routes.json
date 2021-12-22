@@ -32,6 +32,14 @@
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
+    },
+    {
+      "method": "GET",
+      "path": "/giftcards",
+      "handler": "giftcard.getGiftCards",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
     }
   ]
 }

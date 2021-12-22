@@ -15,11 +15,12 @@ export const Footer = () => {
     <FooterWrapper>
       <nav className="flex flex-wrap flex-row items-start justify-start md:justify-center">
         <Section
-          title="Get Help"
+          title="Explore"
           links={[
             { href: '/#how-it-works', label: 'How it Works' },
             { href: '/faqs', label: 'FAQs' },
             { href: '/contact-us', label: 'Contact Us' },
+            { href: '/buy/giftcard', label: 'Gift Cards' },
             // { href: '/size-charts', label: 'Size Charts' },
           ]}
         />

@@ -13,13 +13,15 @@ export const Page = ({ data }) => {
 }
 
 export async function getServerSideProps() {
-  const paymentIntent = await axios.post(
-    '/giftcards/payment-intent',
-    {
-      amount: 10,
-    },
-    { withCredentials: false }
-  )
+  const [paymentIntent] = await Promise.all([
+    await axios.post(
+      '/giftcards/payment-intent',
+      {
+        value: 10,
+      },
+      { withCredentials: false }
+    ),
+  ])
 
   return {
     props: {

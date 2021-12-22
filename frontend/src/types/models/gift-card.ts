@@ -1,4 +1,3 @@
-import { StrapiPurchase } from './custom/purchase';
 import { StrapiUser } from './user';
 
 /**
@@ -6,10 +5,9 @@ import { StrapiUser } from './user';
  */
 export interface StrapiGiftCard {
   id: string;
-  amount: number;
-  code: string;
-  used?: boolean;
-  purchases: StrapiPurchase[];
+  value: number;
+  code?: string;
+  paymentIntent?: string;
   owner?: StrapiUser;
   created_at: string;
   created_by: string;

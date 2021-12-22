@@ -64,9 +64,7 @@ async function toPlanning({
             ? paymentMethod.id
             : paymentMethod || null,
           status: 'planning',
-          charge: strapi.services.price.toPrice(
-            strapi.plugins['orders'].services.price.orderPriceTotal(order)
-          ),
+          charge: strapi.plugins['orders'].services.price.orderPriceTotal(order),
           giftCard: summary.giftCard ? summary.giftCard.id : null,
           giftCardDiscount: summary.giftCardDiscount,
           coupon: summary.coupon ? summary.coupon.id : null,

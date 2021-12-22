@@ -1,7 +1,29 @@
 import React from 'react'
 import Link from 'next/link'
+import { toast } from 'react-toastify'
+
 import { Icon, iconUp } from '@/Icons'
 export { Icon, Icons } from '@/Icons'
+
+export function copyToClipboard(value: string, message: string) {
+  if (!navigator.clipboard) {
+    console.error("Don't have access to clipboard")
+  }
+  navigator.clipboard?.writeText(value).then(
+    () => toast.success(`Successfully copied ${message} to clipboard.`),
+    () => toast.error(`Could not copy ${message} to clipboard.`)
+  )
+}
+
+export const CopyToClipboard = ({ value, message }) => (
+  <button
+    type="button"
+    className="bg-gray-light p-2 rounded-m m-2 select-all"
+    onClick={() => copyToClipboard(value, message)}
+  >
+    {value}
+  </button>
+)
 
 export const FacebookMessenger = () => (
   <>

@@ -72,7 +72,7 @@
     },
     "insurance": {
       "type": "boolean",
-      "default": false
+      "default": true
     },
     "giftCard": {
       "model": "gift-card"
