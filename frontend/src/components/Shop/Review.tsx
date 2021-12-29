@@ -6,15 +6,17 @@ import { getURL } from '@/utils/axios'
 import { StrapiOrder } from '@/types/models'
 import { Icons } from '@/Icons'
 import { iconStarFill, iconStarHalf } from '@/Icons'
+import * as sizing from '@/utils/sizing'
 
 const Review = ({
   user,
+  size,
   review: { fit, rating, images, heading, message, created_at },
 }: StrapiOrder) => {
   return (
     <article className="flex bg-white p-4 border border-gray-light rounded-sm relative flex-row justify-between h-80">
       <div className="w-32">
-        <SideInfo user={user} fit={fit} />
+        <SideInfo size={size} user={user} fit={fit} />
       </div>
       {/* <div className="w-px bg-pri-light mx-4" /> */}
       <div className="space-y-3 flex-grow ml-8">
@@ -56,12 +58,12 @@ const heights = [4, 5, 6]
   .flat()
   .slice(5, -6)
 
-const SideInfo = ({ user, fit }) => {
+const SideInfo = ({ user, fit, size}) => {
   const userInfoKeys = [
     'chestSize',
     'hipsSize',
-    'dressSize',
   ]
+  const height = user.height && heights.find(value => value.key === user.height)
 
   return (
     <aside className="flex flex-col">
@@ -75,7 +77,9 @@ const SideInfo = ({ user, fit }) => {
           {Object.entries(subObj(user, userInfoKeys)).map(([k, v]) => (
             <Row key={k} label={k} value={v} />
           ))}
-          {user.height && heights[user.height] && <Row label='height' value={`${heights[user.height].label}`} />}
+          {size && <Row label='dress size' value={sizing.normalize(size)} />}
+          {user.dressSize && <Row label='normally wears' value={`${sizing.normalize(user.dressSize)}`} />}
+          {height && <Row label='height' value={`${height.label}`} />}
           {user.weight && <Row label='weight' value={`${user.weight}kgs`} />}
         </tbody>
       </table>
@@ -89,7 +93,7 @@ const keyToTh = (key = '') =>
 const Row = ({ label, value }) =>
   !value ? null : (
     <tr>
-      <th className="font-bold text-sm text-left w-24">{keyToTh(label)}:</th>
+      <th className="font-bold text-sm text-left w-28">{keyToTh(label)}:</th>
       <td>{value}</td>
     </tr>
   )
