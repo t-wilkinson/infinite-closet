@@ -43,13 +43,24 @@ const Review = ({
 const subObj = (obj: object, keys: string[]) =>
   Object.fromEntries(Object.entries(obj).filter(([k]) => keys.includes(k)))
 
+const heights = [4, 5, 6]
+  .map((feet) =>
+    Array(12)
+      .fill(0)
+      .map((_, i) => i + 1)
+      .map((inches) => ({
+        label: `${feet}' ${inches}"`,
+        key: `${feet}-${inches}`,
+      }))
+  )
+  .flat()
+  .slice(5, -6)
+
 const SideInfo = ({ user, fit }) => {
   const userInfoKeys = [
     'chestSize',
     'hipsSize',
     'dressSize',
-    'height',
-    'weight',
   ]
 
   return (
@@ -64,6 +75,8 @@ const SideInfo = ({ user, fit }) => {
           {Object.entries(subObj(user, userInfoKeys)).map(([k, v]) => (
             <Row key={k} label={k} value={v} />
           ))}
+          {user.height && heights[user.height] && <Row label='height' value={`${heights[user.height].label}`} />}
+          {user.weight && <Row label='weight' value={`${user.weight}kgs`} />}
         </tbody>
       </table>
     </aside>
