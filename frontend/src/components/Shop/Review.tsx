@@ -28,9 +28,9 @@ const Review = ({
         <span className="">{message}</span>
       </div>
       <div className="relative w-48 h-64">
-        {images?.length > 0 && (
+        {images?.[0]?.url && (
           <Image
-            src={getURL(images[0].formats.large.url)}
+            src={getURL(images?.[0]?.url)}
             layout="fill"
             objectFit="cover"
           />
