@@ -21,13 +21,13 @@ module.exports = {
     const body = ctx.request.body
     const data = await strapi.plugins[
       'orders'
-    ].services.helpers.prepareCheckoutData(body, user)
+    ].services.checkout.prepareData(body, user)
     if (data.cart.length === 0) {
       return ctx.badRequest('Cart is empty or has no valid items to checkout.')
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
-      await strapi.plugins['orders'].services.helpers.onCheckout(data)
+      await strapi.plugins['orders'].services.checkout.onCheckout(data)
       return ctx.send(null)
     }
 
@@ -41,7 +41,7 @@ module.exports = {
         off_session: false,
         confirm: true,
       })
-      await strapi.plugins['orders'].services.helpers.onCheckout({
+      await strapi.plugins['orders'].services.checkout.onCheckout({
         ...data,
         paymentIntent,
       })
@@ -56,13 +56,13 @@ module.exports = {
     const body = { ...(ctx.request.body.body || {}), ...ctx.request.body }
     const data = await strapi.plugins[
       'orders'
-    ].services.helpers.prepareCheckoutData(body)
+    ].services.checkout.prepareData(body)
     if (data.cart.length === 0) {
       return ctx.badRequest('Cart is empty or has no valid items to checkout.')
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
-      await strapi.plugins['orders'].services.helpers.onCheckout(data)
+      await strapi.plugins['orders'].services.checkout.onCheckout(data)
       return ctx.send({ status: 'no-charge' })
     }
 
@@ -83,7 +83,7 @@ module.exports = {
       const response = generateResponse(intent)
 
       if (response.success) {
-        await strapi.plugins['orders'].services.helpers.onCheckout({
+        await strapi.plugins['orders'].services.checkout.onCheckout({
           ...data,
           paymentIntent: intent,
         })
@@ -100,13 +100,13 @@ module.exports = {
     const body = ctx.request.body
     const data = await strapi.plugins[
       'orders'
-    ].services.helpers.prepareCheckoutData(body)
+    ].services.checkout.prepareData(body)
     if (data.cart.length === 0) {
       return ctx.badRequest('Cart is empty or has no valid items to checkout.')
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
-      await strapi.plugins['orders'].services.helpers.onCheckout(data)
+      await strapi.plugins['orders'].services.checkout.onCheckout(data)
       return ctx.send(null)
     }
 
@@ -114,7 +114,7 @@ module.exports = {
       if (!validPaymentIntent(data.cart, data.paymentIntent)) {
         throw new Error('Payment intent invalid')
       }
-      await strapi.plugins['orders'].services.helpers.onCheckout(data)
+      await strapi.plugins['orders'].services.checkout.onCheckout(data)
       return ctx.send(null)
     } catch (e) {
       strapi.log.error('PaymentRequest paymentIntent did not succeed', {

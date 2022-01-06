@@ -27,12 +27,12 @@ describe.only('On checkout', () => {
 
     const checkoutData = await strapi.plugins[
       'orders'
-    ].services.helpers.prepareCheckoutData({
+    ].services.checkout.prepareData({
       user,
       orders: [order],
     })
 
-    await strapi.plugins['orders'].services.helpers.onCheckout({
+    await strapi.plugins['orders'].services.checkout.onCheckout({
       contact,
       address: {
         addressLine1: 'Address Line 1',

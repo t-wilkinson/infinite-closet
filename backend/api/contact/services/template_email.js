@@ -156,7 +156,7 @@ module.exports = {
     })
   },
 
-  async storeCredit() {
+  async storeCredit({firstName, amount}) {
     const recommendations = await strapi.services.product.recommendations()
     await send({
       template: 'store-credit',

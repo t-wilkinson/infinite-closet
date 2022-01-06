@@ -74,10 +74,17 @@ const data = {
   misc: {
     label: 'Misc',
     components: orderData,
+    // 'newsletter-subscription': {},
+    // 'waitlist-subscription': {},
+    // 'mailinglist-subscription': {},
+    'forgot-password': {
+      user,
+      url: '/REST_URL',
+    },
   },
 
   order: {
-    label: 'Order Lifecycle',
+    label: 'Order lifecycle',
     'order-confirmation': {
       cart: [orderData.cartItem, orderData.cartItem],
       address,
@@ -94,33 +101,6 @@ const data = {
     'order-review': orderData,
   },
 
-  'non-user-facing': {
-    label: 'Non user-facing',
-    'trust-pilot': orderData,
-    'order-shipping-failure': {
-      order: {},
-      error: {},
-    },
-    'forgot-password': {
-      user,
-      url: '/REST_URL',
-    },
-    'contact-us': {
-      firstName: 'First Name',
-      lastName: 'Last Name',
-      emailAddress: 'Email',
-      phoneNumber: 'Phone',
-      message: 'Random message',
-    },
-  },
-
-  subscriptions: {
-    label: 'Subscriptions',
-    'newsletter-subscription': {},
-    'waitlist-subscription': {},
-    'mailinglist-subscription': {},
-  },
-
   money: {
     label: 'Money',
     'gift-card': {
@@ -132,6 +112,22 @@ const data = {
       firstName: 'First Name',
       amount: 20,
       recommendations,
+    },
+  },
+
+  'non-user-facing': {
+    label: 'Non user-facing',
+    'trust-pilot': orderData,
+    'order-shipping-failure': {
+      order: {},
+      error: {},
+    },
+    'contact-us': {
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      emailAddress: 'Email',
+      phoneNumber: 'Phone',
+      message: 'Random message',
     },
   },
 

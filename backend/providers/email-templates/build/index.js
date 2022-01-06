@@ -65,83 +65,108 @@ var order = {
 };
 
 var orderData = {
-  order: order,
   firstName: 'First Name',
-  totalPrice: 30.13,
-  range: { start: '8/24/2020', end: '8/28/2020' }
+  cartItem: {
+    order: order,
+    totalPrice: 30.13,
+    range: { start: '8/24/2020', end: '8/28/2020' }
+  },
+  user: user
 };
 
 var recommendations = [product, product, product, product];
 
 var data = {
-  'contact-us': {
-    firstName: 'First Name',
-    lastName: 'Last Name',
-    emailAddress: 'Email',
-    phoneNumber: 'Phone',
-    message: 'Random message'
-  },
-  'order-shipping-failure': {
-    order: {},
-    error: {}
-  },
-  'forgot-password': {
-    user: user,
-    url: '/REST_URL'
+  misc: {
+    label: 'Misc',
+    components: orderData
   },
 
-  'newsletter-subscription': {},
-  'waitlist-subscription': {},
-  'mailinglist-subscription': {},
-
-  'join-launch-party': {
-    firstName: 'First Name',
-    ticketPrice: 25,
-    donation: 25.0,
-    discount: 5,
-    total: 45,
-    guests: ['Bob', 'Joe']
-  },
-  'order-confirmation': {
-    firstName: 'First Name',
-    cart: [orderData, orderData],
-    address: address,
-    summary: summary,
-    recommendations: recommendations
-  },
-  'order-shipped': orderData,
-  'order-starting': orderData,
-  'order-ending': orderData,
-  'order-received': orderData,
-  'order-review': orderData,
-
-  'gift-card': {
-    recommendations: recommendations,
-    firstName: 'First Name',
-    amount: 20
-  },
-  'store-credit': {
-    firstName: 'First Name',
-    amount: 20,
-    recommendations: recommendations
+  order: {
+    label: 'Order Lifecycle',
+    'order-confirmation': {
+      cart: [orderData.cartItem, orderData.cartItem],
+      address: address,
+      summary: summary,
+      recommendations: recommendations,
+      contact: {
+        nickName: 'First Name'
+      }
+    },
+    'order-shipped': orderData,
+    'order-starting': orderData,
+    'order-ending': orderData,
+    'order-received': orderData,
+    'order-review': orderData
   },
 
-  components: orderData
+  'non-user-facing': {
+    label: 'Non user-facing',
+    'trust-pilot': orderData,
+    'order-shipping-failure': {
+      order: {},
+      error: {}
+    },
+    'forgot-password': {
+      user: user,
+      url: '/REST_URL'
+    },
+    'contact-us': {
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      emailAddress: 'Email',
+      phoneNumber: 'Phone',
+      message: 'Random message'
+    }
+  },
+
+  subscriptions: {
+    label: 'Subscriptions',
+    'newsletter-subscription': {},
+    'waitlist-subscription': {},
+    'mailinglist-subscription': {}
+  },
+
+  money: {
+    label: 'Money',
+    'gift-card': {
+      recommendations: recommendations,
+      firstName: 'First Name',
+      amount: 20
+    },
+    'store-credit': {
+      firstName: 'First Name',
+      amount: 20,
+      recommendations: recommendations
+    }
+  },
+
+  old: {
+    label: 'Old',
+    'join-launch-party': {
+      firstName: 'First Name',
+      ticketPrice: 25,
+      donation: 25.0,
+      discount: 5,
+      total: 45,
+      guests: ['Bob', 'Joe']
+    }
+  }
 };
 
 var NavLink = function NavLink(_ref) {
-  var k = _ref.k;
+  var sub = _ref.sub,
+      k = _ref.k;
+
   return _react2.default.createElement(
     'a',
     {
       key: k,
-      href: '/' + k,
+      href: '/' + sub + '/' + k,
       style: {
-        margin: '0.25rem 0.25rem',
         color: 'black',
         textDecoration: 'none',
         padding: '4px 8px',
-        backgroundColor: '#eee',
         borderRadius: 4,
         fontSize: 14
       }
@@ -156,12 +181,12 @@ var Emails = function Emails() {
       Email = _React$useState2[0],
       setEmail = _React$useState2[1];
 
-  var defaultEmail = Object.keys(data).slice(-1)[0];
-  var path = window.location.pathname.split('/')[1];
+  var defaultEmail = ['misc', 'components'];
+  var path = window.location.pathname.split('/').slice(1, 3);
 
   _react2.default.useEffect(function () {
     var Email = _react2.default.lazy(function () {
-      return import('./email-templates/' + (path || defaultEmail));
+      return import('./email-templates/' + (path[1] || defaultEmail[1]));
     });
     setEmail(Email);
   }, []);
@@ -178,23 +203,48 @@ var Emails = function Emails() {
       'nav',
       {
         style: {
+          backgroundColor: '#eee',
           padding: 4,
           display: 'flex',
           flexDirection: 'column',
           flexWrap: 'wrap'
         }
       },
-      Object.keys(data).sort().map(function (key) {
-        return _react2.default.createElement(NavLink, { key: key, k: key });
+      Object.keys(data).map(function (key) {
+        return _react2.default.createElement(
+          _react2.default.Fragment,
+          { key: key },
+          _react2.default.createElement(
+            'strong',
+            { style: { marginTop: 8 } },
+            data[key].label
+          ),
+          Object.keys(data[key]).map(function (k) {
+            return k !== 'label' && _react2.default.createElement(NavLink, { key: k, k: k, sub: key });
+          })
+        );
       })
     ),
     _react2.default.createElement(
       'div',
-      { style: { width: '100%' } },
-      Email && _react2.default.createElement(
-        _react2.default.Suspense,
-        { fallback: _react2.default.createElement('div', null) },
-        _react2.default.createElement(Email, { data: data[path || defaultEmail] })
+      {
+        style: {
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }
+      },
+      _react2.default.createElement(
+        'div',
+        { style: { maxWidth: 1000, width: '100%' } },
+        Email && _react2.default.createElement(
+          _react2.default.Suspense,
+          { fallback: _react2.default.createElement('div', null) },
+          _react2.default.createElement(Email, {
+            data: data[path[0] || defaultEmail[0]][path[1] || defaultEmail[1]]
+          })
+        )
       )
     )
   );

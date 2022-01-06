@@ -2,7 +2,8 @@ import React from 'react'
 import { P, Legal, Layout, G } from '../layout'
 import { ButtonLink } from '../components'
 
-export default ({ data: { url, user } }) => {
+export default ({ data }) => {
+  const { url, user } = data
   return (
     <Layout
       title="Requested Password Reset"

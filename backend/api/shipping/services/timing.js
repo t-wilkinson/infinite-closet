@@ -181,6 +181,7 @@ function range({ startDate, rentalLength, shippingDate, created_at }) {
     : day(startDate).subtract(hoursSendClient, 'hours')
 
   const created = created_at ? day(created_at) : undefined
+  const confirmed = undefined
   const start = day(startDate)
   const end = start.add(rentalLength, 'hours')
   const cleaning = end.add(provider.config.timing.hoursSendCleaners, 'hours')
@@ -190,7 +191,7 @@ function range({ startDate, rentalLength, shippingDate, created_at }) {
     'hours'
   )
 
-  return { created, shipped, start, end, cleaning, completed }
+  return { created, confirmed, shipped, start, end, cleaning, completed }
 }
 
 module.exports = {
