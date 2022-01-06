@@ -121,7 +121,7 @@ export class UseField<Value = FieldValue> {
         optional = true
       }
 
-      const err = (test, message) => (negate ? !test : test) || message
+      const err = (test: boolean, message: string) => (negate ? !test : test) || message
 
       // prettier-ignore
       switch (operation) {
@@ -133,8 +133,8 @@ export class UseField<Value = FieldValue> {
         case 'decimal': return err(/^\d*\.?\d{0,2}$/.test(v) , `${label_} must be a number`)
         case 'integer': return err(/^-?\d*$/.test(v) , `${label_} must be a number`)
         case 'number': return err(/^\d*\.?\d*$/.test(v) , `${label_} must be a number`)
-        case 'min': return err(value > props[0], `${label_} must be be greater than ${props[0]}`)
-        case 'max': return err(value < props[0], `${label_} must be be smaller than ${props[0]}`)
+        case 'min': return err(Number(value) > Number(props[0]), `${label_} must be be greater than ${props[0]}`)
+        case 'max': return err(Number(value) < Number(props[0]), `${label_} must be be smaller than ${props[0]}`)
         case 'max-width': return err(
           v.length <= Number(props[0]) || (v.length === 0 && optional), `${label_} must be at most ${props[0]} characters long`)
         case 'min-width': return err(v.length >= Number(props[0]) || (v.length === 0 && optional), `${label_} must be at least ${props[0]} characters long`)
@@ -271,10 +271,10 @@ export class UseFields<Keys = { [key: string]: any }> {
     }
   }
 
-  clean(): { [key in keyof Keys]: Keys[key] } {
+  clean(): Keys {
     return Object.entries(this.fields).reduce(
-      (acc, [k, field]: [string, UseField<Keys[typeof k]>]) => {
-        acc[k] = field.clean()
+      (acc, [k, field]) => {
+        acc[k] = (field as any).clean()
         return acc
       },
       {} as any

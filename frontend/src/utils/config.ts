@@ -26,7 +26,7 @@ export const routes = [
           { name: 'How It Works', slug: '#how-it-works' },
           { name: 'Why Rent?', slug: '#why-rent' },
           { name: 'About Us', slug: 'about-us' },
-          { name: 'Customer Feedback', slug: null },
+          { name: 'Customer Feedback', slug: '#reviews' },
           { name: 'Ambassador Program', slug: null },
         ],
       },

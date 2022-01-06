@@ -18,12 +18,12 @@ export const Banner = () => {
       .then((data) => data?.[0])
       .then((data) => {
         setLoaded(true)
-        setTimeout(() => setContent(data.content), 500)
+        setTimeout(() => setContent(data?.content), 500)
       })
       .catch((e) => console.error(e))
   }, [])
 
-  if (!loaded) {
+  if (!loaded || !content) {
     return null
   }
 

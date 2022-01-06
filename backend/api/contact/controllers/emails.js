@@ -27,7 +27,7 @@ async function getCartItem(orderId) {
 
 async function defaultCartItemEmail(ctx, email) {
   try {
-    const { orderId } = ctx.params
+    const { orderId } = ctx.request.body
     const { cartItem } = await getCartItem(orderId)
     await strapi.services.template_email[email](cartItem)
     return ctx.send(null)
@@ -42,12 +42,20 @@ module.exports = {
     await defaultCartItemEmail(ctx, 'orderShipped')
   },
 
-  async orderStarting(ctx) {
-    await defaultCartItemEmail(ctx, 'orderStarting')
-  },
+  //   async orderStarting(ctx) {
+  //     await defaultCartItemEmail(ctx, 'orderStarting')
+  //   },
 
   async orderEnding(ctx) {
     await defaultCartItemEmail(ctx, 'orderEnding')
+  },
+
+  async orderReceived(ctx) {
+    await defaultCartItemEmail(ctx, 'orderReceived')
+  },
+
+  async orderReview(ctx) {
+    await defaultCartItemEmail(ctx, 'orderReview')
   },
 
   //   async sendToCleaners(ctx) {
@@ -65,5 +73,26 @@ module.exports = {
 
   async trustPilot(ctx) {
     await defaultCartItemEmail(ctx, 'trustPilot')
+  },
+
+  async giftCard(ctx) {
+    try {
+      let { firstName, giftCardId } = ctx.request.body
+      const giftCard = await strapi.query('gift-card').find({ id: giftCardId })
+      await strapi.services.template_email.giftCard({ firstName, giftCard })
+      return ctx.send(null)
+    } catch (e) {
+      return ctx.badRequest(e.message)
+    }
+  },
+
+  async storeCredit() {
+    // try {
+    //   let { firstName} = ctx.request.body
+    //   await strapi.services.template_email.storeCredit({ firstName })
+    //   return ctx.send(null)
+    // } catch (e) {
+    //   return ctx.badRequest(e.message)
+    // }
   },
 }

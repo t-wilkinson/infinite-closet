@@ -1,45 +1,64 @@
-import React from "react";
+import React from 'react'
 
-import Img from "../elements/Img";
-import Grid from "./Grid";
-import Footer from "../elements/Footer";
+import { Separator, Img } from '../components'
+import G from './Grid'
+import Footer from './Footer'
 
-export const Layout = ({ title, children }) => (
-  <div
+export * from './Footer'
+export * from './Between'
+export * from './Grid'
+export * from './Container'
+export * from './Paragraph'
+
+export const Layout = ({ title, children, footer = true, img, separator }) => (
+  <G
+    className="bg-sec-light"
     style={{
-      width: "100%",
-      background: "#efefef",
-      paddingTop: 16,
-      paddingBottom: 16,
+      width: '100%',
     }}
   >
-    <Grid style={{ width: "100%", maxWidth: 700, margin: "0 auto" }}>
-      <Grid.Row>
-        <Grid>
-          <Grid.Row>
-            <Img
-              style={{
-                height: 128,
-                width: 256,
-                objectFit: "cover",
-              }}
-              src="https://infinitecloset.co.uk/media/brand/logo-lockup-gray-transparent.png"
-            />
-            <Grid.Cell
-              style={{ fontSize: 20, fontWeight: 700, textAlign: "right" }}
-            >
-              {title}
-            </Grid.Cell>
-          </Grid.Row>
-        </Grid>
-      </Grid.Row>
-      <Grid.Row style={{ width: "100%", background: "white" }}>
-        <div style={{ margin: 16 }}>
-          <Grid style={{ width: "100%" }}>{children}</Grid>
-        </div>
-      </Grid.Row>
-      <Footer />
-    </Grid>
-  </div>
-);
-export default Layout;
+    <center>
+      <G className="bg-white" style={{ width: 800 }}>
+        <G.Row>
+          <G>
+            <center>
+              {img && (
+                <Img
+                  src={img}
+                  provider="frontend"
+                  style={{
+                    width: 600,
+                  }}
+                />
+              )}
+              <br />
+              <Img
+                style={{
+                  width: 300,
+                }}
+                provider="frontend"
+                src={'/media/brand/infinite-closet-text.png'}
+              />
+              <br />
+              <span
+                style={{ fontSize: 20, fontWeight: 700, textAlign: 'right' }}
+              >
+                {title.toUpperCase()}
+              </span>
+            </center>
+          </G>
+        </G.Row>
+        <center>
+          <G style={{ width: 600 }}>
+            {separator && <Separator />}
+          {children}
+          </G>
+          <br />
+          {footer && <Footer />}
+        </center>
+      </G>
+    </center>
+  </G>
+)
+
+export default Layout

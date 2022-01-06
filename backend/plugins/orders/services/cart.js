@@ -2,6 +2,7 @@
 const orderUtils = require('./order')
 const priceUtils = require('./price')
 const { sanitizeEntity } = require('strapi-utils')
+const CryptoJS = require('crypto-js')
 const { toId } = require('../../../utils')
 
 /**
@@ -65,6 +66,7 @@ async function createCartItem(order) {
       order.shippingDate,
       order.startDate
     ),
+    token: undefined, // TODO
   }
 }
 

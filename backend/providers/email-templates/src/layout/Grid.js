@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 /**
  * This grid allows you to be less verbose by only defining whay you need:
@@ -44,43 +44,47 @@ import React from "react";
 
 const tableStyle = {
   table: {
-    width: "100%",
-    borderCollapse: "collapse",
+    width: '100%',
+    borderCollapse: 'collapse',
   },
-};
-
-function Cell({ children, style = {}, className = "" }) {
-  return (
-    <td style={style} className={className}>
-      {children}
-    </td>
-  );
 }
 
-function Row({ children, className = "", style = {} }) {
+const Cell = ({ children, style = {}, className = '', ...props }) => {
+  return (
+    <td style={style} className={className} {...props}>
+      {children}
+    </td>
+  )
+}
+
+const Row = ({ children, className = '', style = {} }) => {
   return (
     <tr className={className} style={style}>
       {React.Children.map(children, (el) => {
-        if (el.type === Cell) return el;
-        return <td>{el}</td>;
+        if (el.type === Cell) return el
+        return <td>{el}</td>
       })}
     </tr>
-  );
+  )
 }
 
-function Grid({ children, className = "", style = {} }) {
+export const Grid = ({ children, className = '', style = {}, ...props }) => {
   return (
-    <table className={className} style={{ ...tableStyle.table, ...style }}>
+    <table
+      className={className}
+      style={{ ...tableStyle.table, ...style }}
+      {...props}
+    >
       <tbody>
         {React.Children.map(children, (el) => {
-          if (!el) return;
+          if (!el) return
 
           // We want this content the be on it's own row.
-          if (el.type === Row) return el;
+          if (el.type === Row) return el
 
           // The content is all inside a single cell (so a row)
           if (el.type === Cell) {
-            return <tr>{el}</tr>;
+            return <tr>{el}</tr>
           }
 
           // The content is one cell inside it's own row
@@ -88,14 +92,16 @@ function Grid({ children, className = "", style = {} }) {
             <tr>
               <td>{el}</td>
             </tr>
-          );
+          )
         })}
       </tbody>
     </table>
-  );
+  )
 }
 
-Grid.Row = Row;
-Grid.Cell = Cell;
+Grid.Row = Row
+Grid.Cell = Cell
 
-export default Grid;
+export const G = Grid
+
+export default Grid

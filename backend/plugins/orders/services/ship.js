@@ -17,29 +17,6 @@ async function shipToCleaners(cartItem) {
     .update({ id: order.id }, { shipment: id })
 }
 
-async function ordersEnding(orders) {
-  for (const order of orders) {
-    const range = strapi.services.timing.range(order)
-    const date = day(range.end)
-    const today = day()
-    if (!date.isSame(today, 'day')) {
-      continue
-    }
-
-    const cartItem = await strapi.plugins[
-      'orders'
-    ].services.cart.createCartItem(order)
-
-    await strapi
-      .query('order', 'orders')
-      .update({ id: order.id }, { status: 'cleaning' })
-    if (strapi.services.shipment.providerName !== 'acs') {
-      await shipToCleaners(order).catch((err) => shippingFailure(cartItem, err))
-    }
-    await strapi.services.template_email.orderEnding(cartItem)
-  }
-}
-
 async function shippingFailure(order, err) {
   await strapi
     .query('order', 'orders')
@@ -90,7 +67,7 @@ async function shipOrders(orders) {
   for (const order of orders) {
     if (
       order.status === 'planning' &&
-      strapi.services.shipment.providerName === 'acs'
+      strapi.services.shipment.providerName !== 'acs'
     ) {
       shipOrderToClient(order)
     }
@@ -99,7 +76,6 @@ async function shipOrders(orders) {
 
 module.exports = {
   shipToCleaners,
-  ordersEnding,
   shippingFailure,
   shipCartItemToClient,
   shipOrderToClient,

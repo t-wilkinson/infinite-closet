@@ -14,7 +14,6 @@
     "status": {
       "type": "enumeration",
       "enum": [
-        "delayed",
         "cart",
         "list",
         "planning",
@@ -22,6 +21,7 @@
         "cleaning",
         "completed",
         "dropped",
+        "delayed",
         "error"
       ],
       "default": "cart",

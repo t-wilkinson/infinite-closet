@@ -60,7 +60,7 @@ const FooterWrapper = ({ children }) => (
       {children}
     </footer>
     <div className="mb-8">
-      <small>© 2021 Infinite Closet. All Rights Reserved.</small>
+      <small>© 2022 Infinite Closet. All Rights Reserved.</small>
     </div>
   </div>
 )

@@ -95,10 +95,24 @@ const toRawSQL = (_where) => {
   return query.complete()
 }
 
+async function recommendations() {
+  const productSlugs = [
+    'greta-outer-space-dress',
+    'illegal-halter',
+    'polka-blue-dots',
+    'simone-night-fall',
+  ]
+  const products = await strapi
+    .query('product')
+    .find({ slug_in: productSlugs }, ['designer', 'colors', 'images', 'sizes'])
+  return products
+}
+
 module.exports = {
   toKey,
   price,
   filterSlugs,
   toPrivateFilter,
   toRawSQL,
+  recommendations,
 }

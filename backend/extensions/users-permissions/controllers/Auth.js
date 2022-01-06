@@ -336,8 +336,9 @@ module.exports = {
       await strapi.plugins['email'].services.email.send({
         template: 'forgot-password',
         to: user.email,
-        subject: 'Reset password',
+        subject: `Password reset request`,
         data: {
+          user,
           url: `https://${process.env.FRONTEND_DOMAIN}/account/reset-password?code=${resetPasswordToken}`,
           token: resetPasswordToken,
         },
