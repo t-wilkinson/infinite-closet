@@ -3,12 +3,50 @@
 const { day } = require('../../../utils')
 
 const on = {
-  async confirmed({ cart, contact, summary, address }) {
+  async confirmed({
+    cart,
+    contact,
+    summary,
+    address,
+    paymentIntent,
+    paymentMethod,
+  }) {
+    const settled = await Promise.allSettled(
+      strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
+        strapi.query('order', 'orders').update(
+          { id: order.id },
+          {
+            address,
+            paymentIntent,
+            paymentMethod,
+            status: 'planning',
+            charge: strapi.plugins['orders'].services.price.orderPriceTotal(order),
+
+            giftCard: summary.giftCard ? summary.giftCard.id : null,
+            giftCardDiscount: summary.giftCardDiscount,
+            coupon: summary.coupon ? summary.coupon.id : null,
+            // couponDiscount: summary.couponDiscount,
+
+            fullName: contact.fullName || null,
+            nickName: contact.nickName || null,
+            email: contact.email || null,
+          }
+        )
+      )
+    )
+
+    const failed = settled.filter((res) => res.status === 'rejected')
+    if (failed.length > 0) {
+      strapi.log.error('Failed to prepare cart for shipping', failed)
+    }
+
     // acs expects orders asap
     if (strapi.services.shipment.providerName === 'acs') {
       const settled = await Promise.allSettled(
         cart.map((cartItem) =>
-          strapi.plugins['orders'].services.ship.shipOrderToClient(cartItem.order)
+          strapi.plugins['orders'].services.ship.shipOrderToClient(
+            cartItem.order
+          )
         )
       )
       const failed = settled.filter((res) => res.status === 'rejected')
@@ -21,7 +59,12 @@ const on = {
     // Create contact and send email
     if (contact) {
       await strapi.services.contact.upsertContact(contact)
-      strapi.services.template_email.checkout({ contact, summary, cart, address })
+      strapi.services.template_email.checkout({
+        contact,
+        summary,
+        cart,
+        address,
+      })
     }
   },
 
@@ -40,12 +83,14 @@ const on = {
       await ship.shipOrderToClient(order)
     }
   },
+
   async start(order) {
     const cartItem = await strapi.plugins[
       'orders'
     ].services.cart.createCartItem(order)
     strapi.services.template_email.orderStarting(cartItem)
   },
+
   async end(order) {
     const cartItem = await strapi.plugins[
       'orders'
@@ -63,11 +108,13 @@ const on = {
     }
     await strapi.services.template_email.orderEnding(cartItem)
   },
+
   async cleaning(order) {
     await strapi
       .query('order', 'orders')
       .update({ id: order.id }, { status: 'cleaning' })
   },
+
   async completed(order) {
     strapi
       .query('order', 'orders')

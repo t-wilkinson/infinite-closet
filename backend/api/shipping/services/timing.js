@@ -21,6 +21,7 @@ const HOURS_IN_DAY = 24
  * Range that represents when each order checkpoint is reached
  * @typedef {Object} DateRange
  * @property {DateLike=} created
+ * @property {DateLike=} confirmed
  * @property {DateLike} shipped
  * @property {DateLike} start
  * @property {DateLike} end

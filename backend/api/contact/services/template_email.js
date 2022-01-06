@@ -43,7 +43,7 @@ module.exports = {
         process.env.NODE_ENV === 'production'
           ? ['info@infinitecloset.co.uk']
           : [],
-      subject: "We've got your order",
+      subject: `We've got your order`,
       data: {
         cart,
         address,
@@ -59,7 +59,7 @@ module.exports = {
     await send({
       template: 'order-shipped',
       to: toEmailAddress(user),
-      subject: "Your order is on it's way", // `Your order of ${order.product.name} by ${order.product.designer.name} has shipped!`,
+      subject: `Your order is on it's way`, // `Your order of ${order.product.name} by ${order.product.designer.name} has shipped!`,
       data: {
         user,
         firstName: user.firstName,
@@ -68,19 +68,19 @@ module.exports = {
     })
   },
 
-  async orderStarting(cartItem) {
-    const { order, user } = unpackCartItem(cartItem)
-    await send({
-      template: 'order-starting',
-      to: toEmailAddress(user),
-      subject: `Your order of ${order.product.name} by ${order.product.designer.name} is arriving today`,
-      data: {
-        user,
-        firstName: user.firstName,
-        cartItem,
-      },
-    })
-  },
+  //   async orderStarting(cartItem) {
+  //     const { order, user } = unpackCartItem(cartItem)
+  //     await send({
+  //       template: 'order-starting',
+  //       to: toEmailAddress(user),
+  //       subject: `Your order of ${order.product.name} by ${order.product.designer.name} is arriving today`,
+  //       data: {
+  //         user,
+  //         firstName: user.firstName,
+  //         cartItem,
+  //       },
+  //     })
+  //   },
 
   async orderEnding(cartItem) {
     const { user } = unpackCartItem(cartItem)
@@ -143,20 +143,20 @@ module.exports = {
   /*
    * Money
    */
-  async giftCard({firstName, amount}) {
+  async giftCard({ firstName, giftCard }) {
     const recommendations = await strapi.services.product.recommendations()
     await send({
       template: 'gift-card',
       subject: `You've received a gift card`,
       data: {
         firstName,
-        amount,
+        giftCard,
         recommendations,
-      }
+      },
     })
   },
 
-  async storeCredit({firstName, amount}) {
+  async storeCredit({ firstName, amount }) {
     const recommendations = await strapi.services.product.recommendations()
     await send({
       template: 'store-credit',
@@ -165,7 +165,7 @@ module.exports = {
         firstName,
         amount,
         recommendations,
-      }
+      },
     })
-  }
+  },
 }

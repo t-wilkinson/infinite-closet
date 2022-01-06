@@ -2,7 +2,7 @@
   "routes": [
     {
       "method": "POST",
-      "path": "/emails/rental-shipped/:orderId",
+      "path": "/emails/rental-shipped",
       "handler": "emails.orderShipped",
       "config": {
         "policies": []
@@ -10,15 +10,7 @@
     },
     {
       "method": "POST",
-      "path": "/emails/rental-start/:orderId",
-      "handler": "emails.orderStarting",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "POST",
-      "path": "/emails/rental-ending/:orderId",
+      "path": "/emails/rental-ending",
       "handler": "emails.orderEnding",
       "config": {
         "policies": []
@@ -26,7 +18,31 @@
     },
     {
       "method": "POST",
-      "path": "/emails/trust-pilot/:orderId",
+      "path": "/emails/rental-received",
+      "handler": "emails.orderReceived",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/emails/rental-request",
+      "handler": "emails.orderReview",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/emails/gift-card",
+      "handler": "emails.giftCard",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/emails/trust-pilot",
       "handler": "emails.trustPilot",
       "config": {
         "policies": []

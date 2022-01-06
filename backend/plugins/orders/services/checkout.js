@@ -40,49 +40,6 @@ async function prepareData(body, user = null) {
 }
 
 /**
- * Change stage of cart items to 'planning' and update other information
- */
-async function toPlanning({
-  cart,
-  contact,
-  paymentIntent,
-  summary,
-  address,
-  paymentMethod,
-}) {
-  const settled = await Promise.allSettled(
-    strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
-      strapi.query('order', 'orders').update(
-        { id: order.id },
-        {
-          address,
-          paymentIntent: paymentIntent
-            ? paymentIntent.id
-            : paymentIntent || null,
-          paymentMethod: paymentMethod
-            ? paymentMethod.id
-            : paymentMethod || null,
-          status: 'planning',
-          charge: strapi.plugins['orders'].services.price.orderPriceTotal(order),
-          giftCard: summary.giftCard ? summary.giftCard.id : null,
-          giftCardDiscount: summary.giftCardDiscount,
-          coupon: summary.coupon ? summary.coupon.id : null,
-          // couponDiscount: summary.couponDiscount,
-          fullName: contact.fullName,
-          nickName: contact.nickName,
-          email: contact.email,
-        }
-      )
-    )
-  )
-
-  const failed = settled.filter((res) => res.status === 'rejected')
-  if (failed.length > 0) {
-    strapi.log.error('Failed to prepare cart for shipping', failed)
-  }
-}
-
-/**
  * Core function used by all checkout methods which handles administrative tasks
  * On checkout, we need to:
  *  - Validate address
@@ -127,21 +84,13 @@ async function onCheckout({
     throw new Error('Expected a valid address.')
   }
 
-  // Update information for orders in cart
-  await toPlanning({
-    cart,
-    contact,
-    summary,
-    address,
-    paymentIntent,
-    paymentMethod,
-  })
-
   strapi.plugins['orders'].services.lifecycle.on['confirmed']({
     cart,
     contact,
     summary,
     address,
+    paymentIntent: paymentIntent?.id || null,
+    paymentMethod: paymentMethod?.id || null,
   })
 }
 

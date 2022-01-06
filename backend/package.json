@@ -19,6 +19,7 @@
     "@mailchimp/mailchimp_marketing": "^3.0.71",
     "@mailchimp/mailchimp_transactional": "^1.0.27",
     "bs58": "^4.0.1",
+    "crypto-js": "^4.1.1",
     "dayjs": "^1.10.4",
     "email-templates": "file:providers/email-templates",
     "googleapis": "^72.0.0",

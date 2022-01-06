@@ -124,4 +124,5 @@ module.exports = {
   valid,
   valueLeft,
   valueUsed,
+  fromPaymentIntent,
 }

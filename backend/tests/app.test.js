@@ -55,7 +55,7 @@ describe('Strapi in general', () => {
   })
 })
 
-// require('./order')
-require('./buy')
+require('./order')
+// require('./buy')
 // require('./product')
 // require('./user')

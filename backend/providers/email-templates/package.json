@@ -25,7 +25,7 @@
   },
   "scripts": {
     "build": "NODE_ENV=production babel src --out-dir build",
-    "start": "port=3002 react-scripts start",
+    "start": "export port=3002 react-scripts start",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },

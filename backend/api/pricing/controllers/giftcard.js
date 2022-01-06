@@ -37,12 +37,14 @@ module.exports = {
     )
 
     try {
-      const giftcard = await strapi.services.giftcard.add({
+      const giftCard = await strapi.services.giftcard.add({
         user,
         paymentIntent,
       })
 
-      ctx.send(giftcard)
+      strapi.services.template_email.giftCard({ firstName: user.firstName, giftCard})
+
+      ctx.send(giftCard)
     } catch (e) {
       ctx.badRequest(e.message)
     }

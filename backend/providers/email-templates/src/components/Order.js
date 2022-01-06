@@ -22,7 +22,7 @@ const styles = {
 
 export const Order = ({ totalPrice, order, range, review = false }) => {
   return (
-    <G style={{ tableLayout: 'fixed' }} cellPadding={16}>
+    <G style={{ tableLayout: 'fixed' }} cellPadding={4}>
       <G.Row>
         <G.Cell style={{ ...styles.cell, ...styles.img }}>
           <a
