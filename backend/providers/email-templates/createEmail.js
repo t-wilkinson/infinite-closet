@@ -9,7 +9,7 @@ const CONTENT_TAG = '%CONTENT%'
 
 function createEmail(Email, data) {
   return Promise.all([
-    getFile('../src/styles.css'),
+    getFile('./src/styles.css'),
     getFile('./email.html'),
   ]).then(([style, template]) => {
     const emailElement = React.createElement(Email, { data })
@@ -35,7 +35,7 @@ function getFile(relativePath) {
   })
 }
 
-const templates = path.join(__dirname, 'build', 'templates')
+const templates = path.join(__dirname, 'build', 'email-templates')
 
 module.exports = async function (template, data) {
   template = await require(path.join(templates, template + '.js')).default

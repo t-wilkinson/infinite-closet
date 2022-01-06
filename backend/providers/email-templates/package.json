@@ -2,7 +2,7 @@
   "name": "email-templates",
   "version": "1.0.0",
   "private": true,
-  "main": "./server/createEmail.js",
+  "main": "./createEmail.js",
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-eslint": "7.0.0",
