@@ -12,7 +12,8 @@ module.exports = {
     const helpers = strapi.plugins['orders'].services.helpers
     const ship = strapi.plugins['orders'].services.ship
 
-    const orders = await strapi
+    let orders = { }
+    orders.all = await strapi
       .query('order', 'orders')
       .find({ status_in: ['planning', 'shipping'] }, [
         'product',
@@ -22,17 +23,19 @@ module.exports = {
         'coupon',
       ])
     const filterOrders = (status) =>
-      orders.filter((order) => order.status === status)
+      orders.all.filter((order) => order.status === status)
+    orders.shipping = filterOrders('shipping')
+    orders.planning = filterOrders('planning')
+    orders.completed = filterOrders('completed')
 
-    const shippingOrders = filterOrders('shipping')
-    ship.ordersEnding(shippingOrders)
-    helpers.notifyArrival(shippingOrders)
+    ship.ordersEnding(orders.shipping)
+    helpers.notifyArrival(orders.shipping)
 
     // Send user email if they are recieving order today
     if (strapi.services.shipment.providerName === 'acs') {
       const today = day().utc()
       const isToday = (date) => today.isSame(day(date).utc(), 'day')
-      for (const order of orders) {
+      for (const order of orders.all) {
         if (isToday(order.startDate)) {
           strapi.plugins['orders'].services.cart
             .createCartItem(order)
@@ -46,10 +49,12 @@ module.exports = {
       }
     }
 
-    const planningOrders = filterOrders('planning')
     if (strapi.services.shipment.providerName !== 'acs') {
-      ship.shipOrders(planningOrders)
-      helpers.notifyAction(planningOrders)
+      ship.shipOrders(orders.planning)
+      // helpers.notifyAction(orders.planning)
     }
+
+    // TODO!: also need to update order status (using api) when updating to completed, send the email
+    helpers.ordersCompleted(orders.completed)
   },
 }

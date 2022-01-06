@@ -1,8 +1,8 @@
 'use strict'
-const fs = require('fs')
+// const fs = require('fs')
 
 async function send(...props) {
-  const res = await strapi.plugins['email'].services.email.send(...props)
+  await strapi.plugins['email'].services.email.send(...props)
 
   // If testing save email to file
   if (process.env.NODE_ENV === 'test') {
@@ -31,42 +31,39 @@ const unpackCartItem = (cartItem) =>
   strapi.plugins['orders'].services.cart.unpackCartItem(cartItem)
 
 module.exports = {
-  async checkout({ contact, cart, summary }) {
+  /*
+   * Order lifecycle
+   */
+  async checkout({ contact, cart, summary, address }) {
+    const recommendations = await strapi.services.product.recommendations()
     await send({
-      template: 'checkout',
+      template: 'order-confirmation',
       to: toEmailAddress(contact),
       bcc:
         process.env.NODE_ENV === 'production'
           ? ['info@infinitecloset.co.uk']
           : [],
-      subject: 'Thank you for your order',
+      subject: "We've got your order",
       data: {
         cart,
-        name: contact.fullName,
-        firstName: contact.nickName,
-        totalPrice: summary.total,
+        address,
+        summary,
+        contact,
+        recommendations,
       },
     })
   },
 
-  async shippingAction(cart) {
-    await send({
-      template: 'shipping-action',
-      to: 'info@infinitecloset.co.uk',
-      subject: 'Some orders need to be shipped today',
-      data: { cart },
-    })
-  },
-
   async orderShipped(cartItem) {
-    const { order, user } = unpackCartItem(cartItem)
+    const { user } = unpackCartItem(cartItem)
     await send({
       template: 'order-shipped',
       to: toEmailAddress(user),
-      subject: `Your order of ${order.product.name} by ${order.product.designer.name} has shipped!`,
+      subject: "Your order is on it's way", // `Your order of ${order.product.name} by ${order.product.designer.name} has shipped!`,
       data: {
+        user,
         firstName: user.firstName,
-        ...cartItem,
+        cartItem,
       },
     })
   },
@@ -74,19 +71,21 @@ module.exports = {
   async orderStarting(cartItem) {
     const { order, user } = unpackCartItem(cartItem)
     await send({
-      template: 'order-arriving',
+      template: 'order-starting',
       to: toEmailAddress(user),
       subject: `Your order of ${order.product.name} by ${order.product.designer.name} is arriving today`,
       data: {
+        user,
         firstName: user.firstName,
+        cartItem,
       },
     })
   },
 
   async orderEnding(cartItem) {
-    const { order, user } = unpackCartItem(cartItem)
+    const { user } = unpackCartItem(cartItem)
     await send({
-      template: 'order-leaving',
+      template: 'order-ending',
       to: toEmailAddress(user),
       bcc:
         process.env.NODE_ENV === 'production'
@@ -95,17 +94,40 @@ module.exports = {
             'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
           ]
           : [],
-      subject: `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
-      data: { ...cartItem, firstName: user.firstName },
+      subject: `Your rental is ending soon`, // `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
+      data: { cartItem, firstName: user.firstName, user },
     })
   },
 
+  async orderReceived(cartItem) {
+    const { user } = unpackCartItem(cartItem)
+    await send({
+      template: 'order-received',
+      to: toEmailAddress(user),
+      subject: `We've received your return`, // `Your order of ${order.product.name} by ${order.product.designer.name} has been received`,
+      data: { user, cartItem, firstName: user.firstName },
+    })
+  },
+
+  async orderReview(cartItem) {
+    const { user } = unpackCartItem(cartItem)
+    await send({
+      template: 'order-review',
+      to: toEmailAddress(user),
+      subject: `What did you think?`,
+      data: { user, cartItem, firstName: user.firstName },
+    })
+  },
+
+  /*
+   * Non user-facing
+   */
   async trustPilot(cartItem) {
     const { user } = unpackCartItem(cartItem)
     await send({
       template: 'trust-pilot',
       to: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
-      data: { ...cartItem, firstName: user.firstName },
+      data: { cartItem, user, firstName: user.firstName },
     })
   },
 
@@ -117,4 +139,33 @@ module.exports = {
       data: { order, error: err },
     })
   },
+
+  /*
+   * Money
+   */
+  async giftCard({firstName, amount}) {
+    const recommendations = await strapi.services.product.recommendations()
+    await send({
+      template: 'gift-card',
+      subject: `You've received a gift card`,
+      data: {
+        firstName,
+        amount,
+        recommendations,
+      }
+    })
+  },
+
+  async storeCredit() {
+    const recommendations = await strapi.services.product.recommendations()
+    await send({
+      template: 'store-credit',
+      subject: `You have store credit!`,
+      data: {
+        firstName,
+        amount,
+        recommendations,
+      }
+    })
+  }
 }

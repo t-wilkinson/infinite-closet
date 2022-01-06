@@ -31,7 +31,7 @@ export const Shop = ({ data }) => {
         <div className="w-4" />
         <Product data={data} />
       </div>
-      <div className="w-full items-center">
+      <div className="w-full items-center" id="reviews">
         <Reviews slug={data.product.slug} />
       </div>
     </div>

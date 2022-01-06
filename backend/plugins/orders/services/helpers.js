@@ -3,6 +3,24 @@
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 const { day } = require('../../../utils')
 
+async function ordersCompleted(orders) {
+  for (const order of orders) {
+    const range = strapi.services.timing.range(order)
+    const date = day(range.completed)
+    const today = day()
+
+    if (!date.isSame(today, 'day')) continue
+
+    strapi.log.info('order arriving %o', order.id)
+
+    const cartItem = await strapi.plugins[
+      'orders'
+    ].services.cart.createCartItem(order)
+    strapi.services.template_email.orderReceived(cartItem)
+    strapi.services.template_email.orderReview(cartItem)
+  }
+}
+
 async function notifyArrival(orders) {
   for (const order of orders) {
     const range = strapi.services.timing.range(order)
@@ -194,7 +212,7 @@ async function onCheckout({
   // Create contact and send email
   if (contact) {
     await strapi.services.contact.upsertContact(contact)
-    await strapi.services.template_email.checkout({ contact, summary, cart })
+    strapi.services.template_email.checkout({ contact, summary, cart, address })
   }
 }
 
@@ -203,4 +221,5 @@ module.exports = {
   prepareCheckoutData,
   notifyArrival,
   notifyAction,
+  ordersCompleted
 }
