@@ -38,6 +38,11 @@ var summary = {
   amount: 3000
 };
 
+var giftCard = {
+  value: 20,
+  code: 'ABCDEFG'
+};
+
 var product = {
   name: 'Product name',
   slug: 'product',
@@ -47,9 +52,8 @@ var product = {
   },
   sizes: [{ size: 'S', quantity: 1 }, { size: 'M', quantity: 1 }],
   images: [{
-    url: '/uploads/Screen_Shot_2021_08_22_at_10_36_33_PM_54e21ccc8e.png',
-    // url: 'https://ci6.googleusercontent.com/proxy/0i_xXUdxzuItZLDm1D_gMnKlbWwQGzeTJkobLx32DdFSHfnxDaJXpXYzol9sUEWpPoykOc9n9Ez5hBZKecHtI8ztei6z6CwJTUC-y2kQgKWzTegtLg8XCg6VZb_vS0pf=s0-d-e1-ft#https://images-na.ssl-images-amazon.com/images/I/81wajOO6mLL._AC_SR80,80_.jpg',
-    // url: 'https://infinitecloset.co.uk/_next/image?url=https%3A%2F%2Fapi.infinitecloset.co.uk%2Fuploads%2Flarge_NKIE_WD_394_V1_2_22a4139b48.jpg&w=1920&q=75',
+    url: 'https://infinitecloset.co.uk/_next/image?url=https%3A%2F%2Fapi.infinitecloset.co.uk%2Fuploads%2Flarge_dress_simone_night_fall_81ebcf791b.jpg&w=1920&q=75',
+    // url: '/uploads/Screen_Shot_2021_08_22_at_10_36_33_PM_54e21ccc8e.png',
     alternativeText: 'Alt Text'
   }],
   shortRentalPrice: 50,
@@ -79,11 +83,18 @@ var recommendations = [product, product, product, product];
 var data = {
   misc: {
     label: 'Misc',
-    components: orderData
+    components: orderData,
+    // 'newsletter-subscription': {},
+    // 'waitlist-subscription': {},
+    // 'mailinglist-subscription': {},
+    'forgot-password': {
+      user: user,
+      url: '/REST_URL'
+    }
   },
 
   order: {
-    label: 'Order Lifecycle',
+    label: 'Order lifecycle',
     'order-confirmation': {
       cart: [orderData.cartItem, orderData.cartItem],
       address: address,
@@ -100,6 +111,20 @@ var data = {
     'order-review': orderData
   },
 
+  money: {
+    label: 'Money',
+    'gift-card': {
+      recommendations: recommendations,
+      firstName: 'First Name',
+      giftCard: giftCard
+    },
+    'store-credit': {
+      firstName: 'First Name',
+      amount: 20,
+      recommendations: recommendations
+    }
+  },
+
   'non-user-facing': {
     label: 'Non user-facing',
     'trust-pilot': orderData,
@@ -107,37 +132,12 @@ var data = {
       order: {},
       error: {}
     },
-    'forgot-password': {
-      user: user,
-      url: '/REST_URL'
-    },
     'contact-us': {
       firstName: 'First Name',
       lastName: 'Last Name',
       emailAddress: 'Email',
       phoneNumber: 'Phone',
       message: 'Random message'
-    }
-  },
-
-  subscriptions: {
-    label: 'Subscriptions',
-    'newsletter-subscription': {},
-    'waitlist-subscription': {},
-    'mailinglist-subscription': {}
-  },
-
-  money: {
-    label: 'Money',
-    'gift-card': {
-      recommendations: recommendations,
-      firstName: 'First Name',
-      amount: 20
-    },
-    'store-credit': {
-      firstName: 'First Name',
-      amount: 20,
-      recommendations: recommendations
     }
   },
 
