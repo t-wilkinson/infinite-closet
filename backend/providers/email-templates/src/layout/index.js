@@ -12,13 +12,13 @@ export * from './Paragraph'
 
 export const Layout = ({ title, children, footer = true, img, separator }) => (
   <G
-    className="bg-sec-light"
+    bgcolor="#e7ddcb"
     style={{
       width: '100%',
     }}
   >
     <center>
-      <G className="bg-white" style={{ width: 800 }}>
+      <G bgcolor="#ffffff" style={{ width: 800 }}>
         <G.Row>
           <G>
             <center>

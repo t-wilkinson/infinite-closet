@@ -56,7 +56,7 @@ export const Footer = () => {
         <br />
         <br />
       </G.Cell>
-      <G className="bg-sec text-white p-2" cellPadding={8}>
+      <G bgcolor="#39603d" className="text-white p-2" cellPadding={8}>
         <G cellPadding={4}>
           <G.Cell>
             *Free shipping on all 2-day shipping orders. 1-day and next day
@@ -75,7 +75,7 @@ export const Footer = () => {
                 {socialMedia.map(({ href, src }) => (
                   <G.Cell key={src} style={iconImageStyle}>
                     <Link href={href}>
-                      <Img src={getFrontendURL(src)} />
+                      <Img src={getFrontendURL(src)} style={iconImageStyle} />
                     </Link>
                   </G.Cell>
                 ))}

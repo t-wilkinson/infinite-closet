@@ -7,7 +7,7 @@ export const Container = ({title, href, button, children}) => {
   return (
     <G className="border border-gray" cellPadding={16}>
       <G className="text-center" cellPadding={4}>
-        {title && <strong className="subheading">{title}</strong>}
+        {title && <strong className="subheading text-center">{title}</strong>}
         {children}
         {button && <br />}
         {button && <ButtonLink href={href}>{button}</ButtonLink>}
