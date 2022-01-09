@@ -87,7 +87,7 @@ var Layout = exports.Layout = function Layout(_ref) {
   return _react2.default.createElement(
     _Grid2.default,
     {
-      className: 'bg-sec-light',
+      bgcolor: '#e7ddcb',
       style: {
         width: '100%'
       }
@@ -97,7 +97,7 @@ var Layout = exports.Layout = function Layout(_ref) {
       null,
       _react2.default.createElement(
         _Grid2.default,
-        { className: 'bg-white', style: { width: 800 } },
+        { bgcolor: '#ffffff', style: { width: 800 } },
         _react2.default.createElement(
           _Grid2.default.Row,
           null,
