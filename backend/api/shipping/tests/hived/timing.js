@@ -20,7 +20,7 @@ describeIf('Order arrives', () => {
     [today.set({ hour: 1 }), today.add({ day: 1 })],
     [today.set({ hour: cutoff + 1 }), today.add({ day: 2 })],
   ])('When sent on %j, arrives on %j', (sent, expects) => {
-    const arrives = timing.arrival(sent)
+    const arrives = timing.arrival(sent, 'one')
     expect(expects.utc().isSame(arrives.utc(), 'hour')).toBeTruthy()
   })
 })

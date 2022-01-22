@@ -42,10 +42,6 @@ module.exports = {
     await defaultCartItemEmail(ctx, 'orderShipped')
   },
 
-  //   async orderStarting(ctx) {
-  //     await defaultCartItemEmail(ctx, 'orderStarting')
-  //   },
-
   async orderEnding(ctx) {
     await defaultCartItemEmail(ctx, 'orderEnding')
   },
@@ -57,19 +53,6 @@ module.exports = {
   async orderReview(ctx) {
     await defaultCartItemEmail(ctx, 'orderReview')
   },
-
-  //   async sendToCleaners(ctx) {
-  //     const { orderId } = ctx.params
-  //     const { cartItem, order } = await getCartItem(orderId)
-
-  //     // Ship order and send email to client
-  //     strapi.plugins['orders'].services.ship
-  //       .shipCartItemToClient(cartItem)
-  //       .catch((err) =>
-  //         strapi.plugins['orders'].services.ship.shippingFailure(order, err)
-  //       )
-  //     return ctx.send(null)
-  //   },
 
   async trustPilot(ctx) {
     await defaultCartItemEmail(ctx, 'trustPilot')

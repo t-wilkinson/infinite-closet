@@ -35,7 +35,7 @@ const HOURS_IN_DAY = 24
  * @param {ShippingClass} shippingClass
  * @returns {DateLike} When item will arrive
  */
-function arrival(sent, shippingClass = 'one') {
+function arrival(sent, shippingClass) {
   sent = day(sent)
   const hoursSendClient = provider.config.shippingClassHours[shippingClass]
   const offset = sent.hour() >= provider.config.timing.cutoff ? HOURS_IN_DAY : 0
@@ -55,8 +55,34 @@ function shippingClass(earliestDeliveryDate, startsOn) {
   earliestDeliveryDate = day(earliestDeliveryDate || undefined) // Want to convert null to undefined
   startsOn = day(startsOn).set({ hour: 0 })
 
-  const arrivesWithClass = (shippingClass) =>
-    startsOn.isSameOrAfter(arrival(earliestDeliveryDate, shippingClass), 'day')
+  const arrivesWithClass = (shippingClass) => {
+    const arrives = arrival(earliestDeliveryDate, shippingClass)
+
+//     let dates = {
+//       so: startsOn.utc().date(),
+//       edd: earliestDeliveryDate.utc().date(),
+//       a: arrives.utc().date(),
+//     }
+
+    // let dates = {
+    //   so: startsOn.date(),
+    //   edd: earliestDeliveryDate.date(),
+    //   a: arrives.date(),
+    // }
+
+    let dates = {
+      so: Number(startsOn.format('DD'), { timeZone: 'Europe/London' }),
+      edd: Number(earliestDeliveryDate.format('DD'), { timeZone: 'Europe/London' }),
+      a: Number(arrives.format('DD'), { timeZone: 'Europe/London' }),
+    }
+
+    // console.log(startsOn, earliestDeliveryDate, arrives)
+    console.log(dates)
+    return dates.so >= dates.a // TODO!: also measure week/year/etc
+    // startsOn.isSameOrAfter(, 'day')
+  }
+
+  return arrivesWithClass('one') ? 'one' : undefined
 
   if (arrivesWithClass('two')) {
     return 'two'

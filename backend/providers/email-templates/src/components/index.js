@@ -23,18 +23,25 @@ export const ButtonLink = ({
   style,
 }) => {
   return (
-    <a
-      href={withProvider(href, provider)}
-      style={{
-        whiteSpace: 'nowrap',
-        ...style,
-      }}
-      className="button-link font-body text-white"
-    >
-      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-      {children}
-      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-    </a>
+      <table align="center" cellPadding={8}>
+        <tr>
+          <td bgcolor="#39603d">
+            <a
+              href={withProvider(href, provider)}
+              style={{
+                whiteSpace: 'nowrap',
+                width: '100%',
+                ...style,
+              }}
+              className="button-link font-body text-white"
+            >
+              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+              {children}
+              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            </a>
+          </td>
+        </tr>
+      </table>
   )
 }
 

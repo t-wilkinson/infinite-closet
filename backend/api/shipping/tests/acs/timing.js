@@ -1,5 +1,5 @@
 /**
- * @group lib
+ * @group api
  * @group shipping/timing
  * @group shipping/timing/acs
  */
@@ -20,7 +20,7 @@ describeIf('timing timing', () => {
     [today.set({ hour: 1 }), today.add({ day: 1 })],
     [today.set({ hour: cutoff + 1 }), today.add({ day: 2 })],
   ])('When sent on %j, arrives on %j', (sent, expects) => {
-    const arrives = timing.arrival(sent)
+    const arrives = timing.arrival(sent, 'one')
     expect(expects.utc().isSame(arrives.utc(), 'hour')).toBeTruthy()
   })
 })
@@ -40,8 +40,9 @@ describeIf('Order arrives', () => {
   })
 })
 
-describeIf('Order ships (when ordered before cutoff time)', () => {
-  it('in one day when order starts in one day', () => {
+describe.only('Order ships (when ordered before cutoff time)', () => {
+// describeIf('Order ships (when ordered before cutoff time)', () => {
+  test.only('in one day when order starts in one day', () => {
     beforeCutoff(1, 'one')
   })
 
@@ -60,31 +61,33 @@ describeIf('Order ships (when ordered after cutoff time)', () => {
   })
 })
 
-describeIf('Order does not ship', () => {
-  it('when order started yesterday', () => {
+// describeIf('Order does not ship', () => {
+describe.only('Order does not ship', () => {
+  test('when order started yesterday', () => {
     beforeCutoff(-1, undefined)
     afterCutoff(-1, undefined)
   })
 
-  it('when order starts today', () => {
+  test('when order starts today', () => {
     beforeCutoff(0, undefined)
     afterCutoff(0, undefined)
   })
 
-  it.skip('when order starts in one day', () => {
+  test.only('when order starts in one day', () => {
+    // TODO: earliestDeliveryDate and arrival should be one day larger
     afterCutoff(1, undefined)
   })
 })
 
 describeIf('Overlaps', () => {
-  it.each([
+  it.skip.each([
     [0, -2, -3],
     [0, 4, 5],
     [1, -2, -3],
     [1, 4, 5],
     [2, -2, -3],
     [2, 4, 5],
-    // [3, -2, -3],
+    [3, -2, -3],
     [3, 4, 5],
     [4, -2, -3],
     [4, 4, 5],
@@ -99,14 +102,14 @@ describeIf('Overlaps', () => {
     }
   )
 
-  it.each([
+  it.skip.each([
     [0, -9, -10],
     [0, 7, 8],
     [1, -9, -10],
     [1, 7, 8],
     [2, -9, -10],
     [2, 7, 8],
-    // [3, -9, -10],
+    [3, -9, -10],
     [3, 7, 8],
     [4, -9, -10],
     [4, 7, 8],

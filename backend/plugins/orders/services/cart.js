@@ -2,7 +2,7 @@
 const orderUtils = require('./order')
 const priceUtils = require('./price')
 const { sanitizeEntity } = require('strapi-utils')
-const CryptoJS = require('crypto-js')
+// const CryptoJS = require('crypto-js')
 const { toId } = require('../../../utils')
 
 /**
