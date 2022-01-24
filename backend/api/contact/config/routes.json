@@ -56,6 +56,14 @@
         "policies": []
       }
     },
+    {
+      "method": "POST",
+      "path": "/emails/forgot-password",
+      "handler": "emails.forgotPassword",
+      "config": {
+        "policies": []
+      }
+    },
 
     {
       "method": "POST",

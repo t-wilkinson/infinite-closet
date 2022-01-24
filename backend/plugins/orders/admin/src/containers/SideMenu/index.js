@@ -7,7 +7,7 @@ import { emails } from '../../config';
 const SideMenu = () => {
   const emailLink = ({ slug, title }) => ({
     name: slug,
-    title,
+    title: `${title} (${slug})`,
     to: `/plugins/${pluginId}/emails/${slug}`,
   });
 

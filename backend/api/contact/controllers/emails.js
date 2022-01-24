@@ -31,7 +31,6 @@ async function getCartItem(orderId) {
 async function defaultCartItemEmail(ctx, email) {
   try {
     const data = toTemplateData(ctx.request.body)
-    console.log(data)
     if (!data) {
       await strapi.services.template_email[email]()
     } else {
@@ -86,6 +85,15 @@ module.exports = {
 
   async trustPilot(ctx) {
     await defaultCartItemEmail(ctx, 'trustPilot')
+  },
+
+  async forgotPassword(ctx) {
+    try {
+      await strapi.services.template_email.forgotPassword()
+      return ctx.send(null)
+    } catch (e) {
+      return ctx.badRequest(e.message)
+    }
   },
 
   async giftCard(ctx) {

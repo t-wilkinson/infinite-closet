@@ -11,7 +11,7 @@ import ForgotPassword from './email-templates/forgot-password'
 // Order lifecycle
 import OrderConfirmation from './email-templates/order-confirmation'
 import OrderShipped from './email-templates/order-shipped'
-import OrderStarting from './email-templates/order-starting'
+// import OrderStarting from './email-templates/order-starting'
 import OrderEnding from './email-templates/order-ending'
 import OrderReceived from './email-templates/order-received'
 import OrderReview from './email-templates/order-review'
@@ -42,7 +42,7 @@ const templates = {
     label: 'Order lifecycle',
     'order-confirmation': OrderConfirmation,
     'order-shipped': OrderShipped,
-    'order-starting': OrderStarting,
+    // 'order-starting': OrderStarting,
     'order-ending': OrderEnding,
     'order-received': OrderReceived,
     'order-review': OrderReview,

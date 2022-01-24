@@ -27,7 +27,6 @@ function toEmailAddress({ fullName, name, firstName, lastName, email }) {
     email,
   }
 }
-
 const unpackCartItem = (cartItem) =>
   strapi.plugins['orders'].services.cart.unpackCartItem(cartItem)
 
@@ -36,7 +35,6 @@ module.exports = {
    * Order lifecycle
    */
   async orderConfirmation({ contact, cart, summary, address } = templateData.defaultData['order-confirmation']) {
-    console.log(contact)
     const recommendations = await strapi.services.product.recommendations()
     await send({
       template: 'order-confirmation',
@@ -151,6 +149,7 @@ module.exports = {
     await send({
       template: 'gift-card',
       subject: `You've received a gift card`,
+      to: 'info+test@infinitecloset.co.uk',
       data: {
         firstName,
         giftCard,
@@ -164,6 +163,7 @@ module.exports = {
     await send({
       template: 'store-credit',
       subject: `You have store credit!`,
+      to: 'info+test@infinitecloset.co.uk',
       data: {
         firstName,
         amount,
@@ -171,4 +171,16 @@ module.exports = {
       },
     })
   },
+
+  async forgotPassword({url, user} = templateData.defaultData['forgot-password']) {
+    await send({
+      template: 'forgot-password',
+      to: 'info+test@infinitecloset.co.uk',
+      subject: 'Password reset request',
+      data: {
+        url,
+        user,
+      }
+    })
+  }
 }

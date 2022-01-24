@@ -8,5 +8,6 @@ export const emails = [
   { title: "Trust pilot review", slug: "trust-pilot"},
 
   { title: "Gift card", slug: "gift-card"},
+  { title: "Forgot password", slug: "forgot-password"},
 ]
 

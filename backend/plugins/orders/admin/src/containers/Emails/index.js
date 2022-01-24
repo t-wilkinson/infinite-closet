@@ -15,6 +15,7 @@ const Emails = () => {
   // const path = location.pathname.split("/").slice(-1)
   const path = (subpath) => `/plugins/${pluginId}/emails/${subpath}`
   const giftCardEmail = emails.find(email => email.slug === 'gift-card')
+  const forgotPasswordEmail = emails.find(email => email.slug === 'forgot-password')
 
   return (
     <Wrapper>
@@ -30,6 +31,11 @@ const Emails = () => {
         {<Route
             path={path(giftCardEmail.slug)}
           component={() => <GiftCardEmail slug={giftCardEmail.slug} />}
+        />
+        }
+        {<Route
+            path={path(forgotPasswordEmail.slug)}
+          component={() => <ForgotPasswordEmail slug={forgotPasswordEmail.slug} />}
         />
         }
       </Switch>
@@ -174,6 +180,62 @@ const GiftCardEmail = ({ slug }) => {
           <span>{status.message}</span>
         ) : status.code === 'error' ? (
           <span style={{ color: 'red' }}>{status.message}</span>
+        ) : null}
+      </div>
+    </RentalEndingWrapper>
+  )
+}
+
+const ForgotPasswordEmail = ({ slug }) => {
+  const [status, setStatus] = React.useState({ code: null, message: null })
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    setStatus({ code: 'loading', message: 'Loading...' })
+
+    fetch(`${strapi.backendURL}/emails/${slug}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw res
+        } else {
+          setStatus({ code: 'success', message: 'Successfully sent mail' })
+        }
+      })
+      .catch(async (err) => {
+        let message
+        try {
+          message = (await err.json()).message
+        } catch (e) {
+          message = err.statusText
+        }
+        setStatus({
+          code: 'error',
+          message: `Failure sending mail\n${message}`,
+        })
+      })
+  }
+
+  return (
+    <RentalEndingWrapper>
+      <div>
+        <form onSubmit={onSubmit}>
+          <Button style={{marginBottom: '1rem'}} type="submit" primary={true}>
+            Send test email
+          </Button>
+        </form>
+        {status.code === 'success' ? (
+          <span>{status.message}</span>
+        ) : status.code === 'loading' ? (
+          <span>{status.message}</span>
+        ) : status.code === 'error' ? (
+          <span style={{ color: 'red', whiteSpace: 'pre-wrap' }}>{status.message}</span>
         ) : null}
       </div>
     </RentalEndingWrapper>
