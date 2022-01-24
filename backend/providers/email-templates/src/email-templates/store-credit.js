@@ -4,7 +4,8 @@ import { P, Layout, G } from '../layout'
 import { Heading, YouMayAlsoLike, Space, MailingList, Separator } from '../components'
 import { fmtPrice } from '../utils'
 
-export default ({ data: { recommendations, firstName, amount } }) => {
+export default ({ data }) => {
+  const { recommendations, firstName, amount } = data
   return (
     <Layout
       title="You Have Store Credit"

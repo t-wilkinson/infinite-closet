@@ -2,158 +2,78 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import './styles.css'
+import { defaultData } from './utils/data'
 
-const user = {
-  firstName: 'First Name',
-  lastName: 'Last Name',
-}
+// Misc
+import Components from './email-templates/components'
+import ForgotPassword from './email-templates/forgot-password'
 
-const address = {
-  fullName: 'First Last',
-  addressLine1: 'Address line 1',
-  mobileNumber: '123 456 7890',
-}
+// Order lifecycle
+import OrderConfirmation from './email-templates/order-confirmation'
+import OrderShipped from './email-templates/order-shipped'
+import OrderStarting from './email-templates/order-starting'
+import OrderEnding from './email-templates/order-ending'
+import OrderReceived from './email-templates/order-received'
+import OrderReview from './email-templates/order-review'
 
-const summary = {
-  valid: true,
-  preDiscount: 30,
-  subtotal: 30,
-  shipping: 5,
-  insurance: 5,
-  discount: 5,
-  coupon: undefined,
-  giftCard: undefined,
-  total: 35,
-  amount: 3000,
-}
+// Money
+import GiftCard from './email-templates/gift-card'
+import StoreCredit from './email-templates/store-credit'
 
-const giftCard = {
-  value: 20,
-  code: 'ABCDEFG',
-}
+// Non user-facing
+import TrustPilot from './email-templates/trust-pilot'
+import OrderShippingFailure from './email-templates/order-shipping-failure'
+import ContactUs from './email-templates/contact-us'
 
-const product = {
-  name: 'Product name',
-  slug: 'product',
-  designer: {
-    name: 'Designer name',
-    slug: 'designer',
-  },
-  sizes: [
-    { size: 'S', quantity: 1 },
-    { size: 'M', quantity: 1 },
-  ],
-  images: [
-    {
-      url: 'https://infinitecloset.co.uk/_next/image?url=https%3A%2F%2Fapi.infinitecloset.co.uk%2Fuploads%2Flarge_dress_simone_night_fall_81ebcf791b.jpg&w=1920&q=75',
-      // url: '/uploads/Screen_Shot_2021_08_22_at_10_36_33_PM_54e21ccc8e.png',
-      alternativeText: 'Alt Text',
-    },
-  ],
-  shortRentalPrice: 50,
-  longRentalPrice: 70,
-  retailPrice: 200,
-}
+// Old
+import JoinLaunchParty from './email-templates/join-launch-party'
 
-const order = {
-  size: 'MD',
-  product,
-  user,
-  address,
-}
-
-const orderData = {
-  firstName: 'First Name',
-  cartItem: {
-    order,
-    totalPrice: 30.13,
-    range: { start: '8/24/2020', end: '8/28/2020' },
-  },
-  user,
-}
-
-const recommendations = [product, product, product, product]
-
-const data = {
+const templates = {
   misc: {
     label: 'Misc',
-    components: orderData,
+    components: Components,
     // 'newsletter-subscription': {},
     // 'waitlist-subscription': {},
     // 'mailinglist-subscription': {},
-    'forgot-password': {
-      user,
-      url: '/REST_URL',
-    },
+    'forgot-password': ForgotPassword,
   },
 
   order: {
     label: 'Order lifecycle',
-    'order-confirmation': {
-      cart: [orderData.cartItem, orderData.cartItem],
-      address,
-      summary,
-      recommendations,
-      contact: {
-        nickName: 'First Name',
-      },
-    },
-    'order-shipped': orderData,
-    'order-starting': orderData,
-    'order-ending': orderData,
-    'order-received': orderData,
-    'order-review': orderData,
+    'order-confirmation': OrderConfirmation,
+    'order-shipped': OrderShipped,
+    'order-starting': OrderStarting,
+    'order-ending': OrderEnding,
+    'order-received': OrderReceived,
+    'order-review': OrderReview,
   },
 
   money: {
     label: 'Money',
-    'gift-card': {
-      recommendations,
-      firstName: 'First Name',
-      giftCard,
-    },
-    'store-credit': {
-      firstName: 'First Name',
-      amount: 20,
-      recommendations,
-    },
+    'gift-card': GiftCard,
+    'store-credit': StoreCredit,
   },
 
   'non-user-facing': {
     label: 'Non user-facing',
-    'trust-pilot': orderData,
-    'order-shipping-failure': {
-      order: {},
-      error: {},
-    },
-    'contact-us': {
-      firstName: 'First Name',
-      lastName: 'Last Name',
-      emailAddress: 'Email',
-      phoneNumber: 'Phone',
-      message: 'Random message',
-    },
+    'trust-pilot': TrustPilot,
+    'order-shipping-failure': OrderShippingFailure,
+    'contact-us': ContactUs,
   },
 
   old: {
     label: 'Old',
-    'join-launch-party': {
-      firstName: 'First Name',
-      ticketPrice: 25,
-      donation: 25.0,
-      discount: 5,
-      total: 45,
-      guests: ['Bob', 'Joe'],
-    },
+    'join-launch-party': JoinLaunchParty,
   },
 }
 
-const NavLink = ({ sub, k }) => {
+const NavLink = ({ group, template, active}) => {
   return (
     <a
-      key={k}
-      href={`/${sub}/${k}`}
+      key={template}
+      href={`/${group}/${template}`}
       style={{
+        fontWeight: active ? 'bold' : 'normal',
         color: 'black',
         textDecoration: 'none',
         padding: '4px 8px',
@@ -161,22 +81,25 @@ const NavLink = ({ sub, k }) => {
         fontSize: 14,
       }}
     >
-      {k}
+      {template}
     </a>
   )
 }
 
 const Emails = () => {
-  const [Email, setEmail] = React.useState()
-  const defaultEmail = ['misc', 'components']
-  const path = window.location.pathname.split('/').slice(1, 3)
+  // const [Email, setEmail] = React.useState()
+  let [group, template] = window.location.pathname.split('/').slice(1, 3)
+  if (!templates[group] || !templates[group][template]) {
+    [group, template] = ['misc', 'components']
+  }
+  const Email = templates[group][template]
 
-  React.useEffect(() => {
-    const Email = React.lazy(() =>
-      import(`./email-templates/${path[1] || defaultEmail[1]}`)
-    )
-    setEmail(Email)
-  }, [])
+//   React.useEffect(() => {
+//     const Email = React.lazy(() =>
+//       import(`./email-templates/${path[1] || defaultEmail[1]}`)
+//     )
+//     setEmail(Email)
+//   }, [])
 
   return (
     <div
@@ -194,11 +117,11 @@ const Emails = () => {
           flexWrap: 'wrap',
         }}
       >
-        {Object.keys(data).map((key) => (
-          <React.Fragment key={key}>
-            <strong style={{ marginTop: 8 }}>{data[key].label}</strong>
-            {Object.keys(data[key]).map(
-              (k) => k !== 'label' && <NavLink key={k} k={k} sub={key} />
+        {Object.keys(templates).map((grp) => (
+          <React.Fragment key={grp}>
+            <strong style={{ marginTop: 8 }}>{templates[grp].label}</strong>
+            {Object.keys(templates[grp]).map(
+              (temp) => temp !== 'label' && <NavLink key={temp} template={temp} group={grp} active={grp === group && temp === template} />
             )}
           </React.Fragment>
         ))}
@@ -211,16 +134,8 @@ const Emails = () => {
           alignItems: 'center',
         }}
       >
-        <div style={{ maxWidth: 1000, width: '100%' }}>
-          {Email && (
-            <React.Suspense fallback={<div />}>
-              <Email
-                data={
-                  data[path[0] || defaultEmail[0]][path[1] || defaultEmail[1]]
-                }
-              />
-            </React.Suspense>
-          )}
+        <div width="100%" style={{ maxWidth: 1000, width: '100%' }}>
+          <Email data={defaultData[template]} />
         </div>
       </div>
     </div>

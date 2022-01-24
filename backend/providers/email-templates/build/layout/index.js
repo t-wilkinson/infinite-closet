@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Layout = undefined;
+exports.Layout = exports.Center = undefined;
 
 var _Footer = require('./Footer');
 
@@ -77,27 +77,38 @@ var _Footer2 = _interopRequireDefault(_Footer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Layout = exports.Layout = function Layout(_ref) {
-  var title = _ref.title,
-      children = _ref.children,
-      _ref$footer = _ref.footer,
-      footer = _ref$footer === undefined ? true : _ref$footer,
-      img = _ref.img,
-      separator = _ref.separator;
+var Center = exports.Center = function Center(_ref) {
+  var children = _ref.children;
+  return _react2.default.createElement(
+    _Grid2.default,
+    { width: '100%', align: 'center' },
+    _react2.default.createElement(
+      _Grid2.default.Cell,
+      { align: 'center' },
+      children
+    )
+  );
+};
+
+var Layout = exports.Layout = function Layout(_ref2) {
+  var title = _ref2.title,
+      children = _ref2.children,
+      _ref2$footer = _ref2.footer,
+      footer = _ref2$footer === undefined ? true : _ref2$footer,
+      img = _ref2.img,
+      separator = _ref2.separator;
   return _react2.default.createElement(
     _Grid2.default,
     {
       bgcolor: '#e7ddcb',
-      style: {
-        width: '100%'
-      }
+      width: '100%'
     },
     _react2.default.createElement(
-      'center',
-      null,
+      _Grid2.default.Cell,
+      { align: 'center' },
       _react2.default.createElement(
         _Grid2.default,
-        { bgcolor: '#ffffff', style: { width: 800 } },
+        { bgcolor: '#ffffff', width: '800', align: 'center' },
         _react2.default.createElement(
           _Grid2.default.Row,
           null,
@@ -110,17 +121,21 @@ var Layout = exports.Layout = function Layout(_ref) {
               img && _react2.default.createElement(_components.Img, {
                 src: img,
                 provider: 'frontend',
+                width: '600',
                 style: {
-                  width: 600
+                  width: "600",
+                  minWidth: "600"
                 }
               }),
               _react2.default.createElement('br', null),
               _react2.default.createElement(_components.Img, {
-                style: {
-                  width: 300
-                },
                 provider: 'frontend',
-                src: '/media/brand/infinite-closet-text.png'
+                src: '/media/brand/infinite-closet-text.png',
+                width: '300',
+                style: {
+                  width: "300",
+                  minWidth: "300"
+                }
               }),
               _react2.default.createElement('br', null),
               _react2.default.createElement(
@@ -138,7 +153,7 @@ var Layout = exports.Layout = function Layout(_ref) {
           null,
           _react2.default.createElement(
             _Grid2.default,
-            { style: { width: 600 } },
+            { width: '600' },
             separator && _react2.default.createElement(_components.Separator, null),
             children
           ),

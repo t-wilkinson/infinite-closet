@@ -10,15 +10,20 @@ export * from './Grid'
 export * from './Container'
 export * from './Paragraph'
 
+export const Center = ({children}) =>
+  <G width="100%" align="center">
+    <G.Cell align="center">
+        {children}
+    </G.Cell>
+  </G>
+
 export const Layout = ({ title, children, footer = true, img, separator }) => (
   <G
     bgcolor="#e7ddcb"
-    style={{
-      width: '100%',
-    }}
+    width="100%"
   >
-    <center>
-      <G bgcolor="#ffffff" style={{ width: 800 }}>
+    <G.Cell align="center">
+      <G bgcolor="#ffffff" width="800" align="center">
         <G.Row>
           <G>
             <center>
@@ -26,18 +31,22 @@ export const Layout = ({ title, children, footer = true, img, separator }) => (
                 <Img
                   src={img}
                   provider="frontend"
+                  width="600"
                   style={{
-                    width: 600,
+                    width: "600",
+                    minWidth: "600",
                   }}
                 />
               )}
               <br />
               <Img
-                style={{
-                  width: 300,
-                }}
                 provider="frontend"
                 src={'/media/brand/infinite-closet-text.png'}
+                width="300"
+                  style={{
+                    width: "300",
+                    minWidth: "300",
+                  }}
               />
               <br />
               <span
@@ -49,15 +58,15 @@ export const Layout = ({ title, children, footer = true, img, separator }) => (
           </G>
         </G.Row>
         <center>
-          <G style={{ width: 600 }}>
+          <G width="600">
             {separator && <Separator />}
-          {children}
+            {children}
           </G>
           <br />
           {footer && <Footer />}
         </center>
       </G>
-    </center>
+    </G.Cell>
   </G>
 )
 

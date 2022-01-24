@@ -21,8 +21,8 @@ const Summary = ({ left, right, ...props }) =>
     </G.Row>
   ) : null
 
-export default ({ data }) => {
-  const { cart, address, summary, contact, recommendations } = data
+export default ({ data}) => {
+  const { contact, cart, address, summary, recommendations } = data
 
   return (
     <Layout title="Order Confirmation">
@@ -49,9 +49,9 @@ export default ({ data }) => {
 
       <G>
         <G.Row>
-          <G.Cell className="w-full">
+          <G.Cell width="100%">
             <G>
-              <span className="text-gray">Shipping To</span>
+              <span style={{  color: '#5f6368' }} >Shipping To</span>
               {address.fullName}
               {address.mobileNumber}
               {address.addressLine1}
@@ -62,7 +62,7 @@ export default ({ data }) => {
               <tbody>
                 <tr>
                   <td colSpan={2}>
-                    <span className="text-gray">Price Summary</span>
+                    <span style={{ color: '#5f6368' }}>Price Summary</span>
                   </td>
                 </tr>
                 <Summary left="Subtotal" right={summary.subtotal} />
@@ -75,7 +75,9 @@ export default ({ data }) => {
                 <Summary
                   left="TOTAL"
                   right={summary.total}
-                  className="font-bold"
+                  style={{
+                    fontWeight: 'bold'
+                  }}
                 />
               </tbody>
             </table>

@@ -13,26 +13,26 @@ const iconImageStyle = {
 const socialMedia = [
   {
     href: 'https://twitter.com/_infinitecloset',
-    src: '/icons/twitter.png',
+    src: '/icons/twitter-50.png',
   },
   {
     href: 'https://www.instagram.com/infinitecloset.uk',
-    src: '/icons/instagram.png',
+    src: '/icons/instagram-50.png',
   },
   {
     href: 'https://www.facebook.com/InfiniteClosetUK',
-    src: '/icons/facebook.png',
+    src: '/icons/facebook-50.png',
   },
 ]
 
-export const Legal = (props) => {
+export const Legal = ({color='white', ...props}) => {
   return (
     <G {...props}>
       <G.Row style={{ textAlign: 'left' }}>
         <G.Cell>
-          <Link href="https://infinitecloset.co.uk/en-US/privacy">PRIVACY</Link>{' '}
+          <Link href="https://infinitecloset.co.uk/en-US/privacy" style={{color}}>PRIVACY</Link>{' '}
           |{' '}
-          <Link href="https://infinitecloset.co.uk/en-US/terms-and-conditions">
+          <Link href="https://infinitecloset.co.uk/en-US/terms-and-conditions" style={{color}}>
             TERMS
           </Link>
         </G.Cell>
@@ -47,25 +47,26 @@ export const Footer = () => {
     <G
       style={{
         fontSize: 14,
-        color: '#5f6368',
         textAlign: 'center',
       }}
     >
-      <G.Cell className="font-bold text-black">
+      <G.Cell style={{ fontWeight: 'bold' }}>
         ENJOY FREE SHIPPING AND FREE RETURNS ON EVERY ORDER*
         <br />
         <br />
       </G.Cell>
-      <G bgcolor="#39603d" className="text-white p-2" cellPadding={8}>
+      <G bgcolor="#39603d" style={{ color: 'white' }} cellPadding={8}>
         <G cellPadding={4}>
           <G.Cell>
             *Free shipping on all 2-day shipping orders. 1-day and next day
             orders standard shipping rates apply. Other restrictions may apply.{' '}
-            <Link href="https://infinitecloset.co.uk/en-US/terms-and-conditions">
+            <Link href="https://infinitecloset.co.uk/en-US/terms-and-conditions" style={{
+              color: 'white',
+            }}>
               More Information.
             </Link>
           </G.Cell>
-          <Link href="https://infinitecloset.co.uk">
+          <Link href="https://infinitecloset.co.uk" style={{ color: 'white' }}>
             www.infinitecloset.co.uk
           </Link>
           <G.Cell>TAG US ON SOCIAL</G.Cell>
@@ -75,7 +76,7 @@ export const Footer = () => {
                 {socialMedia.map(({ href, src }) => (
                   <G.Cell key={src} style={iconImageStyle}>
                     <Link href={href}>
-                      <Img src={getFrontendURL(src)} style={iconImageStyle} />
+                      <Img src={getFrontendURL(src)} />
                     </Link>
                   </G.Cell>
                 ))}

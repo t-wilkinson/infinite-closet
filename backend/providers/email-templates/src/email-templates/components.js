@@ -5,9 +5,9 @@ import MailingList from '../components/MailingList'
 
 export default () => {
   return (
-    <G align="center" style={{ width: '100%' }}>
+    <G align="center" width="100%">
       <center>
-        <G style={{ width: 700 }} cellPadding={50}>
+        <G width="700" cellPadding={50}>
           <ReviewRequest />
           <Footer />
           <MailingList />

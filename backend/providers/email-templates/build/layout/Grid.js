@@ -104,13 +104,19 @@ var Grid = function Grid(_ref3) {
       className = _ref3$className === undefined ? '' : _ref3$className,
       _ref3$style = _ref3.style,
       style = _ref3$style === undefined ? {} : _ref3$style,
-      props = _objectWithoutProperties(_ref3, ['children', 'className', 'style']);
+      border = _ref3.border,
+      cellPadding = _ref3.cellPadding,
+      cellSpacing = _ref3.cellSpacing,
+      props = _objectWithoutProperties(_ref3, ['children', 'className', 'style', 'border', 'cellPadding', 'cellSpacing']);
 
   return _react2.default.createElement(
     'table',
     Object.assign({
       className: className,
-      style: Object.assign({}, tableStyle.table, style)
+      style: Object.assign({}, tableStyle.table, style),
+      border: border || "0",
+      cellPadding: cellPadding || "0",
+      cellSpacing: cellSpacing || "0"
     }, props),
     _react2.default.createElement(
       'tbody',

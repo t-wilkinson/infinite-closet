@@ -2,7 +2,7 @@ import React from 'react'
 import { P, Legal, Layout, G } from '../layout'
 import { ButtonLink } from '../components'
 
-export default ({ data }) => {
+export default ({ data}) => {
   const { url, user } = data
   return (
     <Layout
@@ -24,7 +24,7 @@ export default ({ data }) => {
           <ButtonLink href={url}>Reset Password</ButtonLink>
         </G>
       </G>
-      <Legal className="text-gray text-sm" />
+      <Legal color="#5f6368" className="text-sm" />
     </Layout>
   )
 }

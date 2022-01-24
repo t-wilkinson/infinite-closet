@@ -32,6 +32,7 @@ export const Order = ({ totalPrice, order, range, review = false }) => {
           >
             <Img
               provider="backend"
+              width="60" height="110"
               style={{ width: 60, height: 110 }}
               src={order.product.images[0].url}
               alt={order.product.images[0].alternativeText}

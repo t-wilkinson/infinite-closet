@@ -22,13 +22,14 @@ const Emails = () => {
         {emails.map((email) => (
           email.type === 'order' &&
           <Route
+            key={email.slug}
             path={path(email.slug)}
-            component={() => <RentalEmail slug={email.route} />}
+            component={() => <RentalEmail slug={email.slug} />}
           />
         ))}
         {<Route
             path={path(giftCardEmail.slug)}
-          component={() => <GiftCardEmail slug={giftCardEmail.route} />}
+          component={() => <GiftCardEmail slug={giftCardEmail.slug} />}
         />
         }
       </Switch>
@@ -55,17 +56,22 @@ const RentalEmail = ({ slug }) => {
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error(res.message)
+          throw res
         } else {
           setStatus({ code: 'success', message: 'Successfully sent mail' })
         }
       })
-      .catch((err) => {
+      .catch(async (err) => {
+        let message
+        try {
+          message = (await err.json()).message
+        } catch (e) {
+          message = err.statusText
+        }
         setStatus({
           code: 'error',
-          message: `Failure sending mail\n${err.message}`,
+          message: `Failure sending mail\n${message}`,
         })
-        console.error(err)
       })
   }
 
@@ -73,6 +79,9 @@ const RentalEmail = ({ slug }) => {
     <RentalEndingWrapper>
       <div>
         <form onSubmit={onSubmit}>
+          <Button style={{marginBottom: '1rem'}} type="submit" primary={true}>
+            Send test email
+          </Button>
           <fieldset>
             <Label message="Order id"></Label>
             <InputNumber
@@ -90,7 +99,7 @@ const RentalEmail = ({ slug }) => {
         ) : status.code === 'loading' ? (
           <span>{status.message}</span>
         ) : status.code === 'error' ? (
-          <span style={{ color: 'red' }}>{status.message}</span>
+          <span style={{ color: 'red', whiteSpace: 'pre-wrap' }}>{status.message}</span>
         ) : null}
       </div>
     </RentalEndingWrapper>
@@ -136,6 +145,9 @@ const GiftCardEmail = ({ slug }) => {
     <RentalEndingWrapper>
       <div>
         <form onSubmit={onSubmit}>
+          <Button style={{marginBottom: '1rem'}} type="submit" primary={true}>
+            Send test email
+          </Button>
           <fieldset>
             <Label message="First name" />
             <InputNumber

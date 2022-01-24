@@ -45,7 +45,7 @@ const Details = () => (
     <div style={{ backgroundColor: '#efefef', padding: 16 }}>
       <Grid>
         <Grid.Row>
-          <Icon name="clock" size={20} className="text-gray mr-6 mt-2" />
+          <Icon name="clock" size={20} style={{color: '#5f6368' }} className="mr-6 mt-2" />
           <div className="">
             <span>Saturday, September 18, 2021</span>
             <span>8pm to 12am (BST)</span>
@@ -53,7 +53,7 @@ const Details = () => (
         </Grid.Row>
         <div style={{ height: 16 }} />
         <Grid.Row>
-          <Icon name="pin" size={20} className="text-gray mr-6" />
+          <Icon name="pin" size={20} style={{color: '#5f6368' }} className="mr-6" />
           44 Great Cumberland Pl, London W1H 7BS
         </Grid.Row>
       </Grid>
@@ -84,7 +84,7 @@ export default ({ data }) => {
           <span className="mb-2">
             {' '}
             and thank you for your kind donation of{' '}
-            <span className="font-bold">£{data.donation}</span>
+            <span style={{ fontWeight: 'bold' }}>£{data.donation}</span>
           </span>
         )}
         !

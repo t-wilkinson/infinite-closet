@@ -1,5 +1,8 @@
 'use strict'
 
+// Email templates need undefined body to supply defaults
+const toTemplateData = (body) => Object.values(body).filter(v => v).length === 0 ? undefined : body
+
 async function getCartItem(orderId) {
   let order = await strapi
     .query('order', 'orders')
@@ -27,9 +30,15 @@ async function getCartItem(orderId) {
 
 async function defaultCartItemEmail(ctx, email) {
   try {
-    const { orderId } = ctx.request.body
-    const { cartItem } = await getCartItem(orderId)
-    await strapi.services.template_email[email](cartItem)
+    const data = toTemplateData(ctx.request.body)
+    console.log(data)
+    if (!data) {
+      await strapi.services.template_email[email]()
+    } else {
+      const { orderId } = ctx.request.body
+      const { cartItem } = await getCartItem(orderId)
+      await strapi.services.template_email[email](cartItem)
+    }
     return ctx.send(null)
   } catch (e) {
     strapi.log.error('Failed to send email', e.stack)
@@ -38,6 +47,27 @@ async function defaultCartItemEmail(ctx, email) {
 }
 
 module.exports = {
+  async orderConfirmation(ctx) {
+    const data = toTemplateData(ctx.request.body)
+    if (!data) {
+      strapi.services.template_email.orderConfirmation()
+      return ctx.send(null)
+    } else {
+      // const { userId, orderIds } = ctx.request.body
+      return ctx.badRequest('Not yet implemented')
+    }
+    // TODO!
+    // const user = await strapi.query('user', 'users-permissions').findOne({ id: userId })
+    // const orders = await strapi.query('user', 'users-permissions').find({ id_in: orderIds })
+
+    // strapi.services.template_email.orderConfirmation({
+    //   firstName: user.firstName,
+    //   summary,
+    //   cart,
+    //   address,
+    // })
+  },
+
   async orderShipped(ctx) {
     await defaultCartItemEmail(ctx, 'orderShipped')
   },
@@ -70,6 +100,7 @@ module.exports = {
   },
 
   async storeCredit() {
+    return ctx.badRequest('Not yet implemented')
     // try {
     //   let { firstName} = ctx.request.body
     //   await strapi.services.template_email.storeCredit({ firstName })

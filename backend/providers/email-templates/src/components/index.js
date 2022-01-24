@@ -23,31 +23,36 @@ export const ButtonLink = ({
   style,
 }) => {
   return (
-      <table align="center" cellPadding={8}>
-        <tr>
-          <td bgcolor="#39603d">
-            <a
-              href={withProvider(href, provider)}
-              style={{
-                whiteSpace: 'nowrap',
-                width: '100%',
-                ...style,
-              }}
-              className="button-link font-body text-white"
-            >
-              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-              {children}
-              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-            </a>
-          </td>
-        </tr>
-      </table>
+    <table align="center" cellPadding={8}>
+      <tr>
+        <td bgcolor="#39603d" cellPadding={4}>
+          <a
+            href={withProvider(href, provider)}
+            style={{
+              color: 'white',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              whiteSpace: 'nowrap',
+              textDecoration: 'none',
+              ...style,
+            }}
+          >
+            {children}
+          </a>
+        </td>
+      </tr>
+    </table>
   )
 }
 
-export const Link = ({ href, provider = 'frontend', children }) => {
+export const Link = ({ href, provider = 'frontend', children, style, ...props }) => {
   return (
-    <a href={withProvider(href, provider)} className="underline">
+    <a href={withProvider(href, provider)}
+      style={{
+        textDecoration: 'underline',
+        ...style,
+      }}
+      {...props}>
       {children}
     </a>
   )
@@ -62,13 +67,21 @@ const imgStyle = {
   },
 }
 
-export const Img = ({ src, alt, className = '', style = {}, provider }) => {
+export const Img = ({
+  src,
+  alt,
+  className = '',
+  style = {},
+  provider,
+  ...props
+}) => {
   return (
     <img
       src={withProvider(src, provider)}
       alt={alt}
       style={{ ...imgStyle.img, ...style }}
       className={className}
+      {...props}
     />
   )
 }
@@ -77,7 +90,7 @@ export const Separator = ({ space = true }) => {
   return (
     <React.Fragment>
       {space && <br />}
-      <table style={{ width: '100%' }}>
+      <table width="100%">
         <tbody>
           <tr>
             <td
@@ -105,6 +118,12 @@ export const Space = ({ n = 1 }) =>
 
 export const Heading = ({ children }) => (
   <center>
-    <strong className="subheading">{children}</strong>
+    <strong
+      style={{
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        fontSize: '1.2em',
+      }}
+    >{children}</strong>
   </center>
 )

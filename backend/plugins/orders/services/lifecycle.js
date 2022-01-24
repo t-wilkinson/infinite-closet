@@ -59,8 +59,8 @@ const on = {
     // Create contact and send email
     if (contact) {
       await strapi.services.contact.upsertContact(contact)
-      strapi.services.template_email.checkout({
-        contact,
+      strapi.services.template_email.orderConfirmation({
+        firstName: contact.nickName,
         summary,
         cart,
         address,

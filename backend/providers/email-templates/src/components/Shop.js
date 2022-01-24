@@ -14,6 +14,7 @@ const ShopItem = (product) => {
         <Img
           provider="backend"
           src={product.images[0].url}
+          width="100" height="200"
           style={{ width: 100, height: 200 }}
         />
       </Link>
@@ -39,7 +40,7 @@ const ShopItem = (product) => {
             {fmtPrice(product.longRentalPrice, true)}
           </strong>
           {' | '}
-          <span className="text-gray">
+          <span style={{color: '#5f6368' }}>
             {fmtPrice(product.retailPrice, true)} retail
           </span>
         </div>
