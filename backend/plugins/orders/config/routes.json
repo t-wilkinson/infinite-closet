@@ -84,6 +84,14 @@
     },
     {
       "method": "GET",
+      "path": "/favorites/:user_id",
+      "handler": "cart.getUserFavorites",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "GET",
       "path": "/cart/view/:user_id",
       "handler": "cart.viewUserCart",
       "config": {

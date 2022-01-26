@@ -123,12 +123,19 @@ module.exports = {
   /*
    * Non user-facing
    */
-  async trustPilot(cartItem = templateData.cartItem) {
-    const { user } = unpackCartItem(cartItem)
+  async contact({firstName, lastName, email, message, phoneNumber} = templateData.defaultData['contact-us']) {
+    const name = `${firstName} ${lastName}`
     await send({
-      template: 'trust-pilot',
-      to: 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
-      data: { cartItem, user, firstName: user.firstName },
+      template: 'contact-us',
+      to: { name, email: 'info@infinitecloset.co.uk' },
+      subject: `[Contact] ${name} `,
+      data: {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        message,
+      },
     })
   },
 
@@ -144,12 +151,12 @@ module.exports = {
   /*
    * Money
    */
-  async giftCard({ firstName, giftCard } = templateData.defaultData['gift-card']) {
+  async giftCard({ email, firstName, giftCard } = templateData.defaultData['gift-card']) {
     const recommendations = await strapi.services.product.recommendations()
     await send({
       template: 'gift-card',
       subject: `You've received a gift card`,
-      to: 'info+test@infinitecloset.co.uk',
+      to: email,
       data: {
         firstName,
         giftCard,
@@ -175,7 +182,7 @@ module.exports = {
   async forgotPassword({url, user} = templateData.defaultData['forgot-password']) {
     await send({
       template: 'forgot-password',
-      to: 'info+test@infinitecloset.co.uk',
+      to: user.email,
       subject: 'Password reset request',
       data: {
         url,

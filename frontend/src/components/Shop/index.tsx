@@ -4,14 +4,13 @@ import Link from 'next/link'
 import { Divider } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
 import {useFields} from '@/Form'
-import { Dayjs, Size } from '@/types'
 
 import { shopActions } from './slice'
 import ProductImages from './ProductImages'
 import ProductDetails from './ProductDetails'
 import OrderOptions from './OrderOptions'
 import AddToCart from './AddToCart'
-import { RentType, RentalLength } from './types'
+import { AddToCartFields } from './types'
 
 import Reviews from './Reviews'
 
@@ -38,17 +37,10 @@ export const Shop = ({ data }) => {
   )
 }
 
-interface Fields {
-  size: Size
-  selectedDate: Dayjs
-  rentalLength: RentalLength
-  rentType: RentType
-}
-
 const Product = ({ data }) => {
   const { product } = data
   const state = useSelector((state) => state.shop)
-  const fields = useFields<Fields>({
+  const fields = useFields<AddToCartFields>({
     size: { constraints: 'required' },
     selectedDate: {
       label: 'Rental Date',

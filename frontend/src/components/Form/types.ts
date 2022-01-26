@@ -1,6 +1,5 @@
 import {UseField} from './fields'
 export {UseField, UseFields} from './fields'
-export type { Coupon } from './Coupon'
 
 export type FieldConfig<Value=FieldValue> = Partial<{
   default: any

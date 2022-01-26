@@ -1,6 +1,9 @@
+/**
+ * @file Basic modal with background
+ */
 import React from 'react'
 
-const Modal = ({ children, close = () => {} }) => {
+export const Modal = ({ children, close = () => {} }) => {
   return (
     <aside
       className="fixed inset-0 grid place-items-center z-30"

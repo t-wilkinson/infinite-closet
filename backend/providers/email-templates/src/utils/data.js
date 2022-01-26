@@ -122,7 +122,7 @@ module.exports = {
     'contact-us': {
       firstName: 'First Name',
       lastName: 'Last Name',
-      emailAddress: 'Email',
+      email: 'info+test@infinitecloset.co.uk',
       phoneNumber: 'Phone',
       message: 'Random message',
     },

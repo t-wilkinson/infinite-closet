@@ -100,7 +100,7 @@ export const Address = ({
   return (
     <div className="relative">
       <button
-        className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
+        className={`relative flex border p-4 flex-row cursor-pointer items-center
           ${id === selected ? 'border-black' : ''}
         `}
         aria-label={`Choose address with name of ${fullName} in ${addressLine1} ${town} ${postcode}`}
@@ -109,7 +109,7 @@ export const Address = ({
         <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
           <div
             className={`w-3 h-3 rounded-full
-              ${id === selected ? 'bg-pri' : ''}
+              ${id === selected ? 'bg-sec' : ''}
             `}
           />
         </div>

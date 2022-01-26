@@ -7,6 +7,8 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 // Order lifecycle
 
+// import OrderStarting from './email-templates/order-starting'
+
 
 // Money
 
@@ -44,10 +46,6 @@ var _orderConfirmation2 = _interopRequireDefault(_orderConfirmation);
 var _orderShipped = require('./email-templates/order-shipped');
 
 var _orderShipped2 = _interopRequireDefault(_orderShipped);
-
-var _orderStarting = require('./email-templates/order-starting');
-
-var _orderStarting2 = _interopRequireDefault(_orderStarting);
 
 var _orderEnding = require('./email-templates/order-ending');
 
@@ -101,7 +99,7 @@ var templates = {
     label: 'Order lifecycle',
     'order-confirmation': _orderConfirmation2.default,
     'order-shipped': _orderShipped2.default,
-    'order-starting': _orderStarting2.default,
+    // 'order-starting': OrderStarting,
     'order-ending': _orderEnding2.default,
     'order-received': _orderReceived2.default,
     'order-review': _orderReview2.default

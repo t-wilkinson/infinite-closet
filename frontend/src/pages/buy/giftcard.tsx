@@ -3,11 +3,14 @@ import React from 'react'
 import axios from '@/utils/axios'
 import GiftCard from '@/Checkout/GiftCard'
 import Layout from '@/Layout'
+import User from '@/User'
 
 export const Page = ({ data }) => {
   return (
     <Layout>
-      <GiftCard data={data} />
+      <User allowGuest>
+        <GiftCard data={data} />
+      </User>
     </Layout>
   )
 }

@@ -1,8 +1,5 @@
 import React from 'react'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
 import { useRouter } from 'next/router'
-dayjs.extend(utc)
 
 import axios from '@/utils/axios'
 import Cart from '@/Cart'
@@ -16,11 +13,16 @@ import {
   AddPaymentMethod,
 } from '@/Form/Payment'
 import Popup from '@/Layout/Popup'
-import { BlueLink, Button } from '@/components'
+import { BlueLink, Button, Divider } from '@/components'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
-import { isOrderInvalid, CheckoutSummary, useFetchCart } from './Utils'
+import {
+  PaymentSubText,
+  isOrderInvalid,
+  CheckoutSummary,
+  useFetchCart,
+} from './Utils'
 import PaymentRequestForm from './PaymentRequestForm'
 
 type Popup = 'none' | 'address' | 'payment'
@@ -134,7 +136,7 @@ export const CheckoutWrapper = ({}) => {
   }, [user])
 
   return (
-    <div className="w-full flex-grow items-center bg-gray-light px-4 pt-4">
+    <div className="w-full flex-grow items-center px-4 pt-4">
       <StateContext.Provider value={state}>
         <DispatchContext.Provider value={dispatch}>
           <FieldsContext.Provider value={fields}>
@@ -144,6 +146,7 @@ export const CheckoutWrapper = ({}) => {
                 md:flex-row space-y-4 md:space-y-0 md:space-x-4
                 "
               >
+                <Checkout fetchCart={fetchCart} analytics={analytics} />
                 <SideBar
                   user={user}
                   state={state}
@@ -151,7 +154,6 @@ export const CheckoutWrapper = ({}) => {
                   fields={fields}
                   dispatch={dispatch}
                 />
-                <Checkout fetchCart={fetchCart} analytics={analytics} />
               </section>
             </PaymentWrapper>
           </FieldsContext.Provider>
@@ -209,66 +211,64 @@ const Checkout = ({ fetchCart, analytics }) => {
     )
   } else {
     return (
-      <Form
-        className="w-full space-y-4"
-        fields={fields}
-        onSubmit={checkout}
-        redirect="/buy/thankyou"
-        notify
-      >
+      <div className="space-y-4 w-full">
+        <span className="font-subheader uppercase text-3xl">
+          SHOPPING CART ({cartCount})
+        </span>
+        <Divider />
+        <div className="h-2" />
         <Cart />
-        <Submit
-          form={fields.form}
-          disabled={
-            !(state.paymentMethod && state.address) ||
-            fields.form.value === 'success' ||
-            ['checking-out'].includes(state.status) ||
-            cart.every(isOrderInvalid)
-          }
+        <Form
+          className="w-full space-y-4"
+          fields={fields}
+          onSubmit={checkout}
+          redirect="/buy/thankyou"
+          notify
         >
-          {!state.address
-            ? 'Please Select an Address'
-            : !state.paymentMethod
-            ? 'Please Select a Payment Method'
-            : cart.every(isOrderInvalid)
-            ? 'No Available Items'
-            : cart.some(isOrderInvalid)
-            ? 'Checkout Available Items'
-            : 'Secure Checkout'}
-        </Submit>
-        {isVisible && <OR />}
-        <PaymentRequestForm
-          setVisible={setVisible}
-          discountCode={fields.get('discountCode').clean()}
-          accurateSummary={state.summary}
-          form={fields.form}
-          onCheckout={() => {
-            fetchCart()
-            analytics.logEvent('purchase', {
-              user: user?.email,
-              type: 'checkout',
-            })
-            router.push('/buy/thankyou')
-          }}
-        />
-      </Form>
+          <Submit
+            type="secondary"
+            form={fields.form}
+            disabled={
+              !(state.paymentMethod && state.address) ||
+              fields.form.value === 'success' ||
+              ['checking-out'].includes(state.status) ||
+              cart.every(isOrderInvalid)
+            }
+          >
+            {!state.address
+              ? 'Please Select an Address'
+              : !state.paymentMethod
+              ? 'Please Select a Payment Method'
+              : cart.every(isOrderInvalid)
+              ? 'No Available Items'
+              : cart.some(isOrderInvalid)
+              ? 'Checkout Available Items'
+              : 'Secure Checkout'}
+          </Submit>
+          <PaymentSubText />
+          {isVisible && <OR />}
+          <PaymentRequestForm
+            setVisible={setVisible}
+            discountCode={fields.get('discountCode').clean()}
+            accurateSummary={state.summary}
+            form={fields.form}
+            onCheckout={() => {
+              fetchCart()
+              analytics.logEvent('purchase', {
+                user: user?.email,
+                type: 'checkout',
+              })
+              router.push('/buy/thankyou')
+            }}
+          />
+        </Form>
+      </div>
     )
   }
 }
 
 const SideBar = ({ user, state, summary, fields, dispatch }) => (
   <aside className="md:w-2/5 space-y-4">
-    <SideItem label="Addresses" user={user} protect>
-      <Address user={user} state={state} dispatch={dispatch} />
-    </SideItem>
-    <SideItem label="Payment Methods" user={user} protect>
-      <Payment
-        form={fields.form}
-        user={user}
-        state={state}
-        dispatch={dispatch}
-      />
-    </SideItem>
     <SideItem label="Summary" user={user}>
       <CheckoutSummary
         userId={user.id}
@@ -279,6 +279,17 @@ const SideBar = ({ user, state, summary, fields, dispatch }) => (
           dispatch({ type: 'add-summary', payload: summary })
         }
       />
+    </SideItem>
+    <SideItem label="Payment Method" user={user} protect>
+      <Payment
+        form={fields.form}
+        user={user}
+        state={state}
+        dispatch={dispatch}
+      />
+    </SideItem>
+    <SideItem label="Address" user={user} protect>
+      <Address user={user} state={state} dispatch={dispatch} />
     </SideItem>
   </aside>
 )
@@ -316,7 +327,7 @@ const Address = ({ state, user, dispatch }) => (
     )}
     <div className="h-0" />
     <Button role="secondary" onClick={() => dispatch({ type: 'edit-address' })}>
-      Add Address
+      Add New Address
     </Button>
   </>
 )
@@ -344,7 +355,7 @@ const Payment = ({ form, state, user, dispatch }) => (
       />
     )}
     <Button role="secondary" onClick={() => dispatch({ type: 'edit-payment' })}>
-      Add Payment
+      Add New Payment Method
     </Button>
   </>
 )

@@ -6,6 +6,7 @@ export interface State {
   checkoutSummary?: Summary
   checkoutCart?: Cart
   count?: number
+  favorites?: Orders
 }
 
 export type Orders = StrapiOrder[]

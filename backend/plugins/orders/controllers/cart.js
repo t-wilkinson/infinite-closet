@@ -6,8 +6,12 @@ async function getUserOrders(user, status) {
       user: user.id,
       ...(!status ? {} : Array.isArray(status) ? { status_in: status } : { status: status }),
     },
-    ['product', 'product.sizes', 'product.designer', 'product.images', 'review']
+    ['review']
   )
+  await Promise.all(orders.map(async order => {
+    order.product = await strapi.query('product').findOne({ id: order.product }, ['sizes', 'designer', 'images'])
+  }))
+
   return orders
 }
 
@@ -58,6 +62,12 @@ module.exports = {
     }
   },
 
+  async getUserFavorites(ctx) {
+    const user = ctx.state.user
+    const orders = await getUserOrders(user, 'list')
+    ctx.send(strapi.plugins['orders'].services.cart.sanitizeOrders(orders))
+  },
+
   async getUserOrders(ctx) {
     const user = ctx.state.user
     const orders = await getUserOrders(user, 'cart')
@@ -74,7 +84,7 @@ module.exports = {
   async viewGuestCart(ctx) {
     const body = ctx.request.body
     const orders = await Promise.all(
-      body.orders.map(async (order) => {
+                         body.orders.filter(order => order.status === 'cart').map(async (order) => {
         if (['number', 'string'].includes(typeof order.product)) {
           const product = await strapi.query('product').findOne(
             {

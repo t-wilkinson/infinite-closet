@@ -3,6 +3,11 @@ import Head from 'next/head'
 import Header from './Header'
 import Footer from './Footer'
 
+export { Header } from './Header'
+export { Footer } from './Footer'
+export { Popup } from './Popup'
+export { Modal } from './Modal'
+
 export const Layout = ({
   title = 'Infinite Closet',
   append = true,
@@ -26,4 +31,5 @@ export const Layout = ({
     <Footer />
   </>
 )
+
 export default Layout

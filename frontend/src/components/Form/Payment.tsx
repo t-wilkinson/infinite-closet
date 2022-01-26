@@ -87,7 +87,7 @@ export const PaymentMethod = ({
     <div className="relative">
       <button
         type="button"
-        className={`relative flex border bg-gray-light p-4 flex-row cursor-pointer items-center
+        className={`relative flex border p-4 flex-row cursor-pointer items-center
       ${id === state.paymentMethod ? 'border-black' : ''}
       `}
         aria-label={`Choose ${toTitleCase(brand)}
@@ -98,7 +98,7 @@ export const PaymentMethod = ({
         <div className="mr-4 w-4 h-4 rounded-full border border-gray items-center justify-center mr-2">
           <div
             className={`w-3 h-3 rounded-full
-          ${id === state.paymentMethod ? 'bg-pri' : ''}
+          ${id === state.paymentMethod ? 'bg-sec' : ''}
           `}
           />
         </div>
@@ -125,7 +125,7 @@ export const PaymentMethod = ({
 export const Authorize = ({ field }) => (
   <button
     onClick={() => field.setValue(!field.value)}
-    aria-label="Authorize Infinite Closet to handle card details"
+    aria-label="Authorise Infinite Closet to handle card details"
     type="button"
     className="flex flex-col"
   >
@@ -137,7 +137,9 @@ export const Authorize = ({ field }) => (
         I authorise Infinite Closet to send instructions to the financial
         institution that issued my card to take payments from my card account in
         accordance with the{' '}
-        <BlueLink href="/terms-and-conditions" label="terms and conditions" />.
+        <BlueLink href="/terms-and-conditions" label="terms and conditions" />
+        {' '}
+        of my agreement with you.
       </span>
     </div>
     <Warning warnings={field.errors} />

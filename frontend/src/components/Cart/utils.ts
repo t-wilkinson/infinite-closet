@@ -63,6 +63,10 @@ export default {
       }
     }
   ),
+  favorites: createAsyncThunk<Orders, void>('cart/favorites', async (_, { getState }) => {
+    const user = getUser(getState)
+    return helpers.getFavorites(user)
+  }),
   view: createAsyncThunk<Cart, void>('cart/view', async (_, { getState }) => {
     const user = getUser(getState)
     return helpers.viewOrders(user)

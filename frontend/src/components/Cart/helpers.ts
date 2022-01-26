@@ -4,7 +4,7 @@ import { StrapiUser, StrapiOrder } from '@/types/models'
 
 import { Cart, Orders } from './types'
 
-export function getGuestOrders(): Orders {
+function getStorageOrders() {
   let orders = storage.get('cart') || []
 
   switch (Object.prototype.toString.call(orders)) {
@@ -24,6 +24,11 @@ export function getGuestOrders(): Orders {
   return orders.filter((order: StrapiOrder) => !order.user)
 }
 
+export function getGuestOrders(): Orders {
+  const orders = getStorageOrders()
+  return orders.filter((order: StrapiOrder) => order.status === 'cart')
+}
+
 export async function getUserOrders(user: StrapiUser): Promise<Orders> {
   return await axios.get(`/orders/cart/${user.id}`)
 }
@@ -33,6 +38,24 @@ export async function getOrders(user: StrapiUser): Promise<Orders> {
     return getUserOrders(user)
   } else {
     return getGuestOrders()
+  }
+}
+
+async function getUserFavorites(user: StrapiUser): Promise<Orders> {
+  const orders = await axios.get(`/orders/favorites/${user.id}`)
+  return orders
+}
+
+function getGuestFavorites(): Orders {
+  const orders = getStorageOrders()
+  return orders.filter((order: StrapiOrder) => order.status === 'list')
+}
+
+export async function getFavorites(user: StrapiUser): Promise<Orders> {
+  if (user) {
+    return getUserFavorites(user)
+  } else {
+    return getGuestFavorites()
   }
 }
 

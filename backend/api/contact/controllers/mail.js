@@ -28,18 +28,14 @@ module.exports = {
 
   async contact(ctx) {
     const body = ctx.request.body
+    const { name, email, phoneNumber, message} = body
 
-    const { firstName, lastName } = splitName(body.name)
-    await strapi.plugins['email'].services.email.send({
-      template: 'contact-us',
-      to: { name: body.name, email: 'info@infinitecloset.co.uk' },
-      subject: `[Contact] ${body.name}`,
-      data: body,
-    })
+    const { firstName, lastName } = splitName(name)
+    await strapi.services.template_email.contact({ name, email, phoneNumber, message  })
 
     await strapi.query('contact').create({
-      email: body.emailAddress,
-      phoneNumber: body.phoneNumber,
+      email,
+      phoneNumber,
       firstName,
       lastName,
     })

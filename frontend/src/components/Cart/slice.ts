@@ -4,13 +4,14 @@ import { RootState } from '@/utils/store'
 import { Summary } from '@/types'
 
 import CartUtils from './utils'
-import { State, Cart } from './types'
+import { Orders, State, Cart } from './types'
 
 export { CartUtils }
 
 const initialState: State = {
   checkoutCart: [],
   orderHistory: [],
+  favorites: []
 }
 
 export const getUser = (getState: any) => (getState() as RootState).user.data
@@ -61,6 +62,12 @@ export const slice = createSlice({
       (state, action: PayloadAction<Cart>) => {
         state.checkoutCart = action.payload
         state.count = state.count + 1
+      }
+    )
+    builder.addCase(
+      CartUtils.favorites.fulfilled,
+      (state, action: PayloadAction<Orders>) => {
+        state.favorites = action.payload
       }
     )
   },

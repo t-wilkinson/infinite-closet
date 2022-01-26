@@ -1,9 +1,12 @@
+/**
+ * @file Modal with more presentational components like header
+ */
 import React from 'react'
 
 import Modal from './Modal'
 import { Icon, iconClose } from '@/Icons'
 
-const Popup = ({
+export const Popup = ({
   children,
   header = undefined,
   isOpen = true,
@@ -18,8 +21,8 @@ const Popup = ({
       <div className="bg-white w-96 p-4 rounded-md" style={{ maxHeight: 600 }}>
         <button
           type="button"
-          onClick={() => close()}
-          className="place-self-end absolute pb-2 pl-2"
+          onClick={close}
+          className="place-self-end absolute p-1"
         >
           <Icon icon={iconClose} size={16} />
         </button>

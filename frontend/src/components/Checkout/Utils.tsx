@@ -1,14 +1,17 @@
 import React from 'react'
 import * as Stripe from '@stripe/react-stripe-js'
+import Image from 'next/image'
 
 import { CartUtils } from '@/Cart/slice'
 import { CartItem } from '@/Cart/types'
-import { DiscountCode, UseField, Coupon } from '@/Form'
+import { DiscountCode, UseField } from '@/Form'
 import { validatePostcode } from '@/Form/Address'
 import axios from '@/utils/axios'
 import { fmtPrice } from '@/utils/helpers'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
+import { Summary } from '@/types'
+import { Hover } from '@/components'
 
 export interface Contact {
   email: string
@@ -31,8 +34,8 @@ export const CheckoutSummary = ({
   userId?: string
   summary: any
   discountCode: UseField<string>
-  accurateSummary: Coupon
-  setAccurateSummary: (coupon: Coupon) => void
+  accurateSummary: Summary
+  setAccurateSummary: (summary: Summary) => void
 }) => {
   if (!summary) {
     return null
@@ -41,6 +44,19 @@ export const CheckoutSummary = ({
 
   return (
     <article className="flex flex-col">
+      <Price label="Subtotal" price={summary.subtotal} />
+      <Price label="Insurance" price={summary.insurance}>
+        <Hover position="left-0" className="mr-2">
+          We offer damage protection with every item, which renters can opt in
+          to purchase for £5 per order. Damage protection covers the cost of the
+          repair (I.e.—stain removal, broken zippers, missing beading), up to a
+          max of £50. This does not cover: Damage beyond repair Theft or loss of
+          item Damages beyond the £50 repair fee
+        </Hover>
+        </Price>
+
+
+      <Price label="Shipping" price={summary.shipping} />
       <div className="w-full my-2">
         <DiscountCode
           price={summary.preDiscount}
@@ -50,11 +66,8 @@ export const CheckoutSummary = ({
           discountCode={discountCode}
         />
       </div>
-      <Price label="Subtotal" price={summary.subtotal} />
-      <Price label="Insurance" price={summary.insurance} />
-      <Price label="Shipping" price={summary.shipping} />
       {discount > 0 && <Price negative label="Discount" price={discount} />}
-      <div className="h-px bg-pri my-1" />
+      <div className="h-px bg-pri my-1 mt-3" />
       <Price
         label="Total"
         price={summary.total - (accurateSummary?.discount || 0)}
@@ -64,14 +77,27 @@ export const CheckoutSummary = ({
   )
 }
 
-const Price = ({ negative = false, label, price, className = '' }) => (
+const Price = ({ negative = false, label, price, className = '', children=null}) => (
   <div className={`flex-row justify-between ${className}`}>
     <span>{label}</span>
-    <span>
+    <div className="flex-row items-center">
+      {children}
       {negative && '-'} {fmtPrice(price)}
-    </span>
+    </div>
   </div>
 )
+
+export const PaymentSubText = () =>
+  <div className="space-y-1">
+    <strong>FREE 2-day Shipping & Returns</strong>
+    <div className="relative inline-block w-64 h-8">
+      <Image
+        layout="fill"
+        objectFit="contain"
+        src="/icons/payment-methods/payment-methods-secure.png"
+      />
+    </div>
+  </div>
 
 export const useFetchCart = () => {
   const rootDispatch = useDispatch()

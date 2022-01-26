@@ -158,10 +158,7 @@ function forwardOrders(orders, status) {
   }
 }
 
-/**
- * Forward every order lifecycle
- */
-async function forwardAll() {
+async function getOrderLifecycles() {
   // Separate orders by status
   const orders = {
     all: await strapi
@@ -175,12 +172,21 @@ async function forwardAll() {
       ]),
   }
 
-  for (const order in orders.all) {
+  for (const order of orders.all) {
     if (!orders[order.status]) {
       orders[order.status] = []
     }
     orders[order.status].push(order)
   }
+
+  return orders
+}
+
+/**
+ * Forward every order lifecycle
+ */
+async function forwardAll() {
+  const orders = getOrderLifecycles()
 
   forwardOrders(orders.planning, 'shipped')
   forwardOrders(orders.shipping, 'start')

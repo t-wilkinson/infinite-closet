@@ -30,6 +30,9 @@ export const OR = () => (
 )
 
 // TODO: differentiate between client and server error
+/**
+ * Helper for which supplies validation, submitting, redirection, submitting animation, etc.
+ */
 export const Form = ({
   fields,
   Success = null,
@@ -150,10 +153,14 @@ export const Submit = ({
         className={`flex flex-row justify-center items-center
         p-3 rounded-sm border transition duration-200 font-bold
         ${
-          disabled
-            ? 'border-pri-light bg-pri-light text-white'
+          disabled && type === 'secondary'
+            ? 'border-gray bg-gray text-white'
+              : disabled
+                ? 'border-pri-light bg-pri-light text-white'
             : type === 'primary'
             ? 'border-pri bg-pri hover:border-sec hover:bg-sec text-white'
+            : type === 'secondary'
+            ? 'bg-gray-black text-white'
             : 'text-black'
         }
         ${className}
@@ -183,7 +190,7 @@ export const Fieldset = ({ label, className = 'my-2', children }) => (
   </fieldset>
 )
 
-export const BodyWrapper = ({ label, children=null }) => (
+export const BodyWrapper = ({ label, children = null }) => (
   <section className="w-full items-center h-full justify-start bg-white rounded-sm pt-32 pb-16">
     <h3 className="font-bold text-xl flex flex-col items-center">{label}</h3>
     {children}

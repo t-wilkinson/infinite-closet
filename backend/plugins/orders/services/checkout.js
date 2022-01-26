@@ -80,7 +80,7 @@ async function onCheckout({
 
   // Validate address
   const isAddressValid = await strapi.services.shipment.validateAddress(address)
-  if (!isAddressValid) {
+  if (!isAddressValid && process.env.NODE_ENV === 'production') {
     throw new Error('Expected a valid address.')
   }
 

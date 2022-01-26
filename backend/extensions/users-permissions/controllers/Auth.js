@@ -333,15 +333,10 @@ module.exports = {
 
     try {
       // Send an email to the user.
-      await strapi.plugins['email'].services.email.send({
-        template: 'forgot-password',
-        to: user.email,
-        subject: `Password reset request`,
-        data: {
+      await strapi.services.template_email.forgotPassword({
           user,
           url: `https://${process.env.FRONTEND_DOMAIN}/account/reset-password?code=${resetPasswordToken}`,
           token: resetPasswordToken,
-        },
       });
     } catch (err) {
       return ctx.badRequest(null, err);

@@ -1,16 +1,19 @@
-import React from "react";
+import React from 'react'
 
-export default ({ data }) => (
-  <dl>
-    <dt>First Name</dt>
-    <dd>{data.firstName}</dd>
-    <dt>Last Name</dt>
-    <dd>{data.lastName}</dd>
-    <dt>Email Address</dt>
-    <dd>{data.emailAddress}</dd>
-    <dt>Phone Number</dt>
-    <dd>{data.phoneNumber}</dd>
-    <dt>Message</dt>
-    <dd>{data.message}</dd>
-  </dl>
-);
+export default ({ data }) => {
+  const { firstName, lastName, email, message, phoneNumber } = data
+  return (
+    <dl>
+      <dt>First Name</dt>
+      <dd>{firstName}</dd>
+      <dt>Last Name</dt>
+      <dd>{lastName}</dd>
+      <dt>Email Address</dt>
+      <dd>{email}</dd>
+      <dt>Phone Number</dt>
+      <dd>{phoneNumber}</dd>
+      <dt>Message</dt>
+      <dd>{message}</dd>
+    </dl>
+  )
+}

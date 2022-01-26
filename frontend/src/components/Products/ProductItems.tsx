@@ -100,7 +100,7 @@ export const Product = ({ product }: { product: StrapiProduct }) => {
   )
 }
 
-const ProductImages = ({ product }) => {
+export const ProductImages = ({ product }) => {
   const [hover, setHover] = React.useState<number>()
   const [index, setIndex] = React.useState<number>(0)
   const wrap = (i: number) => i % product.images.length
@@ -184,7 +184,7 @@ const rentalPrice = (low: number, high: number): string => {
   return low === high ? `£${low}` : `£${low} - £${high}`
 }
 
-const ProductInfo = ({ product }) => (
+export const ProductInfo = ({ product }) => (
   <div className="w-full flex-row justify-between mt-4 relative text-sm leading-snug">
     <div className="flex-grow">
       <div className="inline-block">

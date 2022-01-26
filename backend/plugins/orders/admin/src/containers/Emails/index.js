@@ -115,6 +115,7 @@ const RentalEmail = ({ slug }) => {
 const GiftCardEmail = ({ slug }) => {
   const [firstName, setFirstName] = React.useState()
   const [giftCardId, setGiftCardId] = React.useState()
+  const [email, setEmail] = React.useState()
   const [status, setStatus] = React.useState({ code: null, message: null })
 
   const onSubmit = (e) => {
@@ -127,6 +128,7 @@ const GiftCardEmail = ({ slug }) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        email,
         firstName,
         giftCardId,
       }),
@@ -160,6 +162,14 @@ const GiftCardEmail = ({ slug }) => {
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               name="first-name"
+            />
+          </fieldset>
+          <fieldset>
+            <Label message="Email" />
+            <InputNumber
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              name="email"
             />
           </fieldset>
           <fieldset>

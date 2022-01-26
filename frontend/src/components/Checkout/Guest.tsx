@@ -10,6 +10,7 @@ import {
   useGuestCheckout,
   useFetchCart,
   isOrderInvalid,
+   PaymentSubText,
 } from '@/Checkout/Utils'
 import {
   useFields,
@@ -25,7 +26,7 @@ import {
 import { useAddressFields, AddressFields } from '@/Form/Address'
 import { PaymentWrapper, Authorize, PaymentCard } from '@/Form/Payment'
 import { useSelector, useDispatch } from '@/utils/store'
-import { BlueLink } from '@/components'
+import { BlueLink, Divider } from '@/components'
 import useAnalytics from '@/utils/useAnalytics'
 import PaymentRequestForm from '@/Checkout/PaymentRequestForm'
 import Cart from '@/Cart'
@@ -170,6 +171,11 @@ const Checkout = () => {
   } else {
     return (
       <section className="w-full space-y-4">
+        <span className="font-subheader uppercase text-3xl">
+          SHOPPING CART ({cartCount})
+        </span>
+        <Divider />
+        <div className="h-2" />
         <Cart />
         <PaymentRequestForm
           setVisible={setVisible}
@@ -227,7 +233,8 @@ const CheckoutForm = ({ onCheckout }) => {
       await registerUser({
         email: contact.email,
         firstName: contact.fullName.split(' ')[0] || undefined,
-        lastName: contact.fullName.split(' ').slice(1).join(' ').trim() || undefined,
+        lastName:
+          contact.fullName.split(' ').slice(1).join(' ').trim() || undefined,
         password: cleanedFields.password,
       })
     }
@@ -274,6 +281,7 @@ const CheckoutForm = ({ onCheckout }) => {
       <div className="mt-4 w-full">
         <Submit
           form={fields.form}
+          type="secondary"
           disabled={
             cart.every(isOrderInvalid) || fields.form.value === 'success'
           }
@@ -284,6 +292,7 @@ const CheckoutForm = ({ onCheckout }) => {
             ? 'Checkout Available Items'
             : 'Secure Checkout'}
         </Submit>
+        <PaymentSubText />
       </div>
     </Form>
   )

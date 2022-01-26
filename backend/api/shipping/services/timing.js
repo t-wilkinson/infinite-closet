@@ -58,31 +58,31 @@ function shippingClass(earliestDeliveryDate, startsOn) {
   const arrivesWithClass = (shippingClass) => {
     const arrives = arrival(earliestDeliveryDate, shippingClass)
 
-//     let dates = {
-//       so: startsOn.utc().date(),
-//       edd: earliestDeliveryDate.utc().date(),
-//       a: arrives.utc().date(),
-//     }
-
-    // let dates = {
-    //   so: startsOn.date(),
-    //   edd: earliestDeliveryDate.date(),
-    //   a: arrives.date(),
-    // }
+    //     let dates = {
+    //       so: startsOn.utc().date(),
+    //       edd: earliestDeliveryDate.utc().date(),
+    //       a: arrives.utc().date(),
+    //     }
 
     let dates = {
-      so: Number(startsOn.format('DD'), { timeZone: 'Europe/London' }),
-      edd: Number(earliestDeliveryDate.format('DD'), { timeZone: 'Europe/London' }),
-      a: Number(arrives.format('DD'), { timeZone: 'Europe/London' }),
+      so: startsOn.date(),
+      edd: earliestDeliveryDate.date(),
+      a: arrives.date(),
     }
 
+    //     let dates = {
+    //       so: Number(startsOn.format('DD'), { timeZone: 'Europe/London' }),
+    //       edd: Number(earliestDeliveryDate.format('DD'), { timeZone: 'Europe/London' }),
+    //       a: Number(arrives.format('DD'), { timeZone: 'Europe/London' }),
+    //     }
+
     // console.log(startsOn, earliestDeliveryDate, arrives)
-    console.log(dates)
+    // console.log(dates)
     return dates.so >= dates.a // TODO!: also measure week/year/etc
     // startsOn.isSameOrAfter(, 'day')
   }
 
-  return arrivesWithClass('one') ? 'one' : undefined
+  // return arrivesWithClass('one') ? 'one' : undefined
 
   if (arrivesWithClass('two')) {
     return 'two'

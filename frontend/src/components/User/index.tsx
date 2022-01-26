@@ -3,16 +3,27 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 import axios from '@/utils/axios'
-import { useDispatch } from '@/utils/store'
+import { useDispatch, useSelector } from '@/utils/store'
 import { userActions } from '@/User/slice'
-import { useProtected } from '@/User/Protected'
 import { CartUtils } from '@/Cart/slice'
 
-export const User = ({ children }) => {
-  const user = useProtected()
+export const User = ({ children, allowGuest = false }) => {
+  const router = useRouter()
+  const user = useSelector((state) => state.user.data)
 
   if (user === undefined) {
     return null
+  }
+
+  const isGuest = user === null
+
+  if (isGuest && !allowGuest) {
+    router.push('/account/signin')
+    return null
+  }
+
+  if (isGuest && allowGuest) {
+    return children
   }
 
   return (
@@ -25,7 +36,6 @@ export const User = ({ children }) => {
     </div>
   )
 }
-export default User
 
 const SideMenu = () => {
   const dispatch = useDispatch()
@@ -45,31 +55,35 @@ const SideMenu = () => {
 
   return (
     <div className="h-full w-full mb-8 sm:mb-0 sm:w-64 bg-gray-light p-4 rounded-sm items-start">
-      <SideLink active={/profile/.test(router.pathname)} href="/user/profile">
-        Profile
-      </SideLink>
-      <SideLink active={/giftcard/.test(router.pathname)} href="/buy/giftcard">
-        Gift cards
-      </SideLink>
-      <SideLink
-        active={/order-history/.test(router.pathname)}
-        href="/user/order-history"
-      >
-        Order history
-      </SideLink>
+      <SideLink href="/user/profile">Profile</SideLink>
+      <SideLink href="/user/favorites">Favorites</SideLink>
+      <SideLink href="/buy/giftcard">Gift cards</SideLink>
+      <SideLink href="/user/order-history">Order history</SideLink>
       <SideButton onClick={signout}>Sign out</SideButton>
     </div>
   )
 }
 
-const SideLink = ({ active, href, children }) => (
-  <Link href={href}>
-    <a className={`hover:underline ${active ? 'font-bold' : ''}`}>{children}</a>
-  </Link>
-)
+const SideLink = ({ href, children }) => {
+  const router = useRouter()
+  const active = new RegExp(href, 'i').test(router.pathname)
+  return (
+    <Link href={href}>
+      <a className={`hover:underline ${active ? 'font-bold' : ''}`}>
+        {children}
+      </a>
+    </Link>
+  )
+}
 
 const SideButton = ({ onClick, children }) => (
-  <button type="button" onClick={onClick} className="hover:underline inline-block">
+  <button
+    type="button"
+    onClick={onClick}
+    className="hover:underline inline-block"
+  >
     {children}
   </button>
 )
+
+export default User

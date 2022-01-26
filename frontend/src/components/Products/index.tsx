@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { Icon, ScrollUp } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
 import { capitalize } from '@/utils/helpers'
+import { iconSettings, iconClose, iconLeft, iconRight } from '@/components/Icons'
 
 import { Crumbs } from './BreadCrumbs'
 import { QUERY_LIMIT } from './constants'
@@ -12,10 +13,8 @@ import Filters, { FiltersCount, useToggleFilter } from './Filters'
 import ProductItems from './ProductItems'
 import Sort from './Sort'
 import styles from './Products.module.css'
-import { iconSettings } from '@/components/Icons'
-import { iconClose } from '@/components/Icons'
-import { iconLeft } from '@/components/Icons'
-import { iconRight } from '@/components/Icons'
+
+export { productImageProps } from './utils'
 
 export const Products = ({ data, loading }) => {
   return (

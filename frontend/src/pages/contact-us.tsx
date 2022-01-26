@@ -14,7 +14,10 @@ export const Page = ({ data }) => {
 
   const sendMessage = async () => {
     const cleaned = fields.clean()
-    return axios.post('/chat/contact', cleaned, {withCredentials: false}).catch(() => {
+    return axios.post('/chat/contact', {
+      ...cleaned,
+      email: cleaned.emailAddress,
+    }, {withCredentials: false}).catch(() => {
       throw 'Unable to send your message, please try again later.'
     })
   }

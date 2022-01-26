@@ -42,7 +42,7 @@ module.exports = {
         paymentIntent,
       })
 
-      strapi.services.template_email.giftCard({ firstName: user.firstName, giftCard})
+      strapi.services.template_email.giftCard({ firstName: user.firstName, email: user.email, giftCard})
 
       ctx.send(giftCard)
     } catch (e) {

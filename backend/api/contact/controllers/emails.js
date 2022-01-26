@@ -98,9 +98,9 @@ module.exports = {
 
   async giftCard(ctx) {
     try {
-      let { firstName, giftCardId } = ctx.request.body
+      let { firstName, email, giftCardId } = ctx.request.body
       const giftCard = await strapi.query('gift-card').find({ id: giftCardId })
-      await strapi.services.template_email.giftCard({ firstName, giftCard })
+      await strapi.services.template_email.giftCard({ firstName, giftCard, email })
       return ctx.send(null)
     } catch (e) {
       return ctx.badRequest(e.message)

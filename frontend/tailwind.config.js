@@ -78,6 +78,7 @@ module.exports = {
           light: palette.grayLight,
           default: palette.grayDefault,
           dark: palette.grayDark,
+          black: '#393536',
         },
         fg: palette.black,
         warning: {

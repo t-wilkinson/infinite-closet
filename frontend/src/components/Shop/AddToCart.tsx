@@ -1,4 +1,5 @@
 import React from 'react'
+import { toast } from 'react-toastify'
 
 import * as sizing from '@/utils/sizing'
 import { createDateFormat } from '@/utils/dayjs'
@@ -9,6 +10,7 @@ import { Icon, iconDate } from '@/Icons'
 import { Dayjs, Size } from '@/types'
 import { rentalLengths } from '@/utils/config'
 import { useDispatch, useSelector } from '@/utils/store'
+import { Button } from '@/components'
 
 import { SizeChartPopup, SizeSelector } from './Size'
 import { shopActions } from './slice'
@@ -31,7 +33,6 @@ export const AddToCart = ({ fields, product }) => {
 
 export const productRentContents = {
   OneTime: ({ user, dispatch, product, fields }) => {
-    const [chartOpen, setChartOpen] = React.useState<boolean>(false)
     const state = useSelector((state) => state.shop)
     const analytics = useAnalytics()
 
@@ -44,30 +45,54 @@ export const productRentContents = {
       }
     }, [user])
 
-    const addToCart = async () => {
+    const prepareOrder = () => {
       const size = sizing.get(product.sizes, fields.get('size').value)
       const selectedDate = fields.get('selectedDate').value
       const rentalLength = fields.get('rentalLength').value
 
       const order: any = {
         user: user ? user.id : null,
-        status: 'cart',
         size: sizing.unnormalize(size.size),
         product: product.id,
-        startDate: selectedDate.toJSON(),
+        startDate: selectedDate?.toJSON(),
         rentalLength,
       }
+      return order
+    }
+
+    const addToCart = async () => {
+      const order = {...prepareOrder(), status: 'cart'}
 
       return dispatch(CartUtils.add(order))
         .then(() => {
+          toast.success(`Successfully added to cart.`, {
+            hideProgressBar: true,
+          }),
           analytics.logEvent('add_to_cart', {
             user: user ? user.email : 'guest',
             items: [order],
           })
         })
         .catch(() => {
-          throw 'Unable to add to your cart'
+          throw 'Unable to add to your cart.'
         })
+    }
+
+    const addToFavorites = async () => {
+      try {
+        const order = {...prepareOrder(), status: 'list'}
+        await dispatch(CartUtils.add(order))
+        await dispatch(CartUtils.favorites())
+        toast.success(`Successfully added to favorites.`, {
+          hideProgressBar: true,
+        }),
+        analytics.logEvent('add_to_favorites', {
+          user: user ? user.email : 'guest',
+          items: [order],
+        })
+      } catch {
+        throw 'Unable to add to cart.'
+      }
     }
 
     // React.useEffect(() => {
@@ -107,8 +132,6 @@ export const productRentContents = {
           size={fields.get('size')}
           selectedDate={fields.get('selectedDate')}
           product={product}
-          chartOpen={chartOpen}
-          setChartOpen={setChartOpen}
         />
         <SelectRentalDate
           size={fields.get('size')}
@@ -126,6 +149,11 @@ export const productRentContents = {
         >
           Add to Cart
         </Submit>
+        <Button role="secondary" onClick={() => {
+          addToFavorites()
+        }}>
+          Add to Favorites
+        </Button>
       </Form>
     )
   },
@@ -147,9 +175,9 @@ export const SelectRentalSize = ({
   size,
   selectedDate,
   product,
-  chartOpen,
-  setChartOpen,
 }) => {
+  const [chartOpen, setChartOpen] = React.useState<boolean>(false)
+
   if (size.value === 'ONESIZE') {
     return null
   }
@@ -167,6 +195,7 @@ export const SelectRentalSize = ({
         <SizeSelector
           onChange={(newSize: Size) => {
             size.setValue(newSize)
+            // Reset date in case new size isn't valid, should do a more sophisticated check eventually
             selectedDate.setValue(null)
           }}
           product={product}
