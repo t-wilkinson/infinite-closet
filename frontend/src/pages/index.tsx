@@ -22,6 +22,7 @@ export const Home = ({ products }) => {
       {process.env.NODE_ENV === 'production' && <FacebookMessenger />}
       <div className="w-full items-center w-full">
         <Introduction />
+        <Categories />
         <ProductItems products={products} />
         <WhyRent />
         <ProductCategories />
@@ -98,6 +99,39 @@ const IntroductionText = () => (
     </span>
   </div>
 )
+
+const categories = [
+  { label: 'Wedding', icon: 'wedding.png', slug: 'wedding' },
+  { label: 'Date Night', icon: 'date-night.png', slug: 'date-night' },
+  { label: 'Work', icon: 'work.png', slug: 'work' },
+  { label: 'Vacation', icon: 'vacation.png', slug: 'vacation' },
+  { label: 'Brunch', icon: 'brunch.png', slug: 'brunch' },
+  { label: 'Bridal', icon: 'bridal.png', slug: 'bridal' },
+  { label: 'Cocktail', icon: 'cocktail.png', slug: 'cocktail' },
+  { label: 'Formal', icon: 'formal.png', slug: 'formal' },
+] as const
+
+const Categories = () => {
+  return <div className="mt-16">
+    <Heading>What are you renting for?</Heading>
+    <div className="flex-row flex-wrap max-w-screen-lg justify-center mt-12">
+      {categories.map(category =>
+      <Link href={`/products/clothing?occasions=${category.slug}`}>
+        <a>
+          <div className="bg-sec relative m-4 items-center justify-center font-bold uppercase w-48 h-40">
+            <span className="text-xl text-white">
+              {category.label}
+            </span>
+            <div className="w-24 h-24 relative">
+              <Image layout="fill" src={`/media/home/categories/${category.icon}`} />
+            </div>
+          </div>
+        </a>
+      </Link>
+                     )}
+    </div>
+  </div>
+}
 
 const whyRent = [
   {
