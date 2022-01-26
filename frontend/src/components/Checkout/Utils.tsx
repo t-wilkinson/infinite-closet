@@ -94,7 +94,7 @@ export const PaymentSubText = () =>
       <Image
         layout="fill"
         objectFit="contain"
-        src="/icons/payment-methods/payment-methods-secure.png"
+        src="/icons/payment-methods-secure.png"
       />
     </div>
   </div>

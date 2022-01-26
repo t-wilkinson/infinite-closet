@@ -108,6 +108,8 @@ export const productRentContents = {
     //   document.body.appendChild(s)
     // }, [])
 
+    const quantity = sizing.get(product.sizes, fields.get('size').value)?.quantity
+
     return (
       <Form
         fields={fields}
@@ -147,7 +149,10 @@ export const productRentContents = {
           className="my-2 self-center rounded-sm w-full"
           disabled={fields.form.value === 'success'}
         >
-          Add to Cart
+          {quantity === 0
+            ? 'Pre-Order'
+            : 'Add to Cart'
+          }
         </Submit>
         <Button role="secondary" onClick={() => {
           addToFavorites()
