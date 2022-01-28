@@ -16,3 +16,9 @@ export const fmtPrice = new Intl.NumberFormat('en-GB', {
   style: 'currency',
   currency: 'GBP',
 }).format
+
+export const toFullname = (name: {
+  firstName?: any
+  lastName?: any
+  [x: string]: any
+}) => (name ? [name.firstName || '', name.lastName || ''].join(' ').trim() : '')

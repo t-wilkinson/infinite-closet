@@ -27,9 +27,11 @@
       "unique": true,
       "required": false
     },
-    "owner": {
-      "plugin": "users-permissions",
-      "model": "user"
-    }
+    "senderName": { "type": "string" },
+    "senderEmail": { "type": "string" },
+    "recipientName": { "type": "string" },
+    "recipientEmail": { "type": "string" },
+    "message": { "type": "string" },
+    "deliveryDate": { "type": "date" }
   }
 }

@@ -79,11 +79,12 @@ export const CheckoutSummary = ({
 
 const Price = ({ negative = false, label, price, className = '', children=null}) => (
   <div className={`flex-row justify-between ${className}`}>
-    <span>{label}</span>
-    <div className="flex-row items-center">
+    <div className="flex-row items-center">{label}
       {children}
-      {negative && '-'} {fmtPrice(price)}
     </div>
+    <span>
+      {negative && '-'} {fmtPrice(price)}
+    </span>
   </div>
 )
 

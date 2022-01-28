@@ -1,5 +1,7 @@
 'use strict'
 const stripe = require('stripe')(process.env.STRIPE_KEY)
+const { splitName, day } = require('../../../utils')
+const _ = require('lodash')
 
 module.exports = {
   async createPaymentIntent(ctx) {
@@ -30,7 +32,6 @@ module.exports = {
   },
 
   async purchase(ctx) {
-    const { user } = ctx.state
     const { body } = ctx.request
     const paymentIntent = await stripe.paymentIntents.retrieve(
       body.paymentIntent
@@ -38,11 +39,27 @@ module.exports = {
 
     try {
       const giftCard = await strapi.services.giftcard.add({
-        user,
         paymentIntent,
+        info: _.pick(body, [
+          'senderName',
+          'senderEmail',
+          'recipientName',
+          'recipientEmail',
+          'message',
+          'deliveryDate',
+        ]),
       })
 
-      strapi.services.template_email.giftCard({ firstName: user.firstName, email: user.email, giftCard})
+      const { deliveryDate } = body
+      const today = day()
+      const { firstName } = splitName(body.recipientName)
+      if (day(deliveryDate).isSameOrBefore(today, 'day')) {
+        strapi.services.template_email.giftCard({
+          firstName,
+          email: body.recipientEmail,
+          giftCard,
+        })
+      }
 
       ctx.send(giftCard)
     } catch (e) {
@@ -56,7 +73,9 @@ module.exports = {
       return ctx.send([])
     }
 
-    const giftCards = await strapi.query('gift-card').find({ owner: user.id })
+    const giftCards = await strapi
+      .query('gift-card')
+      .find({ recipientEmail: user.email })
     await Promise.all(
       giftCards.map(async (giftCard) => {
         const value = await strapi.services.giftcard.valueLeft(giftCard)

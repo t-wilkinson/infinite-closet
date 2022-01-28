@@ -1,10 +1,12 @@
 import React from 'react'
+import Link from 'next/link'
 
 import axios from '@/utils/axios'
-import { GiftCard, useGiftCardFields } from '@/Form/Payment'
+import Layout from '@/Layout'
+import User from '@/User'
 import { StrapiGiftCard } from '@/types/models'
-import { fmtPrice } from '@/utils/helpers'
 import { CopyToClipboard } from '@/components'
+import { fmtPrice } from '@/utils/helpers'
 
 type GiftCardValues = (StrapiGiftCard & { valueLeft: number })[]
 
@@ -12,9 +14,8 @@ const Heading = ({ children }) => (
   <h2 className="mt-8 font-bold text-3xl">{children}</h2>
 )
 
-export const GiftCardWrapper = ({ data }) => {
+export const Page = ({}) => {
   const [giftCards, setGiftCards] = React.useState<GiftCardValues>([])
-  const giftCardFields = useGiftCardFields()
 
   React.useEffect(() => {
     axios
@@ -24,16 +25,25 @@ export const GiftCardWrapper = ({ data }) => {
   }, [])
 
   return (
-    <div className="mb-8 max-w-screen-sm w-full">
-      {giftCards?.length > 0 ? (
-        <>
-          <Heading>Your gift cards</Heading>
-          <GiftCards giftCards={giftCards} />
-        </>
-      ) : null}
-      <Heading>Purchase a gift card</Heading>
-      <GiftCard fields={giftCardFields} paymentIntent={data.paymentIntent} />
-    </div>
+    <Layout>
+      <User allowGuest>
+        <div className="w-full max-w-screen-sm">
+          <Link href="/buy/giftcard">
+            <a className="bg-pri w-full p-3 text-center font-bold text-white">
+              Buy a Gift Card
+            </a>
+          </Link>
+          <div className="mb-8">
+            {giftCards?.length > 0 ? (
+              <>
+                <Heading>Your gift cards</Heading>
+                <GiftCards giftCards={giftCards} />
+              </>
+            ) : null}
+          </div>
+        </div>
+      </User>
+    </Layout>
   )
 }
 
@@ -63,4 +73,4 @@ const GiftCards = ({ giftCards }: { giftCards: GiftCardValues }) => {
   )
 }
 
-export default GiftCardWrapper
+export default Page

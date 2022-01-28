@@ -30,17 +30,16 @@ function paymentIntentValid(paymentIntent) {
   return true
 }
 
-async function create({ user = undefined, value }) {
+async function create({ value }) {
   const code = generateRandomCode()
   const giftCard = await strapi.query('gift-card').create({
     code,
-    owner: user,
     value,
   })
   return giftCard
 }
 
-async function add({ user, paymentIntent }) {
+async function add({ paymentIntent, info }) {
   if (!paymentIntentValid(paymentIntent)) {
     throw new Error('Payment must be completed.')
   }
@@ -54,15 +53,15 @@ async function add({ user, paymentIntent }) {
   const { id, value } = fromPaymentIntent(paymentIntent)
   const giftCard = await strapi.query('gift-card').create({
     code,
-    owner: user,
     paymentIntent: id,
     value,
+    ...info,
   })
   return giftCard
 }
 
 async function availableGiftCard(code) {
-  if ( typeof code !== 'string' || !code) {
+  if (typeof code !== 'string' || !code) {
     return null
   }
 
@@ -94,7 +93,13 @@ async function valid(giftCard) {
 async function valueUsed(giftCard) {
   const orders = await strapi
     .query('order', 'orders')
-    .find({ giftCard: toId(giftCard), status_nin: ['error', 'dropped', 'cart', 'list'] }, [])
+    .find(
+      {
+        giftCard: toId(giftCard),
+        status_nin: ['error', 'dropped', 'cart', 'list'],
+      },
+      []
+    )
   return orders.reduce(
     (acc, { giftCardDiscount }) => acc + (giftCardDiscount || 0),
     0

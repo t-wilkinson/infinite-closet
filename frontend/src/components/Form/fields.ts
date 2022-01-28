@@ -1,3 +1,10 @@
+/**
+ * @file Useful abstraction over react state, particularly for form fields
+ * Lets components assume information about (set)state to reduce duplication
+ */
+
+// TODO: allow extending fields
+  // ex: date objects which .clean() converts to json
 import React from 'react'
 import { toTitleCase } from '@/utils/helpers'
 import {
@@ -226,6 +233,11 @@ export class UseFields<Keys = { [key: string]: any }> {
 
   setValue(field: keyof Keys, value: Keys[typeof field]): void {
     this.get(field).setValue(value)
+  }
+
+  toggle(field: keyof Keys) {
+    const Field = this.get(field)
+    Field.setValue(!Field.value)
   }
 
   value(field: keyof Keys): Keys[typeof field] {

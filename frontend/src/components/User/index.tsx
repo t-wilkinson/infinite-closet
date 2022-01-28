@@ -57,7 +57,7 @@ const SideMenu = () => {
     <div className="h-full w-full mb-8 sm:mb-0 sm:w-64 bg-gray-light p-4 rounded-sm items-start">
       <SideLink href="/user/profile">Profile</SideLink>
       <SideLink href="/user/favorites">Favorites</SideLink>
-      <SideLink href="/buy/giftcard">Gift cards</SideLink>
+      <SideLink href="/user/giftcard">Gift cards</SideLink>
       <SideLink href="/user/order-history">Order history</SideLink>
       <SideButton onClick={signout}>Sign out</SideButton>
     </div>

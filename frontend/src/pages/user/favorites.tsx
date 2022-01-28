@@ -33,7 +33,7 @@ export const Page = () => {
 
 const Favorites = ({ favorites }) => {
   return (
-    <div className="items-center md:flex-row flex-wrap md:space-x-3">
+    <div className="items-center flex-row flex-wrap">
       {favorites.map((order: StrapiOrder) => (
         <Favorite key={order.id} order={order} />
       ))}
@@ -53,8 +53,8 @@ const Favorite = ({ order }: { order: StrapiOrder }) => {
   }
 
   return (
-    <div className="flex-row w-96 space-x-1 h-72">
-      <div className="relative w-48 h-64">
+    <div className="w-1/2 md:w-1/3 pb-8">
+      <div className="relative w-full h-64">
         <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
           <a
             className="absolute inset-0"
@@ -68,26 +68,14 @@ const Favorite = ({ order }: { order: StrapiOrder }) => {
           </a>
         </Link>
       </div>
-      <div className="items-start justify-between h-64">
+      <div className="w-full items-start justify-between">
         <ProductInfo product={product} />
-        <div className="items-start space-y-2">
-          <button
-            type="button"
-            className="underline"
-            onClick={() => setEdit(true)}
-          >
-            add to cart
-          </button>
-          <button
-            type="button"
-            className="underline"
-            onClick={async () => {
+        <div className="items-start mt-2">
+          <EditOrderButton label="add to cart" onClick={() => setEdit(true)} />
+          <EditOrderButton label="remove" onClick={async () => {
               await removeOrderItem({ dispatch, order, analytics })
               await dispatch(CartUtils.favorites())
-            }}
-          >
-            remove
-          </button>
+            }} />
         </div>
       </div>
       <EditCartItem
@@ -99,5 +87,14 @@ const Favorite = ({ order }: { order: StrapiOrder }) => {
     </div>
   )
 }
+
+const EditOrderButton = ({ onClick, label }) =>
+  <button
+    type="button"
+    className="underline"
+    onClick={onClick}
+  >
+    {label}
+  </button>
 
 export default Page

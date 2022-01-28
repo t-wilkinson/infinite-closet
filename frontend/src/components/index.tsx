@@ -68,7 +68,7 @@ export const BlueLink = ({ href, label }) => (
 export const Button = ({
   onClick = (..._: any[]): void => {},
   children,
-  role = 'primary' as 'primary' | 'secondary' | 'cta',
+  role = 'primary' as 'primary' | 'secondary' | 'payment' | 'cta',
   className = '',
   type = 'button',
   ...props
@@ -82,6 +82,8 @@ export const Button = ({
       ${
         role === 'primary'
           ? 'text-white bg-pri hover:bg-sec rounded-sm font-bold'
+          : role === 'payment'
+            ? 'text-white bg-gray-black hover:bg-gray'
           : role === 'secondary'
           ? 'text-black bg-white border border-black'
           : role === 'cta'

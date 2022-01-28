@@ -11,6 +11,8 @@ export const Popup = ({
   header = undefined,
   isOpen = true,
   close = () => {},
+  spacing=false,
+  className="",
 }) => {
   if (!isOpen) {
     return null
@@ -18,7 +20,8 @@ export const Popup = ({
 
   return (
     <Modal close={close}>
-      <div className="bg-white w-96 p-4 rounded-md" style={{ maxHeight: 600 }}>
+      <div className={`bg-white p-4 rounded-md ${className || 'w-96' }`} style={{ maxHeight: 600 }}>
+        {spacing && <div className="h-8" />}
         <button
           type="button"
           onClick={close}

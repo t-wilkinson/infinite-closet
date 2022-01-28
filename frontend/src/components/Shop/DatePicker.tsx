@@ -1,25 +1,13 @@
 import React from 'react'
-import dayjs, { Dayjs } from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
-import isBetween from 'dayjs/plugin/isBetween'
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
+import dayjs from '@/utils/dayjs'
 import axios from '@/utils/axios'
-import { Icon } from '@/components'
-import { iconLeft, iconClose, iconRight } from '@/Icons'
+import { Icon, iconLeft, iconClose, iconRight } from '@/Icons'
 import * as sizing from '@/utils/sizing'
 import useDays from '@/utils/useDays'
-import { Size } from '@/types'
+import { Size, Dayjs } from '@/types'
 import { StrapiProduct, StrapiOrder } from '@/types/models'
 import { rentalLengths } from '@/utils/config'
-
-dayjs.extend(isSameOrAfter)
-dayjs.extend(isBetween)
-dayjs.extend(utc)
-dayjs.extend(timezone)
-dayjs.tz.guess()
-dayjs.tz.setDefault('Europe/London')
 
 interface DatePicker {
   previousDate?: Dayjs

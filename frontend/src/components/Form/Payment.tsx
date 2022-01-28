@@ -1,8 +1,18 @@
 import React from 'react'
+import { useRouter } from 'next/router'
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
 import axios from '@/utils/axios'
-import { Warning, Input, useFields, Submit, Form, UseFormField } from '@/Form'
+import {
+  Warning,
+  Input,
+  useFields,
+  Submit,
+  Form,
+  UseFields,
+  UseFormField,
+} from '@/Form'
+import { useFieldEventTarget, FieldEvent, FieldEventTarget } from './Events'
 import { Icon, iconClose, iconCheck } from '@/Icons'
 import useSignin from '@/User/useSignin'
 import { BlueLink } from '@/components'
@@ -137,8 +147,7 @@ export const Authorize = ({ field }) => (
         I authorise Infinite Closet to send instructions to the financial
         institution that issued my card to take payments from my card account in
         accordance with the{' '}
-        <BlueLink href="/terms-and-conditions" label="terms and conditions" />
-        {' '}
+        <BlueLink href="/terms-and-conditions" label="terms and conditions" />{' '}
         of my agreement with you.
       </span>
     </div>
@@ -250,10 +259,39 @@ export const AddPaymentMethod = ({
   )
 }
 
+type PaymentElementEvents = 'success'
+
 export const usePaymentElement = ({ form }: { form: UseFormField }) => {
   const stripe = useStripe()
   const elements = useElements()
+  const router = useRouter()
+  const target = useFieldEventTarget({ singleListener: true })
 
+  const handleSubmit = async ({ formData }) => {
+    if (!stripe || !elements) {
+      return
+    }
+
+    const params = new URLSearchParams(formData)
+    // @ts-ignore
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.href}?${params.toString()}`,
+        // redirect: 'if_required',
+      },
+    })
+
+    if (error) {
+      if (error.type === 'card_error' || error.type === 'validation_error') {
+        throw new Error(error.message)
+      } else {
+        throw new Error('An unexpected error occured.')
+      }
+    }
+  }
+
+  // Check status of payment through client_secret in query params
   React.useEffect(() => {
     if (!stripe) {
       return
@@ -287,28 +325,36 @@ export const usePaymentElement = ({ form }: { form: UseFormField }) => {
     })
   }, [stripe])
 
-  const handleSubmit = async () => {
-    if (!stripe || !elements) {
+  // Success event
+  React.useEffect(() => {
+    if (form.value !== 'success' || !stripe) {
       return
     }
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: window.location.href,
-      },
-    })
+    const query = router.query
+    const paymentIntent = query.payment_intent
 
-    if (error) {
-      if (error.type === 'card_error' || error.type === 'validation_error') {
-        throw new Error(error.message)
-      } else {
-        throw new Error('An unexpected error occured.')
-      }
+    if (!paymentIntent) {
+      return
     }
-  }
+
+    const successEvent = new FieldEvent('success', {
+      paymentIntent,
+      ...query,
+    })
+    target.dispatch(successEvent)
+  }, [target, form.value, stripe])
 
   return {
-    onSubmit: handleSubmit,
+    handleSubmit,
+    on: (event: PaymentElementEvents, cb: (_: any) => void) => {
+      switch (event) {
+        case 'success':
+          target.on(event, (e: FieldEvent) => {
+            cb(e.data)
+          })
+          break
+      }
+    },
   }
 }

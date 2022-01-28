@@ -9,8 +9,9 @@ import Warning from './Warning'
 import { UseFields } from './fields'
 
 export * from './Checkbox'
-export * from './DiscountCode'
 export * from './DateOfBirth'
+export * from './DatePicker'
+export * from './DiscountCode'
 export * from './Dropdown'
 export * from './ImageUpload'
 export * from './Input'
@@ -155,8 +156,8 @@ export const Submit = ({
         ${
           disabled && type === 'secondary'
             ? 'border-gray bg-gray text-white'
-              : disabled
-                ? 'border-pri-light bg-pri-light text-white'
+            : disabled
+            ? 'border-pri-light bg-pri-light text-white'
             : type === 'primary'
             ? 'border-pri bg-pri hover:border-sec hover:bg-sec text-white'
             : type === 'secondary'
@@ -192,7 +193,9 @@ export const Fieldset = ({ label, className = 'my-2', children }) => (
 
 export const BodyWrapper = ({ label, children = null }) => (
   <section className="w-full items-center h-full justify-start bg-white rounded-sm pt-32 pb-16">
-    <h3 className="font-bold text-xl flex flex-col items-center">{label}</h3>
+    <h3 className="font-bold text-xl flex flex-col items-center text-center">
+      {label}
+    </h3>
     {children}
   </section>
 )
