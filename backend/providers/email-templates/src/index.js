@@ -134,7 +134,7 @@ const Emails = () => {
           alignItems: 'center',
         }}
       >
-        <div width="100%" style={{ maxWidth: 1000, width: '100%' }}>
+        <div width="100%" style={{ maxWidth: 1200, width: '100%' }}>
           <Email data={defaultData[template]} />
         </div>
       </div>

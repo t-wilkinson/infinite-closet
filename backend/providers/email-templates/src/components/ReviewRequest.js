@@ -8,7 +8,7 @@ export const ReviewRequest = () => {
       href="/user/order-history"
       button="Review Your Items"
     >
-      <span className="text-center">
+      <span style={{ textAlign: 'center' }}>
         Your feedback helps us learn how we can improve! Write a product
         review for one or more of your rental items and recieve a £5 promo
         code for your next order.

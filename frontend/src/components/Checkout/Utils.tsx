@@ -46,14 +46,8 @@ export const CheckoutSummary = ({
     <article className="flex flex-col">
       <Price label="Subtotal" price={summary.subtotal} />
       <Price label="Insurance" price={summary.insurance}>
-        <Hover position="left-0" className="mr-2">
-          We offer damage protection with every item, which renters can opt in
-          to purchase for £5 per order. Damage protection covers the cost of the
-          repair (I.e.—stain removal, broken zippers, missing beading), up to a
-          max of £50. This does not cover: Damage beyond repair Theft or loss of
-          item Damages beyond the £50 repair fee
-        </Hover>
-        </Price>
+        <InsuranceInfo position="left-0" className="mr-2" />
+      </Price>
 
 
       <Price label="Shipping" price={summary.shipping} />
@@ -87,6 +81,14 @@ const Price = ({ negative = false, label, price, className = '', children=null})
     </span>
   </div>
 )
+
+export const InsuranceInfo = (props) =>
+  <Hover {...props}>
+We offer damage protection with every item, which renters can opt in to purchase for £5 per order. Damage protection covers the cost of the repair (i.e.—stain removal, broken zippers, missing beading), up to a max of £50*.
+    <br />
+    <br />
+    <small className="text-xs">*This does not cover: Damage beyond repair, theft, loss of item, or damages beyond the £50 repair fee</small>
+  </Hover>
 
 export const PaymentSubText = () =>
   <div className="space-y-1">

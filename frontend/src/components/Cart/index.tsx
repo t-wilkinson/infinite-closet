@@ -12,7 +12,6 @@ import { getURL } from '@/utils/axios'
 import useAnalytics from '@/utils/useAnalytics'
 import { fmtPrice } from '@/utils/helpers'
 import { Checkbox, useFields, Form, Submit } from '@/Form'
-import { Hover } from '@/components'
 import { rentalLengths } from '@/utils/config'
 import * as sizing from '@/utils/sizing'
 import { useDispatch, useSelector } from '@/utils/store'
@@ -22,6 +21,7 @@ import { Popup } from '@/Layout'
 import { SelectRentalDate, SelectRentalSize } from '@/Shop/AddToCart'
 import { AddToCartFields } from '@/Shop/types'
 import { productImageProps } from '@/Products/utils'
+import { InsuranceInfo } from '@/Checkout/Utils'
 
 import * as types from './types'
 
@@ -144,13 +144,7 @@ const OrderPrice = ({ totalPrice, toggleInsurance, order }) => (
           value={order.insurance || false}
           label="Include insurance"
         />
-        <Hover position="right-0">
-          We offer damage protection with every item, which renters can opt in
-          to purchase for £5 per order. Damage protection covers the cost of the
-          repair (I.e.—stain removal, broken zippers, missing beading), up to a
-          max of £50. This does not cover: Damage beyond repair Theft or loss of
-          item Damages beyond the £50 repair fee
-        </Hover>
+        <InsuranceInfo position="right-0" />
       </div>
     </div>
   </div>

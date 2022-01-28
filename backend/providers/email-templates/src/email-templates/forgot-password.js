@@ -2,7 +2,7 @@ import React from 'react'
 import { P, Legal, Layout, G } from '../layout'
 import { ButtonLink } from '../components'
 
-export default ({ data}) => {
+export default ({ data }) => {
   const { url, user } = data
   return (
     <Layout
@@ -15,16 +15,15 @@ export default ({ data}) => {
           <p>Hello {user.firstName},</p>
           <p>
             You have requested a password reset for your account. If this was
-            not you, please ignore this email. Use the link below to reset your
-            password.
+            not you, please ignore this email.
           </p>
           <p>Use the link below to reset your password.</p>
         </P>
-        <G className="text-center" cellPadding={48}>
+        <G style={{ textAlign: 'center' }} cellPadding={48}>
           <ButtonLink href={url}>Reset Password</ButtonLink>
         </G>
       </G>
-      <Legal color="#5f6368" className="text-sm" />
+      <Legal color="#5f6368" style={{ fontSize: 14 }}/>
     </Layout>
   )
 }

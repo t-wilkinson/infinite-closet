@@ -10,31 +10,40 @@ export * from './Grid'
 export * from './Container'
 export * from './Paragraph'
 
-export const Center = ({children}) =>
-  <G width="100%" align="center">
-    <G.Cell align="center">
-        {children}
-    </G.Cell>
-  </G>
+// export const Center = ({children}) =>
+//   <G width="100%" align="center">
+//     <G.Cell align="center">
+//         {children}
+//     </G.Cell>
+//   </G>
 
 export const Layout = ({ title, children, footer = true, img, separator }) => (
   <G
     bgcolor="#e7ddcb"
     width="100%"
+    align="center"
+    style={{
+      width: '100%',
+    }}
   >
     <G.Cell align="center">
-      <G bgcolor="#ffffff" width="800" align="center">
+      <G
+        bgcolor="#ffffff"
+        width="100%"
+        align="center"
+        style={{ width: '100%', maxWidth: 1000 }}
+      >
         <G.Row>
           <G>
-            <center>
+            <G.Cell align="center">
               {img && (
                 <Img
                   src={img}
                   provider="frontend"
                   width="600"
                   style={{
-                    width: "600",
-                    minWidth: "600",
+                    width: '600',
+                    minWidth: '600',
                   }}
                 />
               )}
@@ -43,10 +52,10 @@ export const Layout = ({ title, children, footer = true, img, separator }) => (
                 provider="frontend"
                 src={'/media/brand/infinite-closet-text.png'}
                 width="300"
-                  style={{
-                    width: "300",
-                    minWidth: "300",
-                  }}
+                style={{
+                  width: '300',
+                  minWidth: '300',
+                }}
               />
               <br />
               <span
@@ -54,17 +63,17 @@ export const Layout = ({ title, children, footer = true, img, separator }) => (
               >
                 {title.toUpperCase()}
               </span>
-            </center>
+            </G.Cell>
           </G>
         </G.Row>
-        <center>
-          <G width="600">
-            {separator && <Separator />}
+        <G.Cell align="center">
+          {separator && <Separator />}
+          <G style={{ width: 700 }} width="700" align="center">
             {children}
           </G>
           <br />
           {footer && <Footer />}
-        </center>
+        </G.Cell>
       </G>
     </G.Cell>
   </G>

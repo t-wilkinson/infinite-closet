@@ -213,7 +213,7 @@ var Emails = function Emails() {
       },
       _react2.default.createElement(
         'div',
-        { width: '100%', style: { maxWidth: 1000, width: '100%' } },
+        { width: '100%', style: { maxWidth: 1200, width: '100%' } },
         _react2.default.createElement(Email, { data: _data.defaultData[template] })
       )
     )

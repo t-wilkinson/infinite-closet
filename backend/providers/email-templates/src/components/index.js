@@ -24,23 +24,25 @@ export const ButtonLink = ({
 }) => {
   return (
     <table align="center" cellPadding={8}>
-      <tr>
-        <td bgcolor="#39603d" cellPadding={4}>
-          <a
-            href={withProvider(href, provider)}
-            style={{
-              color: 'white',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              whiteSpace: 'nowrap',
-              textDecoration: 'none',
-              ...style,
-            }}
-          >
-            {children}
-          </a>
-        </td>
-      </tr>
+      <tbody>
+        <tr>
+          <td bgcolor="#39603d" cellPadding={4}>
+            <a
+              href={withProvider(href, provider)}
+              style={{
+                color: 'white',
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                whiteSpace: 'nowrap',
+                textDecoration: 'none',
+                ...style,
+              }}
+            >
+              {children}
+            </a>
+          </td>
+        </tr>
+      </tbody>
     </table>
   )
 }
@@ -90,7 +92,7 @@ export const Separator = ({ space = true }) => {
   return (
     <React.Fragment>
       {space && <br />}
-      <table width="100%">
+      <table width="100%" style={{ width: '100%' }}>
         <tbody>
           <tr>
             <td

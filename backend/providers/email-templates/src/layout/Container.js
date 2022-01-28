@@ -5,17 +5,29 @@ import { ButtonLink } from '../components'
 
 export const Container = ({ title, href, button, children }) => {
   return (
-    <G className="border border-gray" cellPadding={16} width="100%">
-      <G className="text-center" cellPadding={4} width="100%" align="center">
-        <G.Cell align="center">
-          {title && <strong
+    <G
+      align="center"
+      cellPadding={16}
       style={{
-        textAlign: 'center',
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-        fontSize: '1.2em',
+        border: '1px solid #5f6368',
+        width: 700,
       }}
-          >{title}</strong>}
+      width="700"
+    >
+      <G style={{ textAlign: 'center' }} cellPadding={4} align="center">
+        <G.Cell align="center">
+          {title && (
+            <strong
+              style={{
+                textAlign: 'center',
+                fontWeight: 'bold',
+                textTransform: 'uppercase',
+                fontSize: '1.2em',
+              }}
+            >
+              {title}
+            </strong>
+          )}
         </G.Cell>
         <G.Cell align="center">{children}</G.Cell>
         <G.Cell align="center">{button && <br />}</G.Cell>

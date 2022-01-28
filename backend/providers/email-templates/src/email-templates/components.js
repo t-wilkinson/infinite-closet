@@ -5,14 +5,12 @@ import MailingList from '../components/MailingList'
 
 export default () => {
   return (
-    <G align="center" width="100%">
-      <center>
-        <G width="700" cellPadding={50}>
-          <ReviewRequest />
-          <Footer />
-          <MailingList />
-        </G>
-      </center>
+    <G align="center">
+      <G align="center" cellPadding={50}>
+        <ReviewRequest />
+        <Footer />
+        <MailingList />
+      </G>
     </G>
   )
 }

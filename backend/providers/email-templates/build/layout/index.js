@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Layout = exports.Center = undefined;
+exports.Layout = undefined;
 
 var _Footer = require('./Footer');
 
@@ -77,38 +77,41 @@ var _Footer2 = _interopRequireDefault(_Footer);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Center = exports.Center = function Center(_ref) {
-  var children = _ref.children;
-  return _react2.default.createElement(
-    _Grid2.default,
-    { width: '100%', align: 'center' },
-    _react2.default.createElement(
-      _Grid2.default.Cell,
-      { align: 'center' },
-      children
-    )
-  );
-};
+// export const Center = ({children}) =>
+//   <G width="100%" align="center">
+//     <G.Cell align="center">
+//         {children}
+//     </G.Cell>
+//   </G>
 
-var Layout = exports.Layout = function Layout(_ref2) {
-  var title = _ref2.title,
-      children = _ref2.children,
-      _ref2$footer = _ref2.footer,
-      footer = _ref2$footer === undefined ? true : _ref2$footer,
-      img = _ref2.img,
-      separator = _ref2.separator;
+var Layout = exports.Layout = function Layout(_ref) {
+  var title = _ref.title,
+      children = _ref.children,
+      _ref$footer = _ref.footer,
+      footer = _ref$footer === undefined ? true : _ref$footer,
+      img = _ref.img,
+      separator = _ref.separator;
   return _react2.default.createElement(
     _Grid2.default,
     {
       bgcolor: '#e7ddcb',
-      width: '100%'
+      width: '100%',
+      align: 'center',
+      style: {
+        width: '100%'
+      }
     },
     _react2.default.createElement(
       _Grid2.default.Cell,
       { align: 'center' },
       _react2.default.createElement(
         _Grid2.default,
-        { bgcolor: '#ffffff', width: '800', align: 'center' },
+        {
+          bgcolor: '#ffffff',
+          width: '100%',
+          align: 'center',
+          style: { width: '100%', maxWidth: 1000 }
+        },
         _react2.default.createElement(
           _Grid2.default.Row,
           null,
@@ -116,15 +119,15 @@ var Layout = exports.Layout = function Layout(_ref2) {
             _Grid2.default,
             null,
             _react2.default.createElement(
-              'center',
-              null,
+              _Grid2.default.Cell,
+              { align: 'center' },
               img && _react2.default.createElement(_components.Img, {
                 src: img,
                 provider: 'frontend',
                 width: '600',
                 style: {
-                  width: "600",
-                  minWidth: "600"
+                  width: '600',
+                  minWidth: '600'
                 }
               }),
               _react2.default.createElement('br', null),
@@ -133,8 +136,8 @@ var Layout = exports.Layout = function Layout(_ref2) {
                 src: '/media/brand/infinite-closet-text.png',
                 width: '300',
                 style: {
-                  width: "300",
-                  minWidth: "300"
+                  width: '300',
+                  minWidth: '300'
                 }
               }),
               _react2.default.createElement('br', null),
@@ -149,12 +152,12 @@ var Layout = exports.Layout = function Layout(_ref2) {
           )
         ),
         _react2.default.createElement(
-          'center',
-          null,
+          _Grid2.default.Cell,
+          { align: 'center' },
+          separator && _react2.default.createElement(_components.Separator, null),
           _react2.default.createElement(
             _Grid2.default,
-            { width: '600' },
-            separator && _react2.default.createElement(_components.Separator, null),
+            { style: { width: 700 }, width: '700', align: 'center' },
             children
           ),
           _react2.default.createElement('br', null),

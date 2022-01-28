@@ -17,7 +17,7 @@ export default ({ data }) => {
         <p>
           Any issues with your order? Please contact Customer Service at
           info@infinitecloset.co.uk or on Whatsapp +44 7521 933225. They will
-          arrange an exchange or provide you with rental credit to do use on a
+          arrange an exchange or provide you with rental credit to use on a
           future order. If you have multiple orders, you don’t need to return
           the unworn item earlier - just please return everything together at
           the end of your rental period.

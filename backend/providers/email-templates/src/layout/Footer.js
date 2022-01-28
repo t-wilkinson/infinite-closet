@@ -25,14 +25,22 @@ const socialMedia = [
   },
 ]
 
-export const Legal = ({color='white', ...props}) => {
+export const Legal = ({ color = 'white', ...props }) => {
   return (
     <G {...props}>
       <G.Row style={{ textAlign: 'left' }}>
         <G.Cell>
-          <Link href="https://infinitecloset.co.uk/en-US/privacy" style={{color}}>PRIVACY</Link>{' '}
+          <Link
+            href="https://infinitecloset.co.uk/en-US/privacy"
+            style={{ color }}
+          >
+            PRIVACY
+          </Link>{' '}
           |{' '}
-          <Link href="https://infinitecloset.co.uk/en-US/terms-and-conditions" style={{color}}>
+          <Link
+            href="https://infinitecloset.co.uk/en-US/terms-and-conditions"
+            style={{ color }}
+          >
             TERMS
           </Link>
         </G.Cell>
@@ -45,7 +53,9 @@ export const Legal = ({color='white', ...props}) => {
 export const Footer = () => {
   return (
     <G
+      align="center"
       style={{
+        width: '100%',
         fontSize: 14,
         textAlign: 'center',
       }}
@@ -60,9 +70,12 @@ export const Footer = () => {
           <G.Cell>
             *Free shipping on all 2-day shipping orders. 1-day and next day
             orders standard shipping rates apply. Other restrictions may apply.{' '}
-            <Link href="https://infinitecloset.co.uk/en-US/terms-and-conditions" style={{
-              color: 'white',
-            }}>
+            <Link
+              href="https://infinitecloset.co.uk/en-US/terms-and-conditions"
+              style={{
+                color: 'white',
+              }}
+            >
               More Information.
             </Link>
           </G.Cell>

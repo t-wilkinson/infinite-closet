@@ -68,11 +68,11 @@ const Row = ({ children, className = '', style = {} }) => {
   )
 }
 
-export const Grid = ({ children, className = '', style = {}, border, cellPadding, cellSpacing,...props }) => {
+export const Grid = ({ children, className = '', style = {}, border, cellPadding, cellSpacing, ...props }) => {
   return (
     <table
       className={className}
-      style={{ ...tableStyle.table, ...style }}
+      style={{ ...tableStyle.table, ...style}}
       border={border || "0"}
       cellPadding={cellPadding || "0"}
       cellSpacing={cellSpacing || "0"}

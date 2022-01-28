@@ -13,7 +13,7 @@ export default ({ data }) => {
       <P>
         <p>Hi {firstName},</p>
         <p>
-          How was your rental experience? Please et us know how you liked your
+          How was your rental experience? Please let us know how you liked your
           pieces -- We and other customers would love to know!
         </p>
       </P>
@@ -29,7 +29,7 @@ export default ({ data }) => {
         href=""
         button="Review Your Items"
       >
-        <span className="text-center">
+        <span style={{textAlign: 'center'}}>
           Your feedback helps us learn how we can improve! Write a product
           review for one or more of your rental items and recieve a £5 promo
           code for your next order.

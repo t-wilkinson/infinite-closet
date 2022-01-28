@@ -49,7 +49,7 @@ export default ({ data}) => {
 
       <G>
         <G.Row>
-          <G.Cell width="100%">
+          <G.Cell width="100%" style={{ width: '100%' }}>
             <G>
               <span style={{  color: '#5f6368' }} >Shipping To</span>
               {address.fullName}
