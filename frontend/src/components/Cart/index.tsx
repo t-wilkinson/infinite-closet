@@ -98,7 +98,10 @@ export const CartItem = ({
         </div>
 
         <div className="w-full">
-          <div className="lg:flex-row w-full items-start lg:items-center lg:justify-between">
+          <div className="items-start
+            md:items-stretch
+            lg:flex-row w-full lg:items-center lg:justify-between
+            ">
             <OrderInformation
               order={order}
               valid={valid}
@@ -133,7 +136,7 @@ export const CartItem = ({
 }
 
 const OrderPrice = ({ totalPrice, toggleInsurance, order }) => (
-  <div className="items-start lg:items-end">
+  <div className="w-full items-end lg:items-end">
     <div className="items-end space-y-2">
       <span>
         <strong>{fmtPrice(totalPrice)}</strong>

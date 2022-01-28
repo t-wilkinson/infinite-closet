@@ -3,6 +3,18 @@ import React from 'react'
 import Layout from '@/Layout'
 import { Divider } from '@/components'
 
+// const textSection = [
+//   { title: 'Our Mission', text: 'To help women feel confident and fashionable while creating a more sustainable future.', },
+//   { title: 'Our Vision', text: 'Our eCommerce platform allows customers to rent independent brands while cutting their carbon footprint and supporting “slow” fashion – making it affordable for the average consumer. We take the guesswork out of the fashion industry by partnering with sustainable, ethical, and minority and/or women-owned independent brands. Not only do we encourage consumers to focus on renting, but we encourage them to show their own closet by mixing their favorite pieces with our own. By creating an “unlimited” designer closet, we allow shoppers to feel great every day.', },
+// ]
+
+// const imageSection = [
+//   { title: 'Sustainability', text: 'Create less waste and work with designers who share our vision of a better tomorrow',  },
+//   { title: 'Inclusivity', text: 'Cultivate a culture that people to freely express themselves' },
+//   { title: 'Diversity', text: 'Create a platform to promote and support idependent women and minority owned brands' },
+//   { title: 'Affordability', text: 'Make sustainable fashion more accessible to everyone' },
+// ]
+
 const values = [
   {
     header: 'Sustainability',

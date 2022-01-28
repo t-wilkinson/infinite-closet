@@ -122,13 +122,14 @@ const Categories = () => {
             <a
               onMouseEnter={() => setHover(category.slug)}
               onMouseLeave={() => setHover(null)}
+              className="m-4 "
             >
-              <div className="bg-sec relative m-4 items-center justify-center font-bold w-48 h-40">
+              <div className="bg-sec relative items-center justify-center font-bold w-48 h-40">
                 <span className="text-xl text-white">{category.label}</span>
                 <div
                   className={`w-24 h-24 relative transform duration-300 ease-in-out
-              ${hover === category.slug ? 'rotate-12' : ''}
-              `}
+                  ${hover === category.slug ? 'scale-110 rotate-12' : ''}
+                  `}
                 >
                   <Image
                     layout="fill"

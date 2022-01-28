@@ -54,44 +54,51 @@ export const productRentContents = {
         user: user ? user.id : null,
         size: sizing.unnormalize(size.size),
         product: product.id,
-        startDate: selectedDate?.toJSON(),
-        rentalLength,
+        startDate: selectedDate ? selectedDate.toJSON() : undefined,
+        rentalLength: rentalLength ? rentalLength : undefined,
       }
       return order
     }
 
     const addToCart = async () => {
-      const order = {...prepareOrder(), status: 'cart'}
+      const order = { ...prepareOrder(), status: 'cart' }
 
       return dispatch(CartUtils.add(order))
         .then(() => {
           toast.success(`Successfully added to cart.`, {
             hideProgressBar: true,
           }),
-          analytics.logEvent('add_to_cart', {
-            user: user ? user.email : 'guest',
-            items: [order],
-          })
+            analytics.logEvent('add_to_cart', {
+              user: user ? user.email : 'guest',
+              items: [order],
+            })
         })
         .catch(() => {
-          throw 'Unable to add to your cart.'
+          toast.error(`Unable to add to cart`, {
+            hideProgressBar: true,
+          })
         })
     }
 
     const addToFavorites = async () => {
       try {
-        const order = {...prepareOrder(), status: 'list'}
+        const order = { ...prepareOrder(), status: 'list' }
         await dispatch(CartUtils.add(order))
         await dispatch(CartUtils.favorites())
         toast.success(`Successfully added to favorites.`, {
           hideProgressBar: true,
-        }),
+        })
         analytics.logEvent('add_to_favorites', {
           user: user ? user.email : 'guest',
           items: [order],
         })
-      } catch {
-        throw 'Unable to add to cart.'
+      } catch (e) {
+        toast.error(
+          `Ran into an issue adding to favorites. We'll have this fixed soon!`,
+          {
+            hideProgressBar: true,
+          }
+        )
       }
     }
 
@@ -108,7 +115,10 @@ export const productRentContents = {
     //   document.body.appendChild(s)
     // }, [])
 
-    const quantity = sizing.get(product.sizes, fields.get('size').value)?.quantity
+    const quantity = sizing.get(
+      product.sizes,
+      fields.get('size').value
+    )?.quantity
 
     return (
       <Form
@@ -149,14 +159,14 @@ export const productRentContents = {
           className="my-2 self-center rounded-sm w-full"
           disabled={fields.form.value === 'success'}
         >
-          {quantity === 0
-            ? 'Pre-Order'
-            : 'Add to Cart'
-          }
+          {quantity === 0 ? 'Pre-Order' : 'Add to Cart'}
         </Submit>
-        <Button role="secondary" onClick={() => {
-          addToFavorites()
-        }}>
+        <Button
+          role="secondary"
+          onClick={() => {
+            addToFavorites()
+          }}
+        >
           Add to Favorites
         </Button>
       </Form>
@@ -176,11 +186,7 @@ export const productRentContents = {
   ),
 }
 
-export const SelectRentalSize = ({
-  size,
-  selectedDate,
-  product,
-}) => {
+export const SelectRentalSize = ({ size, selectedDate, product }) => {
   const [chartOpen, setChartOpen] = React.useState<boolean>(false)
 
   if (size.value === 'ONESIZE') {
@@ -226,7 +232,7 @@ export const SelectRentalDate = ({
   selectedDate,
   setVisible,
 }) => {
-  const fmtDate = createDateFormat('ddd M/D', { 'en-gb': 'ddd D/M'})
+  const fmtDate = createDateFormat('ddd M/D', { 'en-gb': 'ddd D/M' })
   return (
     <SelectorItem
       label="Rental time"
@@ -249,9 +255,12 @@ export const SelectRentalDate = ({
               {selectedDate.value &&
                 fmtDate(selectedDate.value) +
                   ' - ' +
-                  fmtDate(selectedDate.value
-                    .add(rentalLengths[rentalLength.value] + 1, 'day'))
-              }
+                  fmtDate(
+                    selectedDate.value.add(
+                      rentalLengths[rentalLength.value] + 1,
+                      'day'
+                    )
+                  )}
             </span>
             <Icon className="text-gray" icon={iconDate} size={24} />
           </button>

@@ -16,6 +16,8 @@ import Popup from '@/Layout/Popup'
 import { BlueLink, Button, Divider } from '@/components'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
+import Carousel from '@/Layout/Carousel'
+import { Favorite } from '@/User/Favorites'
 
 import {
   PaymentSubText,
@@ -84,15 +86,16 @@ const FieldsContext = React.createContext<UseFields<Fields>>(null)
 
 export const CheckoutWrapper = ({}) => {
   const user = useSelector((state) => state.user.data)
+  const summary = useSelector((state) => state.cart.checkoutSummary)
+  const cart = useSelector((state) => state.cart.checkoutCart)
+
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
-  const cart = useSelector((state) => state.cart.checkoutCart)
   const fields = useFields<Fields>({
     discountCode: { autocomplete: 'off' },
   })
   const fetchCart = useFetchCart()
-  const summary = useSelector((state) => state.cart.checkoutSummary)
 
   React.useEffect(() => {
     analytics.logEvent('view_cart', {
@@ -103,6 +106,10 @@ export const CheckoutWrapper = ({}) => {
   React.useEffect(() => {
     rootDispatch(CartUtils.summary())
   }, [cart])
+
+  React.useEffect(() => {
+    rootDispatch(CartUtils.favorites())
+  }, [user])
 
   React.useEffect(() => {
     fetchCart()
@@ -154,6 +161,9 @@ export const CheckoutWrapper = ({}) => {
                   fields={fields}
                   dispatch={dispatch}
                 />
+                <div className="md:hidden">
+                  <Favorites />
+                </div>
               </section>
             </PaymentWrapper>
           </FieldsContext.Provider>
@@ -164,12 +174,13 @@ export const CheckoutWrapper = ({}) => {
 }
 
 const Checkout = ({ fetchCart, analytics }) => {
-  const router = useRouter()
-  const state = React.useContext(StateContext)
-  const fields = React.useContext(FieldsContext)
   const user = useSelector((state) => state.user.data)
   const cartCount = useSelector((state) => state.cart.count)
   const cart = useSelector((state) => state.cart.checkoutCart)
+
+  const router = useRouter()
+  const state = React.useContext(StateContext)
+  const fields = React.useContext(FieldsContext)
   const [isVisible, setVisible] = React.useState(false)
 
   const checkout = async () => {
@@ -211,10 +222,12 @@ const Checkout = ({ fetchCart, analytics }) => {
     )
   } else {
     return (
-      <div className="space-y-4 w-full">
-        <span className="font-subheader uppercase text-3xl">
+      <div className="space-y-4" style={{
+        flex: '4 1 0',
+        }}>
+        <h1 className="font-subheader uppercase text-3xl">
           SHOPPING CART ({cartCount})
-        </span>
+        </h1>
         <Divider />
         <div className="h-2" />
         <Cart />
@@ -262,13 +275,56 @@ const Checkout = ({ fetchCart, analytics }) => {
             }}
           />
         </Form>
+        <div className="hidden md:block">
+          <Favorites />
+        </div>
       </div>
     )
   }
 }
 
+const Favorites = ({}) => {
+  const favorites = useSelector((state) => state.cart.favorites)
+  const ref = React.useRef(null)
+  const [width, setWidth] = React.useState(window.innerWidth)
+  React.useEffect(() => {
+    const onResize = () => {
+      const clientWidth = ref.current.clientWidth
+      if (clientWidth) {
+        setWidth(clientWidth)
+      }
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+  console.log(width)
+
+  return <section className="pt-12"
+    ref={ref}
+  style={{
+    flex: '1 0 auto',
+    }}>
+    <h3 className="font-subheader text-2xl">Favourites</h3>
+    <Divider  />
+    <div className="h-8" />
+    <Carousel
+      pageSize={width < 470 ? 1 : width < 610 ? 2 : 3}
+      Renderer={Favorite}
+      riders={favorites}
+      map={(favorite) => ({ order: favorite })}
+      inner={{
+        style: {
+          flex: '1 0 auto',
+      },
+      }}
+    />
+  </section>
+}
+
 const SideBar = ({ user, state, summary, fields, dispatch }) => (
-  <aside className="md:w-2/5 space-y-4">
+  <aside className="space-y-4" style={{
+          flex: '1 0 16rem',
+    }}>
     <SideItem label="Summary" user={user}>
       <CheckoutSummary
         userId={user.id}

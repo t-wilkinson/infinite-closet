@@ -1,5 +1,5 @@
 'use strict'
-
+const _ = require('lodash')
 const { generateAPI } = require('../../../utils')
 
 module.exports = {
@@ -20,17 +20,18 @@ module.exports = {
     const user = ctx.state.user
 
     if (!['cart', 'list'].includes(body.status)) {
-      return ctx.send({ message: "Order status must be 'cart' or 'list'" }, 404)
+      return ctx.badRequest("Order status must be 'cart' or 'list'")
     }
 
-    const order = await strapi.query('order', 'orders').create({
-      user: user ? user.id || user : undefined,
+    const orderBody = _.omitBy({
+      user: user?.id || user,
       status: body.status,
       size: body.size,
       product: body.product,
-      startDate: body.startDate, // TODO: should this be a date time (as opposed to date) to handle utc offsets. should it be UTC?
+      startDate: body.startDate,
       rentalLength: body.rentalLength,
-    })
+    }, _.isNil)
+    const order = await strapi.query('order', 'orders').create(orderBody)
 
     ctx.send(strapi.plugins['orders'].services.cart.sanitizeOrder(order))
   },

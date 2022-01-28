@@ -11,7 +11,7 @@ export { CartUtils }
 const initialState: State = {
   checkoutCart: [],
   orderHistory: [],
-  favorites: []
+  favorites: [],
 }
 
 export const getUser = (getState: any) => (getState() as RootState).user.data
@@ -61,9 +61,12 @@ export const slice = createSlice({
       CartUtils.add.fulfilled,
       (state, action: PayloadAction<Cart>) => {
         state.checkoutCart = action.payload
-        state.count = state.count + 1
+        state.count = action.payload.length
       }
     )
+    builder.addCase(CartUtils.add.rejected, () => {
+      throw 'Failed to add order'
+    })
     builder.addCase(
       CartUtils.favorites.fulfilled,
       (state, action: PayloadAction<Orders>) => {

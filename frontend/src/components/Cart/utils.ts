@@ -95,16 +95,16 @@ export default {
   ),
   add: createAsyncThunk<Cart, Partial<StrapiOrder>>(
     'cart/add',
-    async (order, { getState }) => {
+    async (order, { rejectWithValue, getState }) => {
       const user = getUser(getState)
-      if (user) {
-        await axios.post<void>('/orders', order)
-      } else {
-        order = await axios.post<StrapiOrder>('/orders', order, {withCredentials: false})
-        const orders = [...helpers.getGuestOrders(), order as StrapiOrder]
-        helpers.setGuestOrders(orders)
-      }
-      return await helpers.viewOrders(user)
+        if (user) {
+          await axios.post<void>('/orders', order)
+        } else {
+          order = await axios.post<StrapiOrder>('/orders', order, {withCredentials: false})
+          const orders = [...helpers.getGuestOrders(), order as StrapiOrder]
+          helpers.setGuestOrders(orders)
+        }
+        return await helpers.viewOrders(user)
     }
   ),
   insert: createAsyncThunk<Cart, Partial<StrapiOrder>[] | Partial<StrapiOrder>>(
