@@ -1,12 +1,7 @@
-const env = obj => obj[process.env.NODE_ENV]
-const frontendOrigin = env({
-  development: 'http://ic.com',
-  production: 'https://infinitecloset.co.uk'
-})
-const backendOrigin = env({
-  development: 'http://api.ic.com',
-  production: 'https://api.infinitecloset.co.uk'
-})
+// const env = obj => obj[process.env.NODE_ENV]
+
+const frontendOrigin = process.env.REACT_APP_FRONTEND_ORIGIN || 'http://ic.com'
+const backendOrigin = process.env.REACT_APP_BACKEND_ORIGIN || 'http://api.ic.com'
 
 export function getFrontendURL(url) {
   if (url == null) {
@@ -17,9 +12,6 @@ export function getFrontendURL(url) {
     return url
   }
 
-  env({
-
-  })
   return `${frontendOrigin}${url}`
 }
 
