@@ -9,6 +9,7 @@ export const Container = ({ title, href, button, children }) => {
       align="center"
       cellPadding={16}
       style={{
+        background: 'white',
         border: '1px solid #5f6368',
         width: 700,
       }}

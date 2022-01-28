@@ -1,19 +1,19 @@
 'use strict';
 
 var contact = {
-  fullName: 'First Last',
-  nickName: 'First',
+  fullName: '<Full name>',
+  nickName: '<Nick name>',
   email: 'info+test@infinitecloset.co.uk'
 };
 
 var user = {
-  firstName: 'First Name',
-  lastName: 'Last Name',
+  firstName: '<First name>',
+  lastName: '<Last name>',
   email: 'info+test@infinitecloset.co.uk'
 };
 
 var address = {
-  fullName: 'First Last',
+  fullName: contact.fullName,
   addressLine1: 'Address line 1',
   mobileNumber: '123 456 7890'
 };
@@ -37,10 +37,10 @@ var giftCard = {
 };
 
 var product = {
-  name: 'Product name',
+  name: '<Product name>',
   slug: 'product',
   designer: {
-    name: 'Designer name',
+    name: '<Designer name>',
     slug: 'designer'
   },
   sizes: [{ size: 'S', quantity: 1 }, { size: 'M', quantity: 1 }],
@@ -70,7 +70,7 @@ var cartItem = {
 };
 
 var orderData = {
-  firstName: 'First Name',
+  firstName: '<First Name>',
   cartItem: cartItem,
   user: user
 };

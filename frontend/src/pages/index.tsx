@@ -12,9 +12,9 @@ import whyRentPic from '@/media/home/why-rent.png'
 import formalClothingPic from '@/media/home/formal-clothing.png'
 import sustainableFashionRentalPic from '@/media/home/sustainable-fashion-rental.png'
 import holidaysTreatsPic from '@/media/home/holidays-treats.png'
-import reviewImage1 from  '@/media/home/review-image.jpg'
-import reviewImage2 from  '@/media/home/review-image-1.jpg'
-import reviewImage3 from  '@/media/home/review-image-2.jpg'
+import reviewImage1 from '@/media/home/review-image.jpg'
+import reviewImage2 from '@/media/home/review-image-1.jpg'
+import reviewImage3 from '@/media/home/review-image-2.jpg'
 
 export const Home = ({ products }) => {
   return (
@@ -112,25 +112,36 @@ const categories = [
 ] as const
 
 const Categories = () => {
-  return <div className="mt-16">
-    <Heading>What are you renting for?</Heading>
-    <div className="flex-row flex-wrap max-w-screen-lg justify-center mt-12">
-      {categories.map(category =>
-      <Link href={`/products/clothing?occasions=${category.slug}`}>
-        <a>
-          <div className="bg-sec relative m-4 items-center justify-center font-bold uppercase w-48 h-40">
-            <span className="text-xl text-white">
-              {category.label}
-            </span>
-            <div className="w-24 h-24 relative">
-              <Image layout="fill" src={`/media/home/categories/${category.icon}`} />
-            </div>
-          </div>
-        </a>
-      </Link>
-                     )}
+  const [hover, setHover] = React.useState<string>()
+  return (
+    <div className="mt-16">
+      <Heading>What are you renting for?</Heading>
+      <div className="flex-row flex-wrap max-w-screen-lg justify-center mt-12">
+        {categories.map((category) => (
+          <Link href={`/products/clothing?occasions=${category.slug}`}>
+            <a
+              onMouseEnter={() => setHover(category.slug)}
+              onMouseLeave={() => setHover(null)}
+            >
+              <div className="bg-sec relative m-4 items-center justify-center font-bold w-48 h-40">
+                <span className="text-xl text-white">{category.label}</span>
+                <div
+                  className={`w-24 h-24 relative transform duration-300 ease-in-out
+              ${hover === category.slug ? 'rotate-12' : ''}
+              `}
+                >
+                  <Image
+                    layout="fill"
+                    src={`/media/home/categories/${category.icon}`}
+                  />
+                </div>
+              </div>
+            </a>
+          </Link>
+        ))}
+      </div>
     </div>
-  </div>
+  )
 }
 
 const whyRent = [
@@ -429,7 +440,7 @@ const UserReviews = () => {
   )
 }
 
-const Review = ({ quote, name, image, smallPosition="center"}) => {
+const Review = ({ quote, name, image, smallPosition = 'center' }) => {
   const [hover, setHover] = React.useState(null)
 
   return (
@@ -447,10 +458,13 @@ const Review = ({ quote, name, image, smallPosition="center"}) => {
           objectPosition="center"
           placeholder="blur"
         />
-        <div className={`h-full w-full relative transition-all duration-300
+        <div
+          className={`h-full w-full relative transition-all duration-300
           ${hover ? 'opacity-100' : 'opacity-0'}
-          `}>
-          <div className={`absolute inset-0
+          `}
+        >
+          <div
+            className={`absolute inset-0
             `}
             style={{
               ...(hover
@@ -489,8 +503,12 @@ const Review = ({ quote, name, image, smallPosition="center"}) => {
           />
         </div>
         <div className="h-full w-full relative transition-all duration-300">
-          <div className="absolute inset-0"
-            style={{ backgroundColor: '#DDDDDDAA', backdropFilter: 'blur(4px)' }}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: '#DDDDDDAA',
+              backdropFilter: 'blur(4px)',
+            }}
           />
           <span
             className="absolute top-0 left-0 ml-6 -mt-20 text-sec"
@@ -517,8 +535,12 @@ const Review = ({ quote, name, image, smallPosition="center"}) => {
           placeholder="blur"
         />
         <div className="mt-48 h-full w-full relative transition-all duration-300">
-          <div className="absolute inset-0"
-            style={{ backgroundColor: '#DDDDDDAA', backdropFilter: 'blur(4px)' }}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundColor: '#DDDDDDAA',
+              backdropFilter: 'blur(4px)',
+            }}
           />
           <span
             className="absolute top-0 left-0 ml-6 -mt-20 text-sec"
@@ -599,10 +621,14 @@ export async function getStaticProps() {
     'simone-night-fall',
   ]
   const products = await axios
-    .get<StrapiProduct[]>(`/products?slug_in=${productSlugs.join('&slug_in=')}`, {withCredentials: false})
+    .get<StrapiProduct[]>(
+      `/products?slug_in=${productSlugs.join('&slug_in=')}`,
+      { withCredentials: false }
+    )
     .then((res) =>
       res.sort(
-        (p1, p2) => productSlugs.indexOf(p1.slug) - productSlugs.indexOf(p2.slug)
+        (p1, p2) =>
+          productSlugs.indexOf(p1.slug) - productSlugs.indexOf(p2.slug)
       )
     )
     .catch(() => [])
@@ -614,4 +640,3 @@ export async function getStaticProps() {
 }
 
 export default Page
-

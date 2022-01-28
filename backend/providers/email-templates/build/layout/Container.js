@@ -29,6 +29,7 @@ var Container = exports.Container = function Container(_ref) {
       align: 'center',
       cellPadding: 16,
       style: {
+        background: 'white',
         border: '1px solid #5f6368',
         width: 700
       },

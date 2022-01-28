@@ -58,7 +58,8 @@ function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in ob
 var tableStyle = {
   table: {
     width: '100%',
-    borderCollapse: 'collapse'
+    borderCollapse: 'collapse',
+    border: 0
   }
 };
 
@@ -114,7 +115,6 @@ var Grid = function Grid(_ref3) {
     Object.assign({
       className: className,
       style: Object.assign({}, tableStyle.table, style),
-      border: border || "0",
       cellPadding: cellPadding || "0",
       cellSpacing: cellSpacing || "0"
     }, props),

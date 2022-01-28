@@ -1,17 +1,17 @@
 const contact = {
-  fullName: 'First Last',
-  nickName: 'First',
+  fullName: '<Full name>',
+  nickName: '<Nick name>',
   email: 'info+test@infinitecloset.co.uk',
 }
 
 const user = {
-  firstName: 'First Name',
-  lastName: 'Last Name',
+  firstName: '<First name>',
+  lastName: '<Last name>',
   email: 'info+test@infinitecloset.co.uk',
 }
 
 const address = {
-  fullName: 'First Last',
+  fullName: contact.fullName,
   addressLine1: 'Address line 1',
   mobileNumber: '123 456 7890',
 }
@@ -35,10 +35,10 @@ const giftCard = {
 }
 
 const product = {
-  name: 'Product name',
+  name: '<Product name>',
   slug: 'product',
   designer: {
-    name: 'Designer name',
+    name: '<Designer name>',
     slug: 'designer',
   },
   sizes: [
@@ -73,7 +73,7 @@ const cartItem = {
   }
 
 const orderData = {
-  firstName: 'First Name',
+  firstName: '<First Name>',
   cartItem,
   user,
 }

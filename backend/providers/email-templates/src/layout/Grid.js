@@ -46,6 +46,7 @@ const tableStyle = {
   table: {
     width: '100%',
     borderCollapse: 'collapse',
+    border: 0,
   },
 }
 
@@ -73,7 +74,6 @@ export const Grid = ({ children, className = '', style = {}, border, cellPadding
     <table
       className={className}
       style={{ ...tableStyle.table, ...style}}
-      border={border || "0"}
       cellPadding={cellPadding || "0"}
       cellSpacing={cellSpacing || "0"}
       {...props}

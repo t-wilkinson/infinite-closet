@@ -78,8 +78,8 @@ sup {
 }
 
 table {
-  text-indent: 0;
-  border-color: inherit;
+  /* text-indent: 0; */
+  /* border-color: inherit; */
 }
 
 progress {
@@ -139,9 +139,9 @@ body {
 ::before,
 ::after {
   box-sizing: border-box;
-  border-width: 0;
-  border-style: solid;
-  border-color: currentColor;
+  /* border-width: 0; */
+  /* border-style: solid; */
+  /* border-color: currentColor; */
 }
 
 hr {
@@ -179,7 +179,7 @@ button {
 }
 
 table {
-  border-collapse: collapse;
+  /* border-collapse: collapse; */
 }
 
 h1,
@@ -236,7 +236,7 @@ video {
 *,
 ::before,
 ::after {
-  border-color: rgba(229, 231, 235, var(--tw-border-opacity));
+  /* border-color: rgba(229, 231, 235, var(--tw-border-opacity)); */
 }
 
 .max-w-screen-sm {
