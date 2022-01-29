@@ -154,7 +154,7 @@ const OrderPrice = ({ totalPrice, toggleInsurance, order }) => (
 
 const OrderInformation = ({ order, available, valid }) => {
   const { product } = order
-  const date = dayjs(order.startDate).tz('Europe/London') // order.startDate is utc
+  const date = dayjs(order.startDate || undefined).tz('Europe/London') // order.startDate is utc
   const startDate = date.format('ddd, MMM D')
   const endDate = date
     .add(rentalLengths[order.rentalLength], 'day')
@@ -211,7 +211,7 @@ export const EditCartItem = ({ order, isOpen, close, onSubmit = () => {} }) => {
     selectedDate: {
       label: 'Rental Date',
       constraints: 'required',
-      default: dayjs(order.startDate),
+      default: dayjs(order.startDate || undefined),
     },
     rentalLength: { constraints: 'required', default: order.rentalLength },
     rentType: { default: 'OneTime' },
@@ -256,7 +256,7 @@ export const EditCartItem = ({ order, isOpen, close, onSubmit = () => {} }) => {
           visible={dateVisible}
           setVisible={(visible: boolean) => setDateVisible(visible)}
           rentalLength={fields.value('rentalLength')}
-          previousDate={dayjs(order.startDate)}
+          previousDate={undefined}
         />
 
         <SelectRentalSize
@@ -282,7 +282,7 @@ export const EditCartItem = ({ order, isOpen, close, onSubmit = () => {} }) => {
             : 'Save changes'}
         </Submit>
         {isPreorder && <span className="text-sm">
-          *This item is currently out of stock
+          *This item is not in stock so please allow a 2 week delay
         </span>}
       </Form>
     </Popup>

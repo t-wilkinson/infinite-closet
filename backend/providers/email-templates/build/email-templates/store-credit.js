@@ -48,11 +48,6 @@ exports.default = function (_ref) {
           'You\u2019ve recieved store credit! Your ',
           (0, _utils.fmtPrice)(amount),
           ' credit has been applied to your account and will be automatically applied to your next rental.'
-        ),
-        _react2.default.createElement(
-          'p',
-          null,
-          'Use the link below to reset your password.'
         )
       )
     ),

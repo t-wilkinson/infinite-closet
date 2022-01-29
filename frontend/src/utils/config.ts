@@ -49,7 +49,7 @@ export const routes = [
           { name: 'Gowns', slug: 'gowns' },
           { name: 'Tops', slug: 'tops' },
           { name: 'Outerwear', slug: 'outerwear' },
-          { name: 'Pants', slug: 'pants' },
+          { name: 'Trousers', slug: 'trousers' },
           { name: 'Skirts', slug: 'skirts' },
           { name: 'Maternity', slug: 'maternity' },
         ],

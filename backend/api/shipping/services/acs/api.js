@@ -71,7 +71,7 @@ module.exports = {
         }
       })
       .catch((err) => {
-        strapi.log.error('ship %o', err.stack)
+        strapi.log.error('ship %o', err.stack, err.message)
         throw new Error('Failed to ship order')
       })
 

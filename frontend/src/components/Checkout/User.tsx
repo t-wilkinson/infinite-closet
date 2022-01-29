@@ -211,6 +211,7 @@ const Checkout = ({ fetchCart, analytics }) => {
 
   if (cartCount === 0) {
     return (
+      <div>
       <BodyWrapper
         label={
           <BlueLink
@@ -219,6 +220,10 @@ const Checkout = ({ fetchCart, analytics }) => {
           />
         }
       />
+        <div className="hidden md:block">
+          <Favorites />
+        </div>
+      </div>
     )
   } else {
     return (

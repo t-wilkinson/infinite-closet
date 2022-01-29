@@ -22,6 +22,4 @@ export const createDateFormat = (defFormat: string, formats: object) => {
   }
 }
 
-export { dayjs }
-
 export default dayjs

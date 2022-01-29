@@ -33,7 +33,7 @@ export const Orders = () => {
 
 export const OrderItem = ({ item }) => {
   const { order } = item
-  const date = dayjs(order.startDate).tz('Europe/London') // order.startDate is utc
+  const date = dayjs(order.startDate || undefined).tz('Europe/London') // order.startDate is utc
   const startDate = date.format('ddd, MMM D')
   const endDate = date
     .add(rentalLengths[order.rentalLength], 'day')

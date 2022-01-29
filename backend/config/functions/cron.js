@@ -12,6 +12,10 @@ module.exports = {
     await strapi.services.contact.updateContactList()
   },
 
+  '0 2,7,18 * * *': async () => {
+    // strapi.services.mailchimp.marketing.lists
+  },
+
   '0 7 * * *': async () => {
     // Send out gift-card emails
     const today = day()

@@ -46,6 +46,7 @@ exports.default = function (_ref) {
         'You\u2019ve recieved a gift card! Your ',
         (0, _utils.fmtPrice)(giftCard.value),
         ' gift card code is',
+        ' ',
         _react2.default.createElement(
           'strong',
           null,
