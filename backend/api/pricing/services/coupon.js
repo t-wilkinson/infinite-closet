@@ -18,6 +18,10 @@ function discount({
   price, coupon, valid = true,
   outOfStockTotal=0,
 }) {
+  if (!coupon) {
+    return 0
+  }
+
   if (!valid) {
     return 0
   }

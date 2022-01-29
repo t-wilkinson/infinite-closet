@@ -101,14 +101,14 @@ const IntroductionText = () => (
 )
 
 const categories = [
-  { label: 'Wedding', icon: 'wedding.png', slug: 'wedding' },
-  { label: 'Date Night', icon: 'date-night.png', slug: 'date-night' },
-  { label: 'Work', icon: 'work.png', slug: 'work' },
-  { label: 'Vacation', icon: 'vacation.png', slug: 'vacation' },
-  { label: 'Brunch', icon: 'brunch.png', slug: 'brunch' },
-  { label: 'Bridal', icon: 'bridal.png', slug: 'bridal' },
-  { label: 'Cocktail', icon: 'cocktail.png', slug: 'cocktail' },
-  { label: 'Formal', icon: 'formal.png', slug: 'formal' },
+  { label: 'Wedding', icon: 'wedding.svg', slug: 'wedding' },
+  { label: 'Date Night', icon: 'date-night.svg', slug: 'date-night' },
+  { label: 'Work', icon: 'work.svg', slug: 'work' },
+  { label: 'Vacation', icon: 'vacation.svg', slug: 'vacation' },
+  { label: 'Brunch', icon: 'brunch.svg', slug: 'brunch' },
+  { label: 'Bridal', icon: 'bridal.svg', slug: 'bridal' },
+  { label: 'Cocktail', icon: 'cocktail.svg', slug: 'cocktail' },
+  { label: 'Formal', icon: 'formal.svg', slug: 'formal' },
 ] as const
 
 const Categories = () => {
