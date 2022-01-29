@@ -128,9 +128,6 @@ const GiftCardContent = ({ fields }: { fields: UseFields<GiftCardFields> }) => {
 
   return (
     <Form onSubmit={onSubmit} fields={fields} className="w-full">
-      <button type="button" onClick={() => fields.setStatus('error')}>
-        error
-      </button>
       <GiftCardInfo fields={fields} />
       <GiftCardPayment fields={fields} />
     </Form>
