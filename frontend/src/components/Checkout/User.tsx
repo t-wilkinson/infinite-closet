@@ -222,9 +222,12 @@ const Checkout = ({ fetchCart, analytics }) => {
     )
   } else {
     return (
-      <div className="space-y-4" style={{
-        flex: '4 1 0',
-        }}>
+      <div
+        className="space-y-4"
+        style={{
+          flex: '4 1 0',
+        }}
+      >
         <h1 className="font-subheader uppercase text-3xl">
           SHOPPING CART ({cartCount})
         </h1>
@@ -297,34 +300,40 @@ const Favorites = ({}) => {
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
-  console.log(width)
 
-  return <section className="pt-12"
-    ref={ref}
-  style={{
-    flex: '1 0 auto',
-    }}>
-    <h3 className="font-subheader text-2xl">Favourites</h3>
-    <Divider  />
-    <div className="h-8" />
-    <Carousel
-      pageSize={width < 470 ? 1 : width < 610 ? 2 : 3}
-      Renderer={Favorite}
-      riders={favorites}
-      map={(favorite) => ({ order: favorite })}
-      inner={{
-        style: {
-          flex: '1 0 auto',
-      },
+  return (
+    <section
+      className="pt-12"
+      ref={ref}
+      style={{
+        flex: '1 0 auto',
       }}
-    />
-  </section>
+    >
+      <h3 className="font-subheader text-2xl">Favourites</h3>
+      <Divider />
+      <div className="h-8" />
+      <Carousel
+        pageSize={width < 470 ? 1 : width < 610 ? 2 : 3}
+        Renderer={Favorite}
+        riders={favorites}
+        map={(favorite) => ({ order: favorite })}
+        inner={{
+          style: {
+            flex: '1 0 auto',
+          },
+        }}
+      />
+    </section>
+  )
 }
 
 const SideBar = ({ user, state, summary, fields, dispatch }) => (
-  <aside className="space-y-4" style={{
-          flex: '1 0 16rem',
-    }}>
+  <aside
+    className="space-y-4"
+    style={{
+      flex: '1 0 16rem',
+    }}
+  >
     <SideItem label="Summary" user={user}>
       <CheckoutSummary
         userId={user.id}

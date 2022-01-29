@@ -16,8 +16,10 @@ const toPrice = (amount) => amount / SMALLEST_CURRENCY_UNIT
 
 /**
  * Calculate the discount given the coupon and price
+ * @param {object} obj
+ * @param {number} obj.outOfStockTotal - In case coupons have a modifier that prevents them being applied to items not in stock
  */
-async function discount({ price, context, discountCode, existingCoupons }) {
+async function discount({ outOfStockTotal, price, context, discountCode, existingCoupons }) {
   let giftCard = await strapi.services.giftcard.availableGiftCard(
     discountCode
   )
@@ -40,11 +42,12 @@ async function discount({ price, context, discountCode, existingCoupons }) {
     coupon,
     existingCoupons
   )
-  let couponDiscount = await strapi.services.coupon.discount(
+  let couponDiscount = await strapi.services.coupon.discount({
     price,
     coupon,
-    isCouponValid
-  )
+    isCouponValid,
+    outOfStockTotal,
+  })
   if (!isGiftCardValid) {
     couponDiscount = 0
     coupon = null
@@ -62,9 +65,10 @@ async function discount({ price, context, discountCode, existingCoupons }) {
 /**
  * Price summary including discount, subtotal, etc.
  */
-async function summary({ price, context, discountCode, existingCoupons }) {
+async function summary({ outOfStockTotal, price, context, discountCode, existingCoupons }) {
   const { discountPrice, giftCardDiscount, couponDiscount, coupon, giftCard } =
     await discount({
+      outOfStockTotal,
       price,
       context,
       discountCode,

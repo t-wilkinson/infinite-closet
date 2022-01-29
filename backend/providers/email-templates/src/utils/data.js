@@ -66,11 +66,12 @@ const order = {
 }
 
 const cartItem = {
-    order,
-    totalPrice: 30.13,
-    range: { start: '8/24/2020', end: '8/28/2020' },
-    user,
-  }
+  isDefault: true,
+  order,
+  totalPrice: 30.13,
+  range: { start: '8/24/2020', end: '8/28/2020' },
+  user,
+}
 
 const orderData = {
   firstName: '<First Name>',
@@ -85,11 +86,13 @@ module.exports = {
   defaultData: {
     components: orderData,
     'forgot-password': {
+      isDefault: true,
       user,
       url: '/REST_URL',
     },
 
     'order-confirmation': {
+      isDefault: true,
       cart: [orderData.cartItem, orderData.cartItem],
       address,
       summary,
@@ -104,11 +107,13 @@ module.exports = {
     'order-review': orderData,
 
     'gift-card': {
+      isDefault: true,
       recommendations,
       firstName: 'First Name',
       giftCard,
     },
     'store-credit': {
+      isDefault: true,
       firstName: 'First Name',
       amount: 20,
       recommendations,
@@ -116,10 +121,12 @@ module.exports = {
 
     'trust-pilot': orderData,
     'order-shipping-failure': {
+      isDefault: true,
       order: {},
       error: {},
     },
     'contact-us': {
+      isDefault: true,
       firstName: 'First Name',
       lastName: 'Last Name',
       email: 'info+test@infinitecloset.co.uk',
@@ -128,6 +135,7 @@ module.exports = {
     },
 
     'join-launch-party': {
+      isDefault: true,
       firstName: 'First Name',
       ticketPrice: 25,
       donation: 25.0,

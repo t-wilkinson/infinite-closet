@@ -1,13 +1,8 @@
 import Image from 'next/image'
 import React from 'react'
 import Link from 'next/link'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
 
-dayjs.extend(utc)
-dayjs.extend(timezone)
-
+import dayjs from '@/utils/dayjs'
 import { getURL } from '@/utils/axios'
 import useAnalytics from '@/utils/useAnalytics'
 import { fmtPrice } from '@/utils/helpers'
@@ -22,6 +17,8 @@ import { SelectRentalDate, SelectRentalSize } from '@/Shop/AddToCart'
 import { AddToCartFields } from '@/Shop/types'
 import { productImageProps } from '@/Products/utils'
 import { InsuranceInfo } from '@/Checkout/Utils'
+import { Dayjs } from '@/types'
+import { StrapiOrder } from '@/types/models'
 
 import * as types from './types'
 
@@ -37,7 +34,7 @@ export const Cart = () => {
   )
 }
 
-export const removeOrderItem = async ({dispatch, analytics, order}) => {
+export const removeOrderItem = async ({ dispatch, analytics, order }) => {
   await dispatch(CartUtils.remove(order.id))
   await dispatch(CartUtils.view())
   analytics.logEvent('remove_from_cart', {
@@ -98,10 +95,12 @@ export const CartItem = ({
         </div>
 
         <div className="w-full">
-          <div className="items-start
+          <div
+            className="items-start
             md:items-stretch
             lg:flex-row w-full lg:items-center lg:justify-between
-            ">
+            "
+          >
             <OrderInformation
               order={order}
               valid={valid}
@@ -122,7 +121,7 @@ export const CartItem = ({
               <span className="underline">edit</span>
             </button>
             <button
-              onClick={() => removeOrderItem({dispatch, order, analytics})}
+              onClick={() => removeOrderItem({ dispatch, order, analytics })}
               type="button"
               aria-label="Remove checkout item"
             >
@@ -136,7 +135,7 @@ export const CartItem = ({
 }
 
 const OrderPrice = ({ totalPrice, toggleInsurance, order }) => (
-  <div className="w-full items-end lg:items-end">
+  <div className="w-full md:w-auto items-end lg:items-end">
     <div className="items-end space-y-2">
       <span>
         <strong>{fmtPrice(totalPrice)}</strong>
@@ -198,9 +197,14 @@ const OrderInformation = ({ order, available, valid }) => {
   )
 }
 
-export const EditCartItem = ({ order, isOpen, close, onSubmit=() => {} }) => {
-  const [dateVisible, setDateVisible] = React.useState(false)
+const getOrderSize = (order: StrapiOrder) =>
+  order?.product?.sizes?.find((size) => size.size === order.size)
 
+export const EditCartItem = ({ order, isOpen, close, onSubmit = () => {} }) => {
+  const size = getOrderSize(order)
+  const isPreorder = size.quantity === 0
+
+  const [dateVisible, setDateVisible] = React.useState(false)
   const dispatch = useDispatch()
   const fields = useFields<AddToCartFields>({
     size: { constraints: 'required', default: order.size },
@@ -231,7 +235,11 @@ export const EditCartItem = ({ order, isOpen, close, onSubmit=() => {} }) => {
   }
 
   return (
-    <Popup header={order.status === 'list' ? "Add to Cart" : "Edit Order"} close={close} isOpen={isOpen}>
+    <Popup
+      header={order.status === 'list' ? 'Add to Cart' : 'Edit Order'}
+      close={close}
+      isOpen={isOpen}
+    >
       <div className="h-48 w-full relative">
         <Image
           layout="fill"
@@ -244,7 +252,7 @@ export const EditCartItem = ({ order, isOpen, close, onSubmit=() => {} }) => {
           size={fields.value('size')}
           product={order.product}
           selectedDate={fields.value('selectedDate')}
-          selectDate={(date) => fields.setValue('selectedDate', date)}
+          selectDate={(date: Dayjs) => fields.setValue('selectedDate', date)}
           visible={dateVisible}
           setVisible={(visible: boolean) => setDateVisible(visible)}
           rentalLength={fields.value('rentalLength')}
@@ -267,8 +275,15 @@ export const EditCartItem = ({ order, isOpen, close, onSubmit=() => {} }) => {
           form={fields.form}
           className="my-2 self-center rounded-sm w-full"
         >
-          {order.status === 'list' ? 'Add to cart' : "Save changes"}
+          {isPreorder && order.status === 'list'
+            ? 'Pre-Order'
+            : order.status === 'list'
+            ? 'Add to cart'
+            : 'Save changes'}
         </Submit>
+        {isPreorder && <span className="text-sm">
+          *This item is currently out of stock
+        </span>}
       </Form>
     </Popup>
   )

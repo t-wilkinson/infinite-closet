@@ -14,9 +14,20 @@ async function availableCoupon(code, context = 'checkout') {
     .findOne({ context, code: code.toUpperCase() })
 }
 
-function discount(price, coupon, valid = true) {
+function discount({
+  price, coupon, valid = true,
+  outOfStockTotal=0,
+}) {
   if (!valid) {
     return 0
+  }
+
+  if (price < (coupon.minActivePrice || 0)) {
+    return 0
+  }
+
+  if (coupon.restrictToStock) {
+    price = Math.max(0, price - outOfStockTotal)
   }
 
   switch (coupon.type) {

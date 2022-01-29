@@ -83,25 +83,15 @@ function totalOverlaps(date, orders) {
  * @param {OrderProduct}
  * @returns {number}
  */
-async function productQuantity({ size, product }) {
-  // return either quantiy of product size or 0
-  const getQuantity = (sizes) => {
-    const foundSize = sizes.find((s) => s.size === size)
-    if (foundSize) {
-      return foundSize.quantity
-    } else {
-      return 0
-    }
-  }
-
+async function orderQuantity({ size, product }) {
   // `order` should either have product id or the product object
   if (product.sizes) {
-    return getQuantity(product.sizes)
+    return strapi.services.size.quantity(product.sizes, size)
   } else if (product) {
     product = await strapi
       .query('product')
       .findOne({ id: product.id ? product.id : product }, ['sizes'])
-    return getQuantity(product.sizes)
+    return strapi.services.size.quantity(product.sizes, size)
   } else {
     return 0
   }
@@ -111,7 +101,7 @@ async function productQuantity({ size, product }) {
  * Helper function to calculate number of times an order can be ordered
  */
 async function totalAvailable(order, orders) {
-  const quantity = await productQuantity(order)
+  const quantity = await orderQuantity(order)
   const range = strapi.services.timing.range(order)
   const overlaps = totalOverlaps(range, orders)
   return quantity - overlaps
@@ -132,12 +122,15 @@ async function acsUniqueSKU(order) {
 
 module.exports = {
   inProgress,
-  productQuantity,
   toShippingAddress,
+
+  toAcsUniqueSKU,
+  acsUniqueSKU,
+
   overlap,
   totalOverlaps,
   relevantOrders,
+
   totalAvailable,
-  toAcsUniqueSKU,
-  acsUniqueSKU,
+  orderQuantity,
 }

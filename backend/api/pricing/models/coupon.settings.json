@@ -38,6 +38,15 @@
     "expiration": {
       "type": "date",
       "private": false
+    },
+    "restrictToStock": {
+      "type": "boolean",
+      "default": false
+    },
+    "minActivePrice": {
+      "min": "0",
+      "type": "decimal",
+      "default": 0
     }
   }
 }

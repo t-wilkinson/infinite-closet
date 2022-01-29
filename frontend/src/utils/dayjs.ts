@@ -6,7 +6,6 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 
 import { Dayjs } from '@/types'
 
-
 dayjs.extend(isSameOrAfter)
 dayjs.extend(isBetween)
 dayjs.extend(utc)
@@ -22,5 +21,7 @@ export const createDateFormat = (defFormat: string, formats: object) => {
     return (date: Dayjs) => date.format(defFormat)
   }
 }
+
+export { dayjs }
 
 export default dayjs

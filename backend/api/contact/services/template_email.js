@@ -34,13 +34,13 @@ module.exports = {
   /*
    * Order lifecycle
    */
-  async orderConfirmation({ contact, cart, summary, address } = templateData.defaultData['order-confirmation']) {
+  async orderConfirmation({ isDefault, contact, cart, summary, address } = templateData.defaultData['order-confirmation']) {
     const recommendations = await strapi.services.product.recommendations()
     await send({
       template: 'order-confirmation',
       to: toEmailAddress(contact),
       bcc:
-        process.env.NODE_ENV === 'production'
+        process.env.NODE_ENV === 'production' && !isDefault
           ? ['info@infinitecloset.co.uk']
           : [],
       subject: `We've got your order`,
@@ -83,15 +83,15 @@ module.exports = {
   //     })
   //   },
 
-  async orderEnding(cartItem = templateData.cartItem) {
+  async orderEnding({isDefault, ...cartItem} = templateData.cartItem) {
     const { user } = unpackCartItem(cartItem)
     await send({
       template: 'order-ending',
       to: toEmailAddress(user),
       bcc:
-        process.env.NODE_ENV === 'production'
+        process.env.NODE_ENV === 'production' && !isDefault
           ? [
-            'battersea@oxwash.com',
+            // 'battersea@oxwash.com',
             'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
           ]
           : [],

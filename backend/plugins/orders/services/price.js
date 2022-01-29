@@ -26,6 +26,10 @@ function orderPrice(order) {
   return { productPrice, insurancePrice, shippingPrice }
 }
 
+function cartItemPrice(cartItem) {
+  return cartItem.productPrice + cartItem.insurancePrice + cartItem.shippingPrice
+}
+
 /**
  * Sum all the sub-prices of an order
  */
@@ -38,11 +42,25 @@ function orderPriceTotal(order) {
 
 function cartPrice(cart) {
   const sum = (values, key) =>
-    values.reduce((total, value) => total + value[key], 0)
+    values.reduce((total, value) => {
+      return total + value[key]
+    }, 0)
+
+  const outOfStockTotal = cart.reduce((total, cartItem) => {
+    const { order } = cartItem
+    const isPreorder = strapi.services.size.quantity(order.product.sizes, order.size) === 0
+    if (isPreorder) {
+      return total + cartItemPrice(cartItem)
+    } else {
+      return total
+    }
+  }, 0)
+
   return {
     insurancePrice: sum(cart, 'insurancePrice'),
     productPrice: sum(cart, 'productPrice'),
     shippingPrice: sum(cart, 'shippingPrice'),
+    outOfStockTotal,
   }
 }
 
@@ -83,9 +101,10 @@ async function getDiscountPrice(price, user) {
   }
 }
 
-async function applyDiscounts({ user, preDiscountPrice, discountCode }) {
+async function applyDiscounts({ user, outOfStockTotal, preDiscountPrice, discountCode }) {
   const { coupon, giftCard, discount, giftCardDiscount, couponDiscount } =
     await strapi.services.price.summary({
+      outOfStockTotal,
       price: preDiscountPrice,
       existingCoupons: await existingCoupons(user, discountCode),
       discountCode,
@@ -107,12 +126,13 @@ async function applyDiscounts({ user, preDiscountPrice, discountCode }) {
  */
 async function summary({ cart, user, discountCode }) {
   user = toId(user)
-  const { productPrice, insurancePrice, shippingPrice } = cartPrice(cart)
+  const { outOfStockTotal, productPrice, insurancePrice, shippingPrice } = cartPrice(cart)
 
   const preDiscountPrice = productPrice + insurancePrice + shippingPrice
   let { coupon, giftCard, discountPrice, couponDiscount, giftCardDiscount } =
     await applyDiscounts({
       user,
+      outOfStockTotal,
       preDiscountPrice,
       discountCode,
     })

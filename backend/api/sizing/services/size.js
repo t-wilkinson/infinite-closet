@@ -20,10 +20,23 @@ function normalize(size) {
   return size.replace('_', '')
 }
 
+/**
+ * Return quantity of size
+ */
+function quantity(sizes, size) {
+  const foundSize = sizes.find((s) => s.size === size)
+  if (foundSize) {
+    return foundSize.quantity
+  } else {
+    return 0
+  }
+}
+
 module.exports = {
   enum: sizeEnum,
   sizes,
   normalize,
+  quantity,
 
   contains(order, size) {
     return sizes(order).includes(size)

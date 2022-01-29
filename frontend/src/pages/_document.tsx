@@ -3,7 +3,7 @@ import Document, { Html, Head, Main, NextScript } from 'next/document'
 const DESCRIPTION = `London's premier independent designer rental platform, giving you access to sustainable and ethical luxury brands. IC's "unlimited" closet offers the latest trends, dry cleaning, and next day delivery. The fashion revolution is here.`
 
 const Icons = ({ rel, sizes }) =>
-  sizes.map((size) => (
+  sizes.map((size: number) => (
     <link
       key={size}
       rel={rel}
@@ -24,7 +24,7 @@ const palette = {
 }
 
 class MyDocument extends Document {
-  static async getInitialProps(ctx) {
+  static async getInitialProps(ctx: any) {
     const initialProps = await Document.getInitialProps(ctx)
     return { ...initialProps }
   }
@@ -86,6 +86,11 @@ class MyDocument extends Document {
 
 const Production = () => (
   <>
+    <script id="mcjs"
+    dangerouslySetInnerHTML={{
+      __html: `!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/d6960491006543fd73abbbcdc/3e207f326278351a7a5edc804.js")`
+      }}
+    />
     <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=UA-160256805-2"

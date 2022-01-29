@@ -82,7 +82,7 @@ function unpackCartItem(cartItem) {
 }
 
 async function createAvailableCartItem(numAvailableOrders, order) {
-  const quantity = await orderUtils.productQuantity(order)
+  const quantity = await orderUtils.orderQuantity(order)
   const key = strapi.services.product.toKey(order)
 
   const existingOrders = await strapi.query('order', 'orders').count({

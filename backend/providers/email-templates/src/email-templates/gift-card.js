@@ -23,7 +23,7 @@ export default ({ data }) => {
       <P>
         <p>Hello {firstName},</p>
         <p>
-          You’ve recieved a gift card! Your {fmtPrice(giftCard.value)} gift card code is
+          You’ve recieved a gift card! Your {fmtPrice(giftCard.value)} gift card code is{' '}
           <strong>{giftCard.code}</strong>. Use the code in the discount section during your next checkout.
         </p>
       </P>

@@ -20,7 +20,6 @@ export default ({ data }) => {
             been applied to your account and will be automatically applied to
             your next rental.
           </p>
-          <p>Use the link below to reset your password.</p>
         </P>
       </G>
       <Space n={2} />
