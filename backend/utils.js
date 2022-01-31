@@ -43,11 +43,11 @@ function day(date) {
 // Split name into first and last name
 function splitName(name) {
   if (!name || typeof name !== 'string') {
-    return { firstName: null, lastName: null }
+    return { firstName: '', lastName: '' }
   }
 
   const [first, ...last] = name.split(/ /) // Don't split `Dr.`, etc.
-  return { firstName: first || null, lastName: last.join(' ') || null }
+  return { firstName: first || '', lastName: last.join(' ') || '' }
 }
 
 /**

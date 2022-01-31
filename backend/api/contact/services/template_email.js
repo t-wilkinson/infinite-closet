@@ -121,34 +121,6 @@ module.exports = {
   },
 
   /*
-   * Non user-facing
-   */
-  async contact({firstName, lastName, email, message, phoneNumber} = templateData.defaultData['contact-us']) {
-    const name = `${firstName} ${lastName}`
-    await send({
-      template: 'contact-us',
-      to: { name, email: 'info@infinitecloset.co.uk' },
-      subject: `[Contact] ${name} `,
-      data: {
-        firstName,
-        lastName,
-        email,
-        phoneNumber,
-        message,
-      },
-    })
-  },
-
-  async orderShippingFailure(order = {}, err = {}) {
-    await send({
-      template: 'order-shipping-failure',
-      to: 'info@infinitecloset.co.uk',
-      subject: 'Failed to ship order',
-      data: { order, error: err },
-    })
-  },
-
-  /*
    * Money
    */
   async giftCard({ email, firstName, giftCard } = templateData.defaultData['gift-card']) {
@@ -188,6 +160,51 @@ module.exports = {
         url,
         user,
       }
+    })
+  },
+
+  /*
+   * Non user-facing
+   */
+  async contact({firstName, lastName, email, message, phoneNumber} = templateData.defaultData['contact-us']) {
+    const name = `${firstName} ${lastName}`
+    await send({
+      template: 'contact-us',
+      to: { name, email: 'info@infinitecloset.co.uk' },
+      subject: `[Contact] ${name} `,
+      data: {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        message,
+      },
+    })
+  },
+
+  async orderShippingFailure(order = {}, err = {}) {
+    await send({
+      template: 'order-shipping-failure',
+      to: 'info@infinitecloset.co.uk',
+      subject: 'Failed to ship order',
+      data: { order, error: err },
+    })
+  },
+
+  /**
+   * Mailchimp has a limit of items it will return
+   * Reaching the limit means we need better algorithms
+   * and there are potential performance issues
+   */
+  async mailchimpLimitReached(error) {
+    await send({
+      to: 'info@infinitecloset.co.uk',
+      subject: `Mailchimp api data limit reached`,
+      text: `
+${error.message}
+
+${error.stack}
+`,
     })
   }
 }

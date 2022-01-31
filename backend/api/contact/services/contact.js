@@ -28,7 +28,7 @@ function laterDate(d1, d2) {
  */
 async function updateContactList() {
   const { members } = await strapi.services.mailchimp.marketing.lists.getListMembersInfo(
-    strapi.services.mailchimp.marketing.contactsListId,
+    strapi.services.mailchimp.config.ids('list'),
     {
       fields: [
         'members.full_name',
@@ -40,6 +40,12 @@ async function updateContactList() {
       count: 1000,
     }
   )
+
+  if (members.length >= 1000) {
+    const err = new Error('Contacts list too long')
+    strapi.services.template_email.mailchimpLimitReached(err)
+    throw err
+  }
 
   let contacts = await strapi
     .query('contact')

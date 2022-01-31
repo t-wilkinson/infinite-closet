@@ -2,27 +2,9 @@
 
 // const fs = require('fs')
 const models = require('../../data/data.js').models
-require('../../utils')
+require('../../utils') // Init dayjs
 
 // const { categories } = require('../../data/data')
-
-const setDefaultPermissions = async () => {
-  const permissions_applications = await strapi
-    .query('permission', 'users-permissions')
-    .find({})
-  await Promise.all(
-    permissions_applications.map((p) =>
-      strapi.query('permission', 'users-permissions').update(
-        {
-          id: p.id,
-        },
-        {
-          enabled: true,
-        }
-      )
-    )
-  )
-}
 
 const populatePrivateFields = () => {
   const today = new Date().toJSON()
@@ -53,13 +35,12 @@ const populatePrivateFields = () => {
 }
 
 function registerRoles() {
-  const actions =
-    {
-      section: 'plugins',
-      displayName: 'Manage',
-      uid: 'manage',
-      pluginName: 'orders',
-    }
+  const actions = {
+    section: 'plugins',
+    displayName: 'Manage',
+    uid: 'manage',
+    pluginName: 'orders',
+  }
 
   const { actionProvider } = strapi.admin.services.permission
   actionProvider.register(actions)
@@ -68,11 +49,32 @@ function registerRoles() {
 module.exports = async () => {
   await populatePrivateFields()
   await registerRoles()
+  if (process.env.NODE_ENV === 'development') {
+    // await strapi.services.mailchimp.helpers.bootstrap()
+  }
 
   if (process.env.NODE_ENV !== 'production') {
     // await setDefaultPermissions()
   }
 }
+
+// const setDefaultPermissions = async () => {
+//   const permissions_applications = await strapi
+//     .query('permission', 'users-permissions')
+//     .find({})
+//   await Promise.all(
+//     permissions_applications.map((p) =>
+//       strapi.query('permission', 'users-permissions').update(
+//         {
+//           id: p.id,
+//         },
+//         {
+//           enabled: true,
+//         }
+//       )
+//     )
+//   )
+// }
 
 // const isFirstRun = async () => {
 //   const pluginStore = strapi.store({

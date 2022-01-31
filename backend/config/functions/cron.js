@@ -8,12 +8,12 @@ module.exports = {
       return
     }
 
-    await strapi.plugins['orders'].services.lifecycle.forwardAll()
-    await strapi.services.contact.updateContactList()
+    strapi.plugins['orders'].services.lifecycle.forwardAll()
   },
 
-  '0 2,7,18 * * *': async () => {
-    // strapi.services.mailchimp.marketing.lists
+  // Sync mailchimp
+  '0 * * * *': async () => {
+    strapi.services.mailchimp.helpers.sync()
   },
 
   '0 7 * * *': async () => {

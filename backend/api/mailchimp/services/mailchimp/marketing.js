@@ -1,3 +1,4 @@
+'use strict'
 const mailchimp = require('@mailchimp/mailchimp_marketing')
 
 mailchimp.setConfig({
@@ -5,7 +6,4 @@ mailchimp.setConfig({
   server: 'us19', // TODO: should change this to london but I can't find any nearby (https://status.mailchimp.com/)
 })
 
-module.exports = {
-  ...mailchimp,
-  contactsListId: '0966cdac14',
-}
+module.exports = mailchimp

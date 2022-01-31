@@ -7,6 +7,7 @@
  * @group buy
  * @group buy/giftcard
  * @group buy/summary
+ * @group mailchimp
  */
 'use strict'
 // const fs = require('fs')
@@ -59,3 +60,4 @@ describe('Strapi in general', () => {
 // require('./buy')
 // require('./product')
 // require('./user')
+require('./mailchimp')
