@@ -213,7 +213,7 @@ const GiftCardPayment = ({ fields }) => {
         <PaymentElement id="payment-element" />
       </Fieldset>
       <div className="flex-row w-full space-x-2 mt-6 mb-2">
-        <Submit className="w-full" form={fields.form} type="secondary">
+        <Submit className="w-full" form={fields.form}>
           Secure Checkout
         </Submit>
         <Button

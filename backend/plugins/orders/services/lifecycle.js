@@ -186,7 +186,7 @@ async function getOrderLifecycles() {
  * Forward every order lifecycle
  */
 async function forwardAll() {
-  const orders = getOrderLifecycles()
+  const orders = await getOrderLifecycles()
 
   forwardOrders(orders.planning, 'shipped')
   forwardOrders(orders.shipping, 'start')

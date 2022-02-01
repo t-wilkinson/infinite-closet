@@ -281,7 +281,6 @@ const CheckoutForm = ({ onCheckout }) => {
       <div className="mt-4 w-full">
         <Submit
           form={fields.form}
-          type="secondary"
           disabled={
             cart.every(isOrderInvalid) || fields.form.value === 'success'
           }

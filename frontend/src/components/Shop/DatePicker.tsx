@@ -36,12 +36,13 @@ export const DatePicker = ({
 
   return (
     <div
-      className={`fixed inset-0 items-center justify-center bg-opacity-50 bg-black z-30
+      className={`
+        fixed inset-0 items-center justify-center bg-opacity-50 bg-black z-30
       ${visible ? '' : 'invisible'}
       `}
     >
       <div className="absolute inset-0" onClick={() => setVisible(false)} />
-      <div className="relative bg-white p-6">
+      <div className="p-6 relative bg-white">
         <div className="self-end pb-4">
           <button onClick={() => setVisible(false)} type="button">
             <Icon icon={iconClose} size={16} />

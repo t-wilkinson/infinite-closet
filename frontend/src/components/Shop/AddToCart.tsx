@@ -66,6 +66,7 @@ export const productRentContents = {
       return dispatch(CartUtils.add(order))
         .then(() => {
           toast.success(`Successfully added to cart.`, {
+            autoClose: 1500,
             hideProgressBar: true,
           }),
             analytics.logEvent('add_to_cart', {
@@ -74,9 +75,7 @@ export const productRentContents = {
             })
         })
         .catch(() => {
-          toast.error(`Unable to add to cart`, {
-            hideProgressBar: true,
-          })
+          toast.error(`Unable to add to cart`, {})
         })
     }
 
@@ -86,6 +85,7 @@ export const productRentContents = {
         await dispatch(CartUtils.add(order))
         await dispatch(CartUtils.favorites())
         toast.success(`Successfully added to favorites.`, {
+          autoClose: 1500,
           hideProgressBar: true,
         })
         analytics.logEvent('add_to_favorites', {
@@ -95,9 +95,7 @@ export const productRentContents = {
       } catch (e) {
         toast.error(
           `Ran into an issue adding to favorites. We'll have this fixed soon!`,
-          {
-            hideProgressBar: true,
-          }
+          {}
         )
       }
     }

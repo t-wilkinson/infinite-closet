@@ -144,7 +144,7 @@ export const Submit = ({
   children = 'Submit' as any,
   disabled = false,
   className = '',
-  type = 'primary',
+  role= 'primary',
 }) => {
   disabled = disabled || form.value === 'submitting'
   return (
@@ -153,15 +153,12 @@ export const Submit = ({
         aria-label="Submit form"
         className={`flex flex-row justify-center items-center
         p-3 rounded-sm border transition duration-200 font-bold
+        ${form.value === 'submitting' ? 'cursor-progress' : disabled ? 'cursor-not-allowed' : ''}
         ${
-          disabled && type === 'secondary'
+          disabled
             ? 'border-gray bg-gray text-white'
-            : disabled
-            ? 'border-pri-light bg-pri-light text-white'
-            : type === 'primary'
-            ? 'border-pri bg-pri hover:border-sec hover:bg-sec text-white'
-            : type === 'secondary'
-            ? 'bg-gray-black text-white'
+            : role === 'primary'
+            ? 'bg-gray-black text-white hover:bg-gray'
             : 'text-black'
         }
         ${className}

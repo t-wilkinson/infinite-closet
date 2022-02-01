@@ -1,38 +1,31 @@
 import React from 'react'
-import Link from 'next/link'
 
 import axios from '@/utils/axios'
 import { StrapiOrder } from '@/types/models'
+import { ButtonLink } from '@/components'
 
 import Review, { Rating } from './Review'
 
-type Reviews = {
+export const getReviews = ({slug, onSuccess}) =>
+    axios
+      .get<ReviewsData>(`/products/${slug}/reviews`)
+      .then((reviews) => onSuccess(reviews))
+      .catch((err) => console.error(err))
+
+type ReviewsData = {
   orders: StrapiOrder[]
   fit: string
   rating: number
   canReview: boolean
 }
 
-const Reviews = ({ slug }) => {
-  const [data, setData] = React.useState<Reviews>()
-
-  React.useEffect(() => {
-    axios
-      .get<Reviews>(`/products/${slug}/reviews`)
-      .then((data) => setData(data))
-      .catch((err) => console.error(err))
-  }, [])
-
-  return <ReviewsContent data={data} slug={slug} />
-}
-
-export const ReviewsContent = ({ slug, data }) => {
-  if (!data) {
+export const Reviews = ({ slug, reviews }) => {
+  if (!reviews) {
     return null
   }
 
-  if (data.orders?.length === 0) {
-    return data.canReview ? (
+  if (reviews.orders?.length === 0) {
+    return reviews.canReview ? (
       <div className="w-full items-center py-4">
         <div className="w-full h-px bg-gray-light mb-4" />
         <AddReview productSlug={slug} />
@@ -43,11 +36,11 @@ export const ReviewsContent = ({ slug, data }) => {
   return (
     <section className="flex flex-col w-full items-center bg-pri-white">
       <div className="w-full items-center">
-        <Overview {...data} />
+        <Overview {...reviews} />
       </div>
-      {data.canReview && <AddReview productSlug={slug} />}
+      {reviews.canReview && <AddReview productSlug={slug} />}
       <div className="max-w-screen-md w-full my-12 space-y-4">
-        {data.orders.map((order: StrapiOrder) => (
+        {reviews.orders.map((order: StrapiOrder) => (
           <Review key={order.id} {...order} />
         ))}
       </div>
@@ -88,9 +81,8 @@ const AddReview = ({ productSlug }) => {
       className="max-w-screen-md flex flex-col items-center bg-white w-full p-4"
     >
       <h3 className="text-2xl">Share your experience</h3>
-      <Link href={`/review/${productSlug}`}>
-        <a className="bg-pri text-white p-2 m-2 mt-4 font-bold">Add a review</a>
-      </Link>
+      <ButtonLink href={`/review/${productSlug}`} className="mt-2">
+        Add a review</ButtonLink>
     </section>
   )
 }

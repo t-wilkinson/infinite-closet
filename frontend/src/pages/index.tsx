@@ -37,12 +37,12 @@ export const Home = ({ products }) => {
 const Heading = ({ block = true, children }) => {
   return (
     <div className="w-full items-center">
-      <span className="relative font-bold uppercase text-5xl text-center">
+      <div className="relative font-bold uppercase text-4xl sm:text-5xl text-center items-center">
         <h2 className="relative">{children}</h2>
         {block && (
-          <div className="w-3/4 bg-pri h-2 -mt-3 absolute bottom-0 right-0" />
+          <div className="w-1/2 sm:w-3/4 bg-pri h-2 -mt-3 absolute bottom-0 sm:right-0 mr-4 sm:mr-0" />
         )}
-      </span>
+      </div>
     </div>
   )
 }
@@ -118,16 +118,16 @@ const Categories = () => {
       <Heading>What are you renting for?</Heading>
       <div className="flex-row flex-wrap max-w-screen-lg justify-center mt-12">
         {categories.map((category) => (
-          <Link href={`/products/clothing?occasions=${category.slug}`}>
+          <Link key={category.slug} href={`/products/clothing?occasions=${category.slug}`}>
             <a
               onMouseEnter={() => setHover(category.slug)}
               onMouseLeave={() => setHover(null)}
-              className="m-4 "
+              className="m-2 sm:m-4"
             >
-              <div className="bg-sec relative items-center justify-center font-bold w-48 h-40">
-                <span className="text-xl text-white">{category.label}</span>
+              <div className="bg-sec relative items-center justify-center font-bold w-32 h-24 sm:w-48 sm:h-40">
+                <span className="text-lg md:text-xl text-white">{category.label}</span>
                 <div
-                  className={`w-24 h-24 relative transform duration-300 ease-in-out
+                  className={`w-16 h-10 sm:w-24 sm:h-24 relative transform duration-300 ease-in-out
                   ${hover === category.slug ? 'scale-110 rotate-12' : ''}
                   `}
                 >
@@ -261,7 +261,7 @@ const productCategories = [
     src: holidaysTreatsPic,
     alt: 'Dress fit for holidays',
     href: '/products/clothing?occasions=holiday',
-    position: 'center',
+    position: '60% center',
   },
   // {
   //   title: 'Say I (HEN) Do',
@@ -274,7 +274,7 @@ const productCategories = [
 ]
 
 const ProductCategories = () => (
-  <div className="w-full flex-row space-x-8 md:space-x-16 mb-8">
+  <div className="w-full flex-row space-x-2 sm:space-x-8 md:space-x-16 mb-8 px-2 sm:px-0">
     {productCategories.map((data) => (
       <div key={data.title} className="w-full items-center">
         <Link href={data.href}>

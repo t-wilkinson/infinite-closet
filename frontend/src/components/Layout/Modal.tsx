@@ -6,7 +6,7 @@ import React from 'react'
 export const Modal = ({ children, close = () => {} }) => {
   return (
     <aside
-      className="fixed inset-0 grid place-items-center z-30"
+      className="fixed inset-0 grid place-items-center z-30 px-2"
       style={{ backgroundColor: '#5f6368cc' }}
       onClick={(e) => {
         // @ts-ignore

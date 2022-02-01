@@ -91,7 +91,7 @@ const ImagesSmall = ({ images, state, dispatch }) => (
         >
           <div
             className={`w-3 h-3 rounded-full
-              ${state.focusedImage === i ? 'bg-sec-light' : ''}
+              ${state.focusedImage === i ? 'bg-sec' : ''}
               `}
           />
         </button>

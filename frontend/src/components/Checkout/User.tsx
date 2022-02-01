@@ -247,7 +247,6 @@ const Checkout = ({ fetchCart, analytics }) => {
           notify
         >
           <Submit
-            type="secondary"
             form={fields.form}
             disabled={
               !(state.paymentMethod && state.address) ||

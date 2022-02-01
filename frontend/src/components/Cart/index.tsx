@@ -74,13 +74,21 @@ export const CartItem = ({
         close={() => setEditOrder(false)}
       />
       <div
-        className={`flex-row items-center p-4 rounded-sm relative bg-white
+        className={`w-full mb-4 sm:my-0 sm:p-4 rounded-sm relative bg-white
         ${!valid ? 'border border-warning' : ''}
         `}
+        style={{
+          display: 'grid',
+          gridTemplate: `
+          "img info" auto
+          "img ." auto
+          / 8rem auto
+          `,
+        }}
       >
-        <div className="mr-4">
+        <div className="mr-4" style={{ gridArea: 'img' }}>
           <Link href={`/shop/${product.designer.slug}/${product.slug}`}>
-            <a className="h-32 w-32 relative">
+            <a className="h-full w-full relative">
               <Image
                 src={getURL(
                   product.images[0].formats.thumbnail?.url ||
@@ -94,40 +102,37 @@ export const CartItem = ({
           </Link>
         </div>
 
-        <div className="w-full">
-          <div
-            className="items-start
-            md:items-stretch
-            lg:flex-row w-full lg:items-center lg:justify-between
-            "
-          >
-            <OrderInformation
-              order={order}
-              valid={valid}
-              available={available}
-            />
-            <OrderPrice
-              totalPrice={totalPrice}
-              toggleInsurance={toggleInsurance}
-              order={order}
-            />
-          </div>
+        <div
+          style={{
+            gridArea: 'info',
+          }}
+          className="items-start
+          md:items-stretch
+          lg:flex-row w-full lg:items-center lg:justify-between
+          "
+        >
+          <OrderInformation order={order} valid={valid} available={available} />
+          <OrderPrice
+            totalPrice={totalPrice}
+            toggleInsurance={toggleInsurance}
+            order={order}
+          />
+        </div>
 
-          <div className="flex-row space-x-4">
-            <button onClick={moveToFavorites} type="button">
-              <span className="underline">move to favourites</span>
-            </button>
-            <button onClick={() => setEditOrder(true)} type="button">
-              <span className="underline">edit</span>
-            </button>
-            <button
-              onClick={() => removeOrderItem({ dispatch, order, analytics })}
-              type="button"
-              aria-label="Remove checkout item"
-            >
-              <span className="underline">remove</span>
-            </button>
-          </div>
+        <div className="flex-row space-x-4 row-start-3 col-start-1 col-span-2 sm:row-start-2 sm:col-start-2 sm:col-span-1 mt-2">
+          <button onClick={moveToFavorites} type="button">
+            <span className="underline">move to favourites</span>
+          </button>
+          <button onClick={() => setEditOrder(true)} type="button">
+            <span className="underline">edit</span>
+          </button>
+          <button
+            onClick={() => removeOrderItem({ dispatch, order, analytics })}
+            type="button"
+            aria-label="Remove checkout item"
+          >
+            <span className="underline">remove</span>
+          </button>
         </div>
       </div>
     </>
@@ -281,9 +286,11 @@ export const EditCartItem = ({ order, isOpen, close, onSubmit = () => {} }) => {
             ? 'Add to cart'
             : 'Save changes'}
         </Submit>
-        {isPreorder && <span className="text-sm">
-          *This item is not in stock so please allow a 2 week delay
-        </span>}
+        {isPreorder && (
+          <span className="text-sm">
+            *This item is not in stock so please allow a 2 week delay
+          </span>
+        )}
       </Form>
     </Popup>
   )

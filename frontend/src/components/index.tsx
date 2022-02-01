@@ -65,6 +65,28 @@ export const BlueLink = ({ href, label }) => (
   </Link>
 )
 
+const buttonClassName = ({ role = 'primary', className = '' }) => `
+      p-3 transition duration-200
+      ${className}
+      ${
+        role === 'primary'
+          ? 'text-white bg-pri hover:bg-sec rounded-sm font-bold'
+          : role === 'payment'
+          ? 'text-white bg-gray-black hover:bg-gray'
+          : role === 'secondary'
+          ? 'text-black bg-white border border-black'
+          : role === 'cta'
+          ? 'text-white bg-sec hover:bg-pri rounded-sm font-bold'
+          : ''
+      }
+`
+
+export const ButtonLink = ({ className = '', href, children }) => (
+  <Link href={href}>
+    <a className={buttonClassName({ className })}>{children}</a>
+  </Link>
+)
+
 export const Button = ({
   onClick = (..._: any[]): void => {},
   children,
@@ -76,21 +98,7 @@ export const Button = ({
   <button
     onClick={onClick}
     type={type as 'button' | 'submit'}
-    className={`
-      p-3 transition duration-200
-      ${className}
-      ${
-        role === 'primary'
-          ? 'text-white bg-pri hover:bg-sec rounded-sm font-bold'
-          : role === 'payment'
-            ? 'text-white bg-gray-black hover:bg-gray'
-          : role === 'secondary'
-          ? 'text-black bg-white border border-black'
-          : role === 'cta'
-          ? 'text-white bg-sec hover:bg-pri rounded-sm font-bold'
-          : ''
-      }
-      `}
+    className={buttonClassName({ role, className })}
     {...props}
   >
     {children}
@@ -138,7 +146,12 @@ export const Tooltip = ({ children, info, position = 'left-0' }) => {
   )
 }
 
-export const Hover = ({ type = 'info', children, position = 'left-0', className=''}) => {
+export const Hover = ({
+  type = 'info',
+  children,
+  position = 'left-0',
+  className = '',
+}) => {
   const [hover, setHover] = React.useState(false)
   return (
     <div

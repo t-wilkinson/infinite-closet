@@ -12,15 +12,18 @@ import OrderOptions from './OrderOptions'
 import AddToCart from './AddToCart'
 import { AddToCartFields } from './types'
 
-import Reviews from './Reviews'
+import Reviews, { getReviews } from './Reviews'
+import { Rating } from './Review'
 
 export const Shop = ({ data }) => {
   const dispatch = useDispatch()
+  const [reviews, setReviews] = React.useState()
+  const slug = data.product.slug
 
   React.useEffect(() => {
-    // Don't save selected date
-    // Maybe should use react state instead
     dispatch(shopActions.hideDate())
+    // Don't need review data immediately
+    getReviews({slug, onSuccess: setReviews})
   }, [])
 
   return (
@@ -28,16 +31,16 @@ export const Shop = ({ data }) => {
       <div className="px-4 xl:px:0 sm:flex-row flex-col w-full max-w-screen-xl mb-8">
         <ProductImages images={data.product.images} />
         <div className="w-4" />
-        <Product data={data} />
+        <Product reviews={reviews} data={data} />
       </div>
       <div className="w-full items-center" id="reviews">
-        <Reviews slug={data.product.slug} />
+        <Reviews slug={data.product.slug} reviews={reviews} />
       </div>
     </div>
   )
 }
 
-const Product = ({ data }) => {
+const Product = ({ reviews, data }) => {
   const { product } = data
   const state = useSelector((state) => state.shop)
   const fields = useFields<AddToCartFields>({
@@ -50,24 +53,34 @@ const Product = ({ data }) => {
     rentalLength: { constraints: 'required', default: 'short' },
     rentType: { default: 'OneTime' },
   })
+  reviews = { rating: 5, orders: [1,2,3] }
 
   return (
     <div className="w-full sm:w-1/2 sm:max-w-md">
-      <div className="flex-row justify-between items-center"></div>
+      <div className="flex-row justify-between">
+        <div>
       <Link href={`/designers/${product.designer.slug}`}>
         <a>
-          <span className="pt-4 font-bold text-xl hover:underline">
+          <span className="pt-4 font-bold text-xl underline sm:no-underline hover:underline">
             {product.designer.name}
           </span>
         </a>
       </Link>
       <span className="">{product.name}</span>
       {product.retailPrice && (
-        <span className="pb-2 text-gray-dark">
+        <span className="text-gray-dark">
           £{product.retailPrice} Original Retail
         </span>
       )}
-      <Divider className="mb-4" />
+      </div>
+        {reviews &&
+        <div className="flex-row items-center">
+      <Rating rating={reviews.rating} emptyColor="text-white" />
+          &nbsp;&nbsp;({reviews.orders.length})
+        </div>
+        }
+      </div>
+      <Divider className="mt-2 mb-4" />
       <OrderOptions fields={fields} product={product} />
       <AddToCart fields={fields} product={product} />
       <div className="mb-4" />
