@@ -9,7 +9,6 @@ const shippingPrices = {
   two: 0,
 }
 
-// TODO: should this fail if any of the prices are undefined/null?
 /**
  * Calculate sub-prices of order
  */

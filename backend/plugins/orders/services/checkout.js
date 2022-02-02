@@ -13,9 +13,20 @@ const { splitName } = require('../../../utils')
  * @returns - {summary, cart, paymentIntent, paymentMethod}
  */
 async function prepareData(body, user = null) {
+  let error = null
   const cart = await strapi.plugins['orders'].services.cart.createValidCart(
     body.orders
   )
+
+  // Ensure contact has right content
+  let contact = body.contact
+  if (user) {
+    contact = strapi.services.contact.toContact(user)
+  } else if (contact && contact.fullName) {
+    const name = splitName(contact.fullName)
+    contact.firstName = name.firstName || contact.firstName
+    contact.lastName = name.lastName || contact.lastName
+  }
 
   const summary = await strapi.plugins['orders'].services.price.summary({
     cart,
@@ -31,17 +42,16 @@ async function prepareData(body, user = null) {
     paymentMethod = await stripe.paymentMethods.retrieve(body.paymentMethod)
   }
 
-  // Ensure contact has right content
-  let contact = body.contact
-  if (user) {
-    contact = strapi.services.contact.toContact(user)
-  } else if (contact && contact.fullName) {
-    const name = splitName(contact.fullName)
-    contact.firstName = name.firstName || contact.firstName
-    contact.lastName = name.lastName || contact.lastName
+  if (cart.length === 0) {
+    error = 'Cart is empty or has no valid items to checkout.'
+  }
+
+  if (paymentIntent && paymentIntent.amount !== summary.amount) {
+    error = 'Payment intent invalid.'
   }
 
   return {
+    error,
     user,
     address: body.address,
     contact,

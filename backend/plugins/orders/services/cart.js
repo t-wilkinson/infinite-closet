@@ -1,8 +1,5 @@
 'use strict'
-const orderUtils = require('./order')
-const priceUtils = require('./price')
 const { sanitizeEntity } = require('strapi-utils')
-// const CryptoJS = require('crypto-js')
 const { toId } = require('../../../utils')
 
 /**
@@ -42,7 +39,6 @@ async function numAvailable(orders = []) {
 }
 
 async function createCartItem(order) {
-  // TODO: speed this up
   order = await strapi
     .query('order', 'orders')
     .findOne({ id: toId(order) }, [
@@ -56,17 +52,17 @@ async function createCartItem(order) {
     .query('product')
     .findOne({ id: order.product.id }, ['sizes'])
     .then((res) => res.sizes)
+  const price = strapi.plugins['orders'].services.price.orderPrice(order)
 
   return {
     order,
-    ...priceUtils.orderPrice(order),
-    totalPrice: priceUtils.orderPriceTotal(order),
+    ...price,
+    totalPrice: Object.values(price).reduce((total, price) => total + price, 0),
     range: strapi.services.timing.range(order),
     shippingClass: strapi.services.timing.shippingClass(
       order.shippingDate,
       order.startDate
     ),
-    token: undefined, // TODO
   }
 }
 
@@ -82,13 +78,13 @@ function unpackCartItem(cartItem) {
 }
 
 async function createAvailableCartItem(numAvailableOrders, order) {
-  const quantity = await orderUtils.orderQuantity(order)
+  const quantity = await strapi.plugins['orders'].services.order.orderQuantity(order)
   const key = strapi.services.product.toKey(order)
 
   const existingOrders = await strapi.query('order', 'orders').count({
     product: toId(order.product),
     size: order.size,
-    status_in: orderUtils.inProgress,
+    status_in: strapi.plugins['orders'].services.order.orderQuantity.inProgress,
   })
 
   const valid = strapi.services.timing.valid(

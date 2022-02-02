@@ -18,6 +18,7 @@
 + subscribed
 + metadata
 + User
++ customer?
 
 **Purchase**
 + paymentIntent

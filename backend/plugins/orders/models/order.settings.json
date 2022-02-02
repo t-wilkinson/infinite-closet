@@ -51,12 +51,13 @@
       "model": "rental"
     },
 
+    "message": {
+      "type": "json"
+    },
+
     "details": {
       "type": "string",
       "unique": false
-    },
-    "message": {
-      "type": "json"
     },
 
     "startDate": {

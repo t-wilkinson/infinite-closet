@@ -36,6 +36,14 @@ migrations['0.1.0'] = async () => {
 }
 
 migrations['0.1.1'] = async () => {
+  const users = await strapi.query('user', 'users-permissions').find({}, [])
+  await Promise.all(users.map(async user => {
+    const contact = await strapi.services.contact.upsertContact(strapi.services.contact.toContact(user))
+    await strapi.query('user', 'users-permissions').update({ id: user.id }, {
+      contact: contact?.id,
+    })
+  }))
+
   const orders = await strapi.query('order', 'orders').find({}, ['user', 'product'])
   await Promise.all(orders.map(async order => {
     // Contact

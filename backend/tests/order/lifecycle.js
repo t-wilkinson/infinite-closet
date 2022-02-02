@@ -94,6 +94,7 @@ describe.only('Confirmed', () => {
 
   test('works', async () => {
     const checkout = await lifecycle.on['confirmed'](data)
+    expect(data.error).toBeFalsey()
     expect(checkout.purchase.status).toBe('success')
     expect(checkout.contact).toMatchObject(contact)
     expect(checkout.address).toMatchObject(address)

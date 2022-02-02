@@ -1,20 +1,6 @@
 'use strict'
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
-/**
- * Each cart item has an associated paymentIntent,
- * which we need to check is valid before shipping order.
- */
-function validPaymentIntent(cart, paymentIntent) {
-  // TODO: what if only some paymentIntents match?
-  // Only use paymentIntent created by the server
-  // Don't use paymentIntent passed from client
-  return (
-    cart[0].order.paymentIntent === paymentIntent.id &&
-    paymentIntent.status === 'succeeded'
-  )
-}
-
 module.exports = {
   async checkoutUser(ctx) {
     const user = ctx.state.user
@@ -22,8 +8,9 @@ module.exports = {
     const data = await strapi.plugins[
       'orders'
     ].services.checkout.prepareData(body, user)
-    if (data.cart.length === 0) {
-      return ctx.badRequest('Cart is empty or has no valid items to checkout.')
+
+    if (data.error) {
+      return ctx.badRequest(data.error)
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
@@ -57,8 +44,9 @@ module.exports = {
     const data = await strapi.plugins[
       'orders'
     ].services.checkout.prepareData(body)
-    if (data.cart.length === 0) {
-      return ctx.badRequest('Cart is empty or has no valid items to checkout.')
+
+    if (data.error) {
+      return ctx.badRequest(data.error)
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
@@ -101,8 +89,9 @@ module.exports = {
     const data = await strapi.plugins[
       'orders'
     ].services.checkout.prepareData(body)
-    if (data.cart.length === 0) {
-      return ctx.badRequest('Cart is empty or has no valid items to checkout.')
+
+    if (data.error) {
+      return ctx.badRequest(data.error)
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
@@ -111,9 +100,6 @@ module.exports = {
     }
 
     try {
-      if (!validPaymentIntent(data.cart, data.paymentIntent)) {
-        throw new Error('Payment intent invalid')
-      }
       await strapi.plugins['orders'].services.checkout.onCheckout(data)
       return ctx.send(null)
     } catch (e) {
