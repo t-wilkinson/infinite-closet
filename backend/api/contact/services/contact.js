@@ -1,6 +1,39 @@
 'use strict'
 
+// const _ = require('lodash')
+const crypto = require('crypto')
 const {splitName} = require('../../../utils')
+
+function toHash(email) {
+  return crypto
+    .createHash('md5')
+    .update(email?.toLowerCase())
+    .digest('hex')
+    .toLowerCase()
+}
+
+function toContact(obj) {
+  let name
+  if (obj.fullName) {
+    name = splitName(obj.fullName)
+  } else {
+    name = {
+      firstName: obj.firstName || obj.nickName,
+      lastName: obj.lastName,
+    }
+  }
+
+  const contact = {
+    email: obj.email || obj.emailAddress,
+    ...name,
+  }
+
+  if (!contact.email) {
+    return null
+  }
+
+  return contact
+}
 
 function isValidDate(date) {
   return date instanceof Date && !isNaN(date)
@@ -115,6 +148,10 @@ async function updateContactList() {
 }
 
 async function upsertContact(contact) {
+  if (!contact?.email) {
+    return null
+  }
+
   try {
     const existingContact = await strapi
       .query('contact')
@@ -135,4 +172,7 @@ async function upsertContact(contact) {
 module.exports = {
   updateContactList,
   upsertContact,
+
+  toHash,
+  toContact,
 }

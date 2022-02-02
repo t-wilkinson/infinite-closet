@@ -29,6 +29,7 @@ async function prepareData(body, user = null) {
   if (body.paymentMethod) {
     paymentMethod = await stripe.paymentMethods.retrieve(body.paymentMethod)
   }
+
   return {
     address: body.address,
     contact: body.contact,

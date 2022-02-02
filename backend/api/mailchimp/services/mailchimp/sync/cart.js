@@ -1,7 +1,6 @@
 'use strict'
 
 const _ = require('lodash')
-const crypto = require('crypto')
 const marketing = require('../marketing')
 const { ids } = require('../config')
 const storeId = ids('store')
@@ -21,11 +20,7 @@ const toMailchimp = async (email, orders) => {
   })
 
   let customer
-  const hash = crypto
-    .createHash('md5')
-    .update(email)
-    .digest('hex')
-    .toLowerCase()
+  const hash = strapi.services.contact.toHash(email)
   try {
     res = await marketing.lists.getListMember(ids('list'), hash)
     customer = { id: res.id, email_address: email, opt_in_status: true }
