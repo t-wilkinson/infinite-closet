@@ -7,10 +7,12 @@ module.exports = {
         return
       }
 
+      const { email } = result
+      const hash = strapi.services.contact.toHash(email)
       strapi.services.mailchimp.marketing.lists
-        .addListMember(strapi.services.mailchimp.config.ids('list'), {
-          email_address: result.email,
-          status: result.subscribed ? 'subscribed' : 'unsubscribed',
+        .setListMember(strapi.services.mailchimp.config.ids('list'), hash, {
+          email_address: email,
+          status_if_new: result.subscribed ? 'subscribed' : 'unsubscribed',
         })
         .then((res) => {
           if (res.status === 404) {

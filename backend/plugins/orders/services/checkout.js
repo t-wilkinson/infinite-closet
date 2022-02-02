@@ -34,7 +34,7 @@ async function prepareData(body, user = null) {
   // Ensure contact has right content
   let contact = body.contact
   if (user) {
-    contact = strapi.services.contact.userToContact(user)
+    contact = strapi.services.contact.toContact(user)
   } else if (contact && contact.fullName) {
     const name = splitName(contact.fullName)
     contact.firstName = name.firstName || contact.firstName

@@ -3,6 +3,7 @@
 // const fs = require('fs')
 const models = require('../../data/data.js').models
 require('../../utils') // Init dayjs
+const migration = require('./migration')
 
 // const { categories } = require('../../data/data')
 
@@ -49,7 +50,7 @@ function registerRoles() {
 module.exports = async () => {
   await populatePrivateFields()
   await registerRoles()
-  await strapi.services.mailchimp.helpers.bootstrap()
+  migration()
 
   if (process.env.NODE_ENV !== 'production') {
     // await setDefaultPermissions()

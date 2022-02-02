@@ -23,7 +23,7 @@ module.exports = {
       return ctx.badRequest("Order status must be 'cart' or 'list'")
     }
 
-    const contact = await strapi.services.contact.upsertContact(strapi.services.contact.userToContact(user))
+    const contact = await strapi.services.contact.upsertContact(strapi.services.contact.toContact(user))
     const orderBody = _.omitBy({
       user: user?.id || user,
       contact,
