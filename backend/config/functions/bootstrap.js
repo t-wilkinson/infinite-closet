@@ -49,9 +49,7 @@ function registerRoles() {
 module.exports = async () => {
   await populatePrivateFields()
   await registerRoles()
-  if (process.env.NODE_ENV === 'development') {
-    // await strapi.services.mailchimp.helpers.bootstrap()
-  }
+  await strapi.services.mailchimp.helpers.bootstrap()
 
   if (process.env.NODE_ENV !== 'production') {
     // await setDefaultPermissions()
