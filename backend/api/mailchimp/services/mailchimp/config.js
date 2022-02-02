@@ -14,6 +14,6 @@ const ids = {
 }
 
 module.exports = {
-  ids: (id) => ids[id][process.env.NODE_ENV],
+  ids: (id, env) => ids[id][env || process.env.NODE_ENV],
 }
 

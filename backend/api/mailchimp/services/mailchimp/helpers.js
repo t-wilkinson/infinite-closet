@@ -27,7 +27,7 @@ async function bootstrap() {
     domain: 'infinitecloset.co.uk',
     email_address: 'info@infinitecloset.co.uk',
     money_format: '£',
-    primary_locale: 'en-db',
+    primary_locale: 'en-gb',
     timezone: 'Europe/London',
   }
 
