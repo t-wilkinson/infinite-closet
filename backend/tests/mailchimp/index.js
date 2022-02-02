@@ -19,9 +19,9 @@ describe('Mailchimp', () => {
     ])
   })
 
-  it.only('production has cart information', async () => {
+  it.skip('production has cart information', async () => {
     const carts = await mailchimp.marketing.ecommerce.getStoreCarts(ids('store', 'production'))
-    console.log(carts)
+    console.log(JSON.stringify(carts.carts, null, 4))
   })
 
   // it('syncs', async () => {
