@@ -232,9 +232,8 @@ const CheckoutForm = ({ onCheckout }) => {
     if (cleanedFields.password) {
       await registerUser({
         email: contact.email,
-        firstName: contact.fullName.split(' ')[0] || undefined,
-        lastName:
-          contact.fullName.split(' ').slice(1).join(' ').trim() || undefined,
+        firstName: contact.firstName,
+        lastName: contact.lastName,
         password: cleanedFields.password,
       })
     }

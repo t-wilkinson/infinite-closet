@@ -27,11 +27,23 @@
       "unique": true,
       "required": false
     },
-    "senderName": { "type": "string" },
-    "senderEmail": { "type": "string" },
-    "recipientName": { "type": "string" },
-    "recipientEmail": { "type": "string" },
-    "message": { "type": "string" },
-    "deliveryDate": { "type": "date" }
+    "senderName": {
+      "type": "string"
+    },
+    "senderEmail": {
+      "type": "string"
+    },
+    "recipientName": {
+      "type": "string"
+    },
+    "recipientEmail": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "deliveryDate": {
+      "type": "date"
+    }
   }
 }

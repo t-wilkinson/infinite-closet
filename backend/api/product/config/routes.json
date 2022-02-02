@@ -80,6 +80,15 @@
       "config": {
         "policies": []
       }
+    },
+
+    {
+      "method": "GET",
+      "path": "/size-chart",
+      "handler": "sizing.sizeChart",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

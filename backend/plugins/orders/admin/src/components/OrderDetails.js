@@ -57,7 +57,7 @@ const OrderStatus = {
     return (
       <div className="process">
         <div>
-          {order.fullName} {order.email}
+          {order.contact?.firstName} {order.contact?.lastName} {order.email}
         </div>
         <div>
           {order.product.name} by{" "}

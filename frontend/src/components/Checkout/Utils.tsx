@@ -18,11 +18,16 @@ export interface Contact {
   address: { fullName: string; nickName?: string }
 }
 
-export const toContact = ({ email, address }: Contact) => ({
+export const toContact = ({ email, address }: Contact) => {
+  const names = address.fullName.split(' ')
+  return {
   email,
-  fullName: address.fullName,
-  nickName: address.fullName.split(' ')[0],
-})
+  firstName: names[0],
+  lastName: names.slice(1).join(' ').trim(),
+  fullName: address.fullName.trim(),
+  nickName: names[0],
+}
+}
 
 export const CheckoutSummary = ({
   userId = undefined,

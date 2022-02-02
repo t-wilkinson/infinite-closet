@@ -1,17 +1,15 @@
 const contact = {
-  fullName: 'Full name',
-  nickName: 'Nick name',
+  firstName: 'First',
+  lastName: 'Last',
   email: 'info+test@infinitecloset.co.uk',
 }
 
 const user = {
-  firstName: 'First name',
-  lastName: 'Last name',
-  email: 'info+test@infinitecloset.co.uk',
+  ...contact,
 }
 
 const address = {
-  fullName: contact.fullName,
+  fullName: `${contact.firstName} ${contact.lastName}`,
   addressLine1: 'Address line 1',
   mobileNumber: '123 456 7890',
 }
@@ -98,7 +96,7 @@ module.exports = {
       summary,
       recommendations,
       contact,
-      firstName: contact.nickName,
+      firstName: contact.firstName,
     },
     'order-shipped': orderData,
     'order-starting': orderData,
@@ -109,12 +107,12 @@ module.exports = {
     'gift-card': {
       isDefault: true,
       recommendations,
-      firstName: 'First Name',
+      firstName: contact.firstName,
       giftCard,
     },
     'store-credit': {
       isDefault: true,
-      firstName: 'First Name',
+      firstName: contact.firstName,
       amount: 20,
       recommendations,
     },
@@ -127,8 +125,8 @@ module.exports = {
     },
     'contact-us': {
       isDefault: true,
-      firstName: 'First Name',
-      lastName: 'Last Name',
+      firstName: contact.firstName,
+      lastName: contact.lastName,
       email: 'info+test@infinitecloset.co.uk',
       phoneNumber: 'Phone',
       message: 'Random message',
@@ -136,7 +134,7 @@ module.exports = {
 
     'join-launch-party': {
       isDefault: true,
-      firstName: 'First Name',
+      firstName: contact.firstName,
       ticketPrice: 25,
       donation: 25.0,
       discount: 5,

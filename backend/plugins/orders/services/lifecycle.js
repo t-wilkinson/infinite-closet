@@ -1,9 +1,10 @@
 'use strict'
 
-const { day } = require('../../../utils')
+const { day, toFullName } = require('../../../utils')
 
 const on = {
   async confirmed({
+    user,
     cart,
     contact,
     summary,
@@ -11,28 +12,73 @@ const on = {
     paymentIntent,
     paymentMethod,
   }) {
+    // Create/update address
+    const addressParams = { email: contact.email, fullName: toFullName(contact) }
+    switch (typeof address) {
+      case 'object':
+        address = await strapi
+          .query('address')
+          .create({ ...addressParams, ...address })
+        break
+      case 'string':
+      case 'number':
+        address = await strapi
+          .query('address')
+          .update({ id: address }, addressParams)
+        break
+    }
+
+    // Validate address
+    const isAddressValid = await strapi.services.shipment.validateAddress(address)
+    if (!isAddressValid && process.env.NODE_ENV === 'production') {
+      throw new Error('Expected a valid address.')
+    }
+
+    // Contact
+    contact = await strapi.services.contact.upsertContact(contact)
+
+    // Purchase
+    const purchase = await strapi.query('purchase').create({
+      paymentIntent: paymentIntent?.id,
+      paymentMethod: paymentMethod?.id,
+      charge: summary.total,
+      coupon: summary.coupon?.id,
+      giftCard: summary.giftCard?.id,
+      giftCardDiscount: summary.giftCardDiscount,
+      contact: contact?.id,
+    })
+
+    // Checkout
+    const orderIds = strapi.plugins['orders'].services.cart.orders(cart).map((order) => order.id)
+    const checkout = await strapi.query('checkout').create({
+      orders: orderIds,
+      address: address.id,
+      purchase: purchase.id,
+      user: user?.id,
+      contact: contact?.id,
+    })
+
+    // Rental
     const settled = await Promise.allSettled(
-      strapi.plugins['orders'].services.cart.orders(cart).map((order) =>
-        strapi.query('order', 'orders').update(
+      strapi.plugins['orders'].services.cart.orders(cart).map(async (order) => {
+        // const rental = await strapi.query('rentals').create({
+        //   confirmed: day().toJSON(),
+        //   shippingClass: null,
+        //   shipmentId: null,
+        // })
+        await strapi.query('order', 'orders').update(
           { id: order.id },
           {
-            address,
-            paymentIntent,
-            paymentMethod,
+            contact: contact?.id,
+            user: user?.id,
+            address: address.id,
+            // status: 'shipping',
+            // rental: rental.id,
+
             status: 'planning',
-            charge: strapi.plugins['orders'].services.price.orderPriceTotal(order),
-
-            giftCard: summary.giftCard ? summary.giftCard.id : null,
-            giftCardDiscount: summary.giftCardDiscount,
-            coupon: summary.coupon ? summary.coupon.id : null,
-            // couponDiscount: summary.couponDiscount,
-
-            fullName: contact.fullName || null,
-            nickName: contact.nickName || null,
-            email: contact.email || null,
           }
         )
-      )
+      })
     )
 
     const failed = settled.filter((res) => res.status === 'rejected')
@@ -56,16 +102,14 @@ const on = {
       }
     }
 
-    // Create contact and send email
-    if (contact) {
-      await strapi.services.contact.upsertContact(contact)
-      strapi.services.template_email.orderConfirmation({
-        firstName: contact.nickName,
-        summary,
-        cart,
-        address,
-      })
-    }
+    strapi.services.template_email.orderConfirmation({
+      contact,
+      summary,
+      cart,
+      address,
+    })
+
+    return checkout
   },
 
   async shipped(order) {

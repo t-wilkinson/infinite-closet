@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "checkouts",
+  "info": {
+    "name": "Checkout",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "orders": {
+      "plugin": "orders",
+      "collection": "order"
+    },
+    "address": {
+      "model": "address"
+    },
+    "purchase": {
+      "model": "purchase"
+    },
+    "user": {
+      "plugin": "users-permissions",
+      "model": "user"
+    },
+    "contact": {
+      "model": "contact"
+    }
+  }
+}

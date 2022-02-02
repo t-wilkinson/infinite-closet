@@ -40,6 +40,10 @@ function day(date) {
   }
 }
 
+function toFullName({ firstName, lastName }) {
+  return [firstName, lastName].join(' ').trim()
+}
+
 // Split name into first and last name
 function splitName(name) {
   if (!name || typeof name !== 'string') {
@@ -180,6 +184,7 @@ module.exports = {
   toId,
   fromId,
   generateAPI,
+  toFullName,
   splitName,
   day,
   formatAddress,

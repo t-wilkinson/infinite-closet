@@ -62,6 +62,10 @@ module.exports = {
       formatAddress(config, 'recipient', recipient)
     )
 
+    if (process.env.NODE_ENV !== 'production') {
+      return Math.random().toString().slice(2)
+    }
+
     const res = await fetchApi(`/orders/${body.OrderNumber}`, 'PUT', body)
       .then(async (res) => {
         if (!res.ok) {

@@ -27,6 +27,9 @@ beforeAll(async () => {
     strapi.query('product').delete(),
     strapi.query('coupon').delete(),
     strapi.query('gift-card').delete(),
+    strapi.query('purchase').delete(),
+    strapi.query('checkout').delete(),
+    strapi.query('rental').delete(),
     strapi.query('order', 'orders').delete(),
     strapi.query('user', 'users-permissions').delete(),
   ])
@@ -56,8 +59,8 @@ describe('Strapi in general', () => {
   })
 })
 
-// require('./order')
+require('./order')
 // require('./buy')
 // require('./product')
 // require('./user')
-require('./mailchimp')
+// require('./mailchimp')

@@ -27,6 +27,10 @@
       "default": "cart",
       "required": true
     },
+    "size": {
+      "type": "string",
+      "required": true
+    },
     "product": {
       "model": "product"
     },
@@ -34,9 +38,19 @@
       "plugin": "users-permissions",
       "model": "user"
     },
+    "contact": {
+      "model": "contact"
+    },
     "review": {
       "model": "review"
     },
+    "address": {
+      "model": "address"
+    },
+    "rental": {
+      "model": "rental"
+    },
+
     "details": {
       "type": "string",
       "unique": false
@@ -44,10 +58,7 @@
     "message": {
       "type": "json"
     },
-    "size": {
-      "type": "string",
-      "required": true
-    },
+
     "startDate": {
       "type": "date"
     },
@@ -58,43 +69,12 @@
       "type": "enumeration",
       "enum": ["short", "long"]
     },
-    "address": {
-      "model": "address"
-    },
-    "paymentMethod": {
-      "type": "string"
-    },
-    "paymentIntent": {
-      "type": "string"
-    },
     "shipment": {
       "type": "string"
     },
     "insurance": {
       "type": "boolean",
       "default": true
-    },
-    "giftCard": {
-      "model": "gift-card"
-    },
-    "coupon": {
-      "model": "coupon"
-    },
-    "fullName": {
-      "type": "string"
-    },
-    "nickName": {
-      "type": "string"
-    },
-    "email": {
-      "type": "string"
-    },
-    "charge": {
-      "type": "decimal"
-    },
-    "giftCardDiscount": {
-      "type": "decimal",
-      "default": 0
     }
   }
 }

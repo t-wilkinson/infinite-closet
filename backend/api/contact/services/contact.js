@@ -1,6 +1,15 @@
 'use strict'
 
+const _ = require('lodash')
 const {splitName} = require('../../../utils')
+
+function userToContact(user) {
+  return {
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+  }
+}
 
 function isValidDate(date) {
   return date instanceof Date && !isNaN(date)
@@ -119,20 +128,21 @@ async function upsertContact(contact) {
     const existingContact = await strapi
       .query('contact')
       .findOne({ email: contact.email })
-    const { firstName, lastName } = splitName(contact.fullName)
-    const contactData = { firstName, lastName }
+    const contactData = _.pick(contact, ['firstName', 'lastName', 'email'])
 
     if (existingContact) {
-      strapi.query('contact').update({ id: existingContact.id }, contactData)
+      return await strapi.query('contact').update({ id: existingContact.id }, contactData)
     } else {
-      strapi.query('contact').create(contactData)
+      return await strapi.query('contact').create(contactData)
     }
   } catch (e) {
     strapi.log.error('Failure creating contact.', e.stack)
+    return null
   }
 }
 
 module.exports = {
   updateContactList,
   upsertContact,
+  userToContact,
 }

@@ -76,7 +76,7 @@ async function getLocalItems() {
 
   // Split orders by user
   const carts = orders.reduce((carts, order) => {
-    const key = order.email || order.user?.email
+    const key = order.contact?.email || order.user?.email
     if (!key) {
       return carts
     }

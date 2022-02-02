@@ -14,13 +14,15 @@
     "email": {
       "type": "string"
     },
-    "phoneNumber": {
-      "type": "string"
-    },
     "firstName": {
-      "type": "string"
+      "type": "string",
+      "default": ""
     },
     "lastName": {
+      "type": "string",
+      "default": ""
+    },
+    "phoneNumber": {
       "type": "string"
     },
     "dateOfBirth": {

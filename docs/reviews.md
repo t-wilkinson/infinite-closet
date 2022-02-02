@@ -2,7 +2,7 @@
 Allow users to review products and show relevant reviews on the product page. Reviews should give users an idea of the value of a product.
 
 ## Context
-We need data
+We need data and to build trust
 
 ## Implementation
 - Add /products/top-rated url

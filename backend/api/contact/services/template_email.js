@@ -45,7 +45,6 @@ module.exports = {
           : [],
       subject: `We've got your order`,
       data: {
-        firstName: contact.nickName,
         contact,
         cart,
         address,

@@ -13,7 +13,9 @@ module.exports = {
 
   // Sync mailchimp
   '0 * * * *': async () => {
-    strapi.services.mailchimp.helpers.sync()
+    if (process.env.NODE_ENV === 'production') {
+      strapi.services.mailchimp.helpers.sync()
+    }
   },
 
   '0 7 * * *': async () => {

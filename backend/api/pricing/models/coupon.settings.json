@@ -12,7 +12,10 @@
   "attributes": {
     "type": {
       "type": "enumeration",
-      "enum": ["percent_off", "amount_off"],
+      "enum": [
+        "percent_off",
+        "amount_off"
+      ],
       "required": true
     },
     "amount": {
@@ -26,7 +29,10 @@
     },
     "context": {
       "type": "enumeration",
-      "enum": ["checkout", "launch-party"],
+      "enum": [
+        "checkout",
+        "launch-party"
+      ],
       "default": "checkout"
     },
     "maxUses": {

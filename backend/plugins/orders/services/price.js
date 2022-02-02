@@ -27,7 +27,9 @@ function orderPrice(order) {
 }
 
 function cartItemPrice(cartItem) {
-  return cartItem.productPrice + cartItem.insurancePrice + cartItem.shippingPrice
+  return (
+    cartItem.productPrice + cartItem.insurancePrice + cartItem.shippingPrice
+  )
 }
 
 /**
@@ -48,7 +50,8 @@ function cartPrice(cart) {
 
   const outOfStockTotal = cart.reduce((total, cartItem) => {
     const { order } = cartItem
-    const isPreorder = strapi.services.size.quantity(order.product.sizes, order.size) === 0
+    const isPreorder =
+      strapi.services.size.quantity(order.product.sizes, order.size) === 0
     if (isPreorder) {
       return total + cartItemPrice(cartItem)
     } else {
@@ -101,7 +104,12 @@ async function getDiscountPrice(price, user) {
   }
 }
 
-async function applyDiscounts({ user, outOfStockTotal, preDiscountPrice, discountCode }) {
+async function applyDiscounts({
+  user,
+  outOfStockTotal,
+  preDiscountPrice,
+  discountCode,
+}) {
   const { coupon, giftCard, discount, giftCardDiscount, couponDiscount } =
     await strapi.services.price.summary({
       outOfStockTotal,
@@ -126,7 +134,8 @@ async function applyDiscounts({ user, outOfStockTotal, preDiscountPrice, discoun
  */
 async function summary({ cart, user, discountCode }) {
   user = toId(user)
-  const { outOfStockTotal, productPrice, insurancePrice, shippingPrice } = cartPrice(cart)
+  const { outOfStockTotal, productPrice, insurancePrice, shippingPrice } =
+    cartPrice(cart)
 
   const preDiscountPrice = productPrice + insurancePrice + shippingPrice
   let { coupon, giftCard, discountPrice, couponDiscount, giftCardDiscount } =
@@ -175,11 +184,10 @@ async function existingCoupons(user, code) {
     return []
   }
 
-  return (
-    await strapi
-      .query('order', 'orders')
-      .find({ user: toId(user), 'coupon.code': code })
-  ).map((order) => order.coupon)
+  const purchases = await strapi
+    .query('purchase')
+    .find({ contact: toId(user.contact), 'coupon.code': code })
+  return purchases.map((purchase) => purchase.coupon)
 }
 
 module.exports = {

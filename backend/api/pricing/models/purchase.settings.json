@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "purchases",
+  "info": {
+    "name": "Purchase",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "status": {
+      "type": "enumeration",
+      "enum": ["success"],
+      "default": "success"
+    },
+    "paymentIntent": {
+      "type": "string",
+      "unique": true
+    },
+    "paymentMethod": {
+      "type": "string",
+      "unique": true
+    },
+    "charge": {
+      "type": "decimal",
+      "min": 0
+    },
+    "coupon": {
+      "model": "coupon"
+    },
+    "giftCard": {
+      "model": "gift-card"
+    },
+    "giftCardDiscount": {
+      "type": "decimal",
+      "min": 0
+    },
+    "contact": {
+      "model": "contact"
+    }
+  }
+}

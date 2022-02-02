@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "rentals",
+  "info": {
+    "name": "Rental",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "rentalLength": {
+      "type": "integer",
+      "default": 4
+    },
+    "insurance": {
+      "type": "boolean",
+      "default": true
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["normal", "delayed"],
+      "default": "normal"
+    },
+    "shipmentId": {
+      "type": "string"
+    },
+    "shippingClass": {
+      "type": "enumeration",
+      "enum": ["one", "two"]
+    },
+    "confirmed": {
+      "type": "datetime"
+    },
+    "shipped": {
+      "type": "datetime"
+    },
+    "start": {
+      "type": "datetime"
+    },
+    "end": {
+      "type": "datetime"
+    },
+    "cleaning": {
+      "type": "datetime"
+    },
+    "completed": {
+      "type": "datetime"
+    }
+  }
+}

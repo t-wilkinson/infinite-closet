@@ -187,11 +187,6 @@ const Checkout = ({ fetchCart, analytics }) => {
     const cleanedFields = fields.clean()
     return axios
       .post<void>(`/orders/checkout/${user.id}`, {
-        contact: {
-          fullName: [user.firstName, user.lastName].join(' ').trim(),
-          nickName: user.firstName,
-          email: user.email,
-        },
         address: state.address,
         paymentMethod: state.paymentMethod,
         orders: cart.map((item) => item.order),

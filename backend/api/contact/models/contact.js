@@ -3,6 +3,10 @@
 module.exports = {
   lifecycles: {
     async afterCreate(result) {
+      if (process.env.NODE_ENV === 'test') {
+        return
+      }
+
       strapi.services.mailchimp.marketing.lists
         .addListMember(strapi.services.mailchimp.config.ids('list'), {
           email_address: result.email,

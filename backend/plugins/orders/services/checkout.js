@@ -1,4 +1,5 @@
 const stripe = require('stripe')(process.env.STRIPE_KEY)
+const { splitName } = require('../../../utils')
 
 /**
  * @typedef {object} Contact
@@ -29,9 +30,21 @@ async function prepareData(body, user = null) {
   if (body.paymentMethod) {
     paymentMethod = await stripe.paymentMethods.retrieve(body.paymentMethod)
   }
+
+  // Ensure contact has right content
+  let contact = body.contact
+  if (user) {
+    contact = strapi.services.contact.userToContact(user)
+  } else if (contact && contact.fullName) {
+    const name = splitName(contact.fullName)
+    contact.firstName = name.firstName || contact.firstName
+    contact.lastName = name.lastName || contact.lastName
+  }
+
   return {
+    user,
     address: body.address,
-    contact: body.contact,
+    contact,
     summary,
     cart,
     paymentIntent,
@@ -47,6 +60,7 @@ async function prepareData(body, user = null) {
  *  - Send an email to the client
  */
 async function onCheckout({
+  user,
   contact,
   address,
   cart,
@@ -54,43 +68,14 @@ async function onCheckout({
   paymentIntent,
   paymentMethod,
 }) {
-  // Create/update address
-  const mergeParams = { email: contact.email, fullName: contact.fullName }
-  switch (typeof address) {
-    case 'object':
-      address = await strapi
-        .query('address')
-        .create({ ...mergeParams, ...address })
-      break
-    case 'string':
-    case 'number':
-      address = await strapi
-        .query('address')
-        .update({ id: address }, mergeParams)
-      break
-  }
-
-  await Promise.all(
-    cart.map((cartItem) =>
-      strapi
-        .query('order', 'orders')
-        .update({ id: cartItem.order.id }, { address: address.id })
-    )
-  )
-
-  // Validate address
-  const isAddressValid = await strapi.services.shipment.validateAddress(address)
-  if (!isAddressValid && process.env.NODE_ENV === 'production') {
-    throw new Error('Expected a valid address.')
-  }
-
   strapi.plugins['orders'].services.lifecycle.on['confirmed']({
+    user,
     cart,
     contact,
     summary,
     address,
-    paymentIntent: paymentIntent?.id || null,
-    paymentMethod: paymentMethod?.id || null,
+    paymentIntent,
+    paymentMethod,
   })
 }
 

@@ -28,7 +28,7 @@ export default ({ data}) => {
     <Layout title="Order Confirmation">
       <Space n={2} />
       <P>
-        <p>Hi {contact.nickName},</p>
+        <p>Hi {contact.firstName},</p>
         <p>
           Thank you for your order! Your order has been processed and you will
           receive an email when it ships.

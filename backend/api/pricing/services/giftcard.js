@@ -91,16 +91,10 @@ async function valid(giftCard) {
 }
 
 async function valueUsed(giftCard) {
-  const orders = await strapi
-    .query('order', 'orders')
-    .find(
-      {
-        giftCard: toId(giftCard),
-        status_nin: ['error', 'dropped', 'cart', 'list'],
-      },
-      []
-    )
-  return orders.reduce(
+  const purchases = await strapi
+    .query('purchase')
+    .find({ giftCard: toId(giftCard), }, [])
+  return purchases.reduce(
     (acc, { giftCardDiscount }) => acc + (giftCardDiscount || 0),
     0
   )
