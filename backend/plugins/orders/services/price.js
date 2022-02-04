@@ -14,9 +14,7 @@ const shippingPrices = {
  */
 function orderPrice(order) {
   const shippingClass =
-    strapi.services.timing.shippingClass(order.shippingDate, order.startDate) ||
-    'two'
-
+    strapi.plugins['orders'].services.order.shippingClass(order) || 'two'
   const shippingPrice = shippingPrices[shippingClass] || 0
   const productPrice =
     strapi.services.product.price(order.product, order.rentalLength) || 0
@@ -79,8 +77,7 @@ async function userDiscount(user) {
   const hasOrderedBefore = await strapi.query('order', 'orders').findOne(
     {
       user: toId(user),
-      status_in: ['planning', 'shipping', 'cleaning', 'completed'],
-      shippingDate_gt: day('2021-07-30').toJSON(), // When the discount is first applied
+      status_in: ['shipping', 'completed'],
     },
     []
   )

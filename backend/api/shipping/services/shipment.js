@@ -1,3 +1,7 @@
+/**
+ * @file Supplies the shipping provider apis.
+ * Deal with multiple shipping providers so they can be seamlessly swapped out.
+ */
 'use strict'
 const { providerName } = require('../../../utils')
 const api = require(`./${providerName}/api`)

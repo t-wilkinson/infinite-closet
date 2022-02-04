@@ -13,17 +13,7 @@
   "attributes": {
     "status": {
       "type": "enumeration",
-      "enum": [
-        "cart",
-        "list",
-        "planning",
-        "shipping",
-        "cleaning",
-        "completed",
-        "dropped",
-        "delayed",
-        "error"
-      ],
+      "enum": ["cart", "list", "shipping", "completed", "dropped"],
       "default": "cart",
       "required": true
     },
@@ -47,35 +37,24 @@
     "address": {
       "model": "address"
     },
-    "rental": {
-      "model": "rental"
+    "shipment": {
+      "model": "shipment"
     },
 
-    "message": {
-      "type": "json"
-    },
-
-    "details": {
-      "type": "string",
-      "unique": false
-    },
-
-    "startDate": {
+    "expectedStart": {
       "type": "date"
     },
-    "shippingDate": {
-      "type": "datetime"
+    "insurance": {
+      "type": "boolean",
+      "default": true
     },
     "rentalLength": {
       "type": "enumeration",
       "enum": ["short", "long"]
     },
-    "shipment": {
-      "type": "string"
-    },
-    "insurance": {
-      "type": "boolean",
-      "default": true
+
+    "shippingDate": {
+      "type": "datetime"
     }
   }
 }

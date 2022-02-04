@@ -38,10 +38,6 @@ module.exports = {
   normalize,
   quantity,
 
-  contains(order, size) {
-    return sizes(order).includes(size)
-  },
-
   // TODO: should probably use underlying sizes function
   // {size: S, sizeRange: _2XL} -> S-2XL
   range({size: start, sizeRange: end}) {

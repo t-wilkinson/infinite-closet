@@ -1,20 +1,109 @@
 'use strict'
 const stripe = require('stripe')(process.env.STRIPE_KEY)
+const { splitName } = require('../../../utils')
+
+/**
+ * @typedef {object} Contact
+ * @prop {string} firstName
+ * @prop {string} lastName
+ * @prop {string} email
+ */
+
+/**
+ * Core function used by all checkout methods which handles necessary checkout functions
+ * On checkout, we need to:
+ *  - Validate address
+ *  - Update information about orders (change status, etc.)
+ *  - Send an email to the client
+ *  - Ship order
+ *  - etc.
+ */
+async function onCheckout({
+  user,
+  contact,
+  address,
+  cart,
+  summary,
+  paymentIntent,
+  paymentMethod,
+}) {
+  strapi.plugins['orders'].services.lifecycle.on['confirmed']({
+    user,
+    cart,
+    contact,
+    summary,
+    address,
+    paymentIntent,
+    paymentMethod,
+  })
+}
+
+/**
+ * Convert request body to more useful information
+ * @returns - {summary, cart, paymentIntent, paymentMethod}
+ */
+async function prepareData(body, user = null) {
+  let error = null
+  const cart = await strapi.plugins['orders'].services.cart.createValidCart(
+    body.orders
+  )
+
+  // Ensure contact has right content
+  let contact = body.contact
+  if (user) {
+    contact = strapi.services.contact.toContact(user)
+  } else if (contact && contact.fullName) {
+    const name = splitName(contact.fullName)
+    contact.firstName = name.firstName || contact.firstName
+    contact.lastName = name.lastName || contact.lastName
+  }
+
+  const summary = await strapi.plugins['orders'].services.price.summary({
+    cart,
+    user,
+    discountCode: body.discountCode,
+  })
+
+  let paymentIntent, paymentMethod
+  if (body.paymentIntent) {
+    paymentIntent = await stripe.paymentIntents.retrieve(body.paymentIntent)
+  }
+  if (body.paymentMethod) {
+    paymentMethod = await stripe.paymentMethods.retrieve(body.paymentMethod)
+  }
+
+  if (cart.length === 0) {
+    error = 'Cart is empty or has no valid items to checkout.'
+  }
+
+  if (paymentIntent && paymentIntent.amount !== summary.amount) {
+    error = 'Payment intent invalid.'
+  }
+
+  return {
+    error,
+    user,
+    address: body.address,
+    contact,
+    summary,
+    cart,
+    paymentIntent,
+    paymentMethod,
+  }
+}
 
 module.exports = {
   async checkoutUser(ctx) {
     const user = ctx.state.user
     const body = ctx.request.body
-    const data = await strapi.plugins[
-      'orders'
-    ].services.checkout.prepareData(body, user)
+    const data = await prepareData(body, user)
 
     if (data.error) {
       return ctx.badRequest(data.error)
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
-      await strapi.plugins['orders'].services.checkout.onCheckout(data)
+      await onCheckout(data)
       return ctx.send(null)
     }
 
@@ -28,7 +117,7 @@ module.exports = {
         off_session: false,
         confirm: true,
       })
-      await strapi.plugins['orders'].services.checkout.onCheckout({
+      await onCheckout({
         ...data,
         paymentIntent,
       })
@@ -41,16 +130,14 @@ module.exports = {
 
   async checkoutGuest(ctx) {
     const body = { ...(ctx.request.body.body || {}), ...ctx.request.body }
-    const data = await strapi.plugins[
-      'orders'
-    ].services.checkout.prepareData(body)
+    const data = await prepareData(body)
 
     if (data.error) {
       return ctx.badRequest(data.error)
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
-      await strapi.plugins['orders'].services.checkout.onCheckout(data)
+      await onCheckout(data)
       return ctx.send({ status: 'no-charge' })
     }
 
@@ -71,7 +158,7 @@ module.exports = {
       const response = generateResponse(intent)
 
       if (response.success) {
-        await strapi.plugins['orders'].services.checkout.onCheckout({
+        await onCheckout({
           ...data,
           paymentIntent: intent,
         })
@@ -86,21 +173,19 @@ module.exports = {
   // Through apple pay
   async checkoutRequest(ctx) {
     const body = ctx.request.body
-    const data = await strapi.plugins[
-      'orders'
-    ].services.checkout.prepareData(body)
+    const data = await prepareData(body)
 
     if (data.error) {
       return ctx.badRequest(data.error)
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
-      await strapi.plugins['orders'].services.checkout.onCheckout(data)
+      await onCheckout(data)
       return ctx.send(null)
     }
 
     try {
-      await strapi.plugins['orders'].services.checkout.onCheckout(data)
+      await onCheckout(data)
       return ctx.send(null)
     } catch (e) {
       strapi.log.error('PaymentRequest paymentIntent did not succeed', {

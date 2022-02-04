@@ -4,13 +4,21 @@ async function getUserOrders(user, status) {
   const orders = await strapi.query('order', 'orders').find(
     {
       user: user.id,
-      ...(!status ? {} : Array.isArray(status) ? { status_in: status } : { status: status }),
+      ...(!status
+        ? {}
+        : Array.isArray(status)
+        ? { status_in: status }
+        : { status: status }),
     },
     ['review']
   )
-  await Promise.all(orders.map(async order => {
-    order.product = await strapi.query('product').findOne({ id: order.product }, ['sizes', 'designer', 'images'])
-  }))
+  await Promise.all(
+    orders.map(async (order) => {
+      order.product = await strapi
+        .query('product')
+        .findOne({ id: order.product }, ['sizes', 'designer', 'images'])
+    })
+  )
 
   return orders
 }
@@ -84,19 +92,21 @@ module.exports = {
   async viewGuestCart(ctx) {
     const body = ctx.request.body
     const orders = await Promise.all(
-                         body.orders.filter(order => order.status === 'cart').map(async (order) => {
-        if (['number', 'string'].includes(typeof order.product)) {
-          const product = await strapi.query('product').findOne(
-            {
-              id: order.product,
-            },
-            ['sizes', 'designer', 'images']
-          )
-          return { ...order, product }
-        } else {
-          return order
-        }
-      })
+      body.orders
+        .filter((order) => order.status === 'cart')
+        .map(async (order) => {
+          if (['number', 'string'].includes(typeof order.product)) {
+            const product = await strapi.query('product').findOne(
+              {
+                id: order.product,
+              },
+              ['sizes', 'designer', 'images']
+            )
+            return { ...order, product }
+          } else {
+            return order
+          }
+        })
     )
 
     const cart = await strapi.plugins['orders'].services.cart.create(orders)
@@ -105,7 +115,7 @@ module.exports = {
 
   async viewUserOrderHistory(ctx) {
     const user = ctx.state.user
-    const orders = await getUserOrders(user)
+    const orders = await getUserOrders(user, ['shipping', 'completed'])
     const cart = await strapi.plugins['orders'].services.cart.create(orders)
     ctx.send(strapi.plugins['orders'].services.cart.sanitizeCart(cart))
   },

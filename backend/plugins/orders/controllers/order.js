@@ -6,11 +6,12 @@ module.exports = {
   ...generateAPI('order', 'orders'),
 
   async complete(ctx) {
-    const { order_id } = ctx.params
-    await strapi
-      .query('order', 'orders')
-      .update({ id: order_id }, { status: 'completed' })
-    ctx.send(null)
+    return ctx.badRequest('Not implemented')
+    // const { order_id } = ctx.params
+    // await strapi
+    //   .query('order', 'orders')
+    //   .update({ id: order_id }, { status: 'completed' })
+    // ctx.send(null)
   },
 
   // TODO: should check if product.sizes includes order.size
@@ -30,7 +31,7 @@ module.exports = {
       status: body.status,
       size: body.size,
       product: body.product,
-      startDate: body.startDate,
+      expectedStart: body.expectedStart,
       rentalLength: body.rentalLength,
     }, _.isNil)
     const order = await strapi.query('order', 'orders').create(orderBody)

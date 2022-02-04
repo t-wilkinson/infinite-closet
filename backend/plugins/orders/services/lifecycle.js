@@ -58,48 +58,42 @@ const on = {
       contact: contact?.id,
     })
 
-    // Rental
     const settled = await Promise.allSettled(
-      strapi.plugins['orders'].services.cart.orders(cart).map(async (order) => {
-        // const rental = await strapi.query('rentals').create({
-        //   confirmed: day().toJSON(),
-        //   shippingClass: null,
-        //   shipmentId: null,
-        // })
+      strapi.plugins['orders'].services.cart.map(async (cartItem) => {
+        const { order, shippingClass } = cartItem
+        let shipmentId = null
+
+        // ACS expects orders asap
+        if (strapi.services.shipment.providerName === 'acs') {
+          shipmentId = await strapi.plugins['orders'].services.ship.shipOrderToClient(
+            cartItem.order
+          )
+        }
+
+        // Shipment
+        const shipment = await strapi.query('shipments').create({
+          shippingClass,
+          shipmentId,
+          confirmed: day().toJSON(),
+        })
+
+        // Order
         await strapi.query('order', 'orders').update(
           { id: order.id },
           {
             contact: contact?.id,
             user: user?.id,
             address: address.id,
-            // status: 'shipping',
-            // rental: rental.id,
-
-            status: 'planning',
+            status: 'shipping',
+            shipment: shipment.id,
           }
         )
       })
     )
 
-    const failed = settled.filter((res) => res.status === 'rejected')
+    const failed = settled.filter((res) => res.status === 'rejected').map(res => res.reason)
     if (failed.length > 0) {
       strapi.log.error('Failed to prepare cart for shipping', failed)
-    }
-
-    // acs expects orders asap
-    if (strapi.services.shipment.providerName === 'acs') {
-      const settled = await Promise.allSettled(
-        cart.map((cartItem) =>
-          strapi.plugins['orders'].services.ship.shipOrderToClient(
-            cartItem.order
-          )
-        )
-      )
-      const failed = settled.filter((res) => res.status === 'rejected')
-      if (failed.length > 0) {
-        strapi.log.error('onCheckout: Failed to ship', failed)
-        throw new Error('Failed to ship order')
-      }
     }
 
     strapi.services.template_email.orderConfirmation({
@@ -175,7 +169,7 @@ const on = {
  * Check if order is changing to status today, so we can run respective lifecycle code
  */
 function statusChangingToday(order, status) {
-  const range = strapi.services.timing.range(order)
+  const range = strapi.plugins['orders'].services.order.range(order)
   const date = day(range[status])
   const today = day()
   if (!date.isSame(today, 'day')) {

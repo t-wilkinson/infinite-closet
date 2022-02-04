@@ -1,69 +1,31 @@
-# Core data structures
+# Backend core data structures and functions
 
-## Implementation
-
-- Most below data structures should include a contact, which itself would hold a user
+**Product**
+- size[]
 
 **User**
-+ Contact
+- contact
 
 **Contact**
-- Anywhere mailchimp api is interacted with
-- Most email templates should take a contact
-+ email
-+ firstName
-+ lastName
-+ phoneNumber
-+ dateOfBirth
-+ subscribed
-+ metadata
-+ User
-+ customer?
 
 **Purchase**
-+ paymentIntent
-+ paymentMethod
-+ giftCard
-+ charge
-+ giftCardDiscount
-+ coupon
-+ status : success | refunded
 
-**Rental**
-+ confirmed
-+ shipped
-+ start
-+ end
-+ cleaning
-+ completed
-+ status : delayed | normal
-+ rentalLength
-+ insurance
-+ shipmentId
-+ shippingClass
-+ lifecycle()
-    - Move rental through its lifecycle
+**Shipment**
 
 **Order**
-+ status : cart | list | shipping | dropped
-+ size
-+ Product
-+ User
-+ Contact
-+ Review
-+ Address
-+ Rental
+- address
+- shipment
+- contact
+- user
+- product
+- size
+- review
 
 **Checkout**
-+ Order[]
-+ Address
-+ Purchase
-+ User
-+ Contact
+- order[]
+- purchase
 
-**Cart**
-+ price()
-
-## Migration
-- Orders -> rentals, purchases, contacts, etc.
-? Rename orders table and only migrate cart/list items
+## Alternatives
+- Put insurance, rentalLength, and expectedStart in shipments
+    - Shipments should only be created on shipment
+    - Putting these values in shipment request potentially confusing data

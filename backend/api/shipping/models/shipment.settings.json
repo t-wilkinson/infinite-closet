@@ -1,8 +1,8 @@
 {
   "kind": "collectionType",
-  "collectionName": "rentals",
+  "collectionName": "shipments",
   "info": {
-    "name": "Rental",
+    "name": "Shipment",
     "description": ""
   },
   "options": {
@@ -11,14 +11,6 @@
     "draftAndPublish": true
   },
   "attributes": {
-    "rentalLength": {
-      "type": "integer",
-      "default": 4
-    },
-    "insurance": {
-      "type": "boolean",
-      "default": true
-    },
     "status": {
       "type": "enumeration",
       "enum": ["normal", "delayed"],
@@ -30,6 +22,12 @@
     "shippingClass": {
       "type": "enumeration",
       "enum": ["one", "two"]
+    },
+
+    "position": {
+      "type": "enumeration",
+      "enum": ["confirmed", "shipped", "start", "end", "cleaning", "completed"],
+      "default": "confirmed"
     },
     "confirmed": {
       "type": "datetime"

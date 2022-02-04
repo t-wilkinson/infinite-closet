@@ -39,7 +39,7 @@ const Order = ({ selected, className, order, ...props }) => {
       <td className="order__field">
         {range && showRange(range, order.status)}
       </td>
-      <td className="order__field">{formatDate(order.startDate)}</td>
+      <td className="order__field">{formatDate(order.expectedStart)}</td>
       <td className="order__field--end">
         <Action order={order} />
       </td>

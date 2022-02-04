@@ -12,7 +12,7 @@ function isDateValid({ date, quantity, orders, rentalLength }) {
     )
   } else {
     const range = strapi.services.timing.range({
-      startDate: date,
+      expectedStart: date,
       rentalLength,
     })
 
@@ -32,8 +32,8 @@ function isDateValid({ date, quantity, orders, rentalLength }) {
 
 module.exports = {
   async range(ctx) {
-    const body = ctx.request.body
-    const range = strapi.services.timing.range(body)
+    const order = ctx.request.body
+    const range = strapi.plugins['orders'].services.order.range(order)
     ctx.send({ range })
   },
 
@@ -46,7 +46,7 @@ module.exports = {
       .findOne({ id: product.id || product }, ['sizes'])
     const quantity = orderProduct.sizes.find((s) => s.size === size).quantity
 
-    const orders = await strapi.plugins['orders'].services.order.relevantOrders(
+    const orders = await strapi.plugins['orders'].services.rental.relevantOrders(
       { size, product: orderProduct }
     )
 

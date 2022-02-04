@@ -163,7 +163,7 @@ async function acsStockSetup(ctx) {
 
     return {
       product_sku: product.id,
-      unique_sku: strapi.plugins['orders'].services.order.toAcsUniqueSKU(
+      unique_sku: strapi.services.shipment.toAcsUniqueSKU(
         { product, size: range },
         index
       ),

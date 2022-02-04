@@ -33,7 +33,7 @@ export const Orders = () => {
 
 export const OrderItem = ({ item }) => {
   const { order } = item
-  const date = dayjs(order.startDate || undefined).tz('Europe/London') // order.startDate is utc
+  const date = dayjs(order.expectedStart || undefined).tz('Europe/London')
   const startDate = date.format('ddd, MMM D')
   const endDate = date
     .add(rentalLengths[order.rentalLength], 'day')
@@ -72,7 +72,7 @@ export const OrderItem = ({ item }) => {
             order.status === 'error' ? 'text-warning' : 'text-pri'
           }`}
         >
-          {statuses[order.status]}
+          {getStatus(order?.shipment)}
         </span>
       </div>
       {!order.review && order.status === 'completed' && (
@@ -86,13 +86,18 @@ export const OrderItem = ({ item }) => {
   )
 }
 
-const statuses = {
-  planning: 'Recieved',
-  shipping: 'In use',
-  cleaning: 'Completed',
-  completed: 'Completed',
-  error: 'Error',
-  delayed: 'Delayed',
+const getStatus = ({status, position}) => {
+  if (status === 'delayed') {
+    return 'Delayed'
+  }
+  switch (position) {
+    case 'confirmed': return 'Confirmed'
+    case 'shipped': return 'Shipping'
+    case 'start': return 'In use'
+    case 'end': return 'In use'
+    case 'cleaned': return 'Completed'
+    case 'completed': return 'Completed'
+  }
 }
 
 export default Orders

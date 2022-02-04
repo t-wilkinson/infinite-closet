@@ -159,7 +159,7 @@ const OrderPrice = ({ totalPrice, toggleInsurance, order }) => (
 
 const OrderInformation = ({ order, available, valid }) => {
   const { product } = order
-  const date = dayjs(order.startDate || undefined).tz('Europe/London') // order.startDate is utc
+  const date = dayjs(order.expectedStart || undefined).tz('Europe/London')
   const startDate = date.format('ddd, MMM D')
   const endDate = date
     .add(rentalLengths[order.rentalLength], 'day')
@@ -216,7 +216,7 @@ export const EditCartItem = ({ order, isOpen, close, onSubmit = () => {} }) => {
     selectedDate: {
       label: 'Rental Date',
       constraints: 'required',
-      default: dayjs(order.startDate || undefined),
+      default: dayjs(order.expectedStart || undefined),
     },
     rentalLength: { constraints: 'required', default: order.rentalLength },
     rentType: { default: 'OneTime' },
@@ -228,7 +228,7 @@ export const EditCartItem = ({ order, isOpen, close, onSubmit = () => {} }) => {
     await dispatch(
       CartUtils.update({
         id,
-        startDate: cleaned.selectedDate.toJSON() as any,
+        expectedStart: cleaned.selectedDate.toJSON() as any,
         size: cleaned.size,
         rentalLength: cleaned.rentalLength,
         status: 'cart',

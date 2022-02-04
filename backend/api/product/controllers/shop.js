@@ -52,7 +52,7 @@ async function findProducts(knex, _where, _paging) {
     .join('designers', 'products.designer', 'designers.id')
     .orderByRaw(sort)
     .whereNotNull('products.published_at')
-    .whereRaw(...strapi.services.product.toRawSQL(_where))
+    .whereRaw(...strapi.services.filter.toRawSQL(_where))
 
   const products = await Promise.all(
     productIds.map(({ id }) =>
@@ -70,9 +70,9 @@ async function findProducts(knex, _where, _paging) {
 function productSlugs(products) {
   let filterSlugs = new DefaultDict(Set)
   for (const product of products) {
-    for (const filter of strapi.services.product.filterSlugs) {
+    for (const filter of strapi.services.filter.filterSlugs) {
       if (filter in models) {
-        const slugs = product[strapi.services.product.toPrivateFilter(filter)]
+        const slugs = product[strapi.services.filter.toPrivateFilter(filter)]
         if (!slugs) {
           continue
         }
@@ -117,7 +117,7 @@ async function queryFilters(knex, _where) {
     .from('products')
     .whereNotNull('products.published_at')
     .whereRaw(
-      ...strapi.services.product.toRawSQL({ categories: _where.categories })
+      ...strapi.services.filter.toRawSQL({ categories: _where.categories })
     )
 
   // slugs contain only filters that match product categories

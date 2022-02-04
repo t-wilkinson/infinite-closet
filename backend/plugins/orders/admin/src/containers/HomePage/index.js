@@ -5,7 +5,8 @@ import Orders from "../../components/Orders";
 const HomePage = ({ className }) => {
   return (
     <div className={className}>
-      <Orders />
+      NA
+      {/* <Orders /> */}
     </div>
   );
 };

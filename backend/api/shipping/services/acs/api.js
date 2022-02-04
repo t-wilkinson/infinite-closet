@@ -1,7 +1,8 @@
 'use strict'
+
 const fetch = require('node-fetch')
 const config = require('./config')
-const { formatAddress } = require('../../../../utils')
+const { toId, formatAddress } = require('../../../../utils')
 const { postcodeValidator } = require('postcode-validator')
 
 async function fetchApi(url, method, body = {}) {
@@ -22,27 +23,29 @@ async function fetchApi(url, method, body = {}) {
   })
 }
 
+function toAcsUniqueSKU({ product, size }, existing = 0) {
+  return `IC-${toId(product)}_${existing + 1}-${size}`
+}
+
 module.exports = {
+  toAcsUniqueSKU,
   formatAddress,
 
-  // TODO: accept multiple orders
-  async ship({ recipient, cartItem }) {
-    const { order, range, totalPrice, shippingClass } = cartItem
-    const uniqueSKU = await strapi.plugins[
-      'orders'
-    ].services.order.acsUniqueSKU(order)
+  async ship({ recipient, rental }) {
+    const { id, range, shippingClass, product, size, charge, numInProgress } = rental
+    const uniqueSKU = toAcsUniqueSKU({ product, size }, numInProgress)
 
     const body = Object.assign(
       {
         AccountCode: config.auth.accountCode,
-        OrderNumber: `IC-${order.id}`,
+        OrderNumber: `IC-${id}`,
 
         DeliveryService: config.shippingClasses[shippingClass],
         DeliveryAgent: config.deliveryAgent,
         DeliveryCharge: 0,
         OrderCancelled: false,
 
-        OrderDate: range.created.format('YYYY-MM-DD'),
+        OrderDate: range.confirmed.format('YYYY-MM-DD'),
         DispatchDate: range.shipped.format('YYYY-MM-DD'),
         DeliveryDate: range.start.format('YYYY-MM-DD'),
         EventDate: range.start.format('YYYY-MM-DD'),
@@ -53,7 +56,7 @@ module.exports = {
             LineItemId: uniqueSKU, // should be unique per item in the array
             GarmentSKU: uniqueSKU,
             IsHire: true,
-            ItemPrice: totalPrice,
+            ItemPrice: charge,
             Measurement1: 'ALL', //strapi.services.size.normalize(order.size),
             Measurement2: 'ALL', // strapi.services.size.normalize(order.size),
           },
@@ -82,7 +85,5 @@ module.exports = {
     strapi.log.info('ship %o', res)
     return body.OrderNumber
   },
-  retrieve: () => {},
-  complete: () => {},
   verify: (postcode) => postcodeValidator(postcode, 'UK'),
 }

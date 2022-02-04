@@ -1,57 +1,85 @@
 'use strict'
+const { day, toId } = require('../../../utils')
 
-const { day } = require('../../../utils')
+async function prepareToShip(cartItem) {
+  const { order } = cartItem
+  const { id, product, size } = order
+  const address = toShippingAddress(order)
+  const count = await strapi.plugins['orders'].services.rental.numOrdersInProgress({ product, size })
+
+  return {
+    address,
+    rental: {
+      ...cartItem,
+      id,
+      product,
+      size,
+      numInProgress: count,
+      charge: cartItem.totalPrice,
+    },
+  }
+}
+
+/**
+ * Convert order to shipping address for shipments
+ */
+function toShippingAddress(order) {
+  const { address, user } = order
+  return {
+    name: address.fullName,
+    address: [address.addressLine1, address.addressLine2],
+    town: address.town,
+    postcode: address.postcode,
+    email: address.email || user.email,
+    phone: address.phoneNumber,
+  }
+}
 
 async function shipToCleaners(cartItem) {
   const { order } = cartItem
+  const data = await prepareToShip(cartItem)
   const shippingRequest = {
-    collection:
-      strapi.plugins['orders'].services.order.toShippingAddress(order),
+    collection: data.address,
     recipient: 'oxwash',
-    cartItem,
+    rental: data.rental,
   }
 
-  const id = await strapi.services.shipment.ship(shippingRequest)
+  const shipmentId = await strapi.services.shipment.ship(shippingRequest)
   await strapi
-    .query('order', 'orders')
-    .update({ id: order.id }, { shipment: id })
+    .query('shipments')
+    .update({ id: toId(order?.shipment) }, { shipmentId })
 }
 
 async function shippingFailure(order, err) {
   await strapi
-    .query('order', 'orders')
-    .update({ id: order.id }, { status: 'error', message: err })
+    .query('shipments')
+    .update({ id: toId(order?.shipment) }, { status: 'delayed' })
   await strapi.services.template_email.orderShippingFailure(order, err)
   strapi.log.error('Failed to ship order to client %o', err.stack)
 }
 
 async function shipCartItemToClient(cartItem) {
   const { order } = cartItem
-  if (order.status === 'shipping') {
-    throw new Error('Already shipping')
-  }
-
+  const data = await prepareToShip(cartItem)
   const shippingRequest = {
     collection: 'infinitecloset',
-    recipient: strapi.plugins['orders'].services.order.toShippingAddress(order),
-    cartItem,
+    recipient: data.address,
+    rental: data.rental,
   }
 
-  await strapi.services.shipment
-    .ship(shippingRequest)
-    .then((res) =>
-      strapi
-        .query('order', 'orders')
-        .update(
-          { id: order.id },
-          { shipment: res, status: 'shipping', shippingDate: day().toJSON() }
-        )
-    )
+  const shipmentId = await strapi.services.shipment.ship(shippingRequest)
+  await strapi.query('shipments').update(
+    { order: toId(order?.shipment) },
+    {
+      shipped: day().toJSON(),
+      shipmentId,
+    }
+  )
 }
 
 async function shipOrderToClient(order) {
-  if (order.status === 'shipping') {
-    throw new Error('Already shipping')
+  if (['shipping', 'completed'].includes(order.status)) {
+    throw new Error('Already shipping/shipped')
   }
 
   const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(
@@ -63,21 +91,19 @@ async function shipOrderToClient(order) {
   return cartItem
 }
 
-async function shipOrders(orders) {
-  for (const order of orders) {
-    if (
-      order.status === 'planning' &&
-      strapi.services.shipment.providerName !== 'acs'
-    ) {
-      shipOrderToClient(order)
-    }
-  }
-}
+// async function shipOrders(orders) {
+//   for (const order of orders) {
+//     if (
+//       order.status === 'planning' &&
+//       strapi.services.shipment.providerName !== 'acs'
+//     ) {
+//       shipOrderToClient(order)
+//     }
+//   }
+// }
 
 module.exports = {
   shipToCleaners,
   shippingFailure,
-  shipCartItemToClient,
   shipOrderToClient,
-  shipOrders,
 }

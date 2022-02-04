@@ -1,3 +1,6 @@
+/**
+ * @file Deals with determining handling time around shipping providers. Predict when orders will arrive, tell when orders overlap, etc.
+ */
 'use strict'
 const { providerName, day } = require('../../../utils')
 const provider = require(`./${providerName}`)
@@ -191,42 +194,44 @@ function valid(start, available, quantity, existing = 0) {
   return enoughShippingTime && (notTooFarInFuture || start.year() >= 2050)
 }
 
+function eitherToDay(d1, d2) {
+  return d1 ? day(d1) : d2 ? day(d2) : undefined
+}
+
 /**
  * Expected/measured dates of each stage of an order
- * @param {DateLike} startDate
+ * @param {DateLike} expectedStart
  * @param {RentalLength} rentalLength
  * @param {DateLike=} shippingDate
  * @param {DateLike=} created_at
  * @returns {DateRange}
  */
-function range({ startDate, rentalLength, shippingDate, created_at }) {
+function range({ expectedStart, rentalLength, shipment }) {
+  shipment = shipment || {}
   rentalLength = provider.config.rentalLengths[rentalLength]
-  if (!startDate || !rentalLength) {
-    throw new Error('Must include startDate and rentalLength')
+  if (!expectedStart || !rentalLength) {
+    throw new Error('Must include expectedStart and rentalLength')
   }
 
-  const hoursSendClient = shippingClassHours(shippingDate, startDate)
-  const shipped = shippingDate
-    ? day(shippingDate)
-    : day(startDate).subtract(hoursSendClient, 'hours')
+  const hoursSendClient = shippingClassHours(shipment.shipped, expectedStart)
+  const shipped = shipment.shipped
+    ? day(shipment.shipped)
+    : day(expectedStart).subtract(hoursSendClient, 'hours')
 
-  const created = created_at ? day(created_at) : undefined
-  const confirmed = undefined
-  const start = day(startDate)
-  const end = start.add(rentalLength, 'hours')
-  const cleaning = end.add(provider.config.timing.hoursSendCleaners, 'hours')
-  const completed = cleaning.add(
+  const confirmed = eitherToDay(shipment.confirmed)
+  const start = eitherToDay(shipment.start, expectedStart)
+  const end = eitherToDay(shipment.end, start.add(rentalLength, 'hours'))
+  const cleaning = eitherToDay(shipment.cleaning, end.add(provider.config.timing.hoursSendCleaners, 'hours'))
+  const cleaningDuration =
     provider.config.timing.completionBufferHours +
-      provider.timing.cleaningDuration(cleaning),
-    'hours'
-  )
+      provider.timing.cleaningDuration(cleaning)
+  const completed = eitherToDay(shipment.completed, cleaning.add(cleaningDuration, 'hours'))
 
-  return { created, confirmed, shipped, start, end, cleaning, completed }
+  return { confirmed, shipped, start, end, cleaning, completed }
 }
 
 module.exports = {
   ...provider.timing,
-  arrival,
   shippingClass,
   shippingClassHours,
   range,

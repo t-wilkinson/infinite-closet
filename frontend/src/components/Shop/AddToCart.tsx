@@ -54,7 +54,7 @@ export const productRentContents = {
         user: user ? user.id : null,
         size: sizing.unnormalize(size.size),
         product: product.id,
-        startDate: selectedDate ? selectedDate.toJSON() : undefined,
+        expectedStart: selectedDate ? selectedDate.toJSON() : undefined,
         rentalLength: rentalLength ? rentalLength : undefined,
       }
       return order

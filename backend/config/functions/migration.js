@@ -1,4 +1,5 @@
 const version = require('../../package.json').version
+const { day } = require('../../utils')
 
 const migrations = {}
 
@@ -35,7 +36,7 @@ migrations['0.1.0'] = async () => {
   await strapi.services.mailchimp.sync.cart.all()
 }
 
-migrations['0.1.1'] = async () => {
+migrations['0.2.0'] = async () => {
   const users = await strapi.query('user', 'users-permissions').find({}, [])
   await Promise.all(users.map(async user => {
     const contact = await strapi.services.contact.upsertContact(strapi.services.contact.toContact(user))
@@ -61,10 +62,19 @@ migrations['0.1.1'] = async () => {
     })
 
     // Rental
+    const shipment = await strapi.query('shipments').create({
+      // expectedStart: order.startDate,
+      // rentalLength: order.rentalLength,
+      // insurance: order.insurance,
+      shipmentId: order.shipment,
+      shipped: order.shippingDate,
+    })
 
+    // Order
     await strapi.query('order', 'orders').update({ id: order.id }, {
+      expectedStart: order.startDate,
       contact: contact?.id,
-      // rental: rental?.id,
+      shipment: shipment?.id,
     })
   }))
 }

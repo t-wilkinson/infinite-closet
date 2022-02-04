@@ -29,7 +29,7 @@ async function numAvailable(orders = []) {
 
     const relevantOrders = await strapi.plugins[
       'orders'
-    ].services.order.relevantOrders(order)
+    ].services.rental.relevantOrders(order)
     available[key] = await strapi.plugins[
       'orders'
     ].services.order.totalAvailable(order, relevantOrders)
@@ -43,10 +43,10 @@ async function createCartItem(order) {
     .query('order', 'orders')
     .findOne({ id: toId(order) }, [
       'address',
-      'product.sizes',
       'product.images',
       'product.designer',
       'user',
+      'shipment',
     ])
   order.product.sizes = await strapi
     .query('product')
@@ -58,10 +58,9 @@ async function createCartItem(order) {
     order,
     ...price,
     totalPrice: Object.values(price).reduce((total, price) => total + price, 0),
-    range: strapi.services.timing.range(order),
-    shippingClass: strapi.services.timing.shippingClass(
-      order.shippingDate,
-      order.startDate
+    range: strapi.plugins['orders'].services.order.range(order),
+    shippingClass: strapi.plugins['orders'].services.order.shippingClass(
+      order
     ),
   }
 }
@@ -78,24 +77,21 @@ function unpackCartItem(cartItem) {
 }
 
 async function createAvailableCartItem(numAvailableOrders, order) {
-  const quantity = await strapi.plugins['orders'].services.order.orderQuantity(order)
+  const quantity = await strapi.services.product.quantity(order)
   const key = strapi.services.product.toKey(order)
-
-  const existingOrders = await strapi.query('order', 'orders').count({
-    product: toId(order.product),
-    size: order.size,
-    status_in: strapi.plugins['orders'].services.order.orderQuantity.inProgress,
-  })
+  const existingOrders = await strapi.plugins['orders'].services.rental.existingOrders(order)
 
   const valid = strapi.services.timing.valid(
-    order.startDate,
+    order.expectedStart,
     numAvailableOrders[key],
     quantity,
     existingOrders
   )
 
+  const cartItem = await createCartItem(order)
+
   return {
-    ...(await createCartItem(order)),
+    ...cartItem,
     valid,
     available: numAvailableOrders[key],
   }
