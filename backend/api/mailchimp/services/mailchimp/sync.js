@@ -42,19 +42,17 @@ async function all(sync, localItems, mailchimpItems) {
   let keys = new Set(Object.keys(localItems), Object.keys(mailchimpItems))
   keys = Array.from(keys)
 
-  // await Promise.allSettled(
-  //   Array.from(keys).map((key) =>
-  //     syncItem(key, sync, localItems[key], mailchimpItems[key])
-  //   )
-  // )
   for (const key of keys) {
     // Slow it down
-    await syncItem(key, sync, localItems[key], mailchimpItems[key])
+    try {
+      await syncItem(key, sync, localItems[key], mailchimpItems[key])
+    } catch (e) {
+      strapi.log.error('Sync mailchimp error: ', e.stack)
+    }
   }
   strapi.log.info('Sync mailchimp list')
 }
 
-// TODO: if this fails due to recursion/etc you can have mailchimp.sync.* return parameters for syncList and syncList call those functions and use the params
 module.exports = {
   all,
 }

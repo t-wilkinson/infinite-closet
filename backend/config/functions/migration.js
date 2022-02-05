@@ -35,7 +35,7 @@ migrations['0.1.0'] = async () => {
   await strapi.services.mailchimp.sync.cart.all()
 }
 
-migrations['0.1.1'] = async () => {
+migrations['0.2.0'] = async () => {
   const orders = await strapi.query('order', 'orders').find({}, ['user', 'product'])
   await Promise.all(orders.map(async order => {
     // Contact

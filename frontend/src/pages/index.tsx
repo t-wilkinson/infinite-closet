@@ -9,9 +9,13 @@ import { StrapiProduct } from '@/types/models'
 import axios from '@/utils/axios'
 
 import whyRentPic from '@/media/home/why-rent.png'
-import formalClothingPic from '@/media/home/formal-clothing.png'
 import sustainableFashionRentalPic from '@/media/home/sustainable-fashion-rental.png'
-import holidaysTreatsPic from '@/media/home/holidays-treats.png'
+
+import valentinesDayEditPic from '@/media/home/valentines-day.png'
+import suitUpPic from '@/media/home/jumpsuits.png'
+// import formalClothingPic from '@/media/home/formal-clothing.png'
+// import holidaysTreatsPic from '@/media/home/holidays-treats.png'
+
 import reviewImage1 from '@/media/home/review-image.jpg'
 import reviewImage2 from '@/media/home/review-image-1.jpg'
 import reviewImage3 from '@/media/home/review-image-2.jpg'
@@ -37,7 +41,7 @@ export const Home = ({ products }) => {
 const Heading = ({ block = true, children }) => {
   return (
     <div className="w-full items-center">
-      <div className="relative font-bold uppercase text-4xl sm:text-5xl text-center items-center">
+      <div className="relative font-bold uppercase text-3xl sm:text-4xl text-center items-center">
         <h2 className="relative">{children}</h2>
         {block && (
           <div className="w-1/2 sm:w-3/4 bg-pri h-2 -mt-3 absolute bottom-0 sm:right-0 mr-4 sm:mr-0" />
@@ -248,21 +252,37 @@ const WhyRentItem = ({ item }) => (
 
 const productCategories = [
   {
-    title: 'Oh My Gown',
-    text: 'The Formal Edit',
-    src: formalClothingPic,
-    alt: 'Pink dress for formal occasions',
-    href: '/products/clothing/gowns',
-    position: 'center 20%',
+    title: 'Valentine\'s Day Edit',
+    text: 'Love Your (Sustainable) Look',
+    src: valentinesDayEditPic,
+    alt: 'Flowery dress for valentines day',
+    href: '/products/clothing?colors=red&colors=white&colors=pink&colors=purple',
+    position: 'center',
   },
   {
-    title: 'Our Holidays Treats',
-    text: 'Sparkle season has arrived',
-    src: holidaysTreatsPic,
-    alt: 'Dress fit for holidays',
-    href: '/products/clothing?occasions=holiday',
-    position: '60% center',
+    title: 'Suit Up!',
+    text: 'Play(suit) on',
+    src: suitUpPic,
+    alt: 'Pink jumpsuit',
+    href: '/products/clothing/jumpsuits',
+    position: 'center',
   },
+  // {
+  //   title: 'Oh My Gown',
+  //   text: 'The Formal Edit',
+  //   src: formalClothingPic,
+  //   alt: 'Pink dress for formal occasions',
+  //   href: '/products/clothing/gowns',
+  //   position: 'center 20%',
+  // },
+  // {
+  //   title: 'Our Holidays Treats',
+  //   text: 'Sparkle season has arrived',
+  //   src: holidaysTreatsPic,
+  //   alt: 'Dress fit for holidays',
+  //   href: '/products/clothing?occasions=holiday',
+  //   position: '60% center',
+  // },
   // {
   //   title: 'Say I (HEN) Do',
   //   text: 'Find Your Wedding Bliss',
