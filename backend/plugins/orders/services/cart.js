@@ -27,12 +27,12 @@ async function numAvailable(orders = []) {
       continue
     }
 
-    const relevantOrders = await strapi.plugins[
+    const existingOrders = await strapi.plugins[
       'orders'
-    ].services.rental.relevantOrders(order)
+    ].services.rental.existingOrders(order)
     available[key] = await strapi.plugins[
       'orders'
-    ].services.order.totalAvailable(order, relevantOrders)
+    ].services.order.totalAvailable(order, existingOrders)
   }
 
   return available
@@ -79,7 +79,7 @@ function unpackCartItem(cartItem) {
 async function createAvailableCartItem(numAvailableOrders, order) {
   const quantity = await strapi.services.product.quantity(order)
   const key = strapi.services.product.toKey(order)
-  const existingOrders = await strapi.plugins['orders'].services.rental.existingOrders(order)
+  const existingOrders = await strapi.plugins['orders'].services.rental.numExistingOrders(order)
 
   const valid = strapi.services.timing.valid(
     order.expectedStart,

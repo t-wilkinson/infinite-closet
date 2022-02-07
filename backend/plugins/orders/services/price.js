@@ -29,16 +29,6 @@ function cartItemPrice(cartItem) {
   )
 }
 
-/**
- * Sum all the sub-prices of an order
- */
-function orderPriceTotal(order) {
-  return Object.values(orderPrice(order)).reduce(
-    (total, price) => total + price,
-    0
-  )
-}
-
 function cartPrice(cart) {
   const sum = (values, key) =>
     values.reduce((total, value) => {
@@ -77,7 +67,7 @@ async function userDiscount(user) {
   const hasOrderedBefore = await strapi.query('order', 'orders').findOne(
     {
       user: toId(user),
-      status_in: ['shipping', 'completed'],
+      status_in: strapi.plugins['orders'].services.inConfirmed,
     },
     []
   )
@@ -108,9 +98,9 @@ async function applyDiscounts({
 }) {
   const { coupon, giftCard, discount, giftCardDiscount, couponDiscount } =
     await strapi.services.price.summary({
-      outOfStockTotal,
+      user,
       price: preDiscountPrice,
-      existingCoupons: await existingCoupons(user, discountCode),
+      outOfStockTotal,
       discountCode,
       context: 'checkout',
     })
@@ -168,27 +158,7 @@ async function summary({ cart, user, discountCode }) {
   }
 }
 
-/**
- * Coupons can only be used a certain number of times per user
- */
-async function existingCoupons(user, code) {
-  if (!user) {
-    // For now we are trusting that users will not abuse coupons
-    return []
-  }
-  if (typeof code !== 'string') {
-    return []
-  }
-
-  const purchases = await strapi
-    .query('purchase')
-    .find({ contact: toId(user.contact), 'coupon.code': code })
-  return purchases.map((purchase) => purchase.coupon)
-}
-
 module.exports = {
   summary,
   orderPrice,
-  orderPriceTotal,
-  existingCoupons,
 }

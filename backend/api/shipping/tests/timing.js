@@ -21,7 +21,7 @@ const withinDate = (date, fn) => {
 
 const pnt = (date) => date.format('YYYY-MM-DD hh:mm')
 
-describe('Valid', () => {
+describe.skip('Valid', () => {
   it.skip.each([
     [1, 1, 1],
     [16, 0, 0],

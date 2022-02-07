@@ -231,10 +231,9 @@ function range({ expectedStart, rentalLength, shipment }) {
 }
 
 module.exports = {
-  ...provider.timing,
+  overlap,
+  range,
   shippingClass,
   shippingClassHours,
-  range,
   valid,
-  overlap,
 }

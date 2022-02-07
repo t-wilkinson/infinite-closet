@@ -13,7 +13,10 @@ const on = {
     paymentMethod,
   }) {
     // Create/update address
-    const addressParams = { email: contact.email, fullName: toFullName(contact) }
+    const addressParams = {
+      email: contact.email,
+      fullName: toFullName(contact),
+    }
     switch (typeof address) {
       case 'object':
         address = await strapi
@@ -29,7 +32,9 @@ const on = {
     }
 
     // Validate address
-    const isAddressValid = await strapi.services.shipment.validateAddress(address)
+    const isAddressValid = await strapi.services.shipment.validateAddress(
+      address
+    )
     if (!isAddressValid && process.env.NODE_ENV === 'production') {
       throw new Error('Expected a valid address.')
     }
@@ -49,7 +54,9 @@ const on = {
     })
 
     // Checkout
-    const orderIds = strapi.plugins['orders'].services.cart.orders(cart).map((order) => order.id)
+    const orderIds = strapi.plugins['orders'].services.cart
+      .orders(cart)
+      .map((order) => order.id)
     const checkout = await strapi.query('checkout').create({
       orders: orderIds,
       address: address.id,
@@ -65,9 +72,9 @@ const on = {
 
         // ACS expects orders asap
         if (strapi.services.shipment.providerName === 'acs') {
-          shipmentId = await strapi.plugins['orders'].services.ship.shipOrderToClient(
-            cartItem.order
-          )
+          shipmentId = await strapi.plugins[
+            'orders'
+          ].services.ship.shipOrderToClient(cartItem.order)
         }
 
         // Shipment
@@ -91,7 +98,9 @@ const on = {
       })
     )
 
-    const failed = settled.filter((res) => res.status === 'rejected').map(res => res.reason)
+    const failed = settled
+      .filter((res) => res.status === 'rejected')
+      .map((res) => res.reason)
     if (failed.length > 0) {
       strapi.log.error('Failed to prepare cart for shipping', failed)
     }
@@ -111,12 +120,10 @@ const on = {
 
     // Send user email if their order is shipping today
     if (strapi.services.shipment.providerName === 'acs') {
-      await strapi.plugins['orders'].services.cart
-        .createCartItem(order)
-        .then((cartItem) =>
-          strapi.services.template_email.orderShipped(cartItem)
-        )
-        .catch((err) => ship.shippingFailure(order, err))
+      const cartItem = await strapi.plugins[
+        'orders'
+      ].services.cart.createCartItem(order)
+      strapi.services.template_email.orderShipped(cartItem)
     } else {
       await ship.shipOrderToClient(order)
     }
@@ -137,13 +144,13 @@ const on = {
     await strapi
       .query('order', 'orders')
       .update({ id: order.id }, { status: 'cleaning' })
-    if (strapi.services.shipment.providerName !== 'acs') {
-      await strapi.plugins['orders'].services.ship
-        .shipToCleaners(order)
-        .catch((err) =>
-          strapi.plugins['orders'].services.ship.shippingFailure(cartItem, err)
-        )
-    }
+    // if (strapi.services.shipment.providerName !== 'acs') {
+    //   await strapi.plugins['orders'].services.ship
+    //     .shipToCleaners(order)
+    //     .catch((err) =>
+    //       strapi.plugins['orders'].services.ship.shippingFailure(cartItem, err)
+    //     )
+    // }
     await strapi.services.template_email.orderEnding(cartItem)
   },
 

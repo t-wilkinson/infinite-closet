@@ -1,5 +1,4 @@
 'use strict'
-
 /********************  IMPORTANT ********************
  *
  * PRICE: decimal units ($10.50)
@@ -7,6 +6,7 @@
  *
  ********************  IMPORTANT ********************/
 
+const { toId } = require('../../../utils')
 const { sanitizeEntity } = require('strapi-utils')
 const SMALLEST_CURRENCY_UNIT = 100
 
@@ -19,14 +19,22 @@ const toPrice = (amount) => amount / SMALLEST_CURRENCY_UNIT
  * @param {object} obj
  * @param {number} obj.outOfStockTotal - In case coupons have a modifier that prevents them being applied to items not in stock
  */
-async function discount({ outOfStockTotal, price, context, discountCode, existingCoupons }) {
-  let giftCard = await strapi.services.giftcard.availableGiftCard(
-    discountCode
-  )
-  const isGiftCardValid = await strapi.services.giftcard.valid(giftCard)
-  let giftCardDiscount = await strapi.services.giftcard.discount(
+async function discount({
+  price,
+  outOfStockTotal,
+
+  coupon,
+  existingCoupons,
+
+  giftCard,
+  giftCardPurchases,
+  giftCardPaymentIntent,
+}) {
+  const isGiftCardValid = strapi.services.giftcard.valid(giftCard, giftCardPaymentIntent)
+  let giftCardDiscount = strapi.services.giftcard.discount(
     price,
     giftCard,
+    giftCardPurchases,
     isGiftCardValid
   )
   if (!isGiftCardValid) {
@@ -34,15 +42,8 @@ async function discount({ outOfStockTotal, price, context, discountCode, existin
     giftCard = null
   }
 
-  let coupon = await strapi.services.coupon.availableCoupon(
-    discountCode,
-    context
-  )
-  const isCouponValid = await strapi.services.coupon.valid(
-    coupon,
-    existingCoupons
-  )
-  let couponDiscount = await strapi.services.coupon.discount({
+  const isCouponValid = strapi.services.coupon.valid(coupon, existingCoupons)
+  let couponDiscount = strapi.services.coupon.discount({
     price,
     coupon,
     isCouponValid,
@@ -63,17 +64,48 @@ async function discount({ outOfStockTotal, price, context, discountCode, existin
 }
 
 /**
+ * Coupons can only be used a certain number of times per user
+ */
+async function existingCoupons(user, code) {
+  if (!user) {
+    // For now we are trusting that users will not abuse coupons
+    return []
+  }
+  if (typeof code !== 'string') {
+    return []
+  }
+  const purchases = await strapi
+    .query('purchase')
+    .find({ contact: toId(user.contact), 'coupon.code': code })
+  return purchases.map((purchase) => purchase.coupon)
+}
+
+/**
  * Price summary including discount, subtotal, etc.
  */
-async function summary({ outOfStockTotal, price, context, discountCode, existingCoupons }) {
-  const { discountPrice, giftCardDiscount, couponDiscount, coupon, giftCard } =
+async function summary({
+  user,
+  price,
+  outOfStockTotal,
+  discountCode,
+  context,
+}) {
+  const { discountPrice, giftCardDiscount, couponDiscount, giftCard, coupon } =
     await discount({
-      outOfStockTotal,
       price,
-      context,
-      discountCode,
-      existingCoupons,
+      outOfStockTotal,
+
+      coupon: await strapi.services.coupon.availableCoupon(
+        discountCode,
+        context
+      ),
+      existingCoupons: await existingCoupons(user, discountCode),
+
+      giftCard: await strapi.services.giftcard.availableGiftCard(discountCode),
+      giftCardPurchases: await strapi.services.giftcard.getPurchases(giftCard),
+      giftCardPaymentIntent: await strapi.services.giftcard.getPaymentIntent(giftCard),
     })
+
   const total = price - discountPrice
 
   return {

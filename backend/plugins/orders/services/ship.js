@@ -5,7 +5,9 @@ async function prepareToShip(cartItem) {
   const { order } = cartItem
   const { id, product, size } = order
   const address = toShippingAddress(order)
-  const count = await strapi.plugins['orders'].services.rental.numOrdersInProgress({ product, size })
+  const count = await strapi.plugins[
+    'orders'
+  ].services.rental.numOrdersInProgress({ product, size })
 
   return {
     address,
@@ -33,21 +35,6 @@ function toShippingAddress(order) {
     email: address.email || user.email,
     phone: address.phoneNumber,
   }
-}
-
-async function shipToCleaners(cartItem) {
-  const { order } = cartItem
-  const data = await prepareToShip(cartItem)
-  const shippingRequest = {
-    collection: data.address,
-    recipient: 'oxwash',
-    rental: data.rental,
-  }
-
-  const shipmentId = await strapi.services.shipment.ship(shippingRequest)
-  await strapi
-    .query('shipments')
-    .update({ id: toId(order?.shipment) }, { shipmentId })
 }
 
 async function shippingFailure(order, err) {
@@ -78,7 +65,9 @@ async function shipCartItemToClient(cartItem) {
 }
 
 async function shipOrderToClient(order) {
-  if (['shipping', 'completed'].includes(order.status)) {
+  if (
+    strapi.plugins['orders'].services.order.inConfirmed.includes(order.status)
+  ) {
     throw new Error('Already shipping/shipped')
   }
 
@@ -102,8 +91,23 @@ async function shipOrderToClient(order) {
 //   }
 // }
 
+// async function shipToCleaners(cartItem) {
+//   const { order } = cartItem
+//   const data = await prepareToShip(cartItem)
+//   const shippingRequest = {
+//     collection: data.address,
+//     recipient: 'oxwash',
+//     rental: data.rental,
+//   }
+
+//   const shipmentId = await strapi.services.shipment.ship(shippingRequest)
+//   await strapi
+//     .query('shipments')
+//     .update({ id: toId(order?.shipment) }, { shipmentId })
+// }
+
 module.exports = {
-  shipToCleaners,
-  shippingFailure,
+  // shipToCleaners,
+  // shippingFailure,
   shipOrderToClient,
 }

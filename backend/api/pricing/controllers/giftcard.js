@@ -78,7 +78,8 @@ module.exports = {
       .find({ recipientEmail: user.email })
     await Promise.all(
       giftCards.map(async (giftCard) => {
-        const value = await strapi.services.giftcard.valueLeft(giftCard)
+        const purchases = await strapi.services.giftcard.getPurchases(giftCard)
+        const value = strapi.services.giftcard.valueLeft(giftCard, purchases)
         giftCard.valueLeft = value
       })
     )

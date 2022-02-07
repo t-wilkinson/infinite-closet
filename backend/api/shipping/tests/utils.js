@@ -2,10 +2,6 @@ const timing = require('../services/timing')
 const { day } = require('../../../utils')
 const MockDate = require('mockdate')
 
-describe.skip('Utils', () => {
-  it('works', () => {})
-})
-
 const withinDate = (date, fn) => {
   MockDate.set(day().set(date).toJSON())
   fn()
@@ -137,6 +133,11 @@ function expectOverlapEdge(dow, shouldOverlap, notOverlap, transform) {
   expect(edge.shouldOverlap).toBe(true)
   expect(edge.notOverlap).toBe(false)
 }
+
+// TODO: should test these functions
+describe.skip('Utils', () => {
+  it('works', () => {})
+})
 
 module.exports = (config) => {
   return {

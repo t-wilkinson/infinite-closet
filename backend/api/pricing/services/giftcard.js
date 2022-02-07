@@ -15,6 +15,14 @@ function generateRandomCode() {
   return generateCode(crypto.randomUUID())
 }
 
+async function getPaymentIntent({ paymentIntent }) {
+  if (!paymentIntent) {
+    return undefined
+  } else {
+    return await stripe.paymentIntents.retrieve(paymentIntent)
+  }
+}
+
 function fromPaymentIntent(paymentIntent) {
   return {
     id: paymentIntent.id,
@@ -69,59 +77,60 @@ async function availableGiftCard(code) {
   return giftCard
 }
 
-async function valid(giftCard) {
+function valid(giftCard, paymentIntent) {
   if (!giftCard) {
     return false
   }
 
-  if ((await valueLeft(giftCard)) <= 0) {
+  if (valueLeft(giftCard) <= 0) {
     return false
   }
 
+  if (giftCard.paymentIntent && !paymentIntent) {
+    throw new Error('Must pass retrieve paymentIntent from stripe')
+  }
+
   // If paymentIntent isn't attached there are no more checks to make
-  if (!giftCard.paymentIntent) {
+  if (!paymentIntent) {
     return true
   }
 
-  const paymentIntent = await stripe.paymentIntents.retrieve(
-    giftCard.paymentIntent
-  )
   const { value } = fromPaymentIntent(paymentIntent)
   return paymentIntentValid(paymentIntent) && value == giftCard.value
 }
 
-async function valueUsed(giftCard) {
-  const purchases = await strapi
-    .query('purchase')
-    .find({ giftCard: toId(giftCard), }, [])
+async function getPurchases(giftCard) {
+  return await strapi.query('purchase').find({ giftCard: toId(giftCard) }, [])
+}
+
+function valueUsed(purchases) {
   return purchases.reduce(
     (acc, { giftCardDiscount }) => acc + (giftCardDiscount || 0),
     0
   )
 }
 
-async function valueLeft(giftCard) {
-  return giftCard.value - (await valueUsed(giftCard))
+function valueLeft(giftCard, purchases) {
+  return Math.max(giftCard.value - valueUsed(purchases), 0)
 }
 
-async function discount(price, giftCard, valid = true) {
+function discount(price, giftCard, purchases, valid = true) {
   if (!valid) {
     return 0
   }
 
-  const value = await valueLeft(giftCard)
-  return Math.min(value, price)
+  const effectiveValue = valueLeft(giftCard, purchases)
+  return Math.min(effectiveValue, price)
 }
 
 module.exports = {
   add,
   availableGiftCard,
   create,
-  discount,
-  generateCode,
-  generateRandomCode,
   valid,
+
+  generateRandomCode,
+  getPurchases,
   valueLeft,
-  valueUsed,
-  fromPaymentIntent,
+  discount,
 }

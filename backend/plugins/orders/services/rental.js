@@ -16,31 +16,28 @@ async function numOrdersInProgress({ product, size }) {
   })
 }
 
-async function existingOrders({ product, size }) {
-  return await strapi.query('order', 'orders').count({
-    product: toId(product),
-    size,
-    status_in: ['shipping', 'completed'],
-  })
-}
-
 /**
  * Find all orders that have the same {@link Rental} (shipping or completed)
  * @returns {Order[]}
  */
-async function relevantOrders({ product, size }) {
-  return await strapi.query('order', 'orders').find(
-    {
-      product: toId(product),
-      size,
-      status_in: ['shipping', 'completed'],
-    },
-    []
-  )
+async function existingOrders({ product, size }) {
+  return await strapi.query('order', 'orders').count({
+    product: toId(product),
+    size,
+    status_in: strapi.plugins['orders'].services.order.inConfirmed,
+  })
+}
+
+async function numExistingOrders({ product, size }) {
+  return await strapi.query('order', 'orders').count({
+    product: toId(product),
+    size,
+    status_in: strapi.plugins['orders'].services.order.inConfirmed,
+  })
 }
 
 module.exports = {
   numOrdersInProgress,
   existingOrders,
-  relevantOrders,
+  numExistingOrders,
 }

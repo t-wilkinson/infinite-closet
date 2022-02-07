@@ -1,5 +1,8 @@
 'use strict'
 
+const inConfirmed = ['shipping', 'completed']
+const inProgress = ['shipping']
+
 /**
  * Helper function to calculate number of times an order can be ordered
  */
@@ -17,11 +20,9 @@ async function totalAvailable(order, orders) {
  * @returns {number}
  */
 function totalOverlaps(date, orders) {
-  const overlapCount = orders.reduce((acc, order) => {
+  return orders.reduce((acc, order) => {
     return overlap(date, order) ? acc + 1 : acc
   }, 0)
-
-  return overlapCount
 }
 
 /**
@@ -54,4 +55,7 @@ module.exports = {
   totalAvailable,
   range,
   shippingClass,
+
+  inProgress,
+  inConfirmed,
 }

@@ -46,7 +46,7 @@ module.exports = {
       .findOne({ id: product.id || product }, ['sizes'])
     const quantity = orderProduct.sizes.find((s) => s.size === size).quantity
 
-    const orders = await strapi.plugins['orders'].services.rental.relevantOrders(
+    const orders = await strapi.plugins['orders'].services.rental.existingOrders(
       { size, product: orderProduct }
     )
 

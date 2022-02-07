@@ -12,33 +12,33 @@ const { afterCutoff, beforeCutoff, overlapDateEdge, overlapRangeEdge } = require
 
 const describeIf = providerName === 'acs' ? describe : describe.skip
 
-describeIf('timing timing', () => {
-  const cutoff = config.timing.cutoff
-  const today = day().set({ hour: cutoff, minute: 0, second: 0 })
+// describeIf('timing timing', () => {
+//   const cutoff = config.timing.cutoff
+//   const today = day().set({ hour: cutoff, minute: 0, second: 0 })
 
-  it.each([
-    [today.set({ hour: 1 }), today.add({ day: 1 })],
-    [today.set({ hour: cutoff + 1 }), today.add({ day: 2 })],
-  ])('When sent on %j, arrives on %j', (sent, expects) => {
-    const arrives = timing.arrival(sent, 'one')
-    expect(expects.utc().isSame(arrives.utc(), 'hour')).toBeTruthy()
-  })
-})
+//   it.each([
+//     [today.set({ hour: 1 }), today.add({ day: 1 })],
+//     [today.set({ hour: cutoff + 1 }), today.add({ day: 2 })],
+//   ])('When sent on %j, arrives on %j', (sent, expects) => {
+//     const arrives = timing.arrival(sent, 'one')
+//     expect(expects.utc().isSame(arrives.utc(), 'hour')).toBeTruthy()
+//   })
+// })
 
-describeIf('Order arrives', () => {
-  let today = day()
+// describeIf('Order arrives', () => {
+//   let today = day()
 
-  it('after it is sent', () => {
-    const arrives = timing.arrival(today, 'one')
-    expect(arrives.isAfter(today)).toBeTruthy()
-  })
+//   it('after it is sent', () => {
+//     const arrives = timing.arrival(today, 'one')
+//     expect(arrives.isAfter(today)).toBeTruthy()
+//   })
 
-  it('sooner with one day shipping than two', () => {
-    const arrivesSooner = timing.arrival(today, 'one')
-    const arrivesLater = timing.arrival(today, 'two')
-    expect(arrivesSooner.isBefore(arrivesLater)).toBeTruthy()
-  })
-})
+//   it('sooner with one day shipping than two', () => {
+//     const arrivesSooner = timing.arrival(today, 'one')
+//     const arrivesLater = timing.arrival(today, 'two')
+//     expect(arrivesSooner.isBefore(arrivesLater)).toBeTruthy()
+//   })
+// })
 
 describe.only('Order ships (when ordered before cutoff time)', () => {
 // describeIf('Order ships (when ordered before cutoff time)', () => {
