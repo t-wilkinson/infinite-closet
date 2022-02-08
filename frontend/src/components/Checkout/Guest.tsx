@@ -69,10 +69,10 @@ const CheckoutWrapper = () => {
   const analytics = useAnalytics()
   const cart = useSelector((state) => state.cart.checkoutCart)
   const fields = useFields<Fields>({
-    discountCode: { autocomplete: 'off' },
+    discountCode: { autocomplete: 'none' },
     email: { constraints: 'email required string' },
     billingName: { constraints: 'required string' },
-    password: { constraints: 'optional-password', autocomplete: 'off' },
+    password: { constraints: 'optional-password', autocomplete: 'none' },
     authorized: {
       constraints: 'selected',
       default: false,

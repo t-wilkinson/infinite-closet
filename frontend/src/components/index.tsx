@@ -69,10 +69,8 @@ const buttonClassName = ({ role = 'primary', className = '' }) => `
       p-3 transition duration-200
       ${className}
       ${
-        role === 'primary'
-          ? 'text-white bg-pri hover:bg-sec rounded-sm font-bold'
-          : role === 'payment'
-          ? 'text-white bg-gray-black hover:bg-gray'
+          role === 'primary'
+          ? 'text-white bg-gray-black hover:bg-gray rounded-sm'
           : role === 'secondary'
           ? 'text-black bg-white border border-black'
           : role === 'cta'

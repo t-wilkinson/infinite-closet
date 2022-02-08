@@ -40,6 +40,7 @@ async function validateAddress(address) {
   if (!address) {
     return false
   }
+
   const valid = await api.verify(address.postcode)
 
   return (

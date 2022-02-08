@@ -93,7 +93,7 @@ export const CheckoutWrapper = ({}) => {
   const rootDispatch = useDispatch()
   const analytics = useAnalytics()
   const fields = useFields<Fields>({
-    discountCode: { autocomplete: 'off' },
+    discountCode: { autocomplete: 'none' },
   })
   const fetchCart = useFetchCart()
 
@@ -303,6 +303,10 @@ const Favorites = ({}) => {
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
+
+  if (favorites?.length === 0) {
+    return null
+  }
 
   return (
     <section

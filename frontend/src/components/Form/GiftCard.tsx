@@ -49,12 +49,12 @@ export const useGiftCardFields = ({ user = null } = {}) =>
     recipientName: {
       constraints: 'required',
       label: 'Recipients Name',
-      autocomplete: 'off',
+      autocomplete: 'none',
     },
     recipientEmail: {
       constraints: 'required email',
       label: 'Recipients Email',
-      autocomplete: 'off',
+      autocomplete: 'none',
     },
     confirmRecipientEmail: {
       constraints: 'required',
@@ -187,7 +187,7 @@ const GiftCardInfo = ({ fields }) => {
         <Textarea field={fields.get('message')} rows={4} />
       </Fieldset>
       <div>
-        <Button onClick={nextPage} role="payment">
+        <Button onClick={nextPage}>
           Proceed to Checkout
         </Button>
         <span>

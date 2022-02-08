@@ -13,6 +13,10 @@ function toHash(email) {
 }
 
 function toContact(obj) {
+  if (!obj) {
+    return null
+  }
+
   let name
   if (obj.fullName) {
     name = splitName(obj.fullName)

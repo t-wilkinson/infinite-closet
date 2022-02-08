@@ -19,7 +19,7 @@ export const userSlice = createSlice({
       state.data = payload
     },
     signout(state) {
-      state.data = undefined
+      state.data = null
     },
   },
 })

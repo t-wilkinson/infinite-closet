@@ -6,9 +6,9 @@ import axios from '@/utils/axios'
 import { useDispatch, useSelector } from '@/utils/store'
 import { userActions } from '@/User/slice'
 import { CartUtils } from '@/Cart/slice'
+import { ButtonLink } from '@/components'
 
 export const User = ({ children, allowGuest = false }) => {
-  const router = useRouter()
   const user = useSelector((state) => state.user.data)
 
   if (user === undefined) {
@@ -18,8 +18,16 @@ export const User = ({ children, allowGuest = false }) => {
   const isGuest = user === null
 
   if (isGuest && !allowGuest) {
-    router.push('/account/signin')
-    return null
+    return <div className="h-full w-full items-center px-4 xl:px-0 mb-4">
+      <div className="h-full max-w-screen-xl w-full items-center justify-center h-full space-y-4">
+      <h3 className="text-xl font-bold">
+        Looks like you need to be logged in to access this page.
+      </h3>
+        <ButtonLink href="/account/signin">
+          Sign In
+        </ButtonLink>
+      </div>
+    </div>
   }
 
   if (isGuest && allowGuest) {

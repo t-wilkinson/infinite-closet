@@ -61,7 +61,7 @@ describe('Checkout', () => {
     ])
   })
 
-  it('guest can checkout', async () => {
+  it.only('guest can checkout', async () => {
     let order
     let paymentIntent
     let paymentMethod
@@ -71,11 +71,12 @@ describe('Checkout', () => {
       designer: designer.id,
     })
     let orderData = f.order.mock({
-      startDate: day().add({ day: 10 }).format('YYYY-MM-DD'),
+      expectedDate: day().add({ day: 10 }).format('YYYY-MM-DD'),
     })
     const userData = f.user.mock()
     const contact = {
-      fullName: `${userData.firstName} ${userData.lastName}`,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
       email: userData.email,
     }
 
@@ -121,7 +122,7 @@ describe('Checkout', () => {
     expect(paymentIntent.id).toMatch(/^pi_/)
 
     // checkout
-    await request(strapi.server)
+    const checkout = await request(strapi.server)
       .post('/orders/checkout')
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
@@ -138,36 +139,33 @@ describe('Checkout', () => {
       })
       .expect(200)
       .then((data) => {
-        expect(data.body.success).toBe(true)
+        return data.body
       })
 
     // changes order status to planning
-    const checkedOut = await strapi
-      .query('order', 'orders')
-      .findOne({ id: order.id })
-    expect(checkedOut).toMatchObject({
-      ...orderData,
-      startDate: day(checkedOut.startDate).format('YYYY-MM-DD'),
+    expect(checkout).toMatchObject({
+      orders: [
+        orderData
+      ],
       address: {
         addressLine1: 'Address Line 1',
         email: contact.email,
-        fullName: contact.fullName,
+        fullName: `${contact.firstName} ${contact.lastName}`,
         postcode: 'EC2A 3QF',
         town: 'Town',
       },
-      charge: 1000,
-      coupon: null,
-      email: contact.email,
-      fullName: contact.fullName,
-      nickName: null,
-      // updates price of paymentIntent by creating a new one (eventually should update existing one however)
-      paymentIntent: expect.not.stringMatching(paymentIntent.id),
-      paymentMethod: paymentMethod.id,
-      status: 'planning',
+      purchase: {
+        status: 'success',
+        charge: 15,
+        coupon: null,
+        paymentIntent: expect.not.stringMatching(paymentIntent.id),
+        paymentMethod: paymentMethod.id,
+      },
+      contact,
     })
   })
 
-  it.only('user can checkout', async () => {
+  it('user can checkout', async () => {
     let order
     let paymentIntent
     let paymentMethod

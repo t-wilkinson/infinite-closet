@@ -78,12 +78,10 @@ async function onCheckout({
     contact: contact?.id,
   })
 
-  if (!user.contact) {
+  if (user && !user?.contact) {
     strapi.query('user', 'users-permissions').update(
-      { id: user?.id },
-      {
-        contact: contact?.id,
-      }
+      { id: toId(user) },
+      { contact: toId(contact), }
     )
   }
 
