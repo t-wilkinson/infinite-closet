@@ -40,6 +40,9 @@ migrations['0.2.0'] = async () => {
   const users = await strapi.query('user', 'users-permissions').find({}, [])
   await Promise.all(
     users.map(async (user) => {
+      if (user.contact) {
+        return
+      }
       const contact = await strapi.services.contact.upsertContact(
         strapi.services.contact.toContact(user)
       )

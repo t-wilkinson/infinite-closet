@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import { Divider } from '@/components'
 import { useDispatch, useSelector } from '@/utils/store'
-import {useFields} from '@/Form'
+import { useFields } from '@/Form'
 
 import { shopActions } from './slice'
 import ProductImages from './ProductImages'
@@ -23,7 +23,7 @@ export const Shop = ({ data }) => {
   React.useEffect(() => {
     dispatch(shopActions.hideDate())
     // Don't need review data immediately
-    getReviews({slug, onSuccess: setReviews})
+    getReviews({ slug, onSuccess: setReviews })
   }, [])
 
   return (
@@ -53,32 +53,31 @@ const Product = ({ reviews, data }) => {
     rentalLength: { constraints: 'required', default: 'short' },
     rentType: { default: 'OneTime' },
   })
-  reviews = { rating: 5, orders: [1,2,3] }
 
   return (
     <div className="w-full sm:w-1/2 sm:max-w-md">
       <div className="flex-row justify-between">
         <div>
-      <Link href={`/designers/${product.designer.slug}`}>
-        <a>
-          <span className="pt-4 font-bold text-xl underline sm:no-underline hover:underline">
-            {product.designer.name}
-          </span>
-        </a>
-      </Link>
-      <span className="">{product.name}</span>
-      {product.retailPrice && (
-        <span className="text-gray-dark">
-          £{product.retailPrice} Original Retail
-        </span>
-      )}
-      </div>
-        {reviews &&
-        <div className="flex-row items-center">
-      <Rating rating={reviews.rating} emptyColor="text-white" />
-          &nbsp;&nbsp;({reviews.orders.length})
+          <Link href={`/designers/${product.designer.slug}`}>
+            <a>
+              <span className="pt-4 font-bold text-xl underline sm:no-underline hover:underline">
+                {product.designer.name}
+              </span>
+            </a>
+          </Link>
+          <span className="">{product.name}</span>
+          {product.retailPrice && (
+            <span className="text-gray-dark">
+              £{product.retailPrice} Original Retail
+            </span>
+          )}
         </div>
-        }
+        {reviews && (
+          <div className="flex-row items-center">
+            <Rating rating={reviews.rating} emptyColor="text-white" />
+            &nbsp;&nbsp;({reviews.orders.length})
+          </div>
+        )}
       </div>
       <Divider className="mt-2 mb-4" />
       <OrderOptions fields={fields} product={product} />

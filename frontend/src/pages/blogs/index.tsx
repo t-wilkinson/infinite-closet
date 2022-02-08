@@ -15,8 +15,8 @@ export const Page = ({ blogs }) => {
         const [minutes] = readingTime(blog.content)
         return (
           <Link key={blog.id} href={`/blogs/${blog.slug}`}>
-            <a>
-              <div className="flex-row max-w-xl items-center rounded-md p-4 border border-gray-light">
+            <a className="w-full max-w-xl">
+              <div className="flex-row items-center rounded-md p-4 border border-gray-light">
                 <div className="w-full mr-2">
                   <span className="text-xl font-bold">{blog.title}</span>
                   <span className="text-gray text-sm">{blog.subtitle}</span>
@@ -43,7 +43,6 @@ export const Page = ({ blogs }) => {
     </Layout>
   )
 }
-export default Page
 
 export async function getServerSideProps({}) {
   const [blogs] = await Promise.all([
@@ -56,3 +55,5 @@ export async function getServerSideProps({}) {
     },
   }
 }
+
+export default Page
