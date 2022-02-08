@@ -66,7 +66,7 @@ async function getLocalItems() {
     {
       status: 'cart',
     },
-    ['user', 'product']
+    ['contact', 'user', 'product']
   )
 
   // Split orders by user

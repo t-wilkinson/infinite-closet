@@ -21,7 +21,7 @@ async function numOrdersInProgress({ product, size }) {
  * @returns {Order[]}
  */
 async function existingOrders({ product, size }) {
-  return await strapi.query('order', 'orders').count({
+  return await strapi.query('order', 'orders').find({
     product: toId(product),
     size,
     status_in: strapi.plugins['orders'].services.order.inConfirmed,

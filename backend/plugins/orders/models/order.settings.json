@@ -21,6 +21,18 @@
       "type": "string",
       "required": true
     },
+    "expectedStart": {
+      "type": "date"
+    },
+    "insurance": {
+      "type": "boolean",
+      "default": true
+    },
+    "rentalLength": {
+      "type": "enumeration",
+      "enum": ["short", "long"]
+    },
+
     "product": {
       "model": "product"
     },
@@ -39,22 +51,6 @@
     },
     "shipment": {
       "model": "shipment"
-    },
-
-    "expectedStart": {
-      "type": "date"
-    },
-    "insurance": {
-      "type": "boolean",
-      "default": true
-    },
-    "rentalLength": {
-      "type": "enumeration",
-      "enum": ["short", "long"]
-    },
-
-    "shippingDate": {
-      "type": "datetime"
     }
   }
 }

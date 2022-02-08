@@ -11,7 +11,7 @@
     "draftAndPublish": true
   },
   "attributes": {
-    "status": {
+    "shippingStatus": {
       "type": "enumeration",
       "enum": ["normal", "delayed"],
       "default": "normal"
@@ -24,7 +24,7 @@
       "enum": ["one", "two"]
     },
 
-    "position": {
+    "status": {
       "type": "enumeration",
       "enum": ["confirmed", "shipped", "start", "end", "cleaning", "completed"],
       "default": "confirmed"

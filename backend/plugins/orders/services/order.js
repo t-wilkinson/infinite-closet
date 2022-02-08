@@ -42,7 +42,7 @@ function overlap(date, order) {
 }
 
 function shippingClass({ shipment, expectedStart }) {
-  return strapi.services.timing.shippingclass(shipment.shipped, expectedStart)
+  return strapi.services.timing.shippingClass(shipment?.shipped, expectedStart)
 }
 
 function range({ expectedStart, rentalLength, shipment }) {

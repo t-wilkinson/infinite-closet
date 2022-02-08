@@ -90,6 +90,7 @@ async function summary({
   discountCode,
   context,
 }) {
+  const availableGiftCard = await strapi.services.giftcard.availableGiftCard(discountCode)
   const { discountPrice, giftCardDiscount, couponDiscount, giftCard, coupon } =
     await discount({
       price,
@@ -101,9 +102,9 @@ async function summary({
       ),
       existingCoupons: await existingCoupons(user, discountCode),
 
-      giftCard: await strapi.services.giftcard.availableGiftCard(discountCode),
-      giftCardPurchases: await strapi.services.giftcard.getPurchases(giftCard),
-      giftCardPaymentIntent: await strapi.services.giftcard.getPaymentIntent(giftCard),
+      giftCard: availableGiftCard,
+      giftCardPurchases: await strapi.services.giftcard.getPurchases(availableGiftCard),
+      giftCardPaymentIntent: await strapi.services.giftcard.getPaymentIntent(availableGiftCard),
     })
 
   const total = price - discountPrice

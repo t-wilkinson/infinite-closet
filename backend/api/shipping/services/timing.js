@@ -55,7 +55,7 @@ function arrival(sent, shippingClass) {
  * @returns {ShippingClass}
  */
 function shippingClass(earliestDeliveryDate, startsOn) {
-  earliestDeliveryDate = day(earliestDeliveryDate || undefined) // Want to convert null to undefined
+  earliestDeliveryDate = day(earliestDeliveryDate) // Want to convert null to undefined
   startsOn = day(startsOn).set({ hour: 0 })
 
   //   const arrivesWithClass = (shippingClass) => {
@@ -230,10 +230,16 @@ function range({ expectedStart, rentalLength, shipment }) {
   return { confirmed, shipped, start, end, cleaning, completed }
 }
 
+function logRange(range) {
+  ['confirmed', 'shipped', 'start', 'end', 'cleaning', 'completed'].forEach(status =>
+    console.log(range[status]?.toJSON()))
+}
+
 module.exports = {
   overlap,
   range,
   shippingClass,
   shippingClassHours,
   valid,
+  logRange,
 }

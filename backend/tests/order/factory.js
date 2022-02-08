@@ -1,3 +1,4 @@
+const { day } = require('../../utils')
 const f = {}
 f.product = require('../product/factory')
 f.user = require('../user/factory')
@@ -9,6 +10,7 @@ const defaultData = {
   status: 'cart',
   size: 'S',
   rentalLength: 'short',
+  expectedStart: day().add(3, 'day').toJSON(),
 }
 
 /**

@@ -29,7 +29,7 @@ beforeAll(async () => {
     strapi.query('gift-card').delete(),
     strapi.query('purchase').delete(),
     strapi.query('checkout').delete(),
-    strapi.query('rental').delete(),
+    strapi.query('shipment').delete(),
     strapi.query('order', 'orders').delete(),
     strapi.query('user', 'users-permissions').delete(),
   ])

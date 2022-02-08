@@ -15,11 +15,11 @@ function generateRandomCode() {
   return generateCode(crypto.randomUUID())
 }
 
-async function getPaymentIntent({ paymentIntent }) {
-  if (!paymentIntent) {
+async function getPaymentIntent(giftCard) {
+  if (!giftCard?.paymentIntent) {
     return undefined
   } else {
-    return await stripe.paymentIntents.retrieve(paymentIntent)
+    return await stripe.paymentIntents.retrieve(giftCard.paymentIntent)
   }
 }
 
@@ -129,6 +129,7 @@ module.exports = {
   create,
   valid,
 
+  getPaymentIntent,
   generateRandomCode,
   getPurchases,
   valueLeft,

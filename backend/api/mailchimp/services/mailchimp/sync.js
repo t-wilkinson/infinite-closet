@@ -42,11 +42,6 @@ async function all(sync, localItems, mailchimpItems) {
   let keys = new Set(Object.keys(localItems), Object.keys(mailchimpItems))
   keys = Array.from(keys)
 
-  // await Promise.allSettled(
-  //   Array.from(keys).map((key) =>
-  //     syncItem(key, sync, localItems[key], mailchimpItems[key])
-  //   )
-  // )
   for (const key of keys) {
     // Slow it down
     await syncItem(key, sync, localItems[key], mailchimpItems[key])

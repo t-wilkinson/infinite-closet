@@ -32,7 +32,7 @@ dayjs.tz.setDefault('Europe/London')
  */
 function day(date) {
   if (!date) {
-    return dayjs.tz(date)
+    return dayjs.tz()
   } else if (dayjs.isDayjs(date)) {
     return date
   } else {

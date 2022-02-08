@@ -1,6 +1,6 @@
 'use strict'
 const stripe = require('stripe')(process.env.STRIPE_KEY)
-const { splitName } = require('../../../utils')
+const { toId, toFullName, splitName } = require('../../../utils')
 
 /**
  * @typedef {object} Contact
@@ -27,15 +27,88 @@ async function onCheckout({
   paymentIntent,
   paymentMethod,
 }) {
-  strapi.plugins['orders'].services.lifecycle.on['confirmed']({
-    user,
-    cart,
+  // Create/update address
+  const addressParams = {
+    email: contact.email,
+    fullName: toFullName(contact),
+  }
+  switch (typeof address) {
+    case 'object':
+      address = await strapi
+        .query('address')
+        .create({ ...addressParams, ...address })
+      break
+    case 'string':
+    case 'number':
+      address = await strapi
+        .query('address')
+        .update({ id: address }, addressParams)
+      break
+  }
+
+  // Validate address
+  const isAddressValid = await strapi.services.shipment.validateAddress(address)
+  if (!isAddressValid && process.env.NODE_ENV === 'production') {
+    throw new Error('Expected a valid address.')
+  }
+
+  // Contact
+  contact = await strapi.services.contact.upsertContact(contact)
+
+  // Purchase
+  const purchase = await strapi.query('purchase').create({
+    paymentIntent: paymentIntent?.id,
+    paymentMethod: paymentMethod?.id,
+    charge: summary.total,
+    coupon: summary.coupon?.id,
+    giftCard: summary.giftCard?.id,
+    giftCardDiscount: summary.giftCardDiscount,
+    contact: contact?.id,
+  })
+
+  // Checkout
+  const orderIds = strapi.plugins['orders'].services.cart
+    .orders(cart)
+    .map((order) => toId(order.id))
+  const checkout = await strapi.query('checkout').create({
+    orders: orderIds,
+    address: address.id,
+    purchase: purchase.id,
+    user: user?.id,
+    contact: contact?.id,
+  })
+
+  // Forward lifecycle of each order
+  const settled = await Promise.allSettled(
+    cart.map(async (cartItem) => {
+      strapi.plugins['orders'].services.lifecycle.on(
+        'confirmed',
+        cartItem.order,
+        {
+          user,
+          contact,
+          address,
+        }
+      )
+    })
+  )
+
+  // Error handling
+  const failed = settled
+    .filter((res) => res.status === 'rejected')
+    .map((res) => res.reason)
+  if (failed.length > 0) {
+    strapi.log.error('Failed to prepare cart for shipping', failed)
+  }
+
+  strapi.services.template_email.orderConfirmation({
     contact,
     summary,
+    cart,
     address,
-    paymentIntent,
-    paymentMethod,
   })
+
+  return checkout
 }
 
 /**

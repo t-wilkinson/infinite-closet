@@ -1,247 +1,161 @@
 'use strict'
 
-const { day, toFullName } = require('../../../utils')
+const { toId, day } = require('../../../utils')
 
-const on = {
-  async confirmed({
-    user,
-    cart,
-    contact,
-    summary,
-    address,
-    paymentIntent,
-    paymentMethod,
-  }) {
-    // Create/update address
-    const addressParams = {
-      email: contact.email,
-      fullName: toFullName(contact),
-    }
-    switch (typeof address) {
-      case 'object':
-        address = await strapi
-          .query('address')
-          .create({ ...addressParams, ...address })
-        break
-      case 'string':
-      case 'number':
-        address = await strapi
-          .query('address')
-          .update({ id: address }, addressParams)
-        break
-    }
+const lifecycles = {
+  async confirmed(cartItem, { user, contact, address }) {
+    const { order, shippingClass } = cartItem
+    let shipmentId = null
 
-    // Validate address
-    const isAddressValid = await strapi.services.shipment.validateAddress(
-      address
-    )
-    if (!isAddressValid && process.env.NODE_ENV === 'production') {
-      throw new Error('Expected a valid address.')
-    }
-
-    // Contact
-    contact = await strapi.services.contact.upsertContact(contact)
-
-    // Purchase
-    const purchase = await strapi.query('purchase').create({
-      paymentIntent: paymentIntent?.id,
-      paymentMethod: paymentMethod?.id,
-      charge: summary.total,
-      coupon: summary.coupon?.id,
-      giftCard: summary.giftCard?.id,
-      giftCardDiscount: summary.giftCardDiscount,
-      contact: contact?.id,
-    })
-
-    // Checkout
-    const orderIds = strapi.plugins['orders'].services.cart
-      .orders(cart)
-      .map((order) => order.id)
-    const checkout = await strapi.query('checkout').create({
-      orders: orderIds,
-      address: address.id,
-      purchase: purchase.id,
-      user: user?.id,
-      contact: contact?.id,
-    })
-
-    const settled = await Promise.allSettled(
-      strapi.plugins['orders'].services.cart.map(async (cartItem) => {
-        const { order, shippingClass } = cartItem
-        let shipmentId = null
-
-        // ACS expects orders asap
-        if (strapi.services.shipment.providerName === 'acs') {
-          shipmentId = await strapi.plugins[
-            'orders'
-          ].services.ship.shipOrderToClient(cartItem.order)
-        }
-
-        // Shipment
-        const shipment = await strapi.query('shipments').create({
-          shippingClass,
-          shipmentId,
-          confirmed: day().toJSON(),
-        })
-
-        // Order
-        await strapi.query('order', 'orders').update(
-          { id: order.id },
-          {
-            contact: contact?.id,
-            user: user?.id,
-            address: address.id,
-            status: 'shipping',
-            shipment: shipment.id,
-          }
-        )
-      })
-    )
-
-    const failed = settled
-      .filter((res) => res.status === 'rejected')
-      .map((res) => res.reason)
-    if (failed.length > 0) {
-      strapi.log.error('Failed to prepare cart for shipping', failed)
-    }
-
-    strapi.services.template_email.orderConfirmation({
-      contact,
-      summary,
-      cart,
-      address,
-    })
-
-    return checkout
-  },
-
-  async shipped(order) {
-    const ship = strapi.plugins['orders'].services.ship
-
-    // Send user email if their order is shipping today
+    // ACS expects orders asap
     if (strapi.services.shipment.providerName === 'acs') {
-      const cartItem = await strapi.plugins[
+      shipmentId = await strapi.plugins[
         'orders'
-      ].services.cart.createCartItem(order)
-      strapi.services.template_email.orderShipped(cartItem)
-    } else {
-      await ship.shipOrderToClient(order)
+      ].services.ship.shipOrderToClient(order)
     }
+
+    // Shipment
+    const shipment = await strapi.query('shipments').update({ id: toId(order.shipment) }, {
+      shippingClass,
+      shipmentId,
+    })
+
+    // Order
+    await strapi.query('order', 'orders').update(
+      { id: order.id },
+      {
+        contact: contact?.id,
+        user: user?.id,
+        address: address?.id,
+        shipment: shipment.id,
+      }
+    )
   },
 
-  async start(order) {
-    const cartItem = await strapi.plugins[
-      'orders'
-    ].services.cart.createCartItem(order)
-    strapi.services.template_email.orderStarting(cartItem)
+  async shipped(cartItem) {
+    // Send user email if their order is shipping today
+    if (strapi.services.shipment.providerName !== 'acs') {
+      await strapi.plugins['orders'].services.ship.shipOrderToClient(
+        cartItem.order
+      )
+    }
+    await strapi.services.template_email.orderShipped(cartItem)
   },
 
-  async end(order) {
-    const cartItem = await strapi.plugins[
-      'orders'
-    ].services.cart.createCartItem(order)
+  async start() {},
 
-    await strapi
-      .query('order', 'orders')
-      .update({ id: order.id }, { status: 'cleaning' })
-    // if (strapi.services.shipment.providerName !== 'acs') {
-    //   await strapi.plugins['orders'].services.ship
-    //     .shipToCleaners(order)
-    //     .catch((err) =>
-    //       strapi.plugins['orders'].services.ship.shippingFailure(cartItem, err)
-    //     )
-    // }
-    await strapi.services.template_email.orderEnding(cartItem)
+  async end() {},
+
+  async cleaning(cartItem) {
+    await strapi.services.template_email.orderReceived(cartItem)
   },
 
-  async cleaning(order) {
-    await strapi
-      .query('order', 'orders')
-      .update({ id: order.id }, { status: 'cleaning' })
+  async completed(cartItem) {
+    await strapi.services.template_email.orderReview(cartItem)
   },
-
-  async completed(order) {
-    strapi
-      .query('order', 'orders')
-      .update({ id: order.id }, { status: 'completed' })
-    const cartItem = await strapi.plugins[
-      'orders'
-    ].services.cart.createCartItem(order)
-    strapi.services.template_email.orderReceived(cartItem)
-    strapi.services.template_email.orderReview(cartItem)
-  },
-}
-
-/**
- * Check if order is changing to status today, so we can run respective lifecycle code
- */
-function statusChangingToday(order, status) {
-  const range = strapi.plugins['orders'].services.order.range(order)
-  const date = day(range[status])
-  const today = day()
-  if (!date.isSame(today, 'day')) {
-    return false
-  }
-
-  strapi.log.info(`order ${order.id} changing status to ${status}`)
-  return true
-}
-
-/**
- * Call order lifecycle function if it changes to given status today
- */
-function forwardOrder(order, status) {
-  if (!statusChangingToday(order, status)) {
-    return
-  }
-  on[status](order)
-}
-
-function forwardOrders(orders, status) {
-  for (const order of orders) {
-    forwardOrder(order, status)
-  }
 }
 
 async function getOrderLifecycles() {
   // Separate orders by status
-  const orders = {
-    all: await strapi
-      .query('order', 'orders')
-      .find({ status_in: ['planning', 'shipping', 'cleaning'] }, [
-        'product',
-        'product.designer',
-        'user',
-        'address',
-        'coupon',
-      ]),
-  }
+  const allOrders = await strapi
+    .query('order', 'orders')
+    .find({ status_in: ['shipping'] }, [
+      'product',
+      'product.designer',
+      'user',
+      'contact',
+      'address',
+      'shipment',
+    ])
 
-  for (const order of orders.all) {
-    if (!orders[order.status]) {
-      orders[order.status] = []
+  let orders = {}
+  for (const order of allOrders) {
+    const status = order.shipment.status
+    if (!orders[status]) {
+      orders[status] = []
     }
-    orders[order.status].push(order)
+    orders[status].push(order)
   }
 
   return orders
+}
+
+async function on(status, order, ...props) {
+  // If order does not have a shipment, we create one
+  const shipmentId = toId(order.shipment)
+
+  const changeShipment = (props) => {
+    if (shipmentId) {
+      return strapi.query('shipment').update({ id: shipmentId }, props)
+    } else {
+      return strapi.query('shipment').create(props)
+    }
+  }
+
+  const shipment = await changeShipment({
+    status,
+    [status]: day().toJSON(),
+  })
+
+  const changeOrder = (props) => {
+    if (!shipmentId) {
+      strapi
+        .query('order', 'orders')
+        .update({ id: toId(order), shipment: toId(shipment) }, props)
+    } else {
+      strapi.query('order', 'orders').update({ id: toId(order) }, props)
+    }
+  }
+
+  if (status === 'completed') {
+    changeOrder({ status: 'completed' })
+  } else if (status === 'confirmed' || order.status !== 'shipping') {
+    changeOrder({ status: 'shipping' })
+  }
+
+  const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(
+    order
+  )
+
+  return await lifecycles[status](cartItem, ...props)
 }
 
 /**
  * Forward every order lifecycle
  */
 async function forwardAll() {
+  const statuses = strapi.models.shipment.attributes.status.enum
   const orders = await getOrderLifecycles()
 
-  forwardOrders(orders.planning, 'shipped')
-  forwardOrders(orders.shipping, 'start')
-  forwardOrders(orders.shipping, 'end')
-  forwardOrders(orders.cleaning, 'completed')
+  const today = day()
+  /**
+   * Check if order is changing to status today, so we can run respective lifecycle code
+   */
+  function statusChangingToday(order, nextStatus) {
+    const range = strapi.plugins['orders'].services.order.range(order)
+    const statusChangeDate = day(range[nextStatus])
+    if (statusChangeDate.isSame(today, 'day')) {
+      return true
+    }
+  }
+
+  for (const status in orders) {
+    const index = statuses.indexOf(status)
+    if (index === statuses.length - 1) {
+      continue
+    }
+
+    for (const order of orders[status]) {
+      const nextStatus = statuses[index + 1]
+      if (!statusChangingToday(order, nextStatus)) {
+        continue
+      }
+      on(status, order)
+    }
+  }
 }
 
 module.exports = {
   on,
   forwardAll,
-  forwardOrders,
-  forwardOrder,
 }
