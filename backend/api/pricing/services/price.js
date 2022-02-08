@@ -74,9 +74,14 @@ async function existingCoupons(user, code) {
   if (typeof code !== 'string') {
     return []
   }
-  const purchases = await strapi
-    .query('purchase')
-    .find({ contact: toId(user.contact), 'coupon.code': code })
+
+  const contactId = toId(user.contact)
+  let purchases = []
+  if (contactId) {
+    purchases = await strapi
+      .query('purchase')
+      .find({ contact: contactId, 'coupon.code': code })
+  }
   return purchases.map((purchase) => purchase.coupon)
 }
 

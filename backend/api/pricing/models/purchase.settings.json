@@ -18,11 +18,11 @@
     },
     "paymentIntent": {
       "type": "string",
-      "unique": true
+      "unique": false
     },
     "paymentMethod": {
       "type": "string",
-      "unique": true
+      "unique": false
     },
     "charge": {
       "type": "decimal",

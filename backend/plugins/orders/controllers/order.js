@@ -1,6 +1,6 @@
 'use strict'
 const _ = require('lodash')
-const { generateAPI } = require('../../../utils')
+const { day, generateAPI } = require('../../../utils')
 
 module.exports = {
   ...generateAPI('order', 'orders'),
@@ -47,7 +47,7 @@ module.exports = {
     }
 
     try {
-      const cartItem = await strapi.plugins[
+      const { cartItem } = await strapi.plugins[
         'orders'
       ].services.ship.shipOrderToClient(order)
       await strapi.services.template_email.orderShipped(cartItem)

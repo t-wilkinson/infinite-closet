@@ -79,8 +79,6 @@ function shippingClass(earliestDeliveryDate, startsOn) {
   //     //       a: Number(arrives.format('DD'), { timeZone: 'Europe/London' }),
   //     //     }
 
-  //     // console.log(startsOn, earliestDeliveryDate, arrives)
-  //     // console.log(dates)
   //     return dates.so >= dates.a // TODO!: also measure week/year/etc
   //     // startsOn.isSameOrAfter(, 'day')
   //   }
@@ -209,8 +207,10 @@ function eitherToDay(d1, d2) {
 function range({ expectedStart, rentalLength, shipment }) {
   shipment = shipment || {}
   rentalLength = provider.config.rentalLengths[rentalLength]
-  if (!expectedStart || !rentalLength) {
-    throw new Error('Must include expectedStart and rentalLength')
+  if (!expectedStart) {
+    throw new Error('Must include expectedStart')
+  } else if (!rentalLength) {
+    throw new Error('Must include rentalLength')
   }
 
   const hoursSendClient = shippingClassHours(shipment.shipped, expectedStart)

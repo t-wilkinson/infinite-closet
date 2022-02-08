@@ -78,18 +78,32 @@ async function onCheckout({
     contact: contact?.id,
   })
 
+  if (!user.contact) {
+    strapi.query('user', 'users-permissions').update(
+      { id: user?.id },
+      {
+        contact: contact?.id,
+      }
+    )
+  }
+
   // Forward lifecycle of each order
   const settled = await Promise.allSettled(
     cart.map(async (cartItem) => {
-      strapi.plugins['orders'].services.lifecycle.on(
-        'confirmed',
-        cartItem.order,
+      const shipment = await strapi.query('shipment').create({
+        shippingClass: cartItem.shippingClass,
+      })
+      const order = await strapi.query('order', 'orders').update(
+        { id: toId(cartItem.order) },
         {
-          user,
-          contact,
-          address,
+          contact: toId(contact),
+          user: toId(user),
+          address: toId(address),
+          shipment: toId(shipment),
         }
       )
+
+      await strapi.plugins['orders'].services.lifecycle.on('confirmed', order)
     })
   )
 
@@ -99,6 +113,7 @@ async function onCheckout({
     .map((res) => res.reason)
   if (failed.length > 0) {
     strapi.log.error('Failed to prepare cart for shipping', failed)
+    console.log('checkout error handling', { settled, purchase, contact })
   }
 
   strapi.services.template_email.orderConfirmation({
@@ -190,11 +205,11 @@ module.exports = {
         off_session: false,
         confirm: true,
       })
-      await onCheckout({
+      const checkout = await onCheckout({
         ...data,
         paymentIntent,
       })
-      ctx.send(null)
+      ctx.send(checkout)
     } catch (e) {
       strapi.log.error('checkoutUser error', e.stack)
       ctx.badRequest('Payment failed')
@@ -253,13 +268,11 @@ module.exports = {
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
-      await onCheckout(data)
-      return ctx.send(null)
+      return ctx.send(await onCheckout(data))
     }
 
     try {
-      await onCheckout(data)
-      return ctx.send(null)
+      return ctx.send(await onCheckout(data))
     } catch (e) {
       strapi.log.error('PaymentRequest paymentIntent did not succeed', {
         cart: data.cart,

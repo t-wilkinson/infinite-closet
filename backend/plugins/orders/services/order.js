@@ -4,13 +4,19 @@ const inConfirmed = ['shipping', 'completed']
 const inProgress = ['shipping']
 
 /**
- * Helper function to calculate number of times an order can be ordered
+ * Determines if the order lifecycle overlaps with given date
+ * @param {DateLike|DateRange} expectedStart
+ * @param {Order} order
+ * @returns {boolean}
  */
-async function totalAvailable(order, orders) {
-  const quantity = await strapi.services.product.quantity(order)
+function overlap(date, order) {
   const range = strapi.plugins['orders'].services.order.range(order)
-  const overlaps = totalOverlaps(range, orders)
-  return quantity - overlaps
+
+  const overlaps =
+    date &&
+    inProgress.includes(order.status) &&
+    strapi.services.timing.overlap(date, range)
+  return overlaps
 }
 
 /**
@@ -26,19 +32,13 @@ function totalOverlaps(date, orders) {
 }
 
 /**
- * Determines if the order lifecycle overlaps with given date
- * @param {DateLike|DateRange} expectedStart
- * @param {Order} order
- * @returns {boolean}
+ * Helper function to calculate number of times an order can be ordered
  */
-function overlap(date, order) {
+async function totalAvailable(order, orders) {
+  const quantity = await strapi.services.product.quantity(order)
   const range = strapi.plugins['orders'].services.order.range(order)
-
-  const overlaps =
-    date &&
-    ['shipping'].includes(order.status) &&
-    strapi.services.timing.overlap(date, range)
-  return overlaps
+  const overlaps = totalOverlaps(range, orders)
+  return quantity - overlaps
 }
 
 function shippingClass({ shipment, expectedStart }) {

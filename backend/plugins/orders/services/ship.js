@@ -38,9 +38,12 @@ function toShippingAddress(order) {
 }
 
 async function shippingFailure(order, err) {
-  await strapi
-    .query('shipments')
-    .update({ id: toId(order?.shipment) }, { status: 'delayed' })
+  const shipmentId = toId(order?.shipment)
+  if (shipmentId) {
+    await strapi
+      .query('shipment')
+      .update({ id: toId(order?.shipment) }, { status: 'delayed' })
+  }
   await strapi.services.template_email.orderShippingFailure(order, err)
   strapi.log.error('Failed to ship order to client %o', err.stack)
 }
@@ -55,13 +58,14 @@ async function shipCartItemToClient(cartItem) {
   }
 
   const shipmentId = await strapi.services.shipment.ship(shippingRequest)
-  await strapi.query('shipments').update(
-    { order: toId(order?.shipment) },
+  await strapi.query('shipment').update(
+    { id: toId(order.shipment) },
     {
       shipped: day().toJSON(),
       shipmentId,
     }
   )
+  return shipmentId
 }
 
 async function shipOrderToClient(order) {
@@ -74,10 +78,10 @@ async function shipOrderToClient(order) {
   const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(
     order
   )
-  await shipCartItemToClient(cartItem).catch((err) =>
+  const shipmentId = await shipCartItemToClient(cartItem).catch((err) =>
     shippingFailure(cartItem.order, err)
   )
-  return cartItem
+  return { cartItem, shipmentId }
 }
 
 // async function shipOrders(orders) {
@@ -102,7 +106,7 @@ async function shipOrderToClient(order) {
 
 //   const shipmentId = await strapi.services.shipment.ship(shippingRequest)
 //   await strapi
-//     .query('shipments')
+//     .query('shipment')
 //     .update({ id: toId(order?.shipment) }, { shipmentId })
 // }
 

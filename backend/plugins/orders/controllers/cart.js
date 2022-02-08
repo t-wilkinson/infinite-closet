@@ -56,10 +56,12 @@ module.exports = {
   async priceSummary(ctx) {
     const { orders } = ctx.request.body
     const user = ctx.state.user
+    // error with contact and status
     const cart = await strapi.plugins['orders'].services.cart.createValidCart(
       orders
     )
     try {
+      // error with status twice
       const summary = await strapi.plugins['orders'].services.price.summary({
         cart,
         user,

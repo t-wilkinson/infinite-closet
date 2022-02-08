@@ -14,7 +14,7 @@ f.order = require('./factory')
 f.user = require('../user/factory')
 f.designer = require('../product/designer-factory')
 
-describe.only('On checkout', () => {
+describe.skip('On checkout', () => {
   it('works', async () => {
     const user = await f.user.create(strapi)
     const order = await f.order.create(strapi, {
@@ -167,7 +167,7 @@ describe('Checkout', () => {
     })
   })
 
-  it('user can checkout', async () => {
+  it.only('user can checkout', async () => {
     let order
     let paymentIntent
     let paymentMethod
@@ -178,10 +178,11 @@ describe('Checkout', () => {
     })
     const userData = f.user.mock()
     const orderData = f.order.mock({
-      startDate: day().add({ day: 10 }).format('YYYY-MM-DD'),
+      expectedStart: day().add({ day: 10 }).toJSON(),
     })
     const contact = {
-      fullName: `${userData.firstName} ${userData.lastName}`,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
       email: userData.email,
     }
 
@@ -244,7 +245,7 @@ describe('Checkout', () => {
     expect(paymentIntent.id).toMatch(/^pi_/)
 
     // checkout
-    await request(strapi.server)
+    const checkout = await request(strapi.server)
       .post(`/orders/checkout/${user.id}`)
       .set('Accept', 'application/json')
       .set('Content-Type', 'application/json')
@@ -260,34 +261,33 @@ describe('Checkout', () => {
           postcode: 'EC2A 3QF',
         },
       })
-      .then((res) => {
-        expect(res.body.status).toBe('success')
-      })
+      .expect(200)
+      .then(res => res.body)
 
-    // changes order status to planning
-    const checkedOut = await strapi
-      .query('order', 'orders')
-      .findOne({ id: order.id }, ['address'])
-    expect(checkedOut).toMatchObject({
-      ...orderData,
-      startDate: day(checkedOut.startDate).format('YYYY-MM-DD'),
+    expect(checkout).toMatchObject({
+      orders: [
+        orderData
+      ],
+      user: {
+        id: user.id,
+        firstName: contact.firstName,
+        lastName: contact.lastName,
+      },
       address: {
         addressLine1: 'Address Line 1',
         email: contact.email,
-        fullName: contact.fullName,
+        fullName: `${contact.firstName} ${contact.lastName}`,
         postcode: 'EC2A 3QF',
         town: 'Town',
       },
-      user: user.id,
-      charge: 1000,
-      coupon: null,
-      email: contact.email,
-      fullName: contact.fullName,
-      nickName: null,
-      // updates price of paymentIntent by creating a new one (eventually should update existing one however)
-      paymentIntent: expect.not.stringMatching(paymentIntent.id),
-      paymentMethod: paymentMethod.id,
-      status: 'planning',
+      purchase: {
+        status: 'success',
+        charge: 15,
+        coupon: null,
+        paymentIntent: expect.not.stringMatching(paymentIntent.id),
+        paymentMethod: paymentMethod.id,
+      },
+      contact,
     })
   })
 })

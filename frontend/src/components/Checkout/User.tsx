@@ -206,7 +206,11 @@ const Checkout = ({ fetchCart, analytics }) => {
 
   if (cartCount === 0) {
     return (
-      <div>
+      <div
+        style={{
+          flex: '4 1 0'
+        }}
+      >
       <BodyWrapper
         label={
           <BlueLink

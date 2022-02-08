@@ -67,7 +67,7 @@ async function userDiscount(user) {
   const hasOrderedBefore = await strapi.query('order', 'orders').findOne(
     {
       user: toId(user),
-      status_in: strapi.plugins['orders'].services.inConfirmed,
+      status_in: strapi.plugins['orders'].services.order.inConfirmed,
     },
     []
   )

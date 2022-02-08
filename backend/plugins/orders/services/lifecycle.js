@@ -3,33 +3,31 @@
 const { toId, day } = require('../../../utils')
 
 const lifecycles = {
-  async confirmed(cartItem, { user, contact, address }) {
-    const { order, shippingClass } = cartItem
-    let shipmentId = null
+  async confirmed(cartItem) {
+    const { order } = cartItem
+    // let shipmentId = null
 
     // ACS expects orders asap
     if (strapi.services.shipment.providerName === 'acs') {
-      shipmentId = await strapi.plugins[
-        'orders'
-      ].services.ship.shipOrderToClient(order)
+      await strapi.plugins['orders'].services.ship.shipOrderToClient(order)
+      // shipmentId = res.shipmentId
     }
 
-    // Shipment
-    const shipment = await strapi.query('shipments').update({ id: toId(order.shipment) }, {
-      shippingClass,
-      shipmentId,
-    })
+    //     // Shipment
+    //     const shipment = await strapi.query('shipment').update(
+    //       { id: toId(order.shipment) },
+    //       {
+    //         shipmentId,
+    //       }
+    //     )
 
-    // Order
-    await strapi.query('order', 'orders').update(
-      { id: order.id },
-      {
-        contact: contact?.id,
-        user: user?.id,
-        address: address?.id,
-        shipment: shipment.id,
-      }
-    )
+    // // Order
+    // await strapi.query('order', 'orders').update(
+    //   { id: order.id },
+    //   {
+    //     shipment: shipment.id,
+    //   }
+    // )
   },
 
   async shipped(cartItem) {

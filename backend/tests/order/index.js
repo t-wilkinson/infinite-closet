@@ -9,6 +9,6 @@
 
 // require('./hived')
 // require('./acs')
-// require('./checkout')
+require('./checkout')
 // require('./price')
-require('./lifecycle')
+// require('./lifecycle')

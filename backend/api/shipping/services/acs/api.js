@@ -45,7 +45,7 @@ module.exports = {
         DeliveryCharge: 0,
         OrderCancelled: false,
 
-        OrderDate: range.confirmed.format('YYYY-MM-DD'),
+        OrderDate: range.confirmed?.format('YYYY-MM-DD'),
         DispatchDate: range.shipped.format('YYYY-MM-DD'),
         DeliveryDate: range.start.format('YYYY-MM-DD'),
         EventDate: range.start.format('YYYY-MM-DD'),

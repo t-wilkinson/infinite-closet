@@ -22,7 +22,7 @@
       "required": true
     },
     "expectedStart": {
-      "type": "date"
+      "type": "datetime"
     },
     "insurance": {
       "type": "boolean",
