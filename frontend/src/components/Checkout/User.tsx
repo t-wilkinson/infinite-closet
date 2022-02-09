@@ -295,7 +295,7 @@ const Favorites = ({}) => {
   const [width, setWidth] = React.useState(window.innerWidth)
   React.useEffect(() => {
     const onResize = () => {
-      const clientWidth = ref.current.clientWidth
+      const clientWidth = ref.current?.clientWidth
       if (clientWidth) {
         setWidth(clientWidth)
       }

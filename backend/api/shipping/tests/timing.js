@@ -30,11 +30,7 @@ describe.skip('Valid', () => {
     (days, available, quantity, existing = 0) => {
       withinDate({ hour: 1 }, () => {
         const start = day().add(days, 'day')
-        console.log('*************************************')
-        console.log(day().hour(), pnt(day()), pnt(start))
         const valid = timing.valid(start, available, quantity, existing)
-        console.log(pnt(day()), pnt(start))
-        console.log('*************************************')
         expect(valid).toBeTruthy()
       })
       withinDate({ date: 1, hour: 13 }, () => {

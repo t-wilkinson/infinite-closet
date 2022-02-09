@@ -42,9 +42,6 @@ function arrival(sent, shippingClass) {
   sent = day(sent)
   const hoursSendClient = provider.config.shippingClassHours[shippingClass]
   const offset = sent.hour() >= provider.config.timing.cutoff ? HOURS_IN_DAY : 0
-  // console.log(sent.toJSON(), sent.hour())
-  // console.log(sent.utc().toJSON(), sent.utc().hour())
-  // console.log(sent.tz().toJSON(), sent.tz().hour())
   const arrives = sent
     .add(hoursSendClient + offset, 'hours')
     .hour(provider.config.timing.cutoff)

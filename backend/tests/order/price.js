@@ -24,9 +24,7 @@ describe.skip('Order pricing', () => {
 
   it('summary', async () => {
     let cart = await f.cart.create(strapi, [{}])
-    console.log(cart)
     const summary = await strapi.plugins['orders'].services.price.summary({cart, user})
     strapi.services.timing.logRange(cart[0].range)
-    console.log(summary)
   })
 })
