@@ -4,12 +4,12 @@ export default ({ data }) => (
   <dl>
     <dt>Order</dt>
     <dd>
-      <code>{JSON.stringify(data.order, null, 4)}</code>
+      <pre>{JSON.stringify(data.order, null, 4)}</pre>
     </dd>
 
     <dt>Error</dt>
     <dd>
-      <code>{JSON.stringify(data.error, null, 4)}</code>
+      <pre>{JSON.stringify(data.error, null, 4)}</pre>
     </dd>
   </dl>
 );

@@ -71,7 +71,7 @@ describe('Checkout', () => {
       designer: designer.id,
     })
     let orderData = f.order.mock({
-      expectedDate: day().add({ day: 10 }).format('YYYY-MM-DD'),
+      expectedStart: day().add({ day: 11 }).format('YYYY-MM-DD'),
     })
     const userData = f.user.mock()
     const contact = {

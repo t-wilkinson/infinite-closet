@@ -5,9 +5,9 @@
 'use strict'
 const api = {}
 const mock = {}
-api.giftcard = require('../services/giftcard')
+api.giftCard = require('../services/giftcard')
 
-mock.giftcard = (options) => ({
+mock.giftCard = (options) => ({
   value: 100,
   ...options
 })
@@ -18,26 +18,30 @@ mock.purchases = (...amounts) => amounts.map(amount => ({
 describe('Gift cards', () => {
   const clientSecret = '<client_secret>'
   it('works', () => {
-    expect(api.giftcard.generateRandomCode(clientSecret)).toBeTruthy()
+    expect(api.giftCard.generateRandomCode(clientSecret)).toBeTruthy()
   })
 
   it('is random', () => {
-    const c1 = api.giftcard.generateRandomCode(clientSecret)
-    const c2 = api.giftcard.generateRandomCode(clientSecret)
+    const c1 = api.giftCard.generateRandomCode(clientSecret)
+    const c2 = api.giftCard.generateRandomCode(clientSecret)
     expect(c1).not.toEqual(c2)
   })
 
   it('substracts purchase amounts', () => {
-    const giftCard = mock.giftcard({ value: 100 })
+    const giftCard = mock.giftCard({ value: 100 })
 
-    expect(api.giftcard.valueLeft(giftCard, mock.purchases(10))).toEqual(90)
-    expect(api.giftcard.valueLeft(giftCard, mock.purchases(110))).toEqual(0)
+    expect(api.giftCard.valueLeft(giftCard, mock.purchases(10))).toEqual(90)
+    expect(api.giftCard.valueLeft(giftCard, mock.purchases(110))).toEqual(0)
   })
 
   it('calculates discount', () => {
-    const giftCard = mock.giftcard({ value: 100 })
-    expect(api.giftcard.discount(50, giftCard, mock.purchases(10))).toBe(50)
-    expect(api.giftcard.discount(50, giftCard, mock.purchases(90))).toBe(10)
-    expect(api.giftcard.discount(50, giftCard, mock.purchases(50, 50, 50))).toBe(0)
+    const giftCard = mock.giftCard({ value: 100 })
+    expect(api.giftCard.discount(50, giftCard, mock.purchases(10))).toBe(50)
+    expect(api.giftCard.discount(50, giftCard, mock.purchases(90))).toBe(10)
+    expect(api.giftCard.discount(50, giftCard, mock.purchases(50, 50, 50))).toBe(0)
   })
 })
+
+module.exports = {
+  mockGiftCard: mock.giftCard,
+}

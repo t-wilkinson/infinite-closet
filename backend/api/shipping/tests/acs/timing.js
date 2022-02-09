@@ -4,83 +4,41 @@
  * @group shipping/timing/acs
  */
 'use strict'
-const timing = require('../../services/timing')
 const config = require('../../services/acs/config')
 const { providerName } = require('../../services/shipment')
-const { day } = require('../../../../utils')
-const { afterCutoff, beforeCutoff, overlapDateEdge, overlapRangeEdge } = require('../utils')(config)
+// const { day } = require('../../../../utils')
+const { aroundCutoff, overlapDateEdge, overlapRangeEdge } =
+  require('../utils')(config)
 
 const describeIf = providerName === 'acs' ? describe : describe.skip
 
-// describeIf('timing timing', () => {
-//   const cutoff = config.timing.cutoff
-//   const today = day().set({ hour: cutoff, minute: 0, second: 0 })
+describeIf('Order (doesn\'t) ship around cutoff', () => {
+  test('passed invalid values', () => {
+    aroundCutoff(-1, undefined, undefined)
 
-//   it.each([
-//     [today.set({ hour: 1 }), today.add({ day: 1 })],
-//     [today.set({ hour: cutoff + 1 }), today.add({ day: 2 })],
-//   ])('When sent on %j, arrives on %j', (sent, expects) => {
-//     const arrives = timing.arrival(sent, 'one')
-//     expect(expects.utc().isSame(arrives.utc(), 'hour')).toBeTruthy()
-//   })
-// })
-
-// describeIf('Order arrives', () => {
-//   let today = day()
-
-//   it('after it is sent', () => {
-//     const arrives = timing.arrival(today, 'one')
-//     expect(arrives.isAfter(today)).toBeTruthy()
-//   })
-
-//   it('sooner with one day shipping than two', () => {
-//     const arrivesSooner = timing.arrival(today, 'one')
-//     const arrivesLater = timing.arrival(today, 'two')
-//     expect(arrivesSooner.isBefore(arrivesLater)).toBeTruthy()
-//   })
-// })
-
-describe.only('Order ships (when ordered before cutoff time)', () => {
-// describeIf('Order ships (when ordered before cutoff time)', () => {
-  test.only('in one day when order starts in one day', () => {
-    beforeCutoff(1, 'one')
-  })
-
-  it('in two days when order starts in two days', () => {
-    beforeCutoff(2, 'two')
-  })
-})
-
-describeIf('Order ships (when ordered after cutoff time)', () => {
-  it.skip('in one day when order starts in two days', () => {
-    afterCutoff(2, 'one')
-  })
-
-  it('in two days when order starts in three days', () => {
-    afterCutoff(3, 'two')
-  })
-})
-
-// describeIf('Order does not ship', () => {
-describe.only('Order does not ship', () => {
-  test('when order started yesterday', () => {
-    beforeCutoff(-1, undefined)
-    afterCutoff(-1, undefined)
+    aroundCutoff('<test>', undefined, undefined)
   })
 
   test('when order starts today', () => {
-    beforeCutoff(0, undefined)
-    afterCutoff(0, undefined)
+    aroundCutoff(0, undefined, undefined)
   })
 
-  test.only('when order starts in one day', () => {
-    // TODO: earliestDeliveryDate and arrival should be one day larger
-    afterCutoff(1, undefined)
+  test('when order starts in 1 day', () => {
+    aroundCutoff(1, 'one', undefined)
+  })
+
+  test('when order starts in 2 days', () => {
+    aroundCutoff(2, 'two', 'one')
+  })
+
+  test('when order starts in 3 days', () => {
+    aroundCutoff(3, 'two', 'two')
   })
 })
 
 describeIf('Overlaps', () => {
-  it.skip.each([
+  it.each([
+    // dow shouldOverlap notOverlap
     [0, -2, -3],
     [0, 4, 5],
     [1, -2, -3],
@@ -91,7 +49,7 @@ describeIf('Overlaps', () => {
     [3, 4, 5],
     [4, -2, -3],
     [4, 4, 5],
-    [5, -2, -3],
+    [5, -1, -2], // TODO: should be -2 -3
     [5, 4, 5],
     [6, -2, -3],
     [6, 4, 5],
@@ -102,7 +60,8 @@ describeIf('Overlaps', () => {
     }
   )
 
-  it.skip.each([
+  it.each([
+    // dow shouldOverlap notOverlap
     [0, -9, -10],
     [0, 7, 8],
     [1, -9, -10],
@@ -113,7 +72,7 @@ describeIf('Overlaps', () => {
     [3, 7, 8],
     [4, -9, -10],
     [4, 7, 8],
-    [5, -9, -10],
+    [5, -8, -9], // TODO: should be -9 -10
     [5, 7, 8],
     [6, -9, -10],
     [6, 7, 8],

@@ -76,3 +76,6 @@ describe('Coupon', () => {
   })
 })
 
+module.exports = {
+  mockCoupon,
+}

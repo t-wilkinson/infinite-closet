@@ -1,7 +1,7 @@
 'use strict'
 const crypto = require('crypto')
 const bs58 = require('bs58')
-const { secureKey, toId } = require('../../../utils')
+const { secureKey, toPrice, toId } = require('../../../utils')
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 
 function generateCode(clientSecret) {
@@ -26,7 +26,7 @@ async function getPaymentIntent(giftCard) {
 function fromPaymentIntent(paymentIntent) {
   return {
     id: paymentIntent.id,
-    value: strapi.services.price.toPrice(paymentIntent.amount),
+    value: toPrice(paymentIntent.amount),
   }
 }
 
@@ -77,12 +77,12 @@ async function availableGiftCard(code) {
   return giftCard
 }
 
-function valid(giftCard, paymentIntent) {
+function valid(giftCard, paymentIntent, purchases) {
   if (!giftCard) {
     return false
   }
 
-  if (valueLeft(giftCard) <= 0) {
+  if (valueLeft(giftCard, purchases) <= 0) {
     return false
   }
 

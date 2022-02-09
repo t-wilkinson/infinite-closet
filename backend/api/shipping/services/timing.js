@@ -42,6 +42,9 @@ function arrival(sent, shippingClass) {
   sent = day(sent)
   const hoursSendClient = provider.config.shippingClassHours[shippingClass]
   const offset = sent.hour() >= provider.config.timing.cutoff ? HOURS_IN_DAY : 0
+  // console.log(sent.toJSON(), sent.hour())
+  // console.log(sent.utc().toJSON(), sent.utc().hour())
+  // console.log(sent.tz().toJSON(), sent.tz().hour())
   const arrives = sent
     .add(hoursSendClient + offset, 'hours')
     .hour(provider.config.timing.cutoff)
@@ -58,33 +61,6 @@ function shippingClass(earliestDeliveryDate, startsOn) {
   earliestDeliveryDate = day(earliestDeliveryDate) // Want to convert null to undefined
   startsOn = day(startsOn).set({ hour: 0 })
 
-  //   const arrivesWithClass = (shippingClass) => {
-  //     const arrives = arrival(earliestDeliveryDate, shippingClass)
-
-  //     //     let dates = {
-  //     //       so: startsOn.utc().date(),
-  //     //       edd: earliestDeliveryDate.utc().date(),
-  //     //       a: arrives.utc().date(),
-  //     //     }
-
-  //     let dates = {
-  //       so: startsOn.date(),
-  //       edd: earliestDeliveryDate.date(),
-  //       a: arrives.date(),
-  //     }
-
-  //     //     let dates = {
-  //     //       so: Number(startsOn.format('DD'), { timeZone: 'Europe/London' }),
-  //     //       edd: Number(earliestDeliveryDate.format('DD'), { timeZone: 'Europe/London' }),
-  //     //       a: Number(arrives.format('DD'), { timeZone: 'Europe/London' }),
-  //     //     }
-
-  //     return dates.so >= dates.a // TODO!: also measure week/year/etc
-  //     // startsOn.isSameOrAfter(, 'day')
-  //   }
-
-  // return arrivesWithClass('one') ? 'one' : undefined
-
   const arrivesWithClass = (shippingClass) =>
     startsOn.isSameOrAfter(arrival(earliestDeliveryDate, shippingClass), 'day')
 
@@ -95,6 +71,18 @@ function shippingClass(earliestDeliveryDate, startsOn) {
   } else {
     return
   }
+}
+
+/**
+ * Like {@link shippingClass} but returns hours shipping will take
+ * @returns {number}
+ */
+function shippingClassHours(earliestDeliveryDate, startsOn) {
+  return (
+    provider.config.shippingClassHours[
+      shippingClass(earliestDeliveryDate, startsOn)
+    ] || provider.config.shippingClassHours.two
+  )
 }
 
 /**
@@ -143,18 +131,6 @@ function overlap(date1, date2, granularity = 'day') {
     case 'false,false':
       return date1.utc().isSame(date2.utc(), granularity)
   }
-}
-
-/**
- * Like {@link shippingClass} but returns hours shipping will take
- * @returns {number}
- */
-function shippingClassHours(earliestDeliveryDate, startsOn) {
-  return (
-    provider.config.shippingClassHours[
-      shippingClass(earliestDeliveryDate, startsOn)
-    ] || provider.config.shippingClassHours.two
-  )
 }
 
 /**

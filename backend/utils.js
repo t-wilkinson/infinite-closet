@@ -61,16 +61,16 @@ function toId(obj) {
   return obj?.id || obj
 }
 
-/**
- * If represents an id, retrieves corresponding object from id
- * otherwise return the object
- */
-async function fromId(data, name, plugin) {
-  if (typeof data === 'object') {
-    return data
-  }
-  return await strapi.query(name, plugin).findOne({ id: data })
-}
+// /**
+//  * If represents an id, retrieves corresponding object from id
+//  * otherwise return the object
+//  */
+// async function fromId(data, name, plugin) {
+//   if (typeof data === 'object') {
+//     return data
+//   }
+//   return await strapi.query(name, plugin).findOne({ id: data })
+// }
 
 // TODO: might not need this
 const generateAPI = (name, plugin = '') => {
@@ -180,9 +180,24 @@ function formatAddress(config, format, addr) {
   }, {})
 }
 
+/********************  IMPORTANT ********************
+ *
+ * PRICE: decimal units ($10.50)
+ * AMOUNT: smallest unit of currency (1050¢)
+ *
+ ********************  IMPORTANT ********************/
+
+const SMALLEST_CURRENCY_UNIT = 100
+const toAmount = (price) => Math.round(price * SMALLEST_CURRENCY_UNIT)
+const toPrice = (amount) => amount / SMALLEST_CURRENCY_UNIT
+
 module.exports = {
   toId,
-  fromId,
+  // fromId,
+
+  toAmount,
+  toPrice,
+
   generateAPI,
   toFullName,
   splitName,

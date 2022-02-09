@@ -1,25 +1,17 @@
-'use strict'
-/********************  IMPORTANT ********************
- *
- * PRICE: decimal units ($10.50)
- * AMOUNT: smallest unit of currency (1050¢)
- *
- ********************  IMPORTANT ********************/
-
-const { toId } = require('../../../utils')
+const { toAmount, toPrice, toId } = require('../../../utils')
 const { sanitizeEntity } = require('strapi-utils')
-const SMALLEST_CURRENCY_UNIT = 100
 
 // Services like stripe expect no decimal points, and to be in units of smallest currency
-const toAmount = (price) => Math.round(price * SMALLEST_CURRENCY_UNIT)
-const toPrice = (amount) => amount / SMALLEST_CURRENCY_UNIT
+const services = {}
+services.coupon = require('./coupon')
+services.giftcard = require('./giftcard')
 
 /**
  * Calculate the discount given the coupon and price
  * @param {object} obj
  * @param {number} obj.outOfStockTotal - In case coupons have a modifier that prevents them being applied to items not in stock
  */
-async function discount({
+function discount({
   price,
   outOfStockTotal,
 
@@ -30,8 +22,8 @@ async function discount({
   giftCardPurchases,
   giftCardPaymentIntent,
 }) {
-  const isGiftCardValid = strapi.services.giftcard.valid(giftCard, giftCardPaymentIntent)
-  let giftCardDiscount = strapi.services.giftcard.discount(
+  const isGiftCardValid = services.giftcard.valid(giftCard, giftCardPaymentIntent, giftCardPurchases)
+  let giftCardDiscount = services.giftcard.discount(
     price,
     giftCard,
     giftCardPurchases,
@@ -42,8 +34,8 @@ async function discount({
     giftCard = null
   }
 
-  const isCouponValid = strapi.services.coupon.valid(coupon, existingCoupons)
-  let couponDiscount = strapi.services.coupon.discount({
+  const isCouponValid = services.coupon.valid(coupon, existingCoupons)
+  let couponDiscount = services.coupon.discount({
     price,
     coupon,
     isCouponValid,
@@ -54,10 +46,15 @@ async function discount({
     coupon = null
   }
 
+  couponDiscount = Math.min(price, couponDiscount)
+  // Coupon should be used up before gift card
+  giftCardDiscount = Math.min(price - couponDiscount, giftCardDiscount)
+  let discountPrice = Math.min(price, giftCardDiscount + couponDiscount)
+
   return {
-    discountPrice: giftCardDiscount + couponDiscount,
-    giftCardDiscount,
+    discountPrice,
     couponDiscount,
+    giftCardDiscount,
     giftCard,
     coupon,
   }
@@ -141,6 +138,8 @@ function sanitizeSummary(summary) {
 module.exports = {
   toAmount,
   toPrice,
+
+  discount,
   summary,
   sanitizeSummary,
 }

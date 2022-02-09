@@ -3,15 +3,20 @@ const { day } = require('../../../utils')
 const MockDate = require('mockdate')
 
 const withinDate = (date, fn) => {
-  MockDate.set(day().set(date).toJSON())
+  MockDate.set(day().set(date).toDate())
   fn()
   MockDate.reset()
 }
 
+function getCutoffDays(cutoffOffset, daysToStart) {
+  let orderedOn = day().add(cutoffOffset, 'hour')
+  let startsOn = day().add(daysToStart, 'days')
+  return { orderedOn, startsOn }
+}
+
 function cutoffShippingClass(config, cutoffOffset, daysToStart, expectedClass) {
-  withinDate({ hour: config.timing.cutoff + cutoffOffset }, () => {
-    let orderedOn = day()
-    let startsOn = orderedOn.add(daysToStart, 'days')
+  withinDate({ hour: config.timing.cutoff }, () => {
+    const { orderedOn, startsOn } = getCutoffDays(cutoffOffset, daysToStart)
     const shippingClass = timing.shippingClass(orderedOn, startsOn)
     expect(shippingClass).toBe(expectedClass)
   })
@@ -23,6 +28,11 @@ function beforeCutoff(config, daysToStart, shippingClass) {
 
 function afterCutoff(config, daysToStart, shippingClass) {
   cutoffShippingClass(config, 1, daysToStart, shippingClass)
+}
+
+function aroundCutoff(config, daysToStart, shippingClassBefore, shippingClassAfter) {
+  beforeCutoff(config, daysToStart, shippingClassBefore)
+  afterCutoff(config, daysToStart, shippingClassAfter)
 }
 
 function findOverlapEdge(edge, shouldOverlap, notOverlap, overlap) {
@@ -105,7 +115,7 @@ function findOverlapEdge(edge, shouldOverlap, notOverlap, overlap) {
 }
 
 const range = (date, rentalLength = 'short') =>
-  timing.range({ startDate: date, rentalLength })
+  timing.range({ expectedStart: date, rentalLength })
 
 function overlapEdge(dow, shouldOverlap, notOverlap, transform) {
   const date = day().set({ day: dow, hour: 0 })
@@ -134,16 +144,25 @@ function expectOverlapEdge(dow, shouldOverlap, notOverlap, transform) {
   expect(edge.notOverlap).toBe(false)
 }
 
-// TODO: should test these functions
-describe.skip('Utils', () => {
-  it('works', () => {})
+describe('Utils', () => {
+  it('works', () => {
+    let days
+    days = getCutoffDays(1, 1)
+    expect(days.startsOn.diff(days.orderedOn, 'hour')).toBe(23)
+
+    days = getCutoffDays(1, 2)
+    expect(days.startsOn.diff(days.orderedOn, 'hour')).toBe(47)
+  })
 })
 
 module.exports = (config) => {
   return {
+    // overlap{Date,Range}Edge effectively tests all functions except overlap
     overlapDateEdge: (...props) => expectOverlapEdge(...props, (x) => x),
     overlapRangeEdge: (...props) => expectOverlapEdge(...props, range),
+
     afterCutoff: (...props) => afterCutoff(config, ...props),
     beforeCutoff: (...props) => beforeCutoff(config, ...props),
+    aroundCutoff: (...props) => aroundCutoff(config, ...props),
   }
 }
