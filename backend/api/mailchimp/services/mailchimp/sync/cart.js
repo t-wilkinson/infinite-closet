@@ -106,11 +106,15 @@ async function getMailchimpItems() {
 }
 
 const all = async () => {
-  await strapi.services.mailchimp.sync.all(
-    sync,
-    await getLocalItems(),
-    await getMailchimpItems()
-  )
+  try {
+    await strapi.services.mailchimp.sync.all(
+      sync,
+      await getLocalItems(),
+      await getMailchimpItems()
+    )
+  } catch (e) {
+    console.log(e, e.stack, e.message)
+  }
   strapi.log.info('Sync mailchimp cart')
 }
 
