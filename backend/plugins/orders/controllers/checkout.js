@@ -94,6 +94,7 @@ async function onCheckout({
       const order = await strapi.query('order', 'orders').update(
         { id: toId(cartItem.order) },
         {
+          chekcout: toId(checkout),
           contact: toId(contact),
           user: toId(user),
           address: toId(address),

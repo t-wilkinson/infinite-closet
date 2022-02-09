@@ -51,6 +51,9 @@
     },
     "shipment": {
       "model": "shipment"
+    },
+    "checkout": {
+      "model": "checkout"
     }
   }
 }

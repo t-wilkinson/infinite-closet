@@ -72,7 +72,7 @@ const Product = ({ reviews, data }) => {
             </span>
           )}
         </div>
-        {reviews && (
+        {reviews && reviews?.orders?.length > 0 && (
           <div className="flex-row items-center">
             <Rating rating={reviews.rating} emptyColor="text-white" />
             &nbsp;&nbsp;({reviews.orders.length})
