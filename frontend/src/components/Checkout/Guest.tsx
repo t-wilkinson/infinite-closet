@@ -30,6 +30,7 @@ import { BlueLink, Divider } from '@/components'
 import useAnalytics from '@/utils/useAnalytics'
 import PaymentRequestForm from '@/Checkout/PaymentRequestForm'
 import Cart from '@/Cart'
+import { Favorites } from '@/User/Favorites'
 
 const initialState = {
   error: undefined,
@@ -97,18 +98,19 @@ const CheckoutWrapper = () => {
   }, [])
 
   return (
-    <div className="w-full flex-grow items-center bg-gray-light px-4 pt-4">
+    <div className="w-full flex-grow items-center px-4 pt-4">
       <StateContext.Provider value={state}>
         <DispatchContext.Provider value={dispatch}>
           <FieldsContext.Provider value={fields}>
             <AddressContext.Provider value={address}>
               <PaymentWrapper>
                 <div
-                  className="w-full justify-center max-w-screen-xl my-4 h-full
-                  md:flex-row space-y-4 md:space-y-0 md:space-x-4
+                  className="w-full justify-center max-w-screen-md p-4 my-4 h-full
+                  space-y-4 md:space-y-0 md:space-x-4
                   "
                 >
                   <Checkout />
+                  <Favorites />
                 </div>
               </PaymentWrapper>
             </AddressContext.Provider>
@@ -244,7 +246,7 @@ const CheckoutForm = ({ onCheckout }) => {
     <Form
       onSubmit={onSubmit}
       fields={[fields, address]}
-      className="max-w-screen-sm space-y-8"
+      className="w-full space-y-8"
       redirect="/buy/thankyou"
       notify
     >

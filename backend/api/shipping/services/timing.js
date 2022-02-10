@@ -187,11 +187,11 @@ function range({ expectedStart, rentalLength, shipment }) {
   }
 
   const hoursSendClient = shippingClassHours(shipment.shipped, expectedStart)
+
+  const confirmed = eitherToDay(shipment.confirmed)
   const shipped = shipment.shipped
     ? day(shipment.shipped)
     : day(expectedStart).subtract(hoursSendClient, 'hours')
-
-  const confirmed = eitherToDay(shipment.confirmed)
   const start = eitherToDay(shipment.start, expectedStart)
   const end = eitherToDay(shipment.end, start.add(rentalLength, 'hours'))
   const cleaning = eitherToDay(shipment.cleaning, end.add(provider.config.timing.hoursSendCleaners, 'hours'))
@@ -205,7 +205,7 @@ function range({ expectedStart, rentalLength, shipment }) {
 
 function logRange(range) {
   ['confirmed', 'shipped', 'start', 'end', 'cleaning', 'completed'].forEach(status =>
-    console.log(range[status]?.toJSON()))
+    console.info(range[status]?.toJSON()))
 }
 
 module.exports = {

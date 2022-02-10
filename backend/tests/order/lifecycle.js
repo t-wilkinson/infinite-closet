@@ -16,90 +16,76 @@ f.user = require('../user/factory')
 f.designer = require('../product/designer-factory')
 
 // TODO: does this work?
-const statusChangesToday = (startDate, status) => {
-  const today = day()
+const statusChangesToday = (status) => {
+  const expectedStart = day().toJSON()
   const range = strapi.services.timing.range({
     rentalLength: 'short',
-    startDate: today.toJSON(),
+    expectedStart,
+    shipment: {
+      completed: day().toJSON(),
+    },
   })
-  const diff = range[status].date() - day(startDate).date()
-  startDate = range[status].subtract(diff, 'date')
-  return startDate.toJSON()
+  const diff = range[status]?.diff(expectedStart, 'day')
+  const changeDate = day(expectedStart).subtract(diff, 'day').toJSON()
+  return changeDate
 }
 
-describe('Lifecycle', () => {
-  let orders
-  let today
-  let on
-  let lifecycle
-
-  beforeAll(async () => {
-    lifecycle = strapi.plugins['orders'].services.lifecycle
-    today = day()
-
-    // orders = await Promise.all(
-    //   [
-    //     {
-    //       status: 'planning',
-    //       startDate: statusChangesToday(),
-    //     },
-    //   ].map((orderData) => f.order.create(strapi, orderData))
-    // )
-  })
-
-  it('works', async () => {
-    lifecycle.forwardAll()
-  })
-
-  test('shipped', async () => {
-    // lifecycle.on['shipped']()
-  })
-})
-
-describe.skip('Confirmed', () => {
+describe('Confirmed', () => {
   let lifecycle
   let orders
-  let data
-  let contact
-  let address
+  // let data
+  // let contact
+  // let address
+  let statuses
 
   beforeAll(async () => {
-    contact = {
-      firstName: 'first',
-      lastName: 'last',
-      email: 'info+test@infinitecloset.co.uk',
-    }
-    address = {
-      addressLine1: 'Address line 1',
-      town: 'town',
-      postcode: 'postcode',
-      email: 'email',
-    }
+    statuses = strapi.models.shipment.attributes.status.enum
+    // contact = {
+    //   firstName: 'first',
+    //   lastName: 'last',
+    //   email: 'info+test@infinitecloset.co.uk',
+    // }
+    // address = {
+    //   addressLine1: 'Address line 1',
+    //   town: 'town',
+    //   postcode: 'postcode',
+    //   email: 'email',
+    // }
 
     lifecycle = strapi.plugins['orders'].services.lifecycle
     orders = await Promise.all(
-      [
-        {
-          rentalLength: 'short',
-          startDate: day().add(21, 'day').toJSON(),
-        },
-      ].map((orderData) => f.order.create(strapi, orderData))
+      ['confirmed', 'shipped', 'start', 'end', 'cleaning', 'completed'].map(
+        (status) => {
+          const nextStatus = statuses[statuses.indexOf(status) + 1]
+          const expectedStart = statusChangesToday(nextStatus)
+          const data = {
+            status: 'shipping',
+            expectedStart,
+            shipment: {
+              status,
+            },
+          }
+          return f.order.create(strapi, data)
+        }
+      )
     )
-    data = await strapi.plugins['orders'].services.checkout.prepareData({
-      orders,
-      contact,
-      address,
-    })
   })
 
-  // test('works', async () => {
-  //   const checkout = await strapi.plugins['orders'].['confirmed'](data)
-  //   expect(data.error).toBeFalsey()
-  //   expect(checkout.purchase.status).toBe('success')
-  //   expect(checkout.contact).toMatchObject(contact)
-  //   expect(checkout.address).toMatchObject(address)
-  //   expect(checkout.orders.map((order) => order.id)).toEqual(
-  //     orders.map((order) => order.id)
-  //   )
-  // })
+  test('works', async () => {
+    orders = await lifecycle.forwardAll()
+    orders = await strapi
+      .query('order', 'orders')
+      .find({ id_in: orders.all.map((order) => order.id) }, ['shipment'])
+    // console.log(orders.map((order) => order.shipment.status))
+    // console.log(orders)
+    // console.log(JSON.stringify(orders, null, 4))
+    // const checkout = await strapi.plugins['orders'].['confirmed'](data)
+    // expect(data.error).toBeFalsey()
+    // expect(checkout.purchase.status).toBe('success')
+    // expect(checkout.contact).toMatchObject(contact)
+    // expect(checkout.address).toMatchObject(address)
+    // expect(checkout.orders.map((order) => order.id)).toEqual(
+    //   orders.map((order) => order.id)
+    // )
+  })
 })

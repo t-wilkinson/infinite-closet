@@ -8,21 +8,27 @@ module.exports = {
       return
     }
 
+    strapi.log.info('Forwarding lifecycles')
     strapi.plugins['orders'].services.lifecycle.forwardAll()
   },
 
   // Sync mailchimp
   '0 * * * *': async () => {
     if (process.env.NODE_ENV === 'production') {
+      strapi.log.info('Syncing mailchimp')
       strapi.services.mailchimp.helpers.sync()
     }
   },
 
   '0 7 * * *': async () => {
+    strapi.log.info('Sending gift card emails')
     // Send out gift-card emails
     const today = day()
     const giftCards = await strapi.query('gift-card').find({ })
     for (const giftCard of giftCards) {
+      if (!giftCard.deliveryDate || !giftCard.recipientEmail) {
+        continue
+      }
       if (!day(giftCard.deliveryDate).isSame(today, 'day')) {
         continue
       }

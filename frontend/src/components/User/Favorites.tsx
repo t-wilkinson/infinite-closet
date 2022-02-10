@@ -4,9 +4,11 @@ import Link from 'next/link'
 import useAnalytics from '@/utils/useAnalytics'
 import { ProductImages, ProductInfo } from '@/Products/ProductItems'
 import { EditCartItem, removeOrderItem } from '@/Cart'
-import { useDispatch } from '@/utils/store'
+import { useSelector, useDispatch } from '@/utils/store'
 import { CartUtils } from '@/Cart/slice'
 import { StrapiOrder } from '@/types/models'
+import { Divider } from '@/components'
+import Carousel from '@/Layout/Carousel'
 
 export const Favorite = ({ order }: { order: StrapiOrder }) => {
   const [edit, setEdit] = React.useState(false)
@@ -62,3 +64,51 @@ const EditOrderButton = ({ onClick, label }) => (
     {label}
   </button>
 )
+
+export const Favorites = () => {
+  const favorites = useSelector((state) => state.cart.favorites)
+  const ref = React.useRef(null)
+  const [width, setWidth] = React.useState(window.innerWidth)
+  React.useEffect(() => {
+    const onResize = () => {
+      const clientWidth = ref.current?.clientWidth
+      if (clientWidth) {
+        setWidth(clientWidth)
+      }
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  if (favorites?.length === 0) {
+    return null
+  }
+
+  return (
+    <section
+      className="pt-12"
+      ref={ref}
+      style={{
+        flex: '1 0 auto',
+      }}
+    >
+      <h3 className="font-subheader text-2xl">Favourites</h3>
+      <Divider />
+      <div className="h-8" />
+      <Carousel
+        pageSize={width < 470 ? 1 : width < 610 ? 2 : width < 1000 ? 3 : 4}
+        // pageSize={Math.floor((width + 100) / 320)}
+        Renderer={Favorite}
+        riders={favorites}
+        map={(favorite) => ({ order: favorite })}
+        inner={{
+          style: {
+            flex: '1 0 auto',
+          },
+        }}
+      />
+    </section>
+  )
+}
+
+export default Favorites

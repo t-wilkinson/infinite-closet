@@ -19,7 +19,7 @@ import {
   BodyWrapper,
   useFields,
 } from '@/Form'
-import { Button, CopyToClipboard } from '@/components'
+import { Button } from '@/components'
 import { StrapiGiftCard } from '@/types/models'
 import { useSelector } from '@/utils/store'
 import { PaymentSubText } from '@/Checkout/Utils'

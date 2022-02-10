@@ -24,20 +24,22 @@ function getStorageOrders() {
   return orders.filter((order: StrapiOrder) => !order.user)
 }
 
-export function getGuestOrders(): Orders {
+export const getGuestOrders = getStorageOrders
+
+export function getGuestCart(): Orders {
   const orders = getStorageOrders()
   return orders.filter((order: StrapiOrder) => order.status === 'cart')
 }
 
-export async function getUserOrders(user: StrapiUser): Promise<Orders> {
+export async function getUserCart(user: StrapiUser): Promise<Orders> {
   return await axios.get(`/orders/cart/${user.id}`)
 }
 
-export async function getOrders(user: StrapiUser): Promise<Orders> {
+export function getCart(user: StrapiUser) {
   if (user) {
-    return getUserOrders(user)
+    return getUserCart(user)
   } else {
-    return getGuestOrders()
+    return getGuestCart()
   }
 }
 
@@ -81,11 +83,11 @@ export async function setOrders(
   }
 }
 
-export async function viewOrders(user: StrapiUser): Promise<Cart> {
+export async function viewCart(user: StrapiUser): Promise<Cart> {
   if (user) {
     return await axios.get(`/orders/cart/view/${user.id}`)
   } else {
-    const orders = getGuestOrders()
+    const orders = getGuestCart()
     return await axios.post(`/orders/cart/view`, { orders }, {withCredentials: false})
   }
 }

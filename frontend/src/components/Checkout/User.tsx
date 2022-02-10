@@ -16,8 +16,7 @@ import Popup from '@/Layout/Popup'
 import { BlueLink, Button, Divider } from '@/components'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
-import Carousel from '@/Layout/Carousel'
-import { Favorite } from '@/User/Favorites'
+import { Favorites } from '@/User/Favorites'
 
 import {
   PaymentSubText,
@@ -148,8 +147,8 @@ export const CheckoutWrapper = ({}) => {
         <DispatchContext.Provider value={dispatch}>
           <FieldsContext.Provider value={fields}>
             <PaymentWrapper>
-              <section
-                className="w-full justify-center max-w-screen-xl my-4 h-full
+              <div
+                className="w-full justify-center max-w-screen-xl my-4 p-4 h-full
                 md:flex-row space-y-4 md:space-y-0 md:space-x-4
                 "
               >
@@ -164,7 +163,7 @@ export const CheckoutWrapper = ({}) => {
                 <div className="md:hidden">
                   <Favorites />
                 </div>
-              </section>
+              </div>
             </PaymentWrapper>
           </FieldsContext.Provider>
         </DispatchContext.Provider>
@@ -287,51 +286,6 @@ const Checkout = ({ fetchCart, analytics }) => {
       </div>
     )
   }
-}
-
-const Favorites = ({}) => {
-  const favorites = useSelector((state) => state.cart.favorites)
-  const ref = React.useRef(null)
-  const [width, setWidth] = React.useState(window.innerWidth)
-  React.useEffect(() => {
-    const onResize = () => {
-      const clientWidth = ref.current?.clientWidth
-      if (clientWidth) {
-        setWidth(clientWidth)
-      }
-    }
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
-
-  if (favorites?.length === 0) {
-    return null
-  }
-
-  return (
-    <section
-      className="pt-12"
-      ref={ref}
-      style={{
-        flex: '1 0 auto',
-      }}
-    >
-      <h3 className="font-subheader text-2xl">Favourites</h3>
-      <Divider />
-      <div className="h-8" />
-      <Carousel
-        pageSize={width < 470 ? 1 : width < 610 ? 2 : 3}
-        Renderer={Favorite}
-        riders={favorites}
-        map={(favorite) => ({ order: favorite })}
-        inner={{
-          style: {
-            flex: '1 0 auto',
-          },
-        }}
-      />
-    </section>
-  )
 }
 
 const SideBar = ({ user, state, summary, fields, dispatch }) => (

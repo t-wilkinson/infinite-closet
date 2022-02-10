@@ -3,33 +3,6 @@
 const { toId, day } = require('../../../utils')
 
 const lifecycles = {
-  async confirmed(cartItem) {
-    const { order } = cartItem
-    // let shipmentId = null
-
-    // ACS expects orders asap
-    if (strapi.services.shipment.providerName === 'acs') {
-      await strapi.plugins['orders'].services.ship.shipOrderToClient(order)
-      // shipmentId = res.shipmentId
-    }
-
-    //     // Shipment
-    //     const shipment = await strapi.query('shipment').update(
-    //       { id: toId(order.shipment) },
-    //       {
-    //         shipmentId,
-    //       }
-    //     )
-
-    // // Order
-    // await strapi.query('order', 'orders').update(
-    //   { id: order.id },
-    //   {
-    //     shipment: shipment.id,
-    //   }
-    // )
-  },
-
   async shipped(cartItem) {
     // Send user email if their order is shipping today
     if (strapi.services.shipment.providerName !== 'acs') {
@@ -53,6 +26,41 @@ const lifecycles = {
   },
 }
 
+/**
+ * Handle intricacies of changing order/shipment status
+ */
+async function on(status, order, ...props) {
+  // If order does not have a shipment, we create one
+  const shipmentId = toId(order.shipment)
+  const shipmentProps = {
+    status,
+    [status]: day().toJSON(),
+  }
+  if (shipmentId) {
+    await strapi.query('shipment').update({ id: shipmentId }, shipmentProps)
+  } else {
+    const shipment = await strapi.query('shipment').create(shipmentProps)
+    strapi
+      .query('order', 'orders')
+      .update({ id: toId(order) }, { shipment: toId(shipment) })
+  }
+
+  const changeOrder = (props) => {
+    strapi.query('order', 'orders').update({ id: toId(order) }, props)
+  }
+  if (status === 'completed') {
+    changeOrder({ status: 'completed' })
+  } else if (status === 'confirmed' || order.status !== 'shipping') {
+    changeOrder({ status: 'shipping' })
+  }
+
+  const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(
+    order
+  )
+
+  return await lifecycles[status](cartItem, ...props)
+}
+
 async function getOrderLifecycles() {
   // Separate orders by status
   const allOrders = await strapi
@@ -66,7 +74,9 @@ async function getOrderLifecycles() {
       'shipment',
     ])
 
-  let orders = {}
+  let orders = {
+    all: allOrders,
+  }
   for (const order of allOrders) {
     const status = order.shipment.status
     if (!orders[status]) {
@@ -76,46 +86,6 @@ async function getOrderLifecycles() {
   }
 
   return orders
-}
-
-async function on(status, order, ...props) {
-  // If order does not have a shipment, we create one
-  const shipmentId = toId(order.shipment)
-
-  const changeShipment = (props) => {
-    if (shipmentId) {
-      return strapi.query('shipment').update({ id: shipmentId }, props)
-    } else {
-      return strapi.query('shipment').create(props)
-    }
-  }
-
-  const shipment = await changeShipment({
-    status,
-    [status]: day().toJSON(),
-  })
-
-  const changeOrder = (props) => {
-    if (!shipmentId) {
-      strapi
-        .query('order', 'orders')
-        .update({ id: toId(order), shipment: toId(shipment) }, props)
-    } else {
-      strapi.query('order', 'orders').update({ id: toId(order) }, props)
-    }
-  }
-
-  if (status === 'completed') {
-    changeOrder({ status: 'completed' })
-  } else if (status === 'confirmed' || order.status !== 'shipping') {
-    changeOrder({ status: 'shipping' })
-  }
-
-  const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(
-    order
-  )
-
-  return await lifecycles[status](cartItem, ...props)
 }
 
 /**
@@ -130,6 +100,9 @@ async function forwardAll() {
    * Check if order is changing to status today, so we can run respective lifecycle code
    */
   function statusChangingToday(order, nextStatus) {
+    if (!nextStatus) {
+      return false
+    }
     const range = strapi.plugins['orders'].services.order.range(order)
     const statusChangeDate = day(range[nextStatus])
     if (statusChangeDate.isSame(today, 'day')) {
@@ -138,6 +111,9 @@ async function forwardAll() {
   }
 
   for (const status in orders) {
+    if (status === 'all') {
+      continue
+    }
     const index = statuses.indexOf(status)
     if (index === statuses.length - 1) {
       continue
@@ -148,9 +124,11 @@ async function forwardAll() {
       if (!statusChangingToday(order, nextStatus)) {
         continue
       }
-      on(status, order)
+      on(nextStatus, order)
     }
   }
+
+  return orders
 }
 
 module.exports = {

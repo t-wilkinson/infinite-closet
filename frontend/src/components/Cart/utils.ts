@@ -14,10 +14,10 @@ export const getUser = (getState: () => any) =>
 const toKey = (order: StrapiOrder) => `${order.size}_${order.product.id}`
 
 export default {
-  get: createAsyncThunk<Orders, void>('cart/get', async (_, { getState }) => {
-    const user = getUser(getState)
-    return await helpers.getOrders(user)
-  }),
+  // get: createAsyncThunk<Orders, void>('cart/get', async (_, { getState }) => {
+  //   const user = getUser(getState)
+  //   return await helpers.getCart(user)
+  // }),
   set: createAsyncThunk<Orders, Orders>(
     'cart/set',
     async (orders, { getState }) => {
@@ -36,7 +36,7 @@ export default {
     'cart/summary',
     async (_, { getState }) => {
       const user = getUser(getState)
-      const orders = await helpers.getOrders(user)
+      const orders = await helpers.getCart(user)
       let data: Summary
       if (user) {
         data = await axios.post<Summary>(
@@ -69,7 +69,7 @@ export default {
   }),
   view: createAsyncThunk<Cart, void>('cart/view', async (_, { getState }) => {
     const user = getUser(getState)
-    return helpers.viewOrders(user)
+    return helpers.viewCart(user)
   }),
   history: createAsyncThunk<Cart, void>(
     'cart/history',
@@ -104,7 +104,7 @@ export default {
           const orders = [...helpers.getGuestOrders(), order as StrapiOrder]
           helpers.setGuestOrders(orders)
         }
-        return await helpers.viewOrders(user)
+        return await helpers.viewCart(user)
     }
   ),
   insert: createAsyncThunk<Cart, Partial<StrapiOrder>[] | Partial<StrapiOrder>>(
@@ -119,12 +119,12 @@ export default {
         inserts = [inserts]
       }
 
-      const orders = await helpers.getUserOrders(user)
+      const orders = await helpers.getUserCart(user)
       const orderIds = orders
         .concat(inserts as Orders)
         .map((order: StrapiOrder) => order.id)
       helpers.setUserOrders(user, orderIds)
-      return await helpers.viewOrders(user)
+      return await helpers.viewCart(user)
     }
   ),
   remove: createAsyncThunk<Orders, string>(
@@ -138,7 +138,7 @@ export default {
         const filtered = orders.filter((order: StrapiOrder) => order.id !== id)
         helpers.setGuestOrders(filtered)
       }
-      return helpers.getOrders(user)
+      return helpers.getCart(user)
     }
   ),
 }

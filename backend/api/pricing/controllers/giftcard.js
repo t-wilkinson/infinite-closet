@@ -37,6 +37,11 @@ module.exports = {
       body.paymentIntent
     )
 
+    const missingFields = ['recipientEmail', 'recipientName', 'senderEmail', 'senderName'].some(field => !body[field])
+    if (missingFields) {
+      return ctx.badRequest('Missing necessary fields')
+    }
+
     try {
       const giftCard = await strapi.services.giftcard.add({
         paymentIntent,
