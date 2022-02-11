@@ -2,8 +2,8 @@ import React from 'react'
 import { useRouter } from 'next/router'
 
 import { FormWrapper } from '@/Form'
-import Signin, { CreateAnAccount } from '@/Account/Signin'
-import Account from '@/Account'
+import Signin, { CreateAnAccount } from '@/Form/Signin'
+import Account from '@/Layout/Account'
 import { useSelector } from '@/utils/store'
 
 export const Page = () => {

@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import { Divider } from '@/components'
+import { Divider } from '@/Components'
 import { socialMediaLinks } from '@/utils/config'
 import Header from '@/Layout/Header'
 import {
@@ -12,7 +12,7 @@ import {
   iconFacebook,
   iconTwitter,
   iconTiktok,
-} from '@/Icons'
+} from '@/Components/Icons'
 
 const Page = () => {
   return (

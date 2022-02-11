@@ -15,12 +15,12 @@ import {
   toDate,
   useFields,
 } from '@/Form'
-import { Divider } from '@/components'
+import { Divider } from '@/Components'
 import { Size } from '@/types'
 import { StrapiUser} from '@/types/models'
 import * as sizing from '@/utils/sizing'
 import { useSelector } from '@/utils/store'
-import { SizeChartPopup } from '@/Shop/Size'
+import { SizeChartPopup } from '@/Product/SizeChart'
 
 import useSignin from './useSignin'
 

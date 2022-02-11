@@ -229,7 +229,8 @@ async function onCheckout({
       const order = await strapi.query('order', 'orders').update(
         { id: toId(cartItem.order) },
         {
-          chekcout: toId(checkout),
+          status: 'shipping',
+          checkout: toId(checkout),
           contact: toId(contact),
           user: toId(user),
           address: toId(address),
@@ -249,8 +250,7 @@ async function onCheckout({
     .filter((res) => res.status === 'rejected')
     .map((res) => res.reason)
   if (failed.length > 0) {
-    strapi.log.error('Failed to prepare cart for shipping', failed)
-    console.log('checkout error handling', { settled, purchase, contact })
+    strapi.log.error('Failed to prepare cart for shipping', { failed, settled, purchase, contact })
   }
 
   strapi.services.template_email.orderConfirmation({

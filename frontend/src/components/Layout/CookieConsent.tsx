@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useDispatch, useSelector } from '@/utils/store'
-import { BlueLink } from '@/components'
+import { BlueLink } from '@/Components'
 import * as storage from '@/utils/storage'
 
 import { layoutActions } from './slice'

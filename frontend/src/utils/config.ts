@@ -5,11 +5,6 @@ export const socialMediaLinks = {
   tiktok: 'https://www.tiktok.com/@infinitecloset',
 }
 
-export const rentalLengths = {
-  short: 4 - 1,
-  long: 8 - 1,
-}
-
 export const routes = [
   {
     label: 'How It Works',

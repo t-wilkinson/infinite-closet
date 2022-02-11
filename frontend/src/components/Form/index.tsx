@@ -2,15 +2,13 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 
-import { Icon } from '@/components'
-import { iconLoading } from '@/components/Icons'
+import { Icon, iconLoading } from '@/Components/Icons'
 
 import Warning from './Warning'
 import { UseFields } from './fields'
 
 export * from './Checkbox'
 export * from './DateOfBirth'
-export * from './DatePicker'
 export * from './DiscountCode'
 export * from './Dropdown'
 export * from './ImageUpload'
@@ -65,50 +63,55 @@ export const Form = ({
   const form = fields[0].form
   const router = useRouter()
 
-  const onSubmitInternal = (e: React.SyntheticEvent) => {
+  const onSubmitInternal = async (e: React.SyntheticEvent) => {
     e.preventDefault()
-    ;(fields as UseFields[]).forEach((fields) => fields.clearErrors())
-    const cantResubmit = form.value === 'success' && !resubmit
-    if (form.value === 'submitting' || cantResubmit) {
-      return
-    }
-    form.setValue('submitting')
+    try {
+      ;(fields as UseFields[]).forEach((fields) => fields.clearErrors())
 
-    const valid = (fields as UseFields[])
+      // Resubmit logic
+      const cantResubmit = form.value === 'success' && !resubmit
+      if (form.value === 'submitting' || cantResubmit) {
+        return
+      }
+      form.setValue('submitting')
+
+      // Fail if any field constraints fail
+      const valid = (fields as UseFields[])
       .map((fields: UseFields) => fields.update())
       .every((v) => v)
-    if (!valid) {
-      form.setValue('error')
-      form.setErrors('Please ensure the form is filled out correctly')
-      return
-    }
-
-    const res = onSubmit(e) || Promise.resolve()
-    res
-      .then(() => {
-        form.setValue('success')
-        form.clearErrors()
-        // @ts-ignore
-        document.activeElement?.blur()
-        if (redirect) {
-          router.push(redirect)
-        }
-      })
-      .catch((err) => {
-        const error =
-          err?.message ||
-          err ||
-          "Looks like something's not working... Please try again later"
+      if (!valid) {
         form.setValue('error')
-        if (notify) {
-          toast.error(error, {
-            hideProgressBar: true,
-            closeButton: false,
-          })
-        } else {
-          form.setErrors(error)
-        }
-      })
+        form.setErrors('Please ensure the form is filled out correctly')
+        return
+      }
+
+      // Run provided submit function
+      await (onSubmit(e) || Promise.resolve())
+
+      // Clean up
+      form.setValue('success')
+      form.clearErrors()
+      // @ts-ignore
+      document.activeElement?.blur()
+      if (redirect) {
+        router.push(redirect)
+      }
+
+    } catch (err) {
+      const message =
+        err?.message ||
+        err ||
+        "An unexpected error occurred, please try again later."
+      form.setValue('error')
+      if (notify) {
+        toast.error(message, {
+          hideProgressBar: true,
+          closeButton: false,
+        })
+      } else {
+        form.setErrors(message)
+      }
+    }
   }
 
   return (
@@ -144,7 +147,7 @@ export const Submit = ({
   children = 'Submit' as any,
   disabled = false,
   className = '',
-  role= 'primary',
+  role = 'primary',
 }) => {
   disabled = disabled || form.value === 'submitting'
   return (
@@ -153,7 +156,13 @@ export const Submit = ({
         aria-label="Submit form"
         className={`flex flex-row justify-center items-center
         p-3 rounded-sm border transition duration-200 font-bold
-        ${form.value === 'submitting' ? 'cursor-progress' : disabled ? 'cursor-not-allowed' : ''}
+        ${
+          form.value === 'submitting'
+            ? 'cursor-progress'
+            : disabled
+            ? 'cursor-not-allowed'
+            : ''
+        }
         ${
           disabled
             ? 'border-gray bg-gray text-white'

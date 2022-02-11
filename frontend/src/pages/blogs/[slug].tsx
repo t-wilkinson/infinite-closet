@@ -6,9 +6,9 @@ import Image from 'next/image'
 import axios, { getURL } from '@/utils/axios'
 import dayjs, {createDateFormat} from '@/utils/dayjs'
 import Layout from '@/Layout'
-import { ScrollUp } from '@/components'
-import { readingTime } from '@/Markdown'
-import { components as _components } from '@/Markdown'
+import { ScrollUp } from '@/Components'
+import { readingTime } from '@/Components/Markdown'
+import { components as _components } from '@/Components/Markdown'
 
 export const components = {
   ..._components,

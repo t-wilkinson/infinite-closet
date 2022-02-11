@@ -1,10 +1,10 @@
 import React from 'react'
 import Link from 'next/link'
 
-import Account from '@/Account'
-import { BlueLink } from '@/components'
+import Account from '@/Layout/Account'
+import { BlueLink } from '@/Components'
 import { FormWrapper } from '@/Form'
-import Register from '@/Account/Register'
+import Register from '@/Form/Register'
 
 export const AlreadyHaveAccount = () => (
   <span>

@@ -1,4 +1,4 @@
-import OrderHistory from '@/Cart/OrderHistory'
+import OrderHistory from '@/Order/OrderHistory'
 import User from '@/User'
 import Layout from '@/Layout'
 

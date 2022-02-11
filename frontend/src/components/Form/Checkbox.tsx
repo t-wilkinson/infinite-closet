@@ -1,7 +1,6 @@
 import React from 'react'
 
-import { Icon } from '@/components'
-import { iconCheck } from '@/components/Icons'
+import { Icon, iconCheck } from '@/Components/Icons'
 import { UseField, FieldValue } from './types'
 
 import Warning from './Warning'

@@ -61,7 +61,7 @@ exports.default = function (_ref2) {
         'p',
         null,
         'Hi ',
-        contact.nickName,
+        contact.firstName,
         ','
       ),
       _react2.default.createElement(

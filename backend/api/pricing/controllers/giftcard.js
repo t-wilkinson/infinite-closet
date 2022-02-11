@@ -37,6 +37,11 @@ module.exports = {
       body.paymentIntent
     )
 
+    const existingGiftCard = await strapi.query('gift-card').findOne({ paymentIntent: body.paymentIntent })
+    if (existingGiftCard) {
+      return ctx.send(existingGiftCard)
+    }
+
     const missingFields = ['recipientEmail', 'recipientName', 'senderEmail', 'senderName'].some(field => !body[field])
     if (missingFields) {
       return ctx.badRequest('Missing necessary fields')

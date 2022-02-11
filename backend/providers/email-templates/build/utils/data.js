@@ -1,19 +1,15 @@
 'use strict';
 
 var contact = {
-  fullName: '<Full name>',
-  nickName: '<Nick name>',
+  firstName: 'First',
+  lastName: 'Last',
   email: 'info+test@infinitecloset.co.uk'
 };
 
-var user = {
-  firstName: '<First name>',
-  lastName: '<Last name>',
-  email: 'info+test@infinitecloset.co.uk'
-};
+var user = Object.assign({}, contact);
 
 var address = {
-  fullName: contact.fullName,
+  fullName: contact.firstName + ' ' + contact.lastName,
   addressLine1: 'Address line 1',
   mobileNumber: '123 456 7890'
 };
@@ -37,10 +33,10 @@ var giftCard = {
 };
 
 var product = {
-  name: '<Product name>',
+  name: 'Product name',
   slug: 'product',
   designer: {
-    name: '<Designer name>',
+    name: 'Designer name',
     slug: 'designer'
   },
   sizes: [{ size: 'S', quantity: 1 }, { size: 'M', quantity: 1 }],
@@ -71,7 +67,7 @@ var cartItem = {
 };
 
 var orderData = {
-  firstName: '<First Name>',
+  firstName: 'First Name',
   cartItem: cartItem,
   user: user
 };
@@ -95,7 +91,7 @@ module.exports = {
       summary: summary,
       recommendations: recommendations,
       contact: contact,
-      firstName: contact.nickName
+      firstName: contact.firstName
     },
     'order-shipped': orderData,
     'order-starting': orderData,
@@ -106,12 +102,12 @@ module.exports = {
     'gift-card': {
       isDefault: true,
       recommendations: recommendations,
-      firstName: 'First Name',
+      firstName: contact.firstName,
       giftCard: giftCard
     },
     'store-credit': {
       isDefault: true,
-      firstName: 'First Name',
+      firstName: contact.firstName,
       amount: 20,
       recommendations: recommendations
     },
@@ -124,8 +120,8 @@ module.exports = {
     },
     'contact-us': {
       isDefault: true,
-      firstName: 'First Name',
-      lastName: 'Last Name',
+      firstName: contact.firstName,
+      lastName: contact.lastName,
       email: 'info+test@infinitecloset.co.uk',
       phoneNumber: 'Phone',
       message: 'Random message'
@@ -133,7 +129,7 @@ module.exports = {
 
     'join-launch-party': {
       isDefault: true,
-      firstName: 'First Name',
+      firstName: contact.firstName,
       ticketPrice: 25,
       donation: 25.0,
       discount: 5,

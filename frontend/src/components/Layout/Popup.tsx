@@ -4,7 +4,7 @@
 import React from 'react'
 
 import Modal from './Modal'
-import { Icon, iconClose } from '@/Icons'
+import { Icon, iconClose } from '@/Components/Icons'
 
 export const Popup = ({
   children,

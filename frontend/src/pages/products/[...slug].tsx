@@ -8,10 +8,10 @@ import axios from '@/utils/axios'
 import * as sizing from '@/utils/sizing'
 import { useDispatch } from '@/utils/store'
 
-import Products from '@/Products'
-import { sortData, QUERY_LIMIT } from '@/Products/constants'
-import { productsActions } from '@/Products/slice'
-import { Filters, Filter, ProductRoutes, SortBy } from '@/Products/types'
+import Products from '@/Product'
+import { sortData, QUERY_LIMIT } from '@/Product/constants'
+import { productsActions } from '@/Product/slice'
+import { Filters, Filter, ProductRoutes, SortBy } from '@/Product/types'
 
 export const Page = ({ data }) => {
   const router = useRouter()

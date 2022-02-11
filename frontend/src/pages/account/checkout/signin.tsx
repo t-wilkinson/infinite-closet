@@ -1,10 +1,10 @@
 import React from 'react'
 import Link from 'next/link'
 
-import Account from '@/Account'
-import { BlueLink } from '@/components'
+import Account from '@/Layout/Account'
+import { BlueLink } from '@/Components'
 import { FormWrapper } from '@/Form'
-import Signin from '@/Account/Signin'
+import Signin from '@/Form/Signin'
 
 export const Page = () => {
   return (

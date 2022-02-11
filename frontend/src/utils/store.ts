@@ -4,12 +4,12 @@ import { enableMapSet } from 'immer'
 
 enableMapSet()
 
-import productsSlice from '@/Products/slice'
+import productsSlice from '@/Product/slice'
 import layoutSlice from '@/Layout/slice'
-import shopSlice from '@/Shop/slice'
-import accountSlice from '@/Account/slice'
+import shopSlice from '@/Product/ProductPage/slice'
+import rootSlice from '@/slice'
 import userSlice from '@/User/slice'
-import cartSlice from '@/Cart/slice'
+import ordersSlice from '@/Order/slice'
 
 import {
   TypedUseSelectorHook,
@@ -22,9 +22,9 @@ export const storeOptions = {
     user: userSlice,
     layout: layoutSlice,
     products: productsSlice,
-    account: accountSlice,
+    root: rootSlice,
     shop: shopSlice,
-    cart: cartSlice,
+    orders: ordersSlice,
   },
   middleware: [thunk],
   // middleware: (getDefaultMiddleware: any) => [

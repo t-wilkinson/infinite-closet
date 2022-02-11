@@ -24,7 +24,7 @@ exports.default = function (_ref) {
       "dd",
       null,
       _react2.default.createElement(
-        "code",
+        "pre",
         null,
         JSON.stringify(data.order, null, 4)
       )
@@ -38,7 +38,7 @@ exports.default = function (_ref) {
       "dd",
       null,
       _react2.default.createElement(
-        "code",
+        "pre",
         null,
         JSON.stringify(data.error, null, 4)
       )

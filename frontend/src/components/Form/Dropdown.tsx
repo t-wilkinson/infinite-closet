@@ -1,8 +1,7 @@
 import React from 'react'
 
 import { FieldValue, UseField } from '@/Form'
-import { iconDown } from '@/components/Icons'
-import { Icon } from '@/components'
+import { Icon, iconDown } from '@/Components/Icons'
 
 import Input from './Input'
 

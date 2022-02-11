@@ -3,9 +3,9 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 
-import { Button, Icon } from '@/components'
+import { Button } from '@/Components'
 import { useDispatch, useSelector } from '@/utils/store'
-import { iconMenu, iconShoppingBag, iconUser } from '@/components/Icons'
+import { Icon, iconMenu, iconShoppingBag, iconUser } from '@/Components/Icons'
 
 import { layoutActions } from './slice'
 import Navbar from './Navbar'
@@ -72,7 +72,7 @@ export const LargeHeaderLogo = ({ router }) => (
 )
 
 const Account = ({ user }) => {
-  const count = useSelector((state) => state.cart.count)
+  const count = useSelector((state) => state.orders.count)
 
   if (user) {
     return (

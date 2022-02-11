@@ -2,18 +2,18 @@ import React from 'react'
 
 import Layout from '@/Layout'
 import User from '@/User'
-import { CartUtils } from '@/Cart/slice'
+import { OrderUtils } from '@/Order'
 import { useDispatch, useSelector } from '@/utils/store'
 import { StrapiOrder } from '@/types/models'
-import { Favorite } from '@/User/Favorites'
+import { Favorite } from '@/Order/Favorite'
 
 export const Page = () => {
-  const favorites = useSelector((state) => state.cart.favorites)
+  const favorites = useSelector((state) => state.orders.favorites)
   const dispatch = useDispatch()
   const user = useSelector((state) => state.user.data)
 
   React.useEffect(() => {
-    dispatch(CartUtils.favorites())
+    dispatch(OrderUtils.favorites())
   }, [user])
 
   return (

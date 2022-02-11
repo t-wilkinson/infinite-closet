@@ -1,7 +1,7 @@
 import React from 'react'
 
 import axios from '@/utils/axios'
-import { MarkdownWrapper, fetchMarkdown } from '@/Markdown'
+import { MarkdownWrapper, fetchMarkdown } from '@/Components/Markdown'
 import { useFields, Form, Input, Submit } from '@/Form'
 
 export const Page = ({ data }) => {

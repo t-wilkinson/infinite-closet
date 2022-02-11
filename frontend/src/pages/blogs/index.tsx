@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 
 import axios, { getURL } from '@/utils/axios'
 import { StrapiBlog } from '@/types/models'
-import { readingTime } from '@/Markdown'
+import { readingTime } from '@/Components/Markdown'
 import Layout from '@/Layout'
 
 export const Page = ({ blogs }) => {

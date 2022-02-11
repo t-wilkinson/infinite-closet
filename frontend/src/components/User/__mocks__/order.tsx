@@ -1,6 +1,6 @@
 import { StrapiOrder } from '@/types/models'
 import { StrapiCartItem } from '../Cart'
-import { product } from '@/Products/__mocks__/product'
+import { product } from '@/Product/__mocks__/product'
 
 export const order: StrapiOrder = {
   id: '10',

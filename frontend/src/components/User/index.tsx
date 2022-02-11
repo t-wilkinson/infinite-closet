@@ -2,11 +2,10 @@ import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-import axios from '@/utils/axios'
 import { useDispatch, useSelector } from '@/utils/store'
-import { userActions } from '@/User/slice'
-import { CartUtils } from '@/Cart/slice'
-import { ButtonLink } from '@/components'
+import { ButtonLink } from '@/Components'
+
+import { signout } from './api'
 
 export const User = ({ children, allowGuest = false }) => {
   const user = useSelector((state) => state.user.data)
@@ -49,25 +48,16 @@ const SideMenu = () => {
   const dispatch = useDispatch()
   const router = useRouter()
 
-  const signout = () => {
-    router.push('/')
-    axios
-      .post<void>('/account/signout', {})
-      .then(() => {
-        dispatch(userActions.signout())
-        dispatch(CartUtils.count())
-        dispatch(CartUtils.view())
-      })
-      .catch((err) => console.error(err))
-  }
-
   return (
     <div className="h-full w-full mb-8 sm:mb-0 sm:w-64 bg-gray-light p-4 rounded-sm items-start">
       <SideLink href="/user/profile">Profile</SideLink>
       <SideLink href="/user/favorites">Favorites</SideLink>
       <SideLink href="/user/giftcard">Gift cards</SideLink>
       <SideLink href="/user/order-history">Order history</SideLink>
-      <SideButton onClick={signout}>Sign out</SideButton>
+      <SideButton onClick={() => {
+        router.push('/')
+        signout(dispatch)
+      }}>Sign out</SideButton>
     </div>
   )
 }

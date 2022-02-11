@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Layout from '@/Layout'
-import { Divider } from '@/components'
+import { Divider } from '@/Components'
 
 // const textSection = [
 //   { title: 'Our Mission', text: 'To help women feel confident and fashionable while creating a more sustainable future.', },

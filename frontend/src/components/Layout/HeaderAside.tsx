@@ -5,12 +5,12 @@ import { useRouter } from 'next/router'
 import axios from '@/utils/axios'
 import { routes } from '@/utils/config'
 import { useDispatch, useSelector } from '@/utils/store'
-import { Icon, Divider } from '@/components'
+import { Divider } from '@/Components'
 import { toRows } from '@/Layout/Navbar'
-import { iconDown, iconUp } from '@/components/Icons'
+import { Icon, iconDown, iconUp } from '@/Components/Icons'
 
 import { layoutActions } from './slice'
-import { iconClose } from '@/components/Icons'
+import { iconClose } from '@/Components/Icons'
 
 const HeaderAside = () => {
   const dispatch = useDispatch()

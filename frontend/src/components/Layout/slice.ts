@@ -1,8 +1,9 @@
 import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit'
 
 import { RootState } from '@/utils/store'
+import { Size } from '@/types'
+import { CookieConsent } from '@/Layout/types'
 import {
-  Size,
   StrapiProduct,
   StrapiDesigner,
   StrapiColor,
@@ -12,9 +13,7 @@ import {
   StrapiCategory,
   StrapiMaterial,
   StrapiMetal,
-} from '@/types'
-
-import { CookieConsent } from './types'
+} from '@/types/models'
 
 export interface State {
   data: {
@@ -70,9 +69,6 @@ export const layoutSlice = createSlice({
     },
     startLoading(state) {
       state.loading = true
-    },
-    doneLoading(state) {
-      state.loading = false
     },
     toggleHeader(state) {
       state.headerOpen = !state.headerOpen

@@ -1,7 +1,6 @@
 import React from 'react'
 
-import {Icon} from '@/components'
-import {iconEye, iconEyeHidden} from '@/components/Icons'
+import {Icon, iconEye, iconEyeHidden} from '@/Components/Icons'
 
 import Input from './Input'
 

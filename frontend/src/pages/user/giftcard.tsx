@@ -5,7 +5,7 @@ import axios from '@/utils/axios'
 import Layout from '@/Layout'
 import User from '@/User'
 import { StrapiGiftCard } from '@/types/models'
-import { CopyToClipboard } from '@/components'
+import { CopyToClipboard } from '@/Components'
 import { fmtPrice } from '@/utils/helpers'
 
 type GiftCardValues = (StrapiGiftCard & { valueLeft: number })[]

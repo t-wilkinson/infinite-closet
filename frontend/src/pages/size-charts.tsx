@@ -2,7 +2,7 @@ import React from 'react'
 
 import axios from '@/utils/axios'
 import Layout from '@/Layout'
-import { SizeChart } from '@/Shop/Size'
+import { SizeChart } from '@/Product/SizeChart'
 
 export const Page = () => {
   const [sizeChart, setSizeChart] = React.useState()

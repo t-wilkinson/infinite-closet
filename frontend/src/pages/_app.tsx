@@ -7,8 +7,8 @@ import 'firebase/analytics'
 import 'react-toastify/dist/ReactToastify.css'
 import '@/styles/index.css'
 
-import { accountActions } from '@/Account/slice'
-import { CartUtils } from '@/Cart/slice'
+import { rootActions } from '@/slice'
+import { OrderUtils } from '@/Order'
 import Banner from '@/Layout/Banner'
 import SkipLink from '@/Layout/SkipLink'
 import { layoutActions, layoutSelectors } from '@/Layout/slice'
@@ -18,7 +18,7 @@ import * as storage from '@/utils/storage'
 import store, { useDispatch, useSelector } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 
-const Popup = dynamic(() => import('@/Account/Popup'))
+const Popup = dynamic(() => import('@/Components/Popup'))
 const FourOFour = dynamic(() => import('@/pages/404'))
 const CookieConsent = dynamic(() => import('@/Layout/CookieConsent'))
 
@@ -60,7 +60,7 @@ const Wrapper = ({ router, children }) => {
   // useSaveScrollPos()
   const dispatch = useDispatch()
   const headerOpen = useSelector((state) => state.layout.headerOpen)
-  const popup = useSelector((state) => state.account.popup)
+  const popup = useSelector((state) => state.root.popup)
   const analytics = useAnalytics()
   const consent = useSelector(layoutSelectors.consent)
   const user = useSelector((state) => state.user.data)
@@ -68,7 +68,7 @@ const Wrapper = ({ router, children }) => {
 
   const showPopup = () => {
     window.setTimeout(() => {
-      dispatch(accountActions.showPopup('email'))
+      dispatch(rootActions.showPopup('email'))
       storage.session.set('popup-form', true)
     }, 5000)
     document.getElementById('_app').removeEventListener('scroll', showPopup)
@@ -107,7 +107,7 @@ const Wrapper = ({ router, children }) => {
   }, [user])
 
   React.useEffect(() => {
-    dispatch(CartUtils.count())
+    dispatch(OrderUtils.count())
   }, [user])
 
   React.useEffect(() => {
@@ -119,7 +119,7 @@ const Wrapper = ({ router, children }) => {
 
     // Attach guest cart to current user cart
     if (user) {
-      dispatch(CartUtils.insert(cart)).then(() => storage.set('cart', []))
+      dispatch(OrderUtils.insert(cart)).then(() => storage.set('cart', []))
     }
   }, [user])
 

@@ -9,19 +9,19 @@ import {
   useFields,
   Submit,
   Form,
-  UseFields,
   UseFormField,
 } from '@/Form'
-import { useFieldEventTarget, FieldEvent, FieldEventTarget } from './Events'
-import { Icon, iconClose, iconCheck } from '@/Icons'
+import { useFieldEventTarget, FieldEvent } from './Events'
+import { Icon, iconClose, iconCheck } from '@/Components/Icons'
 import useSignin from '@/User/useSignin'
-import { BlueLink } from '@/components'
+import { BlueLink } from '@/Components'
 import { StrapiUser } from '@/types/models'
 import useAnalytics from '@/utils/useAnalytics'
 import Popup from '@/Layout/Popup'
 
 export * from './PaymentWrapper'
 export * from './GiftCard'
+export * from './PaymentRequestForm'
 
 const toTitleCase = (string: string) =>
   string.charAt(0).toUpperCase() + string.slice(1)
@@ -267,9 +267,9 @@ export const usePaymentElement = ({ form }: { form: UseFormField }) => {
   const router = useRouter()
   const target = useFieldEventTarget({ singleListener: true })
 
-  const handleSubmit = async ({ formData }) => {
+  const handleSubmit = React.useCallback(async ({ formData }) => {
     if (!stripe || !elements) {
-      return
+      throw 'Please fill out the form.'
     }
 
     const params = new URLSearchParams(formData)
@@ -284,12 +284,12 @@ export const usePaymentElement = ({ form }: { form: UseFormField }) => {
 
     if (error) {
       if (error.type === 'card_error' || error.type === 'validation_error') {
-        throw new Error(error.message)
+        throw error.message
       } else {
-        throw new Error('An unexpected error occured.')
+        throw 'An unexpected error occured.'
       }
     }
-  }
+  }, [stripe, elements])
 
   // Check status of payment through client_secret in query params
   React.useEffect(() => {

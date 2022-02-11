@@ -29,7 +29,8 @@ module.exports = {
     }
 
     if (!(hasHeader && ctx.request.header.authorization)) {
-      return unauthorized(ctx, 'Could not find authorization token')
+      return ctx.send({})
+      // return unauthorized(ctx, 'Could not find authorization token')
     }
 
     try {
@@ -38,7 +39,8 @@ module.exports = {
       ].services.jwt.getToken(ctx)
 
       if (id === undefined) {
-        return unauthorized(ctx, 'Could not find token')
+        return ctx.send({})
+        // return unauthorized(ctx, 'Could not find token')
       }
 
       // fetch authenticated user
@@ -46,18 +48,19 @@ module.exports = {
         'users-permissions'
       ].services.user.fetchAuthenticatedUser(id)
     } catch (err) {
-      return unauthorized(ctx, err.message)
+      return ctx.send({})
+      // return unauthorized(ctx, err.message)
     }
 
     if (!ctx.state.user) {
-      return unauthorized(ctx, 'User does not exist')
+      return ctx.send({})
+      // return unauthorized(ctx, 'User does not exist')
     }
 
     return ctx.send({
       user: sanitizeEntity(ctx.state.user, {
         model: strapi.query('user', 'users-permissions').model,
       }),
-      status: 200,
     })
   },
 

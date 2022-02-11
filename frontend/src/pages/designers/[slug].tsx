@@ -1,10 +1,10 @@
 import React from 'react'
 
 import axios from '@/utils/axios'
-import { Divider } from '@/components'
+import { Divider } from '@/Components'
 import Layout from '@/Layout'
-import Markdown from '@/Markdown'
-import { Product } from '@/Products/ProductItems'
+import Markdown from '@/Components/Markdown'
+import { Product } from '@/Product/ProductItems'
 import { StrapiProduct, StrapiDesigner } from '@/types/models'
 
 export const Page = ({ data }) => {

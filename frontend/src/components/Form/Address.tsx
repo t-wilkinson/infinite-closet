@@ -3,7 +3,7 @@ import React from 'react'
 import axios from '@/utils/axios'
 import { useFields, Form, Input, Submit, UseFields } from '@/Form'
 import useSignin from '@/User/useSignin'
-import { Icon, iconClose } from '@/Icons'
+import { Icon, iconClose } from '@/Components/Icons'
 import { StrapiAddress } from '@/types/models'
 import useAnalytics from '@/utils/useAnalytics'
 

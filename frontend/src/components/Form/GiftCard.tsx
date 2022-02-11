@@ -19,13 +19,21 @@ import {
   BodyWrapper,
   useFields,
 } from '@/Form'
-import { Button } from '@/components'
+import { Button } from '@/Components'
 import { StrapiGiftCard } from '@/types/models'
 import { useSelector } from '@/utils/store'
-import { PaymentSubText } from '@/Checkout/Utils'
-import { Icon, iconDate } from '@/Icons'
+import { PaymentSubText } from '@/Order/Checkout/Utils'
+import { Icon, iconDate } from '@/Components/Icons'
 
 import { usePaymentElement } from './Payment'
+
+const createGiftCard = (data: any) => axios.post('/giftcards', data)
+const updateGiftCardValue = ({ paymentIntent, value }) =>
+  axios.put(
+    `/giftcards/payment-intent/${paymentIntent}`,
+    { value },
+    { withCredentials: false }
+  )
 
 interface GiftCardFields {
   value: number
@@ -88,16 +96,15 @@ const GiftCardContent = ({ fields }: { fields: UseFields<GiftCardFields> }) => {
     form: fields.form,
   })
   const [giftcard, setGiftcard] = React.useState<StrapiGiftCard>(null)
-  const stripe = useStripe()
   const user = useSelector((state) => state.user.data)
 
-  const onSubmit = React.useCallback(() => {
+  const onSubmit = React.useCallback(async () => {
     const cleaned = fields.clean()
     if (cleaned.recipientEmail !== cleaned.confirmRecipientEmail) {
       fields.get('confirmRecipientEmail').setError('Confirm email must match')
       throw 'Confirm email must match'
     }
-    payment.handleSubmit({
+    await payment.handleSubmit({
       formData: toFormData({
         ...cleaned,
         deliveryDate: cleaned.deliveryDate.toJSON(),
@@ -107,8 +114,9 @@ const GiftCardContent = ({ fields }: { fields: UseFields<GiftCardFields> }) => {
 
   React.useEffect(() => {
     payment.on('success', (data) => {
-      axios.post('/giftcards', data).then((giftcard) => {
-        setGiftcard(giftcard)
+      createGiftCard(data).then((giftCard) => {
+        setGiftcard(giftCard)
+        fields.setStatus('success')
       })
     })
   }, [])
@@ -120,14 +128,17 @@ const GiftCardContent = ({ fields }: { fields: UseFields<GiftCardFields> }) => {
     }
   }, [user])
 
-  React.useEffect(() => {}, [fields.status, stripe])
-
   if (fields.status === 'success' && giftcard) {
     return <BodyWrapper label={`Thank you for your purchase`} />
   }
 
   return (
     <Form onSubmit={onSubmit} fields={fields} className="w-full">
+      {process.env.NODE_ENV === 'development' && (
+        <button type="button" onClick={() => fields.setStatus(null)}>
+          reset
+        </button>
+      )}
       <GiftCardInfo fields={fields} />
       <GiftCardPayment fields={fields} />
     </Form>
@@ -187,9 +198,7 @@ const GiftCardInfo = ({ fields }) => {
         <Textarea field={fields.get('message')} rows={4} />
       </Fieldset>
       <div>
-        <Button onClick={nextPage}>
-          Proceed to Checkout
-        </Button>
+        <Button onClick={nextPage}>Proceed to Checkout</Button>
         <span>
           <Link href="/terms-and-conditions">
             <a className="underline">Terms and Conditions:</a>
@@ -238,14 +247,7 @@ export const GiftCard = ({ paymentIntent: paymentIntent_, fields }) => {
       return
     }
 
-    axios
-      .put(
-        `/giftcards/payment-intent/${paymentIntent.id}`,
-        {
-          value,
-        },
-        { withCredentials: false }
-      )
+    updateGiftCardValue({ paymentIntent: paymentIntent.id, value })
       .then((paymentIntent: any) => {
         setPaymentIntent(paymentIntent)
       })

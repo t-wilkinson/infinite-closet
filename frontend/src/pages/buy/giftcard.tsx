@@ -4,9 +4,9 @@ import Image from 'next/image'
 import axios from '@/utils/axios'
 import dayjs from '@/utils/dayjs'
 import Layout from '@/Layout'
-import { GiftCard, useGiftCardFields } from '@/Form/Payment'
 import { useSelector } from '@/utils/store'
-import { DatePicker } from '@/Form'
+import { GiftCard, useGiftCardFields } from '@/Form/Payment'
+import { DatePicker } from '@/Form/DatePicker'
 
 export const Page = ({ data }) => {
   const user = useSelector((state) => state.user.data)

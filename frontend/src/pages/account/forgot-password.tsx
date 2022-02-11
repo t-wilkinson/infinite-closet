@@ -1,7 +1,7 @@
 import React from 'react'
 
-import ForgotPassword from '@/Account/ForgotPassword'
-import Account from '@/Account'
+import ForgotPassword from '@/Form/ForgotPassword'
+import Account from '@/Layout/Account'
 
 export const Page = () => {
   return (

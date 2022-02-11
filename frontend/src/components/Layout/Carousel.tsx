@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Icon, iconLeft, iconRight } from '@/Icons'
+import { Icon, iconLeft, iconRight } from '@/Components/Icons'
 
 interface Rider {}
 

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import dayjs from '@/utils/dayjs'
-import { Icon, iconLeft, iconRight } from '@/Icons'
+import { Icon, iconLeft, iconRight } from '@/Components/Icons'
 import useDays from '@/utils/useDays'
 import { Dayjs } from '@/types'
 import { UseField } from '@/Form'
@@ -11,22 +11,28 @@ export interface DatePickerProps {
   selectedDate: UseField<Dayjs>
   visible: UseField<boolean>
   isValid: (date: Dayjs) => boolean
+  length?: number
+  onDateChange?: (date: Dayjs) => void
+  header?: any
+  footer?: any
 }
 
-export const DatePicker = ({ selectedDate, visible, isValid }: DatePickerProps) => {
+export const DatePicker = ({ selectedDate, visible, isValid, onDateChange=() => {}, length=1, header, footer}: DatePickerProps) => {
   return (
     <Popup
       close={() => visible.setValue(false)}
       spacing
-      className="w-auto"
+      className="w-auto p-12"
       isOpen={visible.value}
     >
-      <Date selectedDate={selectedDate} visible={visible} isValid={isValid} />
+      {header}
+      <Date selectedDate={selectedDate} visible={visible} isValid={isValid} length={length} onDateChange={onDateChange}/>
+      {footer}
     </Popup>
   )
 }
 
-const Date = ({ selectedDate, visible, isValid }) => {
+const Date = ({ selectedDate, visible, isValid, length, onDateChange}) => {
   const { date, setDate, days } = useDays(selectedDate.value)
   const ref = React.useRef()
   const [hover, setHover] = React.useState<Dayjs>()
@@ -37,6 +43,10 @@ const Date = ({ selectedDate, visible, isValid }) => {
       ref.current.focus()
     }
   }, [])
+
+  React.useEffect(() => {
+    onDateChange(date)
+  }, [date])
 
   return (
     <div ref={ref} tabIndex={-1}>
@@ -56,6 +66,7 @@ const Date = ({ selectedDate, visible, isValid }) => {
         visible={visible}
         days={days}
         isValid={isValid}
+        length={length}
       />
     </div>
   )
@@ -95,7 +106,9 @@ const MonthHeader = ({ setHover, setDate, date }) => {
   )
 }
 
-const Days = ({ isValid, hover, setHover, selectedDate, visible, days }) => {
+const Days = ({ isValid, hover, setHover, selectedDate, visible, days, length}) => {
+  const isBetween = (currentDate: Dayjs, date?: Dayjs) =>
+    date && currentDate.isBetween(date, date.add(length, 'days'), 'day', '[)')
 
   return (
     <div className="border-gray-light border-r border-b">
@@ -108,12 +121,13 @@ const Days = ({ isValid, hover, setHover, selectedDate, visible, days }) => {
                 key={date.day()}
                 date={date}
                 unavailable={!isValid(date)}
-                // selected={isBetween(date, selectedDate)}
-                hover={date.isSame(hover, 'day')}
+                selected={isBetween(date, selectedDate.value)}
+                hover={isBetween(date, hover)}
                 setHover={setHover}
                 isValid={isValid}
                 selectedDate={selectedDate}
                 visible={visible}
+                length={length}
               />
             ))}
           </div>
@@ -124,27 +138,25 @@ const Days = ({ isValid, hover, setHover, selectedDate, visible, days }) => {
 
 const Day = ({
   date,
-  // selected = false,
+  selected = false,
   unavailable = false,
   hover = false,
-  // previous = false,
   setHover,
   isValid,
   selectedDate,
   visible,
 }: {
   date: Dayjs
-  // selected: boolean
+  selected: boolean
   unavailable: boolean
   selectedDate: UseField<Dayjs>
   visible: UseField<boolean>
   hover: boolean
-  // previous: boolean
   setHover: (hover: Dayjs) => void
   isValid: (date: Dayjs) => boolean
+  length: number
 }) => (
   <button
-    key={date.day()}
     aria-label="Date"
     type="button"
     disabled={!isValid(date)}
@@ -162,10 +174,9 @@ const Day = ({
       }}
       className={`border-l border-t border-gray-light w-12 h-12 p-4 items-center justify-center
       ${hover ? 'bg-sec-light' : ''}
-      ${unavailable ? 'bg-gray-light text-gray-dark' : ''}
+      ${unavailable ? 'bg-gray-300 text-gray-dark' : ''}
+      ${selected ? 'bg-sec text-white' : ''}
       `}
-      // ${previous ? 'bg-sec-light' : ''}
-      // ${selected ? 'bg-sec text-white' : ''}
     >
       <span>{date.date()}</span>
     </div>

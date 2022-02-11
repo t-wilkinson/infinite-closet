@@ -165,15 +165,13 @@ module.exports = {
   /*
    * Non user-facing
    */
-  async contact({firstName, lastName, email, message, phoneNumber} = templateData.defaultData['contact-us']) {
-    const name = `${firstName} ${lastName}`
+  async contact({name, email, message, phoneNumber} = templateData.defaultData['contact-us']) {
     await send({
       template: 'contact-us',
       to: { name, email: 'info@infinitecloset.co.uk' },
       subject: `[Contact] ${name} `,
       data: {
-        firstName,
-        lastName,
+        name,
         email,
         phoneNumber,
         message,

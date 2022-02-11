@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {Icons, iconStarFill} from '@/Icons'
+import {Icons, iconStarFill} from '@/Components/Icons'
 
 import Warning from './Warning'
 

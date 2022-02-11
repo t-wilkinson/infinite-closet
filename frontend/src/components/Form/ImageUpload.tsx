@@ -1,7 +1,6 @@
 import Image from 'next/image'
-import {Icon} from '@/components'
 
-import {iconClose, iconPlus} from '@/components/Icons'
+import {Icon, iconClose, iconPlus} from '@/Components/Icons'
 
 export const ImageUpload = ({ field }) => {
   const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
