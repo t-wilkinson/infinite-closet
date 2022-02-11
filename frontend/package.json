@@ -45,6 +45,7 @@
     "@types/stripe-v3": "^3.1.26",
     "babel-jest": "^27.0.2",
     "better-docs": "^2.3.2",
+    "eslint": "^8.8.0",
     "eslint-config-react": "^1.1.7",
     "jest": "^27.0.4",
     "jest-css-modules-transform": "^4.3.0",

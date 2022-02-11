@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Layout from '@/Layout'
-import AddReview from '@/Product/ProductPage/AddReview'
+import { AddReview } from '@/Order/Review'
 
 export const Page = () => {
   return <Layout title="Review Your Purchases">

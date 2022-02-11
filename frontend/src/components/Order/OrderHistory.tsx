@@ -11,8 +11,7 @@ dayjs.extend(timezone)
 import { fmtPrice } from '@/utils/helpers'
 import { getURL } from '@/utils/axios'
 import { useDispatch, useSelector } from '@/utils/store'
-import { OrderUtils } from '@/Order'
-import { getRentalLength } from '@/Order/Cart/api'
+import { getRentalLength, OrderUtils } from '@/Order'
 
 export const Orders = () => {
   const dispatch = useDispatch()
