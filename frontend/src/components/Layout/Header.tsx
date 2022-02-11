@@ -45,6 +45,9 @@ const LargeHeader = ({ user, router }) => (
       className={`w-full justify-center h-32
      ${router.pathname === '/' ? 'my-4' : ''} `}
     >
+      {user && <div className="absolute right-0 top-0 p-4">
+        {user.email}
+      </div>}
       <div className="relative justify-between items-center">
         <LargeHeaderLogo router={router} />
         <div className="absolute xl:bottom-0 right-0 -mb-1 mt-0 mr-4 z-20">
