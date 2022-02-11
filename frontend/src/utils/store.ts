@@ -7,7 +7,7 @@ enableMapSet()
 import productsSlice from '@/Product/slice'
 import layoutSlice from '@/Layout/slice'
 import shopSlice from '@/Product/ProductPage/slice'
-import rootSlice from '@/slice'
+import rootSlice from '../components/slice'
 import userSlice from '@/User/slice'
 import ordersSlice from '@/Order/slice'
 
