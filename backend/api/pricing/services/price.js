@@ -41,7 +41,7 @@ function discount({
     isCouponValid,
     outOfStockTotal,
   })
-  if (!isGiftCardValid) {
+  if (!isCouponValid) {
     couponDiscount = 0
     coupon = null
   }

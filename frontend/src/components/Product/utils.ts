@@ -1,5 +1,5 @@
 import { getURL } from '@/utils/axios'
-import { StrapiProduct } from '@/types'
+import { StrapiProduct } from '@/types/models'
 
 export const productImageProps = (product: StrapiProduct) => {
   const mainImage = product.images[0]

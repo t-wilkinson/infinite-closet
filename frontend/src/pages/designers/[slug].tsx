@@ -4,7 +4,7 @@ import axios from '@/utils/axios'
 import { Divider } from '@/Components'
 import Layout from '@/Layout'
 import Markdown from '@/Components/Markdown'
-import { Product } from '@/Product/ProductItems'
+import { ProductItem } from '@/Product/ProductItem'
 import { StrapiProduct, StrapiDesigner } from '@/types/models'
 
 export const Page = ({ data }) => {
@@ -23,7 +23,7 @@ export const Page = ({ data }) => {
 
           <div className="flex-row flex-wrap w-full">
             {designer.products.map((product: StrapiProduct) => (
-              <Product key={product.id} product={product} />
+              <ProductItem key={product.id} product={product} />
             ))}
           </div>
         </div>

@@ -113,7 +113,7 @@ const all = async () => {
       await getMailchimpItems()
     )
   } catch (e) {
-    console.log(e, e.stack, e.message)
+    console.error(e, e.stack, e.message)
   }
   strapi.log.info('Sync mailchimp cart')
 }

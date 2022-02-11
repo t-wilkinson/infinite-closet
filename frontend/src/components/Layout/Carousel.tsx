@@ -23,25 +23,34 @@ export const Carousel = ({
 
   return (
     <div className="flex-row w-full items-center space-x-12">
-      <button
-        className={`${notTooSmall ? 'text-gray-black' : 'text-gray-light'}`}
+      <CarouselArrow
+        valid={notTooSmall}
         onClick={() => notTooSmall && setIndex(index - 1)}
-      >
-        <Icon icon={iconLeft} size={30} />
-      </button>
+        icon={iconLeft}
+      />
       {riders.slice(index, index + pageSize).map((rider, i) => (
         <div {...inner} key={index + i}>
           <Renderer {...map(rider)} />
         </div>
       ))}
-      <button
-        className={`${notTooBig ? 'text-gray-black' : 'text-gray-light'}`}
+      <CarouselArrow
+        valid={notTooBig}
         onClick={() => notTooBig && setIndex(index + 1)}
-      >
-        <Icon icon={iconRight} size={30} />
-      </button>
+        icon={iconRight}
+      />
     </div>
   )
 }
+
+const CarouselArrow = ({ valid, icon, onClick }) =>
+  <button
+    className={` rounded-full p-3
+      ${valid ? 'text-white bg-gray-black' : 'text-white bg-gray-light'}
+    `}
+    onClick={onClick}
+  >
+    <Icon icon={icon} size={20} />
+  </button>
+
 
 export default Carousel

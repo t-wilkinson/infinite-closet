@@ -44,6 +44,7 @@ module.exports = withPlugins([withPWA, [withBundleAnalyzer]], {
     defaultLocale: 'en-GB',
   },
   images: {
+    minimumCacheTTL: 60 * 60,
     deviceSizes: [1024, 1920, 2048, 3840],
     domains: [
       'ic.com',

@@ -5,7 +5,8 @@ import { StrapiOrder } from '@/types/models'
 import dayjs from '@/utils/dayjs'
 import { useDispatch } from '@/utils/store'
 
-import { productImageProps } from '@/Product/utils'
+// import { productImageProps } from '@/Product/utils'
+import { ProductImages } from '@/Product/ProductItem'
 import { Popup } from '@/Layout'
 import { AddToCartFields } from '@/Product/ProductPage/types'
 import { useFields, Form, Submit } from '@/Form'
@@ -52,12 +53,13 @@ export const EditCartItem = ({ order, isOpen, close, onSubmit = () => {} }) => {
       close={close}
       isOpen={isOpen}
     >
-      <div className="h-48 w-full relative">
-        <Image
-          layout="fill"
-          objectFit="contain"
-          {...productImageProps(order.product)}
-        />
+      <div className="relative"
+        style={{
+          width: '12rem',
+          height: '12rem',
+        }}
+      >
+        <ProductImages product={order.product} />
       </div>
       <Form fields={fields} onSubmit={updateOrder} resubmit>
         <DatePicker fields={fields} product={order.product} />

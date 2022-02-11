@@ -7,7 +7,7 @@ import { StrapiOrder } from '@/types/models'
 
 import { Divider } from '@/Components'
 import Carousel from '@/Layout/Carousel'
-import { ProductImages, ProductInfo } from '@/Product/ProductItems'
+import { ProductImages, ProductInfo } from '@/Product/ProductItem'
 import { EditCartItem } from '@/Order/Cart'
 import { removeOrderItem, OrderUtils } from '@/Order'
 export * from './api'

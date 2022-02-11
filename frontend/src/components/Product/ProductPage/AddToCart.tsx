@@ -56,7 +56,6 @@ export const productRentContents = {
       product.sizes,
       fields.get('size').value
     )?.quantity
-    console.log(addedFavorite)
 
     return (
       <Form

@@ -7,3 +7,29 @@
   padding: 0.5em 2em;
   background: #efefef;
 }
+
+@keyframes product-item--hide {
+  from {
+    opacity: 100;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes product-item--show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 100;
+  }
+}
+
+.animate-show {
+  animation: product-item--show 0.5s ease-out both;
+}
+
+.animate-hide {
+  animation: product-item--hide 0.5s ease-in both;
+}
