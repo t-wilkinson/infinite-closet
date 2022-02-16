@@ -6,8 +6,14 @@ export * from './Cart/types'
 export type Orders = StrapiOrder[]
 export type Order = StrapiOrder
 
+export interface Checkout{
+  orders: CartItems
+}
+
+export type CheckoutHistory = Checkout[]
+
 export interface State {
-  orderHistory?: CartItems
+  checkoutHistory?: CheckoutHistory
   checkoutSummary?: Summary
   checkoutCart?: CartItems
   count?: number

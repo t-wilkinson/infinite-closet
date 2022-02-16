@@ -78,6 +78,7 @@ module.exports = {
       return ctx.send(null)
     }
 
+    // TODO: create paymentIntent but never confirm it
     // Charge user and checkout order
     try {
       const paymentIntent = await stripe.paymentIntents.create({
@@ -151,11 +152,15 @@ module.exports = {
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
-      return ctx.send(await strapi.plugins['orders'].services.cart.onCheckout(data))
+      return ctx.send(
+        await strapi.plugins['orders'].services.cart.onCheckout(data)
+      )
     }
 
     try {
-      return ctx.send(await strapi.plugins['orders'].services.cart.onCheckout(data))
+      return ctx.send(
+        await strapi.plugins['orders'].services.cart.onCheckout(data)
+      )
     } catch (e) {
       strapi.log.error('PaymentRequest paymentIntent did not succeed', {
         cart: data.cart,
@@ -215,6 +220,33 @@ module.exports = {
         .update({ id: order.id }, { paymentIntent: paymentIntent.id })
     )
     ctx.send(paymentIntent)
+  },
+
+  async userCheckoutHistory(ctx) {
+    const user = ctx.state.user
+    let checkouts
+    checkouts = await strapi
+      .query('checkout')
+      .find({ user: user.id }, ['purchase', 'orders'])
+    checkouts = await Promise.all(
+      checkouts.map(async (checkout) => {
+        checkout.orders = await Promise.all(
+          checkout.orders.map((order) =>
+            strapi.plugins['orders'].services.cart.createCartItem(order)
+          )
+        )
+        try {
+          const paymentIntent = await stripe.paymentIntents.retrieve(
+            checkout.purchase.paymentIntent
+          )
+          checkout.purchase.paymentIntent = paymentIntent
+        } catch {
+          checkout.purchase.paymentIntent = null
+        }
+        return checkout
+      })
+    )
+    ctx.send(checkouts)
   },
 }
 

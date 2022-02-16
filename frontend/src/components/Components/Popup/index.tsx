@@ -24,7 +24,7 @@ export const Popup = ({ popup }) => {
 
   return (
     <PopupWrapper
-      isOpen={popup}
+      isOpen={popup !== 'hidden'}
       close={() => dispatch(rootActions.hidePopup())}
       spacing
     >

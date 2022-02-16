@@ -48,10 +48,6 @@ function getStorageOrders() {
 
 export const getGuestOrders = getStorageOrders
 
-export async function orderHistory(user: StrapiUser): Promise<CartItems> {
-  return user ? axios.get(`/orders/cart/history/${user.id}`) : Promise.resolve([])
-}
-
 export async function updateUserOrder(order: Partial<Order>) {
   return await axios.put<void>(`/orders/${order.id}`, order)
 }
@@ -66,10 +62,23 @@ export async function updateOrder(user: StrapiUser, order: Partial<Order>) {
   return user ? updateUserOrder(order) : updateGuestOrder(order)
 }
 
-export const createUserOrder = async (order: Partial<Order>) => axios.post<void>('/orders', order)
-export const createGuestOrder = async (order: Partial<Order>) => axios.post<Order>('/orders', order, {
-  withCredentials: false
-})
-export const createOrder = async (user: StrapiUser, order: Partial<Order>) => user ? createUserOrder(order) : createGuestOrder(order)
+export const createUserOrder = async (order: Partial<Order>) =>
+  axios.post<void>('/orders', order)
+export const createGuestOrder = async (order: Partial<Order>) =>
+  axios.post<Order>('/orders', order, {
+    withCredentials: false,
+  })
+export const createOrder = async (user: StrapiUser, order: Partial<Order>) =>
+  user ? createUserOrder(order) : createGuestOrder(order)
 
-export const countUserOrders = async () => axios.get<number>('/orders/cart/count')
+export const countUserOrders = async () =>
+  axios.get<number>('/orders/cart/count')
+
+// export const orderPaymentIntents = async (user) =>
+//   axios.get(`/orders/cart/payments/${user.id}`)
+
+export async function checkoutHistory(user: StrapiUser): Promise<CartItems> {
+  return user
+    ? axios.get(`/orders/checkout/history/${user.id}`)
+    : Promise.resolve([])
+}

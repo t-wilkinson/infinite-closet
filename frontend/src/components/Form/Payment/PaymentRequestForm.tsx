@@ -7,7 +7,7 @@ import { Contact, Summary } from '@/types'
 
 import { validatePostcode } from '@/Form/Address'
 import { UseFormField } from '@/Form'
-import { CartItem } from '@/Cart/types'
+import { CartItem } from '@/Order/Cart/types'
 
 export const PaymentRequestForm = ({
   form,

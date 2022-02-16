@@ -1,31 +1,35 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import dayjs from 'dayjs'
-import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
-
-dayjs.extend(utc)
-dayjs.extend(timezone)
 
 import { fmtPrice } from '@/utils/helpers'
+import dayjs from '@/utils/dayjs'
 import { getURL } from '@/utils/axios'
 import { useDispatch, useSelector } from '@/utils/store'
 import { getRentalLength, OrderUtils } from '@/Order'
 
 export const Orders = () => {
   const dispatch = useDispatch()
-  const cart = useSelector((state) => state.orders.orderHistory)
+  const history = useSelector((state) => state.orders.checkoutHistory)
 
   React.useEffect(() => {
     dispatch(OrderUtils.history())
   }, [])
 
   return (
-    <div className="">
-      {cart.map((item) => (
-        <OrderItem key={item.order.id} item={item} />
-      ))}
+    <div className="space-y-6">
+      {history.map((checkout) => {
+        const paymentStatus = checkout.purchase?.paymentIntent?.status
+
+        return (
+          <div className="border border-gray p-2">
+            <strong>{dayjs(checkout.created_at).format('ddd, MMM D')}</strong>
+            {checkout.orders.map((item) => (
+              <OrderItem key={item.order.id} item={item} />
+            ))}
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -41,7 +45,7 @@ export const OrderItem = ({ item }) => {
 
   return (
     <div
-      className={`relative flex-row items-center border p-4 rounded-sm relative bg-white my-2
+      className={`relative flex-row items-center rounded-sm relative bg-white my-2
         ${order.available <= 0 ? 'border-warning' : 'border-gray'}
         `}
     >
@@ -76,7 +80,7 @@ export const OrderItem = ({ item }) => {
       </div>
       {!order.review && order.status === 'completed' && (
         <Link href={`/review/${order.product.slug}`}>
-          <a className="absolute right-0 m-2 p-3 bg-pri hover:bg-sec transition-all duration-300 text-white rounded-sm font-bold text-sm">
+          <a className="text-center md:absolute right-0 m-2 p-3 bg-pri hover:bg-sec transition-all duration-300 text-white rounded-sm font-bold text-sm">
             Review product
           </a>
         </Link>
@@ -85,17 +89,28 @@ export const OrderItem = ({ item }) => {
   )
 }
 
-const getStatus = ({status, position}) => {
+const getStatus = (props) => {
+  if (!props) {
+    return ''
+  }
+
+  const { status, position } = props
   if (status === 'delayed') {
     return 'Delayed'
   }
   switch (position) {
-    case 'confirmed': return 'Confirmed'
-    case 'shipped': return 'Shipping'
-    case 'start': return 'In use'
-    case 'end': return 'In use'
-    case 'cleaned': return 'Completed'
-    case 'completed': return 'Completed'
+    case 'confirmed':
+      return 'Confirmed'
+    case 'shipped':
+      return 'Shipping'
+    case 'start':
+      return 'In use'
+    case 'end':
+      return 'In use'
+    case 'cleaned':
+      return 'Completed'
+    case 'completed':
+      return 'Completed'
   }
 }
 

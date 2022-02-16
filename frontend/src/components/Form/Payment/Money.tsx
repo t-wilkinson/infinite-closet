@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { getInputProps } from './Input'
-import { UseField } from './types'
+import { getInputProps } from '@/Form/Input'
+import { UseField } from '@/Form/types'
 
 export const Money = ({ amounts, field }) => {
   const inputProps = getInputProps(field)
@@ -54,5 +54,3 @@ export const MoneyAmounts = ({ amounts, field }) => (
     <Money amounts={amounts} field={field} />
   </div>
 )
-
-export default Money

@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { Elements, PaymentElement, useStripe } from '@stripe/react-stripe-js'
+import { Elements, PaymentElement } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 const promise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY)
 
@@ -14,7 +14,6 @@ import {
   Form,
   Submit,
   Fieldset,
-  MoneyAmounts,
   UseFields,
   BodyWrapper,
   useFields,
@@ -25,7 +24,8 @@ import { useSelector } from '@/utils/store'
 import { PaymentSubText } from '@/Order/Checkout/Utils'
 import { Icon, iconDate } from '@/Components/Icons'
 
-import { usePaymentElement } from './Payment'
+import { MoneyAmounts } from './Money'
+import { usePaymentElement } from './PaymentElement'
 
 const createGiftCard = (data: any) => axios.post('/giftcards', data)
 const updateGiftCardValue = ({ paymentIntent, value }) =>

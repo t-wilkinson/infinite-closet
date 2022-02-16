@@ -1,6 +1,6 @@
 'use strict'
 
-async function getUserOrders(user, status) {
+async function getUserOrders(user, status, include) {
   const orders = await strapi.query('order', 'orders').find(
     {
       user: user.id,
@@ -10,7 +10,7 @@ async function getUserOrders(user, status) {
         ? { status_in: status }
         : { status: status }),
     },
-    ['review']
+    include
   )
   await Promise.all(
     orders.map(async (order) => {
@@ -74,19 +74,19 @@ module.exports = {
 
   async getUserFavorites(ctx) {
     const user = ctx.state.user
-    const orders = await getUserOrders(user, 'list')
+    const orders = await getUserOrders(user, 'list', ['review'])
     ctx.send(strapi.plugins['orders'].services.cart.sanitizeOrders(orders))
   },
 
   async getUserOrders(ctx) {
     const user = ctx.state.user
-    const orders = await getUserOrders(user, 'cart')
+    const orders = await getUserOrders(user, 'cart', ['review'])
     ctx.send(strapi.plugins['orders'].services.cart.sanitizeOrders(orders))
   },
 
   async viewUserCart(ctx) {
     const user = ctx.state.user
-    const orders = await getUserOrders(user, 'cart')
+    const orders = await getUserOrders(user, 'cart', ['review'])
     const cart = await strapi.plugins['orders'].services.cart.create(orders)
     ctx.send(strapi.plugins['orders'].services.cart.sanitizeCart(cart))
   },
@@ -111,13 +111,6 @@ module.exports = {
         })
     )
 
-    const cart = await strapi.plugins['orders'].services.cart.create(orders)
-    ctx.send(strapi.plugins['orders'].services.cart.sanitizeCart(cart))
-  },
-
-  async viewUserOrderHistory(ctx) {
-    const user = ctx.state.user
-    const orders = await getUserOrders(user, ['shipping', 'completed'])
     const cart = await strapi.plugins['orders'].services.cart.create(orders)
     ctx.send(strapi.plugins['orders'].services.cart.sanitizeCart(cart))
   },

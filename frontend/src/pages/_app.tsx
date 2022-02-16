@@ -129,9 +129,11 @@ const Wrapper = ({ router, children }) => {
     }
 
     if (firebase.apps.length === 0) {
-      firebase.initializeApp(
-        JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG.toString())
-      )
+      const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG.toString())
+      firebase.initializeApp(firebaseConfig)
+      if (process.env.NODE_ENV === 'development') {
+        window.gtag?.('config', firebaseConfig.measurementId, { 'debug_mode':true });
+      }
     }
 
     dispatch(layoutActions.loadFirebase(firebase.analytics()))

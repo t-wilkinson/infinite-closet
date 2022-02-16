@@ -11,7 +11,7 @@ import * as favoritesApi from './Favorite/api'
 
 const initialState: State = {
   checkoutCart: [],
-  orderHistory: [],
+  checkoutHistory: [],
   favorites: [],
 }
 
@@ -73,7 +73,7 @@ export const OrderUtils = {
     'orders/history',
     async (_, { getState }) => {
       const user = getUser(getState)
-      return api.orderHistory(user)
+      return api.checkoutHistory(user)
     }
   ),
   update: createAsyncThunk<void, Partial<StrapiOrder>>(
@@ -169,7 +169,7 @@ export const slice = createSlice({
     builder.addCase(
       OrderUtils.history.fulfilled,
       (state, action: PayloadAction<CartItems>) => {
-        state.orderHistory = action.payload
+        state.checkoutHistory = action.payload
         state.count = Object.values(action.payload).length
       }
     )
