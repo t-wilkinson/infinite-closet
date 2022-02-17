@@ -1,6 +1,8 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import { useStripe } from '@stripe/react-stripe-js'
 
+import { fmtPrice } from '@/utils/helpers'
 import Layout from '@/Layout'
 import { Form, Submit, useFields, BodyWrapper } from '@/Form'
 import {
@@ -20,14 +22,14 @@ export const Page = () => {
   return (
     <Layout>
       <PaymentWrapper clientSecret={clientSecret}>
-        <ConfirmPayment />
+        <ConfirmPayment clientSecret={clientSecret} />
       </PaymentWrapper>
       <div className="h-8" />
     </Layout>
   )
 }
 
-const ConfirmPayment = () => {
+const ConfirmPayment = ({clientSecret}) => {
   const fields = useFields<{
     paymentStatus: any
   }>({
@@ -36,6 +38,8 @@ const ConfirmPayment = () => {
   const payment = usePaymentElement({
     fields,
   })
+  const [paymentIntent, setPaymentIntent] = React.useState()
+  const stripe = useStripe()
 
   const onSubmit = React.useCallback(async () => {
     await payment.handleSubmit({})
@@ -44,6 +48,12 @@ const ConfirmPayment = () => {
   React.useEffect(() => {
     payment.on('success', () => {})
   }, [])
+
+  React.useEffect(() => {
+    if (stripe) {
+    stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => setPaymentIntent(paymentIntent))
+    }
+  }, [stripe])
 
   if (fields.status === 'success') {
     return <BodyWrapper label={`Thank you for your purchase`} />
@@ -61,7 +71,9 @@ const ConfirmPayment = () => {
   return (
     <Form fields={fields} onSubmit={onSubmit}>
       <PaymentElement id="payment-element" />
-      <Submit form={fields.form} />
+      <Submit form={fields.form}>
+        Pay {paymentIntent && fmtPrice(paymentIntent.amount / 100)}
+      </Submit>
     </Form>
   )
 }
