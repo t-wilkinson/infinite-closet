@@ -22,6 +22,7 @@ const updateFormStatus = (fields, paymentIntent) => {
       fields.form.setError('Payment failed. Please try another payment method.')
       break
     case 'requires_action':
+      console.log('requires_action', paymentIntent)
       fields.form.setValue('error')
       fields.setValue('paymentStatus', {
         type: 'requires_action',

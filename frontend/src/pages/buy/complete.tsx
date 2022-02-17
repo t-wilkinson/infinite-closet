@@ -55,11 +55,13 @@ const ConfirmPayment = ({clientSecret}) => {
     }
   }, [stripe])
 
-  if (fields.status === 'success') {
+  console.log('paymentIntent', paymentIntent)
+  if (fields.status === 'success' || paymentIntent?.status === 'succeeded') {
     return <BodyWrapper label={`Thank you for your purchase`} />
   }
 
   const paymentStatus = fields.value('paymentStatus')
+  console.log('paymentStatus', paymentStatus)
   if (paymentStatus?.type === 'requires_action') {
     return (
       <div>
