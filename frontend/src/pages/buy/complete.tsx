@@ -2,6 +2,7 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useStripe } from '@stripe/react-stripe-js'
 
+import axios from '@/utils/axios'
 import { fmtPrice } from '@/utils/helpers'
 import Layout from '@/Layout'
 import { Form, Submit, useFields, BodyWrapper } from '@/Form'
@@ -10,6 +11,7 @@ import {
   PaymentElement,
   usePaymentElement,
 } from '@/Form/Payment'
+import { handleServerResponse } from '@/Order/Checkout/Utils'
 
 export const Page = () => {
   const router = useRouter()
@@ -38,7 +40,7 @@ const ConfirmPayment = ({clientSecret}) => {
   const payment = usePaymentElement({
     fields,
   })
-  const [paymentIntent, setPaymentIntent] = React.useState()
+  const [paymentIntent, setPaymentIntent] = React.useState<any>()
   const stripe = useStripe()
 
   const onSubmit = React.useCallback(async () => {
@@ -51,7 +53,7 @@ const ConfirmPayment = ({clientSecret}) => {
 
   React.useEffect(() => {
     if (stripe) {
-    stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => setPaymentIntent(paymentIntent))
+      stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => setPaymentIntent(paymentIntent))
     }
   }, [stripe])
 
@@ -60,12 +62,23 @@ const ConfirmPayment = ({clientSecret}) => {
     return <BodyWrapper label={`Thank you for your purchase`} />
   }
 
-  const paymentStatus = fields.value('paymentStatus')
-  console.log('paymentStatus', paymentStatus)
-  if (paymentStatus?.type === 'requires_action') {
+  React.useEffect(() => {
+    if (stripe && paymentIntent && paymentIntent.type === 'requires_action' && paymentIntent.next_action.type === 'use_stripe_sdk') {
+      axios.post('/orders/checkout/confirm', {paymentIntent: paymentIntent.id}, {withCredentials: false})
+      .then((res) => handleServerResponse(res, stripe, fields.form))
+      .catch(() => {
+          throw new Error(
+            'We ran into an issue processing your payment. Please try again later.'
+          )
+      })
+      return null
+    }
+  }, [stripe, paymentIntent])
+
+  if (paymentIntent && paymentIntent.type === 'requires_action' && paymentIntent.next_action.type === 'redirect_to_url') {
     return (
       <div>
-        <iframe src={paymentStatus.url} width={600} height={400} />
+        <iframe src={paymentIntent.next_action.redirect_to_url.url} width={600} height={400} />
       </div>
     )
   }

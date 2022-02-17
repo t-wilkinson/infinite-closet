@@ -103,6 +103,20 @@ module.exports = {
     }
   },
 
+  async confirmPayment(ctx) {
+    const body = { ...(ctx.request.body.body || {}), ...ctx.request.body }
+
+    try {
+      let intent = await stripe.paymentIntents.confirm(body.paymentIntent)
+      const response = generateResponse(intent)
+
+      return ctx.send({ ...response, body })
+    } catch (e) {
+      strapi.log.error('checkoutGuest error', e.stack)
+      return ctx.badRequest({ error: 'Could not process payment', body })
+    }
+  },
+
   async checkoutGuest(ctx) {
     const body = { ...(ctx.request.body.body || {}), ...ctx.request.body }
     const data = await prepareData(body)

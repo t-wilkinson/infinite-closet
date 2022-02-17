@@ -57,6 +57,14 @@
         "policies": []
       }
     },
+    {
+      "method": "POST",
+      "path": "/checkout/confirm",
+      "handler": "checkout.confirmPayment",
+      "config": {
+        "policies": []
+      }
+    },
 
     {
       "method": "GET",
