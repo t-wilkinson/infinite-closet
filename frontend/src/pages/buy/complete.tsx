@@ -63,7 +63,7 @@ const ConfirmPayment = ({clientSecret}) => {
   }
 
   React.useEffect(() => {
-    if (stripe && paymentIntent && paymentIntent.type === 'requires_action' && paymentIntent.next_action.type === 'use_stripe_sdk') {
+    if (stripe && paymentIntent && paymentIntent.status === 'requires_action' && paymentIntent.next_action.type === 'use_stripe_sdk') {
       axios.post('/orders/checkout/confirm', {paymentIntent: paymentIntent.id}, {withCredentials: false})
       .then((res) => handleServerResponse(res, stripe, fields.form))
       .catch(() => {

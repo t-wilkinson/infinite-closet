@@ -24,10 +24,10 @@ const updateFormStatus = (fields, paymentIntent) => {
     case 'requires_action':
       console.log('requires_action', paymentIntent)
       fields.form.setValue('error')
-      fields.setValue('paymentStatus', {
-        type: 'requires_action',
-        url: paymentIntent.next_action.redirect_to_url.url,
-      })
+      // fields.setValue('paymentStatus', {
+      //   type: 'requires_action',
+      //   url: paymentIntent.next_action.redirect_to_url.url,
+      // })
       break
     default:
       fields.form.setValue('error')
