@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import './styles.css'
-import { defaultData } from './utils/data'
+import { defaultData } from './utils/data.js'
 
 // Misc
 import Components from './email-templates/components'
@@ -19,6 +19,7 @@ import OrderReview from './email-templates/order-review'
 // Money
 import GiftCard from './email-templates/gift-card'
 import StoreCredit from './email-templates/store-credit'
+import PurchaseSuccess from './email-templates/purchase-success'
 
 // Non user-facing
 import TrustPilot from './email-templates/trust-pilot'
@@ -50,6 +51,7 @@ const templates = {
 
   money: {
     label: 'Money',
+    'purchase-success': PurchaseSuccess,
     'gift-card': GiftCard,
     'store-credit': StoreCredit,
   },

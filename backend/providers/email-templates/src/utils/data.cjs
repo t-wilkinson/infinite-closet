@@ -145,4 +145,7 @@ const defaultData = {
   },
 }
 
-export { cartItem, defaultData }
+module.exports = {
+  cartItem,
+  defaultData,
+}

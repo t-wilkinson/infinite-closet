@@ -1,16 +1,13 @@
 import React from 'react'
 
 import Profile from '@/User/Profile'
-import User from '@/User'
-import Layout from '@/Layout'
+import User from '@/Layout/User'
 
 export const Page = () => {
   return (
-    <Layout>
-      <User>
-        <Profile />
-      </User>
-    </Layout>
+    <User>
+      <Profile />
+    </User>
   )
 }
 

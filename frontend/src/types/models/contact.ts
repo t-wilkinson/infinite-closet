@@ -4,9 +4,9 @@
 export interface StrapiContact {
   id: string;
   email?: string;
-  phoneNumber?: string;
   firstName?: string;
   lastName?: string;
+  phoneNumber?: string;
   dateOfBirth?: Date;
   subscribed?: boolean;
   metadata?: { [key: string]: any };

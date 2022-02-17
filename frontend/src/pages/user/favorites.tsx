@@ -1,7 +1,6 @@
 import React from 'react'
 
-import Layout from '@/Layout'
-import User from '@/User'
+import User from '@/Layout/User'
 import { OrderUtils } from '@/Order'
 import { useDispatch, useSelector } from '@/utils/store'
 import { StrapiOrder } from '@/types/models'
@@ -17,11 +16,9 @@ export const Page = () => {
   }, [user])
 
   return (
-    <Layout>
-      <User allowGuest>
-        <Favorites favorites={favorites} />
-      </User>
-    </Layout>
+    <User allowGuest>
+      <Favorites favorites={favorites} />
+    </User>
   )
 }
 

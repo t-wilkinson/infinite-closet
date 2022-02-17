@@ -2,6 +2,12 @@
 
 const { toId, day } = require('../../../utils')
 
+async function onProcessing() {
+}
+
+async function onConfirm() {
+}
+
 const lifecycles = {
   async shipped(cartItem) {
     // Send user email if their order is shipping today

@@ -27,13 +27,15 @@ const buttonClassName = ({ role = 'primary', className = '', disabled=false}) =>
           ? 'text-black bg-white border border-black'
           : role === 'cta'
           ? 'text-white bg-sec hover:bg-pri rounded-sm font-bold'
+          : role === 'error'
+          ? 'text-white bg-warning rounded-sm font-bold'
           : ''
       }
 `
 
-export const ButtonLink = ({ className = '', href, children }) => (
+export const ButtonLink = ({ className = '', href, role=undefined, children }) => (
   <Link href={href}>
-    <a className={buttonClassName({ className })}>{children}</a>
+    <a className={buttonClassName({ className, role })}>{children}</a>
   </Link>
 )
 

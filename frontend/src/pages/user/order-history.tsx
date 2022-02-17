@@ -1,14 +1,11 @@
 import OrderHistory from '@/Order/OrderHistory'
-import User from '@/User'
-import Layout from '@/Layout'
+import User from '@/Layout/User'
 
 export const Page = () => {
   return (
-    <Layout>
-      <User>
-        <OrderHistory />
-      </User>
-    </Layout>
+    <User>
+      <OrderHistory />
+    </User>
   )
 }
 

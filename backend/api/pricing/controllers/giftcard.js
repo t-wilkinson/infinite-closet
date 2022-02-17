@@ -10,6 +10,9 @@ module.exports = {
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency: 'gbp',
+      metadata: {
+        context: 'gift-card',
+      },
     })
     ctx.send(paymentIntent)
   },

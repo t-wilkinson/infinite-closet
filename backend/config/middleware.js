@@ -1,5 +1,9 @@
 module.exports = {
   settings: {
+    parser: {
+      enabled: true,
+      includeUnparsed: true,
+    },
     cors: {
       enabled: true,
       origin: [

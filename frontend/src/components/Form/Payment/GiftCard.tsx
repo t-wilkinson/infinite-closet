@@ -1,8 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import { Elements, PaymentElement } from '@stripe/react-stripe-js'
-import { loadStripe } from '@stripe/stripe-js'
-const promise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY)
 
 import { toFullname } from '@/utils/helpers'
 import dayjs, { createDateFormat } from '@/utils/dayjs'
@@ -25,9 +22,11 @@ import { PaymentSubText } from '@/Order/Checkout/Utils'
 import { Icon, iconDate } from '@/Components/Icons'
 
 import { MoneyAmounts } from './Money'
-import { usePaymentElement } from './PaymentElement'
+import { PaymentElement, usePaymentElement } from './PaymentElement'
+import { PaymentWrapper } from './PaymentWrapper'
 
 const createGiftCard = (data: any) => axios.post('/giftcards', data)
+
 const updateGiftCardValue = ({ paymentIntent, value }) =>
   axios.put(
     `/giftcards/payment-intent/${paymentIntent}`,
@@ -46,6 +45,7 @@ interface GiftCardFields {
   currentPage: 'info' | 'payment'
   deliveryDate: Dayjs
   dateSelectorVisible: boolean
+  paymentStatus: null
 }
 
 const values = [10, 25, 50]
@@ -54,6 +54,7 @@ export const useGiftCardFields = ({ user = null } = {}) =>
   useFields<GiftCardFields>({
     value: { constraints: 'min:0 number', default: values[0] },
     currentPage: { default: 'info' },
+    paymentStatus: { default: null },
     recipientName: {
       constraints: 'required',
       label: 'Recipients Name',
@@ -92,9 +93,7 @@ const toFormData = (object: object) =>
   }, new FormData())
 
 const GiftCardContent = ({ fields }: { fields: UseFields<GiftCardFields> }) => {
-  const payment = usePaymentElement({
-    form: fields.form,
-  })
+  const payment = usePaymentElement({fields})
   const [giftcard, setGiftcard] = React.useState<StrapiGiftCard>(null)
   const user = useSelector((state) => state.user.data)
 
@@ -257,23 +256,9 @@ export const GiftCard = ({ paymentIntent: paymentIntent_, fields }) => {
       })
   }, [fields.value('value')])
 
-  const options = {
-    clientSecret,
-    appearance: {
-      theme: 'stripe',
-      fonts: ['Lato'],
-      variables: {
-        colorPrimary: '#ad9253',
-        colorText: '#000000',
-        borderRadius: '0.125rem',
-        borderColor: '#5f6368',
-      },
-    },
-  } as any
-
   return (
-    <Elements stripe={promise} options={options}>
+    <PaymentWrapper clientSecret={clientSecret}>
       <GiftCardContent fields={fields} />
-    </Elements>
+    </PaymentWrapper>
   )
 }

@@ -1,5 +1,3 @@
-import { StrapiUser } from './user';
-
 /**
  * Model definition for Gift Card
  */
@@ -8,7 +6,12 @@ export interface StrapiGiftCard {
   value: number;
   code?: string;
   paymentIntent?: string;
-  owner?: StrapiUser;
+  senderName?: string;
+  senderEmail?: string;
+  recipientName?: string;
+  recipientEmail?: string;
+  message?: string;
+  deliveryDate?: Date;
   created_at: string;
   created_by: string;
   updated_at: string;

@@ -29,7 +29,7 @@ var _reactDom2 = _interopRequireDefault(_reactDom);
 
 require('./styles.css');
 
-var _data = require('./utils/data');
+var _data = require('./utils/data.js');
 
 var _components = require('./email-templates/components');
 
@@ -66,6 +66,10 @@ var _giftCard2 = _interopRequireDefault(_giftCard);
 var _storeCredit = require('./email-templates/store-credit');
 
 var _storeCredit2 = _interopRequireDefault(_storeCredit);
+
+var _purchaseSuccess = require('./email-templates/purchase-success');
+
+var _purchaseSuccess2 = _interopRequireDefault(_purchaseSuccess);
 
 var _trustPilot = require('./email-templates/trust-pilot');
 
@@ -107,6 +111,7 @@ var templates = {
 
   money: {
     label: 'Money',
+    'purchase-success': _purchaseSuccess2.default,
     'gift-card': _giftCard2.default,
     'store-credit': _storeCredit2.default
   },

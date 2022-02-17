@@ -1,3 +1,5 @@
+'use strict'
+const stripe = require('stripe')(process.env.STRIPE_KEY)
 const version = require('../../package.json').version
 const { toId, } = require('../../utils')
 
@@ -161,10 +163,37 @@ migrations['0.2.0'] = async () => {
   )
 }
 
+/*
+ * Attach context to every paymentIntent
+ */
+migrations['0.2.1'] = async () => {
+
+  console.log('Purchases')
+  const purchases = await strapi.query('purchase').find()
+  await Promise.allSettled(purchases.map(async purchase => {
+    stripe.paymentIntents.update(purchase.paymentIntent, {
+      metadata: {
+        context: 'checkout',
+      },
+    })
+  }))
+
+  console.log('Gift cards')
+  const giftCards = await strapi.query('gift-card').find()
+  await Promise.allSettled(giftCards.map(async giftCard => {
+    stripe.paymentIntents.update(giftCard.paymentIntent, {
+      metadata: {
+        context: 'gift-card',
+      },
+    })
+  }))
+}
+
 module.exports = async () => {
   const migration = migrations[version]
   if (migration) {
     strapi.log.info(`Migrating to version ${version}`)
     await migration()
+    strapi.log.info(`Finished migration to version ${version}`)
   }
 }

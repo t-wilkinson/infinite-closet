@@ -1,5 +1,8 @@
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 var contact = {
   firstName: 'First',
   lastName: 'Last',
@@ -74,67 +77,71 @@ var orderData = {
 
 var recommendations = [product, product, product, product];
 
-module.exports = {
-  cartItem: cartItem,
-  defaultData: {
-    components: orderData,
-    'forgot-password': {
-      isDefault: true,
-      user: user,
-      url: '/REST_URL'
-    },
+var defaultData = {
+  components: orderData,
+  'forgot-password': {
+    isDefault: true,
+    user: user,
+    url: '/REST_URL'
+  },
 
-    'order-confirmation': {
-      isDefault: true,
-      cart: [orderData.cartItem, orderData.cartItem],
-      address: address,
-      summary: summary,
-      recommendations: recommendations,
-      contact: contact,
-      firstName: contact.firstName
-    },
-    'order-shipped': orderData,
-    'order-starting': orderData,
-    'order-ending': orderData,
-    'order-received': orderData,
-    'order-review': orderData,
+  'order-confirmation': {
+    isDefault: true,
+    cart: [orderData.cartItem, orderData.cartItem],
+    address: address,
+    summary: summary,
+    recommendations: recommendations,
+    contact: contact,
+    firstName: contact.firstName
+  },
+  'order-shipped': orderData,
+  'order-starting': orderData,
+  'order-ending': orderData,
+  'order-received': orderData,
+  'order-review': orderData,
 
-    'gift-card': {
-      isDefault: true,
-      recommendations: recommendations,
-      firstName: contact.firstName,
-      giftCard: giftCard
-    },
-    'store-credit': {
-      isDefault: true,
-      firstName: contact.firstName,
-      amount: 20,
-      recommendations: recommendations
-    },
+  'purchase-success': {
+    isDefault: true,
+    firstName: contact.firstName
+  },
+  'gift-card': {
+    isDefault: true,
+    recommendations: recommendations,
+    firstName: contact.firstName,
+    giftCard: giftCard
+  },
+  'store-credit': {
+    isDefault: true,
+    firstName: contact.firstName,
+    amount: 20,
+    recommendations: recommendations
+  },
 
-    'trust-pilot': orderData,
-    'order-shipping-failure': {
-      isDefault: true,
-      order: {},
-      error: {}
-    },
-    'contact-us': {
-      isDefault: true,
-      firstName: contact.firstName,
-      lastName: contact.lastName,
-      email: 'info+test@infinitecloset.co.uk',
-      phoneNumber: 'Phone',
-      message: 'Random message'
-    },
+  'trust-pilot': orderData,
+  'order-shipping-failure': {
+    isDefault: true,
+    order: {},
+    error: {}
+  },
+  'contact-us': {
+    isDefault: true,
+    firstName: contact.firstName,
+    lastName: contact.lastName,
+    email: 'info+test@infinitecloset.co.uk',
+    phoneNumber: 'Phone',
+    message: 'Random message'
+  },
 
-    'join-launch-party': {
-      isDefault: true,
-      firstName: contact.firstName,
-      ticketPrice: 25,
-      donation: 25.0,
-      discount: 5,
-      total: 45,
-      guests: ['Bob', 'Joe']
-    }
+  'join-launch-party': {
+    isDefault: true,
+    firstName: contact.firstName,
+    ticketPrice: 25,
+    donation: 25.0,
+    discount: 5,
+    total: 45,
+    guests: ['Bob', 'Joe']
   }
 };
+
+exports.cartItem = cartItem;
+exports.defaultData = defaultData;

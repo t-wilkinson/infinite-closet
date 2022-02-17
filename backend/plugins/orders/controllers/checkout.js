@@ -88,6 +88,9 @@ module.exports = {
         payment_method: data.paymentMethod.id,
         off_session: false,
         confirm: true,
+        metadata: {
+          context: 'checkout'
+        },
       })
       const checkout = await strapi.plugins['orders'].services.cart.onCheckout({
         ...data,
@@ -122,6 +125,9 @@ module.exports = {
           currency: 'gbp',
           confirm: true,
           confirmation_method: 'manual',
+          metadata: {
+            context: 'checkout',
+          }
         })
       } else if (body.paymentIntent) {
         intent = await stripe.paymentIntents.confirm(body.paymentIntent)
@@ -213,6 +219,9 @@ module.exports = {
     const paymentIntent = await stripe.paymentIntents.create({
       amount: summary.amount,
       currency: 'gbp',
+      metadata: {
+        context: 'checkout'
+      },
     })
     orders.map((order) =>
       strapi

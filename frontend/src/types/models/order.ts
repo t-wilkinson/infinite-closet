@@ -1,8 +1,9 @@
 import { StrapiAddress } from './address';
-import { StrapiCoupon } from './coupon';
-import { StrapiGiftCard } from './gift-card';
+import { StrapiCheckout } from './checkout';
+import { StrapiContact } from './contact';
 import { StrapiProduct } from './product';
 import { StrapiReview } from './review';
+import { StrapiShipment } from './shipment';
 import { StrapiUser } from './user';
 
 /**
@@ -10,28 +11,18 @@ import { StrapiUser } from './user';
  */
 export interface StrapiOrder {
   id: string;
-  status: "delayed" | "cart" | "list" | "planning" | "shipping" | "cleaning" | "completed" | "dropped" | "error";
+  status: "cart" | "list" | "shipping" | "completed" | "dropped";
+  size: string;
+  expectedStart?: string;
+  insurance?: boolean;
+  rentalLength?: "short" | "long";
   product?: StrapiProduct;
   user?: StrapiUser;
+  contact?: StrapiContact;
   review?: StrapiReview;
-  details?: string;
-  message?: { [key: string]: any };
-  size: string;
-  startDate?: Date;
-  shippingDate?: string;
-  rentalLength?: "short" | "long";
   address?: StrapiAddress;
-  paymentMethod?: string;
-  paymentIntent?: string;
-  shipment?: string;
-  insurance?: boolean;
-  giftCard?: StrapiGiftCard;
-  coupon?: StrapiCoupon;
-  fullName?: string;
-  nickName?: string;
-  email?: string;
-  charge?: number;
-  giftCardDiscount?: number;
+  shipment?: StrapiShipment;
+  checkout?: StrapiCheckout;
   created_at: string;
   created_by: string;
   updated_at: string;

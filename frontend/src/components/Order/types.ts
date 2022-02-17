@@ -1,13 +1,14 @@
 import { Summary } from '@/types'
-import { StrapiOrder } from '@/types/models'
+import { StrapiCheckout, StrapiPurchase, StrapiOrder } from '@/types/models'
 import { CartItems } from './Cart'
 export * from './Cart/types'
 
 export type Orders = StrapiOrder[]
 export type Order = StrapiOrder
 
-export interface Checkout{
+export interface Checkout {
   orders: CartItems
+  purchase: StrapiPurchase
 }
 
 export type CheckoutHistory = Checkout[]

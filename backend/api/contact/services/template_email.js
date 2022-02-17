@@ -1,6 +1,6 @@
 'use strict'
 // const fs = require('fs')
-const templateData = require('email-templates/src/utils/data')
+const templateData = require('email-templates/src/utils/data.cjs')
 
 async function send(...props) {
   await strapi.plugins['email'].services.email.send(...props)

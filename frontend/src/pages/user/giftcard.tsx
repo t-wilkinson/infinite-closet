@@ -2,8 +2,7 @@ import React from 'react'
 import Link from 'next/link'
 
 import axios from '@/utils/axios'
-import Layout from '@/Layout'
-import User from '@/User'
+import User from '@/Layout/User'
 import { StrapiGiftCard } from '@/types/models'
 import { CopyToClipboard } from '@/Components'
 import { fmtPrice } from '@/utils/helpers'
@@ -25,25 +24,23 @@ export const Page = ({}) => {
   }, [])
 
   return (
-    <Layout>
-      <User allowGuest>
-        <div className="w-full max-w-screen-sm">
-          <Link href="/buy/giftcard">
-            <a className="bg-pri w-full p-3 text-center font-bold text-white">
-              Buy a Gift Card
-            </a>
-          </Link>
-          <div className="mb-8">
-            {giftCards?.length > 0 ? (
-              <>
-                <Heading>Your gift cards</Heading>
+    <User allowGuest>
+      <div className="w-full max-w-screen-sm">
+        <Link href="/buy/giftcard">
+          <a className="bg-pri w-full p-3 text-center font-bold text-white">
+            Buy a Gift Card
+          </a>
+        </Link>
+            <div className="mb-8">
+          {giftCards?.length > 0 ? (
+            <>
+              <Heading>Your gift cards</Heading>
                 <GiftCards giftCards={giftCards} />
-              </>
-            ) : null}
-          </div>
-        </div>
+            </>
+              ) : null}
+              </div>
+            </div>
       </User>
-    </Layout>
   )
 }
 
