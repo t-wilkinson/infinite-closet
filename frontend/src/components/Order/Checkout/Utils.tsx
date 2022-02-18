@@ -174,7 +174,7 @@ export const useGuestCheckout = () => {
   return checkout
 }
 
-function handleServerResponse(
+export function handleServerResponse(
   response: {
     status: string
     requires_action?: boolean

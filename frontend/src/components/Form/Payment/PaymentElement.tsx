@@ -10,7 +10,7 @@ export { PaymentElement } from '@stripe/react-stripe-js'
 type PaymentElementEvents = 'success'
 
 const updateFormStatus = (fields, paymentIntent) => {
-  switch (paymentIntent.status) {
+  switch (paymentIntent?.status) {
     case 'succeeded':
       fields.form.setValue('success')
       break
@@ -53,7 +53,9 @@ export const usePaymentElement = ({ fields }: { fields: UseFields }) => {
       const { error } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          return_url: `${window.location.origin}/buy/complete?${params.toString()}`,
+          return_url: `${
+            window.location.origin
+          }/buy/complete?${params.toString()}`,
           // redirect: 'if_required',
         },
       })
@@ -83,9 +85,11 @@ export const usePaymentElement = ({ fields }: { fields: UseFields }) => {
       return
     }
 
-    stripe.retrievePaymentIntent(clientSecret).then(({ paymentIntent }) => {
-      updateFormStatus(fields, paymentIntent)
-    })
+    stripe
+      .retrievePaymentIntent(clientSecret)
+      .then(({ error, paymentIntent }) => {
+        updateFormStatus(fields, paymentIntent)
+      })
   }, [stripe])
 
   // Success event
