@@ -85,7 +85,6 @@ export const addToFavorites = async ({
       ],
     })
   } catch (e) {
-    console.log(e)
     toast.error(
       `Ran into an issue adding to favorites. We'll have this fixed soon!`,
       {}

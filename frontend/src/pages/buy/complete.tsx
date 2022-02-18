@@ -2,7 +2,6 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { useStripe } from '@stripe/react-stripe-js'
 
-import axios from '@/utils/axios'
 import { fmtPrice } from '@/utils/helpers'
 import Layout from '@/Layout'
 import { Form, Submit, useFields, BodyWrapper } from '@/Form'
@@ -11,7 +10,6 @@ import {
   PaymentElement,
   usePaymentElement,
 } from '@/Form/Payment'
-import { handleServerResponse } from '@/Order/Checkout/Utils'
 
 export const Page = () => {
   const router = useRouter()
@@ -71,19 +69,17 @@ const ConfirmPayment = ({ clientSecret }) => {
     ) {
       stripe
         .confirmCardPayment(clientSecret)
-        // axios
-        //   .post(
-        //     '/payment/complete',
-        //     { paymentIntent: paymentIntent.id },
-        //     { withCredentials: false }
-        //   )
-        //   .then((res) => handleServerResponse(res, stripe, fields.form))
-        .then(() => {
-          fields.setStatus('success')
+        .then((res) => {
+          if (res.error) {
+            throw res.error
+          } else {
+            setPaymentIntent(res.paymentIntent)
+            fields.setStatus('success')
+          }
         })
-        .catch(() => {
-          fields.form.setError(
-            'We ran into an issue processing your payment. Please try again later.'
+        .catch((err) => {
+          fields.form.setError(err?.message ||
+            'We ran into an issue processing your payment. Please try again.'
           )
           fields.setStatus('error')
         })
@@ -91,7 +87,6 @@ const ConfirmPayment = ({ clientSecret }) => {
     }
   }, [stripe, paymentIntent])
 
-  console.log('paymentIntent', paymentIntent)
   if (fields.status === 'success' || paymentIntent?.status === 'succeeded') {
     return <BodyWrapper label={`Thank you for your purchase`} />
   }

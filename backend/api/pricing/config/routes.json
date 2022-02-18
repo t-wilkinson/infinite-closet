@@ -73,15 +73,6 @@
       "config": {
         "policies": []
       }
-    },
-
-    {
-      "method": "POST",
-      "path": "/payment/complete",
-      "handler": "stripe.confirmPayments",
-      "config": {
-        "policies": []
-      }
     }
   ]
 }
