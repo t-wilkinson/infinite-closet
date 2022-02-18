@@ -175,6 +175,7 @@ const Checkout = ({ fetchCart, analytics }) => {
   const user = useSelector((state) => state.user.data)
   const cartCount = useSelector((state) => state.orders.count)
   const cart = useSelector((state) => state.orders.checkoutCart)
+  const summary = useSelector((state) => state.orders.checkoutSummary)
 
   const router = useRouter()
   const state = React.useContext(StateContext)
@@ -194,11 +195,13 @@ const Checkout = ({ fetchCart, analytics }) => {
         fetchCart()
         onPurchaseEvent({
           analytics,
-          summary: state.summary,
+          summary,
           checkout,
+          discountCode: fields.value('discountCode')
         })
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error(err)
         throw 'Unable to process order, please try again later'
       })
   }
@@ -274,8 +277,9 @@ const Checkout = ({ fetchCart, analytics }) => {
               fetchCart()
               onPurchaseEvent({
                 analytics,
-                summary: state.summary,
+                summary,
                 checkout,
+                discountCode: fields.value('discountCode')
               })
               router.push('/buy/thankyou')
             }}

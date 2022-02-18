@@ -16,12 +16,12 @@ import { DiscountCode, UseField } from '@/Form'
 import { validatePostcode } from '@/Form/Address'
 import { Hover } from '@/Components'
 
-export const onPurchaseEvent = ({checkout, analytics, summary}) => {
+export const onPurchaseEvent = ({checkout, analytics, summary, discountCode}) => {
   analytics.logEvent('purchase', {
     currency,
     transaction_id: checkout.purchase.id,
     value: summary.total,
-    coupon: summary.coupon?.code,
+    coupon: discountCode,
     shipping: summary.shipping,
     items: checkout.orders.map((order, i) => {
       return {
@@ -191,6 +191,7 @@ export const useGuestCheckout = () => {
           checkout,
           analytics,
           summary,
+          discountCode,
         })
       })
 

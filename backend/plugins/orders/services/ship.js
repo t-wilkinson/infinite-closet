@@ -69,12 +69,6 @@ async function shipCartItemToClient(cartItem) {
 }
 
 async function shipOrderToClient(order) {
-  if (
-    strapi.plugins['orders'].services.order.inConfirmed.includes(order.status)
-  ) {
-    throw new Error('Already shipping/shipped')
-  }
-
   const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(
     order
   )

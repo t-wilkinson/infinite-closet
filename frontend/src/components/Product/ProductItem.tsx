@@ -105,7 +105,7 @@ export const ProductImages = ({ product }) => {
         // TODO: What about prodcuts with only one image
         const image = getSrc(i)
         return <ProductImageWrapper
-          key={image.src}
+          key={i}
           hover={hoverInterval}
           hide={i === index}
           show={i === wrap(index + 1)}

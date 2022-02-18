@@ -135,6 +135,7 @@ const Checkout = () => {
   const dispatch = React.useContext(DispatchContext)
   const fields = React.useContext(FieldsContext)
   const router = useRouter()
+  const summary = useSelector((state) => state.orders.checkoutSummary)
 
   const cartCount = useSelector((state) => state.orders.count)
   const analytics = useAnalytics()
@@ -195,8 +196,9 @@ const Checkout = () => {
             fetchCart()
             onPurchaseEvent({
               analytics,
-              summary: state.summary,
+              summary,
               checkout,
+              discountCode: fields.value('discountCode'),
             })
             router.push('/buy/thankyou')
           }}
@@ -237,7 +239,7 @@ const CheckoutForm = ({ onCheckout }) => {
       },
       email: cleanedFields.email,
       discountCode: cleanedFields.discountCode,
-      summary: state.summary,
+      summary,
     })
     await onCheckout({ contact })
 
