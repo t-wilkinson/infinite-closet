@@ -5,8 +5,9 @@ import { Divider } from '@/Components'
 import { useDispatch } from '@/utils/store'
 import Markdown from '@/Components/Markdown'
 import useAnalytics from '@/utils/useAnalytics'
-
+import { StrapiProduct } from '@/types/models'
 import { Icon, iconDown, iconUp } from '@/Components/Icons'
+
 import { shopActions } from './slice'
 
 export const ProductDetails = ({ state, product }) => {
@@ -104,10 +105,12 @@ const details = [
       >
         {[
           <share.Facebook
+            product={product}
             url={createProductURL(product)}
             description={product.description}
           />,
           <share.Pinterest
+            product={product}
             url={createProductURL(product)}
             description={product.description}
             imageURL={product.images[0].url}
@@ -124,11 +127,13 @@ const createProductURL = ({ slug, designer: { slug: designer_slug } }) =>
   `${process.env.NEXT_PUBLIC_FRONTEND}/shop/${designer_slug}/${slug}`
 
 interface ShareFacebookConfig {
+  product: StrapiProduct
   url: string
   description: string
 }
 
 interface SharePinterestConfig {
+  product: StrapiProduct
   url: string
   description: string
   imageURL: string
@@ -139,7 +144,7 @@ interface SharePinterestConfig {
 // const shareStyle = { width: size * ratio, height: size }
 
 const share = {
-  Facebook: ({ url, description }: ShareFacebookConfig) => {
+  Facebook: ({ product, url, description }: ShareFacebookConfig) => {
     const analytics = useAnalytics()
 
     return (
@@ -149,6 +154,9 @@ const share = {
         rel="noreferrer"
         onClick={() =>
           analytics.logEvent('share', {
+            method: 'Facebook',
+            content_type: 'image',
+            item_id: product.id,
             type: 'facebook',
           })
         }
@@ -174,7 +182,7 @@ const share = {
     )
   },
 
-  Pinterest: ({ url, description, imageURL }: SharePinterestConfig) => {
+  Pinterest: ({ product, url, description, imageURL }: SharePinterestConfig) => {
     const analytics = useAnalytics()
     return (
       <a
@@ -183,7 +191,9 @@ const share = {
         rel="noreferrer"
         onClick={() =>
           analytics.logEvent('share', {
-            type: 'pinterest',
+            method: 'Pinterest',
+            content_type: 'image',
+            item_id: product.id,
           })
         }
         href={

@@ -65,15 +65,22 @@ const ConfirmPayment = ({ clientSecret }) => {
       (stripe &&
         paymentIntent &&
         paymentIntent.status === 'requires_action' &&
-        paymentIntent.next_action.type === 'use_stripe_sdk')
+        paymentIntent.next_action.type === 'use_stripe_sdk' &&
+        paymentIntent.payment_method
+      )
     ) {
-      axios
-        .post(
-          '/payment/complete',
-          { paymentIntent: paymentIntent.id },
-          { withCredentials: false }
-        )
-        .then((res) => handleServerResponse(res, stripe, fields.form))
+      stripe
+        .confirmCardPayment(clientSecret)
+        // axios
+        //   .post(
+        //     '/payment/complete',
+        //     { paymentIntent: paymentIntent.id },
+        //     { withCredentials: false }
+        //   )
+        //   .then((res) => handleServerResponse(res, stripe, fields.form))
+        .then(() => {
+          fields.setStatus('success')
+        })
         .catch(() => {
           fields.form.setError(
             'We ran into an issue processing your payment. Please try again later.'

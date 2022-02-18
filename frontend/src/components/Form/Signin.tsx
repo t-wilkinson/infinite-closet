@@ -41,9 +41,8 @@ export const Signin = ({
       })
       .then((data) => {
         dispatch(userActions.signin(data.user))
-        analytics.logEvent('form_submit', {
-          type: 'account.signin',
-          user: cleaned.email,
+        analytics.logEvent('login', {
+          method: 'website',
         })
         return onSubmit()
       })

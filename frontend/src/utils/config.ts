@@ -1,3 +1,4 @@
+export const currency = 'GBP'
 export const socialMediaLinks = {
   facebook: 'https://www.facebook.com/InfiniteClosetUK',
   instagram: 'https://www.instagram.com/infinitecloset.uk',

@@ -2,6 +2,8 @@ import { toast } from 'react-toastify'
 
 import axios from '@/utils/axios'
 import * as sizing from '@/utils/sizing'
+import { currency } from '@/utils/config'
+import { productRentalPrice } from '@/Product/utils'
 
 import { OrderUtils } from './slice'
 
@@ -20,6 +22,17 @@ const prepareOrder = ({ product, fields, user }) => {
   return order
 }
 
+const productToItem = (product) => {
+  return {
+    item_id: product.id,
+    item_name: product.name,
+    item_brand: product.designer.name,
+    // item_category: order.,
+    price: product.retailPrice,
+    quantity: 1,
+  }
+}
+
 export const addToCart = async ({
   product,
   fields,
@@ -36,8 +49,12 @@ export const addToCart = async ({
         hideProgressBar: true,
       }),
         analytics.logEvent('add_to_cart', {
+          currency,
+          value: productRentalPrice(product, order.rentalLength),
           user: user ? user.email : 'guest',
-          items: [order],
+          items: [
+            productToItem(product)
+          ],
         })
     })
     .catch(() => {
@@ -60,11 +77,15 @@ export const addToFavorites = async ({
       autoClose: 1500,
       hideProgressBar: true,
     })
-    analytics.logEvent('add_to_favorites', {
-      user: user ? user.email : 'guest',
-      items: [order],
+    analytics.logEvent('add_to_wishlist', {
+      currency,
+      value: productRentalPrice(product, order.rentalLength),
+      items: [
+         productToItem(product)
+      ],
     })
   } catch (e) {
+    console.log(e)
     toast.error(
       `Ran into an issue adding to favorites. We'll have this fixed soon!`,
       {}
@@ -73,10 +94,15 @@ export const addToFavorites = async ({
 }
 
 export const removeOrderItem = async ({ dispatch, analytics, order }) => {
+  const { product } = order
   await dispatch(OrderUtils.remove(order.id))
   await dispatch(OrderUtils.view())
   analytics.logEvent('remove_from_cart', {
-    user: order.user?.email || '',
+    currency,
+    value: productRentalPrice(product, order.rentalLength),
+    items: [
+      productToItem(product)
+    ],
   })
 }
 

@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { productRentalPrice } from '@/Product/utils'
+
 import { RentType } from './types'
 
 export const OrderOptions = ({ product, fields }) => {
@@ -35,9 +37,7 @@ const orderOptions = {
       <span className="text-sm font-bold text-center">One-time rental</span>
       <span className="font-bold">
         £
-        {(fields.value('rentalLength') === 'short'
-          ? product.shortRentalPrice
-          : product.longRentalPrice) || '-'}
+        {productRentalPrice(product, fields.value('rentalLength')) || '-'}
       </span>
     </>
   ),

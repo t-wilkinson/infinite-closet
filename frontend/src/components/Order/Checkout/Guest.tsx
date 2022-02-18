@@ -2,6 +2,8 @@ import React from 'react'
 import { useRouter } from 'next/router'
 
 import { Summary } from '@/types'
+import { useSelector, useDispatch } from '@/utils/store'
+import useAnalytics from '@/utils/useAnalytics'
 import { OrderUtils } from '@/Order'
 import { useRegisterUser } from '@/Form/Register'
 import {
@@ -30,9 +32,7 @@ import {
   PaymentCard,
   PaymentRequestForm,
 } from '@/Form/Payment'
-import { useSelector, useDispatch } from '@/utils/store'
 import { BlueLink, Divider } from '@/Components'
-import useAnalytics from '@/utils/useAnalytics'
 import { Cart } from '@/Order/Cart'
 import { Favorites } from '@/Order/Favorite'
 

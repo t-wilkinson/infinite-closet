@@ -10,3 +10,14 @@ export const productImageProps = (product: StrapiProduct) => {
       `${product.name} by ${product.designer.name}`,
   }
 }
+
+export const productRentalPrice = (product: StrapiProduct, rentalLength: 'short' | 'long') => {
+  switch (rentalLength) {
+    case 'short':
+      return product.shortRentalPrice
+    case 'long':
+      return product.longRentalPrice
+    default:
+      return undefined
+  }
+}

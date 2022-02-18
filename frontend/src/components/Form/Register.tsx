@@ -38,9 +38,8 @@ export const useRegisterUser = ({
       })
       .then((data) => {
         dispatch(userActions.signin(data.user))
-        analytics.logEvent('form_submit', {
-          type: 'account.register',
-          user: fields.email,
+        analytics.logEvent('sign_up', {
+          method: 'website',
         })
         return onSubmit()
       })

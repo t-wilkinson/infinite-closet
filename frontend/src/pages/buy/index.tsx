@@ -9,6 +9,8 @@ import { FacebookMessenger } from '@/Components'
 const Page = () => {
   const user = useSelector((state) => state.user.data)
 
+  React.useEffect(() => {}, [])
+
   if (user === undefined) {
     return null
   } else if (user === null) {
