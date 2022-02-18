@@ -4,6 +4,7 @@ import { useStripe } from '@stripe/react-stripe-js'
 import axios from '@/utils/axios'
 import { useSelector } from '@/utils/store'
 import { Contact, Summary } from '@/types'
+import { StrapiCheckout } from '@/types/models'
 
 import { validatePostcode } from '@/Form/Address'
 import { UseFormField } from '@/Form'
@@ -20,7 +21,7 @@ export const PaymentRequestForm = ({
   discountCode: string
   form: UseFormField
   children?: React.ReactElement
-  onCheckout: () => void
+  onCheckout: (_: { contact: Contact, checkout: StrapiCheckout }) => void
   accurateSummary: Summary
   setVisible: (visible: boolean) => void
 }) => {
@@ -266,7 +267,7 @@ const paymentRequestCheckout = async ({ev, discountCode, cart, paymentIntent, on
 
   return validatePostcode(info.address.postcode)
     .then(() =>
-      axios.post<void>('/orders/checkout-request', {
+      axios.post<{ checkout: StrapiCheckout }>('/orders/checkout-request', {
         contact: info.contact,
         address: info.address,
         discountCode,
@@ -275,7 +276,7 @@ const paymentRequestCheckout = async ({ev, discountCode, cart, paymentIntent, on
         paymentMethod: ev.paymentMethod.id,
       })
     )
-    .then(() => onCheckout({ contact: info.contact }))
+    .then(({checkout}) => onCheckout({ contact: info.contact, checkout}))
 }
 
 const onPaymentMethod = async ({

@@ -260,7 +260,14 @@ async function onCheckout({
     address,
   })
 
-  return checkout
+  return {
+    ...checkout,
+    purchase,
+    user,
+    contact,
+    address,
+    orders: strapi.plugins['orders'].services.cart.orders(cart),
+  }
 }
 
 module.exports = {

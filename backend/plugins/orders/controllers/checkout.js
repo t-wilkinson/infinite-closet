@@ -74,8 +74,9 @@ module.exports = {
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
-      await strapi.plugins['orders'].services.cart.onCheckout(data)
-      return ctx.send(null)
+      return ctx.send({
+        checkout: await strapi.plugins['orders'].services.cart.onCheckout(data)
+      })
     }
 
     // TODO: create paymentIntent but never confirm it
@@ -96,7 +97,9 @@ module.exports = {
         ...data,
         paymentIntent,
       })
-      ctx.send(checkout)
+      ctx.send({
+        checkout
+      })
     } catch (e) {
       strapi.log.error('checkoutUser error', e.stack)
       ctx.badRequest('Payment failed')
@@ -112,8 +115,11 @@ module.exports = {
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
-      await strapi.plugins['orders'].services.cart.onCheckout(data)
-      return ctx.send({ status: 'no-charge' })
+
+      return ctx.send({
+        status: 'no-charge',
+        checkout: await strapi.plugins['orders'].services.cart.onCheckout(data)
+      })
     }
 
     try {
@@ -134,14 +140,14 @@ module.exports = {
       }
 
       const response = generateResponse(intent)
-
+      let checkout
       if (response.success) {
-        await strapi.plugins['orders'].services.cart.onCheckout({
+        checkout = await strapi.plugins['orders'].services.cart.onCheckout({
           ...data,
           paymentIntent: intent,
         })
       }
-      return ctx.send({ ...response, body })
+      return ctx.send({ ...response, body, checkout })
     } catch (e) {
       strapi.log.error('checkoutGuest error', e.stack)
       return ctx.badRequest({ error: 'Could not process payment', body })
@@ -158,15 +164,15 @@ module.exports = {
     }
 
     if (!data.paymentIntent && data.summary.amount < 50) {
-      return ctx.send(
-        await strapi.plugins['orders'].services.cart.onCheckout(data)
-      )
+      return ctx.send({
+        checkout: await strapi.plugins['orders'].services.cart.onCheckout(data)
+      })
     }
 
     try {
-      return ctx.send(
-        await strapi.plugins['orders'].services.cart.onCheckout(data)
-      )
+      return ctx.send({
+        checkout: await strapi.plugins['orders'].services.cart.onCheckout(data)
+      })
     } catch (e) {
       strapi.log.error('PaymentRequest paymentIntent did not succeed', {
         cart: data.cart,

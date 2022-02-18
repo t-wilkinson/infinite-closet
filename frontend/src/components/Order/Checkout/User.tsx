@@ -5,6 +5,7 @@ import axios from '@/utils/axios'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { Summary } from '@/types'
+import { StrapiCheckout } from '@/types/models'
 
 import { OrderUtils } from '@/Order'
 import { Cart } from '@/Order/Cart'
@@ -25,6 +26,7 @@ import {
   isOrderInvalid,
   CheckoutSummary,
   useFetchCart,
+  onPurchaseEvent,
 } from './Utils'
 
 type Popup = 'none' | 'address' | 'payment'
@@ -182,17 +184,18 @@ const Checkout = ({ fetchCart, analytics }) => {
   const checkout = async () => {
     const cleanedFields = fields.clean()
     return axios
-      .post<void>(`/orders/checkout/${user.id}`, {
+      .post<{ checkout: StrapiCheckout }>(`/orders/checkout/${user.id}`, {
         address: state.address,
         paymentMethod: state.paymentMethod,
         orders: cart.map((item) => item.order),
         discountCode: cleanedFields.discountCode,
       })
-      .then(() => {
+      .then(({checkout}) => {
         fetchCart()
-        analytics.logEvent('purchase', {
-          user: user?.email,
-          type: 'checkout',
+        onPurchaseEvent({
+          analytics,
+          summary: state.summary,
+          checkout,
         })
       })
       .catch(() => {
@@ -267,11 +270,12 @@ const Checkout = ({ fetchCart, analytics }) => {
             discountCode={fields.get('discountCode').clean()}
             accurateSummary={state.summary}
             form={fields.form}
-            onCheckout={() => {
+            onCheckout={({ checkout }) => {
               fetchCart()
-              analytics.logEvent('purchase', {
-                user: user?.email,
-                type: 'checkout',
+              onPurchaseEvent({
+                analytics,
+                summary: state.summary,
+                checkout,
               })
               router.push('/buy/thankyou')
             }}

@@ -4,16 +4,9 @@ import { useRouter } from 'next/router'
 import { Summary } from '@/types'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
+
 import { OrderUtils } from '@/Order'
 import { useRegisterUser } from '@/Form/Register'
-import {
-  CheckoutSummary,
-  toContact,
-  useGuestCheckout,
-  useFetchCart,
-  isOrderInvalid,
-  PaymentSubText,
-} from '@/Order/Checkout/Utils'
 import {
   useFields,
   Warning,
@@ -33,8 +26,19 @@ import {
   PaymentRequestForm,
 } from '@/Form/Payment'
 import { BlueLink, Divider } from '@/Components'
+
 import { Cart } from '@/Order/Cart'
 import { Favorites } from '@/Order/Favorite'
+
+import {
+  CheckoutSummary,
+  toContact,
+  useGuestCheckout,
+  useFetchCart,
+  isOrderInvalid,
+  PaymentSubText,
+  onPurchaseEvent,
+} from './Utils'
 
 const initialState = {
   error: undefined,
@@ -187,11 +191,12 @@ const Checkout = () => {
           setVisible={setVisible}
           accurateSummary={state.summary}
           form={fields.form}
-          onCheckout={() => {
+          onCheckout={({checkout}) => {
             fetchCart()
-            analytics.logEvent('purchase', {
-              user: 'guest',
-              type: 'checkout',
+            onPurchaseEvent({
+              analytics,
+              summary: state.summary,
+              checkout,
             })
             router.push('/buy/thankyou')
           }}
@@ -232,6 +237,7 @@ const CheckoutForm = ({ onCheckout }) => {
       },
       email: cleanedFields.email,
       discountCode: cleanedFields.discountCode,
+      summary: state.summary,
     })
     await onCheckout({ contact })
 

@@ -3,25 +3,45 @@ import * as Stripe from '@stripe/react-stripe-js'
 import Image from 'next/image'
 
 import axios from '@/utils/axios'
+import { currency } from '@/utils/config'
 import { fmtPrice } from '@/utils/helpers'
 import { useSelector, useDispatch } from '@/utils/store'
 import useAnalytics from '@/utils/useAnalytics'
 import { Summary, Contact } from '@/types'
+import { StrapiCheckout } from '@/types/models'
 
+import { productToItem } from '@/Order/utils'
 import { CartItem, OrderUtils } from '@/Order'
 import { DiscountCode, UseField } from '@/Form'
 import { validatePostcode } from '@/Form/Address'
 import { Hover } from '@/Components'
 
+export const onPurchaseEvent = ({checkout, analytics, summary}) => {
+  analytics.logEvent('purchase', {
+    currency,
+    transaction_id: checkout.purchase.id,
+    value: summary.total,
+    coupon: summary.coupon?.code,
+    shipping: summary.shipping,
+    items: checkout.orders.map((order, i) => {
+      return {
+        ...productToItem(order.product, order.rentalLength),
+        currency,
+        index: i,
+      }
+    }),
+  })
+}
+
 export const toContact = ({ email, address }: Contact) => {
   const names = address.fullName.split(' ')
   return {
-  email,
-  firstName: names[0],
-  lastName: names.slice(1).join(' ').trim(),
-  fullName: address.fullName.trim(),
-  nickName: names[0],
-}
+    email,
+    firstName: names[0],
+    lastName: names.slice(1).join(' ').trim(),
+    fullName: address.fullName.trim(),
+    nickName: names[0],
+  }
 }
 
 export const CheckoutSummary = ({
@@ -49,7 +69,6 @@ export const CheckoutSummary = ({
         <InsuranceInfo position="left-0" className="mr-2" />
       </Price>
 
-
       <Price label="Shipping" price={summary.shipping} />
       <div className="w-full my-2">
         <DiscountCode
@@ -71,9 +90,16 @@ export const CheckoutSummary = ({
   )
 }
 
-const Price = ({ negative = false, label, price, className = '', children=null}) => (
+const Price = ({
+  negative = false,
+  label,
+  price,
+  className = '',
+  children = null,
+}) => (
   <div className={`flex-row justify-between ${className}`}>
-    <div className="flex-row items-center">{label}
+    <div className="flex-row items-center">
+      {label}
       {children}
     </div>
     <span>
@@ -82,15 +108,21 @@ const Price = ({ negative = false, label, price, className = '', children=null})
   </div>
 )
 
-export const InsuranceInfo = (props) =>
+export const InsuranceInfo = (props) => (
   <Hover {...props}>
-We offer damage protection with every item, which renters can opt in to purchase for £5 per order. Damage protection covers the cost of the repair (i.e.—stain removal, broken zippers, missing beading), up to a max of £50*.
+    We offer damage protection with every item, which renters can opt in to
+    purchase for £5 per order. Damage protection covers the cost of the repair
+    (i.e.—stain removal, broken zippers, missing beading), up to a max of £50*.
     <br />
     <br />
-    <small className="text-xs">*This does not cover: Damage beyond repair, theft, loss of item, or damages beyond the £50 repair fee</small>
+    <small className="text-xs">
+      *This does not cover: Damage beyond repair, theft, loss of item, or
+      damages beyond the £50 repair fee
+    </small>
   </Hover>
+)
 
-export const PaymentSubText = () =>
+export const PaymentSubText = () => (
   <div className="space-y-1">
     <strong>FREE 2-day Shipping & Returns</strong>
     <div className="relative inline-block w-64 h-8">
@@ -101,6 +133,7 @@ export const PaymentSubText = () =>
       />
     </div>
   </div>
+)
 
 export const useFetchCart = () => {
   const dispatch = useDispatch()
@@ -120,7 +153,7 @@ export const useGuestCheckout = () => {
   const fetchCart = useFetchCart()
   const rootDispatch = useDispatch()
 
-  const checkout = async ({ form, address, billing, email, discountCode }) => {
+  const checkout = async ({ summary, form, address, billing, email, discountCode }) => {
     const contact = toContact({ email, address })
     return validatePostcode(address.postcode)
       .then(() =>
@@ -151,12 +184,13 @@ export const useGuestCheckout = () => {
 
       .then((res) => handleServerResponse(res, stripe, form))
 
-      .then(() => {
+      .then(({checkout}) => {
         rootDispatch(OrderUtils.set([]))
         fetchCart()
-        analytics.logEvent('purchase', {
-          user: 'guest',
-          type: 'checkout',
+        onPurchaseEvent({
+          checkout,
+          analytics,
+          summary,
         })
       })
 
@@ -181,6 +215,7 @@ export function handleServerResponse(
     payment_intent_client_secret?: string
     error?: string
     body: object
+    checkout?: StrapiCheckout
   },
   stripe: any,
   form: UseField
@@ -192,6 +227,7 @@ export function handleServerResponse(
   } else if (response.status === 'no-charge') {
     form.setValue('success')
     form.clearErrors()
+    return { checkout: response.checkout }
   } else if (response.requires_action) {
     // Use Stripe.js to handle required card action
     stripe
@@ -202,6 +238,7 @@ export function handleServerResponse(
   } else {
     form.setValue('success')
     form.clearErrors()
+    return { checkout: response.checkout }
   }
 }
 

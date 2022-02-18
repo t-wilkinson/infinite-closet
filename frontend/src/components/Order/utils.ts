@@ -22,13 +22,12 @@ const prepareOrder = ({ product, fields, user }) => {
   return order
 }
 
-const productToItem = (product) => {
+export const productToItem = (product, rentalLength) => {
   return {
     item_id: product.id,
     item_name: product.name,
     item_brand: product.designer.name,
-    // item_category: order.,
-    price: product.retailPrice,
+    price: productRentalPrice(product, rentalLength),
     quantity: 1,
   }
 }
@@ -53,7 +52,7 @@ export const addToCart = async ({
           value: productRentalPrice(product, order.rentalLength),
           user: user ? user.email : 'guest',
           items: [
-            productToItem(product)
+            productToItem(product, order.rentalLength)
           ],
         })
     })
@@ -81,7 +80,7 @@ export const addToFavorites = async ({
       currency,
       value: productRentalPrice(product, order.rentalLength),
       items: [
-         productToItem(product)
+         productToItem(product, order.rentalLength)
       ],
     })
   } catch (e) {
@@ -100,7 +99,7 @@ export const removeOrderItem = async ({ dispatch, analytics, order }) => {
     currency,
     value: productRentalPrice(product, order.rentalLength),
     items: [
-      productToItem(product)
+      productToItem(product, order.rentalLength)
     ],
   })
 }

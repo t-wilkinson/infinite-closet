@@ -66,7 +66,7 @@ module.exports = {
         cart,
         user,
       })
-      ctx.send(strapi.services.price.sanitizeSummary(summary))
+      ctx.send(summary)
     } catch (e) {
       ctx.send(null, 404)
     }
