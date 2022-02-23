@@ -45,7 +45,7 @@ export const useAddressFields = (
 // Fails if postcode is invalid for promise chaining
 export const validatePostcode = async (value: string) => {
   return axios
-    .get<{ valid: boolean }>(`/addresses/verify/${value}`, {
+    .get<{ valid: boolean }>(`/addresses/verify/${value.replace(/\s+/g, '')}`, {
       withCredentials: false,
     })
     .then((data) => {
