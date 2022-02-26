@@ -65,6 +65,8 @@ module.exports = {
       formatAddress(config, 'recipient', recipient)
     )
 
+    strapi.log.info('shipping ', body)
+
     if (process.env.NODE_ENV !== 'production') {
       return Math.random().toString().slice(2)
     }

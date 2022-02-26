@@ -252,11 +252,11 @@ const WhyRentItem = ({ item }) => (
 
 const productCategories = [
   {
-    title: 'Valentine\'s Day Edit',
-    text: 'Love Your (Sustainable) Look',
+    title: 'Florals? For Spring Time?',
+    text: 'How groundbreaking',
     src: valentinesDayEditPic,
     alt: 'Flowery dress for valentines day',
-    href: '/products/clothing?colors=red&colors=white&colors=pink&colors=purple',
+    href: '/products/clothing?colors=green&colors=floral-print',
     position: 'center',
   },
   {
