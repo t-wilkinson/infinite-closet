@@ -37,8 +37,18 @@ const groupAlphabetically = (values: Name[]) => {
   )[1]
 }
 
+const ChangeTab = ({ currentPage, setPage, page, label }) =>
+  <button onClick={() => setPage(page)} className={`
+  ${currentPage === page ? 'underline' : ''}
+  font-bold text-xl uppercase
+  `}>
+    {label}
+  </button>
+
 export const Page = () => {
   const [designers, setDesigners] = React.useState([])
+  const [page, setPage] = React.useState(null)
+  // categories slug === 'clothing'
 
   React.useEffect(() => {
     axios
@@ -51,54 +61,48 @@ export const Page = () => {
 
   return (
     <Layout title="Designers" spacing={false}>
-      <div className="h-96 w-full relative items-center justify-center">
-        <div className="relative z-10 p-4 bg-sec text-white">
-          <h1 className="font-subheader text-5xl">Designers</h1>
-        </div>
-        <Image
-          alt=""
-          src="/media/brand/facebook-banner.png"
-          layout="fill"
-          objectFit="cover"
-          objectPosition="top center"
-        />
+      <div className="my-16 relative font-bold uppercase text-3xl sm:text-4xl text-center items-center">
+        <h2 className="relative">Designers</h2>
+        <div className="w-1/2 sm:w-3/4 bg-pri h-2 -mt-3 absolute bottom-0 sm:right-0 mr-4 sm:mr-0" />
       </div>
-      <div className="w-full max-w-screen-md my-4 px-4 lg:px-0">
-        <div className="flex-row flex-wrap">
-          {designers.map(({ firstLetter }) => (
-            <button
+      <div className="flex-row w-full max-w-screen-md justify-evenly mb-8">
+        <ChangeTab currentPage={page} setPage={setPage} page={null} label="All" />
+        <ChangeTab currentPage={page} setPage={setPage} page="clothing" label="Clothing" />
+        <ChangeTab currentPage={page} setPage={setPage} page="accessories" label="Accessories" />
+      </div>
+      <div className="w-full max-w-screen-md my-4 px-0 sm:px-4 lg:px-0">
+        <div className="grid grid-cols-3"
+        >
+          {designers.filter(({designers}) => {
+            if (!page) {
+              return true
+            } else {
+              return designers.some(designer => designer.products.some(product => product.categories.some(category => category.slug === page)))
+            }
+          }).map(({ firstLetter, designers }) => (
+            <Designers
               key={firstLetter}
-              onClick={() =>
-                document.querySelector(`#${firstLetter}`).scrollIntoView()
-              }
-              className="text-pri mr-4"
-            >
-              {firstLetter}
-            </button>
+              firstLetter={firstLetter}
+              designers={designers}
+            />
           ))}
         </div>
-        {designers.map(({ firstLetter, designers }) => (
-          <Designers
-            key={firstLetter}
-            firstLetter={firstLetter}
-            designers={designers}
-          />
-        ))}
       </div>
     </Layout>
   )
 }
 
 const Designers = ({ firstLetter, designers }) => (
-  <div className="flex-row w-full justify-end pl-8 my-8">
+  // <div className="flex-row w-full justify-end pl-8 my-8">
+  <div className="pl-4 my-8">
     <h2 id={firstLetter} className="font-bold text-xl w-32">
       {firstLetter}
     </h2>
-    <div className="md:flex-row flex-wrap w-full ml:16 md:ml-32">
+    <div className="flex-wrap w-full">
       {designers.map((designer) => (
         <div key={designer.id} className="w-1/2">
           <Link href={`/designers/${designer.slug}`}>
-            <a className="text-pri">{designer.name}</a>
+            <a className="">{designer.name}</a>
           </Link>
         </div>
       ))}

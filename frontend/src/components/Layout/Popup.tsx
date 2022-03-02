@@ -25,7 +25,7 @@ export const Popup = ({
         <button
           type="button"
           onClick={close}
-          className="place-self-end absolute p-1"
+          className="place-self-end absolute p-1 z-10"
         >
           <Icon icon={iconClose} size={16} />
         </button>

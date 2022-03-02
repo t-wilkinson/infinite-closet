@@ -63,11 +63,11 @@ export const Signin = ({
       <Password field={fields.get('password')} />
       <Submit form={fields.form}>Sign In</Submit>
 
-      <OR />
-
       <div className="inline-block">
         <BlueLink href="/account/forgot-password" label="Forgot Password?" />
       </div>
+
+      <OR />
     </Form>
   )
 }

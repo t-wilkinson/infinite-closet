@@ -20,9 +20,9 @@ export * from './fields'
 export * from './types'
 
 export const OR = () => (
-  <div className="flex-row items-center">
+  <div className="flex-row w-full items-center">
     <div className="h-px bg-gray flex-grow" />
-    <span className="mx-5 my-2 text-gray">OR</span>
+    <span className="mx-5 my-2 font-bold">OR</span>
     <div className="h-px bg-gray flex-grow" />
   </div>
 )
@@ -138,7 +138,7 @@ export const FormWrapper = ({ className = '', children }) => (
 )
 
 export const FormHeader = ({ label }) => (
-  <span className="text-center font-bold text-2xl mt-2 mb-6">{label}</span>
+  <span className="text-center font-subheader text-2xl mt-2 mb-6">{label}</span>
 )
 
 export const Submit = ({

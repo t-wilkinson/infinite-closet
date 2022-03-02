@@ -11,7 +11,7 @@
     {
       "method": "GET",
       "path": "/designers",
-      "handler": "designer.find",
+      "handler": "product.getDesigners",
       "config": {
         "policies": []
       }

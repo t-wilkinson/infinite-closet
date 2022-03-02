@@ -78,3 +78,17 @@ export const ScrollUp = () => (
     <Icon icon={iconUp} size={18} />
   </button>
 )
+
+
+export const Heading = ({ block = true, children }) => {
+  return (
+    <div className="items-center">
+      <div className="relative font-bold uppercase text-xl sm:text-2xl text-center items-center">
+        <h2 className="relative">{children}</h2>
+        {block && (
+          <div className="w-1/2 sm:w-3/4 bg-pri h-1 -mt-3 absolute bottom-0 sm:right-0 mr-4 sm:mr-0" />
+        )}
+      </div>
+    </div>
+  )
+}

@@ -26,7 +26,6 @@ export const Popup = ({ popup }) => {
     <PopupWrapper
       isOpen={popup !== 'hidden'}
       close={() => dispatch(rootActions.hidePopup())}
-      spacing
     >
       <PopupForm />
     </PopupWrapper>

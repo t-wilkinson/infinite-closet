@@ -1,0 +1,47 @@
+#!/bin/env bash
+
+ssh -T infinitecloset <<EOF
+echo
+echo
+echo
+echo DOCKER
+docker ps
+
+echo
+echo
+echo
+echo IP
+ip a
+
+echo
+echo
+echo
+echo LAST
+last | tail -10
+
+echo
+echo
+echo
+echo UPTIME
+uptime
+
+echo
+echo
+echo
+echo DF
+df / -h
+
+echo
+echo
+echo
+echo VMSTAT
+vmstat -s
+vmstat -w -Sk
+vmstat -d -w
+
+echo
+echo
+echo
+echo SS
+ss -tunp
+EOF

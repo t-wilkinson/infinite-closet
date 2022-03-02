@@ -199,9 +199,15 @@ async function acsStockSetup(ctx) {
   ctx.send(rows.join('\n'))
 }
 
+async function getDesigners(ctx) {
+  const designers = await strapi.query('designer').find({}, ['products', 'products.categories', 'products.category'])
+  ctx.send(designers)
+}
+
 module.exports = {
   routes,
   shopItem,
   facebookCatalog,
   acsStockSetup,
+  getDesigners,
 }

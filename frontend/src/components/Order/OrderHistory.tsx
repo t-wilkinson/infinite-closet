@@ -31,7 +31,7 @@ export const Orders = () => {
               <strong className="mb-4">
                 {dayjs(checkout.created_at).format('ddd, MMM D')}
               </strong>
-              {(paymentError || process.env.NODE_ENV === 'development') &&
+              {(paymentError) &&
                 paymentIntent && (
                   <ButtonLink
                     href={`/buy/complete?payment_intent=${paymentIntent.id}&payment_intent_client_secret=${paymentIntent.client_secret}`}
