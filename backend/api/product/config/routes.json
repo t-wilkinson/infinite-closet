@@ -10,6 +10,14 @@
     },
     {
       "method": "GET",
+      "path": "/designers/:slug",
+      "handler": "product.getDesigner",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
       "path": "/designers",
       "handler": "product.getDesigners",
       "config": {

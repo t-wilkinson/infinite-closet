@@ -9,6 +9,7 @@ import { StrapiProduct, StrapiDesigner } from '@/types/models'
 
 export const Page = ({ data }) => {
   const designer = data.designer
+  console.log(designer.products)
 
   return (
     <Layout title={designer.name}>
@@ -35,12 +36,12 @@ export const Page = ({ data }) => {
 export default Page
 
 export const getServerSideProps = async ({ params }) => {
-  const [designers] = await Promise.all([
-    axios.get<StrapiDesigner[]>(`/designers?slug=${params.slug}`, {
+  const [designer] = await Promise.all([
+    axios.get<StrapiDesigner[]>(`/designers/${params.slug}`, {
       withCredentials: false,
     }),
   ])
-  const designer = designers[0]
+  console.log(designer)
   for (const product of designer.products) {
     product.designer = { ...designer }
     delete product.designer.products

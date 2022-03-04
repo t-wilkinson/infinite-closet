@@ -199,8 +199,44 @@ async function acsStockSetup(ctx) {
   ctx.send(rows.join('\n'))
 }
 
+async function getDesigner(ctx) {
+  const { slug } = ctx.params
+  let designer = await strapi.query('designer').findOne(
+    {
+      slug,
+      published_at_null: false,
+    },
+    ['products']
+  )
+  designer.products = await strapi
+    .query('product')
+    .find({ id_in: designer.products.map((product) => product.id) }, [
+      'sizes',
+      'categories',
+      'images',
+    ])
+  ctx.send(designer)
+}
+
 async function getDesigners(ctx) {
-  const designers = await strapi.query('designer').find({}, ['products', 'products.categories', 'products.category'])
+  let designers = await strapi.query('designer').find(
+    {
+      published_at_null: false,
+    },
+    ['products']
+  )
+  designers = await Promise.all(
+    designers.map(async (designer) => {
+      const products = await strapi
+        .query('product')
+        .find({ id_in: designer.products.map((product) => product.id) }, [
+          'sizes',
+          'categories',
+          'images',
+        ])
+      return { ...designer, products }
+    })
+  )
   ctx.send(designers)
 }
 
@@ -210,4 +246,5 @@ module.exports = {
   facebookCatalog,
   acsStockSetup,
   getDesigners,
+  getDesigner,
 }
