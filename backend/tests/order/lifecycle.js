@@ -60,5 +60,41 @@ describe('Lifecycle', () => {
     orders = await strapi
       .query('order', 'orders')
       .find({ id_in: orders.all.map((order) => order.id) }, ['shipment'])
+    console.log(orders)
   })
 })
+
+describe('Forward order status', () => {
+  let lifecycle
+
+  beforeAll(async () => {
+    lifecycle = strapi.plugins['orders'].services.lifecycle
+  })
+
+  it('works', async () => {
+    let order = await f.order.create(strapi, { status:  null })
+
+    order = await lifecycle.forwardOrderStatus('shipped', order)
+    expect(order.status).toBe('shipping')
+    expect(order.shipment.status).toBe('shipped')
+
+    order = await lifecycle.forwardOrderStatus('start', order)
+    expect(order.status).toBe('shipping')
+    expect(order.shipment.status).toBe('start')
+
+    order = await lifecycle.forwardOrderStatus('end', order)
+    expect(order.status).toBe('shipping')
+    expect(order.shipment.status).toBe('end')
+
+    order = await lifecycle.forwardOrderStatus('cleaning', order)
+    expect(order.status).toBe('shipping')
+    expect(order.shipment.status).toBe('cleaning')
+
+    order = await lifecycle.forwardOrderStatus('completed', order)
+    expect(order.status).toBe('completed')
+    expect(order.shipment.status).toBe('completed')
+
+    console.log(order)
+  })
+})
+

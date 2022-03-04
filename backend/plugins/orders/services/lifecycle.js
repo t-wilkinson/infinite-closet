@@ -35,7 +35,7 @@ const lifecycles = {
 /**
  * Handle intricacies of changing order/shipment status
  */
-async function on(status, order, ...props) {
+async function forwardOrderStatus(status, order) {
   // If order does not have a shipment, we create one
   const shipmentId = toId(order.shipment)
   const shipmentProps = {
@@ -55,15 +55,18 @@ async function on(status, order, ...props) {
     strapi.query('order', 'orders').update({ id: toId(order) }, props)
   }
   if (status === 'completed') {
-    changeOrder({ status: 'completed' })
+    order = changeOrder({ status: 'completed' })
   } else if (status === 'confirmed' || order.status !== 'shipping') {
-    changeOrder({ status: 'shipping' })
+    order = changeOrder({ status: 'shipping' })
   }
+  return order
+}
 
+async function on(status, order, ...props) {
+  order = await forwardOrderStatus(status, order)
   const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(
     order
   )
-
   return await lifecycles[status](cartItem, ...props)
 }
 
@@ -95,26 +98,26 @@ async function getOrderLifecycles() {
 }
 
 /**
+ * Check if order is changing to status today, so we can run respective lifecycle code
+ */
+function statusChangingToday(order, nextStatus) {
+  const today = day()
+  if (!nextStatus) {
+    return false
+  }
+  const range = strapi.plugins['orders'].services.order.range(order)
+  const statusChangeDate = day(range[nextStatus])
+  if (statusChangeDate.isSame(today, 'day')) {
+    return true
+  }
+}
+
+/**
  * Forward every order lifecycle
  */
 async function forwardAll() {
   const statuses = strapi.models.shipment.attributes.status.enum
   const orders = await getOrderLifecycles()
-
-  const today = day()
-  /**
-   * Check if order is changing to status today, so we can run respective lifecycle code
-   */
-  function statusChangingToday(order, nextStatus) {
-    if (!nextStatus) {
-      return false
-    }
-    const range = strapi.plugins['orders'].services.order.range(order)
-    const statusChangeDate = day(range[nextStatus])
-    if (statusChangeDate.isSame(today, 'day')) {
-      return true
-    }
-  }
 
   for (const status in orders) {
     if (status === 'all') {
@@ -140,4 +143,5 @@ async function forwardAll() {
 module.exports = {
   on,
   forwardAll,
+  forwardOrderStatus,
 }

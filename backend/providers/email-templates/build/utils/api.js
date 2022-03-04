@@ -8,8 +8,8 @@ exports.getBackendURL = getBackendURL;
 exports.normalizeSize = normalizeSize;
 // const env = obj => obj[process.env.NODE_ENV]
 
-var frontendOrigin = process.env.REACT_APP_FRONTEND_ORIGIN || 'http://ic.com';
-var backendOrigin = process.env.REACT_APP_BACKEND_ORIGIN || 'http://api.ic.com';
+var frontendOrigin = 'https://infinitecloset.co.uk';
+var backendOrigin = 'https://api.infinitecloset.co.uk';
 
 function getFrontendURL(url) {
   if (url == null) {

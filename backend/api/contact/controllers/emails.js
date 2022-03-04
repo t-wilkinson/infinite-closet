@@ -107,7 +107,7 @@ module.exports = {
     }
   },
 
-  async storeCredit() {
+  async storeCredit(ctx) {
     return ctx.badRequest('Not yet implemented')
     // try {
     //   let { firstName} = ctx.request.body

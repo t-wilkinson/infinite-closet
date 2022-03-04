@@ -2,6 +2,8 @@
 // const fs = require('fs')
 const templateData = require('email-templates/src/utils/data.cjs')
 
+const trustPilotEmail = 'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com'
+
 async function send(...props) {
   await strapi.plugins['email'].services.email.send(...props)
 
@@ -91,7 +93,7 @@ module.exports = {
         process.env.NODE_ENV === 'production' && !isDefault
           ? [
             // 'battersea@oxwash.com',
-            'infinitecloset.co.uk+6c3ff2e3e1@invite.trustpilot.com',
+            trustPilotEmail,
           ]
           : [],
       subject: `Your rental is ending soon`, // `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
@@ -203,5 +205,21 @@ ${error.message}
 ${error.stack}
 `,
     })
-  }
+  },
+
+  async trustPilot(cartItem = templateData.cartItem) {
+    const { user } = unpackCartItem(cartItem)
+    await send({
+      template: 'order-ending',
+      to: 'info@infinitecloset.co.uk',
+      bcc:
+        process.env.NODE_ENV === 'production'
+          ? [
+            trustPilotEmail,
+          ]
+          : [],
+      subject: `Your rental is ending soon`,
+      data: { cartItem, firstName: user.firstName, user },
+    })
+  },
 }
