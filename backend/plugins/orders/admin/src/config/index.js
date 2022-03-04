@@ -5,7 +5,7 @@ export const emails = [
   { type: 'order', title: "Return confirmation", slug: "order-received"},
   { type: 'order', title: "Review request", slug: "order-review"},
 
-  { title: "Trust pilot review", slug: "trust-pilot"},
+  { type: 'order', title: "Trust pilot review", slug: "trust-pilot"},
 
   { title: "Gift card", slug: "gift-card"},
   { title: "Forgot password", slug: "forgot-password"},

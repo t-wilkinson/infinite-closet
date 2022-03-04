@@ -41,7 +41,6 @@ export const getServerSideProps = async ({ params }) => {
       withCredentials: false,
     }),
   ])
-  console.log(designer)
   for (const product of designer.products) {
     product.designer = { ...designer }
     delete product.designer.products
