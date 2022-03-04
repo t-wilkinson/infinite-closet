@@ -8,14 +8,18 @@ import acsImage from '@/media/sustainability/acs.png'
 import kingstonUniversityLondonImage from '@/media/sustainability/kingston-university-london.jpg'
 import bloominoImage from '@/media/sustainability/bloomino.png'
 import giveYourBestImage from '@/media/sustainability/give-your-best.jpg'
-import sustainbilityImage from '@/media/sustainability/sustainability.jpg'
+import sustainbilityImage from '@/media/sustainability/sustainability.png'
 import aboutUsBannerImage from '@/media/about-us/about-us-banner.jpg'
+
+const myLoader = ({ src, width, quality }) => {
+  return `${src}?w=${width}&q=${quality || 100}`
+}
 
 const Banner = () => (
   <section className="w-full relative items-center justify-center">
-    <div className="w-full h-96 sm:h-128 relative">
-      <Image src={aboutUsBannerImage} layout="fill" objectFit="cover" />
-    </div>
+    <Image src={aboutUsBannerImage} objectFit="contain"
+      loader={myLoader}
+    />
     <h1 className="text-center absolute font-bold text-2xl sm:text-4xl md:text-5xl text-white uppercase">
       Partners & Sustainability
     </h1>
@@ -36,6 +40,13 @@ const Page = () => (
 
 const Sustainability = () => (
   <section>
+    <div className="relative">
+      <Image src={sustainbilityImage} objectFit="contain"
+        width={2048}
+        loader={myLoader}
+      />
+    </div>
+
     <div className="mt-4 flex-row">
       <div className="space-y-8 text-start items-start grow-0">
         <div className="relative h-64 w-full md:hidden">
@@ -59,12 +70,6 @@ const Sustainability = () => (
           <li>Decent work and Economic growth</li>
           <li>Industry, innovation and infrastructure</li>
         </ul>
-      </div>
-      <div className="md:w-32" />
-      <div className="grow-0 hidden md:flex">
-        <div className="relative h-96 w-128">
-          <Image src={sustainbilityImage} objectFit="contain" layout="fill" />
-        </div>
       </div>
     </div>
   </section>

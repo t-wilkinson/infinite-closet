@@ -21,6 +21,14 @@ import diversityImage from '@/media/about-us/diversity.jpg'
 //   { title: 'Affordability', text: 'Make sustainable fashion more accessible to everyone' },
 // ]
 
+const myLoader = ({ src, width, quality }) => {
+  return `${src}?w=${width}&q=${quality || 100}`
+  // return `https://infinitecloset.treywilkinson.com/_next/image?url=${encodeURIComponent(
+  //   src,
+  // )}&w=${width}&q=${quality || 75}`
+}
+
+
 const values = [
   {
     image: sustainabilityImage,
@@ -105,9 +113,9 @@ const AboutItem = ({ header, children }) => (
 
 const Banner = () => (
   <section className="w-full relative items-center justify-center">
-    <div className="w-full h-96 sm:h-128 relative">
-      <Image src={aboutUsBannerImage} layout="fill" objectFit="cover" />
-    </div>
+    <Image src={aboutUsBannerImage} objectFit="contain"
+      loader={myLoader}
+    />
     <h1 className="absolute font-bold text-2xl sm:text-4xl md:text-5xl text-white uppercase">
       Who Are We?
     </h1>

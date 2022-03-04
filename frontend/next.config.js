@@ -45,7 +45,7 @@ module.exports = withPlugins([withPWA, [withBundleAnalyzer]], {
   },
   images: {
     minimumCacheTTL: 60 * 60,
-    deviceSizes: [1024, 1920, 2048, 3840],
+    deviceSizes: [1024, 1920, 2048, 3000, 3840],
     domains: [
       'ic.com',
       'api.ic.com',
