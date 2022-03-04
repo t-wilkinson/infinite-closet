@@ -17,7 +17,7 @@ const Banner = () => (
       <Image src={aboutUsBannerImage} layout="fill" objectFit="cover" />
     </div>
     <h1 className="text-center absolute font-bold text-2xl sm:text-4xl md:text-5xl text-white uppercase">
-      Partners & Sustainbility
+      Partners & Sustainability
     </h1>
   </section>
 )

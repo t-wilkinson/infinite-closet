@@ -24,7 +24,7 @@ export const routes = [
           { name: 'About Us', slug: 'about-us' },
           { name: 'Customer Feedback', slug: '#reviews' },
           { name: 'Ambassador Program', slug: 'partners-and-sustainability#ambassador' },
-          { name: 'Sustainbility', slug: 'partners-and-sustainability' },
+          { name: 'Sustainability', slug: 'partners-and-sustainability' },
         ],
       },
     ],
