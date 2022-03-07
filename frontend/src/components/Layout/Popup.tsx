@@ -20,7 +20,7 @@ export const Popup = ({
 
   return (
     <Modal close={close}>
-      <div className={`bg-white p-4 rounded-md items-center ${className || 'w-96' }`} style={{ maxHeight: 600 }}>
+      <div className={`bg-white p-4 rounded-md items-center ${className || 'w-full md:w-96' }`} style={{ maxHeight: 600 }}>
         {spacing && <div className="h-8" />}
         <button
           type="button"
