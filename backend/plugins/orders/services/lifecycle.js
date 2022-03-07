@@ -112,6 +112,13 @@ function statusChangingToday(order, nextStatus) {
   }
 }
 
+function forwardOrder(order, nextStatus) {
+  if (!statusChangingToday(order, nextStatus)) {
+    return
+  }
+  return on(nextStatus, order)
+}
+
 /**
  * Forward every order lifecycle
  */
@@ -130,10 +137,7 @@ async function forwardAll() {
 
     for (const order of orders[status]) {
       const nextStatus = statuses[index + 1]
-      if (!statusChangingToday(order, nextStatus)) {
-        continue
-      }
-      on(nextStatus, order)
+      forwardOrder(order, nextStatus)
     }
   }
 
@@ -143,5 +147,8 @@ async function forwardAll() {
 module.exports = {
   on,
   forwardAll,
+
+  // Testing
+  forwardOrder,
   forwardOrderStatus,
 }

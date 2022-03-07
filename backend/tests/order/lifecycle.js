@@ -55,11 +55,17 @@ describe('Lifecycle', () => {
     )
   })
 
-  it('works', async () => {
-    orders = await lifecycle.forwardAll()
+  it('forwards orders', async () => {
+    // async function forwardOrder(nextStatus, orderData) {
+    //   const order = await f.order.create(strapi, orderData)
+    //   await lifecycle.forwardOrder(order, nextStatus)
+    // }
+    // forwardOrder('', {})
+
+    const forwardedOrders = await lifecycle.forwardAll()
     orders = await strapi
       .query('order', 'orders')
-      .find({ id_in: orders.all.map((order) => order.id) }, ['shipment'])
+      .find({ id_in: forwardedOrders.all.map((order) => order.id) }, ['shipment'])
     console.log(orders)
   })
 })
@@ -71,7 +77,7 @@ describe('Forward order status', () => {
     lifecycle = strapi.plugins['orders'].services.lifecycle
   })
 
-  it('works', async () => {
+  it('forwards order status', async () => {
     let order = await f.order.create(strapi, { status:  null })
 
     order = await lifecycle.forwardOrderStatus('shipped', order)
