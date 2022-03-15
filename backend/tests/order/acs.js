@@ -4,6 +4,12 @@
  */
 'use strict'
 const api = require('../../api/shipping/services/acs/api')
+const f = {}
+f.product = require('../product/factory')
+f.order = require('./factory')
+f.user = require('../user/factory')
+f.designer = require('../product/designer-factory')
+f.cart = require('./cart/factory')
 
 describe('Verifies postcodes', () => {
   it('Verifies hived address', async () => {
@@ -16,3 +22,17 @@ describe('Verifies postcodes', () => {
     expect(valid).toBe(false)
   })
 })
+
+// describe('Shipping', () => {
+//   it('works', async () => {
+//     const order =
+//     const shippingData =
+//     const data = await prepareToShip(cartItem)
+//     const shippingRequest = {
+//       collection: 'infinitecloset',
+//       recipient: data.address,
+//       rental: data.rental,
+//     }
+//     api.ship()
+//   })
+// })

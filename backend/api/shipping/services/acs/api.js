@@ -27,44 +27,49 @@ function toAcsUniqueSKU({ product, size }, existing = 0) {
   return `IC-${toId(product)}_${existing + 1}-${size}`
 }
 
+function rentalToShippingBody(rental) {
+  const { id, range, shippingClass, product, size, charge, numInProgress } = rental
+  const uniqueSKU = toAcsUniqueSKU({ product, size }, numInProgress)
+
+  const body = {
+    AccountCode: config.auth.accountCode,
+    OrderNumber: `IC-${id}`,
+
+    DeliveryService: config.shippingClasses[shippingClass],
+    DeliveryAgent: config.deliveryAgent,
+    DeliveryCharge: 0,
+    OrderCancelled: false,
+
+    OrderDate: range.confirmed?.format('YYYY-MM-DD'),
+    DispatchDate: range.shipped.format('YYYY-MM-DD'),
+    DeliveryDate: range.start.format('YYYY-MM-DD'),
+    EventDate: range.start.format('YYYY-MM-DD'),
+    WarehouseReturnDate: range.cleaning.format('YYYY-MM-DD'), // day after the order should end
+
+    OrderItems: [
+      {
+        LineItemId: uniqueSKU, // should be unique per item in the array
+        GarmentSKU: uniqueSKU,
+        IsHire: true,
+        ItemPrice: charge,
+        Measurement1: 'ALL', //strapi.services.size.normalize(order.size),
+        Measurement2: 'ALL', // strapi.services.size.normalize(order.size),
+      },
+    ],
+  }
+
+  return body
+}
+
 module.exports = {
   toAcsUniqueSKU,
   formatAddress,
 
   async ship({ recipient, rental }) {
-    const { id, range, shippingClass, product, size, charge, numInProgress } = rental
-    const uniqueSKU = toAcsUniqueSKU({ product, size }, numInProgress)
-
     const body = Object.assign(
-      {
-        AccountCode: config.auth.accountCode,
-        OrderNumber: `IC-${id}`,
-
-        DeliveryService: config.shippingClasses[shippingClass],
-        DeliveryAgent: config.deliveryAgent,
-        DeliveryCharge: 0,
-        OrderCancelled: false,
-
-        OrderDate: range.confirmed?.format('YYYY-MM-DD'),
-        DispatchDate: range.shipped.format('YYYY-MM-DD'),
-        DeliveryDate: range.start.format('YYYY-MM-DD'),
-        EventDate: range.start.format('YYYY-MM-DD'),
-        WarehouseReturnDate: range.cleaning.format('YYYY-MM-DD'), // day after the order should end
-
-        OrderItems: [
-          {
-            LineItemId: uniqueSKU, // should be unique per item in the array
-            GarmentSKU: uniqueSKU,
-            IsHire: true,
-            ItemPrice: charge,
-            Measurement1: 'ALL', //strapi.services.size.normalize(order.size),
-            Measurement2: 'ALL', // strapi.services.size.normalize(order.size),
-          },
-        ],
-      },
+      rentalToShippingBody(rental),
       formatAddress(config, 'recipient', recipient)
     )
-
     strapi.log.info('shipping ', body)
 
     if (process.env.NODE_ENV !== 'production') {

@@ -108,4 +108,5 @@ module.exports = {
   // shipToCleaners,
   // shippingFailure,
   shipOrderToClient,
+  prepareToShip,
 }

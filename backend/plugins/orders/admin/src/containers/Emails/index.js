@@ -14,32 +14,122 @@ const Emails = () => {
   // const location = useLocation();
   // const path = location.pathname.split("/").slice(-1)
   const path = (subpath) => `/plugins/${pluginId}/emails/${subpath}`
-  const giftCardEmail = emails.find(email => email.slug === 'gift-card')
-  const forgotPasswordEmail = emails.find(email => email.slug === 'forgot-password')
+  const orderConfirmationEmail = emails.find(
+    (email) => email.slug === 'order-confirmation'
+  )
+  const giftCardEmail = emails.find((email) => email.slug === 'gift-card')
+  const forgotPasswordEmail = emails.find(
+    (email) => email.slug === 'forgot-password'
+  )
 
   return (
     <Wrapper>
       <Switch>
-        {emails.map((email) => (
-          email.type === 'order' &&
+        {emails.map(
+          (email) =>
+            email.type === 'order' && (
+              <Route
+                key={email.slug}
+                path={path(email.slug)}
+                component={() => <RentalEmail slug={email.slug} />}
+              />
+            )
+        )}
+        {
           <Route
-            key={email.slug}
-            path={path(email.slug)}
-            component={() => <RentalEmail slug={email.slug} />}
+            path={path(orderConfirmationEmail.slug)}
+            component={() => (
+              <OrderConfirmationEmail slug={orderConfirmationEmail.slug} />
+            )}
           />
-        ))}
-        {<Route
-            path={path(giftCardEmail.slug)}
-          component={() => <GiftCardEmail slug={giftCardEmail.slug} />}
-        />
         }
-        {<Route
+        {
+          <Route
+            path={path(giftCardEmail.slug)}
+            component={() => <GiftCardEmail slug={giftCardEmail.slug} />}
+          />
+        }
+        {
+          <Route
             path={path(forgotPasswordEmail.slug)}
-          component={() => <ForgotPasswordEmail slug={forgotPasswordEmail.slug} />}
-        />
+            component={() => (
+              <ForgotPasswordEmail slug={forgotPasswordEmail.slug} />
+            )}
+          />
         }
       </Switch>
     </Wrapper>
+  )
+}
+
+const OrderConfirmationEmail = ({ slug }) => {
+  const [checkoutId, setCheckoutId] = React.useState()
+  const [status, setStatus] = React.useState({ code: null, message: null })
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    setStatus({ code: 'loading', message: 'Loading...' })
+
+    fetch(`${strapi.backendURL}/emails/${slug}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        checkoutId,
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw res
+        } else {
+          setStatus({ code: 'success', message: 'Successfully sent mail' })
+        }
+      })
+      .catch(async (err) => {
+        let message
+        try {
+          message = (await err.json()).message
+        } catch (e) {
+          message = err.statusText
+        }
+        setStatus({
+          code: 'error',
+          message: `Failure sending mail\n${message}`,
+        })
+      })
+  }
+
+  return (
+    <RentalEndingWrapper>
+      <div>
+        <form onSubmit={onSubmit}>
+          <Button style={{ marginBottom: '1rem' }} type="submit" primary={true}>
+            Send test email
+          </Button>
+          <fieldset>
+            <Label message="Checkout id"></Label>
+            <InputNumber
+              value={checkoutId}
+              onChange={(e) => setCheckoutId(e.target.value)}
+              name="order-id"
+            />
+          </fieldset>
+          <Button style={{ marginTop: '1rem' }} type="submit" primary={true}>
+            Send email
+          </Button>
+        </form>
+        {status.code === 'success' ? (
+          <span>{status.message}</span>
+        ) : status.code === 'loading' ? (
+          <span>{status.message}</span>
+        ) : status.code === 'error' ? (
+          <span style={{ color: 'red', whiteSpace: 'pre-wrap' }}>
+            {status.message}
+          </span>
+        ) : null}
+      </div>
+    </RentalEndingWrapper>
   )
 }
 
@@ -85,7 +175,7 @@ const RentalEmail = ({ slug }) => {
     <RentalEndingWrapper>
       <div>
         <form onSubmit={onSubmit}>
-          <Button style={{marginBottom: '1rem'}} type="submit" primary={true}>
+          <Button style={{ marginBottom: '1rem' }} type="submit" primary={true}>
             Send test email
           </Button>
           <fieldset>
@@ -105,7 +195,9 @@ const RentalEmail = ({ slug }) => {
         ) : status.code === 'loading' ? (
           <span>{status.message}</span>
         ) : status.code === 'error' ? (
-          <span style={{ color: 'red', whiteSpace: 'pre-wrap' }}>{status.message}</span>
+          <span style={{ color: 'red', whiteSpace: 'pre-wrap' }}>
+            {status.message}
+          </span>
         ) : null}
       </div>
     </RentalEndingWrapper>
@@ -153,7 +245,7 @@ const GiftCardEmail = ({ slug }) => {
     <RentalEndingWrapper>
       <div>
         <form onSubmit={onSubmit}>
-          <Button style={{marginBottom: '1rem'}} type="submit" primary={true}>
+          <Button style={{ marginBottom: '1rem' }} type="submit" primary={true}>
             Send test email
           </Button>
           <fieldset>
@@ -208,8 +300,7 @@ const ForgotPasswordEmail = ({ slug }) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-      }),
+      body: JSON.stringify({}),
     })
       .then((res) => {
         if (!res.ok) {
@@ -236,7 +327,7 @@ const ForgotPasswordEmail = ({ slug }) => {
     <RentalEndingWrapper>
       <div>
         <form onSubmit={onSubmit}>
-          <Button style={{marginBottom: '1rem'}} type="submit" primary={true}>
+          <Button style={{ marginBottom: '1rem' }} type="submit" primary={true}>
             Send test email
           </Button>
         </form>
@@ -245,7 +336,9 @@ const ForgotPasswordEmail = ({ slug }) => {
         ) : status.code === 'loading' ? (
           <span>{status.message}</span>
         ) : status.code === 'error' ? (
-          <span style={{ color: 'red', whiteSpace: 'pre-wrap' }}>{status.message}</span>
+          <span style={{ color: 'red', whiteSpace: 'pre-wrap' }}>
+            {status.message}
+          </span>
         ) : null}
       </div>
     </RentalEndingWrapper>

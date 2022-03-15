@@ -36,7 +36,11 @@ module.exports = {
   /*
    * Order lifecycle
    */
-  async orderConfirmation({ isDefault, contact, cart, summary, address } = templateData.defaultData['order-confirmation']) {
+  async orderConfirmation(
+    { isDefault, contact, cart, summary, address } = templateData.defaultData[
+      'order-confirmation'
+    ]
+  ) {
     const recommendations = await strapi.services.product.recommendations()
     await send({
       template: 'order-confirmation',
@@ -84,7 +88,7 @@ module.exports = {
   //     })
   //   },
 
-  async orderEnding({isDefault, ...cartItem} = templateData.cartItem) {
+  async orderEnding({ isDefault, ...cartItem } = templateData.cartItem) {
     const { user } = unpackCartItem(cartItem)
     await send({
       template: 'order-ending',
@@ -92,9 +96,9 @@ module.exports = {
       bcc:
         process.env.NODE_ENV === 'production' && !isDefault
           ? [
-            // 'battersea@oxwash.com',
-            trustPilotEmail,
-          ]
+              // 'battersea@oxwash.com',
+              trustPilotEmail,
+            ]
           : [],
       subject: `Your rental is ending soon`, // `Your order of ${order.product.name} by ${order.product.designer.name} is ending today`,
       data: { cartItem, firstName: user.firstName, user },
@@ -124,7 +128,9 @@ module.exports = {
   /*
    * Money
    */
-  async giftCard({ email, firstName, giftCard } = templateData.defaultData['gift-card']) {
+  async giftCard(
+    { email, firstName, giftCard } = templateData.defaultData['gift-card']
+  ) {
     const recommendations = await strapi.services.product.recommendations()
     await send({
       template: 'gift-card',
@@ -138,7 +144,9 @@ module.exports = {
     })
   },
 
-  async storeCredit({ firstName, amount } = templateData.defaultData['store-credit']) {
+  async storeCredit(
+    { firstName, amount } = templateData.defaultData['store-credit']
+  ) {
     const recommendations = await strapi.services.product.recommendations()
     await send({
       template: 'store-credit',
@@ -152,7 +160,9 @@ module.exports = {
     })
   },
 
-  async forgotPassword({url, user} = templateData.defaultData['forgot-password']) {
+  async forgotPassword(
+    { url, user } = templateData.defaultData['forgot-password']
+  ) {
     await send({
       template: 'forgot-password',
       to: user.email,
@@ -160,14 +170,18 @@ module.exports = {
       data: {
         url,
         user,
-      }
+      },
     })
   },
 
   /*
    * Non user-facing
    */
-  async contact({name, email, message, phoneNumber} = templateData.defaultData['contact-us']) {
+  async contact(
+    { name, email, message, phoneNumber } = templateData.defaultData[
+      'contact-us'
+    ]
+  ) {
     await send({
       template: 'contact-us',
       to: { name, email: 'info@infinitecloset.co.uk' },
@@ -212,12 +226,7 @@ ${error.stack}
     await send({
       template: 'order-ending',
       to: 'info@infinitecloset.co.uk',
-      bcc:
-        process.env.NODE_ENV === 'production'
-          ? [
-            trustPilotEmail,
-          ]
-          : [],
+      bcc: process.env.NODE_ENV === 'production' ? [trustPilotEmail] : [],
       subject: `Your rental is ending soon`,
       data: { cartItem, firstName: user.firstName, user },
     })

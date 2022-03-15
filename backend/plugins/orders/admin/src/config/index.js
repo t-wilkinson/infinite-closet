@@ -1,5 +1,6 @@
 export const emails = [
-  { type: 'order', title: "Order Confirmation", slug: "order-confirmation"},
+  { title: "Order Confirmation", slug: "order-confirmation"},
+
   { type: 'order', title: "Shipping confirmation", slug: "order-shipped"},
   { type: 'order', title: "Return reminder", slug: "order-ending"},
   { type: 'order', title: "Return confirmation", slug: "order-received"},

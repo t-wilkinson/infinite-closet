@@ -1,7 +1,8 @@
 'use strict'
 
 // Email templates need undefined body to supply defaults
-const toTemplateData = (body) => Object.values(body).filter(v => v).length === 0 ? undefined : body
+const toTemplateData = (body) =>
+  Object.values(body).filter((v) => v).length === 0 ? undefined : body
 
 async function getCartItem(orderId) {
   let order = await strapi
@@ -52,19 +53,37 @@ module.exports = {
       strapi.services.template_email.orderConfirmation()
       return ctx.send(null)
     } else {
-      // const { userId, orderIds } = ctx.request.body
-      return ctx.badRequest('Not yet implemented')
-    }
-    // TODO!
-    // const user = await strapi.query('user', 'users-permissions').findOne({ id: userId })
-    // const orders = await strapi.query('user', 'users-permissions').find({ id_in: orderIds })
+      const { checkoutId } = ctx.request.body
+      const checkout = await strapi
+        .query('checkout')
+        .findOne({ id: checkoutId })
+      if (
+        !checkout ||
+        !checkout.user ||
+        !checkout.contact ||
+        !checkout.address ||
+        !checkout.orders
+      ) {
+        return ctx.badRequest(
+          'Checkout does not have enough attached information'
+        )
+      }
+      const { user, contact, address, orders } = checkout
+      const cart = await strapi.plugins['orders'].services.cart.create(orders)
+      const summary = await strapi.plugins['orders'].services.price.summary({
+        cart,
+        user,
+      })
 
-    // strapi.services.template_email.orderConfirmation({
-    //   firstName: user.firstName,
-    //   summary,
-    //   cart,
-    //   address,
-    // })
+      await strapi.services.template_email.orderConfirmation({
+        contact,
+        address,
+        cart,
+        user,
+        summary,
+      })
+      return ctx.send(null)
+    }
   },
 
   async orderShipped(ctx) {
@@ -100,7 +119,11 @@ module.exports = {
     try {
       let { firstName, email, giftCardId } = ctx.request.body
       const giftCard = await strapi.query('gift-card').find({ id: giftCardId })
-      await strapi.services.template_email.giftCard({ firstName, giftCard, email })
+      await strapi.services.template_email.giftCard({
+        firstName,
+        giftCard,
+        email,
+      })
       return ctx.send(null)
     } catch (e) {
       return ctx.badRequest(e.message)

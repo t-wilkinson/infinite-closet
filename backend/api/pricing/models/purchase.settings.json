@@ -13,7 +13,7 @@
   "attributes": {
     "status": {
       "type": "enumeration",
-      "enum": ["success"],
+      "enum": ["success", "refunded"],
       "default": "success"
     },
     "paymentIntent": {
