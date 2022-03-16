@@ -24,6 +24,13 @@ const SideMenu = () => {
       name: "emails",
       links: emails.map(emailLink),
     },
+    {
+      title: "Actions",
+      name: "actions",
+      links: [
+        {name: 'ship', title: 'ship', to: `/plugins/${pluginId}/actions/ship` },
+      ],
+    },
   ];
 
   return (

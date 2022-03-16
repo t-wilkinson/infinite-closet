@@ -171,6 +171,15 @@
       "config": {
         "plugins": [["admin::hasPermissions", ["plugins::orders.manage"]]]
       }
+    },
+
+    {
+      "method": "POST",
+      "path": "/actions/ship",
+      "handler": "actions.ship",
+      "config": {
+        "plugins": [["admin::hasPermissions", ["plugins::orders.manage"]]]
+      }
     }
   ]
 }

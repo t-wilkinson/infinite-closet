@@ -6,6 +6,7 @@ import pluginId from "../../pluginId";
 // Containers
 import HomePage from "../HomePage";
 import Emails from "../Emails";
+import Actions from "../Actions";
 import SideMenu from "../SideMenu";
 import Wrapper from "./Wrapper";
 
@@ -16,6 +17,7 @@ const App = () => {
       <Switch>
         <Route path={`/plugins/${pluginId}/orders`} component={HomePage} />
         <Route path={`/plugins/${pluginId}/emails`} component={Emails} />
+        <Route path={`/plugins/${pluginId}/actions`} component={Actions} />
         <Route exact path={`/plugins/${pluginId}`}>
           <Redirect to={`/plugins/${pluginId}/orders`} />
         </Route>

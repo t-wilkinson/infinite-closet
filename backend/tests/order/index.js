@@ -8,7 +8,7 @@
 'use strict'
 
 // require('./hived')
-// require('./acs')
+require('./acs')
 // require('./checkout')
 // require('./price')
-require('./lifecycle')
+// require('./lifecycle')

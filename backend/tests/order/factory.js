@@ -3,6 +3,7 @@ const f = {}
 f.product = require('../product/factory')
 f.user = require('../user/factory')
 f.shipment = require('./shipment/factory')
+f.address = require('../user/address/factory')
 
 /**
  * Default data that factory use
@@ -29,6 +30,10 @@ const mock = (options = {}) => {
  */
 const create = async (strapi, data = {}) => {
   let options = {}
+  if (data.address === undefined) {
+    const address = await f.address.create(strapi)
+    options.address = address.id
+  }
   if (data.user === undefined) {
     const user = await f.user.create(strapi)
     options.user = user.id

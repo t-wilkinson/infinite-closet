@@ -23,16 +23,17 @@ describe('Verifies postcodes', () => {
   })
 })
 
-// describe('Shipping', () => {
-//   it('works', async () => {
-//     const order =
-//     const shippingData =
-//     const data = await prepareToShip(cartItem)
-//     const shippingRequest = {
-//       collection: 'infinitecloset',
-//       recipient: data.address,
-//       rental: data.rental,
-//     }
-//     api.ship()
-//   })
-// })
+describe('Shipping', () => {
+  it('works', async () => {
+    const order = await f.order.create(strapi)
+    const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(order)
+    const shippingData = await strapi.plugins['orders'].services.ship.prepareToShip(cartItem)
+    const shippingRequest = {
+      collection: 'infinitecloset',
+      recipient: shippingData.address,
+      rental: shippingData.rental,
+    }
+    const res = await api.ship(shippingRequest)
+    console.log(res)
+  })
+})

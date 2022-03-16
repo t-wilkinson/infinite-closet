@@ -2,17 +2,19 @@
 
 const fetch = require('node-fetch')
 const config = require('./config')
-const { toId, formatAddress } = require('../../../../utils')
+const { day, toId, formatAddress } = require('../../../../utils')
 const { postcodeValidator } = require('postcode-validator')
 
 async function fetchApi(url, method, body = {}) {
   const basicAuth = Buffer.from(
     `${config.auth.username}:${config.auth.password}`
   ).toString('base64')
+  // ACS has not setup live testing api
   const endpoint =
-    process.env.NODE_ENV === 'production'
-      ? config.endpoint.live
-      : config.endpoint.test
+    config.endpoint.live
+    // process.env.NODE_ENV === 'production'
+    //   ? config.endpoint.live
+    //   : config.endpoint.test
   return await fetch(`${endpoint}${url}`, {
     method,
     headers: {
@@ -28,8 +30,20 @@ function toAcsUniqueSKU({ product, size }, existing = 0) {
 }
 
 function rentalToShippingBody(rental) {
-  const { id, range, shippingClass, product, size, charge, numInProgress } = rental
-  const uniqueSKU = toAcsUniqueSKU({ product, size }, numInProgress)
+  const { id, shippingClass, product, size, charge, numInProgress } = rental
+  const uniqueSKU =
+    process.env.NODE_ENV === 'production'
+      ? toAcsUniqueSKU({ product, size }, numInProgress)
+      : 'IC-123_1-M' // ACS requires sku in their database
+
+  // ACS does not have a testing environment so we have to set a date far in the future
+  const range =
+    process.env.NODE_ENV === 'production'
+      ? rental.range
+      : strapi.services.timing.range({
+        rentalLength: 'short',
+        expectedStart: day().add(50, 'year'),
+      })
 
   const body = {
     AccountCode: config.auth.accountCode,
@@ -40,7 +54,8 @@ function rentalToShippingBody(rental) {
     DeliveryCharge: 0,
     OrderCancelled: false,
 
-    OrderDate: range.confirmed?.format('YYYY-MM-DD'),
+    // OrderDate: range.confirmed?.format('YYYY-MM-DD'),
+    OrderDate: day().format('YYYY-MM-DD'),
     DispatchDate: range.shipped.format('YYYY-MM-DD'),
     DeliveryDate: range.start.format('YYYY-MM-DD'),
     EventDate: range.start.format('YYYY-MM-DD'),
@@ -72,19 +87,16 @@ module.exports = {
     )
     strapi.log.info('shipping ', body)
 
-    if (process.env.NODE_ENV !== 'production') {
-      return Math.random().toString().slice(2)
-    }
-
     const res = await fetchApi(`/orders/${body.OrderNumber}`, 'PUT', body)
       .then(async (res) => {
         if (!res.ok) {
           throw new Error('Request failed')
         } else {
-          return await res.json()
+          return await res.text()
         }
       })
       .catch((err) => {
+        console.log(err, err.stack, err.message)
         strapi.log.error('ship %o', err.stack, err.message)
         throw new Error('Failed to ship order')
       })
@@ -92,5 +104,8 @@ module.exports = {
     strapi.log.info('ship %o', res)
     return body.OrderNumber
   },
-  verify: (postcode) => postcodeValidator(postcode, 'UK') || postcode === 'test' || postcode === '55555',
+  verify: (postcode) =>
+    postcodeValidator(postcode, 'UK') ||
+    postcode === 'test' ||
+    postcode === '55555',
 }
