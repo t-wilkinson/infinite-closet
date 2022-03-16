@@ -9,7 +9,6 @@ import { StrapiProduct, StrapiDesigner } from '@/types/models'
 
 export const Page = ({ data }) => {
   const designer = data.designer
-  console.log(designer.products)
 
   return (
     <Layout title={designer.name}>
