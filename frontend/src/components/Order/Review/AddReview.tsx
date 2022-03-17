@@ -1,5 +1,4 @@
 import React from 'react'
-import { useRouter } from 'next/router'
 
 import axios from '@/utils/axios'
 import {
@@ -23,14 +22,14 @@ const fitValues = [
   { key: 'long', label: 'long' },
 ]
 
-export const AddReview = ({}) => {
-  const router = useRouter()
-  const productSlug = router.query.slug
+export const AddReview = ({productSlug}) => {
   const [canReview, setCanReview] = React.useState(null)
 
   React.useEffect(() => {
-    getCanReview({ productSlug, setCanReview })
-  }, [])
+    if (productSlug) {
+      getCanReview({ productSlug, setCanReview })
+    }
+  }, [productSlug])
 
   const fields = useFields<{
     heading: string
@@ -110,3 +109,5 @@ export const AddReview = ({}) => {
     </Form>
   )
 }
+
+export default AddReview
