@@ -204,7 +204,6 @@ async function getDesigner(ctx) {
   let designer = await strapi.query('designer').findOne(
     {
       slug,
-      published_at_null: false,
     },
     ['products']
   )

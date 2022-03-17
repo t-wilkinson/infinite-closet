@@ -5,11 +5,11 @@ module.exports = {
     const { user } = ctx.state
     const { slug } = ctx.params
     try {
-      const product = await strapi.query('product').findOne({ slug }, [])
+      const product = await strapi.query('product').findOne({ slug }, ['images', 'designer'])
       const canReview = await strapi.services.review.canUserReview({product, user})
-      return ctx.send({canReview})
+      return ctx.send({canReview, product})
     } catch (e) {
-      return ctx.send({canReview: false, error: e.message})
+      return ctx.send({canReview: false, product: null, error: e.message})
     }
   },
 

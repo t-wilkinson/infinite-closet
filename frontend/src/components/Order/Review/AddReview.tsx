@@ -1,6 +1,7 @@
 import React from 'react'
+import Image from 'next/image'
 
-import axios from '@/utils/axios'
+import axios, {getURL} from '@/utils/axios'
 import {
   useFields,
   Form,
@@ -24,10 +25,11 @@ const fitValues = [
 
 export const AddReview = ({productSlug}) => {
   const [canReview, setCanReview] = React.useState(null)
+  const [product, setProduct] = React.useState(null)
 
   React.useEffect(() => {
     if (productSlug) {
-      getCanReview({ productSlug, setCanReview })
+      getCanReview({ productSlug, setCanReview, setProduct })
     }
   }, [productSlug])
 
@@ -91,22 +93,40 @@ export const AddReview = ({productSlug}) => {
       })
   }
 
+
+  const image = product?.images[0]
   return (
-    <Form
-      fields={fields}
-      onSubmit={onSubmitInternal}
-      className="overflow-y-auto w-full max-w-md mb-16"
-      redirect="/review/thankyou"
-      test-id="add-review"
-    >
+    <div>
       <FormHeader label="How was your experience?" />
-      <Rating field={fields.get('rating')} />
-      <Input field={fields.get('heading')} />
-      <Dropdown field={fields.get('fit')} values={fitValues} />
-      <ImageUpload field={fields.get('images')} />
-      <Textarea field={fields.get('message')} rows={5} />
-      <Submit form={fields.form} />
-    </Form>
+      {product &&
+      <div className="text-xl items-center pt-4 pb-8">
+        <div className="relative w-64 h-64">
+          <Image
+            src={getURL(image.formats.large?.url || image.url)}
+            layout="fill"
+          />
+        </div>
+        <span className="">{product.name}{' '}
+        by{' '}
+        <span className="text-uppercase font-bold">{product.designer.name}</span>
+        </span>
+      </div>
+      }
+      <Form
+        fields={fields}
+        onSubmit={onSubmitInternal}
+        className="overflow-y-auto w-full max-w-md mb-16"
+        redirect="/review/thankyou"
+        test-id="add-review"
+      >
+        <Rating field={fields.get('rating')} />
+        <Input field={fields.get('heading')} />
+        <Dropdown field={fields.get('fit')} values={fitValues} />
+        <ImageUpload field={fields.get('images')} />
+        <Textarea field={fields.get('message')} rows={5} />
+        <Submit form={fields.form} />
+      </Form>
+    </div>
   )
 }
 
