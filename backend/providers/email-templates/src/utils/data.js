@@ -61,6 +61,7 @@ const order = {
   product,
   user,
   address,
+  trackingId: 'JC026921770GB'
 }
 
 const cartItem = {

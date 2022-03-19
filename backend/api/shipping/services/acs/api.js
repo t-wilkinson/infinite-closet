@@ -80,6 +80,26 @@ module.exports = {
   toAcsUniqueSKU,
   formatAddress,
 
+  async status(orderId) {
+    const res = await fetchApi(`/orders/IC-${orderId}`, 'GET', {})
+      .then(async (res) => {
+        console.log(res.status, res)
+        if (!res.ok) {
+          throw new Error('Request failed')
+        } else {
+          console.log(await res.text())
+          return
+          // return await res.text()
+        }
+      })
+      .catch((err) => {
+        console.log(err, err.stack, err.message)
+        strapi.log.error('ship %o', err.stack, err.message)
+        throw new Error('Failed to ship order')
+      })
+    console.log(res)
+  },
+
   async ship({ recipient, rental }) {
     const body = Object.assign(
       rentalToShippingBody(rental),

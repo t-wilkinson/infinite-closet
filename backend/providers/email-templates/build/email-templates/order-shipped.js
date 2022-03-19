@@ -18,6 +18,9 @@ exports.default = function (_ref) {
   var data = _ref.data;
   var firstName = data.firstName,
       cartItem = data.cartItem;
+  var trackingId = cartItem.order.trackingId;
+
+  console.log(trackingId);
 
   return _react2.default.createElement(
     _layout.Layout,
@@ -35,7 +38,8 @@ exports.default = function (_ref) {
       _react2.default.createElement(
         'p',
         null,
-        'Your order has shipped! Get ready for your rental! You can find more details about your order in your ',
+        'Your order has shipped! Get ready for your rental! You can find more details about your order in your',
+        ' ',
         _react2.default.createElement(
           _components.Link,
           { href: '/user/order-history' },
@@ -44,6 +48,19 @@ exports.default = function (_ref) {
         '.'
       ),
       _react2.default.createElement('br', null),
+      trackingId && _react2.default.createElement(
+        _react2.default.Fragment,
+        null,
+        _react2.default.createElement(
+          _components.ButtonLink,
+          {
+            href: 'https://www.royalmail.com/track-your-item#/tracking-results/' + trackingId,
+            target: '_blank'
+          },
+          'TRACK YOUR ORDER'
+        ),
+        _react2.default.createElement('br', null)
+      ),
       _react2.default.createElement(
         'p',
         null,

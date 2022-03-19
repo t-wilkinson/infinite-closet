@@ -32,6 +32,9 @@
       "type": "enumeration",
       "enum": ["short", "long"]
     },
+    "trackingId": {
+      "type": "string"
+    },
 
     "product": {
       "model": "product"

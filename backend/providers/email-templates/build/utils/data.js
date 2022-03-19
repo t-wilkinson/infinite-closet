@@ -58,7 +58,8 @@ var order = {
   size: 'MD',
   product: product,
   user: user,
-  address: address
+  address: address,
+  trackingId: 'JC026921770GB'
 };
 
 var cartItem = {

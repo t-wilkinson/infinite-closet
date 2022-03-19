@@ -11,20 +11,20 @@ f.user = require('../user/factory')
 f.designer = require('../product/designer-factory')
 f.cart = require('./cart/factory')
 
-describe('Verifies postcodes', () => {
+describe.skip('Verifies postcodes', () => {
   it('Verifies hived address', async () => {
     const valid = api.verify('EC2A 3QF')
     expect(valid).toBe(true)
   })
 
   it('Fails on wrong address', async () => {
-    const valid = api.verify('****')
+    const valid = api.verify('invalid address')
     expect(valid).toBe(false)
   })
 })
 
 describe('Shipping', () => {
-  it('works', async () => {
+  it.skip('works', async () => {
     const order = await f.order.create(strapi)
     const cartItem = await strapi.plugins['orders'].services.cart.createCartItem(order)
     const shippingData = await strapi.plugins['orders'].services.ship.prepareToShip(cartItem)
@@ -35,5 +35,10 @@ describe('Shipping', () => {
     }
     const res = await api.ship(shippingRequest)
     console.log(res)
+  })
+
+  it('get order tracking', async () => {
+    await api.status(203)
+    // JC026921770GB
   })
 })

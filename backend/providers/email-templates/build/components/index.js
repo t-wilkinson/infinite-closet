@@ -72,12 +72,13 @@ var withProvider = function withProvider(url, provider) {
   url;
 };
 
-var ButtonLink = exports.ButtonLink = function ButtonLink(_ref) {
+var ButtonLink = function ButtonLink(_ref) {
   var href = _ref.href,
       _ref$provider = _ref.provider,
       provider = _ref$provider === undefined ? 'frontend' : _ref$provider,
       children = _ref.children,
-      style = _ref.style;
+      style = _ref.style,
+      props = _objectWithoutProperties(_ref, ['href', 'provider', 'children', 'style']);
 
   return _react2.default.createElement(
     'table',
@@ -93,7 +94,7 @@ var ButtonLink = exports.ButtonLink = function ButtonLink(_ref) {
           { bgcolor: '#39603d', cellPadding: 4 },
           _react2.default.createElement(
             'a',
-            {
+            Object.assign({
               href: withProvider(href, provider),
               style: Object.assign({
                 color: 'white',
@@ -102,7 +103,7 @@ var ButtonLink = exports.ButtonLink = function ButtonLink(_ref) {
                 whiteSpace: 'nowrap',
                 textDecoration: 'none'
               }, style)
-            },
+            }, props),
             children
           )
         )
@@ -111,6 +112,7 @@ var ButtonLink = exports.ButtonLink = function ButtonLink(_ref) {
   );
 };
 
+exports.ButtonLink = ButtonLink;
 var Link = function Link(_ref2) {
   var href = _ref2.href,
       _ref2$provider = _ref2.provider,

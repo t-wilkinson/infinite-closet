@@ -21,6 +21,7 @@ export const ButtonLink = ({
   provider = 'frontend',
   children,
   style,
+  ...props
 }) => {
   return (
     <table align="center" cellPadding={8}>
@@ -37,6 +38,7 @@ export const ButtonLink = ({
                 textDecoration: 'none',
                 ...style,
               }}
+              {...props}
             >
               {children}
             </a>

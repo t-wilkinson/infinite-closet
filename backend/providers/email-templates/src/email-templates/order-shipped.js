@@ -1,19 +1,41 @@
 import React from 'react'
 
 import { P, Layout } from '../layout'
-import { Space, Separator, Link, MailingList, Order } from '../components'
+import {
+  Space,
+  Separator,
+  ButtonLink,
+  Link,
+  MailingList,
+  Order,
+} from '../components'
 
 export default ({ data }) => {
   const { firstName, cartItem } = data
+  const { trackingId } = cartItem.order
+  console.log(trackingId)
+
   return (
     <Layout title="Your Order Has Shipped">
       <P>
         <p>Hi {firstName},</p>
         <p>
           Your order has shipped! Get ready for your rental! You can find more
-          details about your order in your <Link href="/user/order-history">account</Link>.
+          details about your order in your{' '}
+          <Link href="/user/order-history">account</Link>.
         </p>
         <br />
+        {trackingId && (
+          <React.Fragment>
+            <ButtonLink
+              href={`https://www.royalmail.com/track-your-item#/tracking-results/${trackingId}`}
+              target="_blank"
+            >
+              TRACK YOUR ORDER
+            </ButtonLink>
+            <br />
+          </React.Fragment>
+        )}
         <p>
           Any issues with your order? Please contact Customer Service at
           info@infinitecloset.co.uk or on Whatsapp +44 7521 933225. They will
