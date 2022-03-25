@@ -7,7 +7,7 @@ async function prepareToShip(cartItem) {
   const address = toShippingAddress(order)
   const count = await strapi.plugins[
     'orders'
-  ].services.rental.numOrdersInProgress({ product, size })
+  ].services.cart.overlappingOrders(order)
 
   return {
     address,

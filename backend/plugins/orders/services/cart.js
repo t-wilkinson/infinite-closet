@@ -14,6 +14,37 @@ const { toFullName, toId } = require('../../../utils')
  */
 
 /**
+ * Find the number of existing orders whose lifecycle overlaps
+ * @param {Order} order
+ * @returns {number}
+ */
+async function overlappingOrders(order) {
+  const existingOrders = await strapi.plugins[
+    'orders'
+  ].services.rental.existingOrders(order)
+
+  const range = strapi.plugins['orders'].services.order.range(order)
+  const numOverlaps = strapi.plugins[
+    'orders'
+  ].services.order.totalOverlaps(range, existingOrders)
+  return numOverlaps
+}
+
+/**
+ * Find the number of existing orders whose lifecycle overlaps
+ * @param {Order} order
+ * @returns {number}
+ */
+async function availableOrder(order) {
+  const existingOrders = await strapi.plugins[
+    'orders'
+  ].services.rental.existingOrders(order)
+  return await strapi.plugins[
+    'orders'
+  ].services.order.totalAvailable(order, existingOrders)
+}
+
+/**
  * For each order, find the number of existing orders whose lifecycle overlaps
  * @param {Order[]} orders
  * @returns {object<string,number>}
@@ -27,12 +58,7 @@ async function numAvailable(orders = []) {
       continue
     }
 
-    const existingOrders = await strapi.plugins[
-      'orders'
-    ].services.rental.existingOrders(order)
-    available[key] = await strapi.plugins[
-      'orders'
-    ].services.order.totalAvailable(order, existingOrders)
+    available[key] = await availableOrder(order)
   }
 
   return available
@@ -275,6 +301,7 @@ module.exports = {
   createCartItem,
   unpackCartItem,
   numAvailable,
+  overlappingOrders,
 
   createValidCart,
   validItems,
