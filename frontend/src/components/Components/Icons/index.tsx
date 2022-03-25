@@ -30,6 +30,7 @@ export * from "./iconTiktok"
 export * from "./iconTwitter"
 export * from "./iconUp"
 export * from "./iconUser"
+export * from "./iconHeartFill"
 
 type Icon = {
   name?: string

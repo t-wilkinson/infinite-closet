@@ -13,7 +13,6 @@ import {
 export default ({ data }) => {
   const { firstName, cartItem } = data
   const { trackingId } = cartItem.order
-  console.log(trackingId)
 
   return (
     <Layout title="Your Order Has Shipped">

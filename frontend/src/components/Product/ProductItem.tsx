@@ -4,8 +4,14 @@ import Image from 'next/image'
 
 import { getURL } from '@/utils/axios'
 import useAnalytics from '@/utils/useAnalytics'
-import { StrapiProduct } from '@/types/models'
+import { useDispatch, useSelector } from '@/utils/store'
 import * as sizing from '@/utils/sizing'
+import { OrderUtils, addToFavorites } from '@/Order'
+import { StrapiProduct } from '@/types/models'
+import { Icon, iconHeartFill } from '@/Components/Icons'
+import { useFields } from '@/Form'
+
+import { AddToCartFields } from './ProductPage/types'
 import styles from './Products.module.css'
 
 export const ProductWrapper = ({ children = null }) => (
@@ -18,6 +24,48 @@ export const ProductWrapper = ({ children = null }) => (
     </div>
   </div>
 )
+
+const AddToFavorites = ({product}) => {
+  const [addedFavorite, setAddedFavorite] = React.useState(false)
+
+  const favorites = useSelector((state) => state.orders.favorites)
+  const isFavorite = favorites.find(o => o.product.id === product.id)
+  const dispatch = useDispatch()
+    const analytics = useAnalytics()
+  const user = useSelector((state) => state.user.data)
+
+  const fields = useFields<AddToCartFields>({
+    visible: { },
+    size: { constraints: 'required', default: product.sizes[0]?.size },
+    selectedDate: {
+      label: 'Rental Date',
+      constraints: 'required',
+      default: null,
+    },
+    rentalLength: { constraints: 'required', default: 'short' },
+    rentType: { default: 'OneTime' },
+  })
+
+  React.useEffect(() => {
+    dispatch(OrderUtils.favorites())
+  }, [user])
+
+  if (!product.sizes[0]?.size) {
+    return null
+  }
+
+  return <button
+    className="stroke-pri p-2 border border-transparent hover:border-gray-light"
+      disabled={addedFavorite}
+      onClick={() => {
+        addToFavorites({fields, dispatch, analytics, user, product})
+        .then(() => setAddedFavorite(true))
+      }}
+  >
+    <Icon className={`${isFavorite ? 'text-red' : 'text-transparent'} stroke-2 stroke-pri`}
+    icon={iconHeartFill} size={32} />
+  </button>
+}
 
 export const ProductItem = ({ product }: { product: StrapiProduct }) => {
   const analytics = useAnalytics()
@@ -42,6 +90,9 @@ export const ProductItem = ({ product }: { product: StrapiProduct }) => {
             <ProductImages product={product} />
           </a>
         </Link>
+        <div className="absolute top-0 right-0">
+          <AddToFavorites product={product} />
+        </div>
       </div>
       <ProductInfo product={product} />
     </ProductWrapper>

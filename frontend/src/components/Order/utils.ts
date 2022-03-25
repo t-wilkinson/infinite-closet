@@ -14,7 +14,7 @@ const prepareOrder = ({ product, fields, user }) => {
 
   const order: any = {
     user: user ? user.id : null,
-    size: sizing.unnormalize(size.size),
+    size: size?.size ? sizing.unnormalize(size.size) : null,
     product: product.id,
     expectedStart: selectedDate ? selectedDate.toJSON() : undefined,
     rentalLength: rentalLength ? rentalLength : undefined,
@@ -84,6 +84,7 @@ export const addToFavorites = async ({
       ],
     })
   } catch (e) {
+    console.error(e)
     toast.error(
       `Ran into an issue adding to favorites. We'll have this fixed soon!`,
       {}
@@ -131,6 +132,7 @@ export const getValidOrderDates = ({ product, dates, size, rentalLength }) =>
     )
     .then((data) => data.valid)
     .catch((err) => {
+      console.error(err)
       toast.error(`We ran into an issue verifying the available dates.`)
     })
 

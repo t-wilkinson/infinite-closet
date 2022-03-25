@@ -71,6 +71,7 @@ export const Favorites = () => {
   const favorites = useSelector((state) => state.orders.favorites)
   const ref = React.useRef(null)
   const [width, setWidth] = React.useState(window.innerWidth)
+
   React.useEffect(() => {
     const onResize = () => {
       const clientWidth = ref.current?.clientWidth
@@ -78,6 +79,8 @@ export const Favorites = () => {
         setWidth(clientWidth)
       }
     }
+
+    onResize()
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
   }, [])
