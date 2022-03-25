@@ -110,14 +110,14 @@ module.exports = {
     const res = await fetchApi(`/orders/${body.OrderNumber}`, 'PUT', body)
       .then(async (res) => {
         if (!res.ok) {
-          throw new Error('Request failed')
+          throw res
         } else {
           return await res.text()
         }
       })
-      .catch((err) => {
-        console.log(err, err.stack, err.message)
-        strapi.log.error('ship %o', err.stack, err.message)
+      .catch((res) => {
+        console.log(res)
+        strapi.log.error('ship %o', res)
         throw new Error('Failed to ship order')
       })
 
