@@ -21,7 +21,9 @@ const lifecycles = {
 
   async start() {},
 
-  async end() {},
+  async end(cartItem) {
+    await strapi.services.template_email.orderEnding(cartItem)
+  },
 
   async cleaning(cartItem) {
     await strapi.services.template_email.orderReceived(cartItem)
