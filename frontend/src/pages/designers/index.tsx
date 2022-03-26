@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 
 import axios from '@/utils/axios'
 import { StrapiDesigner } from '@/types/models'

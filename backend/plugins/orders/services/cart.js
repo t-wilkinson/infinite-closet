@@ -26,7 +26,7 @@ async function overlappingOrders(order) {
   const range = strapi.plugins['orders'].services.order.range(order)
   const numOverlaps = strapi.plugins[
     'orders'
-  ].services.order.totalOverlaps(range, existingOrders)
+  ].services.order.totalOverlaps(range, existingOrders.filter((o) => o.id !== order.id))
   return numOverlaps
 }
 
