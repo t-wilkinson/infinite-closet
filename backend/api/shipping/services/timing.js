@@ -40,7 +40,7 @@ const HOURS_IN_DAY = 24
  */
 function arrival(sent, shippingClass) {
   sent = day(sent)
-  const hoursSendClient = provider.config.shippingClassHours[shippingClass]
+  const hoursSendClient = provider.config.shippingClassHours(sent, shippingClass)
   const offset = sent.hour() >= provider.config.timing.cutoff ? HOURS_IN_DAY : 0
   const arrives = sent
     .add(hoursSendClient + offset, 'hours')
@@ -75,10 +75,12 @@ function shippingClass(earliestDeliveryDate, startsOn) {
  * @returns {number}
  */
 function shippingClassHours(earliestDeliveryDate, startsOn) {
+  // TODO: the order may ship in less time when shipped after eDD
   return (
-    provider.config.shippingClassHours[
+    provider.config.shippingClassHours(
+      earliestDeliveryDate,
       shippingClass(earliestDeliveryDate, startsOn)
-    ] || provider.config.shippingClassHours.two
+    ) || provider.config.shippingClassHours.two
   )
 }
 

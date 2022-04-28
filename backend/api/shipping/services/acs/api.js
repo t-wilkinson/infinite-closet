@@ -93,11 +93,10 @@ module.exports = {
         }
       })
       .catch((err) => {
-        console.log(err, err.stack, err.message)
         strapi.log.error('ship %o', err.stack, err.message)
         throw new Error('Failed to ship order')
       })
-    console.log(res)
+    strapi.log.info('ACS status response: ', res)
   },
 
   async ship({ recipient, rental }) {
@@ -116,7 +115,6 @@ module.exports = {
         }
       })
       .catch((res) => {
-        console.log(res)
         strapi.log.error('ship %o', res)
         throw new Error('Failed to ship order')
       })

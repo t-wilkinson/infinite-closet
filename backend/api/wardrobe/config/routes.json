@@ -1,0 +1,12 @@
+{
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/my-wardrobe/search",
+      "handler": "wardrobe.searchWardrobe",
+      "config": {
+        "policies": []
+      }
+    }
+  ]
+}

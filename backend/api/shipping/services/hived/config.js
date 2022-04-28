@@ -13,17 +13,21 @@ const publicConfig = {
     short: (4 - 1) * HOURS_IN_DAY,
     long: (8 - 1) * HOURS_IN_DAY,
   },
+
   shippingClasses: {
     // zero: 'Same-Day',
     one: 'Next-Day',
     two: '2-Days',
   },
 
-  shippingClassHours: {
+  shippingClassHours: (sent, shippingClass) => {
     // first and last day of the rental are 12 hours each, so subtract a day
-    one: 1 * HOURS_IN_DAY,
-    two: 2 * HOURS_IN_DAY,
+    return {
+      one: 1 * HOURS_IN_DAY,
+      two: 2 * HOURS_IN_DAY,
+    }[shippingClass]
   },
+
 
   addressFormats: {
     sender: {

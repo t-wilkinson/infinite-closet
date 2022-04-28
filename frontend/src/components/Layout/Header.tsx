@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 
 import { Button } from '@/Components'
 import { useDispatch, useSelector } from '@/utils/store'
-import { Icon, iconMenu, iconShoppingBag, iconUser } from '@/Components/Icons'
+import { Icon, iconMenu, iconShoppingBag, iconUser, iconWardrobe } from '@/Components/Icons'
 
 import { layoutActions } from './slice'
 import Navbar from './Navbar'
@@ -89,6 +89,7 @@ const Account = ({ user }) => {
             </span>
           )}
         </IconLink>
+        <IconLink href="/my-wardrobe" size={18} icon={iconWardrobe} />
       </div>
     )
   } else {

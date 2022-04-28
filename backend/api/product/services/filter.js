@@ -62,7 +62,11 @@ class SQLQueryBuilder {
   }
 
   join() {
-    return `( ${this.query.join(' ' + this.logic + ' ')} )`
+    if (this.query.length === 0) {
+      return ''
+    } else {
+      return `( ${this.query.join(' ' + this.logic + ' ')} )`
+    }
   }
 
   complete() {
@@ -83,9 +87,66 @@ const toRawSQL = (_where) => {
   return query.complete()
 }
 
+async function filterProducts(knex, _where, _paging, ids) {
+  let sort = _paging.sort.split(':')
+  sort[0] = `products."${sort[0]}"`
+  sort = sort.join(' ')
+
+  if (ids) {
+    return knex
+      .select('products.id as id')
+      .from('products')
+      .join('designers', 'products.designer', 'designers.id')
+      .orderByRaw(sort)
+      .whereIn('products.id', ids)
+      .whereNotNull('products.published_at')
+      .whereRaw(...strapi.services.filter.toRawSQL(_where))
+  } else {
+    return knex
+      .select('products.id as id')
+      .from('products')
+      .join('designers', 'products.designer', 'designers.id')
+      .orderByRaw(sort)
+      .whereNotNull('products.published_at')
+      .whereRaw(...strapi.services.filter.toRawSQL(_where))
+  }
+}
+
+function partitionObject(object, predicate) {
+  return Object.entries(object).reduce(
+    ([left, right], item) => {
+      if (predicate(item[0])) {
+        left[item[0]] = item[1]
+      } else {
+        right[item[0]] = item[1]
+      }
+      return [left, right]
+    },
+    [{}, {}]
+  )
+}
+
+const DEFAULT_PAGE_NUMBER = 0
+const DEFAULT_PAGE_SIZE = 20
+
+function buildQuery(query) {
+  const [_paging, _where] = partitionObject(query, (k) =>
+    ['start', 'limit', 'sort'].includes(k)
+  )
+  return {
+    paging: {
+      start: parseInt(_paging.start) || DEFAULT_PAGE_NUMBER,
+      limit: parseInt(_paging.limit) || DEFAULT_PAGE_SIZE,
+      sort: _paging.sort || 'name:ASC',
+    },
+    where: _where,
+  }
+}
 
 module.exports = {
   filterSlugs,
   toPrivateFilter,
   toRawSQL,
+  filterProducts,
+  buildQuery,
 }

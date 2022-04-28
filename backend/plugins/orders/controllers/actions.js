@@ -15,9 +15,10 @@ module.exports = {
       recipient: shippingData.address,
       rental: shippingData.rental,
     }
-    console.log(shippingRequest)
     const shipmentId = await strapi.services.shipment.ship(shippingRequest)
-    console.log(shipmentId)
+    strapi.log.info('shipping action', {
+      shippingRequest, shipmentId
+    })
     return ctx.send(null)
   }
 }

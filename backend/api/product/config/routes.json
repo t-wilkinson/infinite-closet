@@ -51,7 +51,7 @@
     {
       "method": "GET",
       "path": "/products/acs-stock.csv",
-      "handler": "product.acsStockSetup",
+      "handler": "exports.acsStockSetup",
       "config": {
         "policies": []
       }
@@ -59,7 +59,7 @@
     {
       "method": "GET",
       "path": "/products/facebook-catalog.csv",
-      "handler": "product.facebookCatalog",
+      "handler": "exports.facebookCatalog",
       "config": {
         "policies": []
       }

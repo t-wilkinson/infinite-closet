@@ -5,61 +5,20 @@
  */
 
 'use strict'
+const { DefaultDict } = require('../../../utils')
 const models = require('../../../data/data.js').models
-
-// Assigns default value to new keys
-class DefaultDict {
-  constructor(defaultInit) {
-    return new Proxy(
-      {},
-      {
-        get: (target, name) =>
-          name in target
-            ? target[name]
-            : (target[name] =
-                typeof defaultInit === 'function'
-                  ? new defaultInit().valueOf()
-                  : defaultInit),
-      }
-    )
-  }
-}
-
-function partitionObject(object, predicate) {
-  return Object.entries(object).reduce(
-    ([left, right], item) => {
-      if (predicate(item[0])) {
-        left[item[0]] = item[1]
-      } else {
-        right[item[0]] = item[1]
-      }
-      return [left, right]
-    },
-    [{}, {}]
-  )
-}
 
 /**
  * Search for products in database matching `_where`
  */
-async function findProducts(knex, _where, _paging) {
-  let sort = _paging.sort.split(':')
-  sort[0] = `products."${sort[0]}"`
-  sort = sort.join(' ')
-  const productIds = await knex
-    .select('products.id as id')
-    .from('products')
-    .join('designers', 'products.designer', 'designers.id')
-    .orderByRaw(sort)
-    .whereNotNull('products.published_at')
-    .whereRaw(...strapi.services.filter.toRawSQL(_where))
-
-  const products = await Promise.all(
+async function findProducts(knex, _where, _paging, ids) {
+  const productIds = await strapi.services.filter.filterProducts(knex, _where, _paging, ids)
+  const populatedProducts = await Promise.all(
     productIds.map(({ id }) =>
       strapi.query('product').findOne({ id }, ['designer', 'images', 'sizes'])
     )
   )
-  return products
+  return populatedProducts
 }
 
 /**
@@ -178,26 +137,19 @@ async function queryCategories(_where) {
   return categories
 }
 
-const DEFAULT_PAGE_NUMBER = 0
-const DEFAULT_PAGE_SIZE = 20
-
 module.exports = {
   async query(ctx) {
-    const query = ctx.query
-    const [_paging, _where] = partitionObject(query, (k) =>
-      ['start', 'limit', 'sort'].includes(k)
-    )
+    const query = strapi.services.filter.buildQuery(ctx.query)
 
     const knex = strapi.connections.default
     const [products, filters, categories] = await Promise.all([
-      findProducts(knex, _where, _paging),
-      queryFilters(knex, _where),
-      queryCategories(_where),
+      findProducts(knex, query.where, query.paging),
+      queryFilters(knex, query.where),
+      queryCategories(query.where),
     ])
 
-    const start = parseInt(_paging.start) || DEFAULT_PAGE_NUMBER
-    const limit = parseInt(_paging.limit) || DEFAULT_PAGE_SIZE
-    const end = start + limit
+    const start = query.paging.start
+    const end = query.paging.start + query.paging.limit
 
     ctx.send({
       products: products.slice(start, end),

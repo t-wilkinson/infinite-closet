@@ -180,6 +180,24 @@ function formatAddress(config, format, addr) {
   }, {})
 }
 
+// Assigns default value to new keys
+class DefaultDict {
+  constructor(defaultInit) {
+    return new Proxy(
+      {},
+      {
+        get: (target, name) =>
+          name in target
+            ? target[name]
+            : (target[name] =
+                typeof defaultInit === 'function'
+                  ? new defaultInit().valueOf()
+                  : defaultInit),
+      }
+    )
+  }
+}
+
 /********************  IMPORTANT ********************
  *
  * PRICE: decimal units ($10.50)
@@ -197,6 +215,8 @@ module.exports = {
 
   toAmount,
   toPrice,
+
+  DefaultDict,
 
   generateAPI,
   toFullName,

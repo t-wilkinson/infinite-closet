@@ -1,4 +1,5 @@
 const HOURS_IN_DAY = 24
+const daysToHours = (days) => days * HOURS_IN_DAY
 
 const publicConfig = {
   timing: {
@@ -18,9 +19,19 @@ const publicConfig = {
     two: '48',
   },
 
-  shippingClassHours: {
-    one: 1 * HOURS_IN_DAY,
-    two: 2 * HOURS_IN_DAY,
+  shippingClassHours: (sent, shippingClass) => {
+    // ACS does not operate on saturday(6) and sunday(0)
+    let offset = 0
+    if (sent.day() === 6) {
+      offset += 2
+    } else if (sent.day() === 0) {
+      offset += 1
+    }
+
+    return {
+      one: daysToHours(1 + offset),
+      two: daysToHours(2 + offset),
+    }[shippingClass]
   },
 
   // API expects specific address format

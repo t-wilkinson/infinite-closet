@@ -168,7 +168,7 @@ migrations['0.2.0'] = async () => {
  */
 migrations['0.2.1'] = async () => {
 
-  console.log('Purchases')
+  strapi.log.info('Purchases')
   const purchases = await strapi.query('purchase').find()
   await Promise.allSettled(purchases.map(async purchase => {
     stripe.paymentIntents.update(purchase.paymentIntent, {
@@ -178,7 +178,7 @@ migrations['0.2.1'] = async () => {
     })
   }))
 
-  console.log('Gift cards')
+  strapi.log.info('Gift cards')
   const giftCards = await strapi.query('gift-card').find()
   await Promise.allSettled(giftCards.map(async giftCard => {
     stripe.paymentIntents.update(giftCard.paymentIntent, {

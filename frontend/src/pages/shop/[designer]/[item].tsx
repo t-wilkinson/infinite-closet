@@ -2,13 +2,13 @@ import React from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
-import axios from '@/utils/axios'
-import { Button } from '@/Components'
-import Shop from '@/Product/ProductPage'
-import Layout from '@/Layout'
-import useData from '@/Layout/useData'
 import { StrapiProduct } from '@/types/models'
 import useAnalytics from '@/utils/useAnalytics'
+import { Button } from '@/Components'
+import Shop from '@/Product/ProductPage'
+import { getProduct } from '@/Product/api'
+import Layout from '@/Layout'
+import useData from '@/Layout/useData'
 
 export const Page = ({ data }) => {
   const analytics = useAnalytics()
@@ -93,9 +93,7 @@ const OpenGraph = (product: StrapiProduct) => {
 
 export async function getServerSideProps({ params }) {
   try {
-    const product: StrapiProduct = await axios
-      .get(`/products/shop/${params.item}`, {withCredentials: false})
-
+    const product = await getProduct(params)
     return {
       props: {
         data: { product },
@@ -109,4 +107,5 @@ export async function getServerSideProps({ params }) {
     }
   }
 }
+
 export default Page

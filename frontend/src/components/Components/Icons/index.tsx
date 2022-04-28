@@ -1,4 +1,3 @@
-
 export * from "./iconCheck"
 export * from "./iconClock"
 export * from "./iconClose"
@@ -31,6 +30,7 @@ export * from "./iconTwitter"
 export * from "./iconUp"
 export * from "./iconUser"
 export * from "./iconHeartFill"
+export * from "./iconWardrobe"
 
 type Icon = {
   name?: string
@@ -98,6 +98,7 @@ export const Icons = ({
       : null}
   </>
 )
+
 /* macro I used to move all icons to their own file, keep for now just incase
 0/icon"ayiwbct(default $dVa(:let @a=@a . '.tsx':vs %:h/aP:wq
 */

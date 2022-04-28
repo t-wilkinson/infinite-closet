@@ -54,7 +54,7 @@ module.exports = {
 
     // console.log(event)
     // const object = event.data?.object
-    console.log(event.type)
+    // console.log(event.type)
     switch (event.type) {
       case 'payment_intent.succeeded':
         // strapi.services.template_email.purchaseSuccess({
