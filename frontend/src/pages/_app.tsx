@@ -54,7 +54,7 @@ const App = ({ router, Component, pageProps }) => {
 export default App
 
 const blockedPages = [
-  'my-wardrobe'
+  // 'my-wardrobe'
 ]
 
 const Wrapper = ({ router, children }) => {

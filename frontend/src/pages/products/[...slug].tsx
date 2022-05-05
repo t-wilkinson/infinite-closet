@@ -17,7 +17,8 @@ import { ProductItems } from '@/Product/ProductItems'
 import { sortData, QUERY_LIMIT } from '@/Product/constants'
 import { productsActions } from '@/Product/slice'
 import { Filter, ProductRoutes, SortBy } from '@/Product/types'
-import Filters, { FiltersCount, useToggleFilter } from '@/Product/Filters'
+import Filters, { FiltersCount} from '@/Product/Filters'
+import { useToggleFilter } from '@/Product/productFilterHooks'
 import Sort from '@/Product/Sort'
 import { Crumbs } from '@/Product/BreadCrumbs'
 import styles from '@/Product/Products.module.css'
@@ -45,7 +46,7 @@ export const Page = ({ data }) => {
       return acc
     }, {})
 
-    dispatch(productsActions.setPanelFilters(filters as Filters))
+    dispatch(productsActions.setPanelFilters(filters as typeof Filters))
   }, [data])
 
   return (
@@ -58,10 +59,15 @@ export const Page = ({ data }) => {
 }
 
 export const Products = ({ data, loading }) => {
+  const dispatch = useDispatch()
+  const isOpen = useSelector((state) => state.products.panel.open)
+  const categories = useSelector((state) => state.layout.data.categories)
+  const closePanel = () => dispatch(productsActions.closePanel())
+
   return (
     <div className="items-center w-full">
       <div className="flex-row w-full max-w-screen-xl h-full md:px-4 xl:px-0">
-        <Filters />
+        <Filters isOpen={isOpen} categories={categories} closePanel={closePanel}/>
         <div className="hidden md:block w-2" />
         <ProductItemsWrapper data={data} loading={loading} />
       </div>

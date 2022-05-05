@@ -6,7 +6,10 @@ export async function getProduct(params) {
       .get<StrapiProduct >(`/products/shop/${params.item}`, {withCredentials: false})
 }
 
-export async function getWardrobe(params) {
+export async function getWardrobe(params, cookie) {
     return await axios
-      .get<StrapiProduct >(`/my-wardrobe/search`, {withCredentials: false})
+      .get(`/my-wardrobe/query`, {params, headers: {
+        Cookie: cookie,
+      },
+      withCredentials: true})
 }

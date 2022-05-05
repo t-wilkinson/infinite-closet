@@ -1,15 +1,14 @@
 import Link from 'next/link'
 
 import { StrapiCategory } from '@/types/models'
-import { useSelector } from '@/utils/store'
 import { capitalize } from '@/utils/helpers'
 
-export const Crumbs = ({ slugs = [], ...props }) => {
+export const Crumbs = ({ href="/products", slugs = [], ...props }) => {
   return (
     <div {...props} style={{ flexDirection: 'row' }}>
       <span className="text-gray whitespace-pre">Browse</span>
       {slugs.map((v, i) => (
-        <Link key={v} href={`/products/${slugs.slice(0, i + 1).join('/')}`}>
+        <Link key={v} href={`${href}/${slugs.slice(0, i + 1).join('/')}`}>
           <a>
             {i === slugs.length - 1 ? (
               <span>
@@ -31,14 +30,14 @@ export const Crumbs = ({ slugs = [], ...props }) => {
   )
 }
 
-export const BreadCrumbs = ({}) => {
-  const categories = useSelector((state) => state.layout.data.categories)
+export const BreadCrumbs = ({href="/products",categories}) => {
   const category = categories[0]
 
   return (
     <div className="items-start mb-2 w-full px-1 hidden sm:flex">
       <span className="mb-4">
         <Crumbs
+          href={href}
           slugs={categories.map((v) => v.slug)}
           className="hidden sm:flex text-sm"
         />
@@ -48,7 +47,7 @@ export const BreadCrumbs = ({}) => {
         <BreadCrumb
           {...category}
           categories={categories}
-          href={`/products/${category.slug}`}
+          href={`${href}/${category.slug}`}
           level={0}
         />
       )}
