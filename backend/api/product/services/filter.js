@@ -4,6 +4,9 @@
 'use strict'
 const _ = require('lodash')
 
+const DEFAULT_PAGE_NUMBER = 0
+const DEFAULT_PAGE_SIZE = 20
+
 /**
  * Some product filters contain a private hash of values to speed up searching
  */
@@ -21,6 +24,20 @@ const filterSlugs = [
   'materials',
   'metals',
 ]
+
+function partitionObject(object, predicate) {
+  return Object.entries(object).reduce(
+    ([left, right], item) => {
+      if (predicate(item[0])) {
+        left[item[0]] = item[1]
+      } else {
+        right[item[0]] = item[1]
+      }
+      return [left, right]
+    },
+    [{}, {}]
+  )
+}
 
 /**
  * Builds SQL queries for filtering products
@@ -87,48 +104,6 @@ const toRawSQL = (_where) => {
   return query.complete()
 }
 
-async function filterProducts(knex, _where, _paging, ids) {
-  let sort = _paging.sort.split(':')
-  sort[0] = `products."${sort[0]}"`
-  sort = sort.join(' ')
-
-  if (ids) {
-    return knex
-      .select('products.id as id')
-      .from('products')
-      .join('designers', 'products.designer', 'designers.id')
-      .orderByRaw(sort)
-      .whereIn('products.id', ids)
-      .whereNotNull('products.published_at')
-      .whereRaw(...strapi.services.filter.toRawSQL(_where))
-  } else {
-    return knex
-      .select('products.id as id')
-      .from('products')
-      .join('designers', 'products.designer', 'designers.id')
-      .orderByRaw(sort)
-      .whereNotNull('products.published_at')
-      .whereRaw(...strapi.services.filter.toRawSQL(_where))
-  }
-}
-
-function partitionObject(object, predicate) {
-  return Object.entries(object).reduce(
-    ([left, right], item) => {
-      if (predicate(item[0])) {
-        left[item[0]] = item[1]
-      } else {
-        right[item[0]] = item[1]
-      }
-      return [left, right]
-    },
-    [{}, {}]
-  )
-}
-
-const DEFAULT_PAGE_NUMBER = 0
-const DEFAULT_PAGE_SIZE = 20
-
 function buildQuery(query) {
   const [_paging, _where] = partitionObject(query, (k) =>
     ['start', 'limit', 'sort'].includes(k)
@@ -147,6 +122,5 @@ module.exports = {
   filterSlugs,
   toPrivateFilter,
   toRawSQL,
-  filterProducts,
   buildQuery,
 }
