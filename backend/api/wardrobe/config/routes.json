@@ -2,8 +2,48 @@
   "routes": [
     {
       "method": "GET",
-      "path": "/my-wardrobe/search",
-      "handler": "wardrobe.searchWardrobe",
+      "path": "/wardrobes",
+      "handler": "wardrobe.find",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/wardrobes/count",
+      "handler": "wardrobe.count",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/wardrobes/:id",
+      "handler": "wardrobe.findOne",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/wardrobes",
+      "handler": "wardrobe.create",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "PUT",
+      "path": "/wardrobes/:id",
+      "handler": "wardrobe.update",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/wardrobes/:id",
+      "handler": "wardrobe.delete",
       "config": {
         "policies": []
       }

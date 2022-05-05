@@ -1,14 +1,23 @@
 {
+  "kind": "collectionType",
   "collectionName": "wardrobes",
   "info": {
-    "name": "wardrobe",
-    "description": ""
+    "name": "Wardrobe"
   },
   "options": {
-    "draftAndPublish": false,
     "increments": true,
     "timestamps": true,
-    "comment": ""
+    "draftAndPublish": false
   },
-  "attributes": {}
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "products": {
+      "collection": "product"
+    },
+    "slug": {
+      "type": "string"
+    }
+  }
 }
