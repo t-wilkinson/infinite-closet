@@ -1,9 +1,8 @@
 {
   "kind": "collectionType",
-  "collectionName": "wardrobes",
+  "collectionName": "wardrobe_items",
   "info": {
-    "name": "Wardrobe",
-    "description": ""
+    "name": "Wardrobe Item"
   },
   "options": {
     "increments": true,
@@ -11,11 +10,11 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "name": {
-      "type": "string"
+    "product": {
+      "model": "product"
     },
-    "slug": {
-      "type": "string"
+    "wardrobe": {
+      "model": "wardrobe"
     },
     "user": {
       "plugin": "users-permissions",

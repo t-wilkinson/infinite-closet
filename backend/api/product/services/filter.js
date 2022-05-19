@@ -104,17 +104,29 @@ const toRawSQL = (_where) => {
   return query.complete()
 }
 
+const paramsToArray = (x) => {
+  if (Array.isArray(x)) {
+    return x
+  } else if (x === undefined) {
+    return []
+  } else {
+    return [x]
+  }
+}
+
 function buildQuery(query) {
   const [_paging, _where] = partitionObject(query, (k) =>
     ['start', 'limit', 'sort'].includes(k)
   )
+  const wardrobes = paramsToArray(_where.wardrobes)
   return {
     paging: {
       start: parseInt(_paging.start) || DEFAULT_PAGE_NUMBER,
       limit: parseInt(_paging.limit) || DEFAULT_PAGE_SIZE,
       sort: _paging.sort || 'name:ASC',
     },
-    where: _where,
+    wardrobes,
+    where: _.omit(_where, ['wardrobes']),
   }
 }
 

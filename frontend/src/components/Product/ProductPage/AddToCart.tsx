@@ -9,6 +9,7 @@ import { Form, Submit } from '@/Form'
 import { Button } from '@/Components'
 import { addToCart, addToFavorites } from '@/Order'
 import { SelectRentalSize, SelectRentalDate, DatePicker} from '@/Order/Cart/AddToCart'
+import { AddWardrobe } from '@/Wardrobe/AddWardrobe'
 
 export const AddToCart = ({ fields, product }) => {
   const user = useSelector((state) => state.user.data)
@@ -29,6 +30,7 @@ export const productRentContents = {
   OneTime: ({ user, dispatch, product, fields }) => {
     const analytics = useAnalytics()
     const [addedFavorite, setAddedFavorite] = React.useState(false)
+    const [wardrobePopupVisible, setWardrobePopupVisible] = React.useState(true)
 
     React.useEffect(() => {
       const hasSize = (size: Size) => sizing.get(product.sizes, size)
@@ -97,6 +99,18 @@ export const productRentContents = {
         >
           Add to Favorites
         </Button>
+        {user && <>
+          <Button
+          role="secondary"
+          onClick={() => {
+            setWardrobePopupVisible(true)
+          }}
+        >
+          Add to Wardrobe
+        </Button>
+        <AddWardrobe product={product} visible={wardrobePopupVisible} setVisible={setWardrobePopupVisible} />
+        </>
+        }
       </Form>
     )
   },

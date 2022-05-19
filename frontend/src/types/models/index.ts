@@ -24,4 +24,6 @@ export * from './shipment';
 export * from './size-chart';
 export * from './style';
 export * from './user';
+export * from './wardrobe';
+export * from './wardrobe-item';
 export * from './weather';

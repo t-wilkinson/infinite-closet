@@ -1,8 +1,11 @@
-import { createSlice, createSelector, } from '@reduxjs/toolkit'
+import { createSlice, createSelector, PayloadAction } from '@reduxjs/toolkit'
 
 import { RootState } from '@/utils/store'
-import { SortBy, Filter, FilterData } from './Filter/types'
-import { initializeFilterReducer, initializeFilterState } from './Filter/slice'
+import { SortBy, Filter, FilterData } from '@/Product/Filter'
+import {
+  initializeFilterReducer,
+  initializeFilterState,
+} from '@/Product/Filter/slice'
 
 export interface State {
   data: any // TODO: can this be more abstract? in a Root state?
@@ -23,21 +26,22 @@ const initialState: State = {
   pageNumber: 0,
   loading: false,
   ...initializeFilterState([
-      'colors',
-      'designers',
-      'datesAvailable',
-      'occasions',
-      'favorites',
-      'weather',
-      'styles',
-      'sizes',
-      'materials',
-      'metals',
+    'wardrobes',
+    'colors',
+    'designers',
+    'datesAvailable',
+    'occasions',
+    'favorites',
+    'weather',
+    'styles',
+    'sizes',
+    'materials',
+    'metals',
   ]),
 }
 
-export const productsSlice = createSlice({
-  name: 'PRODUCTS',
+export const wardrobeSlice = createSlice({
+  name: 'WARDROBE',
   initialState,
   reducers: {
     increasePageNumber(state, { payload: totalPages }) {
@@ -56,14 +60,14 @@ export const productsSlice = createSlice({
       // fetched data from server
       state.loading = payload
     },
-    ...initializeFilterReducer()
+    ...initializeFilterReducer(),
   },
 })
 
-const productsSelector = (state: RootState) => state.products
+const wardrobeSelector = (state: RootState) => state.wardrobe
 const panelSelector = createSelector(
-  productsSelector,
-  (products) => products.panel
+  wardrobeSelector,
+  (wardrobe) => wardrobe.panel
 )
 const panelSize = (
   panel: typeof initialState['panel'],
@@ -72,11 +76,11 @@ const panelSize = (
   return panel.filters[filter]?.length || 0
 }
 
-const productsSelectors = {
+const wardrobeSelectors = {
   panelSelector,
   isFilterSelected: createSelector(
-    [productsSelector, (_: any, filter: Filter) => filter],
-    (products, filter) => products.focusedFilter.has(filter)
+    [wardrobeSelector, (_: any, filter: Filter) => filter],
+    (wardrobe, filter) => wardrobe.focusedFilter.has(filter)
   ),
   numToggled: createSelector([panelSelector], (filters) =>
     Object.values(Filter).reduce((acc, filter) => {
@@ -89,6 +93,6 @@ const productsSelectors = {
   ),
 }
 
-export { productsSelectors }
-export const productsActions = productsSlice.actions
-export default productsSlice.reducer
+export { wardrobeSelectors }
+export const wardrobeActions = wardrobeSlice.actions
+export default wardrobeSlice.reducer

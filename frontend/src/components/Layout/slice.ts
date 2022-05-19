@@ -13,10 +13,12 @@ import {
   StrapiCategory,
   StrapiMaterial,
   StrapiMetal,
+  StrapiWardrobe,
 } from '@/types/models'
 
 export interface State {
   data: {
+    wardrobes: StrapiWardrobe[]
     product: StrapiProduct
     products: StrapiProduct[]
     colors: StrapiColor[]
@@ -38,6 +40,7 @@ export interface State {
 const initialState: State = {
   data: {
     product: undefined,
+    wardrobes: [],
     categories: [],
     products: [],
     designers: [],

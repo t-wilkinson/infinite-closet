@@ -1,51 +1,52 @@
 {
   "routes": [
     {
-      "method": "GET",
-      "path": "/wardrobes",
-      "handler": "wardrobe.find",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/wardrobes/count",
-      "handler": "wardrobe.count",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/wardrobes/:id",
-      "handler": "wardrobe.findOne",
-      "config": {
-        "policies": []
-      }
-    },
-    {
       "method": "POST",
-      "path": "/wardrobes",
-      "handler": "wardrobe.create",
+      "path": "/my-wardrobe/items",
+      "handler": "wardrobe.createItem",
       "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "PUT",
-      "path": "/wardrobes/:id",
-      "handler": "wardrobe.update",
-      "config": {
-        "policies": []
+        "policies": ["plugins::users-permissions.permissions"]
       }
     },
     {
       "method": "DELETE",
-      "path": "/wardrobes/:id",
-      "handler": "wardrobe.delete",
+      "path": "/my-wardrobe/items/:item_id",
+      "handler": "wardrobe.deleteItem",
       "config": {
-        "policies": []
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+
+    {
+      "method": "GET",
+      "path": "/my-wardrobe/items/:product_id",
+      "handler": "wardrobe.productWardrobes",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/my-wardrobe/query",
+      "handler": "wardrobe.query",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/my-wardrobe",
+      "handler": "wardrobe.addWardrobe",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+    {
+      "method": "DELETE",
+      "path": "/my-wardrobe/:slug",
+      "handler": "wardrobe.removeWardrobe",
+      "config": {
+        "policies": ["plugins::users-permissions.permissions"]
       }
     }
   ]

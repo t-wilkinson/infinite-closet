@@ -13,13 +13,13 @@ import { ScrollUp } from '@/Components'
 import Layout from '@/Layout'
 import useData from '@/Layout/useData'
 
+import { filtersByRoute } from '@/Product/constants'
 import { ProductItems } from '@/Product/ProductItems'
 import { sortData, QUERY_LIMIT } from '@/Product/constants'
 import { productsActions } from '@/Product/slice'
 import { Filter, ProductRoutes, SortBy } from '@/Product/types'
-import Filters, { FiltersCount} from '@/Product/Filters'
-import { useToggleFilter } from '@/Product/productFilterHooks'
-import Sort from '@/Product/Sort'
+import { Filters, FiltersCount, Sort } from '@/Product/Filter'
+import { useToggleFilter, useProductFilterPanel } from '@/Product/filterHooks'
 import { Crumbs } from '@/Product/BreadCrumbs'
 import styles from '@/Product/Products.module.css'
 
@@ -59,15 +59,14 @@ export const Page = ({ data }) => {
 }
 
 export const Products = ({ data, loading }) => {
-  const dispatch = useDispatch()
-  const isOpen = useSelector((state) => state.products.panel.open)
-  const categories = useSelector((state) => state.layout.data.categories)
-  const closePanel = () => dispatch(productsActions.closePanel())
+  const filterPanel = useProductFilterPanel()
+  const router = useRouter()
+  const routeName = router.query.slug[0]
 
   return (
     <div className="items-center w-full">
       <div className="flex-row w-full max-w-screen-xl h-full md:px-4 xl:px-0">
-        <Filters isOpen={isOpen} categories={categories} closePanel={closePanel}/>
+        <Filters filterPanel={filterPanel} filterNames={filtersByRoute[routeName]} />
         <div className="hidden md:block w-2" />
         <ProductItemsWrapper data={data} loading={loading} />
       </div>
@@ -184,7 +183,7 @@ const Header = ({ sortBy, totalPages }) => {
 
 const QuickFilter = ({ data }) => {
   const panel = useSelector((state) => state.products.panel)
-  const toggleFilter = useToggleFilter()
+  const toggleFilter = useToggleFilter({panel})
 
   return (
     <div className="space-x-2 flex-row flex-wrap mt-2">

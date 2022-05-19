@@ -89,7 +89,7 @@ const Account = ({ user }) => {
             </span>
           )}
         </IconLink>
-        <IconLink href="/my-wardrobe" size={18} icon={iconWardrobe} />
+        <IconLink href="/my-wardrobe/clothing" size={18} icon={iconWardrobe} />
       </div>
     )
   } else {

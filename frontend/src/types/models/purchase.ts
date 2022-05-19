@@ -7,7 +7,7 @@ import { StrapiGiftCard } from './gift-card';
  */
 export interface StrapiPurchase {
   id: string;
-  status?: "success";
+  status?: "success" | "refunded";
   paymentIntent?: string;
   paymentMethod?: string;
   charge?: number;

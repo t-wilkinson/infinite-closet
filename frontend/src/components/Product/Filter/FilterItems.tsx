@@ -1,11 +1,10 @@
 import React from 'react'
 import debounce from 'lodash/debounce'
 
-import { useSelector } from '@/utils/store'
 import * as sizing from '@/utils/sizing'
 import { useFields, Input, Checkbox } from '@/Form'
 import { SizeChartPopup } from '@/Product/SizeChart'
-import { Icon, iconSearch } from '@/Components/Icons'
+import { Icon, iconSearch} from '@/Components/Icons'
 
 import Color from './Color'
 import { Filter } from './types'
@@ -13,7 +12,7 @@ import { Filter } from './types'
 type FilterItems = {
   [key in Filter]: (props: {
     filter: Filter
-    panel: { values: string[]; toggle: (payload: string) => void }
+    panel: { values: string[]; toggle: (payload: string) => void; data: any }
   }) => any
 }
 
@@ -24,17 +23,20 @@ const toTitleCase = (value: string) =>
     .join(' ')
 
 export const FilterItems: FilterItems = {
+  wardrobes: ({ panel }) => {
+    return <>
+      <FilterCheckboxes panel={panel} />
+    </>
+  },
+
   designers: ({ panel }) => {
-    const designers = useSelector((state) =>
-      Object.values(state.layout.data.designers)
-    )
     const [matches, setMatches] = React.useState<number[]>([])
     const debounceMatches = React.useCallback(
       debounce(
         (search: string, designers: { slug: string; name: string }[]) => {
           fuzzySearch(
             search,
-            designers.map((designer) => designer.slug)
+            panel.data.map((designer) => designer.slug)
           ).then((matches) => setMatches(matches))
         },
         300
@@ -45,16 +47,16 @@ export const FilterItems: FilterItems = {
     const fields = useFields<{ search: string }>({
       search: {
         label: 'Designer Names',
-        onChange: (value) => debounceMatches(value, designers),
+        onChange: (value) => debounceMatches(value, panel.data),
       },
     })
     const useMatches = matches.length > 0 || fields.get('search').value
     const matchedIndexes = useMatches
       ? matches
-      : designers.map((_: unknown, i: number) => i)
+      : panel.data.map((_: unknown, i: number) => i)
     const sortedMatchedIndexes = matchedIndexes.sort((i1, i2) => {
-      const d1 = designers[i1].slug.toUpperCase()
-      const d2 = designers[i2].slug.toUpperCase()
+      const d1 = panel.data[i1].slug.toUpperCase()
+      const d2 = panel.data[i2].slug.toUpperCase()
       return d1 === d2 ? 0 : d1 > d2 ? 1 : -1
     })
 
@@ -68,7 +70,7 @@ export const FilterItems: FilterItems = {
           <div className="h-3" />
           <div className="h-full space-y justify-start overflow-y-scroll">
             {sortedMatchedIndexes.map((index: number) => {
-              let { slug, name } = designers[index]
+              let { slug, name } = panel.data[index]
               return (
                 <Checkbox
                   size={14}
@@ -90,14 +92,10 @@ export const FilterItems: FilterItems = {
   },
 
   colors: ({ panel }) => {
-    const colors = useSelector((state) =>
-      Object.values(state.layout.data.colors)
-    )
-
     return (
       <>
         <div className="flex-row flex-wrap">
-          {colors.map((color) => (
+          {panel.data.map((color) => (
             <Color key={color.slug} panel={panel} color={color} />
           ))}
         </div>
@@ -112,13 +110,9 @@ export const FilterItems: FilterItems = {
   ),
 
   occasions: ({ panel }) => {
-    const occasions = useSelector((state) =>
-      Object.values(state.layout.data.occasions)
-    )
-
     return (
       <>
-        <FilterCheckboxes panel={panel} data={occasions} />
+        <FilterCheckboxes panel={panel} />
       </>
     )
   },
@@ -130,11 +124,6 @@ export const FilterItems: FilterItems = {
   ),
 
   sizes: ({ panel }) => {
-    const sizes = useSelector((state) =>
-      Object.values(state.layout.data.sizes)
-        .sort(sizing.sort)
-        .map((size) => ({ name: size, slug: size }))
-    )
     const [state, setState] = React.useState(false)
 
     return (
@@ -150,53 +139,45 @@ export const FilterItems: FilterItems = {
             <SizeChartPopup state={state} setState={setState} />
           </div>
         </div>
-        <FilterCheckboxes panel={panel} data={sizes} sort={false} />
+        <FilterCheckboxes
+          panel={panel}
+          data={Object.values(panel.data)
+            .sort(sizing.sort)
+            .map((size) => ({ name: size, slug: size }))}
+          sort={false}
+        />
       </>
     )
   },
 
   weather: ({ panel }) => {
-    const weather = useSelector((state) =>
-      Object.values(state.layout.data.weather)
-    )
-
     return (
       <>
-        <FilterCheckboxes panel={panel} data={weather} />
+        <FilterCheckboxes panel={panel} />
       </>
     )
   },
 
   styles: ({ panel }) => {
-    const styles = useSelector((state) =>
-      Object.values(state.layout.data.styles)
-    )
-
     return (
       <>
-        <FilterCheckboxes panel={panel} data={styles} />
+        <FilterCheckboxes panel={panel} />
       </>
     )
   },
 
   materials: ({ panel }) => {
-    const data = useSelector((state) =>
-      Object.values(state.layout.data.materials)
-    )
-
     return (
       <>
-        <FilterCheckboxes panel={panel} data={data} />
+        <FilterCheckboxes panel={panel} />
       </>
     )
   },
 
   metals: ({ panel }) => {
-    const data = useSelector((state) => Object.values(state.layout.data.metals))
-
     return (
       <>
-        <FilterCheckboxes panel={panel} data={data} />
+        <FilterCheckboxes panel={panel} />
       </>
     )
   },
@@ -231,24 +212,33 @@ async function fuzzySearch(search: string, values: string[]) {
   return matches || []
 }
 
-const FilterCheckboxes = ({ panel, data, sort = true }) => {
+const FilterCheckboxes = ({ panel, data = null, sort = true }) => {
+  data =  data || Object.values(panel.data)
   data = sort
     ? data?.sort((v1: { slug: string }, v2: { slug: string }) =>
         v1.slug === v2.slug ? 0 : v1.slug > v2.slug ? 1 : -1
       )
     : data
 
-  return data?.map((v: { slug: string; name: string }) => (
-    <div key={v.slug} className="py-0.5">
-      <Checkbox
-        size={14}
-        onChange={() => panel.toggle(v.slug)}
-        value={panel.values.includes(v.slug)}
-        labelClassName="whitespace-no-wrap"
-        label={v.name}
-      />
-    </div>
-  ))
+  if (!Array.isArray(data)) {
+    return null
+  }
+
+  return (
+    <>
+      {data?.map((v: { slug: string; name: string }) => (
+        <div key={v.slug} className="py-0.5">
+          <Checkbox
+            size={14}
+            onChange={() => panel.toggle(v.slug)}
+            value={panel.values.includes(v.slug)}
+            labelClassName="whitespace-no-wrap"
+            label={v.name}
+          />
+        </div>
+      ))}
+    </>
+  )
 }
 
 export default FilterItems

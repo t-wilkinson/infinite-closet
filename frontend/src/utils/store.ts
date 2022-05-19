@@ -10,6 +10,7 @@ import shopSlice from '@/Product/ProductPage/slice'
 import rootSlice from '../components/slice'
 import userSlice from '@/User/slice'
 import ordersSlice from '@/Order/slice'
+import wardrobeSlice from '@/Wardrobe/slice'
 
 import {
   TypedUseSelectorHook,
@@ -25,6 +26,7 @@ export const storeOptions = {
     root: rootSlice,
     shop: shopSlice,
     orders: ordersSlice,
+    wardrobe: wardrobeSlice,
   },
   middleware: [thunk],
   // middleware: (getDefaultMiddleware: any) => [

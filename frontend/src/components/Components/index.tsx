@@ -29,6 +29,10 @@ const buttonClassName = ({ role = 'primary', className = '', disabled=false}) =>
           ? 'text-white bg-sec hover:bg-pri rounded-sm font-bold'
           : role === 'error'
           ? 'text-white bg-warning rounded-sm font-bold'
+          : role === 'danger'
+          ? 'text-white bg-warning rounded-sm font-bold'
+          : role === 'action'
+          ? 'text-black bg-white underline'
           : ''
       }
 `
@@ -42,7 +46,7 @@ export const ButtonLink = ({ className = '', href, role=undefined, children }) =
 export const Button = ({
   onClick = (..._: any[]): void => {},
   children,
-  role = 'primary' as 'primary' | 'secondary' | 'payment' | 'cta',
+  role = 'primary' as 'primary' | 'secondary' | 'payment' | 'cta' | 'danger' | 'action',
   className = '',
   type = 'button',
   disabled =false,

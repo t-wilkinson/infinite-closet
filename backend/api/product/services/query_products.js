@@ -1,4 +1,4 @@
-const { DefaultDict } = require('../../../utils')
+const { toId, DefaultDict } = require('../../../utils')
 const models = require('../../../data/data.js').models
 
 async function whereIn(column, ids, knexQuery) {
@@ -150,8 +150,47 @@ async function queryCategories(_where) {
   return categories
 }
 
+const CUSTOM_WARDROBES = ['my-wardrobe', 'favorites', 'previously-rented']
+
+function extendWardrobes(query) {
+  if (query.wardrobes.length === 0) {
+    return CUSTOM_WARDROBES
+  } else {
+    return query.wardrobes
+  }
+}
+
+/**
+ * Find product ids that are in the users wardrobe query for further querying
+ */
+async function queryWardrobeItems(query, user) {
+  const wardrobeItems = await strapi.query('wardrobe-item').find({
+    ...(query.wardrobes.length === 0 ? {} : { 'wardrobe.slug_in': query.wardrobes }),
+    user: toId(user),
+  }, [])
+  let productIds = wardrobeItems.map(wardrobeItem => wardrobeItem.product)
+
+  // Some wardrobes require custom logic to get dynamically generated
+  for (const wardrobe of extendWardrobes(query)) {
+    if (wardrobe === 'previously-rented') {
+      const orders = await strapi.query('order', 'orders').find({ user: toId(user), status: 'completed' }, [])
+      productIds.push.apply(productIds, orders.map(order => order.product))
+    } else if (wardrobe === 'favorites') {
+      const orders = await strapi.query('order', 'orders').find({ user: toId(user), status: 'list' }, [])
+      productIds.push.apply(productIds, orders.map(order => order.product))
+    } else if (wardrobe === 'my-wardrobe') {
+      // Items are assigned to the 'My wardrobe' wardrobe by setting wardrobe to null
+      const wardrobeItems = await strapi.query('wardrobe-item').find({ user: toId(user), wardrobe: null }, [])
+      productIds.push.apply(productIds, wardrobeItems.map(order => order.product))
+    }
+  }
+
+  return productIds
+}
+
 module.exports = {
   products: queryProducts,
   filters: queryFilters,
   categories: queryCategories,
+  wardrobeItems: queryWardrobeItems,
 }

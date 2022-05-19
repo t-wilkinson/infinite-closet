@@ -1,40 +1,46 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 
-import { useSelector, } from '@/utils/store'
+import { useSelector } from '@/utils/store'
 import { Divider } from '@/Components'
 import { Icon, iconUp, iconDown } from '@/Components/Icons'
 
-import { BreadCrumbs } from './BreadCrumbs'
-import { filtersByRoute, filterData } from './constants'
-import { productsSelectors } from './slice'
+import { BreadCrumbs } from '@/Product/BreadCrumbs'
+import { filterData } from '@/Product/constants'
+import { productsSelectors } from '@/Product/slice'
+
 import { Filter } from './types'
-import useProductFilter from './productFilterHooks'
 
-export const Filters = ({href="/products", isOpen, categories, closePanel}) => {
-  const router = useRouter()
-  const routeName = router.query.slug[0]
-
+export const Filters = ({
+  href = '/products',
+  filterPanel,
+  filterNames,
+}: {
+  href?: string
+  filterPanel: any
+  filterNames: Filter[]
+}) => {
   return (
     <div
       className={`h-full justify-start bg-white w-full sm:w-64 md:w-72
         overflow-y-auto
-          ${isOpen ? 'fixed inset-0 sm:hidden z-20' : 'hidden w-full sm:flex'}
+          ${
+            filterPanel.isOpen
+              ? 'fixed inset-0 sm:hidden z-20'
+              : 'hidden w-full sm:flex'
+          }
           `}
     >
       <div className="items-center">
-        <BreadCrumbs href={href} categories={categories} />
+        <BreadCrumbs href={href} categories={filterPanel.categories} />
         <FilterHeader />
         <Divider />
       </div>
-      {filtersByRoute[routeName].map((filterName: Filter) => {
-        const filter = useProductFilter(filterName)
-        return <FilterWrapper
-          key={filter.name}
-          filter={filter}
-        />
+      {filterNames.map((filterName: Filter) => {
+        const filter = filterPanel.useFilterName(filterName)
+        return <FilterWrapper key={filter.name} filter={filter} />
       })}
-      <FilterFooter closePanel={closePanel} />
+      <FilterFooter closePanel={filterPanel.closePanel} />
     </div>
   )
 }
@@ -75,8 +81,16 @@ const FilterWrapper = ({ filter }) => {
           <Icon icon={filter.selected ? iconUp : iconDown} size={12} />
         </div>
       </button>
-      <div className={`p-4 text-lg sm:text-sm ${filter.selected ? 'flex' : 'hidden'}`}>
-        <filter.Filter key={filter.name} filter={filter.name} panel={filter.panel} />
+      <div
+        className={`p-4 text-lg sm:text-sm ${
+          filter.selected ? 'flex' : 'hidden'
+        }`}
+      >
+        <filter.Filter
+          key={filter.name}
+          filter={filter.name}
+          panel={filter.panel}
+        />
       </div>
       <Divider />
     </>
@@ -128,6 +142,5 @@ export const FiltersCount = (props: any) => {
   const numToggled = useSelector((state) => productsSelectors.numToggled(state))
   return <span {...props}>Filters{numToggled > 0 && ` (${numToggled})`}</span>
 }
-
 
 export default Filters

@@ -4,8 +4,8 @@ import { useRouter } from 'next/router'
 import { useSelector, useDispatch } from '@/utils/store'
 import { Icon, iconSort } from '@/Components/Icons'
 
-import { productsActions, productsSelectors } from './slice'
-import { sortData } from './constants'
+import { productsActions, productsSelectors } from '@/Product/slice'
+import { sortData } from '@/Product/constants'
 import { SortBy } from './types'
 
 export const Sort = ({ sortBy }: { sortBy: SortBy }) => {

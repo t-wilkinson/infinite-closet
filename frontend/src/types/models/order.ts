@@ -16,6 +16,7 @@ export interface StrapiOrder {
   expectedStart?: string;
   insurance?: boolean;
   rentalLength?: "short" | "long";
+  trackingId?: string;
   product?: StrapiProduct;
   user?: StrapiUser;
   contact?: StrapiContact;

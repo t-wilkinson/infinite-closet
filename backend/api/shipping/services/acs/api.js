@@ -83,11 +83,11 @@ module.exports = {
   async status(orderId) {
     const res = await fetchApi(`/orders/IC-${orderId}`, 'GET', {})
       .then(async (res) => {
-        console.log(res.status, res)
+        strapi.log.info(`acs api ${res.status} ${JSON.stringify(res)}`)
         if (!res.ok) {
           throw new Error('Request failed')
         } else {
-          console.log(await res.text())
+          strapi.log.info(`acs api ${await res.text()}`)
           return
           // return await res.text()
         }

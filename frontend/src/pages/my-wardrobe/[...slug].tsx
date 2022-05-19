@@ -6,21 +6,27 @@ import * as sizing from '@/utils/sizing'
 import { useDispatch, useSelector } from '@/utils/store'
 import { capitalize } from '@/utils/helpers'
 
-import { Icon, iconSettings, iconClose, iconLeft, iconRight } from '@/Components/Icons'
+import {
+  Icon,
+  iconSettings,
+  iconClose,
+  iconLeft,
+  iconRight,
+} from '@/Components/Icons'
 import { ScrollUp } from '@/Components'
 import Layout from '@/Layout'
 import useData from '@/Layout/useData'
 
+import { filtersByRoute } from '@/Product/constants'
 import { ProductItems } from '@/Product/ProductItems'
 import { sortData, QUERY_LIMIT } from '@/Product/constants'
 import { productsActions } from '@/Product/slice'
 import { Filter, ProductRoutes, SortBy } from '@/Product/types'
-import Filters, { FiltersCount} from '@/Product/Filters'
-import { useToggleFilter } from '@/Product/productFilterHooks'
-import Sort from '@/Product/Sort'
 import { Crumbs } from '@/Product/BreadCrumbs'
 import styles from '@/Product/Products.module.css'
-import { getWardrobe } from '@/Product/api'
+import { getWardrobe } from '@/Wardrobe/api'
+import { Filters, FiltersCount, Sort } from '@/Product/Filter'
+import { useToggleFilter, useWardrobeFilterPanel } from '@/Wardrobe/filterHooks'
 
 export const Page = ({ data }) => {
   const router = useRouter()
@@ -51,22 +57,25 @@ export const Page = ({ data }) => {
   return (
     <>
       <Layout title="My Wardrobe">
-        <Products data={data} loading={loading} />
+        {data && <Products data={data} loading={loading} />}
       </Layout>
     </>
   )
 }
 
 export const Products = ({ data, loading }) => {
-  const dispatch = useDispatch()
-  const isOpen = useSelector((state) => state.products.panel.open)
-  const categories = useSelector((state) => state.layout.data.categories)
-  const closePanel = () => dispatch(productsActions.closePanel())
+  const filterPanel = useWardrobeFilterPanel()
+  const router = useRouter()
+  const routeName = router.query.slug[0]
 
   return (
     <div className="items-center w-full">
       <div className="flex-row w-full max-w-screen-xl h-full md:px-4 xl:px-0">
-        <Filters href="/my-wardrobe" isOpen={isOpen} categories={categories} closePanel={closePanel}/>
+        <Filters
+          href="/my-wardrobe"
+          filterPanel={filterPanel}
+          filterNames={['wardrobes', ...filtersByRoute[routeName]]}
+        />
         <div className="hidden md:block w-2" />
         <ProductItemsWrapper data={data} loading={loading} />
       </div>
@@ -183,7 +192,7 @@ const Header = ({ sortBy, totalPages }) => {
 
 const QuickFilter = ({ data }) => {
   const panel = useSelector((state) => state.products.panel)
-  const toggleFilter = useToggleFilter()
+  const toggleFilter = useToggleFilter({ panel })
 
   return (
     <div className="space-x-2 flex-row flex-wrap mt-2">
@@ -286,56 +295,46 @@ export async function getServerSideProps({ params, query, req }) {
 
   const page = query.page > 0 ? query.page : 1
   const sort = sortData[query.sort]?.value ?? sortData.Alphabetical.value
-  const { products, count, filters, categories } = await getWardrobe(
-    {
+  try {
+    const { products, count, filters, categories } = await getWardrobe(
+      {
         sort,
         start: (page - 1) * QUERY_LIMIT,
         limit: QUERY_LIMIT,
         categories: query.slug,
-        ...Filter.reduce((acc, filter) => (acc[filter] = query[filter], acc), {})
+        ...Filter.reduce(
+          (acc, filter) => ((acc[filter] = query[filter]), acc),
+          {}
+        ),
       },
       req.headers.cookie
-  )
+    )
 
-  for (const product of products) {
-    for (const [key, size] of Object.entries(product.sizes as StrapiSize[])) {
-      product.sizes[key].size = sizing.normalize(size.size || '')
-      product.sizes[key].sizeRange = sizing.normalize(size.sizeRange || '')
+    for (const product of products) {
+      for (const [key, size] of Object.entries(product.sizes as StrapiSize[])) {
+        product.sizes[key].size = sizing.normalize(size.size || '')
+        product.sizes[key].sizeRange = sizing.normalize(size.sizeRange || '')
+      }
     }
-  }
 
-  return {
-    props: {
-      data: {
-        products,
-        productsCount: count,
-        ...filters,
-        categories,
-      },
-    },
-  }
-}
-
-export default Page
-
-/*
-export async function getServerSideProps({ params }) {
-  try {
-    const wardrobe = await getWardrobe(params)
     return {
       props: {
-        data: { wardrobe },
+        data: {
+          products,
+          productsCount: count,
+          ...filters,
+          categories,
+        },
       },
     }
   } catch (e) {
     return {
       props: {
-        data: { error: e.response?.status || null },
+        data: null,
+        error: e,
       },
     }
   }
 }
 
 export default Page
- */
-
