@@ -60,6 +60,7 @@ export const productRentContents = {
     )?.quantity
 
     return (
+      <>
       <Form
         fields={fields}
         onSubmit={() => addToCart({fields, dispatch, analytics, user, product})}
@@ -108,10 +109,11 @@ export const productRentContents = {
         >
           Add to Wardrobe
         </Button>
-        <AddWardrobe product={product} visible={wardrobePopupVisible} setVisible={setWardrobePopupVisible} />
         </>
         }
       </Form>
+        <AddWardrobe product={product} visible={wardrobePopupVisible} setVisible={setWardrobePopupVisible} />
+        </>
     )
   },
 
