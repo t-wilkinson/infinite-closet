@@ -60,6 +60,7 @@ const SideMenu = () => {
       <SideLink href="/user/favorites">Favorites</SideLink>
       <SideLink href="/user/giftcard">Gift cards</SideLink>
       <SideLink href="/user/order-history">Order history</SideLink>
+      <SideLink href="/user/wardrobe-upload">Upload an Outfit</SideLink>
       <SideButton
         onClick={() => {
           router.push('/')

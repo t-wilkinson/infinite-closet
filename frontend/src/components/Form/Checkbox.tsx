@@ -1,9 +1,57 @@
 import React from 'react'
 
-import { Icon, iconCheck } from '@/Components/Icons'
+import { Icon, iconUp, iconDown, iconCheck } from '@/Components/Icons'
 import { UseField, FieldValue } from './types'
 
 import Warning from './Warning'
+
+export const Checkboxes = ({
+  field,
+  values,
+}: {
+  field: UseField<Set<string>>
+  values: { name: string; slug: string }[]
+}) => {
+  const [isOpen, setOpen] = React.useState(false)
+  const toggleKey = (key: string) => {
+    if (field.value.has(key)) {
+      let newValue = new Set(field.value)
+      newValue.delete(key)
+      field.setValue(newValue)
+    } else {
+      let newValue = new Set(field.value)
+      newValue.add(key)
+      field.setValue(newValue)
+    }
+  }
+
+  return <div>
+    <button onClick={() => setOpen(!isOpen)} type="button">
+      <div className="flex-row text-lg sm:text-sm items-center justify-between py-4">
+        <span className="font-bold">
+          {field.label}
+          {field.value.size > 0 && ` (${field.value.size})`}
+        </span>
+        <Icon icon={isOpen ? iconUp : iconDown} size={12} />
+      </div>
+    </button>
+    <div
+      className={`py-4 px-2 text-lg sm:text-sm ${
+        isOpen ? 'flex' : 'hidden'
+      }`}
+    >
+      {values.sort((v1, v2) => v1.name < v2.name ? -1 : v1.name > v2.name ? 1 : 0).map(({name, slug}) =>
+      <Checkbox
+        key={slug}
+        label={name}
+        size={16}
+        onChange={() => toggleKey(slug)}
+        value={field.value.has(slug)}
+      />
+                 )}
+    </div>
+  </div>
+}
 
 export const Checkbox = ({
   field = {} as UseField<boolean>,

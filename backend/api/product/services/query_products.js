@@ -12,19 +12,34 @@ async function whereIn(column, ids, knexQuery) {
 /**
  * Search for products in database matching `_where`
  */
-async function queryProducts(knex, _where, _paging, ids) {
+async function queryProducts(knex, _where, _paging, ids, user=null) {
   let sort = _paging.sort.split(':')
   sort[0] = `products."${sort[0]}"`
   sort = sort.join(' ')
 
-  const productIds = await whereIn('products.id', ids, knex
-    .select('products.id as id')
-    .from('products')
-    .join('designers', 'products.designer', 'designers.id')
-    .orderByRaw(sort)
-    .whereNotNull('products.published_at')
-    .whereRaw(...strapi.services.filter.toRawSQL(_where))
-  )
+  let productIds
+  if (user) {
+    productIds = await whereIn('products.id', ids, knex
+      .select('products.id as id')
+      .from('products')
+      .join('designers', 'products.designer', 'designers.id')
+      .orderByRaw(sort)
+      .where('products.user', user)
+      .orWhereNull('products.user')
+      .whereNotNull('products.published_at')
+      .whereRaw(...strapi.services.filter.toRawSQL(_where))
+    )
+  } else {
+    productIds = await whereIn('products.id', ids, knex
+      .select('products.id as id')
+      .from('products')
+      .join('designers', 'products.designer', 'designers.id')
+      .orderByRaw(sort)
+      .whereNull('products.user')
+      .whereNotNull('products.published_at')
+      .whereRaw(...strapi.services.filter.toRawSQL(_where))
+    )
+  }
 
   const populatedProducts = await Promise.all(
     productIds.map(({ id }) =>
@@ -82,11 +97,13 @@ function productSlugs(products) {
   return filterSlugs
 }
 
-async function queryFilters(knex, _where, ids) {
+async function queryFilters(knex, _where, ids, user=null) {
   // here we find all filters in products under only the category filter
   const products = await whereIn('products.id', ids, knex
     .select('products.*')
     .from('products')
+    .where('products.user', user)
+    .orWhereNull('products.user')
     .whereNotNull('products.published_at')
     .whereRaw(
       ...strapi.services.filter.toRawSQL({ categories: _where.categories })

@@ -215,6 +215,12 @@ export const ProductInfo = ({ product }) => (
         </Link>
       </div>
 
+      {product.user ?
+        <span className="mt-6 font-bold">
+          Your outfit
+        </span>
+        :
+      <>
       <span className="text-sm">{sizing.range(product.sizes).join(', ')}</span>
       <div className="h-2" />
 
@@ -229,6 +235,8 @@ export const ProductInfo = ({ product }) => (
           </span>
         </span>
       </div>
+      </>
+      }
     </div>
   </div>
 )

@@ -26,11 +26,11 @@
     },
     "shortRentalPrice": {
       "type": "decimal",
-      "required": true
+      "required": false
     },
     "longRentalPrice": {
       "type": "decimal",
-      "required": true
+      "required": false
     },
     "retailPrice": {
       "type": "decimal"
@@ -41,10 +41,7 @@
     "images": {
       "collection": "file",
       "via": "related",
-      "allowedTypes": [
-        "images",
-        "videos"
-      ],
+      "allowedTypes": ["images", "videos"],
       "plugin": "upload",
       "required": true
     },
@@ -121,6 +118,10 @@
     "sizes_": {
       "type": "string",
       "private": true
+    },
+    "user": {
+      "plugin": "users-permissions",
+      "model": "user"
     }
   }
 }

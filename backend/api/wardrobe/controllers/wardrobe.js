@@ -50,9 +50,10 @@ module.exports = {
         knex,
         query.where,
         query.paging,
-        productIds
+        productIds,
+        user.id
       ),
-      strapi.services.query_products.filters(knex, query.where, productIds),
+      strapi.services.query_products.filters(knex, query.where, productIds, user.id),
       strapi.services.query_products.categories(query.where, productIds),
       wardrobeFilters(query, user),
     ])

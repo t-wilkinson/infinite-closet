@@ -331,7 +331,7 @@ export async function getServerSideProps({ params, query, req }) {
     return {
       props: {
         data: null,
-        error: e,
+        error: e || null,
       },
     }
   }

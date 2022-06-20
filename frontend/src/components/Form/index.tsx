@@ -2,9 +2,6 @@ import React from 'react'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 
-import { Icon, iconLoading } from '@/Components/Icons'
-
-import Warning from './Warning'
 import { UseFields } from './fields'
 
 export * from './Checkbox'
@@ -16,6 +13,7 @@ export * from './Input'
 export * from './Password'
 export * from './Rating'
 export * from './Warning'
+export * from './Submit'
 export * from './fields'
 export * from './types'
 
@@ -140,54 +138,6 @@ export const FormWrapper = ({ className = '', children }) => (
 export const FormHeader = ({ label }) => (
   <span className="text-center font-subheader text-2xl mt-2 mb-6">{label}</span>
 )
-
-export const Submit = ({
-  form,
-  children = 'Submit' as any,
-  disabled = false,
-  className = '',
-  role = 'primary',
-}) => {
-  disabled = disabled || form.value === 'submitting'
-  return (
-    <>
-      <button
-        aria-label="Submit form"
-        className={`flex flex-row justify-center items-center
-        p-3 rounded-sm border transition duration-200 font-bold
-        ${
-          form.value === 'submitting'
-            ? 'cursor-progress'
-            : disabled
-            ? 'cursor-not-allowed'
-            : ''
-        }
-        ${
-          disabled
-            ? 'border-gray bg-gray text-white'
-            : role === 'primary'
-            ? 'bg-gray-black text-white hover:bg-gray'
-            : 'text-black'
-        }
-        ${className}
-        `}
-        type="submit"
-        disabled={disabled}
-        onClick={() => {}}
-      >
-        {form.value === 'submitting' && (
-          <Icon
-            size={20}
-            className="animate-spin h-5 w-5 mr-3"
-            icon={iconLoading}
-          />
-        )}
-        {children}
-      </button>
-      <Warning warnings={form.errors} />
-    </>
-  )
-}
 
 export const Fieldset = ({ label, className = 'my-2', children }) => (
   <fieldset className={`flex flex-col ${className}`}>

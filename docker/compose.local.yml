@@ -4,6 +4,8 @@ services:
   frontend:
     image: node:14-buster
     environment:
+      # NEXT_PUBLIC_FRONTEND: 'http://localhost:3001'
+      # NEXT_PUBLIC_BACKEND: 'http://localhost:1337'
       NEXT_PUBLIC_FRONTEND: 'http://ic.com'
       NEXT_PUBLIC_BACKEND: 'http://api.ic.com'
     command: yarn run develop
@@ -15,6 +17,8 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
     environment:
+      # FRONTEND_DOMAIN: 'localhost:3001'
+      # BACKEND_DOMAIN: 'localhost:1337'
       FRONTEND_DOMAIN: ic.com
       BACKEND_DOMAIN: api.ic.com
       LOCAL: 'true'

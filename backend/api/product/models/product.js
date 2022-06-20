@@ -1,6 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
+const { toId } = require('../../../utils')
 const models = require('../../../data/data.js').models
 
 async function addHiddenFields(data) {
@@ -32,7 +33,7 @@ async function addHiddenFields(data) {
     } else if (filter in data) {
       const values = await strapi
         .query(model)
-        .find({ id_in: data[filter].filter((id) => id) })
+        .find({ id_in: data[filter].map(toId).filter((id) => id) })
       const slugs = values.map((v) => v.slug).join(',')
       data[`${filter}_`] = slugs
     }
