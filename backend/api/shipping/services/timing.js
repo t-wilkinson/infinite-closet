@@ -76,6 +76,7 @@ function shippingClass(earliestDeliveryDate, startsOn) {
  */
 function shippingClassHours(earliestDeliveryDate, startsOn) {
   // TODO: the order may ship in less time when shipped after eDD
+  earliestDeliveryDate = day(earliestDeliveryDate)
   return (
     provider.config.shippingClassHours(
       earliestDeliveryDate,
