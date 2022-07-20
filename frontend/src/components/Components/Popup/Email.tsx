@@ -34,7 +34,7 @@ export const Email = () => {
         Success={() => <Submitted dispatch={dispatch} fields={fields} /> }
       >
         <span className="text-center font-bold text-2xl mb-1">
-          Get 10% Off Your First Rental
+          Get 50% Off Your First Rental
         </span>
         <span className="text-center">
           Join our mailing list for exclusive offers, first dibs on new items,

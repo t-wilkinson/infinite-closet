@@ -162,7 +162,7 @@ const Waitlist = () => {
         after={<Submit form={fields.form} className="h-full rounded-none">Join</Submit>}
       />
       <h3 className="font-bold text-sm -mt-1 text-white">
-        Get 10% off your first rental
+        Get 50% off your first rental
       </h3>
     </Form>
   )
