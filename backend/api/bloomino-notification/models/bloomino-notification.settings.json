@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "bloomino_notifications",
+  "info": {
+    "name": "Bloomino notification",
+    "description": ""
+  },
+  "options": {
+    "increments": true,
+    "timestamps": true,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "requestId": {
+      "type": "uid"
+    },
+    "code": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    }
+  }
+}

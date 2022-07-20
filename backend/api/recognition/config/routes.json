@@ -9,6 +9,14 @@
       }
     },
     {
+      "method": "POST",
+      "path": "/notification/RecognitionNotificationService/notify",
+      "handler": "recognition.handleRecognitionNotification",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "GET",
       "path": "/recognition/filters",
       "handler": "recognition.availableFilters",

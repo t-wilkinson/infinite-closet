@@ -6,6 +6,7 @@ const config = {
   apiUrl: 'https://bloomino.co.uk/api',
   endpoints: {
     doRecognition: "RecognitionService/doRecognitionWithApiKey",
+    doRequest: "RecognitionService",
   }
 }
 

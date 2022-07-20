@@ -24,6 +24,11 @@ module.exports = async (ctx, next) => {
       // fetch authenticated user
       ctx.state.user = await strapi.plugins['users-permissions'].services.user.fetchAuthenticatedUser(id);
     } catch (err) {
+      console.log(err)
+      if (err.message === 'Invalid token.') {
+        role = await strapi.query('role', 'users-permissions').findOne({ type: 'public' }, []);
+        return await executePermission(ctx, next, role)
+      }
       return handleErrors(ctx, err, 'unauthorized');
     }
 
@@ -57,6 +62,10 @@ module.exports = async (ctx, next) => {
     role = await strapi.query('role', 'users-permissions').findOne({ type: 'public' }, []);
   }
 
+  return await executePermission(ctx, next, role)
+};
+
+async function executePermission(ctx, next, role) {
   const route = ctx.request.route;
   const permission = await strapi.query('permission', 'users-permissions').findOne(
     {
@@ -80,7 +89,7 @@ module.exports = async (ctx, next) => {
 
   // Execute the action.
   await next();
-};
+}
 
 const handleErrors = (ctx, err = undefined, type) => {
   throw strapi.errors[type](err);

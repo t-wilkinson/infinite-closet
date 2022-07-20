@@ -6,7 +6,7 @@ const models = require('../../../data/data.js').models
 const { slugify, toId } = require('../../../utils')
 
 const httpsAgent = new https.Agent({
-  rejectUnauthorized: false,
+  rejectUnauthorized: false, // TODO: potentially dangerous
 })
 
 function base64Encode(file) {
@@ -51,7 +51,7 @@ async function createProduct(request, user) {
 
   const product = await strapi.query('product').create({
     name: body.name,
-    slug: slugify(body.name),
+    slug: `${slugify(body.name)}-${Math.floor(Math.random() * 100000)}`,
     user: toId(user),
     images: uploads,
     ...filters,
@@ -74,6 +74,26 @@ module.exports = {
     ctx.send(filters)
   },
 
+  async handleRecognitionNotification(ctx) {
+    const body = ctx.request.body
+    console.log(ctx.request.header, body)
+    const { id, originalRequestId, status, productItems } = body
+    const notification = await strapi.query('bloomino-notification').findOne({ requestId: originalRequestId })
+    console.log(notification)
+
+    if (!notification) {
+      return ctx.badRequest({
+        status: 0,
+        detail: "Notification could not be found in database",
+      })
+    }
+
+    return ctx.send({
+      status: "OK",
+      description: "Received notification.",
+    })
+  },
+
   async handleRecognition(ctx) {
     const user = ctx.state.user
 
@@ -87,31 +107,36 @@ module.exports = {
       })
 
     try {
-
-      /*
       const config = strapi.services.bloomino.config
       const images = ctx.request.files
-      const res = await fetch(`${config.apiUrl}/${config.endpoints.doRecognition}`, {
-        agent: httpsAgent, // TODO: potentially dangerous
-        method: "POST",
-        headers: {
-          "XApiKey": config.apiKey,
-          "X-Api-Key": config.apiKey,
-          'Content-Type': 'application/json',
-        },
+      const req = {
         body: JSON.stringify({
-          userId: 'bloomino',
-          userEmail: 'bloomino@bloomino.co.uk',
           data: Object.values(images).map((image, i) =>
             ({
-              dataId: i,
+              dataId: `${i}`,
               mimeType: image.type,
               data: base64Encode(image.path),
             })
-          )
-        })
-      })
-      */
+          ),
+          userId: user.username,
+          userEmail: user.email,
+        }),
+        agent: httpsAgent,
+        method: "POST",
+        headers: {
+          "XApiKey": config.apiKey,
+          'Accept': '*/*',
+          // "Authorization": `Bearer ${Buffer.from(config.apiKey).toString('base64')}`,
+          'Content-Type': 'application/json',
+        },
+      }
+
+      console.log(req)
+      const res = await fetch(`${config.apiUrl}/${config.endpoints.doRecognition}`, req)
+      console.log(res, res.headers, res.body, await res.text())
+      const body = await res.json()
+      console.log(body)
+      await strapi.query('bloomino-notification').create({ requestId: body.requestId, code: body.code, message: body.message })
 
       ctx.send(product)
     } catch (e) {
@@ -120,6 +145,6 @@ module.exports = {
       console.log(e)
     }
 
-    ctx.send(null)
+    ctx.badRequest(null)
   }
 }
