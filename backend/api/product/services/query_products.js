@@ -16,7 +16,7 @@ function whereIn(products, ids) {
 /**
  * Search for products in database matching `_where`
  */
-async function queryProducts(knex, _where, _paging, ids, user=null) {
+async function queryProducts(knex, _where, _paging, ids = new Set(), user=null) {
   let sort = _paging.sort.split(':')
   sort[0] = `products."${sort[0]}"`
   sort = sort.join(' ')
@@ -100,7 +100,7 @@ function productSlugs(products) {
   return filterSlugs
 }
 
-async function queryFilters(knex, _where, ids, user=null) {
+async function queryFilters(knex, _where, ids=new Set(), user=null) {
   // here we find all filters in products under only the category filter
   let products = await knex
     .select('products.*')

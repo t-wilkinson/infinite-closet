@@ -141,7 +141,7 @@ export const ProductImages = ({ product }) => {
 
   const getSrc = (index: number) => {
     const image = product.images[index]
-    return { ...image, ...(image.formats.medium || null) }
+    return { ...image, ...(image.formats?.medium || null) }
   }
 
   return (
