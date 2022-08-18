@@ -131,8 +131,8 @@ module.exports = {
               data: base64Encode(image.path),
             })
           ),
-          userId: 'infinite-closet',
-          userEmail: 'info@infinitecloset.co.uk',
+          userId: 'bloomino',
+          userEmail: 'bloomino@bloomino.co.uk',
         }),
         agent: httpsAgent,
         method: "POST",
@@ -144,7 +144,6 @@ module.exports = {
         },
       }
 
-      console.log(req)
       const res = await fetch(`${config.apiUrl}/${config.endpoints.doRecognition}`, req)
       const body = await res.json()
       console.log(res, res.headers, res.body, body)
