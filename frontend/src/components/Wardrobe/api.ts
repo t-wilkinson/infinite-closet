@@ -1,11 +1,18 @@
 import axios from '@/utils/axios'
 
+export async function searchWardrobes(search: string, tags: string[]) {
+  return await axios.get('/my-wardrobe/search', {
+    params: { search, tags },
+    withCredentials: true,
+  })
+}
+
 export async function getProductWardrobes(productId: ID) {
   return await axios.get(`/my-wardrobe/items/${productId}`, { withCredentials: true })
 }
 
-export async function getWardrobe(params, cookie) {
-  return await axios.get(`/my-wardrobe/query`, {
+export async function getWardrobeData(params: object, cookie: string) {
+  return await axios.get(`/wardrobes/search`, {
     params,
     headers: {
       Cookie: cookie,

@@ -76,6 +76,7 @@ export const LargeHeaderLogo = ({ router }) => (
 
 const Account = ({ user }) => {
   const count = useSelector((state) => state.orders.count)
+  const [hover, setHover] = React.useState(false)
 
   if (user) {
     return (
@@ -89,7 +90,32 @@ const Account = ({ user }) => {
             </span>
           )}
         </IconLink>
-        <IconLink href="/my-wardrobe/clothing" size={18} icon={iconWardrobe} />
+        <div className="relative"
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+        >
+          <IconLink href="/wardrobes" size={18} icon={iconWardrobe} />
+          {hover && (
+            <div className="absolute top-0 right-0 bg-white rounded-md border border-gray-light"
+              style={{marginTop: 30}}
+            >
+              {[
+                { href: '/wardrobes', name: 'Wardrobes' },
+                { href: '/wardrobes/my-wardrobe', name: 'My Wardrobe' },
+              ].map((item, i) => (
+                <React.Fragment key={item.name}>
+                  {i > 0 && <div className="h-px bg-gray-light" />}
+                <Link href={item.href}>
+                  <a className="inline-block px-2 py-1" style={{ whiteSpace: 'nowrap'}}>
+                    {item.name}
+                  </a>
+                </Link>
+                </React.Fragment>
+              ))}
+            </div>
+          )}
+        </div>
+
       </div>
     )
   } else {

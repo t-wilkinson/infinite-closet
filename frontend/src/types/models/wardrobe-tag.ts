@@ -1,10 +1,9 @@
 /**
- * Model definition for Material
+ * Model definition for Wardrobe Tag
  */
-export interface StrapiMaterial {
+export interface StrapiWardrobeTag {
   id: string;
-  name: string;
-  slug?: string;
+  name?: string;
   created_at: string;
   created_by: string;
   updated_at: string;

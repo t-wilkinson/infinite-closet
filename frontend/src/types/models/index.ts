@@ -1,5 +1,6 @@
 export * from './address';
 export * from './blog';
+export * from './bloomino-notification';
 export * from './category';
 export * from './checkout';
 export * from './color';
@@ -26,4 +27,5 @@ export * from './style';
 export * from './user';
 export * from './wardrobe';
 export * from './wardrobe-item';
+export * from './wardrobe-tag';
 export * from './weather';

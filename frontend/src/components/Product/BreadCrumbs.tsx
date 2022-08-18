@@ -3,34 +3,7 @@ import Link from 'next/link'
 import { StrapiCategory } from '@/types/models'
 import { capitalize } from '@/utils/helpers'
 
-export const Crumbs = ({ href="/products", slugs = [], ...props }) => {
-  return (
-    <div {...props} style={{ flexDirection: 'row' }}>
-      <span className="text-gray whitespace-pre">Browse</span>
-      {slugs.map((v, i) => (
-        <Link key={v} href={`${href}/${slugs.slice(0, i + 1).join('/')}`}>
-          <a>
-            {i === slugs.length - 1 ? (
-              <span>
-                &nbsp;&nbsp;/&nbsp;&nbsp;
-                <span className="hover:underline">{capitalize(v)}</span>
-              </span>
-            ) : (
-              <span>
-                &nbsp;&nbsp;/&nbsp;&nbsp;
-                <span className="text-gray whitespace-pre hover:underline">
-                  {capitalize(v)}
-                </span>
-              </span>
-            )}
-          </a>
-        </Link>
-      ))}
-    </div>
-  )
-}
-
-export const BreadCrumbs = ({href="/products",categories}) => {
+export const BreadCrumbs = ({ href = '/products', categories }) => {
   const category = categories[0]
 
   return (
@@ -47,10 +20,52 @@ export const BreadCrumbs = ({href="/products",categories}) => {
         <BreadCrumb
           {...category}
           categories={categories}
-          href={`${href}/${category.slug}`}
+          href={
+            category.slug === 'root' ? `${href}` : `${href}/${category.slug}`
+          }
           level={0}
         />
       )}
+    </div>
+  )
+}
+
+export const Crumbs = ({ href = '/products', slugs = [], ...props }) => {
+  return (
+    <div {...props} style={{ flexDirection: 'row' }}>
+      <Link href={href}>
+        <a>
+          <span className="text-gray whitespace-pre">Browse</span>
+        </a>
+      </Link>
+      {slugs.map((v, i) => (
+        <Link
+          key={v}
+          href={
+            v === 'root'
+              ? `${href}`
+              : `${href}/${slugs.slice(0, i + 1).join('/')}`
+          }
+        >
+          <a>
+            {i === slugs.length - 1 ? (
+              <span>
+                &nbsp;&nbsp;/&nbsp;&nbsp;
+                <span className="hover:underline">
+                  {v === 'root' ? '' : capitalize(v)}
+                </span>
+              </span>
+            ) : (
+              <span>
+                &nbsp;&nbsp;/&nbsp;&nbsp;
+                <span className="text-gray whitespace-pre hover:underline">
+                  {capitalize(v)}
+                </span>
+              </span>
+            )}
+          </a>
+        </Link>
+      ))}
     </div>
   )
 }

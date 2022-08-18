@@ -17,9 +17,19 @@
     "slug": {
       "type": "string"
     },
+    "description": {
+      "type": "text"
+    },
+    "public": {
+      "type": "boolean",
+      "default": false
+    },
     "user": {
       "plugin": "users-permissions",
       "model": "user"
+    },
+    "tags": {
+      "collection": "wardrobe-tag"
     }
   }
 }

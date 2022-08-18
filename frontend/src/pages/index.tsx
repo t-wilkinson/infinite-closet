@@ -2,7 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { ProductItem } from '@/Product/ProductItem'
+import { WrappedProductItem } from '@/Product/ProductItem'
 import { FacebookMessenger, Button } from '@/Components'
 import Layout from '@/Layout'
 import { StrapiProduct } from '@/types/models'
@@ -406,7 +406,7 @@ const ProductItems = ({ products }) => {
       <Heading>Just Dropped</Heading>
       <div className="px-4 my-8 w-full flex-wrap max-w-screen-sm lg:max-w-none lg:flex-no-wrap flex-row">
         {products.map((product: StrapiProduct) => (
-          <ProductItem key={product.id} product={product} />
+          <WrappedProductItem key={product.id} product={product} />
         ))}
       </div>
     </div>

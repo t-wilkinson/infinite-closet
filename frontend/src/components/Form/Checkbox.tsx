@@ -8,13 +8,17 @@ import Warning from './Warning'
 export const Checkboxes = ({
   field,
   values,
+  single,
 }: {
   field: UseField<Set<string>>
   values: { name: string; slug: string }[]
+  single?: boolean
 }) => {
   const [isOpen, setOpen] = React.useState(false)
   const toggleKey = (key: string) => {
-    if (field.value.has(key)) {
+    if (single) {
+      field.set(new Set([key]))
+    } else if (field.value.has(key)) {
       let newValue = new Set(field.value)
       newValue.delete(key)
       field.setValue(newValue)

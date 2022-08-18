@@ -59,7 +59,9 @@ class SQLQueryBuilder {
   }
 
   add(filter, slugs) {
-    if (typeof slugs === 'string') {
+    if (!slugs) {
+      // pass
+    } else if (typeof slugs === 'string') {
       slugs = [slugs]
       this.addSlug(filter, slugs)
       this.query.push('?? like ?')

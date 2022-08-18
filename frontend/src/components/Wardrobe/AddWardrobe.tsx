@@ -3,7 +3,7 @@ import React from 'react'
 import { StrapiWardrobe } from '@/types/models'
 import { Icon, iconCheck, iconPlus } from '@/Components/Icons'
 import { Button } from '@/Components'
-import { Input, useFields } from '@/Form'
+import { OR, Input, useFields } from '@/Form'
 import { Popup } from '@/Layout'
 
 import {
@@ -45,7 +45,6 @@ export const AddWardrobe = ({ product, visible, setVisible }) => {
         wardrobeItem.wardrobe?.id === wardrobe.id ||
         (wardrobeItem.wardrobe === null && wardrobe.slug === 'my-wardrobe')
     )
-    console.log(wardrobeItem)
     if (wardrobeItem) {
       removeWardrobeItem(wardrobeItem.id).then(() => updateProductWardrobes())
     } else {
@@ -77,8 +76,8 @@ export const AddWardrobe = ({ product, visible, setVisible }) => {
           />
         ))}
       </div>
-
-      <div className="mt-6 flex flex-row items-center">
+      <OR />
+      <div className="flex flex-row items-center">
         <Input field={fields.get('name')} />
         <Button
           className="ml-2 flex flex-row items-center"

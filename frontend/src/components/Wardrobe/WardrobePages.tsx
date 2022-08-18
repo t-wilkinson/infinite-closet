@@ -20,23 +20,24 @@ import useData from '@/Layout/useData'
 import { filtersByRoute } from '@/Product/constants'
 import { ProductItems } from '@/Product/ProductItems'
 import { sortData, QUERY_LIMIT } from '@/Product/constants'
-import { productsActions } from '@/Product/slice'
-import { Filter, ProductRoutes, SortBy } from '@/Product/types'
+import { Filter, SortBy } from '@/Product/types'
 import { Crumbs } from '@/Product/BreadCrumbs'
 import styles from '@/Product/Products.module.css'
-import { getWardrobe } from '@/Wardrobe/api'
 import { Filters, FiltersCount, Sort } from '@/Product/Filter'
+import { getWardrobeData } from '@/Wardrobe/api'
+import { wardrobeActions } from '@/Wardrobe/slice'
 import { useToggleFilter, useWardrobeFilterPanel } from '@/Wardrobe/filterHooks'
 
-export const Page = ({ data }) => {
+export const WardrobePage = ({ href, data }) => {
   const router = useRouter()
   const dispatch = useDispatch()
-  const query = router.query
   const loading = useData(data)
+
+  const query = router.query
 
   React.useEffect(() => {
     if (SortBy.includes(query.sort as any)) {
-      dispatch(productsActions.setPanelSortBy(query.sort as any))
+      dispatch(wardrobeActions.setPanelSortBy(query.sort as any))
     }
   }, [loading, data])
 
@@ -51,33 +52,39 @@ export const Page = ({ data }) => {
       return acc
     }, {})
 
-    dispatch(productsActions.setPanelFilters(filters as typeof Filters))
+    dispatch(wardrobeActions.setPanelFilters(filters as typeof Filters))
   }, [data])
 
   return (
     <>
-      <Layout title="My Wardrobe">
-        {data && <Products data={data} loading={loading} />}
+      <Layout title="Wardrobes">
+        {data && <Products data={data} loading={loading} href={href} />}
       </Layout>
     </>
   )
 }
 
-export const Products = ({ data, loading }) => {
+export const Products = ({ data, loading, href }) => {
   const filterPanel = useWardrobeFilterPanel()
   const router = useRouter()
-  const routeName = router.query.slug[0]
+  const routeName = router.query.slugs?.[0]
+  const totalPages = Math.ceil(data.productsCount / QUERY_LIMIT) || 1
+  const sortBy = useSelector((state) => state.wardrobe.panel.sortBy)
 
   return (
     <div className="items-center w-full">
       <div className="flex-row w-full max-w-screen-xl h-full md:px-4 xl:px-0">
         <Filters
-          href="/my-wardrobe"
+          href={href}
           filterPanel={filterPanel}
-          filterNames={['wardrobes', ...filtersByRoute[routeName]]}
+          filterNames={['wardrobes', ...(routeName ? filtersByRoute[routeName] : filtersByRoute.all)]}
         />
         <div className="hidden md:block w-2" />
-        <ProductItemsWrapper data={data} loading={loading} />
+        <div className="w-full flex-shrink">
+          <Header data={data} totalPages={totalPages} sortBy={sortBy} />
+          <ProductItems data={data} loading={loading} />
+          <Footer totalPages={totalPages} />
+        </div>
       </div>
       <ScrollUp />
       <div className="mb-4" />
@@ -85,35 +92,28 @@ export const Products = ({ data, loading }) => {
   )
 }
 
-const ProductItemsWrapper = ({ data, loading }) => {
-  const totalPages = Math.ceil(data.productsCount / QUERY_LIMIT) || 1
-  const sortBy = useSelector((state) => state.products.panel.sortBy)
+const Footer = ({ totalPages }) => (
+  <div className="mt-4">
+    <PageNavigation totalPages={totalPages} />
+  </div>
+)
 
-  return (
-    <div className="w-full flex-shrink">
-      <HeaderWrapper data={data} totalPages={totalPages} sortBy={sortBy} />
-      <ProductItems data={data} loading={loading} />
-      <Footer totalPages={totalPages} />
-    </div>
-  )
-}
-
-const HeaderWrapper = ({ data, totalPages, sortBy }) => {
+const Header = ({ data, totalPages, sortBy }) => {
   const router = useRouter()
-  const slug = router.query.slug as string[]
+  const slugs = router.query.slugs as string[] || []
 
   return (
     <div className="mx-2 md:mx-0 mb-4">
       <div className="sm:flex-row items-end sm:items-center justify-between w-full">
         <div className="flex-row justify-between w-full sm:w-auto items-end">
           <div className="sm:hidden">
-            <Crumbs href="/my-wardrobe" slugs={slug} />
+            <Crumbs href={router.asPath} slugs={slugs} />
           </div>
           <span className="hidden sm:inline font-bold text-xl self-start sm:self-center">
-            {capitalize(router.query.slug.slice(-1)[0])} ({data.productsCount})
+            {capitalize(slugs.slice(-1)[0]) || 'All'} ({data.productsCount})
           </span>
         </div>
-        <Header totalPages={totalPages} sortBy={sortBy} />
+        <StickyNavigation totalPages={totalPages} sortBy={sortBy} />
       </div>
       <div className="mt-2">
         <QuickFilter data={data} />
@@ -122,7 +122,7 @@ const HeaderWrapper = ({ data, totalPages, sortBy }) => {
   )
 }
 
-const Header = ({ sortBy, totalPages }) => {
+export const StickyNavigation = ({ sortBy, totalPages }) => {
   const dispatch = useDispatch()
   const [sticky, setSticky] = React.useState(false)
   const ref = React.useRef(null)
@@ -167,7 +167,7 @@ const Header = ({ sortBy, totalPages }) => {
       <div className="flex-row sm:hidden py-2 justify-end">
         <button
           onClick={() => {
-            dispatch(productsActions.togglePanel())
+            dispatch(wardrobeActions.togglePanel())
           }}
         >
           <div className="flex-row items-center">
@@ -190,8 +190,8 @@ const Header = ({ sortBy, totalPages }) => {
   )
 }
 
-const QuickFilter = ({ data }) => {
-  const panel = useSelector((state) => state.products.panel)
+export const QuickFilter = ({ data }) => {
+  const panel = useSelector((state) => state.wardrobe.panel)
   const toggleFilter = useToggleFilter({ panel })
 
   return (
@@ -223,13 +223,7 @@ const QuickFilter = ({ data }) => {
   )
 }
 
-const Footer = ({ totalPages }) => (
-  <div className="mt-4">
-    <PageNavigation totalPages={totalPages} />
-  </div>
-)
-
-const PageNavigation = ({ totalPages, ...props }) => {
+export const PageNavigation = ({ totalPages, ...props }) => {
   const router = useRouter()
   const pageNumber = Number(router.query.page) || 1
 
@@ -286,22 +280,25 @@ const PageNavigation = ({ totalPages, ...props }) => {
   )
 }
 
-export async function getServerSideProps({ params, query, req }) {
-  if (params.slug.length === 0 || !ProductRoutes.includes(params.slug[0])) {
-    return {
-      notFound: true,
-    }
-  }
+export async function getWardrobePageData({ params, query, req }) {
+  // if (params.slugs?.length === 0 || !ProductRoutes.includes(params.slugs?.[0])) {
+  //   return {
+  //     notFound: true,
+  //   }
+  // }
 
   const page = query.page > 0 ? query.page : 1
   const sort = sortData[query.sort]?.value ?? sortData.Alphabetical.value
+
   try {
-    const { products, count, filters, categories } = await getWardrobe(
+    const { products, count, filters, categories } = await getWardrobeData(
       {
+        page: params['page-name'] || null,
+        user: params.user || null,
         sort,
         start: (page - 1) * QUERY_LIMIT,
         limit: QUERY_LIMIT,
-        categories: query.slug,
+        categories: query.slugs,
         ...Filter.reduce(
           (acc, filter) => ((acc[filter] = query[filter]), acc),
           {}
@@ -318,23 +315,17 @@ export async function getServerSideProps({ params, query, req }) {
     }
 
     return {
-      props: {
-        data: {
-          products,
-          productsCount: count,
-          ...filters,
-          categories,
-        },
-      },
+      data: {
+        products,
+        productsCount: count,
+        ...filters,
+        categories,
+      }
     }
   } catch (e) {
     return {
-      props: {
-        data: null,
-        error: e || null,
-      },
+      data: null,
+      error: e || null,
     }
   }
 }
-
-export default Page

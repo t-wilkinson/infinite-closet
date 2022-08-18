@@ -8,6 +8,7 @@ import { StrapiMetal } from './metal';
 import { StrapiOccasion } from './occasion';
 import { StrapiSize } from './custom/sizes';
 import { StrapiStyle } from './style';
+import { StrapiUser } from './user';
 import { StrapiWeather } from './weather';
 
 /**
@@ -18,8 +19,8 @@ export interface StrapiProduct {
   name: string;
   slug: string;
   designer?: StrapiDesigner;
-  shortRentalPrice: number;
-  longRentalPrice: number;
+  shortRentalPrice?: number;
+  longRentalPrice?: number;
   retailPrice?: number;
   purchasePrice?: number;
   images: StrapiFile[];
@@ -44,6 +45,7 @@ export interface StrapiProduct {
   materials_?: string;
   metals_?: string;
   sizes_?: string;
+  user?: StrapiUser;
   created_at: string;
   created_by: string;
   updated_at: string;

@@ -1,0 +1,18 @@
+{
+  "kind": "collectionType",
+  "collectionName": "wardrobe_tags",
+  "info": {
+    "name": "Wardrobe Tag",
+    "description": ""
+  },
+  "options": {
+    "increments": false,
+    "timestamps": false,
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string"
+    }
+  }
+}

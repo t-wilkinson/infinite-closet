@@ -75,17 +75,29 @@ module.exports = {
   },
 
   async handleRecognitionNotification(ctx) {
+    console.log('handle recognition notify')
     const body = ctx.request.body
     console.log(ctx.request.header, body)
     const { id, originalRequestId, status, productItems } = body
-    const notification = await strapi.query('bloomino-notification').findOne({ requestId: originalRequestId })
-    console.log(notification)
+    console.log('productItems', JSON.stringify(productItems, null, 4))
 
+    // If notification is not found, it is invalid, possible attack
+    const notification = await strapi.query('bloomino-notification').findOne({ requestId: originalRequestId })
     if (!notification) {
       return ctx.badRequest({
         status: 0,
         detail: "Notification could not be found in database",
       })
+    }
+
+    // Create product for each product item
+    for await (const item of productItems) {
+      // retailer, brand, category, currency, price, colour, size, images
+      // const product = await strapi.query('product').create({
+      //   name: item.name,
+      //   details: item.description,
+      //
+      // })
     }
 
     return ctx.send({
@@ -96,6 +108,7 @@ module.exports = {
 
   async handleRecognition(ctx) {
     const user = ctx.state.user
+    console.log('handling recognition')
 
     const product = await createProduct(ctx.request, user)
     const wardrobeItem = await strapi
@@ -118,8 +131,8 @@ module.exports = {
               data: base64Encode(image.path),
             })
           ),
-          userId: user.username,
-          userEmail: user.email,
+          userId: 'infinite-closet',
+          userEmail: 'info@infinitecloset.co.uk',
         }),
         agent: httpsAgent,
         method: "POST",
@@ -133,18 +146,17 @@ module.exports = {
 
       console.log(req)
       const res = await fetch(`${config.apiUrl}/${config.endpoints.doRecognition}`, req)
-      console.log(res, res.headers, res.body, await res.text())
       const body = await res.json()
-      console.log(body)
+      console.log(res, res.headers, res.body, body)
       await strapi.query('bloomino-notification').create({ requestId: body.requestId, code: body.code, message: body.message })
 
-      ctx.send(product)
+      return ctx.send(product)
     } catch (e) {
       console.log(e.message)
       console.log(e.stack)
       console.log(e)
-    }
 
-    ctx.badRequest(null)
+      return ctx.badRequest(null)
+    }
   }
 }

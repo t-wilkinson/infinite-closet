@@ -30,7 +30,7 @@ export const productRentContents = {
   OneTime: ({ user, dispatch, product, fields }) => {
     const analytics = useAnalytics()
     const [addedFavorite, setAddedFavorite] = React.useState(false)
-    const [wardrobePopupVisible, setWardrobePopupVisible] = React.useState(true)
+    const [wardrobePopupVisible, setWardrobePopupVisible] = React.useState(false)
 
     React.useEffect(() => {
       const hasSize = (size: Size) => sizing.get(product.sizes, size)

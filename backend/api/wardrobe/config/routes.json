@@ -27,10 +27,10 @@
     },
     {
       "method": "GET",
-      "path": "/my-wardrobe/query",
-      "handler": "wardrobe.query",
+      "path": "/wardrobes/search",
+      "handler": "wardrobe.searchWardrobes",
       "config": {
-        "policies": ["plugins::users-permissions.permissions"]
+        "policies": []
       }
     },
     {
@@ -47,6 +47,15 @@
       "handler": "wardrobe.removeWardrobe",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
+      }
+    },
+
+    {
+      "method": "GET",
+      "path": "/my-wardrobe/search",
+      "handler": "wardrobe.searchWardrobe",
+      "config": {
+        "policies": []
       }
     }
   ]

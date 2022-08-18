@@ -26,7 +26,7 @@ export const useToggleFilter = ({panel}) => {
 // passed to each filter which manages query params and filter values
 const useWardrobePanel = (filterName: Filter) => {
   const dispatch = useDispatch()
-  const panel = useSelector((state) => wardrobeSelectors.panelSelector(state))
+  const panel = useSelector((state) => state.wardrobe.panel)
 
   return usePanel({
     values: panel.filters[filterName],

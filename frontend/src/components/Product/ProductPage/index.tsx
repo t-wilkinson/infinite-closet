@@ -1,10 +1,11 @@
 import React from 'react'
 import Link from 'next/link'
 
-import { Divider, Rating } from '@/Components'
+import { Divider, Button, Rating } from '@/Components'
 import { useDispatch, useSelector } from '@/utils/store'
 import { useFields } from '@/Form'
 import { Reviews, getReviews } from '@/Order/Review'
+import { AddWardrobe } from '@/Wardrobe/AddWardrobe'
 
 import { shopActions } from './slice'
 import ProductImages from './ProductImages'
@@ -52,6 +53,7 @@ const Product = ({ reviews, data }) => {
     rentalLength: { constraints: 'required', default: 'short' },
     rentType: { default: 'OneTime' },
   })
+  const [wardrobePopupVisible, setWardrobePopupVisible] = React.useState(false)
 
   if (product.user) {
     return <div className="w-full sm:w-1/2 sm:max-w-md">
@@ -68,9 +70,18 @@ const Product = ({ reviews, data }) => {
         </div>
       </div>
       <Divider className="mt-2 mb-4" />
+        <Button
+        role="secondary"
+        onClick={() => {
+          setWardrobePopupVisible(true)
+        }}
+      >
+        Add to Wardrobe
+      </Button>
       <div className="my-4">
         <ProductDetails state={state} product={product} />
       </div>
+      <AddWardrobe product={product} visible={wardrobePopupVisible} setVisible={setWardrobePopupVisible} />
     </div>
   }
 

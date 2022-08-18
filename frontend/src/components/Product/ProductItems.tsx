@@ -5,7 +5,7 @@ import { Button } from '@/Components'
 import { StrapiProduct } from '@/types/models'
 
 import { QUERY_LIMIT } from './constants'
-import { ProductItem, ProductWrapper } from './ProductItem'
+import { WrappedProductItem, ProductWrapper } from './ProductItem'
 
 export const ProductItems = ({ data, loading }) => {
   const router = useRouter()
@@ -49,7 +49,7 @@ export const ProductItems = ({ data, loading }) => {
     return (
       <div className="w-full flex-row flex-wrap">
         {data.products?.map((product: StrapiProduct) => (
-          <ProductItem key={product.id} product={product} />
+          <WrappedProductItem key={product.id} product={product} />
         ))}
       </div>
     )

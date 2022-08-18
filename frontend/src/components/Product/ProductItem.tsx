@@ -67,11 +67,17 @@ const AddToFavorites = ({product}) => {
   </button>
 }
 
+export const WrappedProductItem = ({ product }: { product: StrapiProduct }) =>
+  <ProductWrapper>
+    <ProductItem product={product} />
+  </ProductWrapper>
+
+
 export const ProductItem = ({ product }: { product: StrapiProduct }) => {
   const analytics = useAnalytics()
 
   return (
-    <ProductWrapper>
+    <>
       <div
         className="relative w-full"
         style={{
@@ -95,7 +101,7 @@ export const ProductItem = ({ product }: { product: StrapiProduct }) => {
         </div>
       </div>
       <ProductInfo product={product} />
-    </ProductWrapper>
+      </>
   )
 }
 
