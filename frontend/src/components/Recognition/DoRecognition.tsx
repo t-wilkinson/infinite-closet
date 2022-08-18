@@ -107,9 +107,13 @@ export const DoRecognition = () => {
       </span>
       {filters && <div>
         {Object.keys(filters).sort().map(filter =>
-      <Checkboxes key={filter} field={fields.get(filter)} values={filters[filter]}
-        single={filter === 'designer'} />
-        />)}
+      <Checkboxes
+        key={filter}
+        field={fields.get(filter)}
+        values={filters[filter]}
+        single={filter === 'designer'}
+        />
+        )}
       </div>
       }
       <Submit form={fields.form}>
