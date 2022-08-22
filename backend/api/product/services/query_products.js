@@ -16,7 +16,7 @@ function whereIn(products, ids) {
 /**
  * Search for products in database matching `_where`
  */
-async function queryProducts(knex, _where, _paging, ids = new Set(), user=null) {
+async function queryProducts(knex, _where, _paging, ids=null, user=null) {
   let sort = _paging.sort.split(':')
   sort[0] = `products."${sort[0]}"`
   sort = sort.join(' ')
@@ -42,7 +42,13 @@ async function queryProducts(knex, _where, _paging, ids = new Set(), user=null) 
       .whereNotNull('products.published_at')
       .whereRaw(...strapi.services.filter.toRawSQL(_where))
   }
-  const productIds = whereIn(products, ids).map(({ id }) => id)
+
+  let productIds
+  if (ids) {
+    productIds = whereIn(products, ids).map(({ id }) => id)
+  } else {
+    productIds = products.map(({ id }) => id)
+  }
 
   const populatedProducts = await Promise.all(
     productIds.map(id =>
@@ -100,7 +106,7 @@ function productSlugs(products) {
   return filterSlugs
 }
 
-async function queryFilters(knex, _where, ids=new Set(), user=null) {
+async function queryFilters(knex, _where, ids=null, user=null) {
   // here we find all filters in products under only the category filter
   let products = await knex
     .select('products.*')
@@ -111,7 +117,10 @@ async function queryFilters(knex, _where, ids=new Set(), user=null) {
     .whereRaw(
       ...strapi.services.filter.toRawSQL({ categories: _where.categories })
     )
-  products = whereIn(products, ids)
+
+  if (ids) {
+    products = whereIn(products, ids)
+  }
 
   // slugs contain only filters that match product categories
   // get all filters that match these slugs
@@ -192,16 +201,18 @@ async function queryWardrobeItems(query, queryUserId, user) {
   if (!queryUserId) {
     return new Set()
   }
+  const isCurrentUser = queryUserId === toId(user)
 
   // get all products in the users selected wardrobes
   const wardrobeItems = await strapi.query('wardrobe-item').find({
     ...(query.wardrobes.length === 0 ? {} : { 'wardrobe.slug_in': query.wardrobes }),
+    ...(isCurrentUser ? {} : { 'wardrobe.public': true }),
     user: queryUserId,
   }, [])
   let productIds = wardrobeItems.map(wardrobeItem => wardrobeItem.product)
 
   // Some wardrobes require custom logic to get dynamically generated
-  if (queryUserId === toId(user)) {
+  if (isCurrentUser) {
     for (const wardrobe of extendWardrobes(query)) {
       if (wardrobe === 'previously-rented') {
         const orders = await strapi.query('order', 'orders').find({ user: queryUserId, status: 'completed' }, [])
