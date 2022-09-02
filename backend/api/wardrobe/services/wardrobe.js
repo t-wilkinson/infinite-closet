@@ -3,7 +3,7 @@
 async function queryWardrobes({ knex, tags, search }) {
   const searchParams = search ? search.split(' ').filter(p => p).map(p => p.toLowerCase()) : []
   tags = tags.map(tag => tag.toLowerCase())
-  let wardrobes = await strapi.query('wardrobe').find({}, ['user', 'tags'])
+  let wardrobes = await strapi.query('wardrobe').find({visible: true}, ['user', 'tags'])
 
   return wardrobes.filter((wardrobe) => {
     const searchMatches = searchParams.every((param) => {

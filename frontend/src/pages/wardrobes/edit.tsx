@@ -146,7 +146,7 @@ const SideBar = ({fields, router, tags, wardrobes}: {
     </div>
     <div>
       <span className="text-xl mx-2 mt-4 font-bold">
-        Wardrobes
+        My Wardrobes
       </span>
       {wardrobes.map(({wardrobe}, i) =>
       <button

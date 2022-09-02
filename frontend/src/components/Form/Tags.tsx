@@ -26,7 +26,7 @@ export const Tags = ({ field }: { field: UseField<string[]> }) => {
       <Input field={tag}
         after={<Button role="cta" className=""
           onClick={() => addTag(tag)}
-        >Join</Button>}
+        >Add</Button>}
       />
       <div className="flex-row">
         {field.value
