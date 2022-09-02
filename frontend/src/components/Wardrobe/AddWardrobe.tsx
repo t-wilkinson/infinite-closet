@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { useSelector } from '@/utils/store'
 import { StrapiWardrobe } from '@/types/models'
 import { Icon, iconCheck, iconPlus } from '@/Components/Icons'
 import { Button } from '@/Components'
@@ -9,9 +10,10 @@ import { Popup } from '@/Layout'
 import {
   createWardrobeItem,
   removeWardrobeItem,
-  getProductWardrobes,
+  getWardrobeItems,
   removeWardrobe,
   addWardrobe,
+  getUserWardrobes
 } from './api'
 
 export const AddWardrobe = ({ product, visible, setVisible }) => {
@@ -20,12 +22,12 @@ export const AddWardrobe = ({ product, visible, setVisible }) => {
   const fields = useFields<{ name: string }>({
     name: {},
   })
+  const user = useSelector((state) => state.user.data)
 
-  const updateProductWardrobes = () =>
-    getProductWardrobes(product.id).then(({ wardrobes, wardrobeItems }) => {
-      setWardrobes(wardrobes)
-      setWardrobeItems(wardrobeItems)
-    })
+  const updateProductWardrobes = () => {
+    getUserWardrobes(user.id).then(setWardrobes)
+    getWardrobeItems(product.id).then(setWardrobeItems)
+  }
 
   React.useEffect(() => {
     if (visible) {

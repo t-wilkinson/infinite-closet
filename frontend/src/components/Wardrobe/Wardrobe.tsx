@@ -5,8 +5,8 @@ import { displayUsername } from '@/User/utils'
 import { ProductItem } from '@/Product/ProductItem'
 import { StrapiWardrobe, StrapiProduct } from '@/types/models'
 
-export const Wardrobe = ({ href, wardrobe, products }: {
-  href: string
+export const Wardrobe = ({ tagsHref, wardrobe, products }: {
+  tagsHref: string
   wardrobe: StrapiWardrobe
   products: StrapiProduct[]
 }) => {
@@ -28,12 +28,27 @@ export const Wardrobe = ({ href, wardrobe, products }: {
           </a>
         </Link>
         <div className="flex-row ml-4">
-          {wardrobe.tags.map((tag) => <WardrobeTag key={tag.id} href={href} tag={tag} />)}
+          {wardrobe.tags.map((tag) => <WardrobeTag key={tag.id} href={tagsHref} tag={tag} />)}
         </div>
       </div>
       <div className="w-full text-sm mt-2 mb-4">
         {wardrobe.description}
       </div>
+      <WardrobeProducts products={products} />
+    </div>
+  )
+}
+
+const WardrobeTag = ({href, tag}) =>
+  <Link href={`${href}?tag=${tag.name}`}>
+    <a>
+    <span className="rounded-lg bg-pri-white px-2 py-1 mt-2 mr-2 cursor-pointer text-sm">
+      {tag.name}
+    </span>
+    </a>
+  </Link>
+
+const WardrobeProducts = ({products}) =>
       <div className="shrink-0 flex-row overflow-x-auto">
         {products.length === 0
           ? <div className="w-full h-24 bg-gray-light grid place-items-center">
@@ -53,18 +68,6 @@ export const Wardrobe = ({ href, wardrobe, products }: {
               </div>
         )}
       </div>
-    </div>
-  )
-}
-
-const WardrobeTag = ({href, tag}) =>
-  <Link href={`${href}?tag=${tag.name}`}>
-    <a>
-    <span className="rounded-lg bg-pri-white px-2 py-1 mt-2 mr-2 cursor-pointer text-sm">
-      {tag.name}
-    </span>
-    </a>
-  </Link>
 
 const WardrobeProduct = ({product}) => {
   return <div className="w-48 flex-none mr-4">

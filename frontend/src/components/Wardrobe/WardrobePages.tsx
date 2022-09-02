@@ -24,7 +24,7 @@ import { Filter, SortBy } from '@/Product/types'
 import { Crumbs } from '@/Product/BreadCrumbs'
 import styles from '@/Product/Products.module.css'
 import { Filters, FiltersCount, Sort } from '@/Product/Filter'
-import { getWardrobeData } from '@/Wardrobe/api'
+import { filterWardrobes } from '@/Wardrobe/api'
 import { wardrobeActions } from '@/Wardrobe/slice'
 import { useToggleFilter, useWardrobeFilterPanel } from '@/Wardrobe/filterHooks'
 
@@ -290,7 +290,7 @@ export async function getWardrobePageData({ params, query, req }) {
   const sort = sortData[query.sort]?.value ?? sortData.Alphabetical.value
 
   try {
-    const { products, count, filters, categories } = await getWardrobeData(
+    const { products, count, filters, categories } = await filterWardrobes(
       {
         page: params['page-name'] || null,
         user: params.user || null,

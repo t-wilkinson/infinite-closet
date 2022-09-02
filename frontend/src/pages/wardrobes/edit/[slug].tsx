@@ -1,14 +1,13 @@
 import React from 'react'
 import { NextRouter, useRouter } from 'next/router'
 
-import { Divider } from '@/Components'
 import { useSelector } from '@/utils/store'
 import { useFields, UseFields, Input } from '@/Form'
 import { Icon, iconClose } from '@/Components/Icons'
 import Layout from '@/Layout'
 import { searchWardrobes } from '@/Wardrobe/api'
 import { Wardrobe } from '@/Wardrobe/Wardrobe'
-import { EditWardrobe } from '@/Wardrobe/EditWardrobe'
+import { SideBar, EditWardrobe } from '@/Wardrobe/EditWardrobe'
 
 interface SideBarFields {
   search: string;
@@ -49,6 +48,18 @@ const Wardrobes = () => {
   }, [router.query])
 
   React.useEffect(() => {
+    const slug = router.query.slug
+    if (!slug) {
+      return
+    }
+    wardrobes?.forEach(({wardrobe}, i) => {
+      if (wardrobe.slug === slug) {
+        fields.setValue('currentWardrobe', i)
+      }
+    })
+  }, [router.query])
+
+  React.useEffect(() => {
     if (router.query.search !== fields.value('search')) {
       fields.setValue('search', router.query.search)
     }
@@ -58,7 +69,12 @@ const Wardrobes = () => {
     searchWardrobes(`${user?.username || ''} ${fields.value('search') || ''}`.trim(), tags)
       .then(wardrobes => {
         if (wardrobes.length > 0) {
-          fields.setValue('currentWardrobe', 0)
+          const slug = router.query.slug
+          wardrobes.forEach(({wardrobe}, i) => {
+            if (wardrobe.slug === slug) {
+              fields.setValue('currentWardrobe', i)
+            }
+          })
         }
         setWardrobes(wardrobes)
       })
@@ -87,7 +103,7 @@ const Wardrobes = () => {
             No wardrobe found
           </span>
         </div>
-        : <Wardrobe wardrobe={currentWardrobe} products={currentProducts} href="/wardrobes/edit" />
+        : <Wardrobe wardrobe={currentWardrobe} products={currentProducts} tagsHref="/wardrobes/edit" />
 
       }
 
@@ -99,76 +115,6 @@ const Wardrobes = () => {
   </div>
 }
 
-const SideBar = ({fields, router, tags, wardrobes}: {
-  fields: UseFields<SideBarFields>
-  tags: string[]
-  router: NextRouter
-  wardrobes: any[]
-}) => {
-  const addTag = (tag: string) => {
-    if (!tag || tags.includes(tag)) {
-      return
-    }
-    fields.setValue('tag', '')
-    router.replace({
-      query: { ...router.query, tag: [...tags, tag]},
-    })
-  }
-
-  const removeTag = (tag: string) => {
-    router.replace({
-      query: { ...router.query, tag: tags.filter(t => t !== tag)},
-    })
-  }
-
-  return <aside>
-    <Input
-      // before={<Icon icon={iconSearch} size={20} />}
-      field={fields.get('search')}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter') {
-        }
-      }}
-    />
-    <div className="mb-4" />
-    <Input
-      // before={<Icon icon={iconSearch} size={20} />}
-      field={fields.get('tag')}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter') {
-          addTag(fields.value('tag'))
-        }
-      }}
-    />
-    <Divider />
-    <div className="flex-row">
-      {tags.map((tag) => <FilterTag key={tag} tag={tag} removeTag={removeTag}/>)}
-    </div>
-    <div>
-      <span className="text-xl mx-2 mt-4 font-bold">
-        My Wardrobes
-      </span>
-      {wardrobes.map(({wardrobe}, i) =>
-      <button
-        key={wardrobe.id}
-        type="button"
-        onClick={() => fields.setValue('currentWardrobe', i)}
-        className={`py-1 px-2 text-left ${i === fields.getValue('currentWardrobe') ? 'rounded-md bg-gray-light' : ''}`}
-      >
-        {wardrobe.name}
-      </button>)}
-    </div>
-  </aside>
-}
-
-const FilterTag = ({tag, removeTag}) =>
-  <span
-    className="relative rounded-lg bg-pri-white px-2 pr-3 py-1 mt-2 mr-2 cursor-pointer"
-    onClick={() => removeTag(tag)}
-  >
-    {tag}
-      <Icon className="absolute top-0 right-0 m-1" icon={iconClose} size={8} />
-  </span>
-
 export default Page
+
 

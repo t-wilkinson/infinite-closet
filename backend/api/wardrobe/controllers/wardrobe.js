@@ -2,22 +2,6 @@
 
 const { toId } = require('../../../utils')
 
-async function wardrobeFilters(_query, user) {
-  const wardrobes = await strapi.query('wardrobe').find(
-    {
-      user: toId(user.id),
-    },
-    []
-  )
-
-  return [
-    ...wardrobes,
-    // Custom wardrobe filters
-    { name: 'My wardrobe', slug: 'my-wardrobe' },
-    { name: 'Favorites', slug: 'favorites' },
-    { name: 'Previously rented', slug: 'previously-rented' },
-  ]
-}
 
 function paramsToArray(param) {
   if (Array.isArray(param)) {
@@ -29,103 +13,68 @@ function paramsToArray(param) {
   }
 }
 
-/**
- * Prepare product data with paging and populating fields
- * @param {obj} paging
- * @param {number} paging.start
- * @param {number} paging.limit
- * @param {{id: string}[]} products
- */
-function populateProducts(paging, products) {
-  const start = paging.start
-  const end = paging.start + paging.limit
-  return Promise.all(
-    products
-      .slice(start, end)
-      .map(({ id }) =>
-        strapi.query('product').findOne({ id }, ['designer', 'images', 'sizes'])
-      )
+async function getWardrobeProducts(wardrobe, props) {
+  let wardrobeItems = await strapi
+    .query('wardrobe-item')
+    .find({ wardrobe: toId(wardrobe), ...props }, [])
+
+  const productIds = [
+    ...wardrobeItems.reduce((acc, { product }) => {
+      acc.add(product)
+      return acc
+    }, new Set()),
+  ]
+
+  const products = await Promise.all(
+    productIds.map((id) =>
+      strapi.query('product').findOne({ id }, ['images', 'designer'])
+    )
   )
+
+  return products.filter((product) => product)
 }
 
-async function queryWardrobes(user, query) {
-  const knex = strapi.connections.default
-  query = strapi.services.filter.buildQuery(query)
-  const userId = toId(user)
+async function toWardrobeProps(body, wardrobe) {
+  let props = {}
 
-  // Get product ids in a user's wardrobe
-  let queryUser
-  if (query.where.page === 'my-wardrobe') {
-    if (!userId) {
-      throw new Error('User not found')
-    }
-    queryUser = userId
-  } else if (query.where.user) {
-    queryUser = await strapi.query('user', 'users-permissions').findOne({ username: query.where.user }, [])
+  if (body.name && body.name !== wardrobe.name) {
+    props.name = body.name
   }
-  const productIds = await strapi.services.query_products.wardrobeItems(
-    query,
-    toId(queryUser),
-    user
-  )
-
-  const [products, filters, categories, wardrobes] = await Promise.all([
-    strapi.services.query_products.products(
-      knex,
-      query.where,
-      query.paging,
-      productIds,
-      userId,
-    ),
-    strapi.services.query_products.filters(
-      knex,
-      query.where,
-      productIds,
-      userId,
-    ),
-    strapi.services.query_products.categories(query.where, productIds),
-    wardrobeFilters(query, user),
-  ])
-
-  return {
-    products: await populateProducts(query.paging, products),
-    count: products.length,
-    filters: {
-      ...filters,
-      wardrobes,
-    },
-    categories,
+  if (body.description && body.description !== wardrobe.description) {
+    props.description = body.description
   }
+  if (body.visible && !!body.visible !== !!wardrobe.visible) {
+    props.visible = !!body.visible
+  }
+
+  const bodyTags = new Set(body.tags)
+  if (
+    body.tags &&
+    (body.tags.length !== wardrobe.tags.length ||
+      !wardrobe.tags.every((tag) => bodyTags.has(tag)))
+  ) {
+    const tags = await Promise.all(
+      body.tags.map((tag) =>
+        strapi.query('wardrobe-tag').create({ name: tag })
+      )
+    )
+    props.tags = tags.map((tag) => tag.id)
+  }
+  return props
 }
 
 module.exports = {
-  async productWardrobes(ctx) {
+  async delete(ctx) {
     const user = ctx.state.user
-    const { product_id } = ctx.params
-    const wardrobes = await strapi.query('wardrobe').find({ user: toId(user) })
-    const wardrobeItems = await strapi
-      .query('wardrobe-item')
-      .find({ user: toId(user), product: product_id })
-
-    ctx.send({
-      wardrobes: [...wardrobes, { name: 'My wardrobe', slug: 'my-wardrobe' }],
-      wardrobeItems,
-    })
+    const { slug } = ctx.params
+    if (!slug) {
+      return ctx.badRequest('Wardrobe does not exist')
+    }
+    await strapi.query('wardrobe').delete({ slug, user: toId(user) })
+    ctx.send()
   },
 
-  // Handles logic related to filtering products based on wardrobe filters, etc.
-  async searchWardrobes(ctx) {
-    const res = await queryWardrobes(ctx.state.user, ctx.query)
-
-    ctx.send({
-      products: res.products,
-      count: res.count,
-      filters: res.filters,
-      categories: res.categories,
-    })
-  },
-
-  async addWardrobe(ctx) {
+  async create(ctx) {
     const user = ctx.state.user
     const { name } = ctx.request.body
     const slug = name
@@ -149,73 +98,7 @@ module.exports = {
     }
   },
 
-  async removeWardrobe(ctx) {
-    const user = ctx.state.user
-    const { slug } = ctx.params
-    if (!slug) {
-      return ctx.badRequest('Wardrobe does not exist')
-    }
-    await strapi.query('wardrobe').delete({ slug, user: toId(user) })
-    ctx.send()
-  },
-
-  async createItem(ctx) {
-    const user = ctx.state.user
-    const body = ctx.request.body
-    const wardrobeItem = await strapi.query('wardrobe-item').create({
-      user: toId(user),
-      wardrobe: body.wardrobeId || null,
-      product: body.productId,
-    })
-    ctx.send(wardrobeItem)
-  },
-
-  async deleteItem(ctx) {
-    const user = ctx.state.user
-    const { item_id } = ctx.params
-
-    await strapi
-      .query('wardrobe-item')
-      .delete({ user: toId(user), id: item_id })
-    ctx.send()
-  },
-
-  async searchWardrobe(ctx) {
-    const knex = strapi.connections.default
-    const { tags, search } = ctx.query
-    const wardrobes = await strapi.services.wardrobe.queryWardrobes({
-      knex,
-      search,
-      tags: paramsToArray(tags),
-    })
-
-    // fetch products from each wardrobe
-    const data = await Promise.all(
-      wardrobes.map(async (wardrobe) => {
-        let wardrobeItems = await strapi
-          .query('wardrobe-item')
-          .find({ wardrobe: toId(wardrobe.id), _limit: 10 }, [])
-        const productIds = [
-          ...wardrobeItems.reduce((acc, { product }) => {
-            acc.add(product)
-            return acc
-          }, new Set()),
-        ]
-        const products = await Promise.all(
-          productIds.map((id) =>
-            strapi.query('product').findOne({ id }, ['images', 'designer'])
-          )
-        )
-        return {
-          wardrobe,
-          products: products.filter((product) => product),
-        }
-      })
-    )
-    ctx.send(data)
-  },
-
-  async updateWardrobe(ctx) {
+  async update(ctx) {
     const user = ctx.state.user
     const { id } = ctx.params
 
@@ -225,57 +108,57 @@ module.exports = {
       return ctx.badRequest('Wardrobe not found')
     }
     if (wardrobe.user !== user.id) {
-      return ctx.unauthorized('You don\'t own this wardrobe')
+      return ctx.unauthorized("You don't own this wardrobe")
     }
 
-    const props = {}
-
-    if (body.name && body.name !== wardrobe.name) {
-      props.name = body.name
-    }
-    if (body.description && body.description !== wardrobe.description) {
-      props.description = body.description
-    }
-    if (body.visible && !!body.visible !== !!wardrobe.visible) {
-      props.visible = !!body.visible
-    }
-
-    const bodyTags = new Set(body.tags)
-    if (body.tags && (body.tags.length !== wardrobe.tags.length || !wardrobe.tags.every(tag => bodyTags.has(tag)))) {
-      const tags = await Promise.all(body.tags.map(tag => strapi.query('wardrobe-tag').create({name: tag})))
-      props.tags = tags.map(tag => tag.id)
-    }
-
+    const props = await toWardrobeProps(body, wardrobe)
     const createdWardrobe = await strapi.query('wardrobe').update({ id }, props)
     ctx.send(createdWardrobe)
   },
 
-  // async getWardrobeData(ctx) {
-  //   const { slug } = ctx.params
-  //   const wardrobe = await strapi.query('wardrobe').findOne({
-  //     slug,
-  //   }, [])
-  //   if (!wardrobe) {
-  //     return ctx.badRequest('Wardrobe does not exist')
-  //   }
+  async getUserWardrobes(ctx) {
+    const user = ctx.state.user
+    const user_id = Number(ctx.params.user_id)
 
-  //   const wardrobeItems = await strapi
-  //     .query('wardrobe-item')
-  //     .find({ wardrobe: toId(wardrobe) }, [])
-  //   const productIds = [...wardrobeItems.reduce((acc, {product}) => {
-  //     acc.add(product)
-  //     return acc
-  //   } , new Set())]
-  //   const products = await Promise.all(
-  //     productIds.map((id) =>
-  //       strapi
-  //         .query('product')
-  //         .findOne({ id }, ['images', 'designer'])
-  //     )
-  //   )
-  //   ctx.send({
-  //     wardrobe,
-  //     products: products.filter((product) => product),
-  //   })
-  // },
+    let wardrobes
+    if (user.id === user_id) {
+      wardrobes = await strapi.query('wardrobe').find({ user: user_id })
+      wardrobes = [...wardrobes, { name: 'My wardrobe', slug: 'my-wardrobe' }]
+    } else {
+      wardrobes = await strapi
+        .query('wardrobe')
+        .find({ user: user_id, visible: true })
+    }
+
+    ctx.send(wardrobes)
+  },
+
+  // Handles logic related to filtering products based on wardrobe filters, etc.
+  async filterWardrobes(ctx) {
+    const data = await strapi.services.wardrobe.filterWardrobes(ctx.state.user, ctx.query)
+
+    ctx.send({
+      products: data.products,
+      count: data.count,
+      filters: data.filters,
+      categories: data.categories,
+    })
+  },
+
+  async searchWardrobes(ctx) {
+    const { tags, search } = ctx.query
+    const wardrobes = await strapi.services.wardrobe.searchWardrobes({
+      search,
+      tags: paramsToArray(tags),
+    })
+
+    // fetch products from each wardrobe
+    const data = await Promise.all(
+      wardrobes.map(async (wardrobe) => {
+        const products = await getWardrobeProducts(wardrobe, { _limit: 10 })
+        return { products, wardrobe }
+      })
+    )
+    ctx.send(data)
+  },
 }

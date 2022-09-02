@@ -22,7 +22,8 @@
     },
     "visible": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "required": true
     },
     "user": {
       "plugin": "users-permissions",

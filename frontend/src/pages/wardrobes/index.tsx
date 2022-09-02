@@ -72,7 +72,7 @@ const Wardrobes = () => {
           </span>
         </div>
         : wardrobes.map(({ wardrobe, products }) => (
-          <Wardrobe key={wardrobe.id} wardrobe={wardrobe} products={products} href="/wardrobes" />
+          <Wardrobe key={wardrobe.id} wardrobe={wardrobe} products={products} tagsHref="/wardrobes" />
         ))
       }
     </div>
