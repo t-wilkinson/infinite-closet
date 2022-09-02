@@ -1,4 +1,5 @@
 import axios from '@/utils/axios'
+import { StrapiWardrobe } from '@/types/models'
 
 export async function searchWardrobes(search: string, tags: string[]) {
   return await axios.get('/my-wardrobe/search', {
@@ -47,6 +48,12 @@ export async function createWardrobeItem(wardrobeId: ID, productId: ID) {
 
 export async function removeWardrobeItem(wardrobeItemId: ID) {
   return await axios.delete(`/my-wardrobe/items/${wardrobeItemId}`, {
+    withCredentials: true,
+  })
+}
+
+export async function updateWardrobe(wardrobeId: ID, props: Partial<StrapiWardrobe>) {
+  return await axios.post(`/wardrobes/${wardrobeId}`, props, {
     withCredentials: true,
   })
 }

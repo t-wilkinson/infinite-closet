@@ -175,6 +175,10 @@ export class UseField<Value = FieldValue> {
     }
   }
 
+  reset() {
+    this.setValue(this.default)
+  }
+
   hasErrors(): boolean {
     return this.getErrors().length !== 0
   }
@@ -240,6 +244,10 @@ export class UseFields<Keys = { [key: string]: any }> {
     Field.setValue(!Field.value)
   }
 
+  getValue(field: keyof Keys): Keys[typeof field] {
+    return this.get(field).value
+  }
+
   value(field: keyof Keys): Keys[typeof field] {
     return this.get(field).value
   }
@@ -302,6 +310,13 @@ export class UseFields<Keys = { [key: string]: any }> {
       }
     }
     return changed
+  }
+
+  // Reset values of fields to default values
+  reset(): void {
+    for (const field in this.fields) {
+      this.fields[field].reset()
+    }
   }
 
   map(fn: (value: UseField<any>, index: number) => any): any[] {

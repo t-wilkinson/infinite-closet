@@ -5,7 +5,8 @@ import { displayUsername } from '@/User/utils'
 import { ProductItem } from '@/Product/ProductItem'
 import { StrapiWardrobe, StrapiProduct } from '@/types/models'
 
-export const Wardrobe = ({ wardrobe, products }: {
+export const Wardrobe = ({ href, wardrobe, products }: {
+  href: string
   wardrobe: StrapiWardrobe
   products: StrapiProduct[]
 }) => {
@@ -14,7 +15,7 @@ export const Wardrobe = ({ wardrobe, products }: {
   return (
     <div className="px-2 w-full bg-white mb-8">
       <div className="w-full text-xl mt-2 flex-row items-center">
-          <Link href={`/wardrobes/${wardrobe.slug}`}>
+          <Link href={`/wardrobes/items/${wardrobe.user.username}?wardrobes=${wardrobe.slug}`}>
             <a>
         <span className="font-bold">
           {wardrobe.name}
@@ -27,7 +28,7 @@ export const Wardrobe = ({ wardrobe, products }: {
           </a>
         </Link>
         <div className="flex-row ml-4">
-          {wardrobe.tags.map((tag) => <WardrobeTag key={tag.id} tag={tag} />)}
+          {wardrobe.tags.map((tag) => <WardrobeTag key={tag.id} href={href} tag={tag} />)}
         </div>
       </div>
       <div className="w-full text-sm mt-2 mb-4">
@@ -56,8 +57,8 @@ export const Wardrobe = ({ wardrobe, products }: {
   )
 }
 
-const WardrobeTag = ({tag}) =>
-  <Link href={`/wardrobes?tag=${tag.name}`}>
+const WardrobeTag = ({href, tag}) =>
+  <Link href={`${href}?tag=${tag.name}`}>
     <a>
     <span className="rounded-lg bg-pri-white px-2 py-1 mt-2 mr-2 cursor-pointer text-sm">
       {tag.name}

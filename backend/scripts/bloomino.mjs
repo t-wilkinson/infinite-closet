@@ -34,6 +34,7 @@ const actions = {
   async authenticate() {
     let req = {
       method: 'POST',
+      agent: httpsAgent,
       headers: {
         XApiKey: config.apiKey,
         Accept: '*/*',

@@ -62,6 +62,28 @@ async function createProduct(request, user) {
 }
 
 module.exports = {
+  async handleAuthentication(ctx) {
+    try {
+      const body = ctx.request.body
+      console.log(ctx.request.header, ctx.request.body)
+      const req = {
+        login: body.login,
+        password: body.password,
+      }
+
+      const config = strapi.services.bloomino.config
+      const res = await fetch(`${config.apiUrl}/${config.endpoints.authentication}`, req)
+        .then(res => res.json())
+      console.log(res)
+      ctx.send(res.jwtToken)
+    } catch (e) {
+      console.log(e)
+      console.log(e.trace)
+      console.log(e.message)
+      ctx.send(null)
+    }
+  },
+
   async availableFilters(ctx) {
     let filters = {}
     for (const filter in models) {
@@ -77,28 +99,48 @@ module.exports = {
   async handleRecognitionNotification(ctx) {
     console.log('handle recognition notify')
     const body = ctx.request.body
-    console.log(ctx.request.header, body)
-    const { id, originalRequestId, status, productItems } = body
-    console.log('productItems', JSON.stringify(productItems, null, 4))
+    const { config } = require('../services/bloomino.js')
+    const { login, password } = body
+    let req = {
+      method: 'POST',
+      agent: httpsAgent,
+      headers: {
+        XApiKey: config.apiKey,
+        Accept: '*/*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ login, password })
+    }
+    let res = await fetch(
+      `${config.apiUrl}${config.endpoints.authenticate}`,
+      req
+    )
+    res = await res.json()
+    console.log(res)
+    const { jwtToken } = res
+
+    // const { id, originalRequestId, status, productItems } = body
+    // console.log('productItems', JSON.stringify(productItems, null, 4))
+    // return
 
     // If notification is not found, it is invalid, possible attack
-    const notification = await strapi.query('bloomino-notification').findOne({ requestId: originalRequestId })
-    if (!notification) {
-      return ctx.badRequest({
-        status: 0,
-        detail: "Notification could not be found in database",
-      })
-    }
+    // const notification = await strapi.query('bloomino-notification').findOne({ requestId: originalRequestId })
+    // if (!notification) {
+    //   return ctx.badRequest({
+    //     status: 0,
+    //     detail: "Notification could not be found in database",
+    //   })
+    // }
 
     // Create product for each product item
-    for await (const item of productItems) {
+    // for await (const item of productItems) {
       // retailer, brand, category, currency, price, colour, size, images
       // const product = await strapi.query('product').create({
       //   name: item.name,
       //   details: item.description,
       //
       // })
-    }
+    // }
 
     return ctx.send({
       status: "OK",

@@ -215,6 +215,41 @@ module.exports = {
     ctx.send(data)
   },
 
+  async updateWardrobe(ctx) {
+    const user = ctx.state.user
+    const { id } = ctx.params
+
+    const body = ctx.request.body
+    const wardrobe = await strapi.query('wardrobe').findOne({ id }, ['tags'])
+    if (!wardrobe) {
+      return ctx.badRequest('Wardrobe not found')
+    }
+    if (wardrobe.user !== user.id) {
+      return ctx.unauthorized('You don\'t own this wardrobe')
+    }
+
+    const props = {}
+
+    if (body.name && body.name !== wardrobe.name) {
+      props.name = body.name
+    }
+    if (body.description && body.description !== wardrobe.description) {
+      props.description = body.description
+    }
+    if (body.visible && !!body.visible !== !!wardrobe.visible) {
+      props.visible = !!body.visible
+    }
+
+    const bodyTags = new Set(body.tags)
+    if (body.tags && (body.tags.length !== wardrobe.tags.length || !wardrobe.tags.every(tag => bodyTags.has(tag)))) {
+      const tags = await Promise.all(body.tags.map(tag => strapi.query('wardrobe-tag').create({name: tag})))
+      props.tags = tags.map(tag => tag.id)
+    }
+
+    const createdWardrobe = await strapi.query('wardrobe').update({ id }, props)
+    ctx.send(createdWardrobe)
+  },
+
   // async getWardrobeData(ctx) {
   //   const { slug } = ctx.params
   //   const wardrobe = await strapi.query('wardrobe').findOne({

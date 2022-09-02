@@ -5,7 +5,7 @@ import { WardrobePage, getWardrobePageData } from '@/Wardrobe/WardrobePages'
 
 export const Page = ({data}) => {
   const router = useRouter()
-  return <WardrobePage href={router.asPath.split('/').slice(0, 3).join('/')} data={data} />
+  return <WardrobePage href={router.asPath.split(/\/|\?/).slice(0, 4).join('/')} data={data} />
 }
 
 export async function getServerSideProps({ params, query, req }) {

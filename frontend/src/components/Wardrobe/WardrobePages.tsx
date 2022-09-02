@@ -32,7 +32,6 @@ export const WardrobePage = ({ href, data }) => {
   const router = useRouter()
   const dispatch = useDispatch()
   const loading = useData(data)
-
   const query = router.query
 
   React.useEffect(() => {
@@ -77,7 +76,7 @@ export const Products = ({ data, loading, href }) => {
         <Filters
           href={href}
           filterPanel={filterPanel}
-          filterNames={['wardrobes', ...(routeName ? filtersByRoute[routeName] : filtersByRoute.all)]}
+          filterNames={['wardrobes', ...((routeName ? filtersByRoute[routeName] : filtersByRoute.all) || [])]}
         />
         <div className="hidden md:block w-2" />
         <div className="w-full flex-shrink">

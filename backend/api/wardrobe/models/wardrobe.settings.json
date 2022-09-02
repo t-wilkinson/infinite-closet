@@ -20,7 +20,7 @@
     "description": {
       "type": "text"
     },
-    "public": {
+    "visible": {
       "type": "boolean",
       "default": false
     },

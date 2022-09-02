@@ -10,6 +10,14 @@
     },
     {
       "method": "POST",
+      "path": "/notification/RecognitionNotificationUsers/authenticate",
+      "handler": "recognition.handleAuthentication",
+      "config": {
+        "policies": []
+      }
+    },
+    {
+      "method": "POST",
       "path": "/notification/RecognitionNotificationService/notify",
       "handler": "recognition.handleRecognitionNotification",
       "config": {
