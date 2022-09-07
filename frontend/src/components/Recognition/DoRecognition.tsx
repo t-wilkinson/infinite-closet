@@ -11,6 +11,7 @@ import {
   Checkboxes,
   BodyWrapper,
 } from '@/Form'
+import { createWardrobeItem, getRecognitionFilters } from './api'
 
 const filterNames = [
   'categories',
@@ -40,7 +41,7 @@ export const DoRecognition = () => {
   const [filters, setFilters] = React.useState(null)
 
   React.useEffect(() => {
-    axios.get('/recognition/filters', {withCredentials: false})
+    getRecognitionFilters()
       .then(filters => setFilters(filters))
       .catch((err) => console.error(err))
   }, [])
@@ -75,10 +76,7 @@ export const DoRecognition = () => {
       formData.append(images[i].name, images[i])
     }
 
-    return axios
-      .post<{ }>(`/recognition`, formData)
-      .then((res) => {
-      })
+    return createWardrobeItem(formData)
       .catch((err) => {
         throw 'We ran into an issue creating your outfit, please try again later.'
       })

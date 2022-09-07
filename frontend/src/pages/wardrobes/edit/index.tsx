@@ -1,11 +1,12 @@
 import React from 'react'
 import { NextRouter, useRouter } from 'next/router'
 
+import { queryParamToArray } from '@/utils/helpers'
 import { useSelector } from '@/utils/store'
 import { useFields, UseFields, Input } from '@/Form'
 import { Icon, iconClose } from '@/Components/Icons'
 import Layout from '@/Layout'
-import { searchWardrobes } from '@/Wardrobe/api'
+import { searchUserWardrobes } from '@/Wardrobe/api'
 import { Wardrobe } from '@/Wardrobe/Wardrobe'
 import { SideBar, EditWardrobe } from '@/Wardrobe/EditWardrobe'
 
@@ -30,33 +31,13 @@ const Wardrobes = () => {
   const fields = useFields<SideBarFields>({
     search: { label: 'Search wardrobes'},
     tag: {},
-    currentWardrobe: {},
   })
   const router = useRouter()
   const user = useSelector((state) => state.user.data)
 
   // Initialize tags from query parameters
   const tags = React.useMemo(() => {
-    const tag = router.query.tag
-    if (Array.isArray(tag)) {
-      return tag
-    } else if (typeof tag === 'string') {
-      return [tag]
-    } else {
-      return []
-    }
-  }, [router.query])
-
-  React.useEffect(() => {
-    const slug = router.query.slug
-    if (!slug) {
-      return
-    }
-    wardrobes?.forEach(({wardrobe}, i) => {
-      if (wardrobe.slug === slug) {
-        fields.setValue('currentWardrobe', i)
-      }
-    })
+    return queryParamToArray(router.query.tag)
   }, [router.query])
 
   React.useEffect(() => {
@@ -66,18 +47,8 @@ const Wardrobes = () => {
   }, [router.query])
 
   React.useEffect(() => {
-    searchWardrobes(`${user?.username || ''} ${fields.value('search') || ''}`.trim(), tags)
-      .then(wardrobes => {
-        if (wardrobes.length > 0) {
-          const slug = router.query.slug
-          wardrobes.forEach(({wardrobe}, i) => {
-            if (wardrobe.slug === slug) {
-              fields.setValue('currentWardrobe', i)
-            }
-          })
-        }
-        setWardrobes(wardrobes)
-      })
+    searchUserWardrobes(fields.value('search'), tags)
+      .then(wardrobes => setWardrobes(wardrobes))
   }, [fields.value('search'), tags, user])
 
   if (wardrobes === null) {
@@ -112,5 +83,3 @@ const Wardrobes = () => {
 }
 
 export default Page
-
-

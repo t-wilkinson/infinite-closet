@@ -22,3 +22,14 @@ export const toFullname = (name: {
   lastName?: any
   [x: string]: any
 }) => (name ? [name.firstName || '', name.lastName || ''].join(' ').trim() : '')
+
+
+export const queryParamToArray = (param: string | string[]) => {
+  if (Array.isArray(param)) {
+    return param
+  } else if (typeof param === 'string') {
+    return [param]
+  } else {
+    return []
+  }
+}

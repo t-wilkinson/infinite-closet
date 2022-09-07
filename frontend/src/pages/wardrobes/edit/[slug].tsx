@@ -1,11 +1,12 @@
 import React from 'react'
 import { NextRouter, useRouter } from 'next/router'
 
+import { queryParamToArray } from '@/utils/helpers'
 import { useSelector } from '@/utils/store'
 import { useFields, UseFields, Input } from '@/Form'
 import { Icon, iconClose } from '@/Components/Icons'
 import Layout from '@/Layout'
-import { searchWardrobes } from '@/Wardrobe/api'
+import { searchUserWardrobes } from '@/Wardrobe/api'
 import { Wardrobe } from '@/Wardrobe/Wardrobe'
 import { SideBar, EditWardrobe } from '@/Wardrobe/EditWardrobe'
 
@@ -37,14 +38,7 @@ const Wardrobes = () => {
 
   // Initialize tags from query parameters
   const tags = React.useMemo(() => {
-    const tag = router.query.tag
-    if (Array.isArray(tag)) {
-      return tag
-    } else if (typeof tag === 'string') {
-      return [tag]
-    } else {
-      return []
-    }
+    return queryParamToArray(router.query.tag)
   }, [router.query])
 
   React.useEffect(() => {
@@ -66,7 +60,7 @@ const Wardrobes = () => {
   }, [router.query])
 
   React.useEffect(() => {
-    searchWardrobes(`${user?.username || ''} ${fields.value('search') || ''}`.trim(), tags)
+    searchUserWardrobes(fields.value('search'), tags)
       .then(wardrobes => {
         if (wardrobes.length > 0) {
           const slug = router.query.slug
@@ -80,6 +74,10 @@ const Wardrobes = () => {
       })
   }, [fields.value('search'), tags, user])
 
+  if (typeof fields.getValue('currentWardrobe') !== 'number') {
+    return null
+  }
+
   if (wardrobes === null) {
     return null
   }
@@ -90,6 +88,10 @@ const Wardrobes = () => {
 
   const currentWardrobe = wardrobes[fields.value('currentWardrobe')].wardrobe
   const currentProducts = wardrobes[fields.value('currentWardrobe')].products
+
+  if (!currentWardrobe || !currentProducts) {
+    return null
+  }
 
   return <div className="flex-row w-full max-w-screen-xl h-full md:px-4 xl:px-0">
     <div className="w-full sm:w-64 md:w-72 flex-none">
@@ -106,7 +108,6 @@ const Wardrobes = () => {
         : <Wardrobe wardrobe={currentWardrobe} products={currentProducts} tagsHref="/wardrobes/edit" />
 
       }
-
       <div>
         <span className="text-xl mb-4 font-bold text-center">Edit Wardrobe</span>
     <EditWardrobe wardrobe={currentWardrobe} setWardrobes={setWardrobes} />

@@ -3,8 +3,9 @@ const fetch = require('node-fetch')
 const fs = require('fs')
 const https = require('https')
 const models = require('../../../data/data.js').models
-const { slugify, toId } = require('../../../utils')
+const { removeNullValues, slugify, toId } = require('../../../utils')
 
+// Currently bloomino is using http (not https)
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false, // TODO: potentially dangerous
 })
@@ -62,29 +63,7 @@ async function createProduct(request, user) {
 }
 
 module.exports = {
-  async handleAuthentication(ctx) {
-    try {
-      const body = ctx.request.body
-      console.log(ctx.request.header, ctx.request.body)
-      const req = {
-        login: body.login,
-        password: body.password,
-      }
-
-      const config = strapi.services.bloomino.config
-      const res = await fetch(`${config.apiUrl}/${config.endpoints.authentication}`, req)
-        .then(res => res.json())
-      console.log(res)
-      ctx.send(res.jwtToken)
-    } catch (e) {
-      console.log(e)
-      console.log(e.trace)
-      console.log(e.message)
-      ctx.send(null)
-    }
-  },
-
-  async availableFilters(ctx) {
+  async availableProductAttributes(ctx) {
     let filters = {}
     for (const filter in models) {
       if (['sizes'].includes(filter)) {
@@ -96,73 +75,24 @@ module.exports = {
     ctx.send(filters)
   },
 
-  async handleRecognitionNotification(ctx) {
-    console.log('handle recognition notify')
-    const body = ctx.request.body
-    const { config } = require('../services/bloomino.js')
-    const { login, password } = body
-    let req = {
-      method: 'POST',
-      agent: httpsAgent,
-      headers: {
-        XApiKey: config.apiKey,
-        Accept: '*/*',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ login, password })
-    }
-    let res = await fetch(
-      `${config.apiUrl}${config.endpoints.authenticate}`,
-      req
-    )
-    res = await res.json()
-    console.log(res)
-    const { jwtToken } = res
-
-    // const { id, originalRequestId, status, productItems } = body
-    // console.log('productItems', JSON.stringify(productItems, null, 4))
-    // return
-
-    // If notification is not found, it is invalid, possible attack
-    // const notification = await strapi.query('bloomino-notification').findOne({ requestId: originalRequestId })
-    // if (!notification) {
-    //   return ctx.badRequest({
-    //     status: 0,
-    //     detail: "Notification could not be found in database",
-    //   })
-    // }
-
-    // Create product for each product item
-    // for await (const item of productItems) {
-      // retailer, brand, category, currency, price, colour, size, images
-      // const product = await strapi.query('product').create({
-      //   name: item.name,
-      //   details: item.description,
-      //
-      // })
-    // }
-
-    return ctx.send({
-      status: "OK",
-      description: "Received notification.",
-    })
-  },
-
-  async handleRecognition(ctx) {
+  /**
+   * The client will send data to this endpoint.
+   * We then use Bloomino integration to find the product information.
+   */
+  async createProduct(ctx) {
     const user = ctx.state.user
-    console.log('handling recognition')
+    const config = strapi.services.bloomino.config
 
-    const product = await createProduct(ctx.request, user)
-    const wardrobeItem = await strapi
-      .query('wardrobe-item')
-      .create({
-        user: toId(user),
-        wardrobe: null,
-        product: toId(product),
-      })
+    // const product = await createProduct(ctx.request, user)
+    // await strapi
+    //   .query('wardrobe-item')
+    //   .create({
+    //     user: toId(user),
+    //     wardrobe: null,
+    //     product: toId(product),
+    //   })
 
     try {
-      const config = strapi.services.bloomino.config
       const images = ctx.request.files
       const req = {
         body: JSON.stringify({
@@ -189,9 +119,9 @@ module.exports = {
       const res = await fetch(`${config.apiUrl}/${config.endpoints.doRecognition}`, req)
       const body = await res.json()
       console.log(res, res.headers, res.body, body)
-      await strapi.query('bloomino-notification').create({ requestId: body.requestId, code: body.code, message: body.message })
+      await strapi.query('bloomino-notification').create({ requestId: body.requestId, code: body.code, message: body.message, user: toId(user) })
 
-      return ctx.send(product)
+      return ctx.send(null)
     } catch (e) {
       console.log(e.message)
       console.log(e.stack)
@@ -199,5 +129,86 @@ module.exports = {
 
       return ctx.badRequest(null)
     }
-  }
+  },
+
+  /**
+   * Bloomino will send the product information to this endpoint
+   */
+  async recognitionNotificationService(ctx) {
+    const body = ctx.request.body
+    const { originalRequestId, productItems } = body
+    console.log('productItems', JSON.stringify(productItems, null, 4))
+
+    // If bloomino-notification is not found, it is invalid
+    const bloominoNotification = await strapi.query('bloomino-notification').findOne({ requestId: originalRequestId })
+    if (!bloominoNotification) {
+      return ctx.badRequest({
+        status: 0,
+        // detail: "Notification could not be found in database",
+      })
+    }
+
+    // Create product for each product item
+    for await (const item of productItems) {
+      // retailer, brand, category, currency, price, colour, size, images
+      let designer = null
+      if (item.brand) {
+        designer = await strapi.query('designer').findOne({ name: item.brand })
+        if (!designer) {
+          // designer = await strapi.query('designer').create({
+          //   name: item.brand,
+          // })
+        }
+      }
+
+      let props = {
+        name: item.name,
+        details: item.description,
+        designer: toId(designer),
+        retailPrice: item.price,
+        currency: item.currency
+      }
+
+      const product = await strapi.query('product').create(
+        removeNullValues(props)
+      )
+      await strapi
+        .query('wardrobe-item')
+        .create({
+          user: toId(bloominoNotification.user),
+          wardrobe: null,
+          product: toId(product),
+        })
+    }
+
+    return ctx.send({
+      status: "OK",
+      description: "Received notification.",
+    })
+  },
+
+  /**
+   * Not sure why this is necessary
+   * Bloomino api will contact with endpoint with login information provided by us
+   */
+  async recognitionNotificationUsers(ctx) {
+    try {
+      const body = ctx.request.body
+      const req = {
+        login: body.login,
+        password: body.password,
+      }
+
+      const config = strapi.services.bloomino.config
+      const res = await fetch(`${config.apiUrl}/${config.endpoints.authentication}`, req)
+        .then(res => res.json())
+      console.log(res)
+      ctx.send(res.jwtToken)
+    } catch (e) {
+      console.log(e)
+      console.log(e.trace)
+      console.log(e.message)
+      ctx.send(null)
+    }
+  },
 }

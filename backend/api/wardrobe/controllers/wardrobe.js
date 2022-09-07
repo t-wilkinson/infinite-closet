@@ -35,7 +35,9 @@ async function getWardrobeProducts(wardrobe, props) {
 }
 
 async function toWardrobeProps(body, wardrobe) {
-  let props = {}
+  let props = {
+    visible: false
+  }
 
   if (body.name && body.name !== wardrobe.name) {
     props.name = body.name
@@ -150,6 +152,25 @@ module.exports = {
     const wardrobes = await strapi.services.wardrobe.searchWardrobes({
       search,
       tags: paramsToArray(tags),
+    })
+
+    // fetch products from each wardrobe
+    const data = await Promise.all(
+      wardrobes.map(async (wardrobe) => {
+        const products = await getWardrobeProducts(wardrobe, { _limit: 10 })
+        return { products, wardrobe }
+      })
+    )
+    ctx.send(data)
+  },
+
+  async searchUserWardrobes(ctx) {
+    const user = ctx.state.user
+    const { tags, search } = ctx.query
+    const wardrobes = await strapi.services.wardrobe.searchWardrobes({
+      search: `${user.username} ${search || ''}`.trim(),
+      tags: paramsToArray(tags),
+      showHidden: true,
     })
 
     // fetch products from each wardrobe

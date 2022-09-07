@@ -229,5 +229,13 @@ module.exports = {
     return str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
       .replace(/\s+/g, '-') // collapse whitespace and replace by -
       .replace(/-+/g, '-') // collapse dashes
-  }
+  },
+  removeNullValues(obj={}) {
+    return Object.entries(obj).reduce(([k,v], acc) => {
+      if (v !== null && v !== undefined) {
+        acc[k] = v
+      }
+      return acc
+    }, {})
+  },
 }

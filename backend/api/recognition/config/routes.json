@@ -1,33 +1,33 @@
 {
   "routes": [
     {
+      "method": "GET",
+      "path": "/recognition/filters",
+      "handler": "recognition.availableProductAttributes",
+      "config": {
+        "policies": []
+      }
+    },
+    {
       "method": "POST",
       "path": "/recognition",
-      "handler": "recognition.handleRecognition",
+      "handler": "recognition.createProduct",
       "config": {
         "policies": ["plugins::users-permissions.permissions"]
       }
     },
     {
       "method": "POST",
-      "path": "/notification/RecognitionNotificationUsers/authenticate",
-      "handler": "recognition.handleAuthentication",
+      "path": "/notification/RecognitionNotificationService/notify",
+      "handler": "recognition.recognitionNotificationService",
       "config": {
         "policies": []
       }
     },
     {
       "method": "POST",
-      "path": "/notification/RecognitionNotificationService/notify",
-      "handler": "recognition.handleRecognitionNotification",
-      "config": {
-        "policies": []
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/recognition/filters",
-      "handler": "recognition.availableFilters",
+      "path": "/notification/RecognitionNotificationUsers/authenticate",
+      "handler": "recognition.recognitionNotificationUsers",
       "config": {
         "policies": []
       }

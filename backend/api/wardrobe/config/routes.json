@@ -73,6 +73,14 @@
       "config": {
         "policies": []
       }
+    },
+    {
+      "method": "GET",
+      "path": "/wardrobes/search/user",
+      "handler": "wardrobe.searchUserWardrobes",
+      "config": {
+        "policies": []
+      }
     }
   ]
 }

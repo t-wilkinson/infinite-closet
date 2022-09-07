@@ -38,6 +38,10 @@
     "purchasePrice": {
       "type": "decimal"
     },
+    "currency": {
+      "type": "string",
+      "default": "GBP"
+    },
     "images": {
       "collection": "file",
       "via": "related",

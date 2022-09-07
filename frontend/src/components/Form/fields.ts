@@ -245,11 +245,11 @@ export class UseFields<Keys = { [key: string]: any }> {
   }
 
   getValue(field: keyof Keys): Keys[typeof field] {
-    return this.get(field).value
+    return this.get(field)?.value
   }
 
   value(field: keyof Keys): Keys[typeof field] {
-    return this.get(field).value
+    return this.get(field)?.value
   }
 
   getErrors(): FieldErrors {

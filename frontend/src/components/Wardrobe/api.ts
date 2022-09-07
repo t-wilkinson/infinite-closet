@@ -39,6 +39,13 @@ export async function searchWardrobes(search: string, tags: string[]) {
   })
 }
 
+export async function searchUserWardrobes(search: string, tags: string[]) {
+  return await axios.get('/wardrobes/search/user', {
+    params: { search, tags },
+    withCredentials: true,
+  })
+}
+
 export async function filterWardrobes(params: object, cookie: string) {
   return await axios.get(`/wardrobes/filter`, {
     params,

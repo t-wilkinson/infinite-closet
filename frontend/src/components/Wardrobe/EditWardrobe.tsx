@@ -91,6 +91,7 @@ export const SideBar = ({fields, router, tags, wardrobes}: {
       query: { ...router.query, tag: tags.filter(t => t !== tag)},
     })
   }
+  console.log(fields.getValue('currentWardrobe'))
 
   return <aside>
     <Input
@@ -124,9 +125,10 @@ export const SideBar = ({fields, router, tags, wardrobes}: {
         key={wardrobe.id}
         type="button"
         href={`/wardrobes/edit/${wardrobe.slug}`}
-        className={`py-1 px-2 text-left ${i === fields.getValue('currentWardrobe') ? 'rounded-md bg-gray-light' : ''}`}
       >
-        <a>
+        <a
+        className={`py-1 px-2 text-left ${i == fields.getValue('currentWardrobe') ? 'rounded-md bg-gray-light' : ''}`}
+        >
         {wardrobe.name}
         </a>
       </Link>)}
