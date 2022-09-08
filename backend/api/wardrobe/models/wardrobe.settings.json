@@ -21,9 +21,7 @@
       "type": "text"
     },
     "visible": {
-      "type": "boolean",
-      "default": false,
-      "required": true
+      "type": "boolean"
     },
     "user": {
       "plugin": "users-permissions",

@@ -45,7 +45,7 @@ async function toWardrobeProps(body, wardrobe) {
   if (body.description && body.description !== wardrobe.description) {
     props.description = body.description
   }
-  if (body.visible && !!body.visible !== !!wardrobe.visible) {
+  if (!!body.visible !== !!wardrobe.visible) {
     props.visible = !!body.visible
   }
 
@@ -53,15 +53,21 @@ async function toWardrobeProps(body, wardrobe) {
   if (
     body.tags &&
     (body.tags.length !== wardrobe.tags.length ||
-      !wardrobe.tags.every((tag) => bodyTags.has(tag)))
+      !wardrobe.tags.every((tag) => bodyTags.has(tag.name)))
   ) {
     const tags = await Promise.all(
-      body.tags.map((tag) =>
-        strapi.query('wardrobe-tag').create({ name: tag })
-      )
+      body.tags.map(async (tag) => {
+        const tagExists = await strapi.query('wardrobe-tag').findOne({ name: tag })
+        if (tagExists) {
+          return tagExists
+        } else {
+          return await strapi.query('wardrobe-tag').create({ name: tag })
+        }
+      })
     )
     props.tags = tags.map((tag) => tag.id)
   }
+
   return props
 }
 
@@ -102,10 +108,10 @@ module.exports = {
 
   async update(ctx) {
     const user = ctx.state.user
-    const { id } = ctx.params
+    const { wardrobe_id } = ctx.params
 
     const body = ctx.request.body
-    const wardrobe = await strapi.query('wardrobe').findOne({ id }, ['tags'])
+    const wardrobe = await strapi.query('wardrobe').findOne({ id: wardrobe_id }, ['tags'])
     if (!wardrobe) {
       return ctx.badRequest('Wardrobe not found')
     }
@@ -114,7 +120,8 @@ module.exports = {
     }
 
     const props = await toWardrobeProps(body, wardrobe)
-    const createdWardrobe = await strapi.query('wardrobe').update({ id }, props)
+    const createdWardrobe = await strapi.query('wardrobe').update({ id: wardrobe_id }, props)
+    console.log(props, body, wardrobe, createdWardrobe)
     ctx.send(createdWardrobe)
   },
 

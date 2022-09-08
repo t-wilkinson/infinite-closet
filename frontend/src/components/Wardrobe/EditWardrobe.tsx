@@ -91,7 +91,6 @@ export const SideBar = ({fields, router, tags, wardrobes}: {
       query: { ...router.query, tag: tags.filter(t => t !== tag)},
     })
   }
-  console.log(fields.getValue('currentWardrobe'))
 
   return <aside>
     <Input

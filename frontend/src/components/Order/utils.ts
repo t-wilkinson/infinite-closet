@@ -42,20 +42,20 @@ export const addToCart = async ({
   const order = { ...prepareOrder({ product, fields, user }), status: 'cart' }
 
   return dispatch(OrderUtils.add(order))
-    .then(() => {
-      toast.success(`Successfully added to cart.`, {
-        autoClose: 1500,
-        hideProgressBar: true,
-      }),
-        analytics.logEvent('add_to_cart', {
-          currency,
-          value: productRentalPrice(product, order.rentalLength),
-          user: user ? user.email : 'guest',
-          items: [
-            productToItem(product, order.rentalLength)
-          ],
-        })
+  .then(() => {
+    toast.success(`Successfully added to cart.`, {
+      autoClose: 1500,
+      hideProgressBar: true,
     })
+    analytics.logEvent('add_to_cart', {
+      currency,
+      value: productRentalPrice(product, order.rentalLength),
+      user: user ? user.email : 'guest',
+      items: [
+        productToItem(product, order.rentalLength)
+      ],
+    })
+  })
     .catch(() => {
       toast.error(`Unable to add to cart`, {})
     })
