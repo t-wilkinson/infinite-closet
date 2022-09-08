@@ -11,7 +11,7 @@ import {
   Checkboxes,
   BodyWrapper,
 } from '@/Form'
-import { createWardrobeItem, getRecognitionFilters } from './api'
+import { uploadWardrobeItem, getRecognitionFilters } from './api'
 
 const filterNames = [
   'categories',
@@ -76,7 +76,7 @@ export const DoRecognition = () => {
       formData.append(images[i].name, images[i])
     }
 
-    return createWardrobeItem(formData)
+    return uploadWardrobeItem(formData)
       .catch((err) => {
         throw 'We ran into an issue creating your outfit, please try again later.'
       })

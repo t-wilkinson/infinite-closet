@@ -103,8 +103,8 @@ module.exports = {
               data: base64Encode(image.path),
             })
           ),
-          userId: 'bloomino',
-          userEmail: 'bloomino@bloomino.co.uk',
+          userId: 'infinite-closet-testing',
+          userEmail: 'info@infinitecloset.co.uk',
         }),
         agent: httpsAgent,
         method: "POST",

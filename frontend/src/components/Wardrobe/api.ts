@@ -80,3 +80,12 @@ export async function updateWardrobe(
     withCredentials: true,
   })
 }
+
+export async function getRecognitionFilters () {
+    return await axios.get('/recognition/filters', {withCredentials: false})
+}
+
+export async function uploadWardrobeItem(data) {
+    return axios.post<{ }>(`/recognition`, data)
+}
+

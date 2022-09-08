@@ -17,7 +17,7 @@ export const Checkboxes = ({
   const [isOpen, setOpen] = React.useState(false)
   const toggleKey = (key: string) => {
     if (single) {
-      field.set(new Set([key]))
+      field.setValue(new Set([key]))
     } else if (field.value.has(key)) {
       let newValue = new Set(field.value)
       newValue.delete(key)
