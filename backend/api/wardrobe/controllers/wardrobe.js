@@ -57,9 +57,10 @@ async function toWardrobeProps(body, wardrobe) {
   ) {
     const tags = await Promise.all(
       body.tags.map(async (tag) => {
-        const tagExists = await strapi.query('wardrobe-tag').findOne({ name: tag })
-        if (tagExists) {
-          return tagExists
+        // Either find and return existing tag or create new tag
+        const existingTag = await strapi.query('wardrobe-tag').findOne({ name: tag })
+        if (existingTag) {
+          return existingTag
         } else {
           return await strapi.query('wardrobe-tag').create({ name: tag })
         }
