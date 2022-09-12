@@ -238,4 +238,13 @@ module.exports = {
       return acc
     }, {})
   },
+  paramsToArray(param) {
+    if (Array.isArray(param)) {
+      return param
+    } else if (typeof param === 'string') {
+      return [param]
+    } else {
+      return []
+    }
+  }
 }

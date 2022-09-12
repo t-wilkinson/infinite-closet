@@ -28,14 +28,11 @@ const TestForm = () => {
   </Form>
 }
 
-describe('Form', () => {
+describe.skip('Form', () => {
   test('<Input />', () => {
     t.render(<TestForm />)
     const input = t.screen.getByTitle(/input/i)
     t.userEvent.type(input, '<testing>')
     expect(t.within(input).getByText('<testing>')).toBeInTheDocument()
-  })
-
-  test('submit', () => {
   })
 })

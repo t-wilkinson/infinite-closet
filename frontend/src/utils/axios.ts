@@ -1,6 +1,6 @@
 import Axios from 'axios'
 
-export const axios = Axios.create({
+export const axios = Axios?.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND,
   headers: {
     'Content-Type': 'application/json',
@@ -8,7 +8,7 @@ export const axios = Axios.create({
   withCredentials: true,
 })
 
-axios.interceptors.response.use(
+axios?.interceptors.response.use(
   (response): any => {
     return response.data
   },

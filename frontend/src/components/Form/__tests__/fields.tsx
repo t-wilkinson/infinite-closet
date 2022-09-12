@@ -1,7 +1,7 @@
 import { UseFields, useFields, UseField, useField } from '../fields'
 import * as t from '@/utils/test'
 
-describe('useFields', () => {
+describe.skip('useFields', () => {
   it('Works', () => {
     let valid: boolean
     let fields: UseFields
@@ -30,7 +30,7 @@ describe('useFields', () => {
   })
 })
 
-describe('useField Errors', () => {
+describe.skip('useField Errors', () => {
   const hasErrors = (constraints: string, value: any) => {
     let field: UseField
     function TestField() {

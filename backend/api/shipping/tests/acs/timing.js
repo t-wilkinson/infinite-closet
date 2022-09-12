@@ -10,7 +10,7 @@ const { providerName } = require('../../services/shipment')
 const { aroundCutoff, overlapDateEdge, overlapRangeEdge } =
   require('../utils')(config)
 
-const describeIf = providerName === 'acs' ? describe : describe.skip
+const describeIf = providerName === 'acs' ? describe.skip : describe.skip
 
 describeIf('Order (doesn\'t) ship around cutoff', () => {
   test('passed invalid values', () => {

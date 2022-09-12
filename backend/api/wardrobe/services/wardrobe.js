@@ -117,10 +117,9 @@ async function filterWardrobes(user, query) {
   }
 }
 
-async function searchWardrobes({ tags, search, showHidden=false }) {
+function searchWardrobes({ tags, search, wardrobes }) {
   const searchParams = search ? search.split(' ').filter(p => p).map(p => p.toLowerCase()) : []
   tags = tags.map(tag => tag.toLowerCase())
-  let wardrobes = await strapi.query('wardrobe').find(showHidden ? {} : {visible: true}, ['user', 'tags'])
 
   return wardrobes.filter((wardrobe) => {
     const name = (wardrobe.name || '').toLowerCase()

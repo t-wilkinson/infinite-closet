@@ -1,15 +1,26 @@
-const domain = 'infinitecloset.co.uk'
 const withPlugins = require('next-compose-plugins')
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
-const withPWA = require('next-pwa')
+const withPWA = require('next-pwa')({
+  disable: process.env.NODE_ENV !== 'production',
+  // dest: 'public',
+  mode: 'production',
+  register: true,
+  sw: '/sw.js',
+})
+
+const domain = 'infinitecloset.co.uk'
 // const withImages = require('next-images')
 
 // const StylelintPlugin = require('stylelint-webpack-plugin')
 // const ESLintPlugin = require('eslint-webpack-plugin')
 
-module.exports = withPlugins([withPWA, [withBundleAnalyzer]], {
+// module.exports = withPlugins([withPWA, [withBundleAnalyzer]], {
+/* Next config */
+// })
+
+module.exports = withPWA({
   webpack: (config, {}) => {
     config.cache = {
       type: 'filesystem',
@@ -31,13 +42,6 @@ module.exports = withPlugins([withPWA, [withBundleAnalyzer]], {
   },
   typescript: {
     ignoreBuildErrors: true,
-  },
-  pwa: {
-    disable: process.env.NODE_ENV !== 'production',
-    // dest: 'public',
-    mode: 'production',
-    register: true,
-    sw: '/sw.js',
   },
   i18n: {
     locales: ['en-GB', 'en-US'],

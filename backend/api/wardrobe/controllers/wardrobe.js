@@ -1,17 +1,6 @@
 'use strict'
 
-const { toId } = require('../../../utils')
-
-
-function paramsToArray(param) {
-  if (Array.isArray(param)) {
-    return param
-  } else if (typeof param === 'string') {
-    return [param]
-  } else {
-    return []
-  }
-}
+const { toId, paramsToArray } = require('../../../utils')
 
 async function getWardrobeProducts(wardrobe, props) {
   let wardrobeItems = await strapi
@@ -80,7 +69,7 @@ module.exports = {
       return ctx.badRequest('Wardrobe does not exist')
     }
     await strapi.query('wardrobe').delete({ slug, user: toId(user) })
-    ctx.send()
+    ctx.send(null)
   },
 
   async create(ctx) {
@@ -160,6 +149,7 @@ module.exports = {
     const wardrobes = await strapi.services.wardrobe.searchWardrobes({
       search,
       tags: paramsToArray(tags),
+      wardrobes: await strapi.query('wardrobe').find({visible: true}, ['user', 'tags'])
     })
 
     // fetch products from each wardrobe
@@ -176,9 +166,9 @@ module.exports = {
     const user = ctx.state.user
     const { tags, search } = ctx.query
     const wardrobes = await strapi.services.wardrobe.searchWardrobes({
-      search: `${user.username} ${search || ''}`.trim(),
+      search,
       tags: paramsToArray(tags),
-      showHidden: true,
+      wardrobes: await strapi.query('wardrobe').find({user: user.id}, ['user', 'tags'])
     })
 
     // fetch products from each wardrobe

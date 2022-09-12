@@ -14,7 +14,7 @@ describe('Size range', () => {
     ['M', undefined, 'M'],
   ])('%s-%s contains %s', (start, end, expected) => {
     expect(
-      sizing.contains({ size: start, sizeRange: end }, expected)
+      sizing.sizes({ size: start, sizeRange: end }).includes(expected)
     ).toBeTruthy()
   })
 
@@ -23,7 +23,7 @@ describe('Size range', () => {
     ['S', undefined, 'L'],
   ])('%s-%s does not contain %s', (start, end, expected) => {
     expect(
-      sizing.contains({ size: start, sizeRange: end }, expected)
+      sizing.sizes({ size: start, sizeRange: end }).includes(expected)
     ).toBeFalsy()
   })
 })
