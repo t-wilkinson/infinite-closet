@@ -40,6 +40,7 @@ const actions = {
         Accept: '*/*',
         'Content-Type': 'application/json',
       },
+        body: JSON.stringify({login: 'infinite-closet-test', password: 'nRvdGm21ZtdvZtKpcfcb0ha6'})
     }
     let res = await fetch(
       `${config.apiUrl}${config.endpoints.authenticate}`,
@@ -47,6 +48,7 @@ const actions = {
     )
     let body = await res.json()
     console.log(body)
+    body.jwtToken
     req = {}
   },
 }

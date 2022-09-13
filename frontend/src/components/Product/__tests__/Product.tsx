@@ -5,8 +5,8 @@ import { product } from '../__mocks__/product.ts'
 import renderer from 'react-test-renderer';
 
 describe('ProductItem', () => {
-  test('.', () => {
-    const tree = renderer.create(t.render(<ProductItem product={product} />))
+  test('ProductItem', () => {
+    const tree = renderer.create(<ProductItem product={product} />)
       .toJSON()
     expect(tree).toMatchSnapshot()
   })

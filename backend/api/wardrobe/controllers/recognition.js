@@ -1,14 +1,9 @@
 "use strict"
 const fetch = require('node-fetch')
 const fs = require('fs')
-const https = require('https')
 const models = require('../../../data/data.js').models
 const { removeNullValues, slugify, toId } = require('../../../utils')
-
-// Currently bloomino is using http (not https)
-const httpsAgent = new https.Agent({
-  rejectUnauthorized: false, // TODO: potentially dangerous
-})
+const { v4: uuidv4 } = require('uuid')
 
 function base64Encode(file) {
   return fs.readFileSync(file, {encoding: 'base64'})
@@ -94,7 +89,13 @@ module.exports = {
 
     try {
       const images = ctx.request.files
-      const req = {
+      let req
+      let res
+      let body
+
+      const jwtToken = await strapi.services.bloomino.authenticate()
+
+      req = {
         body: JSON.stringify({
           data: Object.values(images).map((image, i) =>
             ({
@@ -103,23 +104,24 @@ module.exports = {
               data: base64Encode(image.path),
             })
           ),
-          userId: 'infinite-closet-testing',
-          userEmail: 'info@infinitecloset.co.uk',
+          userId: 'bloomino',
+          userEmail: 'bloomino@bloomino.co.uk',
         }),
-        agent: httpsAgent,
+        agent: config.httpsAgent,
         method: "POST",
         headers: {
           "XApiKey": config.apiKey,
           'Accept': '*/*',
+          'Authorization': `Bearer ${Buffer.from(jwtToken).toString('base64')}`,
           // "Authorization": `Bearer ${Buffer.from(config.apiKey).toString('base64')}`,
           'Content-Type': 'application/json',
         },
       }
 
-      const res = await fetch(`${config.apiUrl}/${config.endpoints.doRecognition}`, req)
-      const body = await res.json()
-      console.log(res, res.headers, res.body, body)
-      await strapi.query('bloomino-notification').create({ requestId: body.requestId, code: body.code, message: body.message, user: toId(user) })
+      res = await fetch(`${config.apiUrl}/${config.endpoints.doRecognition}`, req)
+      body = await res.json()
+      const notification = await strapi.query('bloomino-notification').create({ requestId: body.requestId, code: body.code, message: body.message, user: toId(user) })
+      console.log('bloomino-notification', notification)
 
       return ctx.send(null)
     } catch (e) {
@@ -192,23 +194,15 @@ module.exports = {
    * Bloomino api will contact with endpoint with login information provided by us
    */
   async recognitionNotificationUsers(ctx) {
-    try {
-      const body = ctx.request.body
-      const req = {
-        login: body.login,
-        password: body.password,
-      }
-
-      const config = strapi.services.bloomino.config
-      const res = await fetch(`${config.apiUrl}/${config.endpoints.authentication}`, req)
-        .then(res => res.json())
-      console.log(res)
-      ctx.send(res.jwtToken)
-    } catch (e) {
-      console.log(e)
-      console.log(e.trace)
-      console.log(e.message)
-      ctx.send(null)
+    const body = ctx.request.body
+    const config = strapi.services.bloomino.config
+    const validateUser = (env) => process.env.NODE_ENV === env && body.login === config.users[env].login && body.password === config.users[env].password
+    if (!validateUser('production') && !validateUser('development')) {
+      return ctx.badRequest(null)
     }
+
+    return ctx.send({
+      jwtToken: uuidv4()
+    })
   },
 }
