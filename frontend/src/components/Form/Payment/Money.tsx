@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { getInputProps } from '@/Form/Input'
+import { getInputProps } from '@/Form/InputWrapper'
 import { UseField } from '@/Form/types'
 
 export const Money = ({ amounts, field }) => {

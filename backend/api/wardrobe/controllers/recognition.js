@@ -9,54 +9,6 @@ function base64Encode(file) {
   return fs.readFileSync(file, {encoding: 'base64'})
 }
 
-/**
- * Create a product attaching filters from form request
- * @param {obj} request - Multipart form data which contains filters to attach to product
- * @returns {Product}
- */
-async function createProduct(request, user) {
-  const queryFilters = request.body
-  const body = request.body
-  const images = request.files
-
-  const getFilterIds = async (filter, slugs) => strapi
-    .query(models[filter])
-    .find({ slug_in: slugs }, [])
-    .then(res => res.map(toId))
-
-  // filters from queryFilters
-  let filters = {}
-  for (const filter in models) {
-    if (filter === 'sizes') {
-      continue
-    }
-    filters[filter] = await getFilterIds(filter, JSON.parse(queryFilters[filter]))
-  }
-
-  const uploads = await strapi.plugins['upload'].services.upload.upload({
-    data: {},
-    files: Object.values(images).map((image) => ({
-      path: image.path,
-      name: image.name,
-      type: image.type,
-      size: image.size,
-    })),
-  })
-
-  const designer = await strapi.query('designer').findOne({ slug: filters.designer })
-
-  const product = await strapi.query('product').create({
-    name: body.name,
-    slug: `${slugify(body.name)}-${Math.floor(Math.random() * 100000)}`,
-    user: toId(user),
-    images: uploads,
-    ...filters,
-    designer,
-  })
-
-  return product
-}
-
 module.exports = {
   async availableProductAttributes(ctx) {
     let filters = {}
@@ -77,15 +29,6 @@ module.exports = {
   async createProduct(ctx) {
     const user = ctx.state.user
     const config = strapi.services.bloomino.config
-
-    // const product = await createProduct(ctx.request, user)
-    // await strapi
-    //   .query('wardrobe-item')
-    //   .create({
-    //     user: toId(user),
-    //     wardrobe: null,
-    //     product: toId(product),
-    //   })
 
     try {
       const images = ctx.request.files
@@ -113,7 +56,6 @@ module.exports = {
           "XApiKey": config.apiKey,
           'Accept': '*/*',
           'Authorization': `Bearer ${Buffer.from(jwtToken).toString('base64')}`,
-          // "Authorization": `Bearer ${Buffer.from(config.apiKey).toString('base64')}`,
           'Content-Type': 'application/json',
         },
       }

@@ -20,6 +20,56 @@ async function wardrobeFilters(_query, user) {
 }
 
 /**
+ * Create a product attaching filters from form request
+ * @param {obj} request - Multipart form data which contains filters to attach to product
+ * @returns {Product}
+ */
+/*
+async function createProduct(request, user) {
+  const queryFilters = request.body
+  const body = request.body
+  const images = request.files
+
+  const getFilterIds = async (filter, slugs) => strapi
+    .query(models[filter])
+    .find({ slug_in: slugs }, [])
+    .then(res => res.map(toId))
+
+  // filters from queryFilters
+  let filters = {}
+  for (const filter in models) {
+    if (filter === 'sizes') {
+      continue
+    }
+    filters[filter] = await getFilterIds(filter, JSON.parse(queryFilters[filter]))
+  }
+
+  const uploads = await strapi.plugins['upload'].services.upload.upload({
+    data: {},
+    files: Object.values(images).map((image) => ({
+      path: image.path,
+      name: image.name,
+      type: image.type,
+      size: image.size,
+    })),
+  })
+
+  const designer = await strapi.query('designer').findOne({ slug: filters.designer })
+
+  const product = await strapi.query('product').create({
+    name: body.name,
+    slug: `${slugify(body.name)}-${Math.floor(Math.random() * 100000)}`,
+    user: toId(user),
+    images: uploads,
+    ...filters,
+    designer,
+  })
+
+  return product
+}
+*/
+
+/**
  * Prepare product data with paging and populating fields
  * @param {obj} paging
  * @param {number} paging.start
@@ -41,30 +91,35 @@ function populateProducts(paging, products) {
 /**
  * Query wardrobes using SQL (should be more efficient)
  */
+/*
 async function searchWardrobesSQL({ knex, tags, search }) {
-  // const searchParams = search ? search.replace(/'/g, "''").split(' ') : []
-  // const wardrobeName =
-  //   searchParams.length > 0
-  //     ? `wardrobes.name ~* '${searchParams.join('|')}'`
-  //     : ''
-  // const wardrobeTags =
-  //   tags.length > 0
-  //     ? `wardrobe_tags.name ~* '${tags.join('|')}'`
-  //     : ''
-  // const orFilters = [wardrobeName, wardrobeTags].filter(Boolean).join(' OR ') || 'true'
-  // console.log(orFilters)
+  const searchParams = search ? search.replace(/'/g, "''").split(' ') : []
+  const wardrobeName =
+    searchParams.length > 0
+      ? `wardrobes.name ~* '${searchParams.join('|')}'`
+      : ''
+  const wardrobeTags =
+    tags.length > 0
+      ? `wardrobe_tags.name ~* '${tags.join('|')}'`
+      : ''
+  const orFilters = [wardrobeName, wardrobeTags].filter(Boolean).join(' OR ') || 'true'
+  console.log(orFilters)
 
-  // const wardrobeIds = await knex
-  //   .select('wardrobes.id as id')
-  //   .from('wardrobes')
-  //   .leftOuterJoin('wardrobe_tags', 'wardrobe_tags.wardrobe', 'wardrobes.id')
-  //   .whereRaw(orFilters)
-  // const wardrobes = await strapi
-  //   .query('wardrobe')
-  //   .find({ id_in: wardrobeIds.map((w) => w.id) }, ['user', 'tags'])
-  // return wardrobes
+  const wardrobeIds = await knex
+    .select('wardrobes.id as id')
+    .from('wardrobes')
+    .leftOuterJoin('wardrobe_tags', 'wardrobe_tags.wardrobe', 'wardrobes.id')
+    .whereRaw(orFilters)
+  const wardrobes = await strapi
+    .query('wardrobe')
+    .find({ id_in: wardrobeIds.map((w) => w.id) }, ['user', 'tags'])
+  return wardrobes
 }
+*/
 
+/**
+ * Provide filters for searching wardrobes
+ */
 async function filterWardrobes(user, query) {
   const knex = strapi.connections.default
   query = strapi.services.filter.buildQuery(query)
@@ -117,6 +172,9 @@ async function filterWardrobes(user, query) {
   }
 }
 
+/**
+ * Search wardrobes using tags and search query
+ */
 function searchWardrobes({ tags, search, wardrobes }) {
   const searchParams = search ? search.split(' ').filter(p => p).map(p => p.toLowerCase()) : []
   tags = tags.map(tag => tag.toLowerCase())

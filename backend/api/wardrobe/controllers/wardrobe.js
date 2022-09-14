@@ -111,7 +111,6 @@ module.exports = {
 
     const props = await toWardrobeProps(body, wardrobe)
     const createdWardrobe = await strapi.query('wardrobe').update({ id: wardrobe_id }, props)
-    console.log(props, body, wardrobe, createdWardrobe)
     ctx.send(createdWardrobe)
   },
 
