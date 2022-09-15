@@ -2,23 +2,6 @@
 
 const { toId } = require('../../../utils')
 
-async function wardrobeFilters(_query, user) {
-  const wardrobes = await strapi.query('wardrobe').find(
-    {
-      user: toId(user.id),
-    },
-    []
-  )
-
-  return [
-    ...wardrobes,
-    // Custom wardrobe filters
-    { name: 'My wardrobe', slug: 'my-wardrobe' },
-    { name: 'Favorites', slug: 'favorites' },
-    { name: 'Previously rented', slug: 'previously-rented' },
-  ]
-}
-
 /**
  * Create a product attaching filters from form request
  * @param {obj} request - Multipart form data which contains filters to attach to product
@@ -70,25 +53,6 @@ async function createProduct(request, user) {
 */
 
 /**
- * Prepare product data with paging and populating fields
- * @param {obj} paging
- * @param {number} paging.start
- * @param {number} paging.limit
- * @param {{id: string}[]} products
- */
-function populateProducts(paging, products) {
-  const start = paging.start
-  const end = paging.start + paging.limit
-  return Promise.all(
-    products
-      .slice(start, end)
-      .map(({ id }) =>
-        strapi.query('product').findOne({ id }, ['designer', 'images', 'sizes'])
-      )
-  )
-}
-
-/**
  * Query wardrobes using SQL (should be more efficient)
  */
 /*
@@ -116,6 +80,42 @@ async function searchWardrobesSQL({ knex, tags, search }) {
   return wardrobes
 }
 */
+
+async function wardrobeFilters(_query, user) {
+  const wardrobes = await strapi.query('wardrobe').find(
+    {
+      user: toId(user.id),
+    },
+    []
+  )
+
+  return [
+    ...wardrobes,
+    // Custom wardrobe filters
+    { name: 'My wardrobe', slug: 'my-wardrobe' },
+    { name: 'Favorites', slug: 'favorites' },
+    { name: 'Previously rented', slug: 'previously-rented' },
+  ]
+}
+
+/**
+ * Prepare product data with paging and populating fields
+ * @param {obj} paging
+ * @param {number} paging.start
+ * @param {number} paging.limit
+ * @param {{id: string}[]} products
+ */
+function populateProducts(paging, products) {
+  const start = paging.start
+  const end = paging.start + paging.limit
+  return Promise.all(
+    products
+      .slice(start, end)
+      .map(({ id }) =>
+        strapi.query('product').findOne({ id }, ['designer', 'images', 'sizes'])
+      )
+  )
+}
 
 /**
  * Provide filters for searching wardrobes

@@ -231,7 +231,7 @@ module.exports = {
       .replace(/-+/g, '-') // collapse dashes
   },
   removeNullValues(obj={}) {
-    return Object.entries(obj).reduce(([k,v], acc) => {
+    return Object.entries(obj).reduce((acc, [k,v]) => {
       if (v !== null && v !== undefined) {
         acc[k] = v
       }

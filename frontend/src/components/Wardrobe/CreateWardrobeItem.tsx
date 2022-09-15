@@ -32,7 +32,7 @@ export const DoRecognition = () => {
   } & { [key in keyof typeof filterNames]: Set<string> }
   >({
     productName: { label: 'Name' },
-    images: { label: 'Add a photo or video', default: [] },
+    images: { label: 'Add a photo, video, or receipt', default: [] },
     ...filterNames.reduce((acc, filter) => {
       acc[filter] = { default: new Set() }
       return acc

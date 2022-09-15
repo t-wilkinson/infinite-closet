@@ -68,11 +68,11 @@ class MyDocument extends Document {
           <meta property="og:site_name" content="Infinite Closet" />
           <meta property="og:locale" content="en_GB" />
 
-          <script
+          {process.env.NODE_ENV === 'production' && <script
             type="text/javascript"
             src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
             async
-          ></script>
+          ></script> }
           {process.env.NODE_ENV === 'production' && <Production />}
         </Head>
         <body>

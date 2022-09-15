@@ -2,8 +2,9 @@
 const fetch = require('node-fetch')
 const fs = require('fs')
 const models = require('../../../data/data.js').models
-const { removeNullValues, slugify, toId } = require('../../../utils')
-const { v4: uuidv4 } = require('uuid')
+const { removeNullValues, toId } = require('../../../utils')
+// const { v4: uuidv4 } = require('uuid')
+const jwt = require('jsonwebtoken')
 
 function base64Encode(file) {
   return fs.readFileSync(file, {encoding: 'base64'})
@@ -143,8 +144,10 @@ module.exports = {
       return ctx.badRequest(null)
     }
 
+    const token = jwt.sign({user: body.login}, 'privatekey', { algorithm: 'RS256' })
     return ctx.send({
-      jwtToken: uuidv4()
+      // jwtToken: uuidv4()
+      jwtToken: token
     })
   },
 }

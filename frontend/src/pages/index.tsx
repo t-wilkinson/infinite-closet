@@ -581,19 +581,6 @@ const Review = ({ quote, name, image, smallPosition = 'center' }) => {
   )
 }
 
-// const InstagramSlider = () => {
-//   return (
-//     <div className="my-16 w-full items-center max-w-screen-xl" id="instagram">
-//       <Heading>What's Happening</Heading>
-//       <div className="px-8 w-full lg:justify-center overflow-x-auto flex-row space-x-4 mt-16 mb-8">
-//         <InstgramEmbedding link="https://www.instagram.com/p/CWdN-DugTBE/?utm_source=ig_embed&amp;utm_campaign=loading" />
-//         <InstgramEmbedding link="https://www.instagram.com/p/CWOQZQPgweH/?utm_source=ig_embed&amp;utm_campaign=loading" />
-//         <InstgramEmbedding link="https://www.instagram.com/p/CV-lpmlAfW_/?utm_source=ig_embed&amp;utm_campaign=loading" />
-//       </div>
-//     </div>
-//   )
-// }
-
 const TrustPilotReviews = () => (
   <div
     className="trustpilot-widget"
@@ -618,6 +605,21 @@ const TrustPilotReviews = () => (
     </a>
   </div>
 )
+
+/*
+const InstagramSlider = () => {
+  return (
+    <div className="my-16 w-full items-center max-w-screen-xl" id="instagram">
+      <Heading>What's Happening</Heading>
+      <div className="px-8 w-full lg:justify-center overflow-x-auto flex-row space-x-4 mt-16 mb-8">
+        <InstgramEmbedding link="https://www.instagram.com/p/CWdN-DugTBE/?utm_source=ig_embed&amp;utm_campaign=loading" />
+        <InstgramEmbedding link="https://www.instagram.com/p/CWOQZQPgweH/?utm_source=ig_embed&amp;utm_campaign=loading" />
+        <InstgramEmbedding link="https://www.instagram.com/p/CV-lpmlAfW_/?utm_source=ig_embed&amp;utm_campaign=loading" />
+      </div>
+    </div>
+  )
+}
+ */
 
 /*
 const InstgramEmbedding = ({ link }) => {

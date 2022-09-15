@@ -21,6 +21,15 @@ const domain = 'infinitecloset.co.uk'
 // })
 
 module.exports = withPWA({
+  async redirects() {
+    return [
+      {
+        source: '/user/wardrobe-upload',
+        destination: '/wardrobes/upload',
+        permanent: true
+      }
+    ]
+  },
   webpack: (config, {}) => {
     config.cache = {
       type: 'filesystem',
