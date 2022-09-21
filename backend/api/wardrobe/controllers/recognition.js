@@ -144,10 +144,13 @@ module.exports = {
       return ctx.badRequest(null)
     }
 
-    const token = jwt.sign({user: body.login}, 'privatekey', { algorithm: 'RS256' })
-    return ctx.send({
-      // jwtToken: uuidv4()
-      jwtToken: token
-    })
+    try {
+      const token = jwt.sign({user: body.login}, 'privatekey')
+      return ctx.send({
+        jwtToken: token
+      })
+    } catch (e) {
+      console.error(e)
+    }
   },
 }
