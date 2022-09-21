@@ -48,8 +48,8 @@ module.exports = {
               data: base64Encode(image.path),
             })
           ),
-          userId: 'bloomino',
-          userEmail: 'bloomino@bloomino.co.uk',
+          userId: user.username,
+          userEmail: user.email,
         }),
         agent: config.httpsAgent,
         method: "POST",
@@ -87,43 +87,50 @@ module.exports = {
     // If bloomino-notification is not found, it is invalid
     const bloominoNotification = await strapi.query('bloomino-notification').findOne({ requestId: originalRequestId })
     if (!bloominoNotification) {
+      console.log('cannot find bloomino notification')
       return ctx.badRequest({
         status: 0,
         // detail: "Notification could not be found in database",
       })
     }
 
-    // Create product for each product item
-    for await (const item of productItems) {
-      // retailer, brand, category, currency, price, colour, size, images
-      let designer = null
-      if (item.brand) {
-        designer = await strapi.query('designer').findOne({ name: item.brand })
-        if (!designer) {
-          // designer = await strapi.query('designer').create({
-          //   name: item.brand,
-          // })
+    try {
+      // Create product for each product item
+      for await (const item of productItems) {
+        console.log('processing: ', item.name)
+        // retailer, brand, category, currency, price, colour, size, images
+        let designer = null
+        if (item.brand) {
+          designer = await strapi.query('designer').findOne({ name: item.brand })
+          if (!designer) {
+            // designer = await strapi.query('designer').create({
+            //   name: item.brand,
+            // })
+          }
         }
-      }
 
-      let props = {
-        name: item.name,
-        details: item.description,
-        designer: toId(designer),
-        retailPrice: item.price,
-        currency: item.currency
-      }
+        let props = {
+          name: item.name,
+          details: item.description,
+          designer: toId(designer),
+          retailPrice: item.price,
+          currency: item.currency
+        }
 
-      const product = await strapi.query('product').create(
-        removeNullValues(props)
-      )
-      await strapi
-        .query('wardrobe-item')
-        .create({
-          user: toId(bloominoNotification.user),
-          wardrobe: null,
-          product: toId(product),
-        })
+        const product = await strapi.query('product').create(
+          removeNullValues(props)
+        )
+        await strapi
+          .query('wardrobe-item')
+          .create({
+            user: toId(bloominoNotification.user),
+            wardrobe: null,
+            product: toId(product),
+          })
+      }
+    } catch (e) {
+      console.error(e)
+      console.error(e.message)
     }
 
     return ctx.send({
