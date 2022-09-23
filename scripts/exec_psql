@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
-# Simplifies running common `psql` inside the postgresql docker container
-#
-# Usage:
-#   ./exec-psql local -it   # Runs psql shell interactively
-#   ./exec-psql prod -i < ./psql-commands   # Runs commands in `./psql-commands` in psql shell
-#
+# Run psql command inside docker container
+
+if [[ $1 == -h ]]; then
+    cat <<EOF
+Usage: $(basename "$0") (local|dev|prod) [OPTIONS]
+Run psql command inside docker container.
+
+Examples:
+   ./exec_psql local -it   # Runs psql shell interactively
+   ./exec_psql prod -i < ./psql-commands   # Runs commands in "./psql-commands" in psql shell
+EOF
+    exit 0
+fi
 
 declare -A db_names
 db_names[local]=infinite-closet-dev

@@ -5,17 +5,16 @@
 # Arguments:
 #   $1 = docker service
 #   $2 = optional table
-#
 
 reset_sequences() {
-    ./exec-psql $1 <<EOF
+    ./exec_psql $1 <<EOF
 select setval('${2}_id_seq', max + 1) from (select MAX(id) from "$2") as max;
 EOF
 }
 
 if [[ -z $2 ]]; then
     # If no table is specified, resync all tables
-    sequences=$(echo 'copy (select sequence_name from information_schema.sequences) to STDOUT with CSV;' | ./exec-psql $1 | sed 's/_id_seq//g')
+    sequences=$(echo 'copy (select sequence_name from information_schema.sequences) to STDOUT with CSV;' | ./exec_psql $1 | sed 's/_id_seq//g')
     for sequence in $sequences; do
         reset_sequences $1 $sequence &
     done

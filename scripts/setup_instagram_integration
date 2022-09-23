@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Setup instagram integration
 
 # values known at start
 client_secret=c4033a1a7bd2f30f3ebfc5c593afc383 # this should be kept secure

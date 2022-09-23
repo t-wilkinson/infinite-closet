@@ -1,20 +1,19 @@
 #!/usr/bin/env bash
-# Update local database from server database
-#
-# Connects to server database through ssh and `pg_dump` data to computer
+# Sync local database from server database using ssh and pg_dump.
+
+infinite_closet_server="infinitecloset"
 
 cd $(dirname $0)/../
 
 # Sync uploaded photos
-update_uploads() {
-    rsync -avz infinitecloset:/www/infinite-closet/main/backend/public/uploads/ ./backend/public/uploads
+sync_uploads() {
+    rsync -avz ${infinite_closet_server}:/www/infinite-closet/main/backend/public/uploads/ ./backend/public/uploads
 }
 
-
-update_database() {
+sync_database() {
     # If force is set, disconnect all connections from database
     if  [[ $force ]]; then
-    scripts/exec-psql "local" -i <<SQL
+    scripts/exec_psql "local" -i <<SQL
 SELECT pg_terminate_backend(pg_stat_activity.pid)
 FROM pg_stat_activity
 WHERE datname = current_database()
@@ -23,9 +22,9 @@ SQL
     fi
 
     # Sync the database
-    ssh infinitecloset 'docker exec prod_db_1 pg_dump -d infinite-closet -U infinite-closet -CcO | bzip2'  | bunzip2 | scripts/exec-psql "local" -i
+    ssh ${infinite_closet_server} 'docker exec prod_db_1 pg_dump -d infinite-closet -U infinite-closet -CcO | bzip2'  | bunzip2 | scripts/exec_psql "local" -i
 
-    scripts/exec-psql "local" -i <<SQL
+    scripts/exec_psql "local" -i <<SQL
 \c postgres
 DROP DATABASE IF EXISTS "infinite-closet-dev-old";
 ALTER DATABASE "infinite-closet-dev" RENAME TO "infinite-closet-dev-old";
@@ -37,20 +36,22 @@ while [[ $# > 0 ]]; do
     case "$1" in
         -h)
             cat <<EOF
-$(basename "$0") [uploads|database|all]+ -- sync local project with production data
-where:
-    uploads     update /backend/uploads
+Usage: $(basename "$0") (uploads|database|all)+
+Sync local database from server database using ssh and pg_dump.
+
+Where:
+    uploads     sync /backend/uploads
     database    set local database to production database
     all         all the above
 EOF
             exit 0
             ;;
         -f) force=1;;
-        uploads) update_uploads;;
-        database) update_database;;
+        uploads) sync_uploads;;
+        database) sync_database;;
         all)
-            update_uploads
-            update_database
+            sync_uploads
+            sync_database
             ;;
     esac
     shift

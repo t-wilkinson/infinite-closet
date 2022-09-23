@@ -16,7 +16,7 @@ const cp = require('child_process')
 const axios = require('axios')
 
 function db(input) {
-  return cp.spawnSync('./scripts/exec-psql', ['local'], {
+  return cp.spawnSync('./scripts/exec_psql', ['local'], {
     input: Array.isArray(input) ? input.join(';\n') : input + ';',
   })
 }
