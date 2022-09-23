@@ -101,7 +101,7 @@ const Account = ({ user }) => {
             >
               {[
                 { href: '/wardrobes', name: 'Wardrobes' },
-                { href: '/wardrobes/my-wardrobe', name: 'My Wardrobe' },
+                { href: '/wardrobes/my-wardrobe', name: 'My Wardrobes' },
                 { href: '/wardrobes/edit', name: 'Edit Wardrobes' },
                 { href: '/wardrobes/upload', name: 'Upload Item' },
               ].map((item, i) => (

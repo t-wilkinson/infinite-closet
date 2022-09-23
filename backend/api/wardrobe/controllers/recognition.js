@@ -3,7 +3,6 @@ const fetch = require('node-fetch')
 const fs = require('fs')
 const models = require('../../../data/data.js').models
 const { removeNullValues, toId } = require('../../../utils')
-// const { v4: uuidv4 } = require('uuid')
 const jwt = require('jsonwebtoken')
 
 function base64Encode(file) {
@@ -23,11 +22,26 @@ module.exports = {
     ctx.send(filters)
   },
 
+  async uploadProduct(ctx) {
+    const user = ctx.state.user
+    const product = await strapi.services.wardrobe.createProduct(ctx.request, user)
+
+    await strapi
+      .query('wardrobe-item')
+      .create({
+        user: toId(user),
+        wardrobe: null,
+        product: toId(product),
+      })
+
+    ctx.send(null)
+  },
+
   /**
    * The client will send data to this endpoint.
    * We then use Bloomino integration to find the product information.
    */
-  async createProduct(ctx) {
+  async uploadReceipt(ctx) {
     const user = ctx.state.user
     const config = strapi.services.bloomino.config
 

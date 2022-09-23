@@ -1,19 +1,20 @@
 'use strict'
 
-const { toId } = require('../../../utils')
+const { slugify, toId } = require('../../../utils')
+const models = require('../../../data/data.js').models
 
 /**
  * Create a product attaching filters from form request
  * @param {obj} request - Multipart form data which contains filters to attach to product
+ * @param {obj} user
  * @returns {Product}
  */
-/*
 async function createProduct(request, user) {
   const queryFilters = request.body
   const body = request.body
   const images = request.files
 
-  const getFilterIds = async (filter, slugs) => strapi
+  const getFilterIds = async (filter, slugs=[]) => strapi
     .query(models[filter])
     .find({ slug_in: slugs }, [])
     .then(res => res.map(toId))
@@ -50,7 +51,6 @@ async function createProduct(request, user) {
 
   return product
 }
-*/
 
 /**
  * Query wardrobes using SQL (should be more efficient)
@@ -200,4 +200,5 @@ function searchWardrobes({ tags, search, wardrobes }) {
 module.exports = {
   searchWardrobes,
   filterWardrobes,
+  createProduct,
 }

@@ -2,7 +2,7 @@ import Image from 'next/image'
 
 import {Icon, iconClose, iconPlus} from '@/Components/Icons'
 
-export const ImageUpload = ({ field }) => {
+export const ImageUpload = ({ field, accept="image/*"}) => {
   const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       let urls = Array.from(e.target.files).map((file: Blob) =>
@@ -37,7 +37,7 @@ export const ImageUpload = ({ field }) => {
             <input
               type="file"
               name="images"
-              accept="image/*"
+              accept={accept}
               className="hidden"
               onChange={onImageChange}
               multiple
