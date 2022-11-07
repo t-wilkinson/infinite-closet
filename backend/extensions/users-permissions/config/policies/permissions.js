@@ -24,7 +24,6 @@ module.exports = async (ctx, next) => {
       // fetch authenticated user
       ctx.state.user = await strapi.plugins['users-permissions'].services.user.fetchAuthenticatedUser(id);
     } catch (err) {
-      console.log(err)
       if (err.message === 'Invalid token.') {
         role = await strapi.query('role', 'users-permissions').findOne({ type: 'public' }, []);
         return await executePermission(ctx, next, role)

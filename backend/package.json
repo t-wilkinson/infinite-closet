@@ -36,6 +36,7 @@
     "pg": "8.5.1",
     "postcode-validator": "^3.5.3",
     "postinstall-postinstall": "^2.1.0",
+    "sharp": "^0.31.1",
     "strapi": "3.6.8",
     "strapi-admin": "3.6.8",
     "strapi-connector-bookshelf": "3.6.8",
