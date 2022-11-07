@@ -129,6 +129,7 @@ const UploadProduct = ({}) => {
       formData.append(filter, JSON.stringify(Array.from(cleaned[filter])))
     }
 
+    console.log(cleaned.designer)
     const designers = Array.from(cleaned.designer)
     if (designers.length > 1) {
       throw 'Please select one designer'

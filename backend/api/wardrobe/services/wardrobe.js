@@ -38,7 +38,7 @@ async function createProduct(request, user) {
     })),
   })
 
-  const designer = await strapi.query('designer').findOne({ slug: filters.designer })
+  const designer = await strapi.query('designer').findOne({ slug: body.designer })
 
   const product = await strapi.query('product').create({
     name: body.name,
