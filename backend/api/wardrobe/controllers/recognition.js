@@ -103,10 +103,9 @@ module.exports = {
     // If bloomino-notification is not found, it is invalid
     const bloominoNotification = await strapi.query('bloomino-notification').findOne({ requestId: originalRequestId })
     if (!bloominoNotification && originalRequestId !== 'QSmWDCON3UyGFgWUspFSSguy8') {
-      console.log('cannot find bloomino notification')
       return ctx.badRequest({
         status: 0,
-        // detail: "Notification could not be found in database",
+        detail: "Bloomino request ID could not be found in database.",
       })
     }
 
