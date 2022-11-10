@@ -20,6 +20,9 @@
       "targetField": "name",
       "required": true
     },
+    "customDesignerName": {
+      "type": "string"
+    },
     "designer": {
       "model": "designer",
       "via": "products"

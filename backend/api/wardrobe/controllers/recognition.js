@@ -11,15 +11,47 @@ function base64Encode(file) {
 
 module.exports = {
   async availableProductAttributes(ctx) {
-    let filters = {}
+    const user = ctx.state.user
+
+    const customUserDesigners = await strapi
+      .query('product')
+      .find({user: toId(user)}, [])
+      .then(products =>
+        Array.from(new Set(products.map(product => product.customUserDesigner)))
+          .filter(v => v)
+          .map(name => ({
+            name,
+            slug: name.toLowerCase()
+          }))
+      )
+    const designerNames = await strapi.query('designer').find()
+      .then(designers => designers.map(designer => ({
+        name: designer.name,
+        slug: designer.slug
+      })))
+
+    let attributes = {
+      filters: {},
+      designers: [
+        ...designerNames,
+        ...customUserDesigners,
+      ],
+      wardrobes: [
+        ...await strapi.query('wardrobe').find({
+          user: toId(user),
+        }),
+        { name: 'My wardrobe', slug: 'my-wardrobe' }
+      ]
+    }
+
     for (const filter in models) {
       if (['sizes'].includes(filter)) {
         continue
       }
-      filters[filter] = await strapi.query(models[filter]).find()
+      attributes.filters[filter] = await strapi.query(models[filter]).find()
     }
-    filters.designer = await strapi.query('designer').find()
-    ctx.send(filters)
+
+    ctx.send(attributes)
   },
 
   async uploadProduct(ctx) {

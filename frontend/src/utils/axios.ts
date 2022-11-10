@@ -13,6 +13,7 @@ axios?.interceptors.response.use(
     return response.data
   },
   (error) => {
+    console.log(error)
     let data = error.response?.data
     try {
       if (Array.isArray(data?.message)) {
@@ -25,7 +26,7 @@ axios?.interceptors.response.use(
     } catch (e) {
       console.error('axios', e)
     }
-    return Promise.reject(data)
+    return Promise.reject(data || error)
   }
 )
 

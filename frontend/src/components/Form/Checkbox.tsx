@@ -1,8 +1,9 @@
 import React from 'react'
 
 import { Icon, iconUp, iconDown, iconCheck } from '@/Components/Icons'
-import { UseField, FieldValue } from './types'
 
+import { Drawer } from './Drawer'
+import { UseField, FieldValue } from './types'
 import Warning from './Warning'
 
 export const Checkboxes = ({
@@ -14,7 +15,6 @@ export const Checkboxes = ({
   values: { name: string; slug: string }[]
   single?: boolean
 }) => {
-  const [isOpen, setOpen] = React.useState(false)
   const toggleKey = (key: string) => {
     if (single) {
       field.setValue(new Set([key]))
@@ -29,21 +29,7 @@ export const Checkboxes = ({
     }
   }
 
-  return <div>
-    <button onClick={() => setOpen(!isOpen)} type="button">
-      <div className="flex-row text-lg sm:text-sm items-center justify-between py-4">
-        <span className="font-bold">
-          {field.label}
-          {field.value.size > 0 && ` (${field.value.size})`}
-        </span>
-        <Icon icon={isOpen ? iconUp : iconDown} size={12} />
-      </div>
-    </button>
-    <div
-      className={`py-4 px-2 text-lg sm:text-sm ${
-        isOpen ? 'flex' : 'hidden'
-      }`}
-    >
+  return <Drawer label={field.label} size={field.value.size}>
       {values.sort((v1, v2) => v1.name < v2.name ? -1 : v1.name > v2.name ? 1 : 0).map(({name, slug}) =>
       <Checkbox
         key={slug}
@@ -53,8 +39,7 @@ export const Checkboxes = ({
         value={field.value.has(slug)}
       />
                  )}
-    </div>
-  </div>
+  </Drawer>
 }
 
 export const Checkbox = ({

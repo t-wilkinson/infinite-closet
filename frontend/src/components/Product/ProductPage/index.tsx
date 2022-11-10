@@ -13,6 +13,7 @@ import ProductDetails from './ProductDetails'
 import OrderOptions from './OrderOptions'
 import AddToCart from './AddToCart'
 import { AddToCartFields } from './types'
+import UserWardrobeItem from './UserWardrobeItem'
 
 export const Shop = ({ data }) => {
   const dispatch = useDispatch()
@@ -53,36 +54,9 @@ const Product = ({ reviews, data }) => {
     rentalLength: { constraints: 'required', default: 'short' },
     rentType: { default: 'OneTime' },
   })
-  const [wardrobePopupVisible, setWardrobePopupVisible] = React.useState(false)
 
   if (product.user) {
-    return <div className="w-full sm:w-1/2 sm:max-w-md">
-      <div className="flex-row justify-between">
-        <div>
-          <Link href={`/designers/${product.designer.slug}`}>
-            <a>
-              <span className="pt-4 font-bold text-xl underline sm:no-underline hover:underline">
-                {product.designer.name}
-              </span>
-            </a>
-          </Link>
-          <span className="">{product.name}</span>
-        </div>
-      </div>
-      <Divider className="mt-2 mb-4" />
-        <Button
-        role="secondary"
-        onClick={() => {
-          setWardrobePopupVisible(true)
-        }}
-      >
-        Add to Wardrobe
-      </Button>
-      <div className="my-4">
-        <ProductDetails state={state} product={product} />
-      </div>
-      <AddWardrobe product={product} visible={wardrobePopupVisible} setVisible={setWardrobePopupVisible} />
-    </div>
+    return <UserWardrobeItem state={state} product={product} />
   }
 
   return (

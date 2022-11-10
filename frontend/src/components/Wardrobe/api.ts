@@ -81,8 +81,8 @@ export async function updateWardrobe(
   })
 }
 
-export async function getRecognitionFilters () {
-    return await axios.get('/recognition/filters', {withCredentials: false})
+export async function getRecognitionAttributes () {
+    return await axios.get('/recognition/attributes', {withCredentials: true})
 }
 
 export async function uploadWardrobeReceipt(data) {
@@ -91,4 +91,10 @@ export async function uploadWardrobeReceipt(data) {
 
 export async function uploadWardrobeProduct(data) {
     return axios.post<{ }>(`/wardrobe/upload/product`, data)
+}
+
+export async function editProductWardrobeItem(productId: ID, data) {
+    return axios.put<{ }>(`/wardrobe/items/${productId}`, data, {
+      withCredentials: true,
+    })
 }

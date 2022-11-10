@@ -1,3 +1,5 @@
+const models = require('../../../data/data.js').models
+
 // Return available categories for header navigation
 async function routes(ctx) {
   const categories = await strapi.query('category').find(
@@ -29,6 +31,7 @@ async function shopItem(ctx) {
       'designer',
       'images',
       'sizes',
+      ...Object.keys(models),
     ])
 
   for (const [key, size] of Object.entries(product.sizes)) {
