@@ -7,14 +7,20 @@ module.exports = {
   async editProductWardrobeItem(ctx) {
     const user = ctx.state.user
     const body = ctx.request.body
-    const images = ctx.request.files
+    // const images = ctx.request.files
     const queryFilters = ctx.request.body
 
     const { product_id } = ctx.params
-    const product = await strapi.query('product').find({ id: product_id }, [])
+    const wardrobeItem = await strapi.query('wardrobe-item')
+      .findOne({ product: product_id, user: user.id })
+
+    if (!wardrobeItem) {
+      return ctx.notFound('Could not find product id.')
+    }
+    const product = wardrobeItem.product
 
     // Make sure user owns product
-    if (product.user !== user.id) {
+    if (toId(product.user) !== user.id) {
       return ctx.unauthorized('User does not own this product.')
     }
 
@@ -32,20 +38,20 @@ module.exports = {
       filters[filter] = await getFilterIds(filter, JSON.parse(queryFilters[filter]))
     }
 
-    const uploads = await strapi.plugins['upload'].services.upload.upload({
-      data: {},
-      files: Object.values(images).map((image) => ({
-        path: image.path,
-        name: image.name,
-        type: image.type,
-        size: image.size,
-      })),
-    })
+//     const uploads = await strapi.plugins['upload'].services.upload.upload({
+//       data: {},
+//       files: Object.values(images).map((image) => ({
+//         path: image.path,
+//         name: image.name,
+//         type: image.type,
+//         size: image.size,
+//       })),
+//     })
 
     await strapi.query('product').update({ id: product_id}, {
       name: body.name,
       slug: `${slugify(body.name)}-${Math.floor(Math.random() * 100000)}`,
-      images: uploads,
+      // images: uploads,
       ...filters,
       customDesignerName: body.designerName,
     })

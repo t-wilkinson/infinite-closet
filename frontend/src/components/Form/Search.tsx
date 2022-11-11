@@ -53,6 +53,7 @@ export const Search = ({field, values}) => {
           let { slug, name } = values[index]
           return (
             <button
+              key={slug}
               className="text-left text-base p-1"
               onClick={() => field.setValue(toTitleCase(name))}
             >
