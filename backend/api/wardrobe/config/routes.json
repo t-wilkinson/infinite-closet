@@ -71,7 +71,7 @@
       "path": "/wardrobes/filter",
       "handler": "wardrobe.filterWardrobes",
       "config": {
-        "policies": []
+        "policies": ["plugins::users-permissions.permissions"]
       }
     },
     {

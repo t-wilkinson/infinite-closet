@@ -26,7 +26,7 @@ async function queryProducts(knex, _where, _paging, ids=null, user=null) {
     products = await knex
       .select('products.id as id')
       .from('products')
-      .join('designers', 'products.designer', 'designers.id')
+      .leftJoin('designers', 'products.designer', 'designers.id')
       .orderByRaw(sort)
       .where('products.user', user)
       .orWhereNull('products.user')
@@ -36,7 +36,7 @@ async function queryProducts(knex, _where, _paging, ids=null, user=null) {
     products = await knex
       .select('products.id as id')
       .from('products')
-      .join('designers', 'products.designer', 'designers.id')
+      .leftJoin('designers', 'products.designer', 'designers.id')
       .orderByRaw(sort)
       .whereNull('products.user')
       .whereNotNull('products.published_at')

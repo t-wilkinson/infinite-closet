@@ -32,10 +32,8 @@ ALTER DATABASE "infinite-closet" RENAME TO "infinite-closet-dev";
 SQL
 }
 
-while [[ $# > 0 ]]; do
-    case "$1" in
-        -h)
-            cat <<EOF
+sync_help() {
+    cat <<EOF
 Usage: $(basename "$0") (uploads|database|all)+
 Sync local database from server database using ssh and pg_dump.
 
@@ -45,13 +43,23 @@ Where:
     all         all the above
 EOF
             exit 0
-            ;;
+}
+
+if [[ $# == 0 ]]; then
+    sync_help
+fi
+
+while [[ $# > 0 ]]; do
+    case "$1" in
         -f) force=1;;
         uploads) sync_uploads;;
         database) sync_database;;
         all)
             sync_uploads
             sync_database
+            ;;
+        -h|--help)
+            sync_help
             ;;
     esac
     shift

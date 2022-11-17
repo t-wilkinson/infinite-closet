@@ -6,6 +6,10 @@ const { ids } = require('../config')
 const storeId = ids('store')
 
 const toMailchimp = (id, product) => {
+  if (product.user || !product.designer) {
+    return null
+  }
+
   const title = `${product.name} by ${product.designer.name}`
   const variants = product.sizes.map((size) => ({
     id: `${id}_${size.size}`,

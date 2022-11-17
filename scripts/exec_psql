@@ -24,7 +24,7 @@ db_users[dev]=test
 db_users[prod]=infinite-closet
 
 declare -A db_containers
-db_containers[local]=local-db-1
+db_containers[local]=local_db_1
 db_containers[dev]=dev_db_1
 db_containers[prod]=prod_db_1
 

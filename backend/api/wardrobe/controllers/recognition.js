@@ -2,7 +2,7 @@
 const fetch = require('node-fetch')
 const fs = require('fs')
 const models = require('../../../data/data.js').models
-const { removeNullValues, toId } = require('../../../utils')
+const { removeNullValues, toId, slugify } = require('../../../utils')
 const jwt = require('jsonwebtoken')
 
 function base64Encode(file) {
@@ -158,10 +158,12 @@ module.exports = {
 
         let props = {
           name: item.name,
+          slug: slugify(item.name),
           details: item.description,
           designer: toId(designer),
           retailPrice: item.price,
-          currency: item.currency
+          currency: item.currency,
+          user: toId(bloominoNotification),
         }
 
         const product = await strapi.query('product').create(

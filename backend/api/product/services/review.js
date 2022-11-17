@@ -37,7 +37,6 @@ async function canUserReview({ product, user }) {
   }
 
   const orders = await getUserOrders({ product, user })
-  strapi.log.debug('review orders', orders)
   if (canReview(orders)) {
     return orders[0] // Should only have one order
   } else {

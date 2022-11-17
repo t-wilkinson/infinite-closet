@@ -50,7 +50,7 @@
       "via": "related",
       "allowedTypes": ["images", "videos"],
       "plugin": "upload",
-      "required": true
+      "required": false
     },
     "sizes": {
       "type": "component",
