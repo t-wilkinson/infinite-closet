@@ -107,7 +107,7 @@ module.exports = {
         },
       }
 
-      res = await fetch(`${config.apiUrl}/${config.endpoints.doRecognition}`, req)
+      res = await fetch(`${config.apiUrl}${config.endpoints.doRecognition}`, req)
       body = await res.json()
       const notification = await strapi.query('bloomino-notification').create({
         requestId: body.requestId, code: body.code, message: body.message, user: toId(user)

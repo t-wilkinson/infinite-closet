@@ -186,7 +186,7 @@ const rowToHref = (column, row) => ({
       : null,
 })
 
-export const toRows = (column, serverRoutes) => {
+export const toRows = (column, serverRoutes: any ={routes: {}}) => {
   const defaultRoutes = serverRoutes.routes?.[column.value]?.categories || []
   const serverRows =
     (column.value === 'occasions' ? serverRoutes.occasions : defaultRoutes) ||

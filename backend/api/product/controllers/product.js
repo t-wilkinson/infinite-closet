@@ -34,6 +34,10 @@ async function shopItem(ctx) {
       ...Object.keys(models),
     ])
 
+  if (!product) {
+    return ctx.badRequest('Product could not be found.')
+  }
+
   for (const [key, size] of Object.entries(product.sizes)) {
     product.sizes[key].size = strapi.services.size.normalize(size.size)
   }

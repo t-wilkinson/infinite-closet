@@ -32,18 +32,45 @@ const HeaderAside = () => {
         <div className="w-full h-full overflow-auto">
           <Header dispatch={dispatch} />
           <Divider />
-          <Routes
+          {routes.map((section, i) => (
+            <React.Fragment key={section.value + '' + i}>
+              <Route
+                section={section}
             focused={focused}
             setFocused={setFocused}
             dispatch={dispatch}
             serverRoutes={serverRoutes}
-          />
+                />
+            </React.Fragment>
+          ))}
 
           <Divider className="my-2" />
           {user ? (
             <>
               <AsideLink href="/user/profile" label="My Account" />
               <AsideLink href="/buy" label="Checkout" />
+              <Route
+                focused={focused}
+                setFocused={setFocused}
+                dispatch={dispatch}
+                section={{
+                  label: 'My Wardrobe',
+                  value: 'my-wardrobe',
+                  href: null,
+                  img: null,
+                  data: [
+                    {label: null, href:'/', type: 'href', value: null,
+                        data: [
+                          { slug: 'wardrobes', name: 'Wardrobes' },
+                          { slug: 'wardrobes/my-wardrobe', name: 'My Wardrobes' },
+                          { slug: 'wardrobes/edit', name: 'Edit Wardrobes' },
+                          { slug: 'wardrobes/upload', name: 'Upload Item' },
+                        ]
+                    },
+                  ],
+                }}
+                serverRoutes={undefined}
+              />
             </>
           ) : (
             <>
@@ -84,31 +111,28 @@ const Header = ({ dispatch }) => (
   </div>
 )
 
-const Routes = ({ serverRoutes, dispatch, setFocused, focused }) => (
-  <>
-    {routes.map((section, i) => (
-      <div key={section.value + '' + i}>
-        <RouteHeader
-          dispatch={dispatch}
-          setFocused={setFocused}
-          focused={focused}
-          section={section}
-        />
-        <RouteColumn
-          section={section}
-          dispatch={dispatch}
-          focused={focused}
-          serverRoutes={serverRoutes}
-        />
-      </div>
-    ))}
-  </>
+const Route = ({ section, serverRoutes, dispatch, setFocused, focused }) => (
+  <div>
+    <RouteHeader
+      dispatch={dispatch}
+      setFocused={setFocused}
+      focused={focused}
+      section={section}
+    />
+    <RouteColumn
+      section={section}
+      dispatch={dispatch}
+      focused={focused}
+      serverRoutes={serverRoutes}
+    />
+  </div>
 )
+
 
 const RouteColumn = ({ dispatch, focused, section, serverRoutes }) =>
   section.data.map((column) => (
     <React.Fragment key={section.value + column.value}>
-      {column.href && (
+      {column.label && (
         <span className="font-bold">
           <RouteContents
             dispatch={dispatch}
