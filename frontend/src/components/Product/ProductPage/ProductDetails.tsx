@@ -40,7 +40,9 @@ export const ProductDetails = ({ state, product }) => {
 }
 
 const toContent = (v: string | ((o: object) => any), o: object) => {
-  if (typeof v === 'function') {
+  if (!o) {
+    return null
+  } else if (typeof v === 'function') {
     return v
   } else {
     const content = v.split('.').reduce((acc, key) => acc[key], o)
