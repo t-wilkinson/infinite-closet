@@ -84,7 +84,7 @@ export const ProductItem = ({ product }: { product: StrapiProduct }) => {
           paddingTop: '135%',
         }}
       >
-        <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
+        <Link href={`/shop/${product.designer?.slug || 'unknown'}/${product.slug}`}>
           <a
             className="absolute inset-0"
             onClick={() =>

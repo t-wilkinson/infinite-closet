@@ -36,7 +36,9 @@ export const Page = ({ data }) => {
   const loading = useData(data)
   const title = loading
     ? 'Products'
-    : `${data.product.name} by ${data.product.designer.name}`
+    : data.product.designer
+    ? `${data.product.name} by ${data.product.designer.name}`
+    : data.product.name
 
   return (
     <>
@@ -53,7 +55,9 @@ const OpenGraph = (product: StrapiProduct) => {
   const { name, designer, shortRentalPrice, images, sizes, retailPrice } =
     product
   const url = process.env.NEXT_PUBLIC_FRONTEND + router.asPath.split('?')[0]
-  const description = `Rent ${name} by ${designer.name} for only £${shortRentalPrice} at Infinite Closet`
+  const description = designer
+    ? `Rent ${name} by ${designer.name} for only £${shortRentalPrice} at Infinite Closet`
+    : `Rent ${name} for only £${shortRentalPrice} at Infinite Closet`
   const quantity = Object.values(sizes).reduce(
     (acc, { quantity }) => acc + quantity,
     0
@@ -74,7 +78,7 @@ const OpenGraph = (product: StrapiProduct) => {
     'product:retailer_item_id': product.id,
     'og:url': url,
     'og:type': 'og:product',
-    'og:title': `${name} by ${designer.name}`,
+    'og:title': designer ? `${name} by ${designer.name}` : name,
     'og:description': description,
     'product:price:amount': retailPrice,
     'product:price:currency': 'GBP',
