@@ -174,6 +174,12 @@ export const FocusedImage = ({ alt, image }) => {
   const scale = 2
   const scaleFactor = 1 - 1 / scale
 
+  if (!image) {
+    return <div
+      className="overflow-hidden max-w-md w-full h-full relative border border-gray-light rounded-sm ml-2"
+        />
+  }
+
   return (
     <div
       className="overflow-hidden max-w-md w-full h-full relative border border-gray-light rounded-sm ml-2"
