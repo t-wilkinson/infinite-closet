@@ -7,7 +7,7 @@ export const productImageProps = (product: StrapiProduct) => {
     src: getURL(mainImage.formats.thumbnail?.url || mainImage.url),
     alt:
       mainImage.alternativeText ||
-      `${product.name} by ${product.designer.name}`,
+      product.designer ? `${product.name} by ${product.designer.name}` : product.name,
   }
 }
 

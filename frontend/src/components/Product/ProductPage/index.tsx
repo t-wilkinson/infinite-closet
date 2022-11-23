@@ -63,13 +63,17 @@ const Product = ({ reviews, data }) => {
     <div className="w-full sm:w-1/2 sm:max-w-md">
       <div className="flex-row justify-between">
         <div>
-          <Link href={`/designers/${product.designer.slug}`}>
-            <a>
-              <span className="pt-4 font-bold text-xl underline sm:no-underline hover:underline">
-                {product.designer.name}
-              </span>
-            </a>
-          </Link>
+          {product.designer
+              ?
+            <Link href={`/designers/${product.designer.slug}`}>
+              <a>
+                <span className="pt-4 font-bold text-xl underline sm:no-underline hover:underline">
+                  {product.designer.name}
+                </span>
+              </a>
+            </Link>
+            : 'Unknown designer'
+          }
           <span className="">{product.name}</span>
           {product.retailPrice && (
             <span className="text-gray-dark">

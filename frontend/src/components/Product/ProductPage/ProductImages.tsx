@@ -164,7 +164,7 @@ const ImagesLarge = ({ images, state, dispatch }) => (
 )
 
 const toAlt = (images, index) =>
-  images[index].alternativeText || images[0].alternativeText
+  images[index]?.alternativeText || images[0]?.alternativeText || ''
 
 export const FocusedImage = ({ alt, image }) => {
   const [hover, setHover] = React.useState()
