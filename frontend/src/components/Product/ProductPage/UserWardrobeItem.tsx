@@ -13,6 +13,8 @@ export const UserWardrobeItem = ({state, product}) => {
   return <div className="w-full sm:w-1/2 sm:max-w-md">
     <div className="flex-row justify-between">
       <div>
+        {product.designer
+          ?
         <Link href={`/designers/${product.designer.slug}`}>
           <a>
             <span className="pt-4 font-bold text-xl underline sm:no-underline hover:underline">
@@ -20,6 +22,7 @@ export const UserWardrobeItem = ({state, product}) => {
             </span>
           </a>
         </Link>
+        : 'Unknown designer'}
         <span className="">{product.name}</span>
       </div>
     </div>
