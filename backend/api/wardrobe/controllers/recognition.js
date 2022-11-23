@@ -158,11 +158,15 @@ module.exports = {
 
         const productImages = await strapi.plugins['upload'].services.upload.upload({
           data: {},
-          files: Object.values(item.images).map((image) => ({
-            path: image.url,
-            name: image.path,
-            type: image.url.split('=').at(-1),
-          })),
+          files: Object.values(item.images).map((image) => {
+            if (image.url.split('=').slice(-1).length === 1) {
+              return {
+                path: image.url,
+                name: image.path,
+                type: image.url.split('=').slice(-1)[0],
+              }
+            }
+          }).filter(v => v),
         })
 
         let props = {
