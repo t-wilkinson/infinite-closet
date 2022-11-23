@@ -25,7 +25,8 @@
     },
     "designer": {
       "model": "designer",
-      "via": "products"
+      "via": "products",
+      "required": false
     },
     "shortRentalPrice": {
       "type": "decimal",

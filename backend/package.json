@@ -30,6 +30,7 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.95.7",
     "lodash": "^4.17.21",
+    "mime-types": "^2.1.35",
     "node-fetch": "^2.6.1",
     "npm-run-script": "^0.0.4",
     "patch-package": "^6.4.7",

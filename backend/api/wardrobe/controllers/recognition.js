@@ -4,6 +4,7 @@ const fs = require('fs')
 const models = require('../../../data/data.js').models
 const { removeNullValues, toId, slugify } = require('../../../utils')
 const jwt = require('jsonwebtoken')
+const mime = require('mime-types')
 
 function base64Encode(file) {
   return fs.readFileSync(file, {encoding: 'base64'})
@@ -156,17 +157,30 @@ module.exports = {
           }
         }
 
+        const images = await Promise.allSettled(Object.values(item.images).map(async (image) => {
+          const filePath = `./tmp/${image.path}`
+
+          const res = await fetch(image.url)
+          const fileStream = fs.createWriteStream(filePath)
+          await new Promise((resolve, reject) => {
+            res.body.pipe(fileStream)
+            res.body.on('error', reject)
+            fileStream.on('finish', resolve)
+          })
+          const stats = fs.statSync(filePath)
+
+          return {
+            size: stats.size,
+            path: filePath,
+            name: image.path,
+            type: mime.lookup(filePath),
+          }
+        }))
+          .then(promises => promises.filter(res => res.status === 'fulfilled' && res.value).map(res => res.value))
+
         const productImages = await strapi.plugins['upload'].services.upload.upload({
           data: {},
-          files: Object.values(item.images).map((image) => {
-            if (image.url.split('=').slice(-1).length === 1) {
-              return {
-                path: image.url,
-                name: image.path,
-                type: image.url.split('=').slice(-1)[0],
-              }
-            }
-          }).filter(v => v),
+          files: images,
         })
 
         let props = {
