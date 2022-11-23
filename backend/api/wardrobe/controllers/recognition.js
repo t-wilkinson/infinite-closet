@@ -156,6 +156,15 @@ module.exports = {
           }
         }
 
+        const productImages = await strapi.plugins['upload'].services.upload.upload({
+          data: {},
+          files: Object.values(item.images).map((image) => ({
+            path: image.url,
+            name: image.path,
+            type: image.url.split('=').at(-1),
+          })),
+        })
+
         let props = {
           name: item.name,
           slug: slugify(item.name),
@@ -163,7 +172,8 @@ module.exports = {
           designer: toId(designer),
           retailPrice: item.price,
           currency: item.currency,
-          user: toId(bloominoNotification),
+          user: toId(bloominoNotification.user),
+          images: productImages,
         }
 
         const product = await strapi.query('product').create(
