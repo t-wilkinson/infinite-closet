@@ -111,12 +111,13 @@ const details = [
             url={createProductURL(product)}
             description={product.description}
           />,
+          product.images[0] ?
           <share.Pinterest
             product={product}
             url={createProductURL(product)}
             description={product.description}
             imageURL={product.images[0].url}
-          />,
+          /> : null,
         ].map((share, i) => (
           <div key={i}>{share}</div>
         ))}
@@ -125,8 +126,13 @@ const details = [
   },
 ]
 
-const createProductURL = ({ slug, designer: { slug: designer_slug } }) =>
-  `${process.env.NEXT_PUBLIC_FRONTEND}/shop/${designer_slug}/${slug}`
+const createProductURL = ({ slug, designer }) => {
+  if (!designer) {
+    return `${process.env.NEXT_PUBLIC_FRONTEND}/shop/unknown/${slug}`
+  } else {
+    return `${process.env.NEXT_PUBLIC_FRONTEND}/shop/${designer.slug}/${slug}`
+  }
+}
 
 interface ShareFacebookConfig {
   product: StrapiProduct
