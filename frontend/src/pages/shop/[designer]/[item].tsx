@@ -33,6 +33,16 @@ export const Page = ({ data }) => {
     )
   }
 
+  if (!data.product) {
+      return <Layout title="Infinite Closet">
+        <div className="w-full h-full items-center justify-center">
+          <span className="font-bold text-2xl">
+            Loading...
+          </span>
+        </div>
+      </Layout>
+  }
+
   const loading = useData(data)
   const title = loading
     ? 'Products'

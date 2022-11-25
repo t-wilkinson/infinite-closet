@@ -21,6 +21,6 @@ RUN yarn run test --passWithNoTests
 FROM base as development-build
 
 FROM base as production-build
-RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
+RUN yarn build && yarn add sharp && yarn install --production --ignore-scripts --prefer-offline
 
 FROM ${NODE_ENV}-build as final

@@ -45,7 +45,7 @@ const toContent = (v: string | ((o: object) => any), o: object) => {
   } else if (typeof v === 'function') {
     return v
   } else {
-    const content = v.split('.').reduce((acc, key) => acc[key], o)
+    const content = v.split('.').reduce((acc, key) => acc?.[key], o)
     if (content) {
       return () => (
         <div className="bg-gray-light px-2 py-4">
