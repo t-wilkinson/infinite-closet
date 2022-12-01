@@ -13,7 +13,7 @@ axios?.interceptors.response.use(
     return response.data
   },
   (error) => {
-    console.log(error)
+    console.log(error?.message)
     let data = error.response?.data
     try {
       if (Array.isArray(data?.message)) {

@@ -40,20 +40,26 @@ const toMailchimp = (id, product) => {
 
 const sync = {
   async add(key, localItem) {
-    await marketing.ecommerce.addStoreProduct(
-      storeId,
-      toMailchimp(key, localItem)
-    )
+    const body = toMailchimp(key, localItem)
+    if (body) {
+      await marketing.ecommerce.addStoreProduct(
+        storeId,
+        body
+      )
+    }
   },
   async delete(key) {
     await marketing.ecommerce.deleteStoreProduct(storeId, key)
   },
   async update(key, localItem) {
-    await marketing.ecommerce.updateStoreProduct(
-      storeId,
-      key,
-      _.omit(toMailchimp(key, localItem), ['id'])
-    )
+    const body = toMailchimp(key, localItem)
+    if (body) {
+      await marketing.ecommerce.updateStoreProduct(
+        storeId,
+        key,
+        _.omit(body, ['id'])
+      )
+    }
   },
 }
 

@@ -158,7 +158,7 @@ module.exports = {
         }
 
         const images = await Promise.allSettled(Object.values(item.images).map(async (image) => {
-          const filePath = `./tmp/${image.path}`
+          const filePath = `/tmp/${image.path}` // only trust path if from bloomino
 
           const res = await fetch(image.url)
           const fileStream = fs.createWriteStream(filePath)
