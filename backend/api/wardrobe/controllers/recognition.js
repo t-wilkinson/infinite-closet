@@ -156,10 +156,12 @@ module.exports = {
           fs.mkdirSync(bloominoImagePath)
         }
 
-        const settled = await Promise.allSettled(Object.values(item.images).map(async (image) => {
+        const settled = Promise.allSettled(Object.values(item.images).map(async (image) => {
           const filePath = `/tmp/${image.path}` // only trust path if from bloomino
 
-          const res = await fetch(image.url)
+          const res = await fetch(image.url, {
+            agent: strapi.services.bloomino.config.httpsAgent,
+          })
           const fileStream = fs.createWriteStream(filePath)
           await new Promise((resolve, reject) => {
             res.body.pipe(fileStream)
@@ -176,7 +178,7 @@ module.exports = {
           }
         }))
         console.log(settled)
-        const images = settled
+        const images = await settled
           .then(promises => promises.filter(res => res.status === 'fulfilled' && res.value).map(res => res.value))
 
         const productImages = await strapi.plugins['upload'].services.upload.upload({

@@ -8,9 +8,7 @@ import {
   Input,
   BodyWrapper,
   Checkboxes,
-  Drawer,
 } from '@/Form'
-import { Search } from '@/Form/Search'
 import { filterNames } from '@/Product/constants'
 
 import { editProductWardrobeItem, getRecognitionAttributes } from './api'
@@ -95,17 +93,12 @@ const EditWardrobeItem = ({product}) => {
     onSubmit={onSubmit}
   >
     <Input field={fields.get('productName')} />
+    <Input field={fields.get('designerName')} />
     {/* <ImageUpload field={fields.get('images')} /> */}
     <span className="text-lg font-bold pt-2">
       Filters
     </span>
     {attributes && <div>
-      <Drawer label={fields.get('designerName').label}>
-        <Search
-          field={fields.get('designerName')}
-          values={attributes.designers}
-        />
-    </Drawer>
       {Object.keys(attributes.filters).sort().map(filter =>
       <Checkboxes
         key={filter}

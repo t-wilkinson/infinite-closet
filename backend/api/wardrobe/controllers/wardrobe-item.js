@@ -48,6 +48,7 @@ module.exports = {
 //       })),
 //     })
 
+    console.log(body.designerName)
     await strapi.query('product').update({ id: product_id}, {
       name: body.name,
       slug: `${slugify(body.name)}-${Math.floor(Math.random() * 100000)}`,
