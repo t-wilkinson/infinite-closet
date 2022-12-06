@@ -147,15 +147,7 @@ module.exports = {
       for await (const item of productItems) {
         console.log('processing: ', item.name)
         // retailer, brand, category, currency, price, colour, size, images
-        let designer = null
-        if (item.brand) {
-          designer = await strapi.query('designer').findOne({ name: item.brand })
-          if (!designer) {
-            // designer = await strapi.query('designer').create({
-            //   name: item.brand,
-            // })
-          }
-        }
+        let customDesignerName = item.brand || ''
 
         // bko/... is the path images have from bloomino
         const bloominoImagePath = '/tmp/bko'
@@ -164,7 +156,7 @@ module.exports = {
           fs.mkdirSync(bloominoImagePath)
         }
 
-        const images = await Promise.allSettled(Object.values(item.images).map(async (image) => {
+        const settled = await Promise.allSettled(Object.values(item.images).map(async (image) => {
           const filePath = `/tmp/${image.path}` // only trust path if from bloomino
 
           const res = await fetch(image.url)
@@ -183,8 +175,9 @@ module.exports = {
             type: mime.lookup(filePath),
           }
         }))
+        console.log(settled)
+        const images = settled
           .then(promises => promises.filter(res => res.status === 'fulfilled' && res.value).map(res => res.value))
-        console.log(images)
 
         const productImages = await strapi.plugins['upload'].services.upload.upload({
           data: {},
@@ -195,7 +188,7 @@ module.exports = {
           name: item.name.replace(/[0-9]+/g, '').replace(/-/g, ' '),
           slug: slugify(item.name),
           details: item.description,
-          designer: toId(designer),
+          customDesignerName,
           retailPrice: item.price,
           currency: item.currency,
           user: toId(bloominoNotification.user),
