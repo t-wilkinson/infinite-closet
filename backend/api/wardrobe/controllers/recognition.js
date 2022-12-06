@@ -157,6 +157,13 @@ module.exports = {
           }
         }
 
+        // bko/... is the path images have from bloomino
+        const bloominoImagePath = '/tmp/bko'
+
+        if (!fs.existsSync(bloominoImagePath)) {
+          fs.mkdirSync(bloominoImagePath)
+        }
+
         const images = await Promise.allSettled(Object.values(item.images).map(async (image) => {
           const filePath = `/tmp/${image.path}` // only trust path if from bloomino
 
@@ -177,6 +184,7 @@ module.exports = {
           }
         }))
           .then(promises => promises.filter(res => res.status === 'fulfilled' && res.value).map(res => res.value))
+        console.log(images)
 
         const productImages = await strapi.plugins['upload'].services.upload.upload({
           data: {},
@@ -184,7 +192,7 @@ module.exports = {
         })
 
         let props = {
-          name: item.name,
+          name: item.name.replace(/[0-9]+/g, '').replace(/-/g, ' '),
           slug: slugify(item.name),
           details: item.description,
           designer: toId(designer),
