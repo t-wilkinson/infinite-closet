@@ -72,6 +72,10 @@ const Product = ({ reviews, data }) => {
                 </span>
               </a>
             </Link>
+            : product.customDesignerName
+            ? <span className="pt-4 font-bold text-xl underline sm:no-underline">
+              product.customDesignerName
+                  </span>
             : 'Unknown designer'
           }
           <span className="">{product.name}</span>

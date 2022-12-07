@@ -108,7 +108,7 @@ export const AddReview = ({productSlug}) => {
         </div>
         <span className="">{product.name}{' '}
         by{' '}
-        <span className="text-uppercase font-bold">{product.designer.name}</span>
+        <span className="text-uppercase font-bold">{product.designer?.name || product.customDesignerName}</span>
         </span>
       </div>
       }

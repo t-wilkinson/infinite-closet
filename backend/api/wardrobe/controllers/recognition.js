@@ -169,6 +169,7 @@ module.exports = {
             fileStream.on('finish', resolve)
           })
           const stats = fs.statSync(filePath)
+          console.log('image url', image.url)
 
           return {
             size: stats.size,

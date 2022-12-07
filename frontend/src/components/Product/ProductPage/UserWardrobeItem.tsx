@@ -22,7 +22,11 @@ export const UserWardrobeItem = ({state, product}) => {
             </span>
           </a>
         </Link>
-        : 'Unknown designer'}
+        : product.customDesignerName
+          ? <span className="pt-4 font-bold text-xl underline sm:no-underline">
+              {product.customDesignerName}
+            </span>
+          : 'Unknown designer'}
         <span className="">{product.name}</span>
       </div>
     </div>

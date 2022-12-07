@@ -48,6 +48,8 @@ export const Page = ({ data }) => {
     ? 'Products'
     : data.product.designer
     ? `${data.product.name} by ${data.product.designer.name}`
+    : data.product.customDesignerName
+    ?  `${data.product.name} by ${data.product.customDesignerName}`
     : data.product.name
 
   return (
@@ -66,7 +68,7 @@ const OpenGraph = (product: StrapiProduct) => {
     product
   const url = process.env.NEXT_PUBLIC_FRONTEND + router.asPath.split('?')[0]
   const description = designer
-    ? `Rent ${name} by ${designer.name} for only £${shortRentalPrice} at Infinite Closet`
+    ? `Rent ${name} by ${designer?.name} for only £${shortRentalPrice} at Infinite Closet`
     : `Rent ${name} for only £${shortRentalPrice} at Infinite Closet`
   const quantity = Object.values(sizes).reduce(
     (acc, { quantity }) => acc + quantity,
