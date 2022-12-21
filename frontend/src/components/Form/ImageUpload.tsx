@@ -1,6 +1,10 @@
+import React from 'react'
 import Image from 'next/image'
 
+import Popup from '@/Layout/Popup'
 import {Icon, iconClose, iconPlus} from '@/Components/Icons'
+
+import EditImage from './EditImage'
 
 export const ImageUpload = ({ field, accept="image/*"}) => {
   const onImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -8,27 +12,60 @@ export const ImageUpload = ({ field, accept="image/*"}) => {
       let urls = Array.from(e.target.files).map((file: Blob) =>
         URL.createObjectURL(file)
       )
-      const uniqueUrls = Array.from(new Set(field.value.concat(urls)))
-      field.setValue(uniqueUrls)
+      field.setValue({
+        ...field.value,
+        ...urls.reduce((images, url) => {
+          images[url] = field.value[url] || {}
+          return images
+        }, {})
+      })
     }
   }
+  const [editImage, setEditImage] = React.useState(null)
 
   return (
     <div className="my-4">
+      <Popup
+        isOpen={editImage}
+        close={() => setEditImage(null)}
+      >
+        <EditImage
+          url={editImage}
+          image={field.value[editImage]}
+          updateImage={image => {
+            field.setValue({...field.value, [editImage]: image})
+          }}
+          saveImage={() => {
+            setEditImage(null)
+          }}
+        />
+      </Popup>
       <h3 className="font-bold text-lg">{field.label}</h3>
       <div className="flex-row w-full flex-wrap">
-        {field.value.map((imgUrl: string) => (
-          <UploadedImageWrapper key={imgUrl}>
+        {Object.keys(field.value).map((url) => (
+          <UploadedImageWrapper key={url}>
             <button
               className="absolute top-0 right-0 m-2 z-10 bg-white rounded-full items-center justify-center p-1"
-              onClick={() =>
-                field.setValue(field.value.filter((v) => v !== imgUrl))
-              }
+              onClick={() => {
+                const images = {...field.value}
+                delete images[url]
+                field.setValue(images)
+              }}
               type="button"
             >
               <Icon icon={iconClose} size={12} />
             </button>
-            <Image src={imgUrl} layout="fill" objectFit="cover" />
+            <button
+              type="button"
+              onClick={() => setEditImage(url)}
+            >
+              <Image src={url} layout="fill" objectFit="cover"
+                style={{
+                  transform: `rotate(${field.value[url].rotation || 0}deg)`,
+                }}
+              />
+              Edit
+            </button>
           </UploadedImageWrapper>
         ))}
         <UploadedImageWrapper>

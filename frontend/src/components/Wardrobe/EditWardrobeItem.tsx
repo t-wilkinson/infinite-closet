@@ -1,23 +1,24 @@
 import React from 'react'
 
-// import { getURL } from '@/utils/axios'
+import { getURL } from '@/utils/axios'
 import {
   useFields,
   Form,
   Submit,
   Input,
   BodyWrapper,
+  ImageUpload,
   Checkboxes,
 } from '@/Form'
 import { filterNames } from '@/Product/constants'
 
 import { editProductWardrobeItem, getRecognitionAttributes } from './api'
 
-// const imageToObjectUrl = async (image) => {
-//   return fetch(getURL(image.url))
-//   .then(res => res.blob())
-//   .then(blob => URL.createObjectURL(blob))
-// }
+const imageToObjectUrl = async (image) => {
+  return fetch(getURL(image.url))
+  .then(res => res.blob())
+  .then(blob => URL.createObjectURL(blob))
+}
 
 const EditWardrobeItem = ({product}) => {
   // initialize product filters
@@ -29,7 +30,7 @@ const EditWardrobeItem = ({product}) => {
   >({
     designerName: { default: product.customDesignerName || ''},
     productName: { label: 'Name', default: product.name},
-    // images: { label: 'Add a photo', default: product.images.map(imageToObjectUrl) },
+    images: { label: 'Add a photo', default: {}},
     ...filterNames.reduce((acc, filter) => {
       if (Array.isArray(product?.[filter])) {
         acc[filter] = { default: new Set(product[filter].map(v => v.slug)) }
@@ -41,6 +42,22 @@ const EditWardrobeItem = ({product}) => {
   })
 
   const [attributes, setAttributes] = React.useState(null)
+
+  React.useEffect(() => {
+    Promise.all(product.images.map(async image => {
+      const url = await imageToObjectUrl(image)
+      return {
+        id: image.id,
+        rotation: image.rotation,
+        url,
+      }
+    }))
+    .then(images => fields.setValue('images', images.reduce((acc, image) => {
+      console.log(image)
+      acc[image.url] = image
+      return acc
+    }, {})))
+  }, [])
 
   React.useEffect(() => {
     getRecognitionAttributes()
@@ -64,13 +81,12 @@ const EditWardrobeItem = ({product}) => {
 
     formData.set('designer', cleaned.designerName)
 
-    // const images = form.elements['images'].files
-    // if (images.length === 0) {
-    //   throw 'Please include an image of your outfit'
-    // }
-    // for (let i = 0; i < images.length; i++) {
-    //   formData.append(images[i].name, images[i])
-    // }
+    const images = form.elements['images'].files
+    for (let i = 0; i < images.length; i++) {
+      formData.append(images[i].name, images[i])
+    }
+    const previousImages = fields.getValue('images')
+    formData.append('previousImages', JSON.stringify(previousImages))
 
     return editProductWardrobeItem(product.id, formData)
       .catch((err) => {
@@ -94,7 +110,7 @@ const EditWardrobeItem = ({product}) => {
   >
     <Input field={fields.get('productName')} />
     <Input field={fields.get('designerName')} />
-    {/* <ImageUpload field={fields.get('images')} /> */}
+    <ImageUpload field={fields.get('images')} />
     <span className="text-lg font-bold pt-2">
       Filters
     </span>

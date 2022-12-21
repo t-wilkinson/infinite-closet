@@ -7,7 +7,7 @@ module.exports = {
   async editProductWardrobeItem(ctx) {
     const user = ctx.state.user
     const body = ctx.request.body
-    // const images = ctx.request.files
+    const images = ctx.request.files
     const queryFilters = ctx.request.body
 
     const { product_id } = ctx.params
@@ -18,6 +18,7 @@ module.exports = {
       return ctx.notFound('Could not find product id.')
     }
     const product = wardrobeItem.product
+    console.log(product)
 
     // Make sure user owns product
     if (toId(product.user) !== user.id) {
@@ -38,20 +39,50 @@ module.exports = {
       filters[filter] = await getFilterIds(filter, JSON.parse(queryFilters[filter]))
     }
 
-//     const uploads = await strapi.plugins['upload'].services.upload.upload({
-//       data: {},
-//       files: Object.values(images).map((image) => ({
-//         path: image.path,
-//         name: image.name,
-//         type: image.type,
-//         size: image.size,
-//       })),
-//     })
+    const uploads = await strapi.plugins['upload'].services.upload.upload({
+      data: {},
+      files: Object.values(images).map((image) => ({
+        path: image.path,
+        name: image.name,
+        type: image.type,
+        size: image.size,
+      })),
+    })
+
+    const previousImages = JSON.parse(ctx.request.body.previousImages)
+    console.log(images, uploads, previousImages)
+
+    for (const upload of uploads) {
+      const image = previousImages[upload.name]
+      console.log('update upload image:', image)
+      if (image) {
+        strapi.query('file', 'upload')
+          .update({
+            id: upload.id,
+            rotation: image.rotation || 0
+          })
+      }
+    }
+
+    for (const url in previousImages) {
+      const image = previousImages[url]
+      console.log('update previous image:', image)
+      if (image?.id) {
+        strapi.query('file', 'upload')
+          .update({
+            id: image.id,
+            rotation: image.rotation || 0
+          })
+      }
+    }
 
     await strapi.query('product').update({ id: product_id}, {
       name: body.name,
-      slug: `${slugify(body.name)}-${Math.floor(Math.random() * 100000)}`,
-      // images: uploads,
+      slug: product.slug || `${slugify(body.name)}-${Math.floor(Math.random() * 100000)}`,
+      images: [
+        ...Object.values(previousImages).map(image => image.id).filter(x => x),
+        ...uploads.map(upload => upload.id),
+      ],
       ...filters,
       customDesignerName: body.designer,
     })
