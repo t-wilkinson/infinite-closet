@@ -59,7 +59,7 @@ module.exports = {
         strapi.query('file', 'upload')
           .update({
             id: upload.id,
-            rotation: image.rotation || 0
+            rotation: `${image.rotation || 0}`
           })
       }
     }
@@ -71,7 +71,7 @@ module.exports = {
         strapi.query('file', 'upload')
           .update({
             id: image.id,
-            rotation: image.rotation || 0
+            rotation: `${image.rotation || 0}`
           })
       }
     }

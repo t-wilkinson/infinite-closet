@@ -84,7 +84,7 @@ export const ProductItem = ({ product }: { product: StrapiProduct }) => {
           paddingTop: '135%',
         }}
       >
-        <Link href={`/shop/${product.designer?.slug || 'unknown'}/${product.slug}`}>
+        <Link href={`/shop/${product.customDesignerName || product.designer?.slug || 'unknown'}/${product.slug}`}>
           <a
             className="absolute inset-0"
             onClick={() =>
@@ -204,7 +204,7 @@ export const ProductInfo = ({ product }) => (
   <div className="w-full flex-row justify-between mt-4 relative text-sm leading-snug">
     <div className="flex-grow">
       <div className="inline-block">
-        <Link href={`/designers/${product.designer?.slug}`}>
+        <Link href={`/designers/${product.customDesignerName || product.designer?.slug}`}>
           <a>
             <span className="font-bold hover:underline">
               {product.designer?.name}
@@ -214,7 +214,7 @@ export const ProductInfo = ({ product }) => (
       </div>
 
       <div className="inline-block">
-        <Link href={`/shop/${product.designer?.slug}/${product.slug}`}>
+        <Link href={`/shop/${product.customDesignerName || product.designer?.slug}/${product.slug}`}>
           <a className="hover:underline">
             <span>{product.name}</span>
           </a>
