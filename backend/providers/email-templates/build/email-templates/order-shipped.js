@@ -20,7 +20,6 @@ exports.default = function (_ref) {
       cartItem = data.cartItem;
   var trackingId = cartItem.order.trackingId;
 
-  console.log(trackingId);
 
   return _react2.default.createElement(
     _layout.Layout,
