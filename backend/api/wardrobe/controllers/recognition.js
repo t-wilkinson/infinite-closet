@@ -141,6 +141,7 @@ module.exports = {
         detail: "Bloomino request ID could not be found in database.",
       })
     }
+    const user = await strapi.query('user', 'users-permissions').findOne({ id: toId(bloominoNotification.user) })
 
     try {
       // Create product for each product item
@@ -208,10 +209,18 @@ module.exports = {
             wardrobe: null,
             product: toId(product),
           })
+        await strapi.services.template_email.wardrobeItemCreation({
+          status: 'success',
+          user,
+        })
       }
     } catch (e) {
       console.error(e)
       console.error(e.message)
+      strapi.services.template_email.wardrobeItemCreation({
+        status: 'failure',
+        user,
+      })
     }
 
     return ctx.send({

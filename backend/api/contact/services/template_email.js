@@ -231,4 +231,16 @@ ${error.stack}
       data: { cartItem, firstName: user.firstName, user },
     })
   },
+
+  async wardrobeItemCreation({user, status}) {
+    if (!user) {
+      return
+    }
+    await send({
+      template: 'create-wardrobe-item',
+      status,
+      user,
+      firstName: user.firstName,
+    })
+  }
 }
