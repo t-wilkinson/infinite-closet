@@ -183,27 +183,28 @@ const Checkout = ({ fetchCart, analytics }) => {
   const [isVisible, setVisible] = React.useState(false)
 
   const checkout = async () => {
-    const cleanedFields = fields.clean()
-    return axios
-      .post<{ checkout: StrapiCheckout }>(`/orders/checkout/${user.id}`, {
-        address: state.address,
-        paymentMethod: state.paymentMethod,
-        orders: cart.map((item) => item.order),
-        discountCode: cleanedFields.discountCode,
-      })
-      .then(({checkout}) => {
-        fetchCart()
-        onPurchaseEvent({
-          analytics,
-          summary,
-          checkout,
-          discountCode: fields.value('discountCode')
-        })
-      })
-      .catch((err) => {
-        console.error(err)
-        throw 'Unable to process order, please try again later'
-      })
+    throw 'Sorry, we are not accepting orders at the moment.'
+    // const cleanedFields = fields.clean()
+    // return axios
+    //   .post<{ checkout: StrapiCheckout }>(`/orders/checkout/${user.id}`, {
+    //     address: state.address,
+    //     paymentMethod: state.paymentMethod,
+    //     orders: cart.map((item) => item.order),
+    //     discountCode: cleanedFields.discountCode,
+    //   })
+    //   .then(({checkout}) => {
+    //     fetchCart()
+    //     onPurchaseEvent({
+    //       analytics,
+    //       summary,
+    //       checkout,
+    //       discountCode: fields.value('discountCode')
+    //     })
+    //   })
+    //   .catch((err) => {
+    //     console.error(err)
+    //     throw 'Unable to process order, please try again later'
+    //   })
   }
 
   if (cartCount === 0) {
@@ -268,22 +269,22 @@ const Checkout = ({ fetchCart, analytics }) => {
           </Submit>
           <PaymentSubText />
           {isVisible && <OR />}
-          <PaymentRequestForm
-            setVisible={setVisible}
-            discountCode={fields.get('discountCode').clean()}
-            accurateSummary={state.summary}
-            form={fields.form}
-            onCheckout={({ checkout }) => {
-              fetchCart()
-              onPurchaseEvent({
-                analytics,
-                summary,
-                checkout,
-                discountCode: fields.value('discountCode')
-              })
-              router.push('/buy/thankyou')
-            }}
-          />
+          {/* <PaymentRequestForm */}
+          {/*   setVisible={setVisible} */}
+          {/*   discountCode={fields.get('discountCode').clean()} */}
+          {/*   accurateSummary={state.summary} */}
+          {/*   form={fields.form} */}
+          {/*   onCheckout={({ checkout }) => { */}
+          {/*     fetchCart() */}
+          {/*     onPurchaseEvent({ */}
+          {/*       analytics, */}
+          {/*       summary, */}
+          {/*       checkout, */}
+          {/*       discountCode: fields.value('discountCode') */}
+          {/*     }) */}
+          {/*     router.push('/buy/thankyou') */}
+          {/*   }} */}
+          {/* /> */}
         </Form>
         <div className="hidden md:block">
           <Favorites />

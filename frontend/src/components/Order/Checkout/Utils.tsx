@@ -155,6 +155,7 @@ export const useGuestCheckout = () => {
 
   const checkout = async ({ summary, form, address, billing, email, discountCode }) => {
     const contact = toContact({ email, address })
+    return
     return validatePostcode(address.postcode)
       .then(() =>
         stripe.createPaymentMethod({

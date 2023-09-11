@@ -188,22 +188,22 @@ const Checkout = () => {
         <Divider />
         <div className="h-2" />
         <Cart />
-        <PaymentRequestForm
-          setVisible={setVisible}
-          accurateSummary={state.summary}
-          form={fields.form}
-          onCheckout={({checkout}) => {
-            fetchCart()
-            onPurchaseEvent({
-              analytics,
-              summary,
-              checkout,
-              discountCode: fields.value('discountCode'),
-            })
-            router.push('/buy/thankyou')
-          }}
-          discountCode={fields.get('discountCode').clean() as string}
-        />
+        {/* <PaymentRequestForm */}
+        {/*   setVisible={setVisible} */}
+        {/*   accurateSummary={state.summary} */}
+        {/*   form={fields.form} */}
+        {/*   onCheckout={({checkout}) => { */}
+        {/*     fetchCart() */}
+        {/*     onPurchaseEvent({ */}
+        {/*       analytics, */}
+        {/*       summary, */}
+        {/*       checkout, */}
+        {/*       discountCode: fields.value('discountCode'), */}
+        {/*     }) */}
+        {/*     router.push('/buy/thankyou') */}
+        {/*   }} */}
+        {/*   discountCode={fields.get('discountCode').clean() as string} */}
+        {/* /> */}
         {isVisible && <OR />}
         <div className="py-8 -mx-4 px-4 sm:mx-0 sm:px-0 bg-white items-center ">
           <CheckoutForm onCheckout={onCheckout} />
@@ -224,34 +224,35 @@ const CheckoutForm = ({ onCheckout }) => {
   const registerUser = useRegisterUser()
 
   const onSubmit = async () => {
-    const cleanedFields = fields.clean()
-    const cleanedAddress = address.clean()
-    const contact = toContact({
-      email: cleanedFields.email,
-      address: cleanedAddress,
-    })
+    throw 'Sorry, we are not accepting orders at the moment.'
+    // const cleanedFields = fields.clean()
+    // const cleanedAddress = address.clean()
+    // const contact = toContact({
+    //   email: cleanedFields.email,
+    //   address: cleanedAddress,
+    // })
 
-    await checkout({
-      form: fields.form,
-      address: cleanedAddress,
-      billing: {
-        name: cleanedFields.billingName,
-      },
-      email: cleanedFields.email,
-      discountCode: cleanedFields.discountCode,
-      summary,
-    })
-    await onCheckout({ contact })
+    // await checkout({
+    //   form: fields.form,
+    //   address: cleanedAddress,
+    //   billing: {
+    //     name: cleanedFields.billingName,
+    //   },
+    //   email: cleanedFields.email,
+    //   discountCode: cleanedFields.discountCode,
+    //   summary,
+    // })
+    // await onCheckout({ contact })
 
-    if (cleanedFields.password) {
-      await registerUser({
-        email: contact.email,
-        firstName: contact.firstName,
-        lastName: contact.lastName,
-        password: cleanedFields.password,
-      })
-    }
-    fields.get('discountCode').setValue(null)
+    // if (cleanedFields.password) {
+    //   await registerUser({
+    //     email: contact.email,
+    //     firstName: contact.firstName,
+    //     lastName: contact.lastName,
+    //     password: cleanedFields.password,
+    //   })
+    // }
+    // fields.get('discountCode').setValue(null)
   }
 
   return (

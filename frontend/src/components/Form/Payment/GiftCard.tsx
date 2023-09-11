@@ -98,17 +98,18 @@ const GiftCardContent = ({ fields }: { fields: UseFields<GiftCardFields> }) => {
   const user = useSelector((state) => state.user.data)
 
   const onSubmit = React.useCallback(async () => {
-    const cleaned = fields.clean()
-    if (cleaned.recipientEmail !== cleaned.confirmRecipientEmail) {
-      fields.get('confirmRecipientEmail').setError('Confirm email must match')
-      throw 'Confirm email must match'
-    }
-    await payment.handleSubmit({
-      formData: toFormData({
-        ...cleaned,
-        deliveryDate: cleaned.deliveryDate.toJSON(),
-      }),
-    })
+    throw 'Sorry, we are not accepting payments at the moment.'
+    // const cleaned = fields.clean()
+    // if (cleaned.recipientEmail !== cleaned.confirmRecipientEmail) {
+    //   fields.get('confirmRecipientEmail').setError('Confirm email must match')
+    //   throw 'Confirm email must match'
+    // }
+    // await payment.handleSubmit({
+    //   formData: toFormData({
+    //     ...cleaned,
+    //     deliveryDate: cleaned.deliveryDate.toJSON(),
+    //   }),
+    // })
   }, [fields.status])
 
   React.useEffect(() => {
