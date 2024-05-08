@@ -1,10 +1,6 @@
-const watchIgnoreFiles = [
-  '**/*.md',
-  '**/__tests__/**',
-  '**/tests/**',
-]
+const watchIgnoreFiles = ['**/*.md', '**/__tests__/**', '**/tests/**']
 
-module.exports = ({env}) => ({
+module.exports = ({ env }) => ({
   cron: {
     enabled: true,
   },
@@ -26,7 +22,7 @@ module.exports = ({env}) => ({
     url: '/admin',
     watchIgnoreFiles,
     auth: {
-      secret: env('ADMIN_JWT_SECRET', 'ec27516c3ddbb82286803e7d5308c81b'),
+      secret: env('ADMIN_JWT_SECRET'),
     },
   },
   watchIgnoreFiles,

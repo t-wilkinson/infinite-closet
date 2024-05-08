@@ -1,7 +1,7 @@
 'use strict'
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 const unparsed = Symbol.for('unparsedBody')
-const endpointSecret = 'whsec_c5b70d11f6d6208d337fb4e089506ce3e339641728ca7a7ed4fbc9710d886bd6'
+const endpointSecret = process.env.STRIPE_ENDPOINT
 
 module.exports = {
   async paymentMethods(ctx) {
