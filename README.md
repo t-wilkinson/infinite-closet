@@ -62,7 +62,24 @@ Feel free to contact me to discuss this project or my qualifications further.
 ```bash
 git clone https://github.com/t-wilkinson/infinite-closet
 cd infinite-closet
+
+(cd frontend && yarn install)
+(cd backend && yarn install)
+
 scripts/run local up
+
+# You MAY have to run
+echo "127.0.0.1 backend" | sudo tee -a /etc/hosts to facilate communication between frontend and backend
+
 ```
+
+Visit http://127.0.0.1:3001 and visit static pages
+
+**To visit shop pages:**
+
+1. Visit http://127.0.0.1:8000/admin
+2. Create admin account
+3. Go to Settings > Users & Permissions Plugin > Roles > Public > Edit
+4. Give all permissions to public role so the frontend can pull information
 
 Done!

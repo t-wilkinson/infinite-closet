@@ -4,24 +4,26 @@ services:
   frontend:
     image: node:14-buster
     environment:
-      # NEXT_PUBLIC_FRONTEND: 'http://localhost:3001'
-      # NEXT_PUBLIC_BACKEND: 'http://localhost:1337'
-      NEXT_PUBLIC_FRONTEND: 'http://ic.com'
-      NEXT_PUBLIC_BACKEND: 'http://api.ic.com'
-    command: yarn run develop
+      NEXT_PUBLIC_FRONTEND: 'http://localhost:3001'
+      NEXT_PUBLIC_BACKEND: 'http://backend:1337'
+      # NEXT_PUBLIC_FRONTEND: 'http://ic.com'
+      # NEXT_PUBLIC_BACKEND: 'http://api.ic.com'
+    command: sh -c "yarn install && yarn run develop"
     volumes:
       - ../frontend:/app
 
   backend:
     image: node:14-buster
     ports:
-      - "127.0.0.1:8000:8000"
+      - '127.0.0.1:1337:1337'
+      - '127.0.0.1:8000:8000'
     environment:
-      # FRONTEND_DOMAIN: 'localhost:3001'
-      # BACKEND_DOMAIN: 'localhost:1337'
-      FRONTEND_DOMAIN: ic.com
-      BACKEND_DOMAIN: api.ic.com
+      FRONTEND_DOMAIN: 'localhost:3001'
+      ADMIN_JWT_SECRET: 'a_very_secret_random_string_here'
+      BACKEND_DOMAIN: 'localhost:1337'
+      # FRONTEND_DOMAIN: ic.com
+      # BACKEND_DOMAIN: api.ic.com
       LOCAL: 'true'
-    command: yarn run develop:admin
+    command: sh -c "yarn install && yarn run develop"
     volumes:
       - ../backend:/app:rw

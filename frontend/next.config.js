@@ -26,8 +26,8 @@ module.exports = withPWA({
       {
         source: '/user/wardrobe-upload',
         destination: '/wardrobes/upload',
-        permanent: true
-      }
+        permanent: true,
+      },
     ]
   },
   webpack: (config, {}) => {
@@ -60,6 +60,8 @@ module.exports = withPWA({
     minimumCacheTTL: 60 * 60,
     deviceSizes: [1024, 1920, 2048, 3000, 3840],
     domains: [
+      'localhost',
+      'backend',
       'ic.com',
       'api.ic.com',
       'admin.ic.com',
